@@ -822,10 +822,9 @@ def api_clients_year(cid: str, ay: str, body: dict = Body(...), u: dict = Depend
     return clients.set_year(u, cid, ay, body)
 
 
-@app.delete("/api/clients/{cid}")
-def api_clients_delete(cid: str, _: dict = Depends(screen("clients", "delete"))):
-    clients.delete(cid)
-    return {"ok": True}
+@app.post("/api/clients/{cid}/archive")
+def api_clients_archive(cid: str, body: dict = Body(...), u: dict = Depends(screen("clients", "archive"))):
+    return clients.archive(u, cid, bool(body.get("archived", True)))
 
 
 # --- Intake & map (SimplyFile phase 2, 2026-10-03): statements per client and year, each row's SF Ref (intake.py) ----

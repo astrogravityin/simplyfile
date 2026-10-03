@@ -8,6 +8,7 @@ import { icon } from './icons.js';
 const w = (k, v) => t('clients', k, v);
 let K = null;      // chip clients.settings
 let AY = '';
+let VIEW = '';     // '' = active clients, 'archived' = the Archived tab
 
 const field = (id, label, value = '', attrs = '') => `<div class="field"><label for="${id}">${esc(label)}</label>
   <input id="${id}" value="${esc(value)}" ${attrs}/></div>`;
@@ -22,13 +23,17 @@ export async function clientsPage(host) {
     `<label class="small muted" for="cl-ay">${esc(w('ay'))}</label>
      <select id="cl-ay">${K.years.map((y) => `<option ${y === AY ? 'selected' : ''}>${esc(y)}</option>`).join('')}</select>
      <button type="button" id="cl-new">${icon('plus', 14)} ${esc(w('new'))}</button>`)
+    + `<div class="tabs" role="tablist">${[['', w('tab_active')], ['archived', w('tab_archived')]].map(([id, label]) =>
+      `<button type="button" role="tab" data-view="${id}" class="${VIEW === id ? 'on' : ''}" aria-selected="${VIEW === id}">${esc(label)}</button>`).join('')}</div>`
     + '<section class="card" id="cl-list"></section>';
+  host.querySelectorAll('[data-view]').forEach((b) => { b.onclick = () => { VIEW = b.dataset.view; clientsPage(host); }; });
   const draw = () => listBox(host.querySelector('#cl-list'), {
     list: 'clients',
-    args: { ay: AY },
-    empty: w('empty'),
+    args: { ay: AY, view: VIEW },
+    empty: w(VIEW ? 'empty_archived' : 'empty'),
     row: (r) => `<div class="kw-row small" data-id="${esc(r.id)}">
       <div class="kw-info"><b>${esc(r.name)}</b> <span class="muted">${esc(r.pan)} · ${esc(r.status)} · ${esc(r.form)}</span>
+        ${r.archived_at ? `<span class="tag">${esc(w('archived_tag'))}</span>` : ''}
         ${r.audit ? `<span class="tag brand">${esc(w('audit_tag'))}</span>` : ''}
         ${r.in_year ? `<span class="${esc(stageOf(r.stage).tag)}">${esc(stageOf(r.stage).label)}</span>`
           : `<span class="muted">${esc(w('not_in_year', { ay: AY }))}</span>`}</div>
@@ -77,7 +82,9 @@ function editor(c, reload) {
     <button type="button" class="small ghost" id="c-add-partner">${icon('plus', 12)} ${esc(w('add_partner'))}</button></div>
     <div class="field" style="margin-top:14px"><label for="c-notes">${esc(w('f_notes'))}</label><textarea id="c-notes" rows="2">${esc(c.notes || '')}</textarea></div>
     ${yearCard}`;
-  const footer = `${!isNew && may('clients', 'delete') ? `<button type="button" class="danger" data-del>${icon('trash', 14)} ${esc(w('delete'))}</button>` : ''}
+  const footer = `${!isNew && may('clients', 'archive') ? (c.archived_at
+      ? `<button type="button" data-restore>${icon('refresh', 14)} ${esc(w('restore'))}</button>`
+      : `<button type="button" data-archive>${icon('archive', 14)} ${esc(w('archive'))}</button>`) : ''}
     <button type="button" class="primary" data-save>${icon('save', 15)} ${esc(w('save'))}</button>`;
   modal(isNew ? w('new') : c.name, body, { wide: true, footer, stay: true, onOpen: (b, close) => {
     const card = b.closest('.modal');
@@ -112,10 +119,13 @@ function editor(c, reload) {
     if ($('#y-add')) $('#y-add').onclick = saveYear(() => ({}));
     if ($('#y-save')) $('#y-save').onclick = saveYear(() => ({ form: $('#y-form').value, stage: $('#y-stage').value,
       audit: $('#y-audit').checked, assigned: $('#y-assigned').value, ack_no: $('#y-ack').value }));
-    const del = card.querySelector('[data-del]');
-    if (del) del.onclick = () => confirmDialog(w('delete_title', { name: c.name }), w('delete_body'), async () => {
-      try { await api(`/api/clients/${c.id}`, { method: 'DELETE' }); toast(w('deleted'), 'ok'); close(true); reload(); }
+    const setArchived = (on) => async () => {
+      try { await api(`/api/clients/${c.id}/archive`, { method: 'POST', body: { archived: on } }); toast(w(on ? 'archived' : 'restored'), 'ok'); close(true); reload(); }
       catch (err) { toast(err.message, 'bad', 8); }
-    }, w('delete'), { tone: 'danger' });
+    };
+    const arch = card.querySelector('[data-archive]');
+    if (arch) arch.onclick = () => confirmDialog(w('archive_title', { name: c.name }), w('archive_body', { name: c.name }), setArchived(true), w('archive'), { tone: 'warn' });
+    const rest = card.querySelector('[data-restore]');
+    if (rest) rest.onclick = (e) => busy(e.currentTarget, setArchived(false));
   } });
 }

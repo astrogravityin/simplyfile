@@ -248,30 +248,6 @@
       "label": "saved"
     },
     {
-      "name": "delete",
-      "type": "text",
-      "default": "Delete client",
-      "label": "delete"
-    },
-    {
-      "name": "delete_title",
-      "type": "text",
-      "default": "Delete {name}?",
-      "label": "delete title"
-    },
-    {
-      "name": "delete_body",
-      "type": "long",
-      "default": "The client and every year kept for them are removed from the register.",
-      "label": "delete body"
-    },
-    {
-      "name": "deleted",
-      "type": "text",
-      "default": "Deleted",
-      "label": "deleted"
-    },
-    {
       "name": "need_name",
       "type": "text",
       "default": "Give the assessee's name.",
@@ -348,6 +324,66 @@
       "type": "text",
       "default": "Pick ITR-3 or ITR-5.",
       "label": "bad form"
+    },
+    {
+      "name": "archive",
+      "type": "text",
+      "default": "Archive client",
+      "label": "archive"
+    },
+    {
+      "name": "archive_title",
+      "type": "text",
+      "default": "Archive {name}?",
+      "label": "archive title"
+    },
+    {
+      "name": "archive_body",
+      "type": "text",
+      "default": "{name} moves to the Archived tab with every year kept for them. Nothing is deleted - Restore brings the client back.",
+      "label": "archive body"
+    },
+    {
+      "name": "archived",
+      "type": "text",
+      "default": "Archived",
+      "label": "archived"
+    },
+    {
+      "name": "restore",
+      "type": "text",
+      "default": "Restore client",
+      "label": "restore"
+    },
+    {
+      "name": "restored",
+      "type": "text",
+      "default": "Restored",
+      "label": "restored"
+    },
+    {
+      "name": "tab_active",
+      "type": "text",
+      "default": "Active",
+      "label": "tab active"
+    },
+    {
+      "name": "tab_archived",
+      "type": "text",
+      "default": "Archived",
+      "label": "tab archived"
+    },
+    {
+      "name": "empty_archived",
+      "type": "text",
+      "default": "No archived clients.",
+      "label": "empty archived"
+    },
+    {
+      "name": "archived_tag",
+      "type": "text",
+      "default": "Archived",
+      "label": "archived tag"
     }
   ],
   "expr": {
@@ -393,10 +429,6 @@
       "save": "$save",
       "save_year": "$save_year",
       "saved": "$saved",
-      "delete": "$delete",
-      "delete_title": "$delete_title",
-      "delete_body": "$delete_body",
-      "deleted": "$deleted",
       "need_name": "$need_name",
       "bad_status": "$bad_status",
       "bad_pan": "$bad_pan",
@@ -409,7 +441,17 @@
       "not_found": "$not_found",
       "bad_ay": "$bad_ay",
       "bad_stage": "$bad_stage",
-      "bad_form": "$bad_form"
+      "bad_form": "$bad_form",
+      "archive": "$archive",
+      "archive_title": "$archive_title",
+      "archive_body": "$archive_body",
+      "archived": "$archived",
+      "restore": "$restore",
+      "restored": "$restored",
+      "tab_active": "$tab_active",
+      "tab_archived": "$tab_archived",
+      "empty_archived": "$empty_archived",
+      "archived_tag": "$archived_tag"
     }
   },
   "returns": "record",
@@ -460,10 +502,6 @@
         "save": "Save client",
         "save_year": "Save year",
         "saved": "Saved",
-        "delete": "Delete client",
-        "delete_title": "Delete {name}?",
-        "delete_body": "The client and every year kept for them are removed from the register.",
-        "deleted": "Deleted",
         "need_name": "Give the assessee's name.",
         "bad_status": "Pick a status.",
         "bad_pan": "PAN {pan} is not ten characters of the shape ABCDE1234F.",
@@ -476,7 +514,17 @@
         "not_found": "That client is not in the register.",
         "bad_ay": "{ay} is not an assessment year this portal offers.",
         "bad_stage": "Pick one of the stages.",
-        "bad_form": "Pick ITR-3 or ITR-5."
+        "bad_form": "Pick ITR-3 or ITR-5.",
+        "archive": "Archive client",
+        "archive_title": "Archive {name}?",
+        "archive_body": "{name} moves to the Archived tab with every year kept for them. Nothing is deleted - Restore brings the client back.",
+        "archived": "Archived",
+        "restore": "Restore client",
+        "restored": "Restored",
+        "tab_active": "Active",
+        "tab_archived": "Archived",
+        "empty_archived": "No archived clients.",
+        "archived_tag": "Archived"
       }
     }
   ]

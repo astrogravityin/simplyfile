@@ -88,6 +88,11 @@ def api_check() -> None:
         # Clients -> Intake & map -> Reconcile
         cl = c.post("/api/clients", json={"name": "Sample HUF", "status": "huf", "pan": "AAAHS1234K"}).json()
         assert c.post("/api/clients", json={"name": "X", "status": "individual", "pan": "AAAHS1234K"}).status_code == 400
+        ids = lambda view: [r["id"] for r in c.get("/api/lists/clients", params={"view": view}).json()["rows"]]  # noqa: E731
+        assert c.post(f"/api/clients/{cl['id']}/archive", json={"archived": True}).status_code == 200
+        assert cl["id"] not in ids("") and cl["id"] in ids("archived"), "an archived client moves to the Archived tab"
+        assert c.post(f"/api/clients/{cl['id']}/archive", json={"archived": False}).status_code == 200
+        assert cl["id"] in ids("") and cl["id"] not in ids("archived"), "Restore brings it back"
         import openpyxl  # noqa: PLC0415
         wb = openpyxl.Workbook()
         ws = wb.active

@@ -143,12 +143,22 @@ def set_year(user: dict, cid: str, ay: str, body: dict) -> dict:
         return c
 
 
-def delete(cid: str) -> None:
+def archive(user: dict, cid: str, on: bool) -> dict:
+    """Archive (or bring back) a client. Nothing is deleted: the master and every year stay, the client only
+    moves to the Archived tab. Statements and reconciliations already filed keep pointing at it."""
     with _LOCK:
         rows = _all()
-        if not any(c["id"] == cid for c in rows):
+        c = next((c for c in rows if c["id"] == cid), None)
+        if not c:
             raise HTTPException(404, say("not_found"))
-        store.write(FILE, [c for c in rows if c["id"] != cid])
+        if on:
+            c["archived_at"], c["archived_by"] = store.now(), user["id"]
+        else:
+            c.pop("archived_at", None)
+            c.pop("archived_by", None)
+        c["updated_at"], c["updated_by"] = store.now(), user["id"]
+        store.write(FILE, rows)
+        return c
 
 
 def row(c: dict, ay: str) -> dict:
@@ -156,11 +166,17 @@ def row(c: dict, ay: str) -> dict:
     st = status_of(c["status"]) or {}
     return {"id": c["id"], "name": c["name"], "pan": c["pan"], "status": st.get("label", c["status"]),
             "form": y.get("form") or st.get("form", ""), "audit": bool(y.get("audit")), "stage": y.get("stage", ""),
-            "in_year": bool(y), "updated_at": c.get("updated_at", "")}
+            "in_year": bool(y), "updated_at": c.get("updated_at", ""), "archived_at": c.get("archived_at", "")}
 
 
-lists.source("clients", lambda user, args: [row(c, str(args.get("ay") or settings()["current_ay"])) for c in _all()],
-             screen="clients")
+def listed(args: dict) -> list[dict]:
+    """The Clients list: `view=archived` is the Archived tab, anything else the active clients."""
+    archived = str(args.get("view") or "") == "archived"
+    ay = str(args.get("ay") or settings()["current_ay"])
+    return [row(c, ay) for c in _all() if bool(c.get("archived_at")) == archived]
+
+
+lists.source("clients", lambda user, args: listed(args), screen="clients")
 
 
 if __name__ == "__main__":  # ponytail: one runnable self-check - a made-up client and the two cross-checks
