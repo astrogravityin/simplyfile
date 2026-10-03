@@ -16,8 +16,8 @@ const grid = (html) => `<div class="grid two">${html}</div>`;   // the framework
 const stageOf = (id) => K.stages.find((s) => s.id === id) || { label: id, tag: 'tag' };
 
 // Presentation only: a steady colour per name for the initials badge.
-const hue = (name) => [...String(name)].reduce((h, ch) => (h * 31 + ch.charCodeAt(0)) % 360, 7);
-const initials = (name) => String(name).split(/\s+/).filter(Boolean).slice(0, 2).map((x) => x[0]).join('').toUpperCase() || '?';
+export const hue = (name) => [...String(name)].reduce((h, ch) => (h * 31 + ch.charCodeAt(0)) % 360, 7);
+export const initials = (name) => String(name).split(/\s+/).filter(Boolean).slice(0, 2).map((x) => x[0]).join('').toUpperCase() || '?';
 
 // Dots on a line: the stages done, the one the year is at, the ones to come (colours = chip clients.settings).
 function stepper(stageId) {

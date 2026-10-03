@@ -242,11 +242,11 @@ def findings(cid: str, ay: str) -> dict:
     notes = store.read(_notes_name(cid, ay), {})
     out = []
 
-    def add(kind, key, facts, **v):
+    def add(kind, key, facts, amounts=None, **v):
         sev = engine.run("recon.verdict", {"kind": kind, **facts})
         fid = _fid(kind, key)
         out.append({"id": fid, "kind": kind, "severity": sev, "title": say(f"{kind}_{sev}", **v),
-                    "note": notes.get(fid)})
+                    "note": notes.get(fid), "amounts": amounts or {}})   # books / portal figures, for the screen's bars
 
     if not portal:
         return {"findings": [], "books": len(books), "portal": 0, "open_red": 0, "summary": {}}
@@ -266,10 +266,11 @@ def findings(cid: str, ay: str) -> dict:
         mine = [r for r in b_tds if same_party(r["label"], p["party"])]
         used.update(r["key"] for r in mine)
         got = sum(r["amount"] for r in mine)
-        add("tds", key, {"found": bool(mine), "books": got, "portal": p["tax"]}, party=p["party"], portal=_inr(p["tax"]), books=_inr(got))
+        add("tds", key, {"found": bool(mine), "books": got, "portal": p["tax"]}, {"books": got, "portal": p["tax"]},
+            party=p["party"], portal=_inr(p["tax"]), books=_inr(got))
     for r in b_tds:
         if r["key"] not in used:
-            add("tds_claim", r["key"], {}, party=r["label"], books=_inr(r["amount"]))
+            add("tds_claim", r["key"], {}, {"books": r["amount"], "portal": 0}, party=r["label"], books=_inr(r["amount"]))
 
     # 2. income per head
     p_inc: dict[str, float] = {}
@@ -281,7 +282,7 @@ def findings(cid: str, ay: str) -> dict:
         if g not in k["compare_groups"]:
             continue
         got = sum(r["amount"] for r in books if r["table"] == g and is_income(r["label"]))
-        add("income", g, {"books": got, "portal": amount}, head=say(f"head_{g}"), portal=_inr(amount), books=_inr(got),
+        add("income", g, {"books": got, "portal": amount}, {"books": got, "portal": amount}, head=say(f"head_{g}"), portal=_inr(amount), books=_inr(got),
             gap=_inr(amount - got))
 
     # 3. tax paid (challans)
@@ -292,9 +293,10 @@ def findings(cid: str, ay: str) -> dict:
         hit = next((r for r in free if agrees(r["amount"], amt)), None)
         if hit:
             free.remove(hit)
-        add("paid", e["challan"] or e["date"] or amt, {"found": bool(hit)}, amount=_inr(amt), date=e["date"] or "-")
+        add("paid", e["challan"] or e["date"] or amt, {"found": bool(hit)}, {"books": hit["amount"] if hit else 0, "portal": amt},
+            amount=_inr(amt), date=e["date"] or "-")
     for r in free:
-        add("paid_claim", r["key"], {}, amount=_inr(r["amount"]), label=r["label"])
+        add("paid_claim", r["key"], {}, {"books": r["amount"], "portal": 0}, amount=_inr(r["amount"]), label=r["label"])
 
     order = {s: i for i, s in enumerate(k["severity_order"])}
     out.sort(key=lambda f: (order.get(f["severity"], len(order)), f["kind"]))

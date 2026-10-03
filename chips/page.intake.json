@@ -85,6 +85,16 @@
         "total"
       ],
       "label": "done states"
+    },
+    {
+      "name": "ext_color",
+      "type": "json",
+      "default": {
+        "xlsx": "--ok",
+        "xls": "--ok",
+        "csv": "--brand-2"
+      },
+      "label": "ext color"
     }
   ],
   "expr": {
@@ -98,7 +108,8 @@
       "heading_chars": "$heading_chars",
       "ring": "$ring",
       "ring_color": "$ring_color",
-      "done_states": "$done_states"
+      "done_states": "$done_states",
+      "ext_color": "$ext_color"
     }
   },
   "returns": "record",
@@ -142,7 +153,12 @@
         "done_states": [
           "tagged",
           "total"
-        ]
+        ],
+        "ext_color": {
+          "xlsx": "--ok",
+          "xls": "--ok",
+          "csv": "--brand-2"
+        }
       }
     }
   ]

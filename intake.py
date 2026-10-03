@@ -280,7 +280,7 @@ def view(cid: str, ay: str, fid: str) -> dict:
         x["suggestion"] = sug.get(x["key"], "") if x["from"] == "none" else ""
         x["state"] = engine.run("intake.row_state", {"has_ref": bool(x["ref"]), "ref_ok": bool(x["ref"] and parse_ref(x["ref"])),
                                                      "has_suggestion": bool(x["suggestion"]), "has_label": bool(x["label"])})
-    return {"file": m, "form": form, "rows": rows, "counts": _count(rows)}
+    return {"file": m, "form": form, "rows": rows, "counts": _count(rows), "client": clients.row(clients.get(cid), ay)}
 
 
 def _count(rows: list[dict]) -> dict:

@@ -348,6 +348,66 @@
       "type": "text",
       "default": "{n} total {n:line|lines}",
       "label": "c total"
+    },
+    {
+      "name": "year_progress",
+      "type": "text",
+      "default": "{done} of {n} {n:row|rows} across {files} {files:file|files} carry an SF Ref",
+      "label": "year progress"
+    },
+    {
+      "name": "statements",
+      "type": "text",
+      "default": "Statements",
+      "label": "statements"
+    },
+    {
+      "name": "reconcile",
+      "type": "text",
+      "default": "Reconcile",
+      "label": "reconcile"
+    },
+    {
+      "name": "next_recon",
+      "type": "text",
+      "default": "Mapped the statements? Check them against 26AS, AIS and TIS.",
+      "label": "next recon"
+    },
+    {
+      "name": "drop_title",
+      "type": "text",
+      "default": "No statements yet",
+      "label": "drop title"
+    },
+    {
+      "name": "pick_count",
+      "type": "text",
+      "default": "{n} {n:client|clients}",
+      "label": "pick count"
+    },
+    {
+      "name": "no_heading",
+      "type": "text",
+      "default": "Rows",
+      "label": "no heading"
+    },
+    {
+      "name": "leave_unsaved",
+      "type": "text",
+      "default": "You have unsaved SF Refs. Leave without saving?",
+      "label": "leave unsaved"
+    },
+    {
+      "name": "group_count",
+      "type": "text",
+      "default": "{n} {n:row|rows}",
+      "label": "group count"
+    },
+    {
+      "name": "enter_hint",
+      "type": "text",
+      "default": "Enter moves to the next row",
+      "label": "enter hint"
     }
   ],
   "expr": {
@@ -409,7 +469,17 @@
       "all_saved": "$all_saved",
       "none_open": "$none_open",
       "ref_placeholder": "$ref_placeholder",
-      "c_total": "$c_total"
+      "c_total": "$c_total",
+      "year_progress": "$year_progress",
+      "statements": "$statements",
+      "reconcile": "$reconcile",
+      "next_recon": "$next_recon",
+      "drop_title": "$drop_title",
+      "pick_count": "$pick_count",
+      "no_heading": "$no_heading",
+      "leave_unsaved": "$leave_unsaved",
+      "group_count": "$group_count",
+      "enter_hint": "$enter_hint"
     }
   },
   "returns": "record",
@@ -476,7 +546,17 @@
         "all_saved": "Every change is saved",
         "none_open": "Nothing needs a person - every row carries an SF Ref.",
         "ref_placeholder": "e.g. 3CD 31(a) #2",
-        "c_total": "{n} total {n:line|lines}"
+        "c_total": "{n} total {n:line|lines}",
+        "year_progress": "{done} of {n} {n:row|rows} across {files} {files:file|files} carry an SF Ref",
+        "statements": "Statements",
+        "reconcile": "Reconcile",
+        "next_recon": "Mapped the statements? Check them against 26AS, AIS and TIS.",
+        "drop_title": "No statements yet",
+        "pick_count": "{n} {n:client|clients}",
+        "no_heading": "Rows",
+        "leave_unsaved": "You have unsaved SF Refs. Leave without saving?",
+        "group_count": "{n} {n:row|rows}",
+        "enter_hint": "Enter moves to the next row"
       }
     }
   ]

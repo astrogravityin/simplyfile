@@ -300,6 +300,120 @@
       "type": "text",
       "default": "Assessment year",
       "label": "ay"
+    },
+    {
+      "name": "verdict_block",
+      "type": "text",
+      "default": "{n} red {n:finding|findings} to clear before Review",
+      "label": "verdict block"
+    },
+    {
+      "name": "verdict_ready",
+      "type": "text",
+      "default": "Ready for Review",
+      "label": "verdict ready"
+    },
+    {
+      "name": "verdict_none",
+      "type": "text",
+      "default": "Upload the portal files to start",
+      "label": "verdict none"
+    },
+    {
+      "name": "verdict_sub",
+      "type": "text",
+      "default": "{books} book {books:row|rows} · {portal} portal {portal:entry|entries}",
+      "label": "verdict sub"
+    },
+    {
+      "name": "cleared",
+      "type": "text",
+      "default": "cleared",
+      "label": "cleared"
+    },
+    {
+      "name": "check_tds",
+      "type": "text",
+      "default": "TDS",
+      "label": "check tds"
+    },
+    {
+      "name": "check_income",
+      "type": "text",
+      "default": "Income",
+      "label": "check income"
+    },
+    {
+      "name": "check_paid",
+      "type": "text",
+      "default": "Tax paid",
+      "label": "check paid"
+    },
+    {
+      "name": "sources",
+      "type": "text",
+      "default": "Portal files",
+      "label": "sources"
+    },
+    {
+      "name": "not_uploaded",
+      "type": "text",
+      "default": "Not uploaded yet",
+      "label": "not uploaded"
+    },
+    {
+      "name": "hint_26as",
+      "type": "text",
+      "default": "TRACES › Form 26AS › export as Text",
+      "label": "hint 26as"
+    },
+    {
+      "name": "hint_ais",
+      "type": "text",
+      "default": "Income-tax portal › AIS › download CSV",
+      "label": "hint ais"
+    },
+    {
+      "name": "hint_tis",
+      "type": "text",
+      "default": "Income-tax portal › TIS › download CSV",
+      "label": "hint tis"
+    },
+    {
+      "name": "f_all",
+      "type": "text",
+      "default": "All",
+      "label": "f all"
+    },
+    {
+      "name": "books",
+      "type": "text",
+      "default": "Books",
+      "label": "books"
+    },
+    {
+      "name": "portal",
+      "type": "text",
+      "default": "Portal",
+      "label": "portal"
+    },
+    {
+      "name": "explained_tag",
+      "type": "text",
+      "default": "Explained",
+      "label": "explained tag"
+    },
+    {
+      "name": "findings",
+      "type": "text",
+      "default": "Findings",
+      "label": "findings"
+    },
+    {
+      "name": "none_here",
+      "type": "text",
+      "default": "Nothing in this view.",
+      "label": "none here"
     }
   ],
   "expr": {
@@ -353,7 +467,26 @@
       "sev_red": "$sev_red",
       "sev_amber": "$sev_amber",
       "sev_ok": "$sev_ok",
-      "ay": "$ay"
+      "ay": "$ay",
+      "verdict_block": "$verdict_block",
+      "verdict_ready": "$verdict_ready",
+      "verdict_none": "$verdict_none",
+      "verdict_sub": "$verdict_sub",
+      "cleared": "$cleared",
+      "check_tds": "$check_tds",
+      "check_income": "$check_income",
+      "check_paid": "$check_paid",
+      "sources": "$sources",
+      "not_uploaded": "$not_uploaded",
+      "hint_26as": "$hint_26as",
+      "hint_ais": "$hint_ais",
+      "hint_tis": "$hint_tis",
+      "f_all": "$f_all",
+      "books": "$books",
+      "portal": "$portal",
+      "explained_tag": "$explained_tag",
+      "findings": "$findings",
+      "none_here": "$none_here"
     }
   },
   "returns": "record",
@@ -412,7 +545,26 @@
         "sev_red": "red",
         "sev_amber": "amber",
         "sev_ok": "agrees",
-        "ay": "Assessment year"
+        "ay": "Assessment year",
+        "verdict_block": "{n} red {n:finding|findings} to clear before Review",
+        "verdict_ready": "Ready for Review",
+        "verdict_none": "Upload the portal files to start",
+        "verdict_sub": "{books} book {books:row|rows} · {portal} portal {portal:entry|entries}",
+        "cleared": "cleared",
+        "check_tds": "TDS",
+        "check_income": "Income",
+        "check_paid": "Tax paid",
+        "sources": "Portal files",
+        "not_uploaded": "Not uploaded yet",
+        "hint_26as": "TRACES › Form 26AS › export as Text",
+        "hint_ais": "Income-tax portal › AIS › download CSV",
+        "hint_tis": "Income-tax portal › TIS › download CSV",
+        "f_all": "All",
+        "books": "Books",
+        "portal": "Portal",
+        "explained_tag": "Explained",
+        "findings": "Findings",
+        "none_here": "Nothing in this view."
       }
     }
   ]

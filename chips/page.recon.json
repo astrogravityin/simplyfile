@@ -27,13 +27,82 @@
         ".xlsx"
       ],
       "label": "exts offered in the upload box (recon.settings decides what is taken)"
+    },
+    {
+      "name": "checks",
+      "type": "json",
+      "default": [
+        {
+          "id": "tds",
+          "kinds": [
+            "tds",
+            "tds_claim"
+          ],
+          "icon": "shield"
+        },
+        {
+          "id": "income",
+          "kinds": [
+            "income"
+          ],
+          "icon": "money"
+        },
+        {
+          "id": "paid",
+          "kinds": [
+            "paid",
+            "paid_claim"
+          ],
+          "icon": "check"
+        }
+      ],
+      "label": "checks"
+    },
+    {
+      "name": "severity_color",
+      "type": "json",
+      "default": {
+        "red": "--bad",
+        "amber": "--warn",
+        "ok": "--ok"
+      },
+      "label": "severity color"
+    },
+    {
+      "name": "cleared_severities",
+      "type": "json",
+      "default": [
+        "ok"
+      ],
+      "label": "cleared severities"
+    },
+    {
+      "name": "explained_clears",
+      "type": "json",
+      "default": true,
+      "label": "explained clears"
+    },
+    {
+      "name": "sources",
+      "type": "json",
+      "default": [
+        "26as",
+        "ais",
+        "tis"
+      ],
+      "label": "sources"
     }
   ],
   "expr": {
     "vop": "record",
     "fields": {
       "severity_tag": "$severity_tag",
-      "exts": "$exts"
+      "exts": "$exts",
+      "checks": "$checks",
+      "severity_color": "$severity_color",
+      "cleared_severities": "$cleared_severities",
+      "explained_clears": "$explained_clears",
+      "sources": "$sources"
     }
   },
   "returns": "record",
@@ -54,6 +123,45 @@
           ".csv",
           ".xls",
           ".xlsx"
+        ],
+        "checks": [
+          {
+            "id": "tds",
+            "kinds": [
+              "tds",
+              "tds_claim"
+            ],
+            "icon": "shield"
+          },
+          {
+            "id": "income",
+            "kinds": [
+              "income"
+            ],
+            "icon": "money"
+          },
+          {
+            "id": "paid",
+            "kinds": [
+              "paid",
+              "paid_claim"
+            ],
+            "icon": "check"
+          }
+        ],
+        "severity_color": {
+          "red": "--bad",
+          "amber": "--warn",
+          "ok": "--ok"
+        },
+        "cleared_severities": [
+          "ok"
+        ],
+        "explained_clears": true,
+        "sources": [
+          "26as",
+          "ais",
+          "tis"
         ]
       }
     }
