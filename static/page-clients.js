@@ -15,34 +15,83 @@ const field = (id, label, value = '', attrs = '') => `<div class="field"><label 
 const grid = (html) => `<div class="grid two">${html}</div>`;   // the framework grid: labels line up (no stacked .field margin)
 const stageOf = (id) => K.stages.find((s) => s.id === id) || { label: id, tag: 'tag' };
 
+// Presentation only: a steady colour per name for the initials badge.
+const hue = (name) => [...String(name)].reduce((h, ch) => (h * 31 + ch.charCodeAt(0)) % 360, 7);
+const initials = (name) => String(name).split(/\s+/).filter(Boolean).slice(0, 2).map((x) => x[0]).join('').toUpperCase() || '?';
+
+// Dots on a line: the stages done, the one the year is at, the ones to come (colours = chip clients.settings).
+function stepper(stageId) {
+  const i = K.stages.findIndex((s) => s.id === stageId), n = K.stages.length, gap = 14;
+  const col = i >= 0 ? K.stages[i].color : '--line';
+  const dots = K.stages.map((s, k) => `<circle cx="${5 + k * gap}" cy="6" r="${k === i ? 4.5 : 3.2}"
+      fill="${k <= i ? `var(${col})` : 'var(--panel)'}" stroke="${k <= i ? `var(${col})` : 'var(--line-2)'}" stroke-width="1.5"/>`).join('');
+  return `<svg class="cl-step" width="${10 + (n - 1) * gap}" height="12" viewBox="0 0 ${10 + (n - 1) * gap} 12" role="img"
+      aria-label="${esc(w('stage_of', { i: i + 1, n }))}"><line x1="5" y1="6" x2="${5 + (n - 1) * gap}" y2="6" stroke="var(--line)" stroke-width="2"/>
+      ${i > 0 ? `<line x1="5" y1="6" x2="${5 + i * gap}" y2="6" stroke="var(${col})" stroke-width="2"/>` : ''}${dots}</svg>`;
+}
+
+// The year's pipeline as one stacked bar, a segment per stage.
+function pipeline(sum) {
+  const total = Object.values(sum.stages).reduce((a, b) => a + b, 0);
+  if (!total) return `<div class="small muted">${esc(w('k_none_year', { ay: AY }))}</div>`;
+  let x = 0;
+  const segs = K.stages.filter((s) => sum.stages[s.id]).map((s) => {
+    const wd = (sum.stages[s.id] / total) * 100;
+    const r = `<rect x="${x}%" y="0" width="${wd}%" height="10" fill="var(${s.color})"><title>${esc(s.label)}: ${sum.stages[s.id]}</title></rect>`;
+    x += wd;
+    return r;
+  }).join('');
+  return `<svg class="cl-pipe" width="100%" height="10" role="img" aria-label="${esc(w('k_pipeline', { ay: AY }))}">
+      <defs><clipPath id="cl-pipe-r"><rect width="100%" height="10" rx="5"/></clipPath></defs><g clip-path="url(#cl-pipe-r)">${segs}</g></svg>
+    <div class="cl-pipe-key">${K.stages.filter((s) => sum.stages[s.id]).map((s) =>
+      `<span><i style="background:var(${s.color})"></i>${esc(s.label)} <b>${sum.stages[s.id]}</b></span>`).join('')}</div>`;
+}
+
+function kpis(sum) {
+  const card = (ic, tone, label, big, sub) => `<div class="cl-kpi"><span class="cl-kpi-ic" style="--k:var(${tone})">${icon(ic, 18)}</span>
+    <div><div class="cl-kpi-lbl">${esc(label)}</div><div class="cl-kpi-big">${big}</div><div class="cl-kpi-sub">${esc(sub)}</div></div></div>`;
+  return card('users', '--brand', w('k_clients'), sum.active, w('k_archived', { n: sum.archived }))
+    + card('clock', '--brand-2', w('k_in_year', { ay: AY }), sum.in_year, w('k_of', { n: sum.active }))
+    + card('shield', '--warn', w('k_audit'), sum.audit, w('k_audit_sub'))
+    + `<div class="cl-kpi cl-kpi-wide"><div class="cl-kpi-lbl">${esc(w('k_pipeline', { ay: AY }))}</div>${pipeline(sum)}</div>`;
+}
+
 export async function clientsPage(host) {
   await loadWords('clients');
   K = K || await api('/api/clients/settings');
   AY = AY || K.current_ay;
   host.innerHTML = pageHead(w('title'), esc(w('lede')),
-    `<label class="small muted" for="cl-ay">${esc(w('ay'))}</label>
-     <select id="cl-ay">${K.years.map((y) => `<option ${y === AY ? 'selected' : ''}>${esc(y)}</option>`).join('')}</select>
-     <button type="button" id="cl-new">${icon('plus', 14)} ${esc(w('new'))}</button>`)
-    + `<div class="tabs" role="tablist">${[['', w('tab_active')], ['archived', w('tab_archived')]].map(([id, label]) =>
-      `<button type="button" role="tab" data-view="${id}" class="${VIEW === id ? 'on' : ''}" aria-selected="${VIEW === id}">${esc(label)}</button>`).join('')}</div>`
-    + '<section class="card" id="cl-list"></section>';
+    `<label class="cl-ay" for="cl-ay">${icon('clock', 14)}<span>${esc(w('ay'))}</span>
+       <select id="cl-ay">${K.years.map((y) => `<option ${y === AY ? 'selected' : ''}>${esc(y)}</option>`).join('')}</select></label>
+     <button type="button" class="primary" id="cl-new">${icon('plus', 15)} ${esc(w('new'))}</button>`)
+    + '<section class="cl-kpis" id="cl-kpis" aria-live="polite"></section>'
+    + `<section class="card cl-card"><div class="cl-bar"><div class="tabs cl-tabs" role="tablist">${[['', 'tab_active', 'active'], ['archived', 'tab_archived', 'archived']].map(([id, label, n]) =>
+      `<button type="button" role="tab" data-view="${id}" data-n="${n}" class="${VIEW === id ? 'on' : ''}" aria-selected="${VIEW === id}">${esc(w(label))}<span class="cl-count"></span></button>`).join('')}</div></div>
+      <div id="cl-list"></div></section>`;
   host.querySelectorAll('[data-view]').forEach((b) => { b.onclick = () => { VIEW = b.dataset.view; clientsPage(host); }; });
-  const draw = () => listBox(host.querySelector('#cl-list'), {
+  const head = async () => {
+    const sum = await api(`/api/clients/summary?ay=${encodeURIComponent(AY)}`);
+    host.querySelector('#cl-kpis').innerHTML = kpis(sum);
+    host.querySelectorAll('[data-n]').forEach((b) => { b.querySelector('.cl-count').textContent = sum[b.dataset.n]; });
+  };
+  const draw = () => { head(); return listBox(host.querySelector('#cl-list'), {
     list: 'clients',
     args: { ay: AY, view: VIEW },
     empty: w(VIEW ? 'empty_archived' : 'empty'),
-    row: (r) => `<div class="kw-row small" data-id="${esc(r.id)}">
-      <div class="kw-info"><b>${esc(r.name)}</b> <span class="muted">${esc(r.pan)} · ${esc(r.status)} · ${esc(r.form)}</span>
-        ${r.archived_at ? `<span class="tag">${esc(w('archived_tag'))}</span>` : ''}
-        ${r.audit ? `<span class="tag brand">${esc(w('audit_tag'))}</span>` : ''}
-        ${r.in_year ? `<span class="${esc(stageOf(r.stage).tag)}">${esc(stageOf(r.stage).label)}</span>`
-          : `<span class="muted">${esc(w('not_in_year', { ay: AY }))}</span>`}</div>
-      <div class="row tight">${may('intake') ? `<a class="small ghost button" href="#/intake?c=${esc(r.id)}&ay=${esc(AY)}">${icon('upload', 12)} ${esc(w('intake'))}</a>` : ''}
-        <button type="button" class="small ghost" data-open>${icon('edit', 12)} ${esc(w('edit'))}</button></div></div>`,
+    row: (r) => `<div class="cl-row" data-id="${esc(r.id)}">
+      <span class="cl-av" style="--h:${hue(r.name)}" aria-hidden="true">${esc(initials(r.name))}</span>
+      <div class="cl-main"><div class="cl-name">${esc(r.name)}
+          ${r.archived_at ? `<span class="tag">${esc(w('archived_tag'))}</span>` : ''}
+          ${r.audit ? `<span class="tag brand">${icon('shield', 11)} ${esc(w('audit_tag'))}</span>` : ''}</div>
+        <div class="cl-meta"><code>${esc(r.pan)}</code><span>${esc(r.status)}</span><span>${esc(r.form)}</span></div></div>
+      <div class="cl-stage">${r.in_year ? `${stepper(r.stage)}<span>${esc(stageOf(r.stage).label)}</span>`
+        : `<span class="muted">${esc(w('not_in_year', { ay: AY }))}</span>`}</div>
+      <div class="cl-acts">${may('intake') ? `<a class="small ghost button" href="#/intake?c=${esc(r.id)}&ay=${esc(AY)}">${icon('upload', 13)} ${esc(w('intake'))}</a>` : ''}
+        <button type="button" class="small" data-open>${icon('edit', 13)} ${esc(w('edit'))}</button></div></div>`,
     wire: (rows, _r, load) => rows.querySelectorAll('[data-id]').forEach((el) => {
-      el.querySelector('[data-open]').onclick = async () => editor(await api(`/api/clients/${el.dataset.id}`), load);
+      el.querySelector('[data-open]').onclick = async () => editor(await api(`/api/clients/${el.dataset.id}`), () => { load(); head(); });
     }),
-  });
+  }); };
   host.querySelector('#cl-ay').onchange = (e) => { AY = e.target.value; draw(); };
   host.querySelector('#cl-new').onclick = () => editor(null, draw);
   draw();

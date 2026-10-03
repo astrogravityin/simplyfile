@@ -52,6 +52,39 @@
       "type": "number",
       "default": 90,
       "label": "heading chars"
+    },
+    {
+      "name": "ring",
+      "type": "json",
+      "default": [
+        "tagged",
+        "total",
+        "suggested",
+        "untagged",
+        "invalid"
+      ],
+      "label": "ring"
+    },
+    {
+      "name": "ring_color",
+      "type": "json",
+      "default": {
+        "tagged": "--ok",
+        "total": "--muted",
+        "suggested": "--brand",
+        "untagged": "--warn",
+        "invalid": "--bad"
+      },
+      "label": "ring color"
+    },
+    {
+      "name": "done_states",
+      "type": "json",
+      "default": [
+        "tagged",
+        "total"
+      ],
+      "label": "done states"
     }
   ],
   "expr": {
@@ -62,7 +95,10 @@
       "money_locale": "$money_locale",
       "money_digits": "$money_digits",
       "numbers_shown": "$numbers_shown",
-      "heading_chars": "$heading_chars"
+      "heading_chars": "$heading_chars",
+      "ring": "$ring",
+      "ring_color": "$ring_color",
+      "done_states": "$done_states"
     }
   },
   "returns": "record",
@@ -88,7 +124,25 @@
         "money_locale": "en-IN",
         "money_digits": 2,
         "numbers_shown": 3,
-        "heading_chars": 90
+        "heading_chars": 90,
+        "ring": [
+          "tagged",
+          "total",
+          "suggested",
+          "untagged",
+          "invalid"
+        ],
+        "ring_color": {
+          "tagged": "--ok",
+          "total": "--muted",
+          "suggested": "--brand",
+          "untagged": "--warn",
+          "invalid": "--bad"
+        },
+        "done_states": [
+          "tagged",
+          "total"
+        ]
       }
     }
   ]

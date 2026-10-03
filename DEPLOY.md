@@ -74,8 +74,14 @@ address), and set **Email (SMTP)** as in `README.md`.
 
 ## Every update
 
-On your machine: commit and `git push`. On the VPS: `bash /opt/simplyfile/deploy.sh` — pulls, installs requirements,
-runs the self-check, restarts, and checks `/health`.
+On your machine, two double-clicks:
+
+- `Commit-To-GitHub.cmd` — runs `selfcheck.py`, stages, refuses client data / broken `.py` / `.json` / huge files
+  (`tools/staged_check.py`), commits, pushes. `-Paths a,b` commits only those files; `-Deploy` also deploys.
+- `Deploy-To-VPS.cmd` — over ssh (key `%USERPROFILE%\.ssh\explore_whattag`, or `-Key` / `SF_VPS_KEY`) runs
+  `bash /opt/simplyfile/deploy.sh` on the VPS: pull, install, self-check, and only then restart, then waits for `/health`.
+
+Or on the VPS directly: `bash /opt/simplyfile/deploy.sh`.
 
 ## If something is wrong
 

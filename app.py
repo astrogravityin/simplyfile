@@ -800,6 +800,11 @@ def api_clients_settings(_: dict = Depends(screen("clients"))):
     return clients.settings()
 
 
+@app.get("/api/clients/summary")
+def api_clients_summary(ay: str = "", _: dict = Depends(screen("clients"))):
+    return clients.summary(ay or clients.settings()["current_ay"])
+
+
 @app.get("/api/clients/{cid}")
 def api_clients_get(cid: str, _: dict = Depends(screen("clients"))):
     return clients.get(cid)

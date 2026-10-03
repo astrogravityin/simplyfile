@@ -179,6 +179,19 @@ def listed(args: dict) -> list[dict]:
 lists.source("clients", lambda user, args: listed(args), screen="clients")
 
 
+def summary(ay: str) -> dict:
+    """The headline numbers above the Clients list: active / archived, who is in this year, 3CD audits, per stage."""
+    rows = _all()
+    live = [c for c in rows if not c.get("archived_at")]
+    years = [(c.get("years") or {}).get(ay) for c in live]
+    years = [y for y in years if y]
+    stages = {s["id"]: 0 for s in settings()["stages"]}
+    for y in years:
+        stages[y.get("stage", "")] = stages.get(y.get("stage", ""), 0) + 1
+    return {"active": len(live), "archived": len(rows) - len(live), "in_year": len(years),
+            "audit": sum(1 for y in years if y.get("audit")), "stages": stages}
+
+
 if __name__ == "__main__":  # ponytail: one runnable self-check - a made-up client and the two cross-checks
     import store as _portal_store  # noqa: F401 - registers this portal's chips, as the app does
     assert shape_ok("pan", "AAAHS1234K") and not shape_ok("ifsc", "HDFC1000700")

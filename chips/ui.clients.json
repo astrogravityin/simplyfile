@@ -384,6 +384,60 @@
       "type": "text",
       "default": "Archived",
       "label": "archived tag"
+    },
+    {
+      "name": "k_clients",
+      "type": "text",
+      "default": "Clients",
+      "label": "k clients"
+    },
+    {
+      "name": "k_archived",
+      "type": "text",
+      "default": "{n} archived",
+      "label": "k archived"
+    },
+    {
+      "name": "k_in_year",
+      "type": "text",
+      "default": "In {ay}",
+      "label": "k in year"
+    },
+    {
+      "name": "k_of",
+      "type": "text",
+      "default": "of {n} active {n:client|clients}",
+      "label": "k of"
+    },
+    {
+      "name": "k_audit",
+      "type": "text",
+      "default": "Tax audits",
+      "label": "k audit"
+    },
+    {
+      "name": "k_audit_sub",
+      "type": "text",
+      "default": "Form 3CD with the return",
+      "label": "k audit sub"
+    },
+    {
+      "name": "k_pipeline",
+      "type": "text",
+      "default": "Where {ay} stands",
+      "label": "k pipeline"
+    },
+    {
+      "name": "k_none_year",
+      "type": "text",
+      "default": "Nobody added to {ay} yet",
+      "label": "k none year"
+    },
+    {
+      "name": "stage_of",
+      "type": "text",
+      "default": "Stage {i} of {n}",
+      "label": "stage of"
     }
   ],
   "expr": {
@@ -451,7 +505,16 @@
       "tab_active": "$tab_active",
       "tab_archived": "$tab_archived",
       "empty_archived": "$empty_archived",
-      "archived_tag": "$archived_tag"
+      "archived_tag": "$archived_tag",
+      "k_clients": "$k_clients",
+      "k_archived": "$k_archived",
+      "k_in_year": "$k_in_year",
+      "k_of": "$k_of",
+      "k_audit": "$k_audit",
+      "k_audit_sub": "$k_audit_sub",
+      "k_pipeline": "$k_pipeline",
+      "k_none_year": "$k_none_year",
+      "stage_of": "$stage_of"
     }
   },
   "returns": "record",
@@ -524,7 +587,16 @@
         "tab_active": "Active",
         "tab_archived": "Archived",
         "empty_archived": "No archived clients.",
-        "archived_tag": "Archived"
+        "archived_tag": "Archived",
+        "k_clients": "Clients",
+        "k_archived": "{n} archived",
+        "k_in_year": "In {ay}",
+        "k_of": "of {n} active {n:client|clients}",
+        "k_audit": "Tax audits",
+        "k_audit_sub": "Form 3CD with the return",
+        "k_pipeline": "Where {ay} stands",
+        "k_none_year": "Nobody added to {ay} yet",
+        "stage_of": "Stage {i} of {n}"
       }
     }
   ]

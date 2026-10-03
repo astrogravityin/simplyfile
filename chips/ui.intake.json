@@ -312,6 +312,42 @@
       "type": "text",
       "default": "Assessment year",
       "label": "ay"
+    },
+    {
+      "name": "progress",
+      "type": "text",
+      "default": "{done} of {n} {n:row|rows} carry an SF Ref",
+      "label": "progress"
+    },
+    {
+      "name": "unsaved",
+      "type": "text",
+      "default": "{n} unsaved {n:change|changes}",
+      "label": "unsaved"
+    },
+    {
+      "name": "all_saved",
+      "type": "text",
+      "default": "Every change is saved",
+      "label": "all saved"
+    },
+    {
+      "name": "none_open",
+      "type": "text",
+      "default": "Nothing needs a person - every row carries an SF Ref.",
+      "label": "none open"
+    },
+    {
+      "name": "ref_placeholder",
+      "type": "text",
+      "default": "e.g. 3CD 31(a) #2",
+      "label": "ref placeholder"
+    },
+    {
+      "name": "c_total",
+      "type": "text",
+      "default": "{n} total {n:line|lines}",
+      "label": "c total"
     }
   ],
   "expr": {
@@ -367,7 +403,13 @@
       "s_untagged": "$s_untagged",
       "s_invalid": "$s_invalid",
       "s_total": "$s_total",
-      "ay": "$ay"
+      "ay": "$ay",
+      "progress": "$progress",
+      "unsaved": "$unsaved",
+      "all_saved": "$all_saved",
+      "none_open": "$none_open",
+      "ref_placeholder": "$ref_placeholder",
+      "c_total": "$c_total"
     }
   },
   "returns": "record",
@@ -428,7 +470,13 @@
         "s_untagged": "needs a ref",
         "s_invalid": "not valid",
         "s_total": "total",
-        "ay": "Assessment year"
+        "ay": "Assessment year",
+        "progress": "{done} of {n} {n:row|rows} carry an SF Ref",
+        "unsaved": "{n} unsaved {n:change|changes}",
+        "all_saved": "Every change is saved",
+        "none_open": "Nothing needs a person - every row carries an SF Ref.",
+        "ref_placeholder": "e.g. 3CD 31(a) #2",
+        "c_total": "{n} total {n:line|lines}"
       }
     }
   ]

@@ -67,46 +67,89 @@ async function filesView(host, cid, ay, K) {
   });
 }
 
+// The donut: one arc per row state, in the chip's order and colours (page.intake ring), done = the chip's done_states.
+function ring(c) {
+  const P = ps('intake'), R = 30, L = 2 * Math.PI * R, n = c.rows || 1;
+  let at = 0;
+  const arcs = P.ring.filter((s) => c[s]).map((s) => {
+    const len = (c[s] / n) * L;
+    const arc = `<circle r="${R}" cx="40" cy="40" fill="none" stroke="var(${P.ring_color[s]})" stroke-width="9" stroke-linecap="butt"
+      stroke-dasharray="${len.toFixed(2)} ${(L - len).toFixed(2)}" stroke-dashoffset="${(-at).toFixed(2)}"/>`;
+    at += len;
+    return arc;
+  }).join('');
+  const done = P.done_states.reduce((a, s) => a + (c[s] || 0), 0);
+  return `<svg class="sf-ring" viewBox="0 0 80 80" role="img" aria-label="${esc(w('progress', { done, n: c.rows }))}">
+      <circle r="${R}" cx="40" cy="40" fill="none" stroke="var(--line)" stroke-width="9"/>
+      <g transform="rotate(-90 40 40)">${arcs}</g>
+      <text x="40" y="38" text-anchor="middle" class="sf-ring-pct">${Math.round((done / n) * 100)}%</text>
+      <text x="40" y="52" text-anchor="middle" class="sf-ring-sub">${done}/${c.rows}</text></svg>`;
+}
+
 async function mapper(host, cid, ay, fid) {
   const url = `/api/intake/${cid}/${encodeURIComponent(ay)}/${fid}`;
   let v = await api(url);
   let only = false;
-  host.innerHTML = pageHead(v.file.name, `<span class="tag brand">${esc(w('form_is', { form: v.form }))}</span> <span id="in-counts"></span>`,
-    `<button type="button" class="ghost" id="in-back">${icon('left', 14)} ${esc(w('back'))}</button>
-     <select id="in-only" aria-label="${esc(w('filter'))}"><option value="">${esc(w('f_all'))}</option><option value="1">${esc(w('f_open'))}</option></select>
-     <button type="button" class="ghost" id="in-accept">${icon('check', 14)} ${esc(w('accept_all'))}</button>
-     <button type="button" id="in-save">${icon('save', 14)} ${esc(w('save'))}</button>`)
-    + `<section class="card"><p class="small muted">${esc(w('ref_hint'))}</p><div style="overflow-x:auto"><table class="tbl" style="width:100%">
-      <thead><tr><th>${esc(w('h_row'))}</th><th>${esc(w('h_label'))}</th><th style="text-align:right">${esc(w('h_numbers'))}</th><th>${esc(w('h_ref'))}</th></tr></thead>
-      <tbody id="in-rows"></tbody></table></div></section>`;
+  const dirty = new Set();
+  host.innerHTML = pageHead(v.file.name, `<span class="tag brand">${esc(w('form_is', { form: v.form }))}</span>`,
+    `<button type="button" class="ghost" id="in-back">${icon('left', 14)} ${esc(w('back'))}</button>`)
+    + `<section class="card sf-sum"><div id="in-ring"></div><div class="sf-sum-txt"><b id="in-progress"></b>
+        <div class="sf-legend" id="in-legend"></div></div>
+        <div class="tabs sf-only" role="tablist" aria-label="${esc(w('filter'))}">${[['', w('f_all')], ['1', w('f_open')]].map(([id, label]) =>
+          `<button type="button" role="tab" data-only="${id}" class="${id ? '' : 'on'}">${esc(label)}</button>`).join('')}</div></section>
+      <section class="card sf-map"><p class="small muted">${icon('info', 13)} ${esc(w('ref_hint'))}</p><div class="sf-tbl-wrap"><table class="tbl sf-tbl">
+      <thead><tr><th>${esc(w('h_row'))}</th><th>${esc(w('h_label'))}</th><th class="num">${esc(w('h_numbers'))}</th><th>${esc(w('h_ref'))}</th></tr></thead>
+      <tbody id="in-rows"></tbody></table></div></section>
+      <div class="sf-bar" role="region" aria-label="${esc(w('save'))}"><span class="sf-bar-state" id="in-state"></span><span class="spacer"></span>
+        <button type="button" class="ghost" id="in-accept">${icon('check', 14)} ${esc(w('accept_all'))}</button>
+        <button type="button" class="primary" id="in-save">${icon('save', 15)} ${esc(w('save'))}</button></div>`;
   const body = host.querySelector('#in-rows');
-  const draw = () => {
-    host.querySelector('#in-counts').innerHTML = countTags(v.counts);
-    body.innerHTML = v.rows.filter((x) => !only || ps('intake').open_states.includes(x.state)).map((x) => `<tr data-k="${esc(x.key)}">
-      <td class="small muted" style="white-space:nowrap">${esc(x.key)}</td>
-      <td><b>${esc(x.label || '—')}</b>${x.heading ? `<div class="small muted">${esc(x.heading.slice(0, ps('intake').heading_chars))}</div>` : ''}</td>
-      <td class="small" style="text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums">${x.numbers.slice(0, ps('intake').numbers_shown).map(money).join('<br>')}</td>
-      <td style="min-width:240px"><input data-ref value="${esc(x.ref)}" placeholder="${esc(x.suggestion)}" aria-label="${esc(w('h_ref'))}" style="width:100%"/>
-        <div class="row tight small"><span class="${tagOf(x.state)}">${esc(w(`s_${x.state}`))}</span>
-        ${x.from === 'file' ? `<span class="muted">${esc(w('from_file'))}</span>` : ''}
-        ${x.suggestion ? `<button type="button" class="small ghost" data-use>${esc(w('use'))}: ${esc(x.suggestion)}</button>` : ''}</div></td></tr>`).join('');
-    body.querySelectorAll('[data-use]').forEach((b) => {
-      b.onclick = () => { const r = b.closest('tr'); r.querySelector('[data-ref]').value = v.rows.find((x) => x.key === r.dataset.k).suggestion; };
-    });
+  const state = () => {
+    const el = host.querySelector('#in-state');
+    el.className = `sf-bar-state ${dirty.size ? 'is-dirty' : 'is-clean'}`;
+    el.innerHTML = `<span class="sf-dot"></span>${esc(dirty.size ? w('unsaved', { n: dirty.size }) : w('all_saved'))}`;
+    host.querySelector('#in-save').disabled = !dirty.size;
+    host.querySelector('#in-accept').disabled = !v.counts.suggested;
   };
+  const draw = () => {
+    const c = v.counts, P = ps('intake');
+    host.querySelector('#in-ring').innerHTML = ring(c);
+    host.querySelector('#in-progress').textContent = w('progress', { done: P.done_states.reduce((a, s) => a + (c[s] || 0), 0), n: c.rows });
+    host.querySelector('#in-legend').innerHTML = P.ring.filter((s) => c[s]).map((s) =>
+      `<span class="sf-key"><i style="background:var(${P.ring_color[s]})"></i>${esc(w(`c_${s}`, { n: c[s] }))}</span>`).join('');
+    const rows = v.rows.filter((x) => !only || P.open_states.includes(x.state));
+    body.innerHTML = rows.length ? rows.map((x) => `<tr data-k="${esc(x.key)}" class="st-${esc(x.state)}">
+      <td><span class="sf-rowno">${esc(x.key)}</span></td>
+      <td><div class="sf-label">${esc(x.label || '—')}</div>${x.heading ? `<div class="small muted">${esc(x.heading.slice(0, P.heading_chars))}</div>` : ''}</td>
+      <td class="num">${x.numbers.slice(0, P.numbers_shown).map((n) => `<div>${money(n)}</div>`).join('')}</td>
+      <td class="sf-refcell"><div class="sf-ref"><span class="sf-state" title="${esc(w(`s_${x.state}`))}"></span>
+          <input data-ref value="${esc(x.ref)}" placeholder="${esc(x.suggestion || w('ref_placeholder'))}" aria-label="${esc(w('h_ref'))}"/></div>
+        <div class="sf-ref-meta"><span class="${tagOf(x.state)}">${esc(w(`s_${x.state}`))}</span>
+        ${x.from === 'file' ? `<span class="muted">${esc(w('from_file'))}</span>` : ''}
+        ${x.suggestion && x.state === 'suggested' ? `<button type="button" class="sf-use" data-use>${icon('spark', 12)} ${esc(w('use'))} <b>${esc(x.suggestion)}</b></button>` : ''}</div></td></tr>`).join('')
+      : `<tr><td colspan="4" class="sf-empty">${icon('check', 18)} ${esc(w('none_open'))}</td></tr>`;
+    body.querySelectorAll('tr[data-k]').forEach((r) => {
+      const inp = r.querySelector('[data-ref]');
+      const was = v.rows.find((x) => x.key === r.dataset.k).ref || '';
+      if (dirty.has(r.dataset.k)) r.classList.add('is-dirty');
+      inp.oninput = () => { const ch = inp.value.trim() !== was; dirty[ch ? 'add' : 'delete'](r.dataset.k); r.classList.toggle('is-dirty', ch); state(); };
+      const use = r.querySelector('[data-use]');
+      if (use) use.onclick = () => { inp.value = v.rows.find((x) => x.key === r.dataset.k).suggestion; inp.oninput(); };
+    });
+    state();
+  };
+  const pending = () => Object.fromEntries([...body.querySelectorAll('tr[data-k]')].filter((r) => dirty.has(r.dataset.k))
+    .map((r) => [r.dataset.k, r.querySelector('[data-ref]').value.trim()]));
   draw();
   host.querySelector('#in-back').onclick = () => go({ c: cid, ay });
-  host.querySelector('#in-only').onchange = (e) => { only = !!e.target.value; draw(); };
+  host.querySelectorAll('[data-only]').forEach((b) => {
+    b.onclick = () => { only = !!b.dataset.only; host.querySelectorAll('[data-only]').forEach((x) => x.classList.toggle('on', x === b)); draw(); };
+  });
   host.querySelector('#in-accept').onclick = (e) => busy(e.currentTarget, async () => {
     try { v = await api(`${url}/accept`, { method: 'POST' }); toast(w('saved'), 'ok'); draw(); } catch (err) { toast(err.message, 'bad', 8); }
   });
   host.querySelector('#in-save').onclick = (e) => busy(e.currentTarget, async () => {
-    const was = Object.fromEntries(v.rows.map((x) => [x.key, x.ref]));
-    const tags = {};
-    body.querySelectorAll('tr[data-k]').forEach((r) => {
-      const val = r.querySelector('[data-ref]').value.trim();
-      if (val !== (was[r.dataset.k] || '')) tags[r.dataset.k] = val;
-    });
-    try { v = await api(`${url}/tags`, { method: 'PUT', body: { tags } }); toast(w('saved'), 'ok'); draw(); } catch (err) { toast(err.message, 'bad', 8); }
+    try { v = await api(`${url}/tags`, { method: 'PUT', body: { tags: pending() } }); dirty.clear(); toast(w('saved'), 'ok'); draw(); }
+    catch (err) { toast(err.message, 'bad', 8); }
   });
 }
