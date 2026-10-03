@@ -11,7 +11,7 @@ let AY = '';
 
 const field = (id, label, value = '', attrs = '') => `<div class="field"><label for="${id}">${esc(label)}</label>
   <input id="${id}" value="${esc(value)}" ${attrs}/></div>`;
-const grid = (html) => `<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px 14px">${html}</div>`;
+const grid = (html) => `<div class="grid two">${html}</div>`;   // the framework grid: labels line up (no stacked .field margin)
 const stageOf = (id) => K.stages.find((s) => s.id === id) || { label: id, tag: 'tag' };
 
 export async function clientsPage(host) {
@@ -61,7 +61,7 @@ function editor(c, reload) {
     ${y ? grid(`<div class="field"><label for="y-form">${esc(w('y_form'))}</label><select id="y-form">${K.forms.map((f) => `<option ${f === y.form ? 'selected' : ''}>${esc(f)}</option>`).join('')}</select></div>
       <div class="field"><label for="y-stage">${esc(w('y_stage'))}</label><select id="y-stage">${K.stages.map((s) => `<option value="${esc(s.id)}" ${s.id === y.stage ? 'selected' : ''}>${esc(s.label)}</option>`).join('')}</select></div>
       ${field('y-assigned', w('y_assigned'), y.assigned)}${field('y-ack', w('y_ack'), y.ack_no)}
-      <label class="check"><input type="checkbox" id="y-audit" ${y.audit ? 'checked' : ''}/> <span>${esc(w('y_audit'))}</span></label>`)
+      <label class="check" style="align-self:end;min-height:40px"><input type="checkbox" id="y-audit" ${y.audit ? 'checked' : ''}/> <span>${esc(w('y_audit'))}</span></label>`)
       + `<div class="row tight" style="margin-top:10px"><button type="button" id="y-save">${icon('save', 14)} ${esc(w('save_year'))}</button></div>`
       : `<button type="button" id="y-add">${icon('plus', 14)} ${esc(w('add_to_year', { ay: AY }))}</button>`}</section>`;
   const body = grid(field('c-name', w('f_name'), c.name, 'required') + field('c-relation', w('f_relation'), c.relation)
@@ -75,10 +75,10 @@ function editor(c, reload) {
     <button type="button" class="small ghost" id="c-add-bank">${icon('plus', 12)} ${esc(w('add_bank'))}</button>
     <div id="c-partners-box"><h3>${esc(w('partners'))}</h3><div id="c-partners">${partners.html}</div>
     <button type="button" class="small ghost" id="c-add-partner">${icon('plus', 12)} ${esc(w('add_partner'))}</button></div>
-    <div class="field"><label for="c-notes">${esc(w('f_notes'))}</label><textarea id="c-notes" rows="2">${esc(c.notes || '')}</textarea></div>
+    <div class="field" style="margin-top:14px"><label for="c-notes">${esc(w('f_notes'))}</label><textarea id="c-notes" rows="2">${esc(c.notes || '')}</textarea></div>
     ${yearCard}`;
-  const footer = `${!isNew && may('clients', 'delete') ? `<button type="button" class="pill" data-del>${icon('trash', 14)} ${esc(w('delete'))}</button>` : ''}
-    <button type="button" class="pill solid" data-save>${icon('save', 15)} ${esc(w('save'))}</button>`;
+  const footer = `${!isNew && may('clients', 'delete') ? `<button type="button" class="danger" data-del>${icon('trash', 14)} ${esc(w('delete'))}</button>` : ''}
+    <button type="button" class="primary" data-save>${icon('save', 15)} ${esc(w('save'))}</button>`;
   modal(isNew ? w('new') : c.name, body, { wide: true, footer, stay: true, onOpen: (b, close) => {
     const card = b.closest('.modal');
     const $ = (s) => card.querySelector(s);

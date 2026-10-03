@@ -48,7 +48,7 @@ export async function reconPage(host) {
       const f = d.findings.find((x) => x.id === b.closest('[data-id]').dataset.id);
       b.onclick = () => modal(w('explain_title'), `<p class="small">${esc(f.title)}</p><div class="field"><label for="rc-note">${esc(w('explain_hint'))}</label>
           <textarea id="rc-note" rows="3">${esc(f.note ? f.note.text : '')}</textarea></div>`, {
-        footer: `<button type="button" class="pill solid" data-save>${icon('save', 14)} ${esc(w('save'))}</button>`,
+        footer: `<button type="button" class="primary" data-save>${icon('save', 14)} ${esc(w('save'))}</button>`,
         onOpen: (m, close) => {
           m.closest('.modal').querySelector('[data-save]').onclick = (e) => busy(e.currentTarget, async () => {
             try {
