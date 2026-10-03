@@ -1,0 +1,42 @@
+{
+  "rule_id": "disk_low_daily",
+  "label": "Warn the owner once a day when the disk is filling up",
+  "description": "Recordings are the only thing a hosted portal pays for. Once a day, if free disk is below the number here, the owner is told — by email when mail is set up, as a banner when it is not.",
+  "trigger": "daily",
+  "priority": 50,
+  "status": "published",
+  "version": 1,
+  "params": [
+    {
+      "name": "min_free_mb",
+      "type": "number",
+      "label": "Warn below this much free disk (MB)",
+      "default": 5000
+    }
+  ],
+  "values": {},
+  "when": {
+    "op": "lt",
+    "left": "$disk_free_mb",
+    "right": "$min_free_mb"
+  },
+  "then": [
+    {
+      "kind": "notify",
+      "to": "owner",
+      "subject": "Disk is filling up: {disk_free_mb} MB free",
+      "text": "Only {disk_free_mb} MB of disk is free; the portal's data folder holds {data_mb} MB.\nOpen Admin → Storage to see who holds what, or raise the disk.",
+      "cooldown_minutes": 720
+    }
+  ],
+  "test_cases": [
+    {
+      "scenario": "portal_disk_low",
+      "expect": true
+    },
+    {
+      "scenario": "portal_ok",
+      "expect": false
+    }
+  ]
+}

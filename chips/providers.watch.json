@@ -1,0 +1,60 @@
+{
+  "chip_id": "providers.watch",
+  "kind": "accessor",
+  "set": "providers",
+  "label": "The daily model watch: what it may do by itself when a model is gone",
+  "aliases": [
+    "model watch",
+    "auto replace"
+  ],
+  "params": [
+    {
+      "name": "auto_mark_gone",
+      "type": "boolean",
+      "default": true,
+      "label": "auto mark gone"
+    },
+    {
+      "name": "same_provider",
+      "type": "boolean",
+      "default": true,
+      "label": "same provider"
+    },
+    {
+      "name": "max_price_ratio",
+      "type": "number",
+      "default": 1.0,
+      "label": "max price ratio"
+    },
+    {
+      "name": "notify_when_nothing",
+      "type": "boolean",
+      "default": false,
+      "label": "notify when nothing"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "auto_mark_gone": "$auto_mark_gone",
+      "same_provider": "$same_provider",
+      "max_price_ratio": "$max_price_ratio",
+      "notify_when_nothing": "$notify_when_nothing"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-09-28 owner: models come and go fast - once a day (rule models_daily) the portal asks every provider for its list. auto_mark_gone: a model offered here that the provider no longer lists is marked gone (cleared by itself when it is listed again). A gone model is swapped for its SUCCESSOR wherever it is used: same_provider = only that provider's models; max_price_ratio = the successor may cost at most this times the old one (1.0 = never more - nobody pays for a model they did not choose). notify_when_nothing: email the owner even when nothing changed.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "auto_mark_gone": true,
+        "same_provider": true,
+        "max_price_ratio": 1.0,
+        "notify_when_nothing": false
+      }
+    }
+  ]
+}

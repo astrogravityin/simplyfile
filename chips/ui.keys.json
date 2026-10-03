@@ -1,0 +1,1864 @@
+{
+  "chip_id": "ui.keys",
+  "kind": "accessor",
+  "set": "ui",
+  "label": "Every word on the Account & key screen",
+  "aliases": [
+    "keys screen words"
+  ],
+  "params": [
+    {
+      "name": "title",
+      "type": "text",
+      "default": "Account & key"
+    },
+    {
+      "name": "lede",
+      "type": "text",
+      "default": "One thing in this portal talks to a paid service: <b>Draft with AI</b>, which sends your recording to Google Gemini. It runs on <b>your own key</b>, billed to <b>your own</b> Google account — never the portal's, never a colleague's."
+    },
+    {
+      "name": "how_to_get",
+      "type": "text",
+      "default": "How to get a key"
+    },
+    {
+      "name": "key_connected",
+      "type": "text",
+      "default": "Gemini key connected"
+    },
+    {
+      "name": "no_key",
+      "type": "text",
+      "default": "No AI key yet"
+    },
+    {
+      "name": "ready_line",
+      "type": "text",
+      "default": "Draft with AI is on for your account, using <code>{model}</code>. Saved key ends {ends}."
+    },
+    {
+      "name": "no_key_line",
+      "type": "text",
+      "default": "Everything else still works — write the script yourself, or run the LLM Bridge in a model you already pay for."
+    },
+    {
+      "name": "test_it",
+      "type": "text",
+      "default": "Test it"
+    },
+    {
+      "name": "replace_key",
+      "type": "text",
+      "default": "Replace key"
+    },
+    {
+      "name": "add_key",
+      "type": "text",
+      "default": "Add my key"
+    },
+    {
+      "name": "budget_card",
+      "type": "text",
+      "default": "Budget &amp; spending"
+    },
+    {
+      "name": "budget_note",
+      "type": "text",
+      "default": "Google bills monthly and will not tell the portal your balance, so tell it what you are willing to spend. It subtracts what each run actually cost and warns you when the remainder gets thin. <a href=\"{guide}#budget\" target=\"_blank\" rel=\"noopener\">Set a real cap at Google →</a>"
+    },
+    {
+      "name": "budgeted",
+      "type": "text",
+      "default": "Budgeted"
+    },
+    {
+      "name": "spent_here",
+      "type": "text",
+      "default": "Spent here"
+    },
+    {
+      "name": "left",
+      "type": "text",
+      "default": "Left"
+    },
+    {
+      "name": "budget_low",
+      "type": "text",
+      "default": "Your budget is nearly used up. Top it up at Google, then raise the number here."
+    },
+    {
+      "name": "budget_label",
+      "type": "text",
+      "default": "What I budgeted for Gemini ({code})"
+    },
+    {
+      "name": "currency_label",
+      "type": "text",
+      "default": "Show money in"
+    },
+    {
+      "name": "currency_note",
+      "type": "text",
+      "default": "Every provider bills in US dollars. Amounts here are shown in your currency at a fixed rate the owner keeps - a guide to what a run costs, not an invoice."
+    },
+    {
+      "name": "currency_saved",
+      "type": "text",
+      "default": "Money is now shown in {code}."
+    },
+    {
+      "name": "rates_at",
+      "type": "text",
+      "default": "Live rates as of {at} (refreshed once a day)."
+    },
+    {
+      "name": "rates_fixed",
+      "type": "text",
+      "default": "Fixed rates - the live feed has not answered yet."
+    },
+    {
+      "name": "rates_failed",
+      "type": "text",
+      "default": "The last ask of the rate feed failed ({why}); the previous rates stay until it answers."
+    },
+    {
+      "name": "save_budget",
+      "type": "text",
+      "default": "Save budget"
+    },
+    {
+      "name": "account_card",
+      "type": "text",
+      "default": "Your account"
+    },
+    {
+      "name": "name",
+      "type": "text",
+      "default": "Name"
+    },
+    {
+      "name": "email",
+      "type": "text",
+      "default": "Email"
+    },
+    {
+      "name": "role",
+      "type": "text",
+      "default": "Role"
+    },
+    {
+      "name": "change_password",
+      "type": "text",
+      "default": "Change password"
+    },
+    {
+      "name": "privacy_note",
+      "type": "text",
+      "default": "Your key, your recordings, your manuals and your projects are visible to your account alone. Nobody else signed in here can list them, open them or spend against your key."
+    },
+    {
+      "name": "runs_card",
+      "type": "text",
+      "default": "What you have run"
+    },
+    {
+      "name": "providers_card",
+      "type": "text",
+      "default": "Other providers &amp; who does what"
+    },
+    {
+      "name": "providers_note",
+      "type": "text",
+      "default": "Gemini is the default for everything. Add another provider's key below and pick it for text (scripts, shot lists, imports, checks) or stills; the Film step picks its video model per run. Prices are the providers' published ones; every run is booked to that provider's own budget."
+    },
+    {
+      "name": "provider_pick",
+      "type": "text",
+      "default": "{kind}: {label} · {model}"
+    },
+    {
+      "name": "kind_text",
+      "type": "text",
+      "default": "Text"
+    },
+    {
+      "name": "kind_image",
+      "type": "text",
+      "default": "Stills"
+    },
+    {
+      "name": "kind_video",
+      "type": "text",
+      "default": "Clips"
+    },
+    {
+      "name": "choice_saved",
+      "type": "text",
+      "default": "Saved: {kind} now goes to {label} · {model}."
+    },
+    {
+      "name": "needs_key",
+      "type": "text",
+      "default": "no key yet"
+    },
+    {
+      "name": "key_in",
+      "type": "text",
+      "default": "key in"
+    },
+    {
+      "name": "free_tag",
+      "type": "text",
+      "default": "free"
+    },
+    {
+      "name": "save_key",
+      "type": "text",
+      "default": "Save key"
+    },
+    {
+      "name": "key_saved",
+      "type": "text",
+      "default": "{label} saved."
+    },
+    {
+      "name": "get_key",
+      "type": "text",
+      "default": "get one"
+    },
+    {
+      "name": "budget_for",
+      "type": "text",
+      "default": "Money for {label}"
+    },
+    {
+      "name": "price_text",
+      "type": "text",
+      "default": "{in} in · {out} out per million tokens"
+    },
+    {
+      "name": "price_image",
+      "type": "text",
+      "default": "{usd} a still"
+    },
+    {
+      "name": "price_video",
+      "type": "text",
+      "default": "{low}–{high} a second"
+    },
+    {
+      "name": "pool_title",
+      "type": "text",
+      "default": "Your {label} keys"
+    },
+    {
+      "name": "pool_note",
+      "type": "text",
+      "default": "Keep several: a call goes to the default first, a key that hits its limit steps aside for an hour and the next one takes over, an invalid one waits until it passes a test. Every key stays on this server, shown by its last four characters only."
+    },
+    {
+      "name": "pool_add",
+      "type": "text",
+      "default": "Add another key"
+    },
+    {
+      "name": "pool_add_first",
+      "type": "text",
+      "default": "Add key",
+      "label": "The button when this provider has no key yet (the first one is not 'another')"
+    },
+    {
+      "name": "budget_shared",
+      "type": "text",
+      "default": "shared by every {label} key",
+      "label": "Said beside the budget box: the money belongs to the provider, not to one key"
+    },
+    {
+      "name": "pool_name",
+      "type": "text",
+      "default": "Name (optional)"
+    },
+    {
+      "name": "pool_added",
+      "type": "text",
+      "default": "Key added."
+    },
+    {
+      "name": "pool_default",
+      "type": "text",
+      "default": "Make default"
+    },
+    {
+      "name": "pool_is_default",
+      "type": "text",
+      "default": "default"
+    },
+    {
+      "name": "pool_test",
+      "type": "text",
+      "default": "Test"
+    },
+    {
+      "name": "pool_remove",
+      "type": "text",
+      "default": "Remove"
+    },
+    {
+      "name": "pool_remove_title",
+      "type": "text",
+      "default": "Remove {name}?"
+    },
+    {
+      "name": "pool_remove_body",
+      "type": "text",
+      "default": "The next key becomes the default. Nothing else changes."
+    },
+    {
+      "name": "status_active",
+      "type": "text",
+      "default": "active"
+    },
+    {
+      "name": "status_exhausted",
+      "type": "text",
+      "default": "at its limit"
+    },
+    {
+      "name": "status_invalid",
+      "type": "text",
+      "default": "invalid"
+    },
+    {
+      "name": "pool_since",
+      "type": "text",
+      "default": "since {at}"
+    },
+    {
+      "name": "runs_note",
+      "type": "text",
+      "default": "Your own runs only. Every AI and metered call, whether it cost anything or not — a free voice run is listed too, so the record is whole."
+    },
+    {
+      "name": "col_when",
+      "type": "text",
+      "default": "When"
+    },
+    {
+      "name": "col_what",
+      "type": "text",
+      "default": "What"
+    },
+    {
+      "name": "col_provider",
+      "type": "text",
+      "default": "Provider"
+    },
+    {
+      "name": "col_cost",
+      "type": "text",
+      "default": "Cost"
+    },
+    {
+      "name": "col_time",
+      "type": "text",
+      "default": "Time"
+    },
+    {
+      "name": "free",
+      "type": "text",
+      "default": "free"
+    },
+    {
+      "name": "tokens",
+      "type": "text",
+      "default": "{in} in / {out} out"
+    },
+    {
+      "name": "no_runs_title",
+      "type": "text",
+      "default": "Nothing run yet"
+    },
+    {
+      "name": "no_runs_body",
+      "type": "text",
+      "default": "Every AI draft and every generated video leaves a receipt here — what it cost, how long it took."
+    },
+    {
+      "name": "budget_saved",
+      "type": "text",
+      "default": "Budget saved."
+    },
+    {
+      "name": "asking",
+      "type": "text",
+      "default": "Asking Google…"
+    },
+    {
+      "name": "test_ok",
+      "type": "text",
+      "default": "Your key works with <code>{model}</code> — answered in {secs}s, cost {cost}."
+    },
+    {
+      "name": "test_switched",
+      "type": "text",
+      "default": " Google does not offer <code>{from}</code> to this key, so your model is now <code>{model}</code>."
+    },
+    {
+      "name": "key_label",
+      "type": "text",
+      "default": "Gemini API key"
+    },
+    {
+      "name": "model_label",
+      "type": "text",
+      "default": "Gemini model"
+    },
+    {
+      "name": "dialog_title",
+      "type": "text",
+      "default": "Your Gemini key"
+    },
+    {
+      "name": "dialog_note",
+      "type": "text",
+      "default": "The key stays on this server, for your account only. It is never shown to anyone — not even back to you: the box below only ever shows its last four characters. <a href=\"{guide}\" target=\"_blank\" rel=\"noopener\">How to get one, step by step →</a>"
+    },
+    {
+      "name": "key_hint",
+      "type": "text",
+      "default": "Starts with <code>AQ.…</code> (new keys) or <code>AIza…</code> (older ones). Paste it from aistudio.google.com/apikey."
+    },
+    {
+      "name": "label_label",
+      "type": "text",
+      "default": "Label — whose account is this key from?"
+    },
+    {
+      "name": "label_hint",
+      "type": "text",
+      "default": "e.g. <i>explore.whattag Gmail</i> or <i>Work project</i>. When this key runs out, messages name it, so you know which account to top up."
+    },
+    {
+      "name": "pool_rename_hint",
+      "type": "text",
+      "default": "Rename: say which account this key came from, so you know which one to top up."
+    },
+    {
+      "name": "pool_renamed",
+      "type": "text",
+      "default": "Label saved."
+    },
+    {
+      "name": "model_hint",
+      "type": "text",
+      "default": "Flash is the cheap one that watches video. Pro costs more and reads a busy screen better."
+    },
+    {
+      "name": "saving_tries",
+      "type": "text",
+      "default": "Saving also tries it once — a fraction of a cent."
+    },
+    {
+      "name": "cancel",
+      "type": "text",
+      "default": "Cancel"
+    },
+    {
+      "name": "save_and_test",
+      "type": "text",
+      "default": "Save and test"
+    },
+    {
+      "name": "paste_first",
+      "type": "text",
+      "default": "Paste your key first."
+    },
+    {
+      "name": "saved_asking",
+      "type": "text",
+      "default": "Saved. Asking Google whether it works…"
+    },
+    {
+      "name": "works_switched",
+      "type": "text",
+      "default": "Key works. Google does not offer {from} to new keys, so your model is now {model}. Draft with AI is on."
+    },
+    {
+      "name": "works",
+      "type": "text",
+      "default": "Key works with {model}. Draft with AI is on."
+    },
+    {
+      "name": "saved_but_refused",
+      "type": "text",
+      "default": "The key is saved — fix it here and test again."
+    },
+    {
+      "name": "share_title",
+      "type": "text",
+      "default": "Lend this key",
+      "label": "share_title"
+    },
+    {
+      "name": "share_note",
+      "type": "text",
+      "default": "Someone with an account on this portal can run their own work on your key. It spends <b>your</b> balance, every run lands on your usage list, and you can take it back at any moment.",
+      "label": "share_note"
+    },
+    {
+      "name": "share_email_ph",
+      "type": "text",
+      "default": "their email on this portal",
+      "label": "share_email_ph"
+    },
+    {
+      "name": "share_cta",
+      "type": "text",
+      "default": "Lend it",
+      "label": "share_cta"
+    },
+    {
+      "name": "share_open",
+      "type": "text",
+      "default": "Lend",
+      "label": "share_open"
+    },
+    {
+      "name": "shared_with",
+      "type": "text",
+      "default": "Lent to",
+      "label": "shared_with"
+    },
+    {
+      "name": "take_back",
+      "type": "text",
+      "default": "Take back",
+      "label": "take_back"
+    },
+    {
+      "name": "take_back_title",
+      "type": "text",
+      "default": "Take {name} back?",
+      "label": "take_back_title"
+    },
+    {
+      "name": "take_back_body",
+      "type": "text",
+      "default": "They stop being able to spend on this key straight away. What they already ran stays on your usage list and can still be billed.",
+      "label": "take_back_body"
+    },
+    {
+      "name": "give_back",
+      "type": "text",
+      "default": "Give back",
+      "label": "give_back"
+    },
+    {
+      "name": "give_back_title",
+      "type": "text",
+      "default": "Give {name} back?",
+      "label": "give_back_title"
+    },
+    {
+      "name": "give_back_body",
+      "type": "text",
+      "default": "You will not be able to run anything on it again unless its owner lends it to you once more.",
+      "label": "give_back_body"
+    },
+    {
+      "name": "borrowed_tag",
+      "type": "text",
+      "default": "Borrowed",
+      "label": "borrowed_tag"
+    },
+    {
+      "name": "borrowed_owner",
+      "type": "text",
+      "default": "from {owner}",
+      "label": "borrowed_owner"
+    },
+    {
+      "name": "borrowed_rename_hint",
+      "type": "text",
+      "default": "Your own name for this key - its owner keeps theirs",
+      "label": "borrowed_rename_hint"
+    },
+    {
+      "name": "grant_since",
+      "type": "text",
+      "default": "since {at}",
+      "label": "grant_since"
+    },
+    {
+      "name": "grant_until",
+      "type": "text",
+      "default": "ended {at}",
+      "label": "grant_until"
+    },
+    {
+      "name": "grant_active",
+      "type": "text",
+      "default": "In use",
+      "label": "grant_active"
+    },
+    {
+      "name": "grant_revoked",
+      "type": "text",
+      "default": "Taken back",
+      "label": "grant_revoked"
+    },
+    {
+      "name": "grant_returned",
+      "type": "text",
+      "default": "Given back",
+      "label": "grant_returned"
+    },
+    {
+      "name": "usage_card",
+      "type": "text",
+      "default": "Key usage",
+      "label": "usage_card"
+    },
+    {
+      "name": "usage_note",
+      "type": "text",
+      "default": "Every paid run this portal made on a key you own or a key you were lent - yours and other people's. A run somebody else made on your key shows only the beginning of what they called it; they see it whole and can check the bill against it.",
+      "label": "usage_note"
+    },
+    {
+      "name": "usage_search_ph",
+      "type": "text",
+      "default": "Search key, person, activity…",
+      "label": "usage_search_ph"
+    },
+    {
+      "name": "col_portal",
+      "type": "text",
+      "default": "Portal",
+      "label": "col_portal"
+    },
+    {
+      "name": "col_key",
+      "type": "text",
+      "default": "Key",
+      "label": "col_key"
+    },
+    {
+      "name": "col_whose",
+      "type": "text",
+      "default": "Own / lent",
+      "label": "col_whose"
+    },
+    {
+      "name": "col_owner",
+      "type": "text",
+      "default": "Key owner",
+      "label": "col_owner"
+    },
+    {
+      "name": "col_usedby",
+      "type": "text",
+      "default": "Used by",
+      "label": "col_usedby"
+    },
+    {
+      "name": "col_activity",
+      "type": "text",
+      "default": "Activity",
+      "label": "col_activity"
+    },
+    {
+      "name": "col_duration",
+      "type": "text",
+      "default": "Duration",
+      "label": "col_duration"
+    },
+    {
+      "name": "col_date",
+      "type": "text",
+      "default": "Date",
+      "label": "col_date"
+    },
+    {
+      "name": "own_tag",
+      "type": "text",
+      "default": "Own",
+      "label": "own_tag"
+    },
+    {
+      "name": "shared_tag",
+      "type": "text",
+      "default": "Shared",
+      "label": "shared_tag"
+    },
+    {
+      "name": "no_usage_title",
+      "type": "text",
+      "default": "No paid runs yet",
+      "label": "no_usage_title"
+    },
+    {
+      "name": "no_usage_body",
+      "type": "text",
+      "default": "Anything that costs money - a draft, a voice, a picture, a film - lands here with the key that paid for it.",
+      "label": "no_usage_body"
+    },
+    {
+      "name": "page_of",
+      "type": "text",
+      "default": "Page {page} of {pages} · {total} {total:run|runs}",
+      "label": "page_of"
+    },
+    {
+      "name": "prev",
+      "type": "text",
+      "default": "Back",
+      "label": "prev"
+    },
+    {
+      "name": "next",
+      "type": "text",
+      "default": "Next",
+      "label": "next"
+    },
+    {
+      "name": "bills_card",
+      "type": "text",
+      "default": "Bills",
+      "label": "bills_card"
+    },
+    {
+      "name": "bills_note",
+      "type": "text",
+      "default": "What people owe you for using your keys, and what you owe for using theirs. Money moves outside this portal; this is the record of it.",
+      "label": "bills_note"
+    },
+    {
+      "name": "bill_owing",
+      "type": "text",
+      "default": "Not billed yet",
+      "label": "bill_owing"
+    },
+    {
+      "name": "bill_push",
+      "type": "text",
+      "default": "Send bill",
+      "label": "bill_push"
+    },
+    {
+      "name": "bill_push_title",
+      "type": "text",
+      "default": "Send {name} a bill for {amount}?",
+      "label": "bill_push_title"
+    },
+    {
+      "name": "bill_push_body",
+      "type": "text",
+      "default": "{runs} runs on {label}. They see it on their own Account &amp; key screen, with every run behind it.",
+      "label": "bill_push_body"
+    },
+    {
+      "name": "bill_note_ph",
+      "type": "text",
+      "default": "what this bill is for (optional)",
+      "label": "bill_note_ph"
+    },
+    {
+      "name": "bills_sent",
+      "type": "text",
+      "default": "Bills you sent",
+      "label": "bills_sent"
+    },
+    {
+      "name": "bills_received",
+      "type": "text",
+      "default": "Bills sent to you",
+      "label": "bills_received"
+    },
+    {
+      "name": "bill_settle",
+      "type": "text",
+      "default": "Mark as paid",
+      "label": "bill_settle"
+    },
+    {
+      "name": "bill_settle_title",
+      "type": "text",
+      "default": "Mark {amount} to {owner} as paid?",
+      "label": "bill_settle_title"
+    },
+    {
+      "name": "bill_settle_body",
+      "type": "text",
+      "default": "This records that you settled it. It does not move any money.",
+      "label": "bill_settle_body"
+    },
+    {
+      "name": "bill_settled",
+      "type": "text",
+      "default": "Paid {at}",
+      "label": "bill_settled"
+    },
+    {
+      "name": "bill_unsettled",
+      "type": "text",
+      "default": "Waiting",
+      "label": "bill_unsettled"
+    },
+    {
+      "name": "bill_line",
+      "type": "text",
+      "default": "{runs} runs · {amount} · {from_at} to {to_at}",
+      "label": "bill_line"
+    },
+    {
+      "name": "no_bills_title",
+      "type": "text",
+      "default": "Nothing owed either way",
+      "label": "no_bills_title"
+    },
+    {
+      "name": "no_bills_body",
+      "type": "text",
+      "default": "Lend a key and a bill line appears here the moment somebody spends on it.",
+      "label": "no_bills_body"
+    },
+    {
+      "name": "shared_card",
+      "type": "text",
+      "default": "Shared keys",
+      "label": "shared_card"
+    },
+    {
+      "name": "shared_note",
+      "type": "text",
+      "default": "Keys you lent to other people, and keys other people lent to you. A lent key spends the OWNER's balance, on the owner's terms.",
+      "label": "shared_note"
+    },
+    {
+      "name": "shared_lent",
+      "type": "text",
+      "default": "Keys you lent",
+      "label": "shared_lent"
+    },
+    {
+      "name": "shared_held",
+      "type": "text",
+      "default": "Keys lent to you",
+      "label": "shared_held"
+    },
+    {
+      "name": "shared_none_lent",
+      "type": "text",
+      "default": "You have not lent a key to anyone.",
+      "label": "shared_none_lent"
+    },
+    {
+      "name": "shared_none_held",
+      "type": "text",
+      "default": "Nobody has lent you a key.",
+      "label": "shared_none_held"
+    },
+    {
+      "name": "terms_title",
+      "type": "text",
+      "default": "Terms for {name}",
+      "label": "terms_title"
+    },
+    {
+      "name": "terms_markup",
+      "type": "text",
+      "default": "Add on top of what each run costs (%)",
+      "label": "terms_markup"
+    },
+    {
+      "name": "terms_markup_hint",
+      "type": "text",
+      "default": "0 means they pay exactly what the provider charges you. They only ever see the price with this added.",
+      "label": "terms_markup_hint"
+    },
+    {
+      "name": "terms_cap_day",
+      "type": "text",
+      "default": "Cap per day ({code})",
+      "label": "terms_cap_day"
+    },
+    {
+      "name": "terms_cap_week",
+      "type": "text",
+      "default": "Cap per week ({code})",
+      "label": "terms_cap_week"
+    },
+    {
+      "name": "terms_cap_month",
+      "type": "text",
+      "default": "Cap per month ({code})",
+      "label": "terms_cap_month"
+    },
+    {
+      "name": "terms_cap_hint",
+      "type": "text",
+      "default": "0 means no cap. Measured on a rolling window, on the price they see. The key stops working when a cap is spent and starts again as the window rolls on.",
+      "label": "terms_cap_hint"
+    },
+    {
+      "name": "terms_save",
+      "type": "text",
+      "default": "Save terms",
+      "label": "terms_save"
+    },
+    {
+      "name": "terms_edit",
+      "type": "text",
+      "default": "Terms",
+      "label": "terms_edit"
+    },
+    {
+      "name": "terms_saved",
+      "type": "text",
+      "default": "Terms saved.",
+      "label": "terms_saved"
+    },
+    {
+      "name": "window_day",
+      "type": "text",
+      "default": "Day",
+      "label": "window_day"
+    },
+    {
+      "name": "window_week",
+      "type": "text",
+      "default": "Week",
+      "label": "window_week"
+    },
+    {
+      "name": "window_month",
+      "type": "text",
+      "default": "Month",
+      "label": "window_month"
+    },
+    {
+      "name": "window_used",
+      "type": "text",
+      "default": "{spent} of {cap}",
+      "label": "window_used"
+    },
+    {
+      "name": "window_uncapped",
+      "type": "text",
+      "default": "no cap",
+      "label": "window_uncapped"
+    },
+    {
+      "name": "blocked_now",
+      "type": "text",
+      "default": "Stopped",
+      "label": "blocked_now"
+    },
+    {
+      "name": "rates_title",
+      "type": "text",
+      "default": "Roughly what this will cost you",
+      "label": "rates_title"
+    },
+    {
+      "name": "rates_preview",
+      "type": "text",
+      "default": "What they will be quoted",
+      "label": "rates_preview"
+    },
+    {
+      "name": "col_base",
+      "type": "text",
+      "default": "Real cost",
+      "label": "col_base"
+    },
+    {
+      "name": "col_charged",
+      "type": "text",
+      "default": "Charged",
+      "label": "col_charged"
+    },
+    {
+      "name": "markup_col",
+      "type": "text",
+      "default": "Mark-up",
+      "label": "markup_col"
+    },
+    {
+      "name": "report_card",
+      "type": "text",
+      "default": "Shared key report",
+      "label": "report_card"
+    },
+    {
+      "name": "report_note",
+      "type": "text",
+      "default": "Every run other people made on your keys: what the provider really charged you, and what you charge them.",
+      "label": "report_note"
+    },
+    {
+      "name": "report_open",
+      "type": "text",
+      "default": "Open report",
+      "label": "report_open"
+    },
+    {
+      "name": "report_group_key",
+      "type": "text",
+      "default": "By key",
+      "label": "report_group_key"
+    },
+    {
+      "name": "report_group_person",
+      "type": "text",
+      "default": "By person",
+      "label": "report_group_person"
+    },
+    {
+      "name": "report_group_session",
+      "type": "text",
+      "default": "By sitting",
+      "label": "report_group_session"
+    },
+    {
+      "name": "report_search_ph",
+      "type": "text",
+      "default": "Search key, person…",
+      "label": "report_search_ph"
+    },
+    {
+      "name": "col_runs",
+      "type": "text",
+      "default": "Runs",
+      "label": "col_runs"
+    },
+    {
+      "name": "col_session",
+      "type": "text",
+      "default": "Sitting",
+      "label": "col_session"
+    },
+    {
+      "name": "col_terms",
+      "type": "text",
+      "default": "Terms",
+      "label": "col_terms"
+    },
+    {
+      "name": "col_first",
+      "type": "text",
+      "default": "First",
+      "label": "col_first"
+    },
+    {
+      "name": "col_last",
+      "type": "text",
+      "default": "Last",
+      "label": "col_last"
+    },
+    {
+      "name": "report_totals",
+      "type": "text",
+      "default": "{runs} runs · real {base} · charged {charged}",
+      "label": "report_totals"
+    },
+    {
+      "name": "no_report_title",
+      "type": "text",
+      "default": "Nobody has spent on your keys yet",
+      "label": "no_report_title"
+    },
+    {
+      "name": "no_report_body",
+      "type": "text",
+      "default": "Lend a key and every run made on it turns up here, per key, per person and per sitting.",
+      "label": "no_report_body"
+    },
+    {
+      "name": "low_now",
+      "type": "text",
+      "default": "Running low",
+      "label": "low_now"
+    },
+    {
+      "name": "buy_more",
+      "type": "text",
+      "default": "Buy more",
+      "label": "buy_more"
+    },
+    {
+      "name": "fund_save",
+      "type": "text",
+      "default": "Save the amount loaded on this key"
+    },
+    {
+      "name": "add_credit",
+      "type": "text",
+      "default": "Add credit"
+    },
+    {
+      "name": "add_credit_tip",
+      "type": "text",
+      "default": "Opens this provider's own page, where you add money to the account behind this key. Then press Test - a stopped key starts again."
+    },
+    {
+      "name": "mc_card",
+      "type": "text",
+      "default": "AI models"
+    },
+    {
+      "name": "mc_note",
+      "type": "text",
+      "default": "Providers add and withdraw models often. Check asks each provider (with your keys) what it offers today: add a new model in one click, retire one that is gone. A model a call finds withdrawn leaves every list by itself."
+    },
+    {
+      "name": "mc_check",
+      "type": "text",
+      "default": "Check models"
+    },
+    {
+      "name": "mc_title",
+      "type": "text",
+      "default": "Models the providers offer today"
+    },
+    {
+      "name": "mc_lede",
+      "type": "text",
+      "default": "New = offered by the provider, not yet in the portal. Gone = in the portal, not offered any more. Adding and retiring are saved as new versions of the model chips (history kept)."
+    },
+    {
+      "name": "mc_same",
+      "type": "text",
+      "default": "Nothing new, nothing gone."
+    },
+    {
+      "name": "mc_new",
+      "type": "text",
+      "default": "New"
+    },
+    {
+      "name": "mc_gone",
+      "type": "text",
+      "default": "Gone"
+    },
+    {
+      "name": "mc_kind_text",
+      "type": "text",
+      "default": "text"
+    },
+    {
+      "name": "mc_kind_image",
+      "type": "text",
+      "default": "picture"
+    },
+    {
+      "name": "mc_kind_video",
+      "type": "text",
+      "default": "video"
+    },
+    {
+      "name": "mc_in",
+      "type": "text",
+      "default": "$ per 1M in"
+    },
+    {
+      "name": "mc_out",
+      "type": "text",
+      "default": "$ per 1M out"
+    },
+    {
+      "name": "mc_per_image",
+      "type": "text",
+      "default": "$ per picture"
+    },
+    {
+      "name": "mc_per_second",
+      "type": "text",
+      "default": "$ per second"
+    },
+    {
+      "name": "mc_quality",
+      "type": "text",
+      "default": "Quality (your rating)"
+    },
+    {
+      "name": "mc_good_for",
+      "type": "text",
+      "default": "Good for..."
+    },
+    {
+      "name": "mc_add",
+      "type": "text",
+      "default": "Add"
+    },
+    {
+      "name": "mc_price_first",
+      "type": "text",
+      "default": "Type its price first - the portal never guesses a price (see the provider's pricing page)."
+    },
+    {
+      "name": "mc_added",
+      "type": "text",
+      "default": "{model} added - it is in every model picker now."
+    },
+    {
+      "name": "mc_gone_note",
+      "type": "text",
+      "default": "{provider} no longer lists it."
+    },
+    {
+      "name": "mc_gone_seen",
+      "type": "text",
+      "default": "A call was refused: the provider said this model is gone. It is already out of the pickers."
+    },
+    {
+      "name": "mc_retire",
+      "type": "text",
+      "default": "Retire"
+    },
+    {
+      "name": "mc_retire_title",
+      "type": "text",
+      "default": "Retire {model}?"
+    },
+    {
+      "name": "mc_retire_body",
+      "type": "text",
+      "default": "It leaves every model picker for good (its prices stay, for the history of what was spent). Anything saved with it asks for another model the next time AI is pressed."
+    },
+    {
+      "name": "mc_retired",
+      "type": "text",
+      "default": "{model} retired."
+    },
+    {
+      "name": "wallet_card",
+      "type": "text",
+      "default": "SteadyMove credit",
+      "label": "wallet card"
+    },
+    {
+      "name": "wallet_note",
+      "type": "long",
+      "default": "The portal lends you its keys and takes what each run costs from this one balance. A picture the check throws away is never charged.",
+      "label": "wallet note"
+    },
+    {
+      "name": "wallet_left",
+      "type": "text",
+      "default": "{left} left",
+      "label": "wallet left"
+    },
+    {
+      "name": "wallet_today",
+      "type": "text",
+      "default": "{today} used today of {cap}",
+      "label": "wallet today"
+    },
+    {
+      "name": "wallet_today_nocap",
+      "type": "text",
+      "default": "{today} used today",
+      "label": "wallet today nocap"
+    },
+    {
+      "name": "wallet_added_total",
+      "type": "text",
+      "default": "{added} added in all, {refunded} given back for redrawn pictures",
+      "label": "wallet added total"
+    },
+    {
+      "name": "wallets_card",
+      "type": "text",
+      "default": "Wallets (portal owner)",
+      "label": "wallets card"
+    },
+    {
+      "name": "wallets_note",
+      "type": "long",
+      "default": "Someone pays you by UPI or bank; add the same amount here. Your default key for each provider is lent to them, and every run draws on their one balance.",
+      "label": "wallets note"
+    },
+    {
+      "name": "wallet_email",
+      "type": "text",
+      "default": "Their email",
+      "label": "wallet email"
+    },
+    {
+      "name": "wallet_amount",
+      "type": "text",
+      "default": "Amount",
+      "label": "wallet amount"
+    },
+    {
+      "name": "wallet_note_f",
+      "type": "text",
+      "default": "Note (UPI reference)",
+      "label": "wallet note f"
+    },
+    {
+      "name": "wallet_add",
+      "type": "text",
+      "default": "Add credit",
+      "label": "wallet add"
+    },
+    {
+      "name": "wallet_cap",
+      "type": "text",
+      "default": "Daily limit",
+      "label": "wallet cap"
+    },
+    {
+      "name": "wallet_cap_go",
+      "type": "text",
+      "default": "Set limit",
+      "label": "wallet cap go"
+    },
+    {
+      "name": "wallets_none",
+      "type": "text",
+      "default": "No wallets yet.",
+      "label": "wallets none"
+    },
+    {
+      "name": "wallet_row",
+      "type": "text",
+      "default": "{email}: {left} left · {today} today",
+      "label": "wallet row"
+    },
+    {
+      "name": "lent_count",
+      "type": "text",
+      "default": "People holding this key: {n}",
+      "label": "lent count"
+    },
+    {
+      "name": "lent_manage",
+      "type": "text",
+      "default": "Manage",
+      "label": "lent manage"
+    },
+    {
+      "name": "lent_title",
+      "type": "text",
+      "default": "Who holds this key",
+      "label": "lent title"
+    },
+    {
+      "name": "report_group_label",
+      "type": "text",
+      "default": "Group the report by",
+      "label": "report_group_label"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "title": "$title",
+      "lede": "$lede",
+      "how_to_get": "$how_to_get",
+      "key_connected": "$key_connected",
+      "no_key": "$no_key",
+      "ready_line": "$ready_line",
+      "no_key_line": "$no_key_line",
+      "test_it": "$test_it",
+      "replace_key": "$replace_key",
+      "add_key": "$add_key",
+      "budget_card": "$budget_card",
+      "budget_note": "$budget_note",
+      "budgeted": "$budgeted",
+      "spent_here": "$spent_here",
+      "left": "$left",
+      "budget_low": "$budget_low",
+      "budget_label": "$budget_label",
+      "currency_label": "$currency_label",
+      "currency_note": "$currency_note",
+      "currency_saved": "$currency_saved",
+      "rates_at": "$rates_at",
+      "rates_fixed": "$rates_fixed",
+      "rates_failed": "$rates_failed",
+      "save_budget": "$save_budget",
+      "account_card": "$account_card",
+      "name": "$name",
+      "email": "$email",
+      "role": "$role",
+      "change_password": "$change_password",
+      "privacy_note": "$privacy_note",
+      "runs_card": "$runs_card",
+      "providers_card": "$providers_card",
+      "providers_note": "$providers_note",
+      "provider_pick": "$provider_pick",
+      "kind_text": "$kind_text",
+      "kind_image": "$kind_image",
+      "kind_video": "$kind_video",
+      "choice_saved": "$choice_saved",
+      "needs_key": "$needs_key",
+      "key_in": "$key_in",
+      "free_tag": "$free_tag",
+      "save_key": "$save_key",
+      "key_saved": "$key_saved",
+      "get_key": "$get_key",
+      "budget_for": "$budget_for",
+      "price_text": "$price_text",
+      "price_image": "$price_image",
+      "price_video": "$price_video",
+      "pool_title": "$pool_title",
+      "pool_note": "$pool_note",
+      "pool_add": "$pool_add",
+      "pool_add_first": "$pool_add_first",
+      "budget_shared": "$budget_shared",
+      "pool_name": "$pool_name",
+      "pool_added": "$pool_added",
+      "pool_default": "$pool_default",
+      "pool_is_default": "$pool_is_default",
+      "pool_test": "$pool_test",
+      "pool_remove": "$pool_remove",
+      "pool_remove_title": "$pool_remove_title",
+      "pool_remove_body": "$pool_remove_body",
+      "status_active": "$status_active",
+      "status_exhausted": "$status_exhausted",
+      "status_invalid": "$status_invalid",
+      "pool_since": "$pool_since",
+      "runs_note": "$runs_note",
+      "col_when": "$col_when",
+      "col_what": "$col_what",
+      "col_provider": "$col_provider",
+      "col_cost": "$col_cost",
+      "col_time": "$col_time",
+      "free": "$free",
+      "tokens": "$tokens",
+      "no_runs_title": "$no_runs_title",
+      "no_runs_body": "$no_runs_body",
+      "budget_saved": "$budget_saved",
+      "asking": "$asking",
+      "test_ok": "$test_ok",
+      "test_switched": "$test_switched",
+      "key_label": "$key_label",
+      "model_label": "$model_label",
+      "dialog_title": "$dialog_title",
+      "dialog_note": "$dialog_note",
+      "key_hint": "$key_hint",
+      "label_label": "$label_label",
+      "label_hint": "$label_hint",
+      "pool_rename_hint": "$pool_rename_hint",
+      "pool_renamed": "$pool_renamed",
+      "model_hint": "$model_hint",
+      "saving_tries": "$saving_tries",
+      "cancel": "$cancel",
+      "save_and_test": "$save_and_test",
+      "paste_first": "$paste_first",
+      "saved_asking": "$saved_asking",
+      "works_switched": "$works_switched",
+      "works": "$works",
+      "saved_but_refused": "$saved_but_refused",
+      "share_title": "$share_title",
+      "share_note": "$share_note",
+      "share_email_ph": "$share_email_ph",
+      "share_cta": "$share_cta",
+      "share_open": "$share_open",
+      "shared_with": "$shared_with",
+      "take_back": "$take_back",
+      "take_back_title": "$take_back_title",
+      "take_back_body": "$take_back_body",
+      "give_back": "$give_back",
+      "give_back_title": "$give_back_title",
+      "give_back_body": "$give_back_body",
+      "borrowed_tag": "$borrowed_tag",
+      "borrowed_owner": "$borrowed_owner",
+      "borrowed_rename_hint": "$borrowed_rename_hint",
+      "grant_since": "$grant_since",
+      "grant_until": "$grant_until",
+      "grant_active": "$grant_active",
+      "grant_revoked": "$grant_revoked",
+      "grant_returned": "$grant_returned",
+      "usage_card": "$usage_card",
+      "usage_note": "$usage_note",
+      "usage_search_ph": "$usage_search_ph",
+      "col_portal": "$col_portal",
+      "col_key": "$col_key",
+      "col_whose": "$col_whose",
+      "col_owner": "$col_owner",
+      "col_usedby": "$col_usedby",
+      "col_activity": "$col_activity",
+      "col_duration": "$col_duration",
+      "col_date": "$col_date",
+      "own_tag": "$own_tag",
+      "shared_tag": "$shared_tag",
+      "no_usage_title": "$no_usage_title",
+      "no_usage_body": "$no_usage_body",
+      "page_of": "$page_of",
+      "prev": "$prev",
+      "next": "$next",
+      "bills_card": "$bills_card",
+      "bills_note": "$bills_note",
+      "bill_owing": "$bill_owing",
+      "bill_push": "$bill_push",
+      "bill_push_title": "$bill_push_title",
+      "bill_push_body": "$bill_push_body",
+      "bill_note_ph": "$bill_note_ph",
+      "bills_sent": "$bills_sent",
+      "bills_received": "$bills_received",
+      "bill_settle": "$bill_settle",
+      "bill_settle_title": "$bill_settle_title",
+      "bill_settle_body": "$bill_settle_body",
+      "bill_settled": "$bill_settled",
+      "bill_unsettled": "$bill_unsettled",
+      "bill_line": "$bill_line",
+      "no_bills_title": "$no_bills_title",
+      "no_bills_body": "$no_bills_body",
+      "shared_card": "$shared_card",
+      "shared_note": "$shared_note",
+      "shared_lent": "$shared_lent",
+      "shared_held": "$shared_held",
+      "shared_none_lent": "$shared_none_lent",
+      "shared_none_held": "$shared_none_held",
+      "terms_title": "$terms_title",
+      "terms_markup": "$terms_markup",
+      "terms_markup_hint": "$terms_markup_hint",
+      "terms_cap_day": "$terms_cap_day",
+      "terms_cap_week": "$terms_cap_week",
+      "terms_cap_month": "$terms_cap_month",
+      "terms_cap_hint": "$terms_cap_hint",
+      "terms_save": "$terms_save",
+      "terms_edit": "$terms_edit",
+      "terms_saved": "$terms_saved",
+      "window_day": "$window_day",
+      "window_week": "$window_week",
+      "window_month": "$window_month",
+      "window_used": "$window_used",
+      "window_uncapped": "$window_uncapped",
+      "blocked_now": "$blocked_now",
+      "rates_title": "$rates_title",
+      "rates_preview": "$rates_preview",
+      "col_base": "$col_base",
+      "col_charged": "$col_charged",
+      "markup_col": "$markup_col",
+      "report_card": "$report_card",
+      "report_note": "$report_note",
+      "report_open": "$report_open",
+      "report_group_key": "$report_group_key",
+      "report_group_person": "$report_group_person",
+      "report_group_session": "$report_group_session",
+      "report_search_ph": "$report_search_ph",
+      "col_runs": "$col_runs",
+      "col_session": "$col_session",
+      "col_terms": "$col_terms",
+      "col_first": "$col_first",
+      "col_last": "$col_last",
+      "report_totals": "$report_totals",
+      "no_report_title": "$no_report_title",
+      "no_report_body": "$no_report_body",
+      "low_now": "$low_now",
+      "buy_more": "$buy_more",
+      "fund_save": "$fund_save",
+      "add_credit": "$add_credit",
+      "add_credit_tip": "$add_credit_tip",
+      "mc_card": "$mc_card",
+      "mc_note": "$mc_note",
+      "mc_check": "$mc_check",
+      "mc_title": "$mc_title",
+      "mc_lede": "$mc_lede",
+      "mc_same": "$mc_same",
+      "mc_new": "$mc_new",
+      "mc_gone": "$mc_gone",
+      "mc_kind_text": "$mc_kind_text",
+      "mc_kind_image": "$mc_kind_image",
+      "mc_kind_video": "$mc_kind_video",
+      "mc_in": "$mc_in",
+      "mc_out": "$mc_out",
+      "mc_per_image": "$mc_per_image",
+      "mc_per_second": "$mc_per_second",
+      "mc_quality": "$mc_quality",
+      "mc_good_for": "$mc_good_for",
+      "mc_add": "$mc_add",
+      "mc_price_first": "$mc_price_first",
+      "mc_added": "$mc_added",
+      "mc_gone_note": "$mc_gone_note",
+      "mc_gone_seen": "$mc_gone_seen",
+      "mc_retire": "$mc_retire",
+      "mc_retire_title": "$mc_retire_title",
+      "mc_retire_body": "$mc_retire_body",
+      "mc_retired": "$mc_retired",
+      "wallet_card": "$wallet_card",
+      "wallet_note": "$wallet_note",
+      "wallet_left": "$wallet_left",
+      "wallet_today": "$wallet_today",
+      "wallet_today_nocap": "$wallet_today_nocap",
+      "wallet_added_total": "$wallet_added_total",
+      "wallets_card": "$wallets_card",
+      "wallets_note": "$wallets_note",
+      "wallet_email": "$wallet_email",
+      "wallet_amount": "$wallet_amount",
+      "wallet_note_f": "$wallet_note_f",
+      "wallet_add": "$wallet_add",
+      "wallet_cap": "$wallet_cap",
+      "wallet_cap_go": "$wallet_cap_go",
+      "wallets_none": "$wallets_none",
+      "wallet_row": "$wallet_row",
+      "lent_count": "$lent_count",
+      "lent_manage": "$lent_manage",
+      "lent_title": "$lent_title",
+      "report_group_label": "$report_group_label"
+    }
+  },
+  "returns": "record",
+  "version": 2,
+  "status": "published",
+  "description_nl": "The words of one screen. {placeholders} are filled on the page. A language overrides any of them with chip ui.keys.<lang> (for example ui.keys.hi).",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "title": "Account & key",
+        "lede": "One thing in this portal talks to a paid service: <b>Draft with AI</b>, which sends your recording to Google Gemini. It runs on <b>your own key</b>, billed to <b>your own</b> Google account — never the portal's, never a colleague's.",
+        "how_to_get": "How to get a key",
+        "key_connected": "Gemini key connected",
+        "no_key": "No AI key yet",
+        "ready_line": "Draft with AI is on for your account, using <code>{model}</code>. Saved key ends {ends}.",
+        "no_key_line": "Everything else still works — write the script yourself, or run the LLM Bridge in a model you already pay for.",
+        "test_it": "Test it",
+        "replace_key": "Replace key",
+        "add_key": "Add my key",
+        "budget_card": "Budget &amp; spending",
+        "budget_note": "Google bills monthly and will not tell the portal your balance, so tell it what you are willing to spend. It subtracts what each run actually cost and warns you when the remainder gets thin. <a href=\"{guide}#budget\" target=\"_blank\" rel=\"noopener\">Set a real cap at Google →</a>",
+        "budgeted": "Budgeted",
+        "spent_here": "Spent here",
+        "left": "Left",
+        "budget_low": "Your budget is nearly used up. Top it up at Google, then raise the number here.",
+        "budget_label": "What I budgeted for Gemini ({code})",
+        "currency_label": "Show money in",
+        "currency_note": "Every provider bills in US dollars. Amounts here are shown in your currency at a fixed rate the owner keeps - a guide to what a run costs, not an invoice.",
+        "currency_saved": "Money is now shown in {code}.",
+        "rates_at": "Live rates as of {at} (refreshed once a day).",
+        "rates_fixed": "Fixed rates - the live feed has not answered yet.",
+        "rates_failed": "The last ask of the rate feed failed ({why}); the previous rates stay until it answers.",
+        "save_budget": "Save budget",
+        "account_card": "Your account",
+        "name": "Name",
+        "email": "Email",
+        "role": "Role",
+        "change_password": "Change password",
+        "privacy_note": "Your key, your recordings, your manuals and your projects are visible to your account alone. Nobody else signed in here can list them, open them or spend against your key.",
+        "runs_card": "What you have run",
+        "providers_card": "Other providers &amp; who does what",
+        "providers_note": "Gemini is the default for everything. Add another provider's key below and pick it for text (scripts, shot lists, imports, checks) or stills; the Film step picks its video model per run. Prices are the providers' published ones; every run is booked to that provider's own budget.",
+        "provider_pick": "{kind}: {label} · {model}",
+        "kind_text": "Text",
+        "kind_image": "Stills",
+        "kind_video": "Clips",
+        "choice_saved": "Saved: {kind} now goes to {label} · {model}.",
+        "needs_key": "no key yet",
+        "key_in": "key in",
+        "free_tag": "free",
+        "save_key": "Save key",
+        "key_saved": "{label} saved.",
+        "get_key": "get one",
+        "budget_for": "Money for {label}",
+        "price_text": "{in} in · {out} out per million tokens",
+        "price_image": "{usd} a still",
+        "price_video": "{low}–{high} a second",
+        "pool_title": "Your {label} keys",
+        "pool_note": "Keep several: a call goes to the default first, a key that hits its limit steps aside for an hour and the next one takes over, an invalid one waits until it passes a test. Every key stays on this server, shown by its last four characters only.",
+        "pool_add": "Add another key",
+        "pool_add_first": "Add key",
+        "budget_shared": "shared by every {label} key",
+        "pool_name": "Name (optional)",
+        "pool_added": "Key added.",
+        "pool_default": "Make default",
+        "pool_is_default": "default",
+        "pool_test": "Test",
+        "pool_remove": "Remove",
+        "pool_remove_title": "Remove {name}?",
+        "pool_remove_body": "The next key becomes the default. Nothing else changes.",
+        "status_active": "active",
+        "status_exhausted": "at its limit",
+        "status_invalid": "invalid",
+        "pool_since": "since {at}",
+        "runs_note": "Your own runs only. Every AI and metered call, whether it cost anything or not — a free voice run is listed too, so the record is whole.",
+        "col_when": "When",
+        "col_what": "What",
+        "col_provider": "Provider",
+        "col_cost": "Cost",
+        "col_time": "Time",
+        "free": "free",
+        "tokens": "{in} in / {out} out",
+        "no_runs_title": "Nothing run yet",
+        "no_runs_body": "Every AI draft and every generated video leaves a receipt here — what it cost, how long it took.",
+        "budget_saved": "Budget saved.",
+        "asking": "Asking Google…",
+        "test_ok": "Your key works with <code>{model}</code> — answered in {secs}s, cost {cost}.",
+        "test_switched": " Google does not offer <code>{from}</code> to this key, so your model is now <code>{model}</code>.",
+        "key_label": "Gemini API key",
+        "model_label": "Gemini model",
+        "dialog_title": "Your Gemini key",
+        "dialog_note": "The key stays on this server, for your account only. It is never shown to anyone — not even back to you: the box below only ever shows its last four characters. <a href=\"{guide}\" target=\"_blank\" rel=\"noopener\">How to get one, step by step →</a>",
+        "key_hint": "Starts with <code>AQ.…</code> (new keys) or <code>AIza…</code> (older ones). Paste it from aistudio.google.com/apikey.",
+        "label_label": "Label — whose account is this key from?",
+        "label_hint": "e.g. <i>explore.whattag Gmail</i> or <i>Work project</i>. When this key runs out, messages name it, so you know which account to top up.",
+        "pool_rename_hint": "Rename: say which account this key came from, so you know which one to top up.",
+        "pool_renamed": "Label saved.",
+        "model_hint": "Flash is the cheap one that watches video. Pro costs more and reads a busy screen better.",
+        "saving_tries": "Saving also tries it once — a fraction of a cent.",
+        "cancel": "Cancel",
+        "save_and_test": "Save and test",
+        "paste_first": "Paste your key first.",
+        "saved_asking": "Saved. Asking Google whether it works…",
+        "works_switched": "Key works. Google does not offer {from} to new keys, so your model is now {model}. Draft with AI is on.",
+        "works": "Key works with {model}. Draft with AI is on.",
+        "saved_but_refused": "The key is saved — fix it here and test again.",
+        "share_title": "Lend this key",
+        "share_note": "Someone with an account on this portal can run their own work on your key. It spends <b>your</b> balance, every run lands on your usage list, and you can take it back at any moment.",
+        "share_email_ph": "their email on this portal",
+        "share_cta": "Lend it",
+        "share_open": "Lend",
+        "shared_with": "Lent to",
+        "take_back": "Take back",
+        "take_back_title": "Take {name} back?",
+        "take_back_body": "They stop being able to spend on this key straight away. What they already ran stays on your usage list and can still be billed.",
+        "give_back": "Give back",
+        "give_back_title": "Give {name} back?",
+        "give_back_body": "You will not be able to run anything on it again unless its owner lends it to you once more.",
+        "borrowed_tag": "Borrowed",
+        "borrowed_owner": "from {owner}",
+        "borrowed_rename_hint": "Your own name for this key - its owner keeps theirs",
+        "grant_since": "since {at}",
+        "grant_until": "ended {at}",
+        "grant_active": "In use",
+        "grant_revoked": "Taken back",
+        "grant_returned": "Given back",
+        "usage_card": "Key usage",
+        "usage_note": "Every paid run this portal made on a key you own or a key you were lent - yours and other people's. A run somebody else made on your key shows only the beginning of what they called it; they see it whole and can check the bill against it.",
+        "usage_search_ph": "Search key, person, activity…",
+        "col_portal": "Portal",
+        "col_key": "Key",
+        "col_whose": "Own / lent",
+        "col_owner": "Key owner",
+        "col_usedby": "Used by",
+        "col_activity": "Activity",
+        "col_duration": "Duration",
+        "col_date": "Date",
+        "own_tag": "Own",
+        "shared_tag": "Shared",
+        "no_usage_title": "No paid runs yet",
+        "no_usage_body": "Anything that costs money - a draft, a voice, a picture, a film - lands here with the key that paid for it.",
+        "page_of": "Page {page} of {pages} · {total} {total:run|runs}",
+        "prev": "Back",
+        "next": "Next",
+        "bills_card": "Bills",
+        "bills_note": "What people owe you for using your keys, and what you owe for using theirs. Money moves outside this portal; this is the record of it.",
+        "bill_owing": "Not billed yet",
+        "bill_push": "Send bill",
+        "bill_push_title": "Send {name} a bill for {amount}?",
+        "bill_push_body": "{runs} runs on {label}. They see it on their own Account &amp; key screen, with every run behind it.",
+        "bill_note_ph": "what this bill is for (optional)",
+        "bills_sent": "Bills you sent",
+        "bills_received": "Bills sent to you",
+        "bill_settle": "Mark as paid",
+        "bill_settle_title": "Mark {amount} to {owner} as paid?",
+        "bill_settle_body": "This records that you settled it. It does not move any money.",
+        "bill_settled": "Paid {at}",
+        "bill_unsettled": "Waiting",
+        "bill_line": "{runs} runs · {amount} · {from_at} to {to_at}",
+        "no_bills_title": "Nothing owed either way",
+        "no_bills_body": "Lend a key and a bill line appears here the moment somebody spends on it.",
+        "shared_card": "Shared keys",
+        "shared_note": "Keys you lent to other people, and keys other people lent to you. A lent key spends the OWNER's balance, on the owner's terms.",
+        "shared_lent": "Keys you lent",
+        "shared_held": "Keys lent to you",
+        "shared_none_lent": "You have not lent a key to anyone.",
+        "shared_none_held": "Nobody has lent you a key.",
+        "terms_title": "Terms for {name}",
+        "terms_markup": "Add on top of what each run costs (%)",
+        "terms_markup_hint": "0 means they pay exactly what the provider charges you. They only ever see the price with this added.",
+        "terms_cap_day": "Cap per day ({code})",
+        "terms_cap_week": "Cap per week ({code})",
+        "terms_cap_month": "Cap per month ({code})",
+        "terms_cap_hint": "0 means no cap. Measured on a rolling window, on the price they see. The key stops working when a cap is spent and starts again as the window rolls on.",
+        "terms_save": "Save terms",
+        "terms_edit": "Terms",
+        "terms_saved": "Terms saved.",
+        "window_day": "Day",
+        "window_week": "Week",
+        "window_month": "Month",
+        "window_used": "{spent} of {cap}",
+        "window_uncapped": "no cap",
+        "blocked_now": "Stopped",
+        "rates_title": "Roughly what this will cost you",
+        "rates_preview": "What they will be quoted",
+        "col_base": "Real cost",
+        "col_charged": "Charged",
+        "markup_col": "Mark-up",
+        "report_card": "Shared key report",
+        "report_note": "Every run other people made on your keys: what the provider really charged you, and what you charge them.",
+        "report_open": "Open report",
+        "report_group_key": "By key",
+        "report_group_person": "By person",
+        "report_group_session": "By sitting",
+        "report_search_ph": "Search key, person…",
+        "col_runs": "Runs",
+        "col_session": "Sitting",
+        "col_terms": "Terms",
+        "col_first": "First",
+        "col_last": "Last",
+        "report_totals": "{runs} runs · real {base} · charged {charged}",
+        "no_report_title": "Nobody has spent on your keys yet",
+        "no_report_body": "Lend a key and every run made on it turns up here, per key, per person and per sitting.",
+        "low_now": "Running low",
+        "buy_more": "Buy more",
+        "fund_save": "Save the amount loaded on this key",
+        "add_credit": "Add credit",
+        "add_credit_tip": "Opens this provider's own page, where you add money to the account behind this key. Then press Test - a stopped key starts again.",
+        "mc_card": "AI models",
+        "mc_note": "Providers add and withdraw models often. Check asks each provider (with your keys) what it offers today: add a new model in one click, retire one that is gone. A model a call finds withdrawn leaves every list by itself.",
+        "mc_check": "Check models",
+        "mc_title": "Models the providers offer today",
+        "mc_lede": "New = offered by the provider, not yet in the portal. Gone = in the portal, not offered any more. Adding and retiring are saved as new versions of the model chips (history kept).",
+        "mc_same": "Nothing new, nothing gone.",
+        "mc_new": "New",
+        "mc_gone": "Gone",
+        "mc_kind_text": "text",
+        "mc_kind_image": "picture",
+        "mc_kind_video": "video",
+        "mc_in": "$ per 1M in",
+        "mc_out": "$ per 1M out",
+        "mc_per_image": "$ per picture",
+        "mc_per_second": "$ per second",
+        "mc_quality": "Quality (your rating)",
+        "mc_good_for": "Good for...",
+        "mc_add": "Add",
+        "mc_price_first": "Type its price first - the portal never guesses a price (see the provider's pricing page).",
+        "mc_added": "{model} added - it is in every model picker now.",
+        "mc_gone_note": "{provider} no longer lists it.",
+        "mc_gone_seen": "A call was refused: the provider said this model is gone. It is already out of the pickers.",
+        "mc_retire": "Retire",
+        "mc_retire_title": "Retire {model}?",
+        "mc_retire_body": "It leaves every model picker for good (its prices stay, for the history of what was spent). Anything saved with it asks for another model the next time AI is pressed.",
+        "mc_retired": "{model} retired.",
+        "wallet_card": "SteadyMove credit",
+        "wallet_note": "The portal lends you its keys and takes what each run costs from this one balance. A picture the check throws away is never charged.",
+        "wallet_left": "{left} left",
+        "wallet_today": "{today} used today of {cap}",
+        "wallet_today_nocap": "{today} used today",
+        "wallet_added_total": "{added} added in all, {refunded} given back for redrawn pictures",
+        "wallets_card": "Wallets (portal owner)",
+        "wallets_note": "Someone pays you by UPI or bank; add the same amount here. Your default key for each provider is lent to them, and every run draws on their one balance.",
+        "wallet_email": "Their email",
+        "wallet_amount": "Amount",
+        "wallet_note_f": "Note (UPI reference)",
+        "wallet_add": "Add credit",
+        "wallet_cap": "Daily limit",
+        "wallet_cap_go": "Set limit",
+        "wallets_none": "No wallets yet.",
+        "wallet_row": "{email}: {left} left · {today} today",
+        "lent_count": "People holding this key: {n}",
+        "lent_manage": "Manage",
+        "lent_title": "Who holds this key",
+        "report_group_label": "Group the report by"
+      }
+    }
+  ],
+  "weight_basis": "Wording only. Every word on this screen lives here, never in JavaScript."
+}

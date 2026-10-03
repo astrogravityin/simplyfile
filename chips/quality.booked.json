@@ -1,0 +1,440 @@
+{
+  "chip_id": "quality.booked",
+  "kind": "accessor",
+  "set": "quality",
+  "label": "Status line: runs, work time, AI used and which time line shows - the record's own book when the run log has rolled past them",
+  "aliases": [
+    "quality booked"
+  ],
+  "params": [
+    {
+      "name": "logged",
+      "type": "json",
+      "default": {},
+      "label": "What the run log says (runs, work_s, models, last_at)"
+    },
+    {
+      "name": "booked",
+      "type": "json",
+      "default": {},
+      "label": "The record's own spend book (runs, work_s, provider, model, cost_usd, at)"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "runs": {
+        "vop": "largest",
+        "values": [
+          {
+            "vop": "get",
+            "path": "runs",
+            "value": "$logged"
+          },
+          {
+            "vop": "get",
+            "path": "runs",
+            "value": "$booked"
+          },
+          0
+        ]
+      },
+      "work_s": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "gt",
+                  "left": {
+                    "vop": "coalesce",
+                    "values": [
+                      {
+                        "vop": "get",
+                        "path": "runs",
+                        "value": "$booked"
+                      },
+                      0
+                    ]
+                  },
+                  "right": {
+                    "vop": "coalesce",
+                    "values": [
+                      {
+                        "vop": "get",
+                        "path": "runs",
+                        "value": "$logged"
+                      },
+                      0
+                    ]
+                  }
+                },
+                {
+                  "op": "eq",
+                  "left": {
+                    "vop": "coalesce",
+                    "values": [
+                      {
+                        "vop": "get",
+                        "path": "work_s",
+                        "value": "$booked"
+                      },
+                      "none"
+                    ]
+                  },
+                  "right": "none"
+                }
+              ]
+            },
+            "then": null
+          }
+        ],
+        "else": {
+          "vop": "largest",
+          "values": [
+            {
+              "vop": "get",
+              "path": "work_s",
+              "value": "$logged"
+            },
+            {
+              "vop": "get",
+              "path": "work_s",
+              "value": "$booked"
+            },
+            0
+          ]
+        }
+      },
+      "last_at": {
+        "vop": "coalesce",
+        "values": [
+          {
+            "vop": "get",
+            "path": "last_at",
+            "value": "$logged"
+          },
+          {
+            "vop": "get",
+            "path": "at",
+            "value": "$booked"
+          }
+        ]
+      },
+      "models": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "gt",
+              "left": {
+                "vop": "count",
+                "items": {
+                  "vop": "get",
+                  "path": "models",
+                  "value": "$logged"
+                }
+              },
+              "right": 0
+            },
+            "then": {
+              "vop": "get",
+              "path": "models",
+              "value": "$logged"
+            }
+          },
+          {
+            "when": {
+              "vop": "get",
+              "path": "provider",
+              "value": "$booked"
+            },
+            "then": [
+              {
+                "vop": "record",
+                "fields": {
+                  "provider": {
+                    "vop": "get",
+                    "path": "provider",
+                    "value": "$booked"
+                  },
+                  "model": {
+                    "vop": "get",
+                    "path": "model",
+                    "value": "$booked"
+                  },
+                  "runs": {
+                    "vop": "get",
+                    "path": "runs",
+                    "value": "$booked"
+                  },
+                  "cost_usd": {
+                    "vop": "get",
+                    "path": "cost_usd",
+                    "value": "$booked"
+                  },
+                  "elapsed_s": {
+                    "vop": "get",
+                    "path": "work_s",
+                    "value": "$booked"
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "else": []
+      },
+      "time_word": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "vop": "get",
+              "path": "first_at",
+              "value": "$logged"
+            },
+            "then": "st_since"
+          },
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "vop": "coalesce",
+                  "values": [
+                    {
+                      "vop": "get",
+                      "path": "last_at",
+                      "value": "$logged"
+                    },
+                    {
+                      "vop": "get",
+                      "path": "at",
+                      "value": "$booked"
+                    }
+                  ]
+                },
+                {
+                  "op": "all",
+                  "items": [
+                    {
+                      "op": "gt",
+                      "left": {
+                        "vop": "coalesce",
+                        "values": [
+                          {
+                            "vop": "get",
+                            "path": "runs",
+                            "value": "$booked"
+                          },
+                          0
+                        ]
+                      },
+                      "right": {
+                        "vop": "coalesce",
+                        "values": [
+                          {
+                            "vop": "get",
+                            "path": "runs",
+                            "value": "$logged"
+                          },
+                          0
+                        ]
+                      }
+                    },
+                    {
+                      "op": "eq",
+                      "left": {
+                        "vop": "coalesce",
+                        "values": [
+                          {
+                            "vop": "get",
+                            "path": "work_s",
+                            "value": "$booked"
+                          },
+                          "none"
+                        ]
+                      },
+                      "right": "none"
+                    }
+                  ]
+                }
+              ]
+            },
+            "then": "st_last_only"
+          },
+          {
+            "when": {
+              "vop": "coalesce",
+              "values": [
+                {
+                  "vop": "get",
+                  "path": "last_at",
+                  "value": "$logged"
+                },
+                {
+                  "vop": "get",
+                  "path": "at",
+                  "value": "$booked"
+                }
+              ]
+            },
+            "then": "st_last"
+          }
+        ],
+        "else": "st_no_runs"
+      },
+      "time_at": {
+        "vop": "coalesce",
+        "values": [
+          {
+            "vop": "get",
+            "path": "first_at",
+            "value": "$logged"
+          },
+          {
+            "vop": "coalesce",
+            "values": [
+              {
+                "vop": "get",
+                "path": "last_at",
+                "value": "$logged"
+              },
+              {
+                "vop": "get",
+                "path": "at",
+                "value": "$booked"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-03 owner (Comic page: '$1.96 spent' beside '0 paid runs' and 'No AI used yet'): the run log is a capped roll, so an older asset's runs roll off it while its own spend book keeps them. Runs and work time = the larger of the two; the last run = the log's, else the book's; AI used = the log's models, else the book's one provider and model. The time line: 'first run' when the log knows it, else 'last run' from the book, else 'no paid run yet' (time_word + time_at - the page picks nothing). Work time is unknown (blank, never 0s) when the book holds runs the log lost and the book never kept their time. With the time unknown the line is 'last run {last}' alone.",
+  "test_cases": [
+    {
+      "args": {
+        "logged": {
+          "runs": 0,
+          "work_s": 0,
+          "models": [],
+          "last_at": null
+        },
+        "booked": {
+          "runs": 180,
+          "work_s": 1311.2,
+          "provider": "openai",
+          "model": "gpt-image-1",
+          "cost_usd": 1.96,
+          "at": "2026-09-24T10:00:00+00:00"
+        }
+      },
+      "expect_value": {
+        "runs": 180,
+        "work_s": 1311.2,
+        "last_at": "2026-09-24T10:00:00+00:00",
+        "models": [
+          {
+            "provider": "openai",
+            "model": "gpt-image-1",
+            "runs": 180,
+            "cost_usd": 1.96,
+            "elapsed_s": 1311.2
+          }
+        ],
+        "time_word": "st_last",
+        "time_at": "2026-09-24T10:00:00+00:00"
+      }
+    },
+    {
+      "args": {
+        "logged": {
+          "runs": 3,
+          "work_s": 9,
+          "models": [
+            {
+              "provider": "google",
+              "model": "g"
+            }
+          ],
+          "last_at": "2026-10-01T00:00:00+00:00",
+          "first_at": "2026-10-01T00:00:00+00:00"
+        },
+        "booked": {
+          "runs": 2
+        }
+      },
+      "expect_value": {
+        "runs": 3,
+        "work_s": 9,
+        "last_at": "2026-10-01T00:00:00+00:00",
+        "models": [
+          {
+            "provider": "google",
+            "model": "g"
+          }
+        ],
+        "time_word": "st_since",
+        "time_at": "2026-10-01T00:00:00+00:00"
+      }
+    },
+    {
+      "args": {
+        "logged": {
+          "runs": 0,
+          "work_s": 0,
+          "models": []
+        },
+        "booked": {}
+      },
+      "expect_value": {
+        "runs": 0,
+        "work_s": 0,
+        "last_at": null,
+        "models": [],
+        "time_word": "st_no_runs",
+        "time_at": null
+      }
+    },
+    {
+      "args": {
+        "logged": {
+          "runs": 0,
+          "work_s": 0,
+          "models": [],
+          "last_at": null
+        },
+        "booked": {
+          "runs": 180,
+          "provider": "openai",
+          "model": "gpt-image-1",
+          "cost_usd": 1.96,
+          "at": "2026-09-24T10:00:00+00:00"
+        }
+      },
+      "expect_value": {
+        "runs": 180,
+        "work_s": null,
+        "last_at": "2026-09-24T10:00:00+00:00",
+        "models": [
+          {
+            "provider": "openai",
+            "model": "gpt-image-1",
+            "runs": 180,
+            "cost_usd": 1.96,
+            "elapsed_s": null
+          }
+        ],
+        "time_word": "st_last_only",
+        "time_at": "2026-09-24T10:00:00+00:00"
+      }
+    }
+  ]
+}

@@ -1,0 +1,68 @@
+{
+  "chip_id": "page.video",
+  "kind": "accessor",
+  "set": "page",
+  "label": "Videos page: the colours of the shorts on the band, how much of a line a question quotes",
+  "aliases": [
+    "video page settings"
+  ],
+  "params": [
+    {
+      "name": "short_colours",
+      "type": "list",
+      "default": [
+        "#6366f1",
+        "#0ea5e9",
+        "#10b981",
+        "#f59e0b",
+        "#ef4444",
+        "#a855f7",
+        "#14b8a6",
+        "#f97316"
+      ]
+    },
+    {
+      "name": "quote_chars",
+      "type": "number",
+      "default": 90
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "short_colours": "$short_colours",
+      "quote_chars": "$quote_chars",
+      "title_max": {
+        "vop": "get",
+        "value": {
+          "chip": "portal.settings"
+        },
+        "path": "title_max"
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-09-26 (owner: 'move the rest to chips'): the page's own numbers, lists and maps - they were written in its JavaScript. Loaded with the page's words (core/words.py), read with ps('video').",
+  "weight_basis": "page",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "short_colours": [
+          "#6366f1",
+          "#0ea5e9",
+          "#10b981",
+          "#f59e0b",
+          "#ef4444",
+          "#a855f7",
+          "#14b8a6",
+          "#f97316"
+        ],
+        "quote_chars": 90,
+        "title_max": 120
+      }
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "chip_id": "intake.ref",
+  "kind": "accessor",
+  "set": "intake",
+  "label": "SF Ref grammar: forms, 3CD clauses and ITR schedules",
+  "aliases": [
+    "intake ref"
+  ],
+  "params": [
+    {
+      "name": "pattern",
+      "type": "long",
+      "default": "(3CD|ITR-?3|ITR-?5)\\s+([A-Za-z0-9().]+)(?:\\s*#\\s*([\\w().]+)|\\s+([\\w().]+))?",
+      "label": "pattern"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "pattern": "$pattern"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "An SF Ref is <form> <table> [#serial]: form 3CD, ITR3 or ITR5; for 3CD the table is a clause 1-44 with its letters, e.g. 31(a); for an ITR the table is a schedule code from this list. Several are joined with ';'.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "pattern": "(3CD|ITR-?3|ITR-?5)\\s+([A-Za-z0-9().]+)(?:\\s*#\\s*([\\w().]+)|\\s+([\\w().]+))?"
+      }
+    }
+  ]
+}

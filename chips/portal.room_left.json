@@ -1,0 +1,71 @@
+{
+  "chip_id": "portal.room_left",
+  "kind": "accessor",
+  "set": "portal",
+  "label": "Bytes an account may still add",
+  "aliases": [
+    "space left"
+  ],
+  "params": [
+    {
+      "name": "used_bytes",
+      "type": "number",
+      "default": 0
+    },
+    {
+      "name": "quota_bytes",
+      "type": "number",
+      "default": 0
+    }
+  ],
+  "expr": {
+    "vop": "choose",
+    "cases": [
+      {
+        "when": {
+          "op": "gt",
+          "left": "$quota_bytes",
+          "right": 0
+        },
+        "then": {
+          "vop": "clamp",
+          "value": {
+            "vop": "sub",
+            "a": "$quota_bytes",
+            "b": "$used_bytes"
+          },
+          "low": 0
+        }
+      }
+    ],
+    "else": null
+  },
+  "returns": "number",
+  "version": 1,
+  "status": "published",
+  "description_nl": "The quota less what is held, never below 0. Blank (no number) when there is no quota, so a screen shows no limit rather than 0 left.",
+  "test_cases": [
+    {
+      "args": {
+        "used_bytes": 30,
+        "quota_bytes": 100
+      },
+      "expect_value": 70
+    },
+    {
+      "args": {
+        "used_bytes": 130,
+        "quota_bytes": 100
+      },
+      "expect_value": 0
+    },
+    {
+      "args": {
+        "used_bytes": 30,
+        "quota_bytes": 0
+      },
+      "expect_value": null
+    }
+  ],
+  "weight_basis": "A yes/no or a value the portal acts on. The knobs ARE the policy — edit them here, never in Python."
+}

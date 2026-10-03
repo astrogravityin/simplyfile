@@ -1,0 +1,50 @@
+{
+  "chip_id": "geo.messages",
+  "kind": "accessor",
+  "set": "geo",
+  "audience": "admin",
+  "label": "Every sentence the IP-to-place database reports",
+  "aliases": [
+    "geoip errors"
+  ],
+  "params": [
+    {
+      "name": "not_mmdb",
+      "type": "text",
+      "default": "{file} is not a MaxMind DB file"
+    },
+    {
+      "name": "bad_record_size",
+      "type": "text",
+      "default": "unsupported record size {size}"
+    },
+    {
+      "name": "download_failed",
+      "type": "text",
+      "default": "could not download the DB-IP database: {error}"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "not_mmdb": "$not_mmdb",
+      "bad_record_size": "$bad_record_size",
+      "download_failed": "$download_failed"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "Shown on the Visitors page when the database cannot be used. {file}, {size}, {error} fill in.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "not_mmdb": "{file} is not a MaxMind DB file",
+        "bad_record_size": "unsupported record size {size}",
+        "download_failed": "could not download the DB-IP database: {error}"
+      }
+    }
+  ],
+  "weight_basis": "Platform operations primitive, no business content. The knobs ARE the policy — edit them here, never in Python."
+}

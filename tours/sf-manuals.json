@@ -1,0 +1,99 @@
+{
+  "page_key": "sf-manuals",
+  "title": "User manuals",
+  "start_url": "/#/manuals",
+  "prod_base": "https://sf.valuestream.in",
+  "voice": "en-IN-NeerjaNeural",
+  "rate": "+0%",
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "blur": [
+    "#whoami",
+    "#userpop .head",
+    ".tile .meta b",
+    "#vd-title"
+  ],
+  "covers": [
+    "manual list",
+    "new manual",
+    "cover page",
+    "pages",
+    "add a page",
+    "preview",
+    "download",
+    "publish"
+  ],
+  "steps": [
+    {
+      "chapter": "Welcome",
+      "say": "The User Manual Builder writes a manual once. It downloads as one file, prints to PDF, and publishes as a page anybody can read.",
+      "do": [
+        {
+          "wait_for": "#mn-new"
+        },
+        {
+          "highlight": "#mn-new",
+          "optional": true
+        }
+      ]
+    },
+    {
+      "chapter": "Write",
+      "say": "New manual opens the editor. Nothing is kept until you save.",
+      "do": [
+        {
+          "click": "#mn-new"
+        },
+        {
+          "wait": 1.5
+        },
+        {
+          "highlight": "#c-title",
+          "optional": true
+        }
+      ]
+    },
+    {
+      "say": "The cover page takes a title, a subtitle, the author, the version and a picture.",
+      "do": [
+        {
+          "highlight": "#c-sub",
+          "optional": true
+        },
+        {
+          "highlight": "#c-author",
+          "optional": true
+        }
+      ]
+    },
+    {
+      "say": "Then add a page for each screen, with its picture and its steps.",
+      "do": [
+        {
+          "highlight": "#mn-pages",
+          "optional": true
+        },
+        {
+          "highlight": "#mn-addpage",
+          "optional": true
+        }
+      ]
+    },
+    {
+      "chapter": "Share",
+      "say": "Preview shows it as a reader will see it. Publish puts it on a read-only page, and once it is saved, Download gives you the single file.",
+      "do": [
+        {
+          "highlight": "#mn-preview",
+          "optional": true
+        },
+        {
+          "highlight": "#mn-publish",
+          "optional": true
+        }
+      ]
+    }
+  ]
+}

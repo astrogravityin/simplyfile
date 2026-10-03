@@ -1,0 +1,36 @@
+{
+  "chip_id": "list.backlog",
+  "kind": "accessor",
+  "set": "list",
+  "label": "Lists still sent to the screen whole (to be moved onto list.<id>)",
+  "aliases": [
+    "list backlog",
+    "paging backlog"
+  ],
+  "params": [
+    {
+      "name": "lists",
+      "type": "list",
+      "default": [],
+      "label": "lists"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "lists": "$lists"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-09-28 owner: 'it goes beyond 10 we are gone'. A list that grows with the NUMBER OF PEOPLE (everyone's accounts, grants, wallets, bills, orders, members, works) is list.<id> + lists.source + listBox - never sent whole. Any such list still sent whole is named here; tv selfcheck fails if this grows. A person's OWN items (their projects, manuals, recordings) are not on it, but are found through an index, never by scanning everyone's (narrator.owners).",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "lists": []
+      }
+    }
+  ]
+}

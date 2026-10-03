@@ -1,0 +1,123 @@
+{
+  "chip_id": "tourvideo.settings",
+  "kind": "accessor",
+  "set": "tourvideo",
+  "label": "Tour Video: where the runner and the videos are",
+  "aliases": [
+    "tourvideo settings"
+  ],
+  "params": [
+    {
+      "name": "runner",
+      "type": "text",
+      "default": "tools/tour_video/make_tour.py",
+      "label": "runner"
+    },
+    {
+      "name": "out_dir",
+      "type": "text",
+      "default": "tmp/tour_video",
+      "label": "out dir"
+    },
+    {
+      "name": "tours_dir",
+      "type": "text",
+      "default": "tours",
+      "label": "tours dir"
+    },
+    {
+      "name": "tours_glob",
+      "type": "text",
+      "default": "sf-*.json",
+      "label": "tours glob"
+    },
+    {
+      "name": "python",
+      "type": "text",
+      "default": "python",
+      "label": "python"
+    },
+    {
+      "name": "log_keep",
+      "type": "number",
+      "default": 200,
+      "label": "log keep"
+    },
+    {
+      "name": "install",
+      "type": "long",
+      "default": "pip install -r tools/tour_video/requirements.txt && python -m playwright install chromium",
+      "label": "install"
+    },
+    {
+      "name": "files",
+      "type": "list",
+      "default": [
+        {
+          "id": "mp4",
+          "name": "{key}.mp4",
+          "type": "video/mp4"
+        },
+        {
+          "id": "srt",
+          "name": "{key}.srt",
+          "type": "text/plain"
+        },
+        {
+          "id": "txt",
+          "name": "description.txt",
+          "type": "text/plain"
+        }
+      ],
+      "label": "files"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "runner": "$runner",
+      "out_dir": "$out_dir",
+      "tours_dir": "$tours_dir",
+      "tours_glob": "$tours_glob",
+      "python": "$python",
+      "log_keep": "$log_keep",
+      "install": "$install",
+      "files": "$files"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-02 owner: \"bring Tour Video from AstroStage to sm, visible to portal admin\". The screen runs AstroStage's own runner (tools/tour_video/make_tour.py, skill module-tour-video) on each SteadyMove tour script (tours/<tours_glob>): Check steps walks it without sound, Record makes the narrated MP4 + subtitles + YouTube chapters, Sign in opens a window on this computer once. Paths are from the repo root. python = the Python that has Playwright and edge-tts (a hosting fact); install = what to run when it does not. One job at a time; the last log_keep lines are kept.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "runner": "tools/tour_video/make_tour.py",
+        "out_dir": "tmp/tour_video",
+        "tours_dir": "tours",
+        "tours_glob": "sf-*.json",
+        "python": "python",
+        "log_keep": 200,
+        "install": "pip install -r tools/tour_video/requirements.txt && python -m playwright install chromium",
+        "files": [
+          {
+            "id": "mp4",
+            "name": "{key}.mp4",
+            "type": "video/mp4"
+          },
+          {
+            "id": "srt",
+            "name": "{key}.srt",
+            "type": "text/plain"
+          },
+          {
+            "id": "txt",
+            "name": "description.txt",
+            "type": "text/plain"
+          }
+        ]
+      }
+    }
+  ]
+}

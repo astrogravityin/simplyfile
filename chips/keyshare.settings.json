@@ -1,0 +1,147 @@
+{
+  "chip_id": "keyshare.settings",
+  "kind": "accessor",
+  "set": "keyshare",
+  "label": "Lending a key: how many people, what the owner may see of a borrower's work, the usage table, bills",
+  "aliases": [
+    "key sharing settings",
+    "shared key knobs"
+  ],
+  "params": [
+    {
+      "name": "keys_shared_max",
+      "type": "number",
+      "default": 25,
+      "label": "People one key may be lent to at once"
+    },
+    {
+      "name": "holder_label_max",
+      "type": "number",
+      "default": 40,
+      "label": "Longest name the borrower may give a borrowed key"
+    },
+    {
+      "name": "usage_page_size",
+      "type": "number",
+      "default": 25,
+      "label": "Usage rows on one page"
+    },
+    {
+      "name": "usage_max_page_size",
+      "type": "number",
+      "default": 200,
+      "label": "Most usage rows one page may ask for"
+    },
+    {
+      "name": "usage_sort_key",
+      "type": "text",
+      "default": "at",
+      "label": "Usage table sorts on this field"
+    },
+    {
+      "name": "usage_sort_desc",
+      "type": "boolean",
+      "default": true,
+      "label": "Newest usage first"
+    },
+    {
+      "name": "usage_search_keys",
+      "type": "list",
+      "default": [
+        "activity",
+        "key_label",
+        "owner_name",
+        "used_by",
+        "provider",
+        "model"
+      ],
+      "label": "Fields the usage search box looks in"
+    },
+    {
+      "name": "owner_sees_chars",
+      "type": "number",
+      "default": 14,
+      "label": "Characters of a borrower's activity name the key owner sees"
+    },
+    {
+      "name": "owner_sees_tail",
+      "type": "text",
+      "default": "…",
+      "label": "Put after a shortened activity name"
+    },
+    {
+      "name": "bills_kept",
+      "type": "number",
+      "default": 500,
+      "label": "Bills kept per portal"
+    },
+    {
+      "name": "bill_note_max",
+      "type": "number",
+      "default": 300,
+      "label": "Longest note on a bill"
+    },
+    {
+      "name": "markup_max_pct",
+      "type": "number",
+      "default": 500,
+      "label": "Most a lender may add on top (per cent)"
+    },
+    {
+      "name": "report_page_size",
+      "type": "number",
+      "default": 30,
+      "label": "Report lines on one page"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "keys_shared_max": "$keys_shared_max",
+      "holder_label_max": "$holder_label_max",
+      "usage_page_size": "$usage_page_size",
+      "usage_max_page_size": "$usage_max_page_size",
+      "usage_sort_key": "$usage_sort_key",
+      "usage_sort_desc": "$usage_sort_desc",
+      "usage_search_keys": "$usage_search_keys",
+      "owner_sees_chars": "$owner_sees_chars",
+      "owner_sees_tail": "$owner_sees_tail",
+      "bills_kept": "$bills_kept",
+      "bill_note_max": "$bill_note_max",
+      "markup_max_pct": "$markup_max_pct",
+      "report_page_size": "$report_page_size"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "keys_shared_max: how many people one key may be lent to at once. holder_label_max: the borrower names a borrowed key for themselves (usually the owner's name) - this is how long that may be. usage_page_size, usage_max_page_size, usage_sort_key, usage_sort_desc, usage_search_keys: the usage table. owner_sees_chars and owner_sees_tail: a key's owner sees only this much of what a borrower called their work - enough to recognise a run they are billed for, not the whole title; the borrower sees it in full and can cross-check the bill. bills_kept, bill_note_max: bills. markup_max_pct: the largest mark-up a lender may type. report_page_size: lines on one page of the lender's shared-key report.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "keys_shared_max": 25,
+        "holder_label_max": 40,
+        "usage_page_size": 25,
+        "usage_max_page_size": 200,
+        "usage_sort_key": "at",
+        "usage_sort_desc": true,
+        "usage_search_keys": [
+          "activity",
+          "key_label",
+          "owner_name",
+          "used_by",
+          "provider",
+          "model"
+        ],
+        "owner_sees_chars": 14,
+        "owner_sees_tail": "…",
+        "bills_kept": 500,
+        "bill_note_max": 300,
+        "markup_max_pct": 500,
+        "report_page_size": 30
+      }
+    }
+  ],
+  "weight_basis": "Every limit and every column of key sharing. Edit here, never in Python."
+}

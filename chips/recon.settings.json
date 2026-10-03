@@ -1,0 +1,177 @@
+{
+  "chip_id": "recon.settings",
+  "kind": "accessor",
+  "set": "recon",
+  "label": "Reconcile: files, tolerances, which heads are compared, what a red finding blocks",
+  "aliases": [
+    "recon settings"
+  ],
+  "params": [
+    {
+      "name": "exts",
+      "type": "list",
+      "default": [
+        ".txt",
+        ".csv",
+        ".xls",
+        ".xlsx"
+      ],
+      "label": "exts"
+    },
+    {
+      "name": "max_mb",
+      "type": "number",
+      "default": 20,
+      "label": "max mb"
+    },
+    {
+      "name": "tds_tables",
+      "type": "list",
+      "default": [
+        "TDS1",
+        "TDS2",
+        "TDS3"
+      ],
+      "label": "tds tables"
+    },
+    {
+      "name": "paid_tables",
+      "type": "list",
+      "default": [
+        "IT"
+      ],
+      "label": "paid tables"
+    },
+    {
+      "name": "compare_groups",
+      "type": "list",
+      "default": [
+        "OS",
+        "HP"
+      ],
+      "label": "compare groups"
+    },
+    {
+      "name": "name_stop_words",
+      "type": "list",
+      "default": [
+        "ltd",
+        "limited",
+        "pvt",
+        "private",
+        "the",
+        "and",
+        "bank",
+        "co",
+        "company",
+        "india",
+        "branch",
+        "corporation"
+      ],
+      "label": "name stop words"
+    },
+    {
+      "name": "min_word_len",
+      "type": "number",
+      "default": 3,
+      "label": "min word len"
+    },
+    {
+      "name": "sniff_lines",
+      "type": "number",
+      "default": 60,
+      "label": "sniff lines"
+    },
+    {
+      "name": "note_max",
+      "type": "number",
+      "default": 500,
+      "label": "note max"
+    },
+    {
+      "name": "severity_order",
+      "type": "list",
+      "default": [
+        "red",
+        "amber",
+        "ok"
+      ],
+      "label": "severity order"
+    },
+    {
+      "name": "file_name_max",
+      "type": "number",
+      "default": 160,
+      "label": "file name max"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "exts": "$exts",
+      "max_mb": "$max_mb",
+      "tds_tables": "$tds_tables",
+      "paid_tables": "$paid_tables",
+      "compare_groups": "$compare_groups",
+      "name_stop_words": "$name_stop_words",
+      "min_word_len": "$min_word_len",
+      "sniff_lines": "$sniff_lines",
+      "note_max": "$note_max",
+      "severity_order": "$severity_order",
+      "file_name_max": "$file_name_max"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "Which portal files are read and how big; how far two amounts may differ and still agree (rupees, or percent of the portal figure, whichever is larger); which ITR tables hold TDS and tax paid; which income heads are compared; the stages a year cannot reach while a red finding is unexplained; words ignored when matching names.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "exts": [
+          ".txt",
+          ".csv",
+          ".xls",
+          ".xlsx"
+        ],
+        "max_mb": 20,
+        "tds_tables": [
+          "TDS1",
+          "TDS2",
+          "TDS3"
+        ],
+        "paid_tables": [
+          "IT"
+        ],
+        "compare_groups": [
+          "OS",
+          "HP"
+        ],
+        "name_stop_words": [
+          "ltd",
+          "limited",
+          "pvt",
+          "private",
+          "the",
+          "and",
+          "bank",
+          "co",
+          "company",
+          "india",
+          "branch",
+          "corporation"
+        ],
+        "min_word_len": 3,
+        "sniff_lines": 60,
+        "note_max": 500,
+        "severity_order": [
+          "red",
+          "amber",
+          "ok"
+        ],
+        "file_name_max": 160
+      }
+    }
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "chip_id": "ledger.stored_referrer",
+  "kind": "accessor",
+  "set": "ledger",
+  "audience": "admin",
+  "label": "Where a visitor came from, site only",
+  "aliases": [],
+  "params": [
+    {
+      "name": "referrer",
+      "type": "text",
+      "default": ""
+    },
+    {
+      "name": "pattern",
+      "type": "text",
+      "default": "^(https?://[^/?#]+)"
+    },
+    {
+      "name": "max_length",
+      "type": "number",
+      "default": 120
+    }
+  ],
+  "expr": {
+    "vop": "truncate",
+    "text": {
+      "vop": "coalesce",
+      "values": [
+        {
+          "vop": "text_pick",
+          "text": "$referrer",
+          "pattern": "$pattern"
+        },
+        ""
+      ]
+    },
+    "length": "$max_length"
+  },
+  "returns": "text",
+  "version": 1,
+  "status": "published",
+  "description_nl": "Only the origin — a search query in a referrer is somebody's words, not a statistic. Anything that is not an http(s) address is dropped.",
+  "test_cases": [
+    {
+      "args": {
+        "referrer": "https://www.google.com/search?q=private"
+      },
+      "expect_value": "https://www.google.com"
+    },
+    {
+      "args": {
+        "referrer": "javascript:alert(1)"
+      },
+      "expect_value": ""
+    }
+  ],
+  "weight_basis": "Platform operations primitive, no business content. The knobs ARE the policy — edit them here, never in Python."
+}

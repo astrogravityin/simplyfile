@@ -1,0 +1,251 @@
+{
+  "chip_id": "ui.tourvideo",
+  "kind": "accessor",
+  "set": "ui",
+  "label": "Tour Video screen words",
+  "aliases": [
+    "ui tourvideo"
+  ],
+  "params": [
+    {
+      "name": "title",
+      "type": "text",
+      "default": "Tour Video",
+      "label": "title"
+    },
+    {
+      "name": "lede",
+      "type": "long",
+      "default": "A narrated MP4 of each screen, recorded from its tour script - with subtitles and YouTube chapters. Free: the voices are edge-tts.",
+      "label": "lede"
+    },
+    {
+      "name": "sign_in",
+      "type": "text",
+      "default": "Sign in once",
+      "label": "sign in"
+    },
+    {
+      "name": "tip_sign_in",
+      "type": "long",
+      "default": "Opens a browser window on this computer; sign in there and it closes by itself. The session is kept for every recording.",
+      "label": "tip sign in"
+    },
+    {
+      "name": "check",
+      "type": "text",
+      "default": "Check steps",
+      "label": "check"
+    },
+    {
+      "name": "tip_check",
+      "type": "long",
+      "default": "Walks every step fast, no sound or video - finds a step that no longer points at the page",
+      "label": "tip check"
+    },
+    {
+      "name": "record",
+      "type": "text",
+      "default": "Record video",
+      "label": "record"
+    },
+    {
+      "name": "tip_record",
+      "type": "text",
+      "default": "Speaks each step and records the screen - a few minutes",
+      "label": "tip record"
+    },
+    {
+      "name": "record_again",
+      "type": "text",
+      "default": "Record again",
+      "label": "record again"
+    },
+    {
+      "name": "dl_mp4",
+      "type": "text",
+      "default": "MP4",
+      "label": "dl mp4"
+    },
+    {
+      "name": "dl_srt",
+      "type": "text",
+      "default": "Subtitles",
+      "label": "dl srt"
+    },
+    {
+      "name": "copy_desc",
+      "type": "text",
+      "default": "Copy description",
+      "label": "copy desc"
+    },
+    {
+      "name": "copied",
+      "type": "text",
+      "default": "Description copied",
+      "label": "copied"
+    },
+    {
+      "name": "state_none",
+      "type": "text",
+      "default": "No video yet",
+      "label": "state none"
+    },
+    {
+      "name": "state_stale",
+      "type": "text",
+      "default": "Script changed since the video",
+      "label": "state stale"
+    },
+    {
+      "name": "state_ready",
+      "type": "text",
+      "default": "Video up to date",
+      "label": "state ready"
+    },
+    {
+      "name": "steps_n",
+      "type": "text",
+      "default": "{n} steps",
+      "label": "steps n"
+    },
+    {
+      "name": "made_at",
+      "type": "text",
+      "default": "made {when}",
+      "label": "made at"
+    },
+    {
+      "name": "busy",
+      "type": "text",
+      "default": "Another tour is running - wait for it to finish",
+      "label": "busy"
+    },
+    {
+      "name": "working_check",
+      "type": "text",
+      "default": "Checking {title}",
+      "label": "working check"
+    },
+    {
+      "name": "working_record",
+      "type": "text",
+      "default": "Recording {title}",
+      "label": "working record"
+    },
+    {
+      "name": "working_login",
+      "type": "text",
+      "default": "Signing in",
+      "label": "working login"
+    },
+    {
+      "name": "needs",
+      "type": "text",
+      "default": "This server cannot record yet. Run once: {install}",
+      "label": "needs"
+    },
+    {
+      "name": "empty",
+      "type": "text",
+      "default": "No tour scripts found.",
+      "label": "empty"
+    },
+    {
+      "name": "no_video",
+      "type": "text",
+      "default": "No video yet - press Record video first",
+      "label": "no video"
+    },
+    {
+      "name": "rec_title",
+      "type": "text",
+      "default": "Record {title}?",
+      "label": "rec title"
+    },
+    {
+      "name": "rec_body",
+      "type": "long",
+      "default": "It speaks every step and records the screen for a few minutes. Keep this computer awake; nothing is paid.",
+      "label": "rec body"
+    },
+    {
+      "name": "rec_yes",
+      "type": "text",
+      "default": "Record",
+      "label": "rec yes"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "title": "$title",
+      "lede": "$lede",
+      "sign_in": "$sign_in",
+      "tip_sign_in": "$tip_sign_in",
+      "check": "$check",
+      "tip_check": "$tip_check",
+      "record": "$record",
+      "tip_record": "$tip_record",
+      "record_again": "$record_again",
+      "dl_mp4": "$dl_mp4",
+      "dl_srt": "$dl_srt",
+      "copy_desc": "$copy_desc",
+      "copied": "$copied",
+      "state_none": "$state_none",
+      "state_stale": "$state_stale",
+      "state_ready": "$state_ready",
+      "steps_n": "$steps_n",
+      "made_at": "$made_at",
+      "busy": "$busy",
+      "working_check": "$working_check",
+      "working_record": "$working_record",
+      "working_login": "$working_login",
+      "needs": "$needs",
+      "empty": "$empty",
+      "no_video": "$no_video",
+      "rec_title": "$rec_title",
+      "rec_body": "$rec_body",
+      "rec_yes": "$rec_yes"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "Every word of the Tour Video screen (SteadyMove, owner only).",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "title": "Tour Video",
+        "lede": "A narrated MP4 of each screen, recorded from its tour script - with subtitles and YouTube chapters. Free: the voices are edge-tts.",
+        "sign_in": "Sign in once",
+        "tip_sign_in": "Opens a browser window on this computer; sign in there and it closes by itself. The session is kept for every recording.",
+        "check": "Check steps",
+        "tip_check": "Walks every step fast, no sound or video - finds a step that no longer points at the page",
+        "record": "Record video",
+        "tip_record": "Speaks each step and records the screen - a few minutes",
+        "record_again": "Record again",
+        "dl_mp4": "MP4",
+        "dl_srt": "Subtitles",
+        "copy_desc": "Copy description",
+        "copied": "Description copied",
+        "state_none": "No video yet",
+        "state_stale": "Script changed since the video",
+        "state_ready": "Video up to date",
+        "steps_n": "{n} steps",
+        "made_at": "made {when}",
+        "busy": "Another tour is running - wait for it to finish",
+        "working_check": "Checking {title}",
+        "working_record": "Recording {title}",
+        "working_login": "Signing in",
+        "needs": "This server cannot record yet. Run once: {install}",
+        "empty": "No tour scripts found.",
+        "no_video": "No video yet - press Record video first",
+        "rec_title": "Record {title}?",
+        "rec_body": "It speaks every step and records the screen for a few minutes. Keep this computer awake; nothing is paid.",
+        "rec_yes": "Record"
+      }
+    }
+  ]
+}

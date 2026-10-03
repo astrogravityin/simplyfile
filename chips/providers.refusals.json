@@ -1,0 +1,106 @@
+{
+  "chip_id": "providers.refusals",
+  "kind": "accessor",
+  "set": "providers",
+  "label": "A provider's refusal code in plain words, and whether the portal asks once more by itself",
+  "aliases": [
+    "IMAGE_OTHER",
+    "refused picture",
+    "model refused"
+  ],
+  "params": [
+    {
+      "name": "reason",
+      "type": "text",
+      "default": "",
+      "label": "The code or message the provider sent back"
+    },
+    {
+      "name": "rows",
+      "type": "rows",
+      "default": [
+        {
+          "pattern": "IMAGE_OTHER|\\bOTHER\\b|NO_IMAGE|MALFORMED|UNEXPECTED",
+          "retry": true,
+          "text": "the picture model drew nothing and gave no reason ({code}). This is not about your money or your key - nothing was charged. It usually works when asked again (the portal already asked once more); press the same button, or reword what is drawn, or pick another picture model"
+        },
+        {
+          "pattern": "SAFETY|PROHIBITED|BLOCKLIST|SPII|content_policy|moderation|safety_violations",
+          "retry": false,
+          "text": "the picture model's safety filter stopped this picture ({code}). Nothing was charged. Reword what is drawn (a fight, blood, a weapon or a real person's name often trips it) or pick another picture model"
+        },
+        {
+          "pattern": "RECITATION",
+          "retry": false,
+          "text": "the picture model thought this would copy an existing work ({code}). Nothing was charged. Reword what is drawn"
+        }
+      ],
+      "label": "First row whose pattern is found in the code wins: its words ({code} = the provider's own code) and whether to ask again"
+    },
+    {
+      "name": "retries",
+      "type": "number",
+      "default": 1,
+      "label": "How many more times a no-reason refusal is asked again, by itself"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "text": {
+        "vop": "first_matching",
+        "text": "$reason",
+        "rows": "$rows",
+        "pattern_field": "pattern",
+        "value_field": "text",
+        "default": "{code}"
+      },
+      "retry": {
+        "vop": "first_matching",
+        "text": "$reason",
+        "rows": "$rows",
+        "pattern_field": "pattern",
+        "value_field": "retry",
+        "default": false
+      },
+      "retries": "$retries"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-09-26 owner: \"Stopped at step 5 of 5: the model refused this still: IMAGE_OTHER - I am not sure why, I have enough money\". Google's IMAGE_OTHER means the model declined without a reason; it is not money, and a refused picture is not charged. The screen now says so in words and the portal asks once more by itself for the no-reason codes.",
+  "weight_basis": "providers",
+  "test_cases": [
+    {
+      "args": {
+        "reason": "IMAGE_OTHER"
+      },
+      "expect_value": {
+        "text": "the picture model drew nothing and gave no reason ({code}). This is not about your money or your key - nothing was charged. It usually works when asked again (the portal already asked once more); press the same button, or reword what is drawn, or pick another picture model",
+        "retry": true,
+        "retries": 1
+      }
+    },
+    {
+      "args": {
+        "reason": "IMAGE_SAFETY"
+      },
+      "expect_value": {
+        "text": "the picture model's safety filter stopped this picture ({code}). Nothing was charged. Reword what is drawn (a fight, blood, a weapon or a real person's name often trips it) or pick another picture model",
+        "retry": false,
+        "retries": 1
+      }
+    },
+    {
+      "args": {
+        "reason": "something new"
+      },
+      "expect_value": {
+        "text": "{code}",
+        "retry": false,
+        "retries": 1
+      }
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "chip_id": "issues.may_see",
+  "kind": "predicate",
+  "set": "issues",
+  "label": "May this person see a reported issue",
+  "aliases": [
+    "may see"
+  ],
+  "params": [
+    {
+      "name": "is_giver",
+      "type": "boolean",
+      "default": false,
+      "label": "Filed it"
+    },
+    {
+      "name": "may_answer",
+      "type": "boolean",
+      "default": false,
+      "label": "May answer it"
+    }
+  ],
+  "expr": {
+    "op": "any",
+    "items": [
+      {
+        "op": "eq",
+        "left": "$is_giver",
+        "right": true
+      },
+      {
+        "op": "eq",
+        "left": "$may_answer",
+        "right": true
+      }
+    ]
+  },
+  "returns": "boolean",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-03 owner: \"We already have Report Issue framework - why can't we use that ... chip ops only\" - Report an issue and Katha feedback are ONE framework (core/issues.py); a kind is a row here.",
+  "test_cases": [
+    {
+      "args": {
+        "is_giver": true
+      },
+      "expect_value": true
+    },
+    {
+      "args": {
+        "may_answer": true
+      },
+      "expect_value": true
+    },
+    {
+      "args": {},
+      "expect_value": false
+    }
+  ]
+}

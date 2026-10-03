@@ -1,0 +1,153 @@
+{
+  "chip_id": "guide.keysales",
+  "kind": "accessor",
+  "set": "guide",
+  "label": "The step-by-step guide to Keys for sale: every step, spotlight, narration and picture",
+  "aliases": [
+    "keys for sale tour",
+    "keys for sale guide",
+    "guide me"
+  ],
+  "params": [
+    {
+      "name": "title",
+      "type": "text",
+      "default": "Keys for sale",
+      "label": "The tour's name (its cover card)"
+    },
+    {
+      "name": "lede",
+      "type": "long",
+      "default": "{product} lets you put one of your own keys up for sale and decide who buys credit on it. Here is how to make an offer and answer each request.",
+      "label": "The cover's opening line; {product} = this edition's name"
+    },
+    {
+      "name": "icon",
+      "type": "text",
+      "default": "key",
+      "label": "The emblem on the cover (an icon name)"
+    },
+    {
+      "name": "minutes",
+      "type": "number",
+      "default": 2,
+      "label": "How long the tour takes"
+    },
+    {
+      "name": "steps",
+      "type": "rows",
+      "default": [
+        {
+          "title": "Your seller's desk",
+          "say": "Keys for sale is where you offer credit on your own AI keys. Until one key is on sale, nobody on the portal sees a Buy a key menu.",
+          "target": "header.pagehead",
+          "art": {
+            "kind": "hero",
+            "icon": "key"
+          }
+        },
+        {
+          "title": "Sell a key",
+          "say": "Press Sell a key, choose which of your keys, name the offer and set what to add on top of each run. Tick On sale to put it on the shelf.",
+          "target": "#s-new|header.pagehead",
+          "art": {
+            "kind": "flow",
+            "items": [
+              "Your key",
+              "Name it",
+              "Set mark-up",
+              "On sale"
+            ],
+            "at": 0
+          }
+        },
+        {
+          "title": "What you are selling",
+          "say": "Every offer is listed with its terms. Edit changes it at any time; Remove takes it off the shelf, and credit already bought keeps working.",
+          "target": "#ks-offers|header.pagehead",
+          "art": {
+            "kind": "stack",
+            "items": [
+              "Studio key",
+              "Team key"
+            ],
+            "icon": "key"
+          }
+        },
+        {
+          "title": "Answer requests",
+          "say": "Requests waiting shows who asked, for which offer and how much. Approve hands over prepaid credit and raises a bill; Turn down tells them no, with a reason if you wish.",
+          "target": "#ks-waiting|header.pagehead",
+          "art": {
+            "kind": "flow",
+            "items": [
+              "Request",
+              "Approve",
+              "Credit given",
+              "Bill raised"
+            ],
+            "at": 1
+          }
+        },
+        {
+          "title": "A clear record",
+          "say": "Already answered keeps every decision with its amount, state and the credit still left. No money moves through the portal; the record is there for your own settling.",
+          "target": "#ks-answered|#ks-waiting",
+          "art": {
+            "kind": "check",
+            "items": [
+              "Approved",
+              "Credit left",
+              "Billed"
+            ],
+            "done": 3
+          }
+        }
+      ],
+      "label": "The steps in order: title, say (the narration), target (where the spotlight goes; alternatives split by |, the first on screen wins), art (the picture: hero/flow/roads/meter/stack/check), place (below/above/right/left/center, optional), open (optional: what the guide presses first when the part is not on screen - open the first item, go back Home; alternatives split by |)"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "title": "$title",
+      "lede": "$lede",
+      "icon": "$icon",
+      "minutes": "$minutes",
+      "steps": "$steps"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-09-27 owner: a screen tour guide on every tv / SteadyMove screen, step by step, professional narration with SVG pictures, all chips and ops. Drawn by core/static/guide.js, served by core/guide.py; Guide me appears in the top bar once this chip exists.",
+  "weight_basis": "page",
+  "test_cases": [
+    {
+      "args": {
+        "title": "T",
+        "lede": "L",
+        "icon": "spark",
+        "minutes": 1,
+        "steps": [
+          {
+            "title": "a",
+            "say": "b"
+          }
+        ]
+      },
+      "expect_value": {
+        "title": "T",
+        "lede": "L",
+        "icon": "spark",
+        "minutes": 1,
+        "steps": [
+          {
+            "title": "a",
+            "say": "b"
+          }
+        ]
+      }
+    }
+  ]
+}

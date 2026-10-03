@@ -1,0 +1,216 @@
+{
+  "chip_id": "portal.storage_limits",
+  "kind": "accessor",
+  "set": "portal",
+  "audience": "admin",
+  "label": "The three storage limits as the portal applies them",
+  "aliases": [
+    "upload cap",
+    "quota"
+  ],
+  "params": [
+    {
+      "name": "max_upload_mb",
+      "type": "number",
+      "default": null
+    },
+    {
+      "name": "quota_gb",
+      "type": "number",
+      "default": null
+    },
+    {
+      "name": "keep_source_days",
+      "type": "number",
+      "default": null
+    },
+    {
+      "name": "person_max_upload_mb",
+      "type": "number",
+      "default": null,
+      "label": "This person's own upload cap (MB); blank = the portal's"
+    },
+    {
+      "name": "person_quota_gb",
+      "type": "number",
+      "default": null,
+      "label": "This person's own storage (GB); blank = the portal's, 0 = no limit"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "max_upload_mb": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "gt",
+              "left": "$person_max_upload_mb",
+              "right": 0
+            },
+            "then": "$person_max_upload_mb"
+          }
+        ],
+        "else": {
+          "vop": "choose",
+          "cases": [
+            {
+              "when": {
+                "op": "gt",
+                "left": "$max_upload_mb",
+                "right": 0
+              },
+              "then": "$max_upload_mb"
+            }
+          ],
+          "else": {
+            "vop": "get",
+            "value": {
+              "chip": "portal.defaults"
+            },
+            "path": "max_upload_mb"
+          }
+        }
+      },
+      "quota_gb": {
+        "vop": "coalesce",
+        "values": [
+          "$person_quota_gb",
+          "$quota_gb",
+          {
+            "vop": "get",
+            "value": {
+              "chip": "portal.defaults"
+            },
+            "path": "quota_gb"
+          }
+        ]
+      },
+      "keep_source_days": {
+        "vop": "coalesce",
+        "values": [
+          "$keep_source_days",
+          {
+            "vop": "get",
+            "value": {
+              "chip": "portal.defaults"
+            },
+            "path": "keep_source_days"
+          }
+        ]
+      },
+      "custom": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "any",
+              "items": [
+                {
+                  "op": "gt",
+                  "left": "$person_max_upload_mb",
+                  "right": 0
+                },
+                {
+                  "op": "ge",
+                  "left": "$person_quota_gb",
+                  "right": 0
+                }
+              ]
+            },
+            "then": true
+          }
+        ],
+        "else": false
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "Whatever was typed into the three boxes, read as whole numbers (blank = unreadable). A cap of 0 or an unreadable cap is not a cap: it falls back to portal.defaults max_upload_mb, or every upload would be refused. An unreadable quota or retention falls back to its default; 0 there means no limit. 2026-09-30 owner: 'the 1 GB is the same for everyone - make it a default and let me set it for each person': person_max_upload_mb / person_quota_gb (Setup -> Storage -> Each person) win over the portal's boxes; blank (or a cap of 0) = the portal's; a person's quota of 0 = no limit for them. custom = this person has their own.",
+  "test_cases": [
+    {
+      "args": {
+        "max_upload_mb": 0,
+        "quota_gb": 5,
+        "keep_source_days": 7
+      },
+      "expect_value": {
+        "max_upload_mb": 1024,
+        "quota_gb": 5,
+        "keep_source_days": 7,
+        "custom": false
+      }
+    },
+    {
+      "args": {
+        "max_upload_mb": 50,
+        "quota_gb": null,
+        "keep_source_days": 0
+      },
+      "expect_value": {
+        "max_upload_mb": 50,
+        "quota_gb": 0,
+        "keep_source_days": 0,
+        "custom": false
+      }
+    },
+    {
+      "args": {},
+      "expect_value": {
+        "max_upload_mb": 1024,
+        "quota_gb": 0,
+        "keep_source_days": 0,
+        "custom": false
+      }
+    },
+    {
+      "args": {
+        "max_upload_mb": 1024,
+        "quota_gb": 1,
+        "keep_source_days": 0,
+        "person_max_upload_mb": 4096,
+        "person_quota_gb": 20
+      },
+      "expect_value": {
+        "max_upload_mb": 4096,
+        "quota_gb": 20,
+        "keep_source_days": 0,
+        "custom": true
+      }
+    },
+    {
+      "args": {
+        "max_upload_mb": 1024,
+        "quota_gb": 1,
+        "keep_source_days": 0,
+        "person_max_upload_mb": null,
+        "person_quota_gb": 0
+      },
+      "expect_value": {
+        "max_upload_mb": 1024,
+        "quota_gb": 0,
+        "keep_source_days": 0,
+        "custom": true
+      }
+    },
+    {
+      "args": {
+        "max_upload_mb": 1024,
+        "quota_gb": 1,
+        "keep_source_days": 0,
+        "person_max_upload_mb": 0,
+        "person_quota_gb": null
+      },
+      "expect_value": {
+        "max_upload_mb": 1024,
+        "quota_gb": 1,
+        "keep_source_days": 0,
+        "custom": false
+      }
+    }
+  ],
+  "weight_basis": "A yes/no or a value the portal acts on. The knobs ARE the policy — edit them here, never in Python. Owner-only (audience admin): a looser value here would open a security hole or spend the owner's disk, so editors see and test it but cannot change it."
+}

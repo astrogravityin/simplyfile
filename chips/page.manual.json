@@ -1,0 +1,47 @@
+{
+  "chip_id": "page.manual",
+  "kind": "accessor",
+  "set": "page",
+  "label": "Manuals page: the biggest picture a page takes, and the formatting buttons",
+  "aliases": [
+    "manual page settings"
+  ],
+  "params": [
+    {
+      "name": "max_image_bytes",
+      "type": "number",
+      "default": 4000000
+    },
+    {
+      "name": "rich_skip",
+      "type": "list",
+      "default": [
+        "youtube"
+      ],
+      "label": "Buttons of the rich-text editor a manual page leaves out (a manual keeps no video frames - chip manuals.allow_list)"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "max_image_bytes": "$max_image_bytes",
+      "rich_skip": "$rich_skip"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-09-26 (owner: 'move the rest to chips'): the page's own numbers, lists and maps - they were written in its JavaScript. Loaded with the page's words (core/words.py), read with ps('manual').",
+  "weight_basis": "page",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "max_image_bytes": 4000000,
+        "rich_skip": [
+          "youtube"
+        ]
+      }
+    }
+  ]
+}

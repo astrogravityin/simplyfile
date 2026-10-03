@@ -1,0 +1,93 @@
+{
+  "chip_id": "guideme.export",
+  "kind": "accessor",
+  "set": "guideme",
+  "label": "What the Guide Me Builder's Export puts in the zip: file names, the ready Guide me code and the read-me",
+  "aliases": [
+    "guide me export",
+    "guide me zip"
+  ],
+  "params": [
+    {
+      "name": "zip_name",
+      "type": "text",
+      "default": "guide-me-{portal}-{page}"
+    },
+    {
+      "name": "script_file",
+      "type": "text",
+      "default": "{page}.guide.json"
+    },
+    {
+      "name": "module_file",
+      "type": "text",
+      "default": "guide-me.{page}.js"
+    },
+    {
+      "name": "readme_file",
+      "type": "text",
+      "default": "README.md"
+    },
+    {
+      "name": "kit_files",
+      "type": "list",
+      "default": [
+        "guide-kit.js",
+        "guide-kit.css",
+        "icons.js"
+      ]
+    },
+    {
+      "name": "button_style",
+      "type": "long",
+      "default": "position:fixed;right:18px;bottom:18px;z-index:8999;padding:10px 18px;border:0;border-radius:999px;background:var(--gd-brand);color:var(--gd-brand-ink);font:600 14px/1.2 system-ui,sans-serif;box-shadow:var(--gd-shadow);cursor:pointer"
+    },
+    {
+      "name": "module_js",
+      "type": "long",
+      "default": "// Guide me for the page \"{page}\" on {portal} - made by the Guide Me Builder.\n// Needs guide-kit.js, guide-kit.css and icons.js in the same folder as this file. Nothing is fetched: the tour is below.\nimport { openTour } from './guide-kit.js';\n\nexport const PAGE = {page_json};\nexport const SCRIPT = {script_json};\n/** The card's words and the guide's settings travel with the tour: the kit itself carries none. */\nexport const WORDS = {words_json};\nexport const SETTINGS = {settings_json};\n\nconst KIT_CSS = new URL('./guide-kit.css', import.meta.url).href;\n\nfunction addStyles() {\n  const have = Array.from(document.querySelectorAll('link[rel=\"stylesheet\"]')).some((l) => l.href === KIT_CSS);\n  if (have) return;\n  const link = document.createElement('link');\n  link.rel = 'stylesheet';\n  link.href = KIT_CSS;\n  document.head.appendChild(link);\n}\n\n/** Open the tour now (a page may call this from a button of its own). */\nexport function openGuideMe() {\n  addStyles();\n  openTour(Object.assign({}, SCRIPT, { settings: Object.assign({}, SETTINGS, SCRIPT.voice || {}) }), { words: WORDS, screen: PAGE });\n}\n\n/** Wire every element marked data-guide-me - or, when the page has none, add a Guide me button to `where`. */\nexport function mountGuideMe(where = document.body) {\n  addStyles();\n  const found = Array.from(document.querySelectorAll('[data-guide-me]'));\n  if (!found.length) {\n    const b = document.createElement('button');\n    b.type = 'button';\n    b.className = 'gd-btn gd-float';\n    b.setAttribute('data-guide-me', '');\n    b.style.cssText = {button_style_json};\n    b.textContent = {button_label_json};\n    where.appendChild(b);\n    found.push(b);\n  }\n  found.forEach((el) => el.addEventListener('click', openGuideMe));\n  return found;\n}\n"
+    },
+    {
+      "name": "readme",
+      "type": "long",
+      "default": "# Guide me - {title}\n\nA live, step-by-step tour of the page \"{page}\" on {portal}: a soft veil, a spotlight on each part, one card with a picture, the narration, Back / Next, Listen (the browser's own free voice) and Close.\n\n## What is in this folder\n\n| File | What it is |\n|---|---|\n| `{module_file}` | Ready to use: adds a Guide me button and opens the tour |\n| `{script_file}` | The tour itself (a Guide Me script, format {format}) - plain text anyone can read and edit |\n| `guide-kit.js` | The kit that draws the tour |\n| `guide-kit.css` | Its look (takes your site's colours when it has --brand / --panel / --ink tokens) |\n| `icons.js` | The icons the cards use |\n\n## On one of our own portals\n\nDo not copy the code. Open How to Use -> Configure for the page \"{page}\", choose Guide me, import `{script_file}` and Save. The portal already carries the kit.\n\n## On any other site\n\n1. Copy this whole folder next to the page (all five files stay together).\n2. Add, anywhere in the page:\n\n```html\n<script type=\"module\">import { mountGuideMe } from './{module_file}'; mountGuideMe();</script>\n```\n\nA Guide me button appears at the bottom right. To use a button of your own instead, give it the attribute `data-guide-me` - mountGuideMe wires it and adds nothing.\n\nThe spotlight finds each part by the selectors in the script (`target`). Give the page's parts matching `id` or `data-tour` attributes so every step lands on its part; a part that is not on screen gets a centred card instead.\n"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "zip_name": "$zip_name",
+      "script_file": "$script_file",
+      "module_file": "$module_file",
+      "readme_file": "$readme_file",
+      "kit_files": "$kit_files",
+      "button_style": "$button_style",
+      "module_js": "$module_js",
+      "readme": "$readme"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "Skill guide-me-script section 4. module_js and readme are templates: {page} {portal} {title} {format} {module_file} {script_file}, and {page_json} {script_json} {words_json} (chip ui.guide + the road names of ui.shell) {settings_json} (chip guide.settings) {button_label_json} (ui.guide guide_me) {button_style_json} are filled with the values written as code. Only a {name} with no space after the brace is filled, so the code's own braces stay as written. kit_files are copied from the portal's own kit (core/static).",
+  "weight_basis": "The exported code and words. Edit them here, never in Python.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "zip_name": "guide-me-{portal}-{page}",
+        "script_file": "{page}.guide.json",
+        "module_file": "guide-me.{page}.js",
+        "readme_file": "README.md",
+        "kit_files": [
+          "guide-kit.js",
+          "guide-kit.css",
+          "icons.js"
+        ],
+        "button_style": "position:fixed;right:18px;bottom:18px;z-index:8999;padding:10px 18px;border:0;border-radius:999px;background:var(--gd-brand);color:var(--gd-brand-ink);font:600 14px/1.2 system-ui,sans-serif;box-shadow:var(--gd-shadow);cursor:pointer",
+        "module_js": "// Guide me for the page \"{page}\" on {portal} - made by the Guide Me Builder.\n// Needs guide-kit.js, guide-kit.css and icons.js in the same folder as this file. Nothing is fetched: the tour is below.\nimport { openTour } from './guide-kit.js';\n\nexport const PAGE = {page_json};\nexport const SCRIPT = {script_json};\n/** The card's words and the guide's settings travel with the tour: the kit itself carries none. */\nexport const WORDS = {words_json};\nexport const SETTINGS = {settings_json};\n\nconst KIT_CSS = new URL('./guide-kit.css', import.meta.url).href;\n\nfunction addStyles() {\n  const have = Array.from(document.querySelectorAll('link[rel=\"stylesheet\"]')).some((l) => l.href === KIT_CSS);\n  if (have) return;\n  const link = document.createElement('link');\n  link.rel = 'stylesheet';\n  link.href = KIT_CSS;\n  document.head.appendChild(link);\n}\n\n/** Open the tour now (a page may call this from a button of its own). */\nexport function openGuideMe() {\n  addStyles();\n  openTour(Object.assign({}, SCRIPT, { settings: Object.assign({}, SETTINGS, SCRIPT.voice || {}) }), { words: WORDS, screen: PAGE });\n}\n\n/** Wire every element marked data-guide-me - or, when the page has none, add a Guide me button to `where`. */\nexport function mountGuideMe(where = document.body) {\n  addStyles();\n  const found = Array.from(document.querySelectorAll('[data-guide-me]'));\n  if (!found.length) {\n    const b = document.createElement('button');\n    b.type = 'button';\n    b.className = 'gd-btn gd-float';\n    b.setAttribute('data-guide-me', '');\n    b.style.cssText = {button_style_json};\n    b.textContent = {button_label_json};\n    where.appendChild(b);\n    found.push(b);\n  }\n  found.forEach((el) => el.addEventListener('click', openGuideMe));\n  return found;\n}\n",
+        "readme": "# Guide me - {title}\n\nA live, step-by-step tour of the page \"{page}\" on {portal}: a soft veil, a spotlight on each part, one card with a picture, the narration, Back / Next, Listen (the browser's own free voice) and Close.\n\n## What is in this folder\n\n| File | What it is |\n|---|---|\n| `{module_file}` | Ready to use: adds a Guide me button and opens the tour |\n| `{script_file}` | The tour itself (a Guide Me script, format {format}) - plain text anyone can read and edit |\n| `guide-kit.js` | The kit that draws the tour |\n| `guide-kit.css` | Its look (takes your site's colours when it has --brand / --panel / --ink tokens) |\n| `icons.js` | The icons the cards use |\n\n## On one of our own portals\n\nDo not copy the code. Open How to Use -> Configure for the page \"{page}\", choose Guide me, import `{script_file}` and Save. The portal already carries the kit.\n\n## On any other site\n\n1. Copy this whole folder next to the page (all five files stay together).\n2. Add, anywhere in the page:\n\n```html\n<script type=\"module\">import { mountGuideMe } from './{module_file}'; mountGuideMe();</script>\n```\n\nA Guide me button appears at the bottom right. To use a button of your own instead, give it the attribute `data-guide-me` - mountGuideMe wires it and adds nothing.\n\nThe spotlight finds each part by the selectors in the script (`target`). Give the page's parts matching `id` or `data-tour` attributes so every step lands on its part; a part that is not on screen gets a centred card instead.\n"
+      }
+    }
+  ]
+}

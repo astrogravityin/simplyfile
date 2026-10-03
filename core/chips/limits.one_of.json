@@ -1,0 +1,53 @@
+{
+  "chip_id": "limits.one_of",
+  "kind": "predicate",
+  "set": "limits",
+  "label": "Is this choice one of the allowed choices",
+  "aliases": [
+    "one of"
+  ],
+  "params": [
+    {
+      "name": "value",
+      "type": "text",
+      "default": "",
+      "label": "The choice made"
+    },
+    {
+      "name": "choices",
+      "type": "list",
+      "default": [],
+      "label": "The allowed ids"
+    }
+  ],
+  "expr": {
+    "op": "in_set",
+    "value": "$value",
+    "set": "$choices"
+  },
+  "returns": "boolean",
+  "description_nl": "2026-09-28 owner (\"chips and ops only\"): a module never compares a count, a time or a text with a chip's number in Python - it asks this chip. True when value is in choices (a rating, a language, a source picked from a chip's list).",
+  "test_cases": [
+    {
+      "args": {
+        "value": "en",
+        "choices": [
+          "en",
+          "te"
+        ]
+      },
+      "expect_value": true
+    },
+    {
+      "args": {
+        "value": "xx",
+        "choices": [
+          "en"
+        ]
+      },
+      "expect_value": false
+    }
+  ],
+  "version": 1,
+  "status": "published"
+}

@@ -1,0 +1,43 @@
+{
+  "chip_id": "bell.settings",
+  "kind": "accessor",
+  "set": "bell",
+  "label": "The bell: how many notes each person keeps",
+  "aliases": [
+    "settings"
+  ],
+  "params": [
+    {
+      "name": "keep",
+      "type": "number",
+      "default": 100,
+      "label": "keep"
+    },
+    {
+      "name": "text_max",
+      "type": "number",
+      "default": 300,
+      "label": "Longest note (and link) under the bell"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "keep": "$keep",
+      "text_max": "$text_max"
+    }
+  },
+  "returns": "record",
+  "version": 2,
+  "status": "published",
+  "description_nl": "2026-09-28 owner (Katha = YouTube + Spotify + Scribd: notify): keep = notes kept per person, newest first; the oldest fall off.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "keep": 100,
+        "text_max": 300
+      }
+    }
+  ]
+}

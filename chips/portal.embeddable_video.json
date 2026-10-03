@@ -1,0 +1,58 @@
+{
+  "chip_id": "portal.embeddable_video",
+  "kind": "predicate",
+  "set": "portal",
+  "audience": "admin",
+  "label": "A help video link a page may frame",
+  "aliases": [
+    "iframe allowed"
+  ],
+  "params": [
+    {
+      "name": "url",
+      "type": "text",
+      "default": ""
+    },
+    {
+      "name": "pattern",
+      "type": "text",
+      "default": "(?i)(youtube\\.com/embed/|player\\.vimeo\\.com/|\\.mp4($|\\?))"
+    }
+  ],
+  "expr": {
+    "vop": "search",
+    "text": "$url",
+    "pattern": "$pattern"
+  },
+  "returns": "boolean",
+  "version": 1,
+  "status": "published",
+  "description_nl": "True when the link is a player known to allow framing (YouTube /embed/, Vimeo's player, a plain .mp4). Anything else is offered as a plain link instead of an iframe.",
+  "test_cases": [
+    {
+      "args": {
+        "url": "https://www.youtube.com/embed/abc123"
+      },
+      "expect": true
+    },
+    {
+      "args": {
+        "url": "https://player.vimeo.com/video/1"
+      },
+      "expect": true
+    },
+    {
+      "args": {
+        "url": "https://cdn.example.com/guide.MP4?x=1"
+      },
+      "expect": true
+    },
+    {
+      "args": {
+        "url": "https://example.com/watch?v=x"
+      },
+      "expect": false
+    }
+  ],
+  "weight_basis": "A yes/no or a value the portal acts on. The knobs ARE the policy — edit them here, never in Python. Owner-only (audience admin): a looser value here would open a security hole or spend the owner's disk, so editors see and test it but cannot change it."
+}

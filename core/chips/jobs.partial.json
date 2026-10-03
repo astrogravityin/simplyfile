@@ -1,0 +1,61 @@
+{
+  "chip_id": "jobs.partial",
+  "kind": "accessor",
+  "set": "jobs",
+  "label": "How a long job keeps going, retries, and stops without losing what it made",
+  "aliases": [
+    "resumable jobs",
+    "stop when money runs out"
+  ],
+  "params": [
+    {
+      "name": "stop_when_left_usd",
+      "type": "number",
+      "default": 0.05,
+      "label": "Stop before a paid step would leave less than this in the budget"
+    },
+    {
+      "name": "max_retries",
+      "type": "number",
+      "default": 2,
+      "label": "Tries again after a step fails, before the job stops"
+    },
+    {
+      "name": "retry_wait_s",
+      "type": "number",
+      "default": 2,
+      "label": "Seconds between tries"
+    },
+    {
+      "name": "keep_days",
+      "type": "number",
+      "default": 30,
+      "label": "Days a finished or stopped job's record is kept"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "stop_when_left_usd": "$stop_when_left_usd",
+      "max_retries": "$max_retries",
+      "retry_wait_s": "$retry_wait_s",
+      "keep_days": "$keep_days"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "A long job (every narrated line of a video; later every shot of a film) is a list of steps written to disk one by one. A failed step is tried again max_retries times, retry_wait_s apart. Before a PAID step the job checks the budget: if doing it would leave less than stop_when_left_usd, it stops cleanly instead, keeps everything it made, and says what the rest would cost. Pressing the same button again carries on from the first step not done.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "stop_when_left_usd": 0.05,
+        "max_retries": 2,
+        "retry_wait_s": 2,
+        "keep_days": 30
+      }
+    }
+  ],
+  "weight_basis": "Platform operations primitive, no business content. The knobs ARE the policy - edit them here, never in Python."
+}

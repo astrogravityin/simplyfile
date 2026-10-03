@@ -1,0 +1,307 @@
+{
+  "chip_id": "recon.read",
+  "kind": "accessor",
+  "set": "recon",
+  "label": "How a 26AS / AIS / TIS file is read",
+  "aliases": [
+    "recon read"
+  ],
+  "params": [
+    {
+      "name": "sources",
+      "type": "rows",
+      "default": [
+        {
+          "id": "26as",
+          "words": [
+            "annual tax statement",
+            "form 26as",
+            "tax deducted at source"
+          ]
+        },
+        {
+          "id": "ais",
+          "words": [
+            "annual information statement",
+            "information code",
+            "information source"
+          ]
+        },
+        {
+          "id": "tis",
+          "words": [
+            "taxpayer information summary",
+            "information category",
+            "processed value"
+          ]
+        }
+      ],
+      "label": "sources"
+    },
+    {
+      "name": "parts",
+      "type": "rows",
+      "default": [
+        {
+          "kind": "tds",
+          "words": [
+            "details of tax deducted at source"
+          ]
+        },
+        {
+          "kind": "tcs",
+          "words": [
+            "details of tax collected at source"
+          ]
+        },
+        {
+          "kind": "paid",
+          "words": [
+            "details of tax paid"
+          ]
+        }
+      ],
+      "label": "parts"
+    },
+    {
+      "name": "columns",
+      "type": "rows",
+      "default": [
+        {
+          "field": "party",
+          "words": [
+            "name of deductor",
+            "name of collector",
+            "information source",
+            "name of deductee",
+            "party"
+          ]
+        },
+        {
+          "field": "tan",
+          "words": [
+            "tan of deductor",
+            "tan of collector",
+            "tan"
+          ]
+        },
+        {
+          "field": "section",
+          "words": [
+            "section"
+          ]
+        },
+        {
+          "field": "category",
+          "words": [
+            "information category",
+            "information description",
+            "information code"
+          ]
+        },
+        {
+          "field": "gross",
+          "words": [
+            "amount paid / credited",
+            "amount paid/credited",
+            "total amount paid",
+            "accepted value",
+            "processed value",
+            "reported value",
+            "amount"
+          ]
+        },
+        {
+          "field": "tax",
+          "words": [
+            "total tax (rs",
+            "tax deducted",
+            "tax collected",
+            "tds deposited",
+            "tax (rs"
+          ]
+        },
+        {
+          "field": "date",
+          "words": [
+            "date of deposit",
+            "transaction date",
+            "date"
+          ]
+        },
+        {
+          "field": "bsr",
+          "words": [
+            "bsr code"
+          ]
+        },
+        {
+          "field": "challan",
+          "words": [
+            "challan serial",
+            "challan"
+          ]
+        }
+      ],
+      "label": "columns"
+    },
+    {
+      "name": "tan_pattern",
+      "type": "text",
+      "default": "[A-Z]{4}[0-9]{5}[A-Z]",
+      "label": "tan pattern"
+    },
+    {
+      "name": "section_pattern",
+      "type": "text",
+      "default": "(19|20)\\d",
+      "label": "section pattern"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "sources": "$sources",
+      "parts": "$parts",
+      "columns": "$columns",
+      "tan_pattern": "$tan_pattern",
+      "section_pattern": "$section_pattern"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "Which file it is (words in its first lines), where each part starts (its title), and which column holds what (the first title word found wins, so 'Total Tax' beats 'Tax'). A line carrying a TAN and no section is a deductor's summary line in 26AS; its name and TAN go with the lines under it.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "sources": [
+          {
+            "id": "26as",
+            "words": [
+              "annual tax statement",
+              "form 26as",
+              "tax deducted at source"
+            ]
+          },
+          {
+            "id": "ais",
+            "words": [
+              "annual information statement",
+              "information code",
+              "information source"
+            ]
+          },
+          {
+            "id": "tis",
+            "words": [
+              "taxpayer information summary",
+              "information category",
+              "processed value"
+            ]
+          }
+        ],
+        "parts": [
+          {
+            "kind": "tds",
+            "words": [
+              "details of tax deducted at source"
+            ]
+          },
+          {
+            "kind": "tcs",
+            "words": [
+              "details of tax collected at source"
+            ]
+          },
+          {
+            "kind": "paid",
+            "words": [
+              "details of tax paid"
+            ]
+          }
+        ],
+        "columns": [
+          {
+            "field": "party",
+            "words": [
+              "name of deductor",
+              "name of collector",
+              "information source",
+              "name of deductee",
+              "party"
+            ]
+          },
+          {
+            "field": "tan",
+            "words": [
+              "tan of deductor",
+              "tan of collector",
+              "tan"
+            ]
+          },
+          {
+            "field": "section",
+            "words": [
+              "section"
+            ]
+          },
+          {
+            "field": "category",
+            "words": [
+              "information category",
+              "information description",
+              "information code"
+            ]
+          },
+          {
+            "field": "gross",
+            "words": [
+              "amount paid / credited",
+              "amount paid/credited",
+              "total amount paid",
+              "accepted value",
+              "processed value",
+              "reported value",
+              "amount"
+            ]
+          },
+          {
+            "field": "tax",
+            "words": [
+              "total tax (rs",
+              "tax deducted",
+              "tax collected",
+              "tds deposited",
+              "tax (rs"
+            ]
+          },
+          {
+            "field": "date",
+            "words": [
+              "date of deposit",
+              "transaction date",
+              "date"
+            ]
+          },
+          {
+            "field": "bsr",
+            "words": [
+              "bsr code"
+            ]
+          },
+          {
+            "field": "challan",
+            "words": [
+              "challan serial",
+              "challan"
+            ]
+          }
+        ],
+        "tan_pattern": "[A-Z]{4}[0-9]{5}[A-Z]",
+        "section_pattern": "(19|20)\\d"
+      }
+    }
+  ]
+}

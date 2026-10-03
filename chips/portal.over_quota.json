@@ -1,0 +1,77 @@
+{
+  "chip_id": "portal.over_quota",
+  "kind": "predicate",
+  "set": "portal",
+  "audience": "admin",
+  "label": "This would put the account over its storage quota",
+  "aliases": [
+    "storage full"
+  ],
+  "params": [
+    {
+      "name": "used_bytes",
+      "type": "number",
+      "default": 0
+    },
+    {
+      "name": "incoming_bytes",
+      "type": "number",
+      "default": 0
+    },
+    {
+      "name": "quota_bytes",
+      "type": "number",
+      "default": 0
+    }
+  ],
+  "expr": {
+    "op": "all",
+    "items": [
+      {
+        "op": "gt",
+        "left": "$quota_bytes",
+        "right": 0
+      },
+      {
+        "op": "gt",
+        "left": {
+          "vop": "add",
+          "a": "$used_bytes",
+          "b": "$incoming_bytes"
+        },
+        "right": "$quota_bytes"
+      }
+    ]
+  },
+  "returns": "boolean",
+  "version": 1,
+  "status": "published",
+  "description_nl": "True when the account has a quota (above 0) and what it holds plus what is about to arrive is more than it. Asked before an upload, during every chunk of it, and before a render writes its narrated copy.",
+  "test_cases": [
+    {
+      "args": {
+        "used_bytes": 90,
+        "incoming_bytes": 20,
+        "quota_bytes": 100
+      },
+      "expect": true
+    },
+    {
+      "args": {
+        "used_bytes": 90,
+        "incoming_bytes": 10,
+        "quota_bytes": 100
+      },
+      "expect": false
+    },
+    {
+      "args": {
+        "used_bytes": 1000000000000,
+        "incoming_bytes": 1,
+        "quota_bytes": 0
+      },
+      "expect": false
+    }
+  ],
+  "weight_basis": "A yes/no or a value the portal acts on. The knobs ARE the policy — edit them here, never in Python. Owner-only (audience admin): a looser value here would open a security hole or spend the owner's disk, so editors see and test it but cannot change it."
+}

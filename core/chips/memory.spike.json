@@ -1,0 +1,68 @@
+{
+  "chip_id": "memory.spike",
+  "kind": "accessor",
+  "set": "memory",
+  "audience": "admin",
+  "label": "The latest request that spiked memory",
+  "aliases": [
+    "memory spike"
+  ],
+  "params": [
+    {
+      "name": "events",
+      "type": "string",
+      "default": []
+    },
+    {
+      "name": "spike_mb",
+      "type": "number",
+      "default": 50
+    }
+  ],
+  "expr": {
+    "vop": "last",
+    "items": {
+      "vop": "filter_rows",
+      "rows": "$events",
+      "field": "delta",
+      "cmp": "ge",
+      "value": "$spike_mb"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "The most recent recorded request that moved memory by spike_mb or more (events oldest first), or nothing. A single request should never move it that far: that is a load-everything path.",
+  "test_cases": [
+    {
+      "args": {
+        "events": [
+          {
+            "path": "/a",
+            "delta": 60
+          },
+          {
+            "path": "/b",
+            "delta": 10
+          }
+        ]
+      },
+      "expect_value": {
+        "path": "/a",
+        "delta": 60
+      }
+    },
+    {
+      "args": {
+        "events": [
+          {
+            "path": "/b",
+            "delta": 10
+          }
+        ]
+      },
+      "expect_value": null
+    }
+  ],
+  "weight_basis": "Platform operations primitive, no business content. The knobs ARE the policy — edit them here, never in Python."
+}

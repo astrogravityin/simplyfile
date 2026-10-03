@@ -1,0 +1,145 @@
+{
+  "chip_id": "keyshare.report_view",
+  "kind": "accessor",
+  "set": "keyshare",
+  "label": "The lender's report on every key they lent: how it is grouped and totalled",
+  "aliases": [
+    "shared key report",
+    "lender report"
+  ],
+  "params": [
+    {
+      "name": "group_by",
+      "type": "record",
+      "default": {
+        "key": [
+          "key_id"
+        ],
+        "person": [
+          "key_id",
+          "user_id"
+        ],
+        "session": [
+          "key_id",
+          "user_id",
+          "session_id"
+        ]
+      },
+      "label": "The three ways the report groups, by name"
+    },
+    {
+      "name": "default_group",
+      "type": "text",
+      "default": "person",
+      "label": "Which grouping the report opens on"
+    },
+    {
+      "name": "measures",
+      "type": "record",
+      "default": {
+        "runs": [
+          "count",
+          "at"
+        ],
+        "base_usd": [
+          "sum",
+          "cost_usd"
+        ],
+        "charged_usd": [
+          "sum",
+          "charged_usd"
+        ],
+        "seconds": [
+          "sum",
+          "elapsed_s"
+        ],
+        "first_at": [
+          "first",
+          "at"
+        ],
+        "last_at": [
+          "last",
+          "at"
+        ]
+      },
+      "label": "What every report line totals"
+    },
+    {
+      "name": "sort_key",
+      "type": "text",
+      "default": "charged_usd",
+      "label": "Report lines sort on this"
+    },
+    {
+      "name": "sort_desc",
+      "type": "boolean",
+      "default": true,
+      "label": "Biggest first"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "group_by": "$group_by",
+      "default_group": "$default_group",
+      "measures": "$measures",
+      "sort_key": "$sort_key",
+      "sort_desc": "$sort_desc"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "group_by: the three groupings offered - by key, by key and person, and by key, person and sign-in session (one sitting at the screen). default_group: which one opens. measures: what each line totals, including BOTH what it really cost (base_usd) and what the borrower is charged (charged_usd) - only the lender ever sees both. sort_key, sort_desc: the order.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "group_by": {
+          "key": [
+            "key_id"
+          ],
+          "person": [
+            "key_id",
+            "user_id"
+          ],
+          "session": [
+            "key_id",
+            "user_id",
+            "session_id"
+          ]
+        },
+        "default_group": "person",
+        "measures": {
+          "runs": [
+            "count",
+            "at"
+          ],
+          "base_usd": [
+            "sum",
+            "cost_usd"
+          ],
+          "charged_usd": [
+            "sum",
+            "charged_usd"
+          ],
+          "seconds": [
+            "sum",
+            "elapsed_s"
+          ],
+          "first_at": [
+            "first",
+            "at"
+          ],
+          "last_at": [
+            "last",
+            "at"
+          ]
+        },
+        "sort_key": "charged_usd",
+        "sort_desc": true
+      }
+    }
+  ],
+  "weight_basis": "One report, three depths: per key, per key and person, per key and person and sign-in. The lender is the only one who sees base_usd beside charged_usd."
+}

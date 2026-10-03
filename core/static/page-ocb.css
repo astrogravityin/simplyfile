@@ -1,0 +1,137 @@
+/* Ops & Chips Builder (page-ocb.js). Tokens only — every colour comes from portal.css. */
+
+/* ── left pane: tabs, search, filters, list ─────────────────────────────────── */
+.ocb-top{display:grid;gap:10px}
+.ocb-top .tabs.many{margin:0;justify-self:start}
+.ocb-top .tabs.many button{padding:5px 12px;font-size:12.5px}
+.ocb-n{font-size:11px;font-weight:700;opacity:.7;font-variant-numeric:tabular-nums}
+.ocb-find{display:flex;gap:8px;align-items:center}
+.ocb-find .finder{flex:1;min-width:0}
+.ocb-find button{flex:none}
+.ocb-filters{display:flex;flex-wrap:wrap;gap:5px}
+.ocb-filters button{min-height:0;padding:3px 10px;font-size:11.5px;font-weight:620;border-radius:999px;
+  box-shadow:none;background:var(--panel);color:var(--muted);border-color:var(--line)}
+.ocb-filters button:hover{color:var(--ink)}
+.ocb-filters button[aria-pressed="true"]{background:var(--brand-soft);color:var(--brand);border-color:var(--brand-line)}
+.ocb-filters .ocb-n{margin-left:2px}
+
+.ocb .list button{align-items:center}
+.ocb-li{display:flex;flex-direction:column;flex:1;min-width:0;gap:1px}
+.ocb-li .nm{flex:none}
+.ocb-id{background:none;border:0;padding:0;font-size:11px;color:var(--faint);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ocb .list button.on .ocb-id{color:var(--brand)}
+.ocb-doc-line{font-size:11.5px;color:var(--muted);font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ocb-tags{display:inline-flex;flex-wrap:wrap;gap:4px;align-items:center;flex:none}
+.ocb .list .ocb-tags .tag{font-size:9.5px;padding:2px 6px}
+.ocb-ico{display:inline-flex;line-height:0}
+
+/* ── right pane ───────────────────────────────────────────────────────────── */
+.ocb-detail{container:ocb / inline-size}
+.ocb-detail thead th{position:static}
+
+/* the bar with the name and the actions never scrolls away */
+.ocb-bar{position:sticky;top:calc(-1 * var(--sb-pad,0px));z-index:3;margin:-20px -22px 16px;padding:14px 22px 12px;
+  background:var(--panel);border-bottom:1px solid var(--line);display:grid;gap:6px}
+.ocb-back{justify-self:start;gap:4px}
+.ocb-titlerow{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.ocb-title{margin:0;display:flex;align-items:center;gap:8px;min-width:0;overflow-wrap:anywhere}
+.ocb-title code{font-size:15px}
+.ocb-dot{width:9px;height:9px;border-radius:999px;background:var(--warn);flex:none;
+  box-shadow:0 0 0 3px var(--warn-soft)}
+.ocb-dot[hidden]{display:none}
+.ocb-ready{display:inline-flex}
+.ocb-sub{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.ocb-code{font-size:12px}
+.ocb-meta{margin:0;font-size:12.5px;color:var(--muted)}
+.ocb-acts{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding-top:4px}
+.ocb-acts:empty{display:none}
+
+/* collapsible sections */
+.ocb-sec{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-1);margin:0 0 12px;scroll-margin-top:170px}
+.ocb-sec > summary{list-style:none;cursor:pointer;display:flex;gap:10px;align-items:center;
+  padding:12px 16px;border-radius:var(--radius-lg);user-select:none}
+.ocb-sec > summary::-webkit-details-marker{display:none}
+.ocb-sec > summary::before{content:"";width:7px;height:7px;flex:none;border-right:2px solid var(--muted);
+  border-bottom:2px solid var(--muted);transform:rotate(-45deg);transition:transform var(--ease);margin-right:2px}
+.ocb-sec[open] > summary::before{transform:rotate(45deg)}
+.ocb-sec > summary:hover{background:var(--panel-2)}
+.ocb-sec > summary:focus-visible{outline:none;box-shadow:var(--ring)}
+.ocb-sec[open] > summary{border-bottom:1px solid var(--line);border-radius:var(--radius-lg) var(--radius-lg) 0 0}
+.ocb-sectitle{font-weight:680;font-size:14px;color:var(--ink)}
+.ocb-sechint{font-size:12px;color:var(--muted);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ocb-secbadge{margin-left:auto;display:inline-flex;gap:4px;align-items:center}
+.ocb-secbody{padding:14px 16px;display:grid;gap:12px;min-width:0}
+.ocb-secbody > *{min-width:0}
+.ocb-secbody .note{margin:0}
+
+.ocb-grid{gap:12px}
+.ocb-label{font-size:11px;font-weight:700;letter-spacing:.075em;text-transform:uppercase;color:var(--muted);margin:0 0 5px}
+.ocb-secbody .field + .field{margin-top:0}
+
+/* read-only: the same editors, locked, without their add/remove buttons */
+fieldset.ocb-ro{border:0;padding:0;margin:0;min-width:0;display:grid;gap:10px}
+fieldset.ocb-ro button{display:none}
+fieldset.ocb-ro input,fieldset.ocb-ro select,fieldset.ocb-ro textarea{cursor:default}
+
+.ocb-try{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.ocb-try select{width:auto;min-width:0;max-width:100%;flex:0 1 360px;font-size:13px;padding-top:6px;padding-bottom:6px}
+.ocb-try .ocb-label{margin:0}
+.ocb-tryout{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;overflow-wrap:anywhere}
+
+.ocb-refs{display:grid;gap:4px}
+.ocb-pills{display:flex;flex-wrap:wrap;gap:6px}
+.ocb-pill{min-height:0;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:600;gap:5px;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;box-shadow:none;
+  background:var(--brand-soft);color:var(--brand);border:1px solid var(--brand-line)}
+button.ocb-pill:hover{background:var(--brand-soft);border-color:var(--brand);filter:brightness(.98)}
+.ocb-pill.static{display:inline-flex;align-items:center;background:var(--panel-2);color:var(--ink-2);border-color:var(--line)}
+.ocb-pill .ocb-draft{font-family:inherit;color:var(--warn);font-weight:700}
+
+.ocb-doc{margin:0;font-size:14px;color:var(--ink-2)}
+.ocb-ul{margin:0;padding-left:18px;display:grid;gap:4px}
+
+/* scenario facts */
+.ocb-facts{display:grid;gap:8px}
+.ocb-fact{display:grid;grid-template-columns:minmax(150px,220px) minmax(0,1fr);gap:10px;align-items:start;
+  padding:8px 10px;border:1px solid var(--line);border-radius:var(--radius);background:var(--panel)}
+.ocb-fact.unset{background:var(--panel-2)}
+.ocb-factname{display:grid;gap:2px;justify-items:start;padding-top:4px;min-width:0}
+.ocb-factname b{font-size:13px;overflow-wrap:anywhere}
+.ocb-factname code{font-size:11px}
+.ocb-factval{display:grid;gap:4px;justify-items:start;min-width:0}
+.ocb-factval > .vb{width:100%}
+
+/* overview */
+.ocb-over{display:grid;gap:14px}
+.ocb-over .stats{margin:0}
+.ocb-queue{display:grid;gap:4px}
+.ocb-queue button{justify-content:flex-start;gap:10px;box-shadow:none;border-color:var(--line);text-align:left;font-weight:560}
+.ocb-queue button .ocb-li{align-items:flex-start}
+.ocb-queue h3{margin:0 0 4px}
+
+/* a version from history, in its modal */
+.ocb-version{display:grid;gap:12px}
+.ocb-version .note{margin:0}
+.ocb-dl{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:4px 14px;margin:0;font-size:13.5px}
+.ocb-dl dt{color:var(--muted);font-size:12px;padding-top:1px}
+.ocb-dl dd{margin:0;color:var(--ink-2);overflow-wrap:anywhere;white-space:pre-wrap}
+.ocb-h3{margin:6px 0 0;font-size:13.5px}
+
+/* the detail pane reflows on ITS width, not the window's */
+@container ocb (max-width:640px){
+  .ocb-bar{margin:-20px -22px 14px;padding:12px 16px 10px}
+  .ocb-fact{grid-template-columns:minmax(0,1fr)}
+  .ocb-sechint{display:none}
+  .ocb-secbody{padding:12px}
+  .ocb-dl{grid-template-columns:minmax(0,1fr)}
+}
+@container ocb (max-width:420px){
+  .ocb-acts button{flex:1 1 auto}
+  .ocb-try select{flex:1 1 100%}
+}
+@media (max-width:900px){
+  .ocb-sec{scroll-margin-top:210px}
+}
+@media (prefers-reduced-motion:reduce){.ocb-sec > summary::before{transition:none}}

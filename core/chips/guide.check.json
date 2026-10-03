@@ -1,0 +1,411 @@
+{
+  "chip_id": "guide.check",
+  "kind": "accessor",
+  "set": "guide",
+  "audience": "admin",
+  "label": "What a Guide me tour (or an imported Guide me script) must satisfy: every rule is a row here",
+  "aliases": [
+    "guide me rules",
+    "tour rules",
+    "script check"
+  ],
+  "params": [
+    {
+      "name": "doc",
+      "type": "record",
+      "default": {},
+      "label": "The tour or script to check"
+    },
+    {
+      "name": "script",
+      "type": "boolean",
+      "default": false,
+      "label": "Also check the script's envelope (format, portal, page) - true for an imported Guide me script"
+    },
+    {
+      "name": "sets",
+      "type": "record",
+      "default": {},
+      "label": "Known values from the host: portals, art_kinds, icons (a set not given is not judged)"
+    },
+    {
+      "name": "places",
+      "type": "list",
+      "default": [
+        "below",
+        "above",
+        "right",
+        "left",
+        "center"
+      ],
+      "label": "Where a step may place its card"
+    },
+    {
+      "name": "tour_rules",
+      "type": "rows",
+      "default": [
+        {
+          "path": "title",
+          "check": "required",
+          "say": "no_title"
+        },
+        {
+          "path": "steps",
+          "check": "min_items",
+          "say": "few_steps",
+          "value": 3
+        },
+        {
+          "path": "steps[].title",
+          "check": "required",
+          "say": "step_no_title"
+        },
+        {
+          "path": "steps[].say",
+          "check": "required",
+          "say": "step_no_say"
+        },
+        {
+          "path": "steps[].art.kind",
+          "check": "in_set",
+          "say": "bad_art",
+          "set": "art_kinds"
+        },
+        {
+          "path": "steps[].place",
+          "check": "in_set",
+          "say": "bad_place",
+          "set": "places"
+        },
+        {
+          "path": "icon",
+          "check": "in_set",
+          "say": "bad_icon",
+          "set": "icons"
+        },
+        {
+          "path": "steps[].art.icon",
+          "check": "in_set",
+          "say": "bad_icon",
+          "set": "icons"
+        },
+        {
+          "path": "steps[].art.icon2",
+          "check": "in_set",
+          "say": "bad_icon",
+          "set": "icons"
+        },
+        {
+          "path": "voice.rate",
+          "check": "range",
+          "say": "bad_rate",
+          "value": [
+            0.5,
+            2
+          ]
+        },
+        {
+          "path": "voice.pitch",
+          "check": "range",
+          "say": "bad_pitch",
+          "value": [
+            0,
+            2
+          ]
+        },
+        {
+          "when": {
+            "path": "steps[].target",
+            "check": "any_contains",
+            "value": "as-home"
+          },
+          "path": "steps[].open",
+          "check": "any_contains",
+          "say": "list_must_open",
+          "value": "[data-open]"
+        },
+        {
+          "when": {
+            "path": "steps.0.target",
+            "check": "any_contains",
+            "value": "as-home"
+          },
+          "path": "steps.0.open",
+          "check": "required",
+          "say": "step1_must_open"
+        },
+        {
+          "when": {
+            "path": "steps[].target",
+            "check": "any_contains",
+            "value": "#mn-list"
+          },
+          "path": "steps[].open",
+          "check": "any_contains",
+          "say": "list_must_open",
+          "value": "[data-open]"
+        },
+        {
+          "when": {
+            "path": "steps.0.target",
+            "check": "any_contains",
+            "value": "#mn-list"
+          },
+          "path": "steps.0.open",
+          "check": "required",
+          "say": "step1_must_open"
+        }
+      ],
+      "label": "Rules for every tour: path (steps[].title = each step, steps.0 = the first), check (required, min_items, max_items, in_set, matches, range, any_contains), value or set, when (only when this other row passes), say (the message key in guide.messages)"
+    },
+    {
+      "name": "script_rules",
+      "type": "rows",
+      "default": [
+        {
+          "path": "format",
+          "check": "required",
+          "say": "bad_format"
+        },
+        {
+          "path": "format",
+          "check": "matches",
+          "say": "bad_format",
+          "value": "guide-me/1"
+        },
+        {
+          "path": "portal",
+          "check": "required",
+          "say": "bad_portal"
+        },
+        {
+          "path": "portal",
+          "say": "bad_portal",
+          "any_of": [
+            {
+              "path": "portal",
+              "check": "in_set",
+              "set": "portals"
+            },
+            {
+              "path": "portal",
+              "check": "matches",
+              "value": "workspace:[a-z0-9_-]+"
+            }
+          ]
+        },
+        {
+          "path": "page",
+          "check": "required",
+          "say": "bad_page"
+        },
+        {
+          "path": "page",
+          "check": "matches",
+          "say": "bad_page",
+          "value": "[a-z0-9][a-z0-9._-]{0,60}"
+        },
+        {
+          "path": "page",
+          "check": "in_set",
+          "say": "wrong_page",
+          "set": "pages"
+        }
+      ],
+      "label": "Extra rules for an imported Guide me script (its envelope); any_of = passes when any listed row passes; a set the caller does not pass (e.g. pages) is not judged"
+    }
+  ],
+  "expr": {
+    "vop": "doc_problems",
+    "doc": "$doc",
+    "rules": "$tour_rules",
+    "also": {
+      "vop": "choose",
+      "cases": [
+        {
+          "when": {
+            "op": "eq",
+            "left": "$script",
+            "right": true
+          },
+          "then": "$script_rules"
+        }
+      ],
+      "else": []
+    },
+    "sets": {
+      "vop": "merge",
+      "rows": [
+        "$sets",
+        {
+          "places": "$places"
+        }
+      ]
+    }
+  },
+  "returns": "list",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-09-28 owner: chips and ops only. The rules a Guide me tour obeys live here as rows over the generic op doc_problems; core/guide.py (python -m core.guide) and the Guide Me Builder only gather the known sets and call this chip.",
+  "weight_basis": "page",
+  "test_cases": [
+    {
+      "args": {
+        "doc": {
+          "title": "T",
+          "steps": [
+            {
+              "title": "a",
+              "say": "b"
+            },
+            {
+              "title": "c",
+              "say": "d"
+            },
+            {
+              "title": "e",
+              "say": "f"
+            }
+          ]
+        }
+      },
+      "expect_value": []
+    },
+    {
+      "args": {
+        "doc": {
+          "title": "",
+          "steps": [
+            {
+              "title": "a",
+              "say": "b",
+              "place": "up"
+            }
+          ]
+        }
+      },
+      "expect_value": [
+        {
+          "say": "no_title",
+          "path": "title"
+        },
+        {
+          "say": "few_steps",
+          "path": "steps"
+        },
+        {
+          "say": "bad_place",
+          "path": "steps[].place",
+          "index": 0
+        }
+      ]
+    },
+    {
+      "args": {
+        "doc": {
+          "format": "guide-me/1",
+          "portal": "workspace:astrogaami",
+          "page": "tarabalam",
+          "title": "T",
+          "steps": [
+            {
+              "title": "a",
+              "say": "b"
+            },
+            {
+              "title": "c",
+              "say": "d"
+            },
+            {
+              "title": "e",
+              "say": "f"
+            }
+          ]
+        },
+        "script": true,
+        "sets": {
+          "portals": [
+            "sm"
+          ]
+        }
+      },
+      "expect_value": []
+    },
+    {
+      "args": {
+        "doc": {
+          "format": "x",
+          "portal": "elsewhere",
+          "page": "A B",
+          "title": "T",
+          "steps": [
+            {
+              "title": "a",
+              "say": "b"
+            },
+            {
+              "title": "c",
+              "say": "d"
+            },
+            {
+              "title": "e",
+              "say": "f"
+            }
+          ]
+        },
+        "script": true,
+        "sets": {
+          "portals": [
+            "sm"
+          ]
+        }
+      },
+      "expect_value": [
+        {
+          "say": "bad_format",
+          "path": "format"
+        },
+        {
+          "say": "bad_portal",
+          "path": "portal"
+        },
+        {
+          "say": "bad_page",
+          "path": "page"
+        }
+      ]
+    },
+    {
+      "args": {
+        "doc": {
+          "title": "T",
+          "steps": [
+            {
+              "title": "a",
+              "say": "b",
+              "target": "section.as-home"
+            },
+            {
+              "title": "c",
+              "say": "d"
+            },
+            {
+              "title": "e",
+              "say": "f"
+            }
+          ]
+        }
+      },
+      "expect_value": [
+        {
+          "say": "list_must_open",
+          "path": "steps[].open"
+        },
+        {
+          "say": "step1_must_open",
+          "path": "steps.0.open"
+        }
+      ]
+    }
+  ]
+}

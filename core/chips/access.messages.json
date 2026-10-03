@@ -1,0 +1,249 @@
+{
+  "chip_id": "access.messages",
+  "kind": "accessor",
+  "set": "access",
+  "audience": "admin",
+  "label": "Every sentence People & access says",
+  "aliases": [
+    "access wording",
+    "groups messages"
+  ],
+  "params": [
+    {
+      "name": "no_access",
+      "type": "text",
+      "default": "You do not have access to {label}. Ask the portal owner, or request access from the menu."
+    },
+    {
+      "name": "function_label",
+      "type": "text",
+      "default": "{screen} → {function}"
+    },
+    {
+      "name": "group_label",
+      "type": "text",
+      "default": "group \"{name}\""
+    },
+    {
+      "name": "deleted_group",
+      "type": "text",
+      "default": "a deleted group"
+    },
+    {
+      "name": "deleted_account",
+      "type": "text",
+      "default": "a deleted account"
+    },
+    {
+      "name": "everyone_name",
+      "type": "text",
+      "default": "Everyone"
+    },
+    {
+      "name": "everyone_description",
+      "type": "text",
+      "default": "Every account, including ones made tomorrow."
+    },
+    {
+      "name": "group_needs_name",
+      "type": "text",
+      "default": "A group needs a name."
+    },
+    {
+      "name": "group_exists",
+      "type": "text",
+      "default": "There is already a group called \"{name}\"."
+    },
+    {
+      "name": "everyone_builtin",
+      "type": "text",
+      "default": "Everyone is built in. Remove its rules instead."
+    },
+    {
+      "name": "allow_or_deny",
+      "type": "text",
+      "default": "A rule either allows or denies."
+    },
+    {
+      "name": "pick_screen",
+      "type": "text",
+      "default": "Pick a screen (and function) from the catalog."
+    },
+    {
+      "name": "owner_alone_rule",
+      "type": "text",
+      "default": "{label} is the portal owner's alone. No rule can open it to anyone else."
+    },
+    {
+      "name": "pick_subject",
+      "type": "text",
+      "default": "Pick a person or a group that exists."
+    },
+    {
+      "name": "no_account",
+      "type": "text",
+      "default": "No such account."
+    },
+    {
+      "name": "unknown_screen",
+      "type": "text",
+      "default": "Unknown screen."
+    },
+    {
+      "name": "owner_alone_request",
+      "type": "text",
+      "default": "That screen is the portal owner's alone."
+    },
+    {
+      "name": "already_open",
+      "type": "text",
+      "default": "You can already open that."
+    },
+    {
+      "name": "already_asked",
+      "type": "text",
+      "default": "You already asked. The owner will see it on People & access."
+    },
+    {
+      "name": "approve_or_reject",
+      "type": "text",
+      "default": "Approve or reject."
+    },
+    {
+      "name": "request_gone",
+      "type": "text",
+      "default": "That request is gone or already answered."
+    },
+    {
+      "name": "account_gone",
+      "type": "text",
+      "default": "The account is gone."
+    },
+    {
+      "name": "only_owner_makes_owner",
+      "type": "text",
+      "default": "Only an owner can make another owner."
+    },
+    {
+      "name": "invite_needs_mail",
+      "type": "text",
+      "default": "Set up email to send invitations, or give them a first password here."
+    },
+    {
+      "name": "invite_failed",
+      "type": "text",
+      "default": "Could not send the invitation. {error}"
+    },
+    {
+      "name": "bad_role",
+      "type": "text",
+      "default": "A role is one of: {roles}."
+    },
+    {
+      "name": "no_self_demote",
+      "type": "text",
+      "default": "You cannot demote yourself. Ask another owner."
+    },
+    {
+      "name": "no_self_remove",
+      "type": "text",
+      "default": "You cannot remove your own account."
+    },
+    {
+      "name": "only_owner_removes_owner",
+      "type": "text",
+      "default": "Only an owner can remove an owner."
+    },
+    {
+      "name": "too_many_requests",
+      "type": "long",
+      "default": "You have asked for access many times today. A portal admin will answer the ones you sent.",
+      "label": "too many requests"
+    },
+    {
+      "name": "last_owner",
+      "type": "text",
+      "default": "The last owner cannot be removed - make someone else an owner first.",
+      "label": "last_owner"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "no_access": "$no_access",
+      "function_label": "$function_label",
+      "group_label": "$group_label",
+      "deleted_group": "$deleted_group",
+      "deleted_account": "$deleted_account",
+      "everyone_name": "$everyone_name",
+      "everyone_description": "$everyone_description",
+      "group_needs_name": "$group_needs_name",
+      "group_exists": "$group_exists",
+      "everyone_builtin": "$everyone_builtin",
+      "allow_or_deny": "$allow_or_deny",
+      "pick_screen": "$pick_screen",
+      "owner_alone_rule": "$owner_alone_rule",
+      "pick_subject": "$pick_subject",
+      "no_account": "$no_account",
+      "unknown_screen": "$unknown_screen",
+      "owner_alone_request": "$owner_alone_request",
+      "already_open": "$already_open",
+      "already_asked": "$already_asked",
+      "approve_or_reject": "$approve_or_reject",
+      "request_gone": "$request_gone",
+      "account_gone": "$account_gone",
+      "only_owner_makes_owner": "$only_owner_makes_owner",
+      "invite_needs_mail": "$invite_needs_mail",
+      "invite_failed": "$invite_failed",
+      "bad_role": "$bad_role",
+      "no_self_demote": "$no_self_demote",
+      "no_self_remove": "$no_self_remove",
+      "only_owner_removes_owner": "$only_owner_removes_owner",
+      "too_many_requests": "$too_many_requests",
+      "last_owner": "$last_owner"
+    }
+  },
+  "returns": "record",
+  "version": 2,
+  "status": "published",
+  "description_nl": "Errors and labels of People & access, groups, rules and requests to open a screen. {label}, {screen}, {function}, {name}, {error}, {roles} fill in. everyone_name and everyone_description name the built-in group the first time the access file is made.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "no_access": "You do not have access to {label}. Ask the portal owner, or request access from the menu.",
+        "function_label": "{screen} → {function}",
+        "group_label": "group \"{name}\"",
+        "deleted_group": "a deleted group",
+        "deleted_account": "a deleted account",
+        "everyone_name": "Everyone",
+        "everyone_description": "Every account, including ones made tomorrow.",
+        "group_needs_name": "A group needs a name.",
+        "group_exists": "There is already a group called \"{name}\".",
+        "everyone_builtin": "Everyone is built in. Remove its rules instead.",
+        "allow_or_deny": "A rule either allows or denies.",
+        "pick_screen": "Pick a screen (and function) from the catalog.",
+        "owner_alone_rule": "{label} is the portal owner's alone. No rule can open it to anyone else.",
+        "pick_subject": "Pick a person or a group that exists.",
+        "no_account": "No such account.",
+        "unknown_screen": "Unknown screen.",
+        "owner_alone_request": "That screen is the portal owner's alone.",
+        "already_open": "You can already open that.",
+        "already_asked": "You already asked. The owner will see it on People & access.",
+        "approve_or_reject": "Approve or reject.",
+        "request_gone": "That request is gone or already answered.",
+        "account_gone": "The account is gone.",
+        "only_owner_makes_owner": "Only an owner can make another owner.",
+        "invite_needs_mail": "Set up email to send invitations, or give them a first password here.",
+        "invite_failed": "Could not send the invitation. {error}",
+        "bad_role": "A role is one of: {roles}.",
+        "no_self_demote": "You cannot demote yourself. Ask another owner.",
+        "no_self_remove": "You cannot remove your own account.",
+        "only_owner_removes_owner": "Only an owner can remove an owner.",
+        "too_many_requests": "You have asked for access many times today. A portal admin will answer the ones you sent.",
+        "last_owner": "The last owner cannot be removed - make someone else an owner first."
+      }
+    }
+  ],
+  "weight_basis": "Platform access primitive, no business content. The knobs ARE the policy — edit them here, never in Python."
+}

@@ -1,0 +1,126 @@
+{
+  "page_key": "sf-guideme",
+  "title": "Guide Me Builder",
+  "start_url": "/#/guideme",
+  "prod_base": "https://sf.valuestream.in",
+  "voice": "en-IN-NeerjaNeural",
+  "rate": "+0%",
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "blur": [
+    "#whoami",
+    "#userpop .head",
+    ".tile .meta b",
+    "#vd-title"
+  ],
+  "covers": [
+    "import a script",
+    "create guide me",
+    "problems in plain words",
+    "your builds",
+    "search",
+    "open a build",
+    "the steps",
+    "preview",
+    "export",
+    "replace script",
+    "delete with warning"
+  ],
+  "steps": [
+    {
+      "chapter": "Welcome",
+      "say": "This is the Guide Me Builder. Bring a Guide Me script, check it, watch it as the live tour, and export the complete code for any page of any site.",
+      "do": [
+        {
+          "wait_for": "#gm-import"
+        },
+        {
+          "highlight": "#gm-import",
+          "optional": true
+        }
+      ]
+    },
+    {
+      "chapter": "Import",
+      "say": "Drop or choose a script file, or paste the script into the box. Create Guide Me checks every rule at once and lists anything to fix in plain words. Nothing is saved until the script is clean.",
+      "do": [
+        {
+          "highlight": "#gm-create",
+          "optional": true
+        }
+      ]
+    },
+    {
+      "chapter": "Your builds",
+      "say": "Every tour you create is listed here with its site, its page and how many steps it has. Search finds one by title, site or page.",
+      "do": [
+        {
+          "highlight": "#gm-list",
+          "optional": true
+        },
+        {
+          "fill": "#gm-q",
+          "text": "${page}",
+          "optional": true
+        },
+        {
+          "wait": 1.2
+        }
+      ]
+    },
+    {
+      "chapter": "Open a build",
+      "say": "Open shows the tour's facts and every step: its title, its narration, the part it spotlights and its picture.",
+      "do": [
+        {
+          "click": "[data-open]",
+          "optional": true
+        },
+        {
+          "wait": 1.5
+        },
+        {
+          "highlight": "#gm-steps",
+          "optional": true
+        }
+      ]
+    },
+    {
+      "say": "Preview plays the tour right here, card by card, with Listen for the browser's own voice.",
+      "do": [
+        {
+          "highlight": "#gm-preview",
+          "optional": true
+        }
+      ]
+    },
+    {
+      "chapter": "Export",
+      "say": "Export downloads one zip with the kit, the script, a ready Guide me button and a read-me. Any site can use it; our own portals import the script in How to Use instead.",
+      "do": [
+        {
+          "highlight": "#gm-export",
+          "optional": true
+        }
+      ]
+    },
+    {
+      "say": "Replace script brings in a newer version after the same checks. Delete asks first. Back on All builds, the list is waiting.",
+      "do": [
+        {
+          "highlight": "#gm-replace",
+          "optional": true
+        },
+        {
+          "click": "#gm-back",
+          "optional": true
+        }
+      ]
+    }
+  ],
+  "vars": {
+    "page": "Access"
+  }
+}

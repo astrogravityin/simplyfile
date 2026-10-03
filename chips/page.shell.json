@@ -1,0 +1,769 @@
+{
+  "chip_id": "page.shell",
+  "kind": "accessor",
+  "set": "page",
+  "label": "The four roads every module offers, in order, and the icon of each",
+  "aliases": [
+    "shell page settings"
+  ],
+  "params": [
+    {
+      "name": "roads",
+      "type": "list",
+      "default": [
+        "portal",
+        "bridge",
+        "ai",
+        "diy"
+      ]
+    },
+    {
+      "name": "road_icons",
+      "type": "record",
+      "default": {
+        "portal": "shield",
+        "bridge": "link",
+        "ai": "spark",
+        "diy": "edit"
+      }
+    },
+    {
+      "name": "howto_icons",
+      "type": "record",
+      "default": {
+        "doc": "book",
+        "youtube": "play",
+        "video": "film",
+        "instagram": "image",
+        "link": "link"
+      }
+    },
+    {
+      "name": "cover",
+      "type": "record",
+      "default": {
+        "palettes": [
+          [
+            "#1e1b4b",
+            "#7c3aed"
+          ],
+          [
+            "#0c4a6e",
+            "#22d3ee"
+          ],
+          [
+            "#4a044e",
+            "#ec4899"
+          ],
+          [
+            "#052e16",
+            "#10b981"
+          ],
+          [
+            "#431407",
+            "#f59e0b"
+          ],
+          [
+            "#1e293b",
+            "#f43f5e"
+          ],
+          [
+            "#172554",
+            "#6366f1"
+          ],
+          [
+            "#3b0764",
+            "#c084fc"
+          ],
+          [
+            "#422006",
+            "#eab308"
+          ],
+          [
+            "#083344",
+            "#14b8a6"
+          ]
+        ],
+        "title_chars": 18,
+        "title_lines": 3,
+        "title_big": 25,
+        "title_small": 21,
+        "title_font": "Georgia, 'Times New Roman', serif",
+        "text_font": "Inter, system-ui, sans-serif",
+        "motif_of": {
+          "video": "film",
+          "youtube": "film",
+          "assessment": "tedbook",
+          "deck": "deck"
+        },
+        "motif_default": "film"
+      },
+      "label": "Every asset's drawn cover (Katha cards, Home cards): palettes [from, to] - a work always gets the same one, from its id; fonts; how the title wraps and its size for 1-2 / 3 lines"
+    },
+    {
+      "name": "publish_screen",
+      "type": "text",
+      "default": "katha",
+      "label": "The screen a Publish & Circles button opens"
+    },
+    {
+      "name": "deck",
+      "type": "record",
+      "default": {
+        "api": "/api/decks",
+        "screen": "decks",
+        "keep": "sm.deck",
+        "formats": [
+          "pdf",
+          "pptx"
+        ],
+        "words": "decks",
+        "theme_keep": "deck.theme",
+        "order": "name"
+      },
+      "label": "Decks (2026-09-30): the routes a PDF & PowerPoint button calls, the screen Save to Decks opens and the key it keeps order: how ticked works line up before a person moves one - 'name' = by name, numbers counted (Ch 2 before Ch 10); 'ticked' = as ticked (2026-09-30 owner: six chapters came out 1 2 3 6 5 4)"
+    },
+    {
+      "name": "off_buttons",
+      "type": "any",
+      "default": {
+        "toast": "warn",
+        "seconds": 6,
+        "fallback_word": "off_default"
+      },
+      "label": "off buttons"
+    },
+    {
+      "name": "pick_many",
+      "type": "json",
+      "default": {
+        "rows": 40
+      },
+      "label": "pickMany: at most this many tick rows drawn at once (type to narrow the rest)"
+    },
+    {
+      "name": "key_screen",
+      "type": "text",
+      "default": "keys",
+      "label": "The Account & key screen: the key link, the key menu row and AI READY show only where this screen is in the host's menu"
+    },
+    {
+      "name": "rich",
+      "type": "json",
+      "default": {
+        "toolbar": [
+          {
+            "do": "block",
+            "arg": "p",
+            "label": "rt_p",
+            "tip": "rt_tip_p"
+          },
+          {
+            "do": "block",
+            "arg": "h2",
+            "label": "rt_h2",
+            "tip": "rt_tip_h2"
+          },
+          {
+            "do": "block",
+            "arg": "h3",
+            "label": "rt_h3",
+            "tip": "rt_tip_h3"
+          },
+          {
+            "do": "block",
+            "arg": "h4",
+            "label": "rt_h4",
+            "tip": "rt_tip_h4"
+          },
+          {
+            "do": "sep"
+          },
+          {
+            "do": "exec",
+            "arg": "bold",
+            "label": "rt_b",
+            "tip": "rt_tip_b"
+          },
+          {
+            "do": "exec",
+            "arg": "italic",
+            "label": "rt_i",
+            "tip": "rt_tip_i"
+          },
+          {
+            "do": "exec",
+            "arg": "underline",
+            "label": "rt_u",
+            "tip": "rt_tip_u"
+          },
+          {
+            "do": "colour",
+            "tip": "rt_tip_colour"
+          },
+          {
+            "do": "exec",
+            "arg": "removeFormat",
+            "label": "rt_clear",
+            "tip": "rt_tip_clear"
+          },
+          {
+            "do": "sep"
+          },
+          {
+            "do": "exec",
+            "arg": "insertUnorderedList",
+            "label": "rt_ul",
+            "tip": "rt_tip_ul"
+          },
+          {
+            "do": "exec",
+            "arg": "insertOrderedList",
+            "label": "rt_ol",
+            "tip": "rt_tip_ol"
+          },
+          {
+            "do": "block",
+            "arg": "blockquote",
+            "label": "rt_quote",
+            "tip": "rt_tip_quote"
+          },
+          {
+            "do": "sep"
+          },
+          {
+            "do": "exec",
+            "arg": "justifyLeft",
+            "label": "rt_left",
+            "tip": "rt_tip_left"
+          },
+          {
+            "do": "exec",
+            "arg": "justifyCenter",
+            "label": "rt_center",
+            "tip": "rt_tip_center"
+          },
+          {
+            "do": "exec",
+            "arg": "justifyRight",
+            "label": "rt_right",
+            "tip": "rt_tip_right"
+          },
+          {
+            "do": "sep"
+          },
+          {
+            "do": "link",
+            "icon": "link",
+            "tip": "rt_tip_link"
+          },
+          {
+            "do": "image",
+            "icon": "image",
+            "tip": "rt_tip_image"
+          },
+          {
+            "do": "youtube",
+            "icon": "play",
+            "tip": "rt_tip_youtube"
+          },
+          {
+            "do": "table",
+            "label": "rt_table",
+            "tip": "rt_tip_table"
+          },
+          {
+            "do": "row",
+            "label": "rt_row",
+            "tip": "rt_tip_row"
+          },
+          {
+            "do": "col",
+            "label": "rt_col",
+            "tip": "rt_tip_col"
+          },
+          {
+            "do": "unrow",
+            "label": "rt_unrow",
+            "tip": "rt_tip_unrow"
+          },
+          {
+            "do": "uncol",
+            "label": "rt_uncol",
+            "tip": "rt_tip_uncol"
+          },
+          {
+            "do": "sep"
+          },
+          {
+            "do": "exec",
+            "arg": "undo",
+            "icon": "left",
+            "tip": "rt_tip_undo"
+          },
+          {
+            "do": "exec",
+            "arg": "redo",
+            "icon": "right",
+            "tip": "rt_tip_redo"
+          },
+          {
+            "do": "source",
+            "label": "rt_source",
+            "tip": "rt_tip_source"
+          }
+        ],
+        "colours": [
+          {
+            "value": "",
+            "word": "rt_c_default"
+          },
+          {
+            "value": "#b91c1c",
+            "word": "rt_c_red"
+          },
+          {
+            "value": "#c2410c",
+            "word": "rt_c_orange"
+          },
+          {
+            "value": "#15803d",
+            "word": "rt_c_green"
+          },
+          {
+            "value": "#1d4ed8",
+            "word": "rt_c_blue"
+          },
+          {
+            "value": "#7e22ce",
+            "word": "rt_c_purple"
+          },
+          {
+            "value": "#57534e",
+            "word": "rt_c_grey"
+          }
+        ],
+        "table": {
+          "rows": 3,
+          "cols": 3
+        },
+        "youtube": "(?:youtube\\.com/(?:watch\\?(?:.*&)?v=|embed/|shorts/)|youtu\\.be/)([\\w-]{11})",
+        "youtube_embed": "https://www.youtube-nocookie.com/embed/{id}",
+        "paste_tags": [
+          "p",
+          "br",
+          "b",
+          "strong",
+          "i",
+          "em",
+          "u",
+          "h2",
+          "h3",
+          "h4",
+          "ul",
+          "ol",
+          "li",
+          "blockquote",
+          "a",
+          "table",
+          "thead",
+          "tbody",
+          "tr",
+          "td",
+          "th",
+          "img",
+          "figure",
+          "figcaption"
+        ],
+        "paste_attrs": [
+          "href",
+          "src",
+          "alt",
+          "colspan",
+          "rowspan"
+        ],
+        "save_after_ms": 1500,
+        "video_w": 560,
+        "video_h": 315
+      },
+      "label": "The rich-text editor (Articles, book parts): its buttons in order, colours, table size, the video address it takes, what a paste keeps, when it saves by itself"
+    },
+    {
+      "name": "quality_stars",
+      "type": "number",
+      "default": 5,
+      "label": "A model's quality is shown out of this many stars"
+    },
+    {
+      "name": "job_poll_ms",
+      "type": "number",
+      "default": 1500,
+      "label": "How often a running job is asked for news (ms)"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "roads": "$roads",
+      "road_icons": "$road_icons",
+      "howto_icons": "$howto_icons",
+      "cover": "$cover",
+      "publish_screen": "$publish_screen",
+      "deck": "$deck",
+      "off_buttons": "$off_buttons",
+      "pick_many": "$pick_many",
+      "key_screen": "$key_screen",
+      "rich": "$rich",
+      "quality_stars": "$quality_stars",
+      "job_poll_ms": "$job_poll_ms"
+    }
+  },
+  "returns": "record",
+  "version": 2,
+  "status": "published",
+  "description_nl": "2026-09-26 (owner: 'move the rest to chips'): the page's own numbers, lists and maps - they were written in its JavaScript. Loaded with the page's words (core/words.py), read with ps('shell').",
+  "weight_basis": "page",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "roads": [
+          "portal",
+          "bridge",
+          "ai",
+          "diy"
+        ],
+        "road_icons": {
+          "portal": "shield",
+          "bridge": "link",
+          "ai": "spark",
+          "diy": "edit"
+        },
+        "howto_icons": {
+          "doc": "book",
+          "youtube": "play",
+          "video": "film",
+          "instagram": "image",
+          "link": "link"
+        },
+        "cover": {
+          "palettes": [
+            [
+              "#1e1b4b",
+              "#7c3aed"
+            ],
+            [
+              "#0c4a6e",
+              "#22d3ee"
+            ],
+            [
+              "#4a044e",
+              "#ec4899"
+            ],
+            [
+              "#052e16",
+              "#10b981"
+            ],
+            [
+              "#431407",
+              "#f59e0b"
+            ],
+            [
+              "#1e293b",
+              "#f43f5e"
+            ],
+            [
+              "#172554",
+              "#6366f1"
+            ],
+            [
+              "#3b0764",
+              "#c084fc"
+            ],
+            [
+              "#422006",
+              "#eab308"
+            ],
+            [
+              "#083344",
+              "#14b8a6"
+            ]
+          ],
+          "title_chars": 18,
+          "title_lines": 3,
+          "title_big": 25,
+          "title_small": 21,
+          "title_font": "Georgia, 'Times New Roman', serif",
+          "text_font": "Inter, system-ui, sans-serif",
+          "motif_of": {
+            "video": "film",
+            "youtube": "film",
+            "assessment": "tedbook",
+            "deck": "deck"
+          },
+          "motif_default": "film"
+        },
+        "publish_screen": "katha",
+        "deck": {
+          "api": "/api/decks",
+          "screen": "decks",
+          "keep": "sm.deck",
+          "formats": [
+            "pdf",
+            "pptx"
+          ],
+          "words": "decks",
+          "theme_keep": "deck.theme",
+          "order": "name"
+        },
+        "off_buttons": {
+          "toast": "warn",
+          "seconds": 6,
+          "fallback_word": "off_default"
+        },
+        "pick_many": {
+          "rows": 40
+        },
+        "key_screen": "keys",
+        "rich": {
+          "toolbar": [
+            {
+              "do": "block",
+              "arg": "p",
+              "label": "rt_p",
+              "tip": "rt_tip_p"
+            },
+            {
+              "do": "block",
+              "arg": "h2",
+              "label": "rt_h2",
+              "tip": "rt_tip_h2"
+            },
+            {
+              "do": "block",
+              "arg": "h3",
+              "label": "rt_h3",
+              "tip": "rt_tip_h3"
+            },
+            {
+              "do": "block",
+              "arg": "h4",
+              "label": "rt_h4",
+              "tip": "rt_tip_h4"
+            },
+            {
+              "do": "sep"
+            },
+            {
+              "do": "exec",
+              "arg": "bold",
+              "label": "rt_b",
+              "tip": "rt_tip_b"
+            },
+            {
+              "do": "exec",
+              "arg": "italic",
+              "label": "rt_i",
+              "tip": "rt_tip_i"
+            },
+            {
+              "do": "exec",
+              "arg": "underline",
+              "label": "rt_u",
+              "tip": "rt_tip_u"
+            },
+            {
+              "do": "colour",
+              "tip": "rt_tip_colour"
+            },
+            {
+              "do": "exec",
+              "arg": "removeFormat",
+              "label": "rt_clear",
+              "tip": "rt_tip_clear"
+            },
+            {
+              "do": "sep"
+            },
+            {
+              "do": "exec",
+              "arg": "insertUnorderedList",
+              "label": "rt_ul",
+              "tip": "rt_tip_ul"
+            },
+            {
+              "do": "exec",
+              "arg": "insertOrderedList",
+              "label": "rt_ol",
+              "tip": "rt_tip_ol"
+            },
+            {
+              "do": "block",
+              "arg": "blockquote",
+              "label": "rt_quote",
+              "tip": "rt_tip_quote"
+            },
+            {
+              "do": "sep"
+            },
+            {
+              "do": "exec",
+              "arg": "justifyLeft",
+              "label": "rt_left",
+              "tip": "rt_tip_left"
+            },
+            {
+              "do": "exec",
+              "arg": "justifyCenter",
+              "label": "rt_center",
+              "tip": "rt_tip_center"
+            },
+            {
+              "do": "exec",
+              "arg": "justifyRight",
+              "label": "rt_right",
+              "tip": "rt_tip_right"
+            },
+            {
+              "do": "sep"
+            },
+            {
+              "do": "link",
+              "icon": "link",
+              "tip": "rt_tip_link"
+            },
+            {
+              "do": "image",
+              "icon": "image",
+              "tip": "rt_tip_image"
+            },
+            {
+              "do": "youtube",
+              "icon": "play",
+              "tip": "rt_tip_youtube"
+            },
+            {
+              "do": "table",
+              "label": "rt_table",
+              "tip": "rt_tip_table"
+            },
+            {
+              "do": "row",
+              "label": "rt_row",
+              "tip": "rt_tip_row"
+            },
+            {
+              "do": "col",
+              "label": "rt_col",
+              "tip": "rt_tip_col"
+            },
+            {
+              "do": "unrow",
+              "label": "rt_unrow",
+              "tip": "rt_tip_unrow"
+            },
+            {
+              "do": "uncol",
+              "label": "rt_uncol",
+              "tip": "rt_tip_uncol"
+            },
+            {
+              "do": "sep"
+            },
+            {
+              "do": "exec",
+              "arg": "undo",
+              "icon": "left",
+              "tip": "rt_tip_undo"
+            },
+            {
+              "do": "exec",
+              "arg": "redo",
+              "icon": "right",
+              "tip": "rt_tip_redo"
+            },
+            {
+              "do": "source",
+              "label": "rt_source",
+              "tip": "rt_tip_source"
+            }
+          ],
+          "colours": [
+            {
+              "value": "",
+              "word": "rt_c_default"
+            },
+            {
+              "value": "#b91c1c",
+              "word": "rt_c_red"
+            },
+            {
+              "value": "#c2410c",
+              "word": "rt_c_orange"
+            },
+            {
+              "value": "#15803d",
+              "word": "rt_c_green"
+            },
+            {
+              "value": "#1d4ed8",
+              "word": "rt_c_blue"
+            },
+            {
+              "value": "#7e22ce",
+              "word": "rt_c_purple"
+            },
+            {
+              "value": "#57534e",
+              "word": "rt_c_grey"
+            }
+          ],
+          "table": {
+            "rows": 3,
+            "cols": 3
+          },
+          "youtube": "(?:youtube\\.com/(?:watch\\?(?:.*&)?v=|embed/|shorts/)|youtu\\.be/)([\\w-]{11})",
+          "youtube_embed": "https://www.youtube-nocookie.com/embed/{id}",
+          "paste_tags": [
+            "p",
+            "br",
+            "b",
+            "strong",
+            "i",
+            "em",
+            "u",
+            "h2",
+            "h3",
+            "h4",
+            "ul",
+            "ol",
+            "li",
+            "blockquote",
+            "a",
+            "table",
+            "thead",
+            "tbody",
+            "tr",
+            "td",
+            "th",
+            "img",
+            "figure",
+            "figcaption"
+          ],
+          "paste_attrs": [
+            "href",
+            "src",
+            "alt",
+            "colspan",
+            "rowspan"
+          ],
+          "save_after_ms": 1500,
+          "video_w": 560,
+          "video_h": 315
+        },
+        "quality_stars": 5,
+        "job_poll_ms": 1500
+      }
+    }
+  ]
+}

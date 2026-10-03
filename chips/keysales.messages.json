@@ -1,0 +1,212 @@
+{
+  "chip_id": "keysales.messages",
+  "kind": "accessor",
+  "set": "keysales",
+  "label": "Everything the server says about selling and buying a key",
+  "aliases": [
+    "key sales messages"
+  ],
+  "params": [
+    {
+      "name": "no_offer",
+      "type": "text",
+      "default": "No offer with that id.",
+      "label": "no_offer"
+    },
+    {
+      "name": "not_your_offer",
+      "type": "text",
+      "default": "That offer is not yours.",
+      "label": "not_your_offer"
+    },
+    {
+      "name": "no_order",
+      "type": "text",
+      "default": "No request with that id.",
+      "label": "no_order"
+    },
+    {
+      "name": "not_your_order",
+      "type": "text",
+      "default": "That request is not yours.",
+      "label": "not_your_order"
+    },
+    {
+      "name": "not_a_seller",
+      "type": "text",
+      "default": "Only the portal owner or a sales person puts a key up for sale.",
+      "label": "not_a_seller"
+    },
+    {
+      "name": "offer_needs_key",
+      "type": "text",
+      "default": "Choose one of your own keys to sell credit on.",
+      "label": "offer_needs_key"
+    },
+    {
+      "name": "offer_key_gone",
+      "type": "text",
+      "default": "The key behind this offer is gone. Switch the offer off or point it at another key.",
+      "label": "offer_key_gone"
+    },
+    {
+      "name": "too_many_offers",
+      "type": "text",
+      "default": "You have {max} offers already.",
+      "label": "too_many_offers"
+    },
+    {
+      "name": "offer_saved",
+      "type": "text",
+      "default": "{title} is on sale at {terms}.",
+      "label": "offer_saved"
+    },
+    {
+      "name": "offer_off",
+      "type": "text",
+      "default": "{title} is no longer on sale. Credit already bought keeps working.",
+      "label": "offer_off"
+    },
+    {
+      "name": "offer_deleted",
+      "type": "text",
+      "default": "{title} is gone. Credit already bought keeps working.",
+      "label": "offer_deleted"
+    },
+    {
+      "name": "cannot_buy",
+      "type": "text",
+      "default": "You cannot ask for that right now.",
+      "label": "cannot_buy"
+    },
+    {
+      "name": "bad_amount",
+      "type": "text",
+      "default": "Ask for between {min} and {max}.",
+      "label": "bad_amount"
+    },
+    {
+      "name": "already_waiting",
+      "type": "text",
+      "default": "You already have a request waiting on this offer.",
+      "label": "already_waiting"
+    },
+    {
+      "name": "too_many_orders",
+      "type": "text",
+      "default": "You have {max} requests waiting already. Wait for an answer first.",
+      "label": "too_many_orders"
+    },
+    {
+      "name": "order_placed",
+      "type": "text",
+      "default": "Asked {seller} for {amount} of credit on {title}. You will see it here when they answer.",
+      "label": "order_placed"
+    },
+    {
+      "name": "order_withdrawn",
+      "type": "text",
+      "default": "Request withdrawn.",
+      "label": "order_withdrawn"
+    },
+    {
+      "name": "order_decided",
+      "type": "text",
+      "default": "Already answered.",
+      "label": "order_decided"
+    },
+    {
+      "name": "approved_ok",
+      "type": "text",
+      "default": "{buyer} now has {amount} of credit on {title}, and a bill for it.",
+      "label": "approved_ok"
+    },
+    {
+      "name": "rejected_ok",
+      "type": "text",
+      "default": "Told {buyer} no.",
+      "label": "rejected_ok"
+    },
+    {
+      "name": "bill_for_credit",
+      "type": "text",
+      "default": "{amount} of credit on {title}",
+      "label": "bill_for_credit"
+    },
+    {
+      "name": "credit_left",
+      "type": "text",
+      "default": "{left} of {bought} left",
+      "label": "credit_left"
+    },
+    {
+      "name": "sold_by",
+      "type": "text",
+      "default": "Sold by {seller}",
+      "label": "sold_by"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "no_offer": "$no_offer",
+      "not_your_offer": "$not_your_offer",
+      "no_order": "$no_order",
+      "not_your_order": "$not_your_order",
+      "not_a_seller": "$not_a_seller",
+      "offer_needs_key": "$offer_needs_key",
+      "offer_key_gone": "$offer_key_gone",
+      "too_many_offers": "$too_many_offers",
+      "offer_saved": "$offer_saved",
+      "offer_off": "$offer_off",
+      "offer_deleted": "$offer_deleted",
+      "cannot_buy": "$cannot_buy",
+      "bad_amount": "$bad_amount",
+      "already_waiting": "$already_waiting",
+      "too_many_orders": "$too_many_orders",
+      "order_placed": "$order_placed",
+      "order_withdrawn": "$order_withdrawn",
+      "order_decided": "$order_decided",
+      "approved_ok": "$approved_ok",
+      "rejected_ok": "$rejected_ok",
+      "bill_for_credit": "$bill_for_credit",
+      "credit_left": "$credit_left",
+      "sold_by": "$sold_by"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "Every sentence the offer, request, approve and reject routes can answer with, plus the two lines that describe a bought key on screen.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "no_offer": "No offer with that id.",
+        "not_your_offer": "That offer is not yours.",
+        "no_order": "No request with that id.",
+        "not_your_order": "That request is not yours.",
+        "not_a_seller": "Only the portal owner or a sales person puts a key up for sale.",
+        "offer_needs_key": "Choose one of your own keys to sell credit on.",
+        "offer_key_gone": "The key behind this offer is gone. Switch the offer off or point it at another key.",
+        "too_many_offers": "You have {max} offers already.",
+        "offer_saved": "{title} is on sale at {terms}.",
+        "offer_off": "{title} is no longer on sale. Credit already bought keeps working.",
+        "offer_deleted": "{title} is gone. Credit already bought keeps working.",
+        "cannot_buy": "You cannot ask for that right now.",
+        "bad_amount": "Ask for between {min} and {max}.",
+        "already_waiting": "You already have a request waiting on this offer.",
+        "too_many_orders": "You have {max} requests waiting already. Wait for an answer first.",
+        "order_placed": "Asked {seller} for {amount} of credit on {title}. You will see it here when they answer.",
+        "order_withdrawn": "Request withdrawn.",
+        "order_decided": "Already answered.",
+        "approved_ok": "{buyer} now has {amount} of credit on {title}, and a bill for it.",
+        "rejected_ok": "Told {buyer} no.",
+        "bill_for_credit": "{amount} of credit on {title}",
+        "credit_left": "{left} of {bought} left",
+        "sold_by": "Sold by {seller}"
+      }
+    }
+  ],
+  "weight_basis": "The words of the shop. Not one of them is written in Python."
+}

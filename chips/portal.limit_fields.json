@@ -1,0 +1,81 @@
+{
+  "chip_id": "portal.limit_fields",
+  "kind": "accessor",
+  "set": "portal",
+  "label": "The storage limits the owner sets - on the Storage screen",
+  "aliases": [
+    "storage limit boxes",
+    "quota fields"
+  ],
+  "params": [
+    {
+      "name": "rows",
+      "type": "rows",
+      "default": [
+        {
+          "key": "max_upload_mb",
+          "label": "Largest upload (MB)",
+          "note": "Refused at the door, not after the file is written. About 20 MB per minute of 1080p screen recording.",
+          "unit": "MB",
+          "person": true
+        },
+        {
+          "key": "quota_gb",
+          "label": "Storage each account may hold (GB)",
+          "note": "0 = no limit. Counts the recording, the narrated copy and the subtitles together; upload and Generate both check it first.",
+          "unit": "GB",
+          "person": true
+        },
+        {
+          "key": "keep_source_days",
+          "label": "Delete recordings after (days)",
+          "note": "0 = keep every recording for ever. The narrated MP4, the subtitles and the script always stay - what goes is the raw upload, which is the biggest file in the folder. To change the script after that, upload the recording again.",
+          "unit": "days",
+          "person": false
+        }
+      ],
+      "label": "key = the setting it saves; label and note = the words by the box; unit = what the number counts; person = may also be set for one person"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "rows": "$rows"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "Admin -> Storage shows these boxes under 'Default for everyone'; the ones marked person also appear in one person's Edit limits. The numbers are chip portal.defaults and the owner's saved settings; what 0 means is chip portal.storage_limits.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "rows": [
+          {
+            "key": "max_upload_mb",
+            "label": "Largest upload (MB)",
+            "note": "Refused at the door, not after the file is written. About 20 MB per minute of 1080p screen recording.",
+            "unit": "MB",
+            "person": true
+          },
+          {
+            "key": "quota_gb",
+            "label": "Storage each account may hold (GB)",
+            "note": "0 = no limit. Counts the recording, the narrated copy and the subtitles together; upload and Generate both check it first.",
+            "unit": "GB",
+            "person": true
+          },
+          {
+            "key": "keep_source_days",
+            "label": "Delete recordings after (days)",
+            "note": "0 = keep every recording for ever. The narrated MP4, the subtitles and the script always stay - what goes is the raw upload, which is the biggest file in the folder. To change the script after that, upload the recording again.",
+            "unit": "days",
+            "person": false
+          }
+        ]
+      }
+    }
+  ],
+  "weight_basis": "Platform operations primitive, no business content."
+}

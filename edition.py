@@ -1,0 +1,97 @@
+"""Which product this server is. In this folder only SimplyFile (chip edition.settings) - kept as the framework's hook.
+
+2026-09-18 owner: "going forward all other features will be part of SteadyMove, which is tv + new
+features". One codebase, two editions. A server is told which it is by PORTAL_EDITION (a hosting fact,
+set in its service file, like the port); what each edition is called and which screens it shows is chip
+`edition.settings`. tv is frozen: a new screen is added to the catalog and to steadymove's list only.
+"""
+from __future__ import annotations
+
+import os
+
+from core import engine
+
+
+def settings() -> dict:
+    return engine.run("edition.settings")
+
+
+def current() -> dict:
+    s = settings()
+    want = (os.getenv("PORTAL_EDITION") or os.getenv("TV_EDITION") or s["default_edition"]).strip().lower()
+    row = next((r for r in s["rows"] if r["id"] == want), None)
+    if row is None:   # a service file naming an edition that does not exist must not start half-configured
+        raise RuntimeError(f"PORTAL_EDITION={want!r} is not one of {[r['id'] for r in s['rows']]} (chip edition.settings)")
+    return row
+
+
+def catalog(screens: list[dict]) -> list[dict]:
+    """The catalog's screens this edition shows, in the edition's own order."""
+    by_id = {s["id"]: s for s in screens}
+    return [by_id[i] for i in current()["screens"] if i in by_id]
+
+
+def door(host: str) -> dict | None:
+    """2026-09-28 owner: "make Katha standard as tv and sm". Another address of the SAME edition (katha.valuestream.in on
+    SteadyMove) is a door, chip edition.settings rows[].doors: its own name, pitch and first screen - the same shell,
+    sign-in card, menu and screens. Never a page of its own."""
+    host = str(host or "").split(":")[0].strip().lower()
+    return next((d for d in current().get("doors") or [] if host in d["hosts"]), None)
+
+
+def menu_ids(host: str) -> set[str] | None:
+    """The screens this address's menu and top search offer; None = every screen of the edition.
+    A door's are ITS screens (Katha: home, watch, read...); the edition's own address leaves off its `site_hides`
+    (2026-10-01 owner: "I don't want Katha in sm's menu" - they live on katha.valuestream.in). The framework's admin
+    screens, which no edition lists, stay for whoever may open them. Menu and search only: a hidden screen still opens
+    from a link or a bell, and the server still asks access.may."""
+    from core import access  # noqa: PLC0415
+    d, own = door(host), current()["screens"]
+    if d and d.get("screens"):
+        return {s["id"] for s in access.CATALOG if s["id"] in d["screens"] or s["id"] not in own}
+    hides = set(current().get("site_hides") or [])
+    return {s["id"] for s in access.CATALOG if s["id"] not in hides} if hides and not d else None
+
+
+def elsewhere(host: str) -> dict:
+    """Where this address sends the screens its menu leaves off (chip edition.settings site_sends): {url, screens}, or
+    {} - a door, or an address with nowhere named, keeps them. 2026-10-01 owner: "send Katha links to katha.valuestream.in"."""
+    h = str(host or "").split(":")[0].strip().lower()
+    url = (current().get("site_sends") or {}).get(h, "")
+    return {"url": url, "screens": list(current().get("site_hides") or [])} if url and not door(host) else {}
+
+
+def bootstrap_extra(request, u) -> dict:
+    d = door(request.headers.get("host") if request is not None else "")
+    row = current() | {k: v for k, v in (d or {}).items() if k != "hosts"}
+    from core import access  # noqa: PLC0415
+    shown = menu_ids(request.headers.get("host") if request is not None else "")
+    menu = {"catalog": [s for s in access.CATALOG if s["id"] in shown]} if shown is not None else {}
+    away = elsewhere(request.headers.get("host") if request is not None else "")
+    return ({"product_name": d["product_name"]} if d else {}) | menu | ({"elsewhere": away} if away else {}) | {"edition": {
+        "id": row["id"], "brand_sub": row["brand_sub"], "landing": row["landing"],
+        "words_prefix": row.get("words_prefix", ""), "tour": row.get("tour"), "selling": row.get("selling") or [],
+        "jump_signin": bool(row.get("jump_signin")),
+        # a door's "Launch Studio" (top right): the workshop's address as seen from THIS host (chip doors[].launch)
+        "launch": ((d or {}).get("launch") or {}).get(str(request.headers.get("host") if request is not None else "").split(":")[0].lower(), "")}}
+
+
+if __name__ == "__main__":  # ponytail: one runnable self-check - SimplyFile is the one edition here
+    import store  # noqa: F401 - registers this portal's chips, as the app does
+    keep = os.environ.pop("PORTAL_EDITION", None)
+    try:
+        assert current()["id"] == "simplyfile" and current()["landing"] == "#/clients"
+        shown = [s["id"] for s in catalog([{"id": x} for x in ("keys", "clients", "video", "intake")])]
+        assert shown == ["clients", "intake", "keys"], shown        # the edition's order; a screen it does not list is absent
+        assert door("sf.valuestream.in") is None
+        os.environ["PORTAL_EDITION"] = "nonsense"
+        try:
+            current()
+            raise AssertionError("an unknown edition must refuse to start")
+        except RuntimeError:
+            pass
+    finally:
+        os.environ.pop("PORTAL_EDITION", None)
+        if keep is not None:
+            os.environ["PORTAL_EDITION"] = keep
+    print("edition self-check OK")

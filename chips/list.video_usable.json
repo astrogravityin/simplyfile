@@ -1,0 +1,85 @@
+{
+  "chip_id": "list.video_usable",
+  "kind": "accessor",
+  "set": "list",
+  "label": "Videos Combine: the recordings that can be joined",
+  "aliases": [
+    "combine recordings"
+  ],
+  "params": [
+    {
+      "name": "search_keys",
+      "type": "list",
+      "default": [
+        "title"
+      ],
+      "label": "search keys"
+    },
+    {
+      "name": "sort_key",
+      "type": "text",
+      "default": "created_at",
+      "label": "sort key"
+    },
+    {
+      "name": "sort_desc",
+      "type": "boolean",
+      "default": true,
+      "label": "sort desc"
+    },
+    {
+      "name": "sorts",
+      "type": "list",
+      "default": [
+        "created_at",
+        "title"
+      ],
+      "label": "sorts"
+    },
+    {
+      "name": "page_size",
+      "type": "number",
+      "default": 8,
+      "label": "page size"
+    },
+    {
+      "name": "max_page_size",
+      "type": "number",
+      "default": 200,
+      "label": "max page size"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "search_keys": "$search_keys",
+      "sort_key": "$sort_key",
+      "sort_desc": "$sort_desc",
+      "sorts": "$sorts",
+      "page_size": "$page_size",
+      "max_page_size": "$max_page_size"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-01 owner (Phase 3, \"1000s of cards\"): Combine listed every recording, each with a video preview (one media request each). Now a paged list: 8 at a time, newest first, searched by title.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "search_keys": [
+          "title"
+        ],
+        "sort_key": "created_at",
+        "sort_desc": true,
+        "sorts": [
+          "created_at",
+          "title"
+        ],
+        "page_size": 8,
+        "max_page_size": 200
+      }
+    }
+  ]
+}

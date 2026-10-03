@@ -1,0 +1,73 @@
+{
+  "chip_id": "security.headers",
+  "kind": "accessor",
+  "set": "security",
+  "label": "Security headers every answer of the portal carries (tv, sm, katha - one list)",
+  "aliases": [
+    "security headers",
+    "http headers",
+    "hsts"
+  ],
+  "params": [
+    {
+      "name": "headers",
+      "type": "any",
+      "default": {
+        "X-Content-Type-Options": "nosniff",
+        "Referrer-Policy": "strict-origin-when-cross-origin",
+        "Content-Security-Policy": "frame-ancestors 'self' https://*.valuestream.in https://astrostage.in https://*.astrostage.in",
+        "X-Frame-Options": "SAMEORIGIN"
+      },
+      "label": "Header -> value, added to every answer that does not set its own (a file's own Content-Security-Policy wins)"
+    },
+    {
+      "name": "hsts",
+      "type": "text",
+      "default": "max-age=31536000",
+      "label": "Strict-Transport-Security, sent only on an https request (blank = not sent)"
+    },
+    {
+      "name": "frame_ok_paths",
+      "type": "list",
+      "default": [
+        "/m/",
+        "/embed/"
+      ],
+      "label": "Paths another site may show in a frame (a published manual, the embed script) - X-Frame-Options left off"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "headers": "$headers",
+      "hsts": "$hsts",
+      "frame_ok_paths": "$frame_ok_paths"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-01 portal assessment: tv, sm and katha sent no Content-Security-Policy, X-Frame-Options, nosniff or Referrer-Policy, and katha no HSTS (nginx config not in the repo). Every answer now carries these from core (core/__init__ _stamp_build), so all three sites get them from one list; change a value here, never in code. frame-ancestors lets AstroStage and the valuestream sites frame each other; CSP stays frame-ancestors only (inline styles everywhere - a full script/style policy is a later step).",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "headers": {
+          "X-Content-Type-Options": "nosniff",
+          "Referrer-Policy": "strict-origin-when-cross-origin",
+          "Content-Security-Policy": "frame-ancestors 'self' https://*.valuestream.in https://astrostage.in https://*.astrostage.in",
+          "X-Frame-Options": "SAMEORIGIN"
+        },
+        "hsts": "max-age=31536000",
+        "frame_ok_paths": [
+          "/m/",
+          "/embed/"
+        ]
+      }
+    }
+  ],
+  "weight_basis": "Platform security primitive, no content. The values ARE the policy - edit them here, never in Python.",
+  "evidence": {
+    "kind": "none"
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "chip_id": "auth.signin_gate",
+  "kind": "accessor",
+  "set": "auth",
+  "audience": "admin",
+  "label": "May this account come in right now",
+  "aliases": [],
+  "params": [
+    {
+      "name": "verified",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "name": "mail",
+      "type": "boolean",
+      "default": false
+    }
+  ],
+  "expr": {
+    "vop": "choose",
+    "cases": [
+      {
+        "when": {
+          "op": "all",
+          "items": [
+            {
+              "op": "eq",
+              "left": "$verified",
+              "right": false
+            },
+            {
+              "op": "eq",
+              "left": "$mail",
+              "right": true
+            }
+          ]
+        },
+        "then": "verify_first"
+      }
+    ],
+    "else": "ok"
+  },
+  "returns": "text",
+  "version": 1,
+  "status": "published",
+  "description_nl": "verify_first: an unconfirmed address, while the portal CAN send the code that would confirm it. Mail switched off later must not strand anyone behind a code nobody can send, so without mail it is ok.",
+  "test_cases": [
+    {
+      "args": {
+        "verified": false,
+        "mail": true
+      },
+      "expect_value": "verify_first"
+    },
+    {
+      "args": {
+        "verified": false,
+        "mail": false
+      },
+      "expect_value": "ok"
+    },
+    {
+      "args": {
+        "verified": true,
+        "mail": true
+      },
+      "expect_value": "ok"
+    }
+  ],
+  "weight_basis": "Platform access primitive, no business content. The knobs ARE the policy — edit them here, never in Python."
+}

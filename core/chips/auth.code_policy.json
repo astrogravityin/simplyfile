@@ -1,0 +1,79 @@
+{
+  "chip_id": "auth.code_policy",
+  "kind": "accessor",
+  "set": "auth",
+  "audience": "admin",
+  "label": "Verification codes: length, lifetime, tries",
+  "aliases": [
+    "otp",
+    "verification code"
+  ],
+  "params": [
+    {
+      "name": "digits",
+      "type": "number",
+      "default": 6
+    },
+    {
+      "name": "signup_ttl_seconds",
+      "type": "number",
+      "default": 900
+    },
+    {
+      "name": "reset_ttl_seconds",
+      "type": "number",
+      "default": 3600
+    },
+    {
+      "name": "invite_ttl_seconds",
+      "type": "number",
+      "default": 604800
+    },
+    {
+      "name": "proof_ttl_seconds",
+      "type": "number",
+      "default": 900
+    },
+    {
+      "name": "max_attempts",
+      "type": "number",
+      "default": 5
+    },
+    {
+      "name": "resend_after_seconds",
+      "type": "number",
+      "default": 60
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "digits": "$digits",
+      "signup_ttl_seconds": "$signup_ttl_seconds",
+      "reset_ttl_seconds": "$reset_ttl_seconds",
+      "invite_ttl_seconds": "$invite_ttl_seconds",
+      "proof_ttl_seconds": "$proof_ttl_seconds",
+      "max_attempts": "$max_attempts",
+      "resend_after_seconds": "$resend_after_seconds"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "A code emailed to prove an address: digits long, alive signup_ttl_seconds (sign-up) or reset_ttl_seconds (forgot password), max_attempts wrong tries and it is burned. A right code gives a proof that lives proof_ttl_seconds. Invitations are links that live invite_ttl_seconds. resend_after_seconds before Send again.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "digits": 6,
+        "signup_ttl_seconds": 900,
+        "reset_ttl_seconds": 3600,
+        "invite_ttl_seconds": 604800,
+        "proof_ttl_seconds": 900,
+        "max_attempts": 5,
+        "resend_after_seconds": 60
+      }
+    }
+  ],
+  "weight_basis": "Platform access primitive, no business content. The knobs ARE the policy — edit them here, never in Python."
+}

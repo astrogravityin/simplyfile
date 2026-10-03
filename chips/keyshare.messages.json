@@ -1,0 +1,348 @@
+{
+  "chip_id": "keyshare.messages",
+  "kind": "accessor",
+  "set": "keyshare",
+  "label": "Everything the server says about lending a key",
+  "aliases": [
+    "key sharing messages"
+  ],
+  "params": [
+    {
+      "name": "no_key",
+      "type": "text",
+      "default": "No key with that id.",
+      "label": "no_key"
+    },
+    {
+      "name": "not_yours",
+      "type": "text",
+      "default": "That key is not yours to lend.",
+      "label": "not_yours"
+    },
+    {
+      "name": "no_grant",
+      "type": "text",
+      "default": "No shared key with that id.",
+      "label": "no_grant"
+    },
+    {
+      "name": "not_your_grant",
+      "type": "text",
+      "default": "That share is not yours to change.",
+      "label": "not_your_grant"
+    },
+    {
+      "name": "no_such_person",
+      "type": "text",
+      "default": "Nobody here signs in as {email}. They need an account on this portal first.",
+      "label": "no_such_person"
+    },
+    {
+      "name": "not_yourself",
+      "type": "text",
+      "default": "That is your own account - you already have this key.",
+      "label": "not_yourself"
+    },
+    {
+      "name": "already_shared",
+      "type": "text",
+      "default": "{email} already has this key.",
+      "label": "already_shared"
+    },
+    {
+      "name": "too_many_holders",
+      "type": "text",
+      "default": "This key is lent to {max} people already. Take one back first.",
+      "label": "too_many_holders"
+    },
+    {
+      "name": "borrowed_not_lent_on",
+      "type": "text",
+      "default": "You borrowed this key, so it is not yours to lend on.",
+      "label": "borrowed_not_lent_on"
+    },
+    {
+      "name": "borrowed_no_default",
+      "type": "text",
+      "default": "A borrowed key cannot be made your default - that would put someone else's secret in your own key box.",
+      "label": "borrowed_no_default"
+    },
+    {
+      "name": "borrowed_no_remove",
+      "type": "text",
+      "default": "You borrowed this key. Give it back instead - only its owner can delete it.",
+      "label": "borrowed_no_remove"
+    },
+    {
+      "name": "shared_ok",
+      "type": "text",
+      "default": "{email} can now spend on {label}. Every run they make on it is on your usage list.",
+      "label": "shared_ok"
+    },
+    {
+      "name": "revoked_ok",
+      "type": "text",
+      "default": "{email} can no longer use {label}.",
+      "label": "revoked_ok"
+    },
+    {
+      "name": "returned_ok",
+      "type": "text",
+      "default": "You gave {label} back.",
+      "label": "returned_ok"
+    },
+    {
+      "name": "relabelled_ok",
+      "type": "text",
+      "default": "That key is called {label} for you now. Its owner still sees their own name for it.",
+      "label": "relabelled_ok"
+    },
+    {
+      "name": "label_needed",
+      "type": "text",
+      "default": "Give the key a name you will recognise.",
+      "label": "label_needed"
+    },
+    {
+      "name": "no_bill",
+      "type": "text",
+      "default": "No bill with that id.",
+      "label": "no_bill"
+    },
+    {
+      "name": "nothing_to_bill",
+      "type": "text",
+      "default": "Nothing has been spent on that key by that person since the last bill.",
+      "label": "nothing_to_bill"
+    },
+    {
+      "name": "bill_pushed",
+      "type": "text",
+      "default": "Bill for {amount} sent to {email}: {runs} runs on {label}.",
+      "label": "bill_pushed"
+    },
+    {
+      "name": "bill_acked",
+      "type": "text",
+      "default": "Marked as settled.",
+      "label": "bill_acked"
+    },
+    {
+      "name": "bill_not_yours",
+      "type": "text",
+      "default": "That bill was not sent to you.",
+      "label": "bill_not_yours"
+    },
+    {
+      "name": "own_key",
+      "type": "text",
+      "default": "Your own key",
+      "label": "own_key"
+    },
+    {
+      "name": "borrowed_from",
+      "type": "text",
+      "default": "Borrowed from {owner}",
+      "label": "borrowed_from"
+    },
+    {
+      "name": "someone",
+      "type": "text",
+      "default": "someone",
+      "label": "someone"
+    },
+    {
+      "name": "bad_markup",
+      "type": "text",
+      "default": "A mark-up is a percentage between 0 and {max}.",
+      "label": "bad_markup"
+    },
+    {
+      "name": "bad_cap",
+      "type": "text",
+      "default": "A spending cap is between 0 and {max}; 0 means no cap.",
+      "label": "bad_cap"
+    },
+    {
+      "name": "over_limit_day",
+      "type": "text",
+      "default": "Today's cap on this key is spent ({spent} of {cap}). It frees up as the last {hours} hours roll by.",
+      "label": "over_limit_day"
+    },
+    {
+      "name": "over_limit_week",
+      "type": "text",
+      "default": "This week's cap on this key is spent ({spent} of {cap}).",
+      "label": "over_limit_week"
+    },
+    {
+      "name": "over_limit_month",
+      "type": "text",
+      "default": "This month's cap on this key is spent ({spent} of {cap}).",
+      "label": "over_limit_month"
+    },
+    {
+      "name": "limits_saved",
+      "type": "text",
+      "default": "{label}: {summary}",
+      "label": "limits_saved"
+    },
+    {
+      "name": "no_limits",
+      "type": "text",
+      "default": "No cap",
+      "label": "no_limits"
+    },
+    {
+      "name": "markup_none",
+      "type": "text",
+      "default": "at cost",
+      "label": "markup_none"
+    },
+    {
+      "name": "markup_some",
+      "type": "text",
+      "default": "+{pct}%",
+      "label": "markup_some"
+    },
+    {
+      "name": "cap_line",
+      "type": "text",
+      "default": "{window}: {cap}",
+      "label": "cap_line"
+    },
+    {
+      "name": "unknown_session",
+      "type": "text",
+      "default": "earlier",
+      "label": "unknown_session"
+    },
+    {
+      "name": "over_limit_total",
+      "type": "text",
+      "default": "The credit on this key is used up ({spent} of {cap}). Buy more to carry on.",
+      "label": "over_limit_total"
+    },
+    {
+      "name": "credit_line",
+      "type": "text",
+      "default": "credit {cap}",
+      "label": "credit_line"
+    },
+    {
+      "name": "credit_low",
+      "type": "text",
+      "default": "Only {left} of {bought} credit is left on {label}. Buy more before it runs out — the key stops the moment it is spent.",
+      "label": "credit_low"
+    },
+    {
+      "name": "cap_low",
+      "type": "text",
+      "default": "{label}: {left} of this {window}'s {cap} is left.",
+      "label": "cap_low"
+    },
+    {
+      "name": "credit_added",
+      "type": "text",
+      "default": "{amount} added to {label}. {total} of credit now, {left} of it unspent.",
+      "label": "credit_added"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "no_key": "$no_key",
+      "not_yours": "$not_yours",
+      "no_grant": "$no_grant",
+      "not_your_grant": "$not_your_grant",
+      "no_such_person": "$no_such_person",
+      "not_yourself": "$not_yourself",
+      "already_shared": "$already_shared",
+      "too_many_holders": "$too_many_holders",
+      "borrowed_not_lent_on": "$borrowed_not_lent_on",
+      "borrowed_no_default": "$borrowed_no_default",
+      "borrowed_no_remove": "$borrowed_no_remove",
+      "shared_ok": "$shared_ok",
+      "revoked_ok": "$revoked_ok",
+      "returned_ok": "$returned_ok",
+      "relabelled_ok": "$relabelled_ok",
+      "label_needed": "$label_needed",
+      "no_bill": "$no_bill",
+      "nothing_to_bill": "$nothing_to_bill",
+      "bill_pushed": "$bill_pushed",
+      "bill_acked": "$bill_acked",
+      "bill_not_yours": "$bill_not_yours",
+      "own_key": "$own_key",
+      "borrowed_from": "$borrowed_from",
+      "someone": "$someone",
+      "bad_markup": "$bad_markup",
+      "bad_cap": "$bad_cap",
+      "over_limit_day": "$over_limit_day",
+      "over_limit_week": "$over_limit_week",
+      "over_limit_month": "$over_limit_month",
+      "limits_saved": "$limits_saved",
+      "no_limits": "$no_limits",
+      "markup_none": "$markup_none",
+      "markup_some": "$markup_some",
+      "cap_line": "$cap_line",
+      "unknown_session": "$unknown_session",
+      "over_limit_total": "$over_limit_total",
+      "credit_line": "$credit_line",
+      "credit_low": "$credit_low",
+      "cap_low": "$cap_low",
+      "credit_added": "$credit_added"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "Every sentence the share, revoke, relabel and bill routes can answer with, and the two words that say whether a key on the usage list is your own or borrowed. bad_markup / bad_cap: a number outside what the chips allow. over_limit_*: why a borrowed key stopped working - one sentence per window. limits_saved, no_limits, markup_none, markup_some, cap_line: how a share's terms read on screen. unknown_session: a run booked before sign-in sessions were tracked. credit_low / cap_low: the warning when a share is down to its last slice (keyshare.limits warn_at_pct - 80 means 'warn when a fifth is left'). credit_added: a top-up on credit somebody already bought.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "no_key": "No key with that id.",
+        "not_yours": "That key is not yours to lend.",
+        "no_grant": "No shared key with that id.",
+        "not_your_grant": "That share is not yours to change.",
+        "no_such_person": "Nobody here signs in as {email}. They need an account on this portal first.",
+        "not_yourself": "That is your own account - you already have this key.",
+        "already_shared": "{email} already has this key.",
+        "too_many_holders": "This key is lent to {max} people already. Take one back first.",
+        "borrowed_not_lent_on": "You borrowed this key, so it is not yours to lend on.",
+        "borrowed_no_default": "A borrowed key cannot be made your default - that would put someone else's secret in your own key box.",
+        "borrowed_no_remove": "You borrowed this key. Give it back instead - only its owner can delete it.",
+        "shared_ok": "{email} can now spend on {label}. Every run they make on it is on your usage list.",
+        "revoked_ok": "{email} can no longer use {label}.",
+        "returned_ok": "You gave {label} back.",
+        "relabelled_ok": "That key is called {label} for you now. Its owner still sees their own name for it.",
+        "label_needed": "Give the key a name you will recognise.",
+        "no_bill": "No bill with that id.",
+        "nothing_to_bill": "Nothing has been spent on that key by that person since the last bill.",
+        "bill_pushed": "Bill for {amount} sent to {email}: {runs} runs on {label}.",
+        "bill_acked": "Marked as settled.",
+        "bill_not_yours": "That bill was not sent to you.",
+        "own_key": "Your own key",
+        "borrowed_from": "Borrowed from {owner}",
+        "someone": "someone",
+        "bad_markup": "A mark-up is a percentage between 0 and {max}.",
+        "bad_cap": "A spending cap is between 0 and {max}; 0 means no cap.",
+        "over_limit_day": "Today's cap on this key is spent ({spent} of {cap}). It frees up as the last {hours} hours roll by.",
+        "over_limit_week": "This week's cap on this key is spent ({spent} of {cap}).",
+        "over_limit_month": "This month's cap on this key is spent ({spent} of {cap}).",
+        "limits_saved": "{label}: {summary}",
+        "no_limits": "No cap",
+        "markup_none": "at cost",
+        "markup_some": "+{pct}%",
+        "cap_line": "{window}: {cap}",
+        "unknown_session": "earlier",
+        "over_limit_total": "The credit on this key is used up ({spent} of {cap}). Buy more to carry on.",
+        "credit_line": "credit {cap}",
+        "credit_low": "Only {left} of {bought} credit is left on {label}. Buy more before it runs out — the key stops the moment it is spent.",
+        "cap_low": "{label}: {left} of this {window}'s {cap} is left.",
+        "credit_added": "{amount} added to {label}. {total} of credit now, {left} of it unspent."
+      }
+    }
+  ],
+  "weight_basis": "The words of key sharing. Not one of them is written in Python."
+}

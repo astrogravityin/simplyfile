@@ -1,0 +1,92 @@
+{
+  "chip_id": "ledger.counts_as_view",
+  "kind": "predicate",
+  "set": "ledger",
+  "audience": "admin",
+  "label": "A server-rendered page that counts as a visit",
+  "aliases": [],
+  "params": [
+    {
+      "name": "method",
+      "type": "text",
+      "default": "GET"
+    },
+    {
+      "name": "status",
+      "type": "number",
+      "default": 200
+    },
+    {
+      "name": "path",
+      "type": "text",
+      "default": ""
+    },
+    {
+      "name": "content_type",
+      "type": "text",
+      "default": ""
+    },
+    {
+      "name": "shell_path",
+      "type": "text",
+      "default": "/"
+    }
+  ],
+  "expr": {
+    "op": "all",
+    "items": [
+      {
+        "op": "eq",
+        "left": "$method",
+        "right": "GET"
+      },
+      {
+        "op": "eq",
+        "left": "$status",
+        "right": 200
+      },
+      {
+        "op": "ne",
+        "left": "$path",
+        "right": "$shell_path"
+      },
+      {
+        "op": "eq",
+        "left": {
+          "vop": "contains",
+          "text": "$content_type",
+          "part": "text/html"
+        },
+        "right": true
+      }
+    ]
+  },
+  "returns": "boolean",
+  "version": 1,
+  "status": "published",
+  "description_nl": "A published manual (/m/…) or help page is a visit too. The single-page shell (shell_path) reports its own screens by beacon, so it is not counted twice.",
+  "test_cases": [
+    {
+      "args": {
+        "path": "/m/guide",
+        "content_type": "text/html; charset=utf-8"
+      },
+      "expect": true
+    },
+    {
+      "args": {
+        "path": "/",
+        "content_type": "text/html"
+      },
+      "expect": false
+    },
+    {
+      "args": {
+        "path": "/api/x",
+        "content_type": "application/json"
+      },
+      "expect": false
+    }
+  ],
+  "weight_basis": "Platform operations primitive, no business content. The knobs ARE the policy — edit them here, never in Python."
+}

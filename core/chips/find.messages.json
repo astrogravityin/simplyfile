@@ -1,0 +1,121 @@
+{
+  "chip_id": "find.messages",
+  "kind": "accessor",
+  "set": "find",
+  "label": "Every word the top search says",
+  "aliases": [
+    "search wording",
+    "palette text"
+  ],
+  "params": [
+    {
+      "name": "placeholder",
+      "type": "text",
+      "default": "Search screens, actions or how to…"
+    },
+    {
+      "name": "title",
+      "type": "text",
+      "default": "Go to"
+    },
+    {
+      "name": "hint",
+      "type": "text",
+      "default": "Type a screen, an action, or a question like “how do I change storage size”."
+    },
+    {
+      "name": "suggested",
+      "type": "text",
+      "default": "Suggested"
+    },
+    {
+      "name": "results",
+      "type": "text",
+      "default": "Best matches"
+    },
+    {
+      "name": "nothing",
+      "type": "text",
+      "default": "Nothing matches “{q}”."
+    },
+    {
+      "name": "nothing_hint",
+      "type": "text",
+      "default": "Only screens you may open are searched."
+    },
+    {
+      "name": "open_label",
+      "type": "text",
+      "default": "Open"
+    },
+    {
+      "name": "shortcut",
+      "type": "text",
+      "default": "Ctrl K"
+    },
+    {
+      "name": "shortcut_mac",
+      "type": "text",
+      "default": "⌘ K"
+    },
+    {
+      "name": "keys_hint",
+      "type": "text",
+      "default": "↑↓ to move · Enter to open · Esc to close"
+    },
+    {
+      "name": "in_screen",
+      "type": "text",
+      "default": "in {screen}"
+    },
+    {
+      "name": "in_menu",
+      "type": "text",
+      "default": "{menu} › {screen}",
+      "label": "Under an action or a how-to: where it sits in the menu"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "placeholder": "$placeholder",
+      "title": "$title",
+      "hint": "$hint",
+      "suggested": "$suggested",
+      "results": "$results",
+      "nothing": "$nothing",
+      "nothing_hint": "$nothing_hint",
+      "open_label": "$open_label",
+      "shortcut": "$shortcut",
+      "shortcut_mac": "$shortcut_mac",
+      "keys_hint": "$keys_hint",
+      "in_screen": "$in_screen",
+      "in_menu": "$in_menu"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "The words on the search box and in its list. {q} is what was typed; {screen} is the screen an action belongs to.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "placeholder": "Search screens, actions or how to…",
+        "title": "Go to",
+        "hint": "Type a screen, an action, or a question like “how do I change storage size”.",
+        "suggested": "Suggested",
+        "results": "Best matches",
+        "nothing": "Nothing matches “{q}”.",
+        "nothing_hint": "Only screens you may open are searched.",
+        "open_label": "Open",
+        "shortcut": "Ctrl K",
+        "shortcut_mac": "⌘ K",
+        "keys_hint": "↑↓ to move · Enter to open · Esc to close",
+        "in_screen": "in {screen}",
+        "in_menu": "{menu} › {screen}"
+      }
+    }
+  ],
+  "weight_basis": "Wording only. Every sentence the search shows lives here, never in Python or JavaScript."
+}

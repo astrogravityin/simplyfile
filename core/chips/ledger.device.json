@@ -1,0 +1,186 @@
+{
+  "chip_id": "ledger.device",
+  "kind": "accessor",
+  "set": "ledger",
+  "audience": "admin",
+  "label": "Device, browser and system from a browser's user agent",
+  "aliases": [
+    "user agent",
+    "browser detection"
+  ],
+  "params": [
+    {
+      "name": "user_agent",
+      "type": "text",
+      "default": ""
+    },
+    {
+      "name": "bot_pattern",
+      "type": "text",
+      "default": "(?i)bot|crawl|spider|slurp|preview|monitor|curl|wget|python|httpx"
+    },
+    {
+      "name": "tablet_pattern",
+      "type": "text",
+      "default": "(?i)ipad|tablet"
+    },
+    {
+      "name": "mobile_pattern",
+      "type": "text",
+      "default": "(?i)mobi|iphone|android"
+    },
+    {
+      "name": "browsers",
+      "type": "rows",
+      "default": [
+        {
+          "pattern": "Edg/",
+          "name": "Edge"
+        },
+        {
+          "pattern": "OPR/|Opera",
+          "name": "Opera"
+        },
+        {
+          "pattern": "Firefox/",
+          "name": "Firefox"
+        },
+        {
+          "pattern": "Chrome/",
+          "name": "Chrome"
+        },
+        {
+          "pattern": "Safari/",
+          "name": "Safari"
+        }
+      ]
+    },
+    {
+      "name": "systems",
+      "type": "rows",
+      "default": [
+        {
+          "pattern": "Windows",
+          "name": "Windows"
+        },
+        {
+          "pattern": "iPhone|iPad|iOS",
+          "name": "iOS"
+        },
+        {
+          "pattern": "Android",
+          "name": "Android"
+        },
+        {
+          "pattern": "Mac OS X|Macintosh",
+          "name": "macOS"
+        },
+        {
+          "pattern": "Linux",
+          "name": "Linux"
+        }
+      ]
+    },
+    {
+      "name": "unknown",
+      "type": "text",
+      "default": "other"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "device": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "eq",
+              "left": {
+                "vop": "search",
+                "text": "$user_agent",
+                "pattern": "$bot_pattern"
+              },
+              "right": true
+            },
+            "then": "bot"
+          },
+          {
+            "when": {
+              "op": "eq",
+              "left": {
+                "vop": "search",
+                "text": "$user_agent",
+                "pattern": "$tablet_pattern"
+              },
+              "right": true
+            },
+            "then": "tablet"
+          },
+          {
+            "when": {
+              "op": "eq",
+              "left": {
+                "vop": "search",
+                "text": "$user_agent",
+                "pattern": "$mobile_pattern"
+              },
+              "right": true
+            },
+            "then": "mobile"
+          }
+        ],
+        "else": "desktop"
+      },
+      "browser": {
+        "vop": "first_matching",
+        "text": "$user_agent",
+        "rows": "$browsers",
+        "default": "$unknown"
+      },
+      "os": {
+        "vop": "first_matching",
+        "text": "$user_agent",
+        "rows": "$systems",
+        "default": "$unknown"
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "Rows are tried in order — Edge before Chrome, because Edge's user agent says Chrome too. A bot is counted in the lists and left out of the totals (ledger.settings not_people).",
+  "test_cases": [
+    {
+      "args": {
+        "user_agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0) Mobile/15E148 Safari/604.1"
+      },
+      "expect_value": {
+        "device": "mobile",
+        "browser": "Safari",
+        "os": "iOS"
+      }
+    },
+    {
+      "args": {
+        "user_agent": "Mozilla/5.0 (Windows NT 10.0) Chrome/120.0 Safari/537.36 Edg/120.0"
+      },
+      "expect_value": {
+        "device": "desktop",
+        "browser": "Edge",
+        "os": "Windows"
+      }
+    },
+    {
+      "args": {
+        "user_agent": "curl/8.0"
+      },
+      "expect_value": {
+        "device": "bot",
+        "browser": "other",
+        "os": "other"
+      }
+    }
+  ],
+  "weight_basis": "Platform operations primitive, no business content. The knobs ARE the policy — edit them here, never in Python."
+}

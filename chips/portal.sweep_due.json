@@ -1,0 +1,69 @@
+{
+  "chip_id": "portal.sweep_due",
+  "kind": "predicate",
+  "set": "portal",
+  "label": "Time to remove old raw recordings",
+  "aliases": [
+    "retention cadence"
+  ],
+  "params": [
+    {
+      "name": "keep_source_days",
+      "type": "number",
+      "default": 0
+    },
+    {
+      "name": "seconds_since_sweep",
+      "type": "number",
+      "default": 0
+    },
+    {
+      "name": "every_seconds",
+      "type": "number",
+      "default": 3600
+    }
+  ],
+  "expr": {
+    "op": "all",
+    "items": [
+      {
+        "op": "gt",
+        "left": "$keep_source_days",
+        "right": 0
+      },
+      {
+        "op": "ge",
+        "left": "$seconds_since_sweep",
+        "right": "$every_seconds"
+      }
+    ]
+  },
+  "returns": "boolean",
+  "version": 1,
+  "status": "published",
+  "description_nl": "True when a retention period is set (keep_source_days above 0) and at least every_seconds have passed since the last sweep. No scheduler: the Videos screen asks this each time it opens, so a sweep costs one folder listing per period.",
+  "test_cases": [
+    {
+      "args": {
+        "keep_source_days": 7,
+        "seconds_since_sweep": 4000
+      },
+      "expect": true
+    },
+    {
+      "args": {
+        "keep_source_days": 7,
+        "seconds_since_sweep": 60
+      },
+      "expect": false
+    },
+    {
+      "args": {
+        "keep_source_days": 0,
+        "seconds_since_sweep": 99999
+      },
+      "expect": false
+    }
+  ],
+  "weight_basis": "A yes/no or a value the portal acts on. The knobs ARE the policy — edit them here, never in Python."
+}

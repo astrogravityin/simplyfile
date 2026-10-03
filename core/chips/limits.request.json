@@ -1,0 +1,49 @@
+{
+  "chip_id": "limits.request",
+  "kind": "accessor",
+  "set": "limits",
+  "label": "How big one JSON request may be (a form, a save) - uploads have their own limit",
+  "aliases": [
+    "request size",
+    "body size",
+    "json limit"
+  ],
+  "params": [
+    {
+      "name": "json_most_mb",
+      "type": "number",
+      "default": 32,
+      "label": "Largest JSON request, MB (a manual with pictures inside is the biggest save)"
+    },
+    {
+      "name": "too_big",
+      "type": "long",
+      "default": "That is more than {mb} MB in one go, so it was not taken. Save in smaller parts, or upload the file instead.",
+      "label": "What is said when it is bigger"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "json_most_mb": "$json_most_mb",
+      "too_big": "$too_big"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-02 security test: a 10 MB JSON body was read whole and answered 200; nginx lets 1200 MB through for uploads, so one JSON post could fill the server's memory. core._json_cap refuses a bigger JSON body at the door (413) before it is read.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "json_most_mb": 32,
+        "too_big": "That is more than {mb} MB in one go, so it was not taken. Save in smaller parts, or upload the file instead."
+      }
+    }
+  ],
+  "weight_basis": "Platform safety primitive, no content.",
+  "evidence": {
+    "kind": "none"
+  }
+}

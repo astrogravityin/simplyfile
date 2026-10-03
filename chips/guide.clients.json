@@ -1,0 +1,141 @@
+{
+  "chip_id": "guide.clients",
+  "kind": "accessor",
+  "set": "guide",
+  "label": "Guide me: Clients & years",
+  "aliases": [
+    "clients & years guide"
+  ],
+  "params": [
+    {
+      "name": "title",
+      "type": "text",
+      "default": "Clients & years",
+      "label": "The tour's name (its cover card)"
+    },
+    {
+      "name": "lede",
+      "type": "long",
+      "default": "Enter every assessee once in {product}, then carry them into each assessment year.",
+      "label": "The cover's opening line; {product} = this edition's name"
+    },
+    {
+      "name": "icon",
+      "type": "text",
+      "default": "users",
+      "label": "The emblem on the cover (an icon name)"
+    },
+    {
+      "name": "minutes",
+      "type": "number",
+      "default": 2,
+      "label": "How long the tour takes"
+    },
+    {
+      "name": "steps",
+      "type": "rows",
+      "default": [
+        {
+          "title": "The register",
+          "say": "Every client of the firm, one row each, for the assessment year picked at the top: return form, a 3CD tag when the year is audited, and its stage.",
+          "target": "#cl-list",
+          "art": {
+            "kind": "stack",
+            "items": [
+              "Name and PAN",
+              "Form and 3CD",
+              "Stage"
+            ],
+            "icon": "users"
+          }
+        },
+        {
+          "title": "Pick the year",
+          "say": "Change the assessment year here. A client not yet in that year says so; open it and press Add to carry the master into the year.",
+          "target": "#cl-ay",
+          "art": {
+            "kind": "flow",
+            "items": [
+              "2025-26",
+              "2026-27",
+              "2027-28"
+            ],
+            "at": 1
+          }
+        },
+        {
+          "title": "A new client, once",
+          "say": "New client opens the master: name, status, PAN, contacts, GSTIN, banks and partners for a firm. The PAN's 4th letter must match the status and a GSTIN must carry the PAN, so a slip is caught here.",
+          "target": "#cl-new",
+          "art": {
+            "kind": "flow",
+            "items": [
+              "Master",
+              "Checks",
+              "Saved"
+            ],
+            "at": 0
+          }
+        },
+        {
+          "title": "Statements",
+          "say": "Statements on a row opens Intake & map for that client and year, where the Excel files go.",
+          "target": "#cl-list",
+          "art": {
+            "kind": "flow",
+            "items": [
+              "Client",
+              "Statements",
+              "SF Ref"
+            ],
+            "at": 1
+          }
+        }
+      ],
+      "label": "The steps in order: title, say (the narration), target (where the spotlight goes; alternatives split by |, the first on screen wins), art (the picture: hero/flow/roads/meter/stack/check), place (below/above/right/left/center, optional), open (optional: what the guide presses first when the part is not on screen - open the first item, go back Home; alternatives split by |)"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "title": "$title",
+      "lede": "$lede",
+      "icon": "$icon",
+      "minutes": "$minutes",
+      "steps": "$steps"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-02 owner: Tour Video in sm, owner only - its own Guide me.",
+  "weight_basis": "page",
+  "test_cases": [
+    {
+      "args": {
+        "title": "T",
+        "lede": "L",
+        "icon": "spark",
+        "minutes": 1,
+        "steps": [
+          {
+            "title": "a",
+            "say": "b"
+          }
+        ]
+      },
+      "expect_value": {
+        "title": "T",
+        "lede": "L",
+        "icon": "spark",
+        "minutes": 1,
+        "steps": [
+          {
+            "title": "a",
+            "say": "b"
+          }
+        ]
+      }
+    }
+  ]
+}

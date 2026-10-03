@@ -1,0 +1,99 @@
+{
+  "chip_id": "clients.shape_ok",
+  "kind": "predicate",
+  "set": "clients",
+  "label": "Is this a PAN / IFSC of the right shape?",
+  "aliases": [
+    "clients shape_ok"
+  ],
+  "params": [
+    {
+      "name": "kind",
+      "type": "text",
+      "default": "pan",
+      "label": "kind"
+    },
+    {
+      "name": "value",
+      "type": "text",
+      "default": "",
+      "label": "value"
+    },
+    {
+      "name": "pan_pattern",
+      "type": "text",
+      "default": "[A-Z]{5}[0-9]{4}[A-Z]",
+      "label": "pan pattern"
+    },
+    {
+      "name": "ifsc_pattern",
+      "type": "text",
+      "default": "[A-Z]{4}0[A-Z0-9]{6}",
+      "label": "ifsc pattern"
+    }
+  ],
+  "expr": {
+    "vop": "choose",
+    "cases": [
+      {
+        "when": {
+          "op": "eq",
+          "left": "$kind",
+          "right": "pan"
+        },
+        "then": {
+          "vop": "matches",
+          "text": "$value",
+          "pattern": "$pan_pattern"
+        }
+      },
+      {
+        "when": {
+          "op": "eq",
+          "left": "$kind",
+          "right": "ifsc"
+        },
+        "then": {
+          "vop": "matches",
+          "text": "$value",
+          "pattern": "$ifsc_pattern"
+        }
+      }
+    ],
+    "else": false
+  },
+  "returns": "boolean",
+  "version": 1,
+  "status": "published",
+  "description_nl": "TRUE when the value has the shape of its kind: a PAN is 5 letters, 4 digits, a letter; an IFSC is 4 letters, a zero, then 6 letters or digits.",
+  "test_cases": [
+    {
+      "args": {
+        "kind": "pan",
+        "value": "AAAHS1234K"
+      },
+      "expect_value": true
+    },
+    {
+      "args": {
+        "kind": "pan",
+        "value": "ABCD1234E"
+      },
+      "expect_value": false
+    },
+    {
+      "args": {
+        "kind": "ifsc",
+        "value": "HDFC0000700"
+      },
+      "expect_value": true
+    },
+    {
+      "args": {
+        "kind": "ifsc",
+        "value": "HDFC1000700"
+      },
+      "expect_value": false
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "chip_id": "issues.is_owner",
+  "kind": "predicate",
+  "set": "issues",
+  "label": "Is this person the portal owner (a fact every kind's decision chips may read)",
+  "aliases": [
+    "is owner"
+  ],
+  "params": [
+    {
+      "name": "role",
+      "type": "text",
+      "default": "",
+      "label": "their role"
+    },
+    {
+      "name": "owner_role",
+      "type": "text",
+      "default": "owner",
+      "label": "the role that owns the portal"
+    }
+  ],
+  "expr": {
+    "op": "eq",
+    "left": "$role",
+    "right": "$owner_role"
+  },
+  "returns": "boolean",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-03 owner: \"Chips and ops audit for core/issues.py\" - every name, path, field list, pattern and rule the code held.",
+  "test_cases": [
+    {
+      "args": {
+        "role": "owner"
+      },
+      "expect_value": true
+    },
+    {
+      "args": {
+        "role": "member"
+      },
+      "expect_value": false
+    },
+    {
+      "args": {},
+      "expect_value": false
+    }
+  ]
+}

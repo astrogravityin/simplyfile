@@ -1,0 +1,168 @@
+{
+  "chip_id": "intake.ref_part_ok",
+  "kind": "predicate",
+  "set": "intake",
+  "label": "Is this form + table a real 3CD clause or ITR schedule?",
+  "aliases": [
+    "intake ref_part_ok"
+  ],
+  "params": [
+    {
+      "name": "form",
+      "type": "text",
+      "default": "",
+      "label": "form"
+    },
+    {
+      "name": "table",
+      "type": "text",
+      "default": "",
+      "label": "table"
+    },
+    {
+      "name": "clauses_3cd",
+      "type": "number",
+      "default": 44,
+      "label": "clauses 3cd"
+    },
+    {
+      "name": "itr_tables",
+      "type": "list",
+      "default": [
+        "PL",
+        "BS",
+        "MA",
+        "TA",
+        "OI",
+        "QD",
+        "HP",
+        "BP",
+        "DPM",
+        "DOA",
+        "DEP",
+        "DCG",
+        "ESR",
+        "CG",
+        "112A",
+        "OS",
+        "CYLA",
+        "BFLA",
+        "CFL",
+        "UD",
+        "ICDS",
+        "VIA",
+        "80G",
+        "SI",
+        "EI",
+        "PTI",
+        "FSI",
+        "TR",
+        "FA",
+        "AL",
+        "GST",
+        "TI",
+        "TTI",
+        "IT",
+        "TDS1",
+        "TDS2",
+        "TDS3",
+        "TCS",
+        "AMT",
+        "AMTC",
+        "VDA"
+      ],
+      "label": "itr tables"
+    }
+  ],
+  "expr": {
+    "vop": "choose",
+    "cases": [
+      {
+        "when": {
+          "op": "all",
+          "items": [
+            {
+              "op": "eq",
+              "left": "$form",
+              "right": "3CD"
+            },
+            {
+              "op": "ge",
+              "left": {
+                "vop": "sub_text",
+                "text": "$table",
+                "pattern": "^(\\d+).*$",
+                "replacement": "\\1"
+              },
+              "right": 1
+            },
+            {
+              "op": "le",
+              "left": {
+                "vop": "sub_text",
+                "text": "$table",
+                "pattern": "^(\\d+).*$",
+                "replacement": "\\1"
+              },
+              "right": "$clauses_3cd"
+            }
+          ]
+        },
+        "then": true
+      },
+      {
+        "when": {
+          "op": "all",
+          "items": [
+            {
+              "op": "ne",
+              "left": "$form",
+              "right": "3CD"
+            },
+            {
+              "op": "in_set",
+              "value": "$table",
+              "set": "$itr_tables"
+            }
+          ]
+        },
+        "then": true
+      }
+    ],
+    "else": false
+  },
+  "returns": "boolean",
+  "version": 1,
+  "status": "published",
+  "description_nl": "For 3CD the table is a clause 1-44 (with its letters, e.g. 31(a)); for an ITR it is one of these schedule codes.",
+  "test_cases": [
+    {
+      "args": {
+        "form": "3CD",
+        "table": "31(a)"
+      },
+      "expect_value": true
+    },
+    {
+      "args": {
+        "form": "3CD",
+        "table": "45"
+      },
+      "expect_value": false
+    },
+    {
+      "args": {
+        "form": "ITR3",
+        "table": "HP"
+      },
+      "expect_value": true
+    },
+    {
+      "args": {
+        "form": "ITR5",
+        "table": "XYZ"
+      },
+      "expect_value": false
+    }
+  ]
+}

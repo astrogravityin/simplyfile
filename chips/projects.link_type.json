@@ -1,0 +1,135 @@
+{
+  "chip_id": "projects.link_type",
+  "kind": "accessor",
+  "set": "projects",
+  "label": "What kind of link a How to Use address is",
+  "aliases": [
+    "link kind"
+  ],
+  "params": [
+    {
+      "name": "url",
+      "type": "text",
+      "default": ""
+    },
+    {
+      "name": "given",
+      "type": "text",
+      "default": ""
+    },
+    {
+      "name": "link_types",
+      "type": "list",
+      "default": [
+        "doc",
+        "youtube",
+        "video",
+        "instagram",
+        "link"
+      ]
+    },
+    {
+      "name": "rows",
+      "type": "rows",
+      "default": [
+        {
+          "pattern": "(?i)youtu\\.?be",
+          "type": "youtube"
+        },
+        {
+          "pattern": "(?i)instagram\\.",
+          "type": "instagram"
+        },
+        {
+          "pattern": "(?i)\\.(mp4|webm|mov)(\\?|$)",
+          "type": "video"
+        },
+        {
+          "pattern": "^/m/",
+          "type": "doc"
+        },
+        {
+          "pattern": "(?i)\\.(pdf|html?|docx?)(\\?|$)",
+          "type": "doc"
+        }
+      ]
+    },
+    {
+      "name": "fallback",
+      "type": "text",
+      "default": "link"
+    }
+  ],
+  "expr": {
+    "vop": "choose",
+    "cases": [
+      {
+        "when": {
+          "op": "in_set",
+          "value": "$given",
+          "set": "$link_types"
+        },
+        "then": "$given"
+      }
+    ],
+    "else": {
+      "vop": "first_matching",
+      "text": "$url",
+      "rows": "$rows",
+      "pattern_field": "pattern",
+      "value_field": "type",
+      "default": "$fallback"
+    }
+  },
+  "returns": "text",
+  "version": 1,
+  "status": "published",
+  "description_nl": "A type the author picked stands when it is one of link_types. Otherwise the address decides: the rows are tried in order (a YouTube address before a video file, a published manual /m/… or a document file is a doc) and the first pattern found wins; nothing matching is a plain link (fallback).",
+  "test_cases": [
+    {
+      "args": {
+        "url": "https://youtu.be/x"
+      },
+      "expect_value": "youtube"
+    },
+    {
+      "args": {
+        "url": "https://www.instagram.com/p/1"
+      },
+      "expect_value": "instagram"
+    },
+    {
+      "args": {
+        "url": "https://x.dev/a.webm?x=1"
+      },
+      "expect_value": "video"
+    },
+    {
+      "args": {
+        "url": "/m/guide#mp-2"
+      },
+      "expect_value": "doc"
+    },
+    {
+      "args": {
+        "url": "https://x.dev/guide.PDF"
+      },
+      "expect_value": "doc"
+    },
+    {
+      "args": {
+        "url": "https://x.dev/a.mp4",
+        "given": "doc"
+      },
+      "expect_value": "doc"
+    },
+    {
+      "args": {
+        "url": "https://x.dev",
+        "given": "nonsense"
+      },
+      "expect_value": "link"
+    }
+  ],
+  "weight_basis": "Portal business setting of the Training & Video Portal. The knobs ARE the policy — edit them here, never in Python."
+}

@@ -1,0 +1,150 @@
+{
+  "chip_id": "keyshare.may_share",
+  "kind": "predicate",
+  "set": "keyshare",
+  "label": "May this key be lent to this person right now",
+  "aliases": [
+    "can share key",
+    "share allowed"
+  ],
+  "params": [
+    {
+      "name": "is_owner",
+      "type": "boolean",
+      "default": false,
+      "label": "The person lending owns the key"
+    },
+    {
+      "name": "key_is_borrowed",
+      "type": "boolean",
+      "default": false,
+      "label": "The key being lent was itself borrowed"
+    },
+    {
+      "name": "same_person",
+      "type": "boolean",
+      "default": false,
+      "label": "The email is the lender's own account"
+    },
+    {
+      "name": "person_exists",
+      "type": "boolean",
+      "default": false,
+      "label": "That email has an account on this portal"
+    },
+    {
+      "name": "already_has_it",
+      "type": "boolean",
+      "default": false,
+      "label": "That person already holds this key"
+    },
+    {
+      "name": "holders_now",
+      "type": "number",
+      "default": 0,
+      "label": "People this key is lent to at the moment"
+    },
+    {
+      "name": "holders_max",
+      "type": "number",
+      "default": 25,
+      "label": "People one key may be lent to at once"
+    }
+  ],
+  "expr": {
+    "op": "all",
+    "items": [
+      {
+        "op": "eq",
+        "left": "$is_owner",
+        "right": true
+      },
+      {
+        "op": "eq",
+        "left": "$key_is_borrowed",
+        "right": false
+      },
+      {
+        "op": "eq",
+        "left": "$same_person",
+        "right": false
+      },
+      {
+        "op": "eq",
+        "left": "$person_exists",
+        "right": true
+      },
+      {
+        "op": "eq",
+        "left": "$already_has_it",
+        "right": false
+      },
+      {
+        "op": "lt",
+        "left": "$holders_now",
+        "right": "$holders_max"
+      }
+    ]
+  },
+  "returns": "boolean",
+  "version": 1,
+  "status": "published",
+  "description_nl": "Only the owner of a key lends it, never a borrower; never to themselves, never twice to the same person, never to someone with no account on this portal, and never past the limit.",
+  "test_cases": [
+    {
+      "args": {
+        "is_owner": true,
+        "person_exists": true
+      },
+      "expect_value": true
+    },
+    {
+      "args": {
+        "is_owner": false,
+        "person_exists": true
+      },
+      "expect_value": false
+    },
+    {
+      "args": {
+        "is_owner": true,
+        "person_exists": false
+      },
+      "expect_value": false
+    },
+    {
+      "args": {
+        "is_owner": true,
+        "person_exists": true,
+        "same_person": true
+      },
+      "expect_value": false
+    },
+    {
+      "args": {
+        "is_owner": true,
+        "person_exists": true,
+        "already_has_it": true
+      },
+      "expect_value": false
+    },
+    {
+      "args": {
+        "is_owner": true,
+        "person_exists": true,
+        "key_is_borrowed": true
+      },
+      "expect_value": false
+    },
+    {
+      "args": {
+        "is_owner": true,
+        "person_exists": true,
+        "holders_now": 25,
+        "holders_max": 25
+      },
+      "expect_value": false
+    }
+  ],
+  "weight_basis": "The whole policy of who may lend a key to whom. A borrowed key is never lent on."
+}

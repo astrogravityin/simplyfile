@@ -1,0 +1,122 @@
+{
+  "chip_id": "mail.smtp_fields",
+  "kind": "accessor",
+  "set": "mail",
+  "audience": "admin",
+  "label": "The boxes of the SMTP setup form",
+  "aliases": [
+    "smtp form"
+  ],
+  "params": [
+    {
+      "name": "fields",
+      "type": "rows",
+      "default": [
+        {
+          "name": "host",
+          "label": "SMTP server",
+          "secret": false,
+          "hint": "smtp.gmail.com"
+        },
+        {
+          "name": "port",
+          "label": "Port",
+          "secret": false,
+          "hint": "587 for STARTTLS, 465 for SSL"
+        },
+        {
+          "name": "security",
+          "label": "Security",
+          "secret": false,
+          "hint": "starttls | ssl | none"
+        },
+        {
+          "name": "username",
+          "label": "Username",
+          "secret": false,
+          "hint": "your full Gmail address"
+        },
+        {
+          "name": "password",
+          "label": "Password",
+          "secret": true,
+          "hint": "Gmail: a 16-character App Password, NOT your normal password"
+        },
+        {
+          "name": "from_email",
+          "label": "Send from",
+          "secret": false,
+          "hint": "must be the same mailbox, or an alias it owns"
+        },
+        {
+          "name": "from_name",
+          "label": "Sender name",
+          "secret": false,
+          "hint": "what people see in their inbox"
+        }
+      ]
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "fields": "$fields"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "One row per stored SMTP field: name (the stored key, do not rename), label, hint, and secret (never sent back to the browser; a blank box keeps the stored value).",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "fields": [
+          {
+            "name": "host",
+            "label": "SMTP server",
+            "secret": false,
+            "hint": "smtp.gmail.com"
+          },
+          {
+            "name": "port",
+            "label": "Port",
+            "secret": false,
+            "hint": "587 for STARTTLS, 465 for SSL"
+          },
+          {
+            "name": "security",
+            "label": "Security",
+            "secret": false,
+            "hint": "starttls | ssl | none"
+          },
+          {
+            "name": "username",
+            "label": "Username",
+            "secret": false,
+            "hint": "your full Gmail address"
+          },
+          {
+            "name": "password",
+            "label": "Password",
+            "secret": true,
+            "hint": "Gmail: a 16-character App Password, NOT your normal password"
+          },
+          {
+            "name": "from_email",
+            "label": "Send from",
+            "secret": false,
+            "hint": "must be the same mailbox, or an alias it owns"
+          },
+          {
+            "name": "from_name",
+            "label": "Sender name",
+            "secret": false,
+            "hint": "what people see in their inbox"
+          }
+        ]
+      }
+    }
+  ],
+  "weight_basis": "Platform access primitive, no business content. The knobs ARE the policy — edit them here, never in Python."
+}

@@ -1,0 +1,171 @@
+{
+  "chip_id": "narrator.key_error",
+  "kind": "accessor",
+  "set": "narrator",
+  "label": "Google's refusal of a key, as the one thing to change",
+  "aliases": [
+    "gemini key message"
+  ],
+  "params": [
+    {
+      "name": "detail",
+      "type": "text",
+      "default": ""
+    },
+    {
+      "name": "model",
+      "type": "text",
+      "default": ""
+    },
+    {
+      "name": "google_said",
+      "type": "text",
+      "default": " [Google said: {detail}]"
+    },
+    {
+      "name": "invalid_status",
+      "type": "number",
+      "default": 400
+    },
+    {
+      "name": "invalid_message",
+      "type": "text",
+      "default": "Google refused that key. Copy it again from aistudio.google.com/apikey."
+    },
+    {
+      "name": "model_status",
+      "type": "number",
+      "default": 400
+    },
+    {
+      "name": "model_message",
+      "type": "text",
+      "default": "Your key works, but it cannot use \"{model}\". Pick another model."
+    },
+    {
+      "name": "refused_status",
+      "type": "number",
+      "default": 400
+    },
+    {
+      "name": "refused_message",
+      "type": "text",
+      "default": "Google refused the call."
+    },
+    {
+      "name": "network_status",
+      "type": "number",
+      "default": 502
+    },
+    {
+      "name": "network_message",
+      "type": "text",
+      "default": "This server could not reach Google (network, proxy or firewall). Your key is saved — try the test again once it can."
+    },
+    {
+      "name": "other_status",
+      "type": "number",
+      "default": 400
+    },
+    {
+      "name": "other_message",
+      "type": "text",
+      "default": "That key could not be used."
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "status": {
+        "vop": "get",
+        "path": {
+          "chip": "narrator.key_error_kind",
+          "args": {
+            "detail": "$detail",
+            "model": "$model"
+          }
+        },
+        "value": {
+          "invalid": "$invalid_status",
+          "model": "$model_status",
+          "refused": "$refused_status",
+          "network": "$network_status",
+          "other": "$other_status"
+        }
+      },
+      "message": {
+        "vop": "template",
+        "text": "{message}{said}",
+        "values": {
+          "message": {
+            "vop": "template",
+            "values": {
+              "model": "$model"
+            },
+            "text": {
+              "vop": "get",
+              "path": {
+                "chip": "narrator.key_error_kind",
+                "args": {
+                  "detail": "$detail",
+                  "model": "$model"
+                }
+              },
+              "value": {
+                "invalid": "$invalid_message",
+                "model": "$model_message",
+                "refused": "$refused_message",
+                "network": "$network_message",
+                "other": "$other_message"
+              }
+            }
+          },
+          "said": {
+            "vop": "template",
+            "text": "$google_said",
+            "values": {
+              "detail": "$detail"
+            }
+          }
+        }
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "The HTTP status and the sentence for each kind from narrator.key_error_kind. Google's own sentence is always attached (google_said), so the next failure explains itself. A network failure is 502: not the key's fault.",
+  "test_cases": [
+    {
+      "args": {
+        "detail": "404 NOT_FOUND. models/gemini-9 is not found for API version v1beta",
+        "model": "gemini-9"
+      },
+      "expect_value": {
+        "status": 400,
+        "message": "Your key works, but it cannot use \"gemini-9\". Pick another model. [Google said: 404 NOT_FOUND. models/gemini-9 is not found for API version v1beta]"
+      }
+    },
+    {
+      "args": {
+        "detail": "Connection reset",
+        "model": "m"
+      },
+      "expect_value": {
+        "status": 502,
+        "message": "This server could not reach Google (network, proxy or firewall). Your key is saved — try the test again once it can. [Google said: Connection reset]"
+      }
+    },
+    {
+      "args": {
+        "detail": "404 NOT_FOUND. Requested entity was not found.",
+        "model": "gemini-2.5-flash"
+      },
+      "expect_value": {
+        "status": 400,
+        "message": "That key could not be used. [Google said: 404 NOT_FOUND. Requested entity was not found.]"
+      }
+    }
+  ],
+  "weight_basis": "Portal wording, no scoring. The knobs ARE the sentences — edit them here, never in Python."
+}

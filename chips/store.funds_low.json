@@ -1,0 +1,102 @@
+{
+  "chip_id": "store.funds_low",
+  "kind": "predicate",
+  "set": "store",
+  "label": "A person's money left for a provider is low",
+  "aliases": [
+    "low balance"
+  ],
+  "params": [
+    {
+      "name": "loaded_usd",
+      "type": "number",
+      "default": 0
+    },
+    {
+      "name": "spent_usd",
+      "type": "number",
+      "default": 0
+    },
+    {
+      "name": "low_floor_usd",
+      "type": "number",
+      "default": 1.0
+    },
+    {
+      "name": "low_share",
+      "type": "number",
+      "default": 0.1
+    }
+  ],
+  "expr": {
+    "op": "all",
+    "items": [
+      {
+        "op": "gt",
+        "left": "$loaded_usd",
+        "right": 0
+      },
+      {
+        "op": "lt",
+        "left": {
+          "vop": "sub",
+          "a": "$loaded_usd",
+          "b": "$spent_usd"
+        },
+        "right": {
+          "vop": "largest",
+          "values": [
+            "$low_floor_usd",
+            {
+              "vop": "mul",
+              "a": "$loaded_usd",
+              "b": "$low_share"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "returns": "boolean",
+  "version": 1,
+  "status": "published",
+  "description_nl": "Low when money has been loaded AND what is left is under the larger of low_floor_usd and low_share of what was loaded (10 % of a big top-up, but never under $1). Nothing loaded is not 'low' — it is unknown.",
+  "test_cases": [
+    {
+      "args": {
+        "loaded_usd": 10,
+        "spent_usd": 9.5
+      },
+      "expect_value": true
+    },
+    {
+      "args": {
+        "loaded_usd": 100,
+        "spent_usd": 50
+      },
+      "expect_value": false
+    },
+    {
+      "args": {
+        "loaded_usd": 100,
+        "spent_usd": 91
+      },
+      "expect_value": true
+    },
+    {
+      "args": {
+        "loaded_usd": 5,
+        "spent_usd": 3.5
+      },
+      "expect_value": false
+    },
+    {
+      "args": {
+        "loaded_usd": 0,
+        "spent_usd": 0
+      },
+      "expect_value": false
+    }
+  ],
+  "weight_basis": "Portal business setting of the Training & Video Portal. The knobs ARE the policy — edit them here, never in Python."
+}

@@ -1,0 +1,93 @@
+{
+  "chip_id": "source.settings",
+  "kind": "accessor",
+  "set": "source",
+  "audience": "admin",
+  "label": "How a Git project is fetched and how its errors are cleaned",
+  "aliases": [
+    "git clone depth",
+    "token scrub"
+  ],
+  "params": [
+    {
+      "name": "timeout_seconds",
+      "type": "number",
+      "default": 300
+    },
+    {
+      "name": "clone_depth",
+      "type": "number",
+      "default": 1
+    },
+    {
+      "name": "remote",
+      "type": "text",
+      "default": "origin"
+    },
+    {
+      "name": "token_user",
+      "type": "text",
+      "default": "x-access-token"
+    },
+    {
+      "name": "scrub_pattern",
+      "type": "text",
+      "default": "(https://)[^@/\\s]+@"
+    },
+    {
+      "name": "scrub_replacement",
+      "type": "text",
+      "default": "\\1"
+    },
+    {
+      "name": "commit_format",
+      "type": "text",
+      "default": "%h %s"
+    },
+    {
+      "name": "commit_max_length",
+      "type": "number",
+      "default": 120
+    },
+    {
+      "name": "windows_path_pattern",
+      "type": "text",
+      "default": "^[A-Za-z]:[\\\\/]"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "timeout_seconds": "$timeout_seconds",
+      "clone_depth": "$clone_depth",
+      "remote": "$remote",
+      "token_user": "$token_user",
+      "scrub_pattern": "$scrub_pattern",
+      "scrub_replacement": "$scrub_replacement",
+      "commit_format": "$commit_format",
+      "commit_max_length": "$commit_max_length",
+      "windows_path_pattern": "$windows_path_pattern"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "timeout_seconds: the longest one git command may run. clone_depth: history fetched (1 = latest commit only). remote: the remote name used. token_user: the user name a token is sent under for one https fetch (it is never written to the remote). scrub_pattern / scrub_replacement: SECURITY — applied to every git error before it is shown, removing the credentials part of any https://…@ address. commit_format / commit_max_length: the 'at <commit>' note. windows_path_pattern: a path that belongs to someone's Windows computer, not to the server.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "timeout_seconds": 300,
+        "clone_depth": 1,
+        "remote": "origin",
+        "token_user": "x-access-token",
+        "scrub_pattern": "(https://)[^@/\\s]+@",
+        "scrub_replacement": "\\1",
+        "commit_format": "%h %s",
+        "commit_max_length": 120,
+        "windows_path_pattern": "^[A-Za-z]:[\\\\/]"
+      }
+    }
+  ],
+  "weight_basis": "Portal business setting of the Training & Video Portal. The knobs ARE the policy — edit them here, never in Python. Owner-only (audience admin): a looser value here would open a security hole or spend the owner's disk, so editors see and test it but cannot change it."
+}

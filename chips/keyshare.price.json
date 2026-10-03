@@ -1,0 +1,83 @@
+{
+  "chip_id": "keyshare.price",
+  "kind": "accessor",
+  "set": "keyshare",
+  "label": "What a borrower is charged for a run, from what it really cost and the lender's mark-up",
+  "aliases": [
+    "markup",
+    "charged price",
+    "jacked price"
+  ],
+  "params": [
+    {
+      "name": "base_usd",
+      "type": "number",
+      "default": 0,
+      "label": "What the provider really charged the key's owner"
+    },
+    {
+      "name": "markup_pct",
+      "type": "number",
+      "default": 0,
+      "label": "Per cent the owner adds on top (0 = at cost)"
+    },
+    {
+      "name": "decimals",
+      "type": "number",
+      "default": 6,
+      "label": "Places the charged amount is kept to"
+    }
+  ],
+  "expr": {
+    "vop": "round_to",
+    "value": {
+      "vop": "mul",
+      "a": "$base_usd",
+      "b": {
+        "vop": "add",
+        "a": 1,
+        "b": {
+          "vop": "div",
+          "a": "$markup_pct",
+          "b": 100
+        }
+      }
+    },
+    "digits": "$decimals"
+  },
+  "returns": "number",
+  "version": 1,
+  "status": "published",
+  "description_nl": "base_usd is what the provider actually billed the key's owner. markup_pct is what that owner adds on top when lending the key - 0 means at cost. The answer is what the borrower is shown and what their bill says. The owner's own balance still moves by base_usd, never by this.",
+  "test_cases": [
+    {
+      "args": {
+        "base_usd": 2,
+        "markup_pct": 0
+      },
+      "expect_value": 2
+    },
+    {
+      "args": {
+        "base_usd": 2,
+        "markup_pct": 25
+      },
+      "expect_value": 2.5
+    },
+    {
+      "args": {
+        "base_usd": 0.0123,
+        "markup_pct": 10
+      },
+      "expect_value": 0.01353
+    },
+    {
+      "args": {
+        "base_usd": 0,
+        "markup_pct": 200
+      },
+      "expect_value": 0
+    }
+  ],
+  "weight_basis": "The mark-up formula, in ONE place. A borrower never sees base_usd; the owner sees both."
+}

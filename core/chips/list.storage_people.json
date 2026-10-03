@@ -1,0 +1,100 @@
+{
+  "chip_id": "list.storage_people",
+  "kind": "accessor",
+  "set": "list",
+  "label": "Storage: everyone by the space they hold",
+  "aliases": [
+    "storage list",
+    "who holds the disk"
+  ],
+  "params": [
+    {
+      "name": "search_keys",
+      "type": "list",
+      "default": [
+        "name",
+        "email"
+      ],
+      "label": "search keys"
+    },
+    {
+      "name": "sort_key",
+      "type": "text",
+      "default": "bytes",
+      "label": "sort key"
+    },
+    {
+      "name": "sort_desc",
+      "type": "boolean",
+      "default": true,
+      "label": "sort desc"
+    },
+    {
+      "name": "sorts",
+      "type": "list",
+      "default": [
+        "bytes",
+        "files",
+        "since",
+        "email"
+      ],
+      "label": "sorts"
+    },
+    {
+      "name": "page_size",
+      "type": "number",
+      "default": 25,
+      "label": "page size"
+    },
+    {
+      "name": "max_page_size",
+      "type": "number",
+      "default": 200,
+      "label": "max page size"
+    },
+    {
+      "name": "items_shown",
+      "type": "number",
+      "default": 50,
+      "label": "items shown"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "search_keys": "$search_keys",
+      "sort_key": "$sort_key",
+      "sort_desc": "$sort_desc",
+      "sorts": "$sorts",
+      "page_size": "$page_size",
+      "max_page_size": "$max_page_size",
+      "items_shown": "$items_shown"
+    }
+  },
+  "returns": "record",
+  "version": 2,
+  "status": "published",
+  "description_nl": "2026-09-28. A list that grows with the number of people: searched, sorted and paged on the server by op rows_view (core/lists.py); one page reaches the screen. search_keys = the fields a search looks in; sort_key/sort_desc = the order it opens in; sorts = the other fields a viewer may sort by; page_size rows a page (max_page_size at most).",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "search_keys": [
+          "name",
+          "email"
+        ],
+        "sort_key": "bytes",
+        "sort_desc": true,
+        "sorts": [
+          "bytes",
+          "files",
+          "since",
+          "email"
+        ],
+        "page_size": 25,
+        "max_page_size": 200,
+        "items_shown": 50
+      }
+    }
+  ]
+}

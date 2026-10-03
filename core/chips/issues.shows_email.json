@@ -1,0 +1,63 @@
+{
+  "chip_id": "issues.shows_email",
+  "kind": "predicate",
+  "set": "issues",
+  "label": "Does this note show its sender's email to this person",
+  "aliases": [
+    "shows email"
+  ],
+  "params": [
+    {
+      "name": "show_email",
+      "type": "boolean",
+      "default": false,
+      "label": "the kind shows emails (issues.kinds show_email)"
+    },
+    {
+      "name": "may_answer",
+      "type": "boolean",
+      "default": false,
+      "label": "this person may answer the note"
+    }
+  ],
+  "expr": {
+    "op": "all",
+    "items": [
+      {
+        "op": "eq",
+        "left": "$show_email",
+        "right": true
+      },
+      {
+        "op": "eq",
+        "left": "$may_answer",
+        "right": true
+      }
+    ]
+  },
+  "returns": "boolean",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-03 owner: \"Chips and ops audit for core/issues.py\" - every name, path, field list, pattern and rule the code held.",
+  "test_cases": [
+    {
+      "args": {
+        "show_email": true,
+        "may_answer": true
+      },
+      "expect_value": true
+    },
+    {
+      "args": {
+        "show_email": true
+      },
+      "expect_value": false
+    },
+    {
+      "args": {
+        "may_answer": true
+      },
+      "expect_value": false
+    }
+  ]
+}

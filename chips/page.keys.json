@@ -1,0 +1,67 @@
+{
+  "chip_id": "page.keys",
+  "kind": "accessor",
+  "set": "page",
+  "label": "Key Management page: the usage windows shown, the provider with its own key pool card, the Gemini models offered in the key dialog",
+  "aliases": [
+    "keys page settings"
+  ],
+  "params": [
+    {
+      "name": "windows",
+      "type": "list",
+      "default": [
+        "day",
+        "week",
+        "month"
+      ]
+    },
+    {
+      "name": "pool_provider",
+      "type": "text",
+      "default": "gemini"
+    },
+    {
+      "name": "gemini_models",
+      "type": "list",
+      "default": [
+        "gemini-flash-latest",
+        "gemini-pro-latest",
+        "gemini-2.5-flash",
+        "gemini-2.5-pro"
+      ]
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "windows": "$windows",
+      "pool_provider": "$pool_provider",
+      "gemini_models": "$gemini_models"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-09-26 (owner: 'move the rest to chips'): the page's own numbers, lists and maps - they were written in its JavaScript. Loaded with the page's words (core/words.py), read with ps('keys').",
+  "weight_basis": "page",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "windows": [
+          "day",
+          "week",
+          "month"
+        ],
+        "pool_provider": "gemini",
+        "gemini_models": [
+          "gemini-flash-latest",
+          "gemini-pro-latest",
+          "gemini-2.5-flash",
+          "gemini-2.5-pro"
+        ]
+      }
+    }
+  ]
+}

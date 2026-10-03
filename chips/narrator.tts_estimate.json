@@ -1,0 +1,143 @@
+{
+  "chip_id": "narrator.tts_estimate",
+  "kind": "accessor",
+  "set": "narrator",
+  "label": "What a premium voice will cost for this many characters, before anything is spent",
+  "aliases": [
+    "tts estimate"
+  ],
+  "params": [
+    {
+      "name": "chars",
+      "type": "number",
+      "default": 0
+    },
+    {
+      "name": "chars_per_token",
+      "type": "number",
+      "default": 4
+    },
+    {
+      "name": "chars_per_second",
+      "type": "number",
+      "default": 15
+    },
+    {
+      "name": "audio_tokens_per_second",
+      "type": "number",
+      "default": 25
+    },
+    {
+      "name": "usd_per_1m_in",
+      "type": "number",
+      "default": 0.5
+    },
+    {
+      "name": "usd_per_1m_out",
+      "type": "number",
+      "default": 10
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "tokens_in": {
+        "vop": "round_to",
+        "value": {
+          "vop": "div",
+          "a": "$chars",
+          "b": "$chars_per_token"
+        },
+        "digits": 0
+      },
+      "seconds": {
+        "vop": "round_to",
+        "value": {
+          "vop": "div",
+          "a": "$chars",
+          "b": "$chars_per_second"
+        },
+        "digits": 1
+      },
+      "tokens_out": {
+        "vop": "round_to",
+        "value": {
+          "vop": "mul",
+          "a": {
+            "vop": "div",
+            "a": "$chars",
+            "b": "$chars_per_second"
+          },
+          "b": "$audio_tokens_per_second"
+        },
+        "digits": 0
+      },
+      "cost_usd": {
+        "vop": "round_to",
+        "value": {
+          "vop": "add",
+          "a": {
+            "vop": "mul",
+            "a": {
+              "vop": "div",
+              "a": "$chars",
+              "b": "$chars_per_token"
+            },
+            "b": {
+              "vop": "div",
+              "a": "$usd_per_1m_in",
+              "b": 1000000
+            }
+          },
+          "b": {
+            "vop": "mul",
+            "a": {
+              "vop": "mul",
+              "a": {
+                "vop": "div",
+                "a": "$chars",
+                "b": "$chars_per_second"
+              },
+              "b": "$audio_tokens_per_second"
+            },
+            "b": {
+              "vop": "div",
+              "a": "$usd_per_1m_out",
+              "b": 1000000
+            }
+          }
+        },
+        "digits": 4
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "characters / chars_per_token = text tokens in; characters / chars_per_second = seconds of speech; seconds x audio_tokens_per_second = audio tokens out; cost = tokens x the per-million prices (narrator.tts). An estimate: the model's own usage figures are what get booked.",
+  "test_cases": [
+    {
+      "args": {
+        "chars": 1500
+      },
+      "expect_value": {
+        "tokens_in": 375,
+        "seconds": 100,
+        "tokens_out": 2500,
+        "cost_usd": 0.0252
+      }
+    },
+    {
+      "args": {
+        "chars": 0
+      },
+      "expect_value": {
+        "tokens_in": 0,
+        "seconds": 0,
+        "tokens_out": 0,
+        "cost_usd": 0
+      }
+    }
+  ],
+  "weight_basis": "Arithmetic of a paid call. Edit it here, never in Python."
+}

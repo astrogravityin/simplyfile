@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta name="color-scheme" content="light dark"/>
+<title>Get your own Gemini key</title>
+<style>
+  :root{--bg:#f6f7fb;--panel:#fff;--panel-2:#f8fafc;--line:#e2e8f0;--ink:#0f172a;--muted:#64748b;
+        --brand:#4f46e5;--brand-soft:#eef2ff;--ok:#047857;--ok-soft:#ecfdf5;--warn:#b45309;--warn-soft:#fffbeb;
+        --bad:#b91c1c;--bad-soft:#fef2f2;}
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+    --bg:#0b1020;--panel:#111827;--panel-2:#0f172a;--line:#1f2937;--ink:#e5e7eb;--muted:#94a3b8;
+    --brand:#818cf8;--brand-soft:#1e1b4b;--ok:#34d399;--ok-soft:#052e26;--warn:#fbbf24;--warn-soft:#2a1f05;
+    --bad:#f87171;--bad-soft:#2a0d0d;}}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+       font:16px/1.65 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+  .wrap{max-width:820px;margin:0 auto;padding:36px 16px 80px}
+  h1{font-size:30px;line-height:1.2;margin:0 0 6px}
+  h2{font-size:21px;margin:34px 0 8px;scroll-margin-top:16px}
+  h3{font-size:16px;margin:20px 0 6px}
+  p,li{margin:0 0 10px}
+  a{color:var(--brand)}
+  code{font-family:ui-monospace,Menlo,monospace;font-size:14px;background:var(--panel-2);
+       border:1px solid var(--line);border-radius:6px;padding:1px 5px}
+  .lede{color:var(--muted);font-size:17px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin:0 0 16px}
+  .note{border-radius:10px;padding:12px 14px;margin:14px 0}
+  .note.info{background:var(--brand-soft);color:var(--brand)}
+  .note.ok{background:var(--ok-soft);color:var(--ok)}
+  .note.warn{background:var(--warn-soft);color:var(--warn)}
+  .note.bad{background:var(--bad-soft);color:var(--bad)}
+  ol.steps{counter-reset:s;list-style:none;padding:0;margin:0}
+  ol.steps > li{counter-increment:s;position:relative;padding:0 0 4px 44px;margin:0 0 18px}
+  ol.steps > li::before{content:counter(s);position:absolute;left:0;top:1px;width:30px;height:30px;
+    border-radius:50%;background:var(--brand);color:#fff;display:grid;place-items:center;
+    font-weight:800;font-size:14px}
+  ol.steps > li > b{display:block;font-size:17px;margin-bottom:2px}
+  ul{padding-left:22px}
+  table{width:100%;border-collapse:collapse;font-size:15px;margin:10px 0}
+  th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--muted)}
+  .toc{font-size:14px}
+  .toc a{display:block;padding:3px 0;text-decoration:none}
+  .toc a:hover{text-decoration:underline}
+  video,iframe{width:100%;aspect-ratio:16/9;border:0;border-radius:12px;background:#000}
+  @media print{body{background:#fff}.card{break-inside:avoid}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>Get your own Gemini key</h1>
+<p class="lede">Everything in this portal is free except one button: <b>Draft with AI</b> in Video
+Narrator, which sends your recording to Google Gemini so it can write the timed script. That call is
+billed to <b>you</b>, on <b>your</b> Google account, with <b>your</b> key. This page is the whole
+route, from nothing to a working key, in about ten minutes.</p>
+
+<div class="note info">You never need a key to use the rest of the portal. How to Use, the User
+Manual Builder, the voices and the video generation all cost nothing and ask for nothing. If you
+would rather not have a key at all, skip to <a href="#bridge">Without a key at all</a>.</div>
+
+<!--VIDEO-->
+
+<div class="card toc">
+  <b>On this page</b>
+  <a href="#why">Why your own key, and not one shared key</a>
+  <a href="#get">Part 1 — Get the key (5 minutes, free)</a>
+  <a href="#fund">Part 2 — Put money behind it (5 minutes)</a>
+  <a href="#paste">Part 3 — Put the key into the portal</a>
+  <a href="#budget">Part 4 — Tell the portal what you loaded</a>
+  <a href="#cost">What this actually costs</a>
+  <a href="#bridge">Without a key at all</a>
+  <a href="#trouble">When something goes wrong</a>
+  <a href="#safety">Keeping the key safe</a>
+</div>
+
+<h2 id="why">Why your own key, and not one shared key</h2>
+<p>A key is a way to spend money. A shared key would mean one person's long video quietly spends
+another person's balance, and nobody could tell whose run was whose. So the portal gives every
+account its own key box, its own balance and its own list of runs. That is also why the portal
+asks you to sign in before it shows you anything: without an account there is nowhere to keep
+your key.</p>
+<p>Your key is never shown back to you after you save it — the box shows the last four characters
+only — and no other account can read it, see it, or spend against it.</p>
+
+<h2 id="get">Part 1 — Get the key (5 minutes, free)</h2>
+<ol class="steps">
+  <li><b>Sign in to Google AI Studio</b>
+    Open <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a>
+    and sign in with the Google account you want the usage billed to. A personal Gmail is fine. If
+    this is a work account and the page refuses, your administrator has blocked AI Studio — use a
+    personal account, or ask them to allow it.</li>
+
+  <li><b>Accept the terms</b>
+    First time only. Read what you are agreeing to; it covers how Google may handle the content you
+    send. Your screen recordings go to Google when you press Draft with AI, so this matters — see
+    <a href="#safety">Keeping the key safe</a>.</li>
+
+  <li><b>Press “Create API key”</b>
+    AI Studio asks which Google Cloud project the key belongs to. If you have none, let it create
+    one for you — the default name is fine. A “project” here is just a billing and quota bucket; it
+    has nothing to do with the projects you register in this portal.</li>
+
+  <li><b>Copy the key</b>
+    New keys look like <code>AQ.…</code> (about 53 characters); older ones like <code>AIzaSy…</code>
+    (39). Both work. <b>Copy it now.</b> Google shows
+    the full key once; afterwards you can only see a fragment of it or create a new one. Paste it
+    somewhere safe for the next two minutes — your password manager, not a chat window.</li>
+</ol>
+
+<div class="note ok">At this point the key already works, on Google's <b>free tier</b>. That is
+enough to try Draft with AI on a short recording. The free tier has low rate limits and Google may
+use free-tier content to improve its products, so most people move to Part 2 before doing real
+work.</div>
+
+<h2 id="fund">Part 2 — Put money behind it (5 minutes)</h2>
+<p>Google Gemini is <b>not a prepaid wallet</b>. You do not top it up with 20 dollars and watch it
+count down. You attach a <b>billing account</b> — a card — to the Cloud project the key belongs to,
+and Google charges you monthly for what you used. That is why Part 4 exists: the portal keeps your
+own running total, because Google will not hand it one.</p>
+
+<ol class="steps">
+  <li><b>Open billing for the key's project</b>
+    On the same <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">API keys</a>
+    page, find your key's row and use its <b>Set up billing</b> / <b>Upgrade</b> link. That takes you
+    to the Google Cloud console with the right project already selected. (The long way round:
+    <a href="https://console.cloud.google.com/billing" target="_blank" rel="noopener">console.cloud.google.com/billing</a>
+    → pick the project → <b>Link a billing account</b>.)</li>
+
+  <li><b>Create a billing account</b>
+    Name it, choose your country and currency — <b>currency cannot be changed later</b> — and enter a
+    card. Google may place a small temporary authorisation on the card to check it is real; it drops
+    off. Depending on your country you may be asked for tax details.</li>
+
+  <li><b>Link it to the project</b>
+    Confirm the billing account is attached to the project your key belongs to. If you have several
+    projects, check you linked the right one: a key on an unbilled project stays on free-tier limits
+    however much money sits in the other one.</li>
+
+  <li><b>Set a budget alert — do not skip this</b>
+    <a href="https://console.cloud.google.com/billing" target="_blank" rel="noopener">Billing</a> →
+    <b>Budgets &amp; alerts</b> → <b>Create budget</b>. Scope it to the project, set a monthly amount
+    you are comfortable with (10 US dollars is plenty for ordinary narration work), and keep the
+    default alerts at 50%, 90% and 100%. Google emails you as you cross each one.
+    <br/><span style="color:var(--muted)">A budget alert <em>warns</em>; it does not stop spending.
+    If you want a hard stop, keep the key on the free tier, or remove the billing link when you are
+    done for the month.</span></li>
+
+  <li><b>Check the API is on</b>
+    Keys created through AI Studio have the Generative Language API enabled already. If a call later
+    fails with a message about the API not being enabled, open
+    <a href="https://console.cloud.google.com/apis/library" target="_blank" rel="noopener">APIs &amp; Services → Library</a>,
+    search <b>Generative Language API</b>, and press <b>Enable</b>.</li>
+</ol>
+
+<h2 id="paste">Part 3 — Put the key into the portal</h2>
+<ol class="steps">
+  <li><b>Sign in to this portal</b>
+    With your own account. If you do not have one, the portal's owner creates it for you from
+    <b>Setup → People</b>.</li>
+  <li><b>Open Key Management</b>
+    In the left menu, under <b>Portal</b>.</li>
+  <li><b>Paste the key into “Your Google Gemini API key”</b>
+    Leave <b>Gemini model</b> at <code>gemini-flash-latest</code> unless you have a reason to change it.
+    New keys are not offered <code>gemini-2.5-flash</code>; if you pick a model your key cannot use,
+    <b>Save and test</b> moves you to one it can.
+    Flash is the cheap, fast model, and it watches video.</li>
+  <li><b>Press “Save keys”</b>
+    The field changes to <code>••••••••</code> and the last four characters. That is correct — the
+    key is stored on the server and is never sent back to a browser again, not even to yours.</li>
+  <li><b>Prove it works</b>
+    Go to <b>Video Narrator</b>, open or upload a short recording, and read the line under
+    <b>Draft with AI</b>. With no key it says so plainly; with a key it names your model and the
+    estimated cost and time for <em>that</em> video. Press <b>Draft with AI</b> and watch the
+    progress. When it finishes, the log line shows what it really cost.</li>
+</ol>
+
+<h2 id="budget">Part 4 — Tell the portal what you loaded</h2>
+<p>Google bills monthly and gives the portal no way to read your balance. So the portal keeps a
+figure you set yourself:</p>
+<ul>
+  <li>In <b>Key Management → Money left</b>, type the amount you are willing to spend this month —
+    the same number you used for the budget alert in Part 2.</li>
+  <li>Every run subtracts its real cost from that figure.</li>
+  <li>When the remainder gets thin the portal says so, on this screen and on the Draft button.</li>
+</ul>
+<div class="note warn">This is <b>your</b> budget tracker, not Google's balance. It is only as
+honest as the number you typed, and it does not know about spending you did elsewhere with the same
+key. Google's own figure is in
+<a href="https://console.cloud.google.com/billing" target="_blank" rel="noopener">Cloud Billing →
+Reports</a>, and that is the one that gets charged.</div>
+
+<h2 id="cost">What this actually costs</h2>
+<p>Gemini charges per token. For video it counts roughly <b>290 tokens per second</b> of recording,
+plus the prompt, plus what it writes back. On <code>gemini-flash-latest</code> that works out at
+small change:</p>
+<table>
+  <thead><tr><th>Recording</th><th>Rough cost of one draft</th></tr></thead>
+  <tbody>
+    <tr><td>1 minute</td><td>a few US cents</td></tr>
+    <tr><td>5 minutes</td><td>around ten US cents</td></tr>
+    <tr><td>20 minutes</td><td>a few tens of US cents</td></tr>
+  </tbody>
+</table>
+<p>The portal shows its own estimate for <em>your</em> video before you press anything, and the real
+cost afterwards — so you never have to take a table's word for it. Prices change; the
+authority is Google's
+<a href="https://ai.google.dev/pricing" target="_blank" rel="noopener">Gemini API pricing page</a>.</p>
+<p>Drafting again on the same video costs again. Editing lines, choosing voices, generating the
+narrated MP4, subtitles and chapters are all free and unlimited: the voices come from edge-tts and
+the video work is done by ffmpeg on this server.</p>
+
+<h2 id="bridge">Without a key at all</h2>
+<p>If you do not want a Google key, or your organisation will not allow one, use the
+<b>LLM Bridge</b> button beside Draft with AI. It gives you the exact same prompt the portal would
+have sent. Run it in any model you already pay for that can watch video — Gemini in a browser,
+ChatGPT, Claude, an in-house model — attach your recording, and paste the JSON it returns back into
+the dialog. The portal reads it through the same parser and fills the same table.</p>
+<p>Nothing leaves this server on that path, which is often the answer when the recording shows
+customer data.</p>
+
+<h2 id="trouble">When something goes wrong</h2>
+<table>
+  <thead><tr><th>What you see</th><th>What it means</th></tr></thead>
+  <tbody>
+    <tr><td>“Add your own Google Gemini API key in Key Management first”</td>
+        <td>Your account has no key saved. Part 3. Somebody else's key does not count — keys are per person.</td></tr>
+    <tr><td>API key not valid / invalid argument</td>
+        <td>The key was mistyped, truncated on paste, or deleted in AI Studio. Create a fresh one and save it again.</td></tr>
+    <tr><td>Permission denied / API not enabled</td>
+        <td>The Generative Language API is off for that Cloud project. Part 2, last step.</td></tr>
+    <tr><td>Quota exceeded / rate limit / 429</td>
+        <td>Free-tier limits, or too many runs in a minute. Wait, or attach billing (Part 2).</td></tr>
+    <tr><td>Billing account not configured</td>
+        <td>The key's project has no billing account linked. Part 2, step 3 — check you linked the right project.</td></tr>
+    <tr><td>“the AI could not process this video”</td>
+        <td>Google rejected the file. Re-export as MP4 (H.264) and keep it under an hour.</td></tr>
+    <tr><td>“the AI returned no usable lines”</td>
+        <td>The model answered with something that was not a timed script. Press Draft again, or use the LLM Bridge.</td></tr>
+    <tr><td>The run is slow</td>
+        <td>Google has to watch the whole recording first. A twenty-minute video takes minutes, not seconds. The progress bar is honest.</td></tr>
+  </tbody>
+</table>
+
+<h2 id="safety">Keeping the key safe</h2>
+<ul>
+  <li><b>Treat the key like a password.</b> Anyone holding it can spend your money. Never paste it
+    into a chat, a ticket, a screenshot or a shared document.</li>
+  <li><b>Never commit it.</b> The portal stores it in <code>data/</code>, which is excluded from git
+    on purpose.</li>
+  <li><b>Restrict it</b> if you can:
+    <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener">APIs &amp; Services → Credentials</a>
+    → your key → restrict it to the <b>Generative Language API</b>. A leaked key then buys an attacker
+    far less.</li>
+  <li><b>Rotate it</b> if you suspect it leaked: create a new key, save it here, then delete the old
+    one in AI Studio. In that order, so nothing breaks in between.</li>
+  <li><b>Watch what is on screen.</b> Draft with AI sends the recording itself to Google. If the
+    recording shows real customer names, emails, phone numbers or account details, record a
+    demonstration account instead — or use the LLM Bridge and keep the file where it is.</li>
+  <li><b>Leaving?</b> Delete the key in AI Studio and clear the box in Key Management. Removing your
+    portal account does not cancel anything on Google's side.</li>
+</ul>
+
+<p style="margin-top:36px;color:var(--muted);font-size:14px">This page is part of the Training &amp;
+Video Portal. Print it, or send someone the link — it needs no sign-in.</p>
+
+</div>
+</body>
+</html>

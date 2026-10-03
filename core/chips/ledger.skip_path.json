@@ -1,0 +1,55 @@
+{
+  "chip_id": "ledger.skip_path",
+  "kind": "predicate",
+  "set": "ledger",
+  "audience": "admin",
+  "label": "This request is not activity (assets, health, the beacon itself)",
+  "aliases": [],
+  "params": [
+    {
+      "name": "path",
+      "type": "text",
+      "default": ""
+    },
+    {
+      "name": "prefixes",
+      "type": "list",
+      "default": [
+        "/static/",
+        "/core-static/",
+        "/health",
+        "/api/core/view",
+        "/favicon"
+      ]
+    }
+  ],
+  "expr": {
+    "op": "eq",
+    "left": {
+      "vop": "starts_with_any",
+      "text": "$path",
+      "prefixes": "$prefixes",
+      "ignore_case": false
+    },
+    "right": true
+  },
+  "returns": "boolean",
+  "version": 1,
+  "status": "published",
+  "description_nl": "Requests under these prefixes are neither recorded nor timed: they are assets and probes, not somebody doing something.",
+  "test_cases": [
+    {
+      "args": {
+        "path": "/core-static/ui.js"
+      },
+      "expect": true
+    },
+    {
+      "args": {
+        "path": "/api/projects"
+      },
+      "expect": false
+    }
+  ],
+  "weight_basis": "Platform operations primitive, no business content. The knobs ARE the policy — edit them here, never in Python."
+}

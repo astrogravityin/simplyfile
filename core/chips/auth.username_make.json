@@ -1,0 +1,67 @@
+{
+  "chip_id": "auth.username_make",
+  "kind": "accessor",
+  "set": "auth",
+  "label": "How a user name is made from an email when none was chosen",
+  "aliases": [
+    "username make"
+  ],
+  "params": [
+    {
+      "name": "strip_pattern",
+      "type": "text",
+      "default": "[^a-z0-9._-]+",
+      "label": "characters replaced by a dot"
+    },
+    {
+      "name": "stem_max",
+      "type": "number",
+      "default": 24,
+      "label": "longest stem (room left for a number)"
+    },
+    {
+      "name": "fallback",
+      "type": "text",
+      "default": "user",
+      "label": "the stem when nothing usable is left"
+    },
+    {
+      "name": "lead",
+      "type": "text",
+      "default": "u",
+      "label": "put in front when the stem does not start with a letter or digit"
+    },
+    {
+      "name": "most_tries",
+      "type": "number",
+      "default": 10000,
+      "label": "numbers tried before giving up"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "strip_pattern": "$strip_pattern",
+      "stem_max": "$stem_max",
+      "fallback": "$fallback",
+      "lead": "$lead",
+      "most_tries": "$most_tries"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-04 owner: \"Chips and ops audit for core/store.py\" - caps, user-name making, the last-owner test, the new role and the public fields the store held.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "strip_pattern": "[^a-z0-9._-]+",
+        "stem_max": 24,
+        "fallback": "user",
+        "lead": "u",
+        "most_tries": 10000
+      }
+    }
+  ]
+}

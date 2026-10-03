@@ -1,0 +1,101 @@
+{
+  "chip_id": "ledger.range",
+  "kind": "accessor",
+  "set": "ledger",
+  "audience": "admin",
+  "label": "A report range: how far back, and how it is bucketed",
+  "aliases": [],
+  "params": [
+    {
+      "name": "range",
+      "type": "text",
+      "default": "7d"
+    },
+    {
+      "name": "ranges",
+      "type": "rows",
+      "default": [
+        {
+          "when": {
+            "range": "24h"
+          },
+          "set": {
+            "hours": 24,
+            "bucket": "hour"
+          }
+        },
+        {
+          "when": {
+            "range": "7d"
+          },
+          "set": {
+            "hours": 168,
+            "bucket": "day"
+          }
+        },
+        {
+          "when": {
+            "range": "30d"
+          },
+          "set": {
+            "hours": 720,
+            "bucket": "day"
+          }
+        },
+        {
+          "when": {
+            "range": "90d"
+          },
+          "set": {
+            "hours": 2160,
+            "bucket": "day"
+          }
+        }
+      ]
+    },
+    {
+      "name": "all_time",
+      "type": "record",
+      "default": {
+        "hours": null,
+        "bucket": "day"
+      }
+    }
+  ],
+  "expr": {
+    "vop": "decision_table",
+    "facts": {
+      "vop": "record",
+      "fields": {
+        "range": "$range"
+      }
+    },
+    "rules": "$ranges",
+    "current": "$all_time"
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "Anything not in the table (\"all\") means all time.",
+  "test_cases": [
+    {
+      "args": {
+        "range": "24h"
+      },
+      "expect_value": {
+        "hours": 24,
+        "bucket": "hour"
+      }
+    },
+    {
+      "args": {
+        "range": "all"
+      },
+      "expect_value": {
+        "hours": null,
+        "bucket": "day"
+      }
+    }
+  ],
+  "weight_basis": "Platform operations primitive, no business content. The knobs ARE the policy — edit them here, never in Python."
+}

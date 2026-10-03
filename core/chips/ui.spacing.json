@@ -1,0 +1,84 @@
+{
+  "chip_id": "ui.spacing",
+  "kind": "accessor",
+  "set": "ui",
+  "label": "Spacing and sizes of the portal shell: logo row and page titles",
+  "aliases": [
+    "spacing",
+    "sizes"
+  ],
+  "params": [
+    {
+      "name": "brand_gap_px",
+      "type": "number",
+      "default": 9,
+      "label": "Space between the logo, the product name and the fold button"
+    },
+    {
+      "name": "brand_pad_px",
+      "type": "number",
+      "default": 4,
+      "label": "Space left and right of the logo row"
+    },
+    {
+      "name": "fold_width_px",
+      "type": "number",
+      "default": 28,
+      "label": "Width of the fold-the-menu button"
+    },
+    {
+      "name": "brand_sub_gap_px",
+      "type": "number",
+      "default": 5,
+      "label": "Space between the product name and the line under it (never let the name's y/g touch it)"
+    },
+    {
+      "name": "brand_sub_size_px",
+      "type": "number",
+      "default": 10,
+      "label": "Size of the line under the product name"
+    },
+    {
+      "name": "brand_sub_track_em",
+      "type": "number",
+      "default": 0.05,
+      "label": "Letter spacing of the line under the product name (it stays ONE line)"
+    },
+    {
+      "name": "page_title_gap_px",
+      "type": "number",
+      "default": 10,
+      "label": "Space between a page title and the sentence under it"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "brand_gap_px": "$brand_gap_px",
+      "brand_pad_px": "$brand_pad_px",
+      "fold_width_px": "$fold_width_px",
+      "brand_sub_gap_px": "$brand_sub_gap_px",
+      "brand_sub_size_px": "$brand_sub_size_px",
+      "brand_sub_track_em": "$brand_sub_track_em",
+      "page_title_gap_px": "$page_title_gap_px"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-03 owner 'move spacing into a ui chip': every portal page gets these as CSS variables (engine.css_vars: _px -> px, _em -> em; --brand-sub-gap etc.); portal.css reads var(--x, fallback). Owner marks: brand name descenders on the subtitle, title descenders on its sentence, FILMS wrapping.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "brand_gap_px": 9,
+        "brand_pad_px": 4,
+        "fold_width_px": 28,
+        "brand_sub_gap_px": 5,
+        "brand_sub_size_px": 10,
+        "brand_sub_track_em": 0.05,
+        "page_title_gap_px": 10
+      }
+    }
+  ]
+}

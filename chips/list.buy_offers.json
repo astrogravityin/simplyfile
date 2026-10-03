@@ -1,0 +1,88 @@
+{
+  "chip_id": "list.buy_offers",
+  "kind": "accessor",
+  "set": "list",
+  "label": "Buy a key: the live offers of other sellers",
+  "aliases": [
+    "key offers",
+    "keys on sale"
+  ],
+  "params": [
+    {
+      "name": "search_keys",
+      "type": "list",
+      "default": [
+        "title",
+        "seller_name"
+      ],
+      "label": "search keys"
+    },
+    {
+      "name": "sort_key",
+      "type": "text",
+      "default": "title",
+      "label": "sort key"
+    },
+    {
+      "name": "sort_desc",
+      "type": "boolean",
+      "default": false,
+      "label": "sort desc"
+    },
+    {
+      "name": "sorts",
+      "type": "list",
+      "default": [
+        "title",
+        "seller_name"
+      ],
+      "label": "sorts"
+    },
+    {
+      "name": "page_size",
+      "type": "number",
+      "default": 10,
+      "label": "page size"
+    },
+    {
+      "name": "max_page_size",
+      "type": "number",
+      "default": 100,
+      "label": "max page size"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "search_keys": "$search_keys",
+      "sort_key": "$sort_key",
+      "sort_desc": "$sort_desc",
+      "sorts": "$sorts",
+      "page_size": "$page_size",
+      "max_page_size": "$max_page_size"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-01 owner (Phase 3): Buy a key drew every live offer of every seller at once. Now a paged list (core/lists.py): searched by title and seller; the buyer-facing view of each offer is made for the page shown only.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "search_keys": [
+          "title",
+          "seller_name"
+        ],
+        "sort_key": "title",
+        "sort_desc": false,
+        "sorts": [
+          "title",
+          "seller_name"
+        ],
+        "page_size": 10,
+        "max_page_size": 100
+      }
+    }
+  ]
+}

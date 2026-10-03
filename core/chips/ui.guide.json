@@ -1,0 +1,133 @@
+{
+  "chip_id": "ui.guide",
+  "kind": "accessor",
+  "set": "ui",
+  "label": "Every word on the screen guide card",
+  "aliases": [
+    "guide card words"
+  ],
+  "params": [
+    {
+      "name": "guide_me",
+      "type": "text",
+      "default": "Guide me"
+    },
+    {
+      "name": "guide_tip",
+      "type": "text",
+      "default": "A step-by-step tour of this screen"
+    },
+    {
+      "name": "step_of",
+      "type": "text",
+      "default": "Step {n} of {total}"
+    },
+    {
+      "name": "minutes",
+      "type": "text",
+      "default": "About {n} min"
+    },
+    {
+      "name": "begin",
+      "type": "text",
+      "default": "Begin the tour"
+    },
+    {
+      "name": "next",
+      "type": "text",
+      "default": "Next"
+    },
+    {
+      "name": "back",
+      "type": "text",
+      "default": "Back"
+    },
+    {
+      "name": "done",
+      "type": "text",
+      "default": "Finish"
+    },
+    {
+      "name": "close",
+      "type": "text",
+      "default": "Close the guide"
+    },
+    {
+      "name": "listen",
+      "type": "text",
+      "default": "Listen"
+    },
+    {
+      "name": "mute",
+      "type": "text",
+      "default": "Stop voice"
+    },
+    {
+      "name": "not_on_screen",
+      "type": "text",
+      "default": "Not on screen right now - it appears once you reach this part."
+    },
+    {
+      "name": "keys_hint",
+      "type": "text",
+      "default": "Use the arrow keys to move, Esc to close."
+    },
+    {
+      "name": "failed",
+      "type": "text",
+      "default": "The guide could not be loaded: {why}"
+    },
+    {
+      "name": "open_first",
+      "type": "text",
+      "default": "Open one from your list first - this part lives inside it."
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "guide_me": "$guide_me",
+      "guide_tip": "$guide_tip",
+      "step_of": "$step_of",
+      "minutes": "$minutes",
+      "begin": "$begin",
+      "next": "$next",
+      "back": "$back",
+      "done": "$done",
+      "close": "$close",
+      "listen": "$listen",
+      "mute": "$mute",
+      "not_on_screen": "$not_on_screen",
+      "keys_hint": "$keys_hint",
+      "failed": "$failed",
+      "open_first": "$open_first"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "Words of core/static/guide.js.",
+  "weight_basis": "page",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "guide_me": "Guide me",
+        "guide_tip": "A step-by-step tour of this screen",
+        "step_of": "Step {n} of {total}",
+        "minutes": "About {n} min",
+        "begin": "Begin the tour",
+        "next": "Next",
+        "back": "Back",
+        "done": "Finish",
+        "close": "Close the guide",
+        "listen": "Listen",
+        "mute": "Stop voice",
+        "not_on_screen": "Not on screen right now - it appears once you reach this part.",
+        "keys_hint": "Use the arrow keys to move, Esc to close.",
+        "failed": "The guide could not be loaded: {why}",
+        "open_first": "Open one from your list first - this part lives inside it."
+      }
+    }
+  ]
+}

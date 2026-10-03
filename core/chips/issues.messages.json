@@ -1,0 +1,163 @@
+{
+  "chip_id": "issues.messages",
+  "kind": "accessor",
+  "set": "issues",
+  "label": "Everything the Reported issues routes say",
+  "aliases": [
+    "issue messages"
+  ],
+  "params": [
+    {
+      "name": "no_issue",
+      "type": "text",
+      "default": "That report is not here.",
+      "label": "no issue"
+    },
+    {
+      "name": "no_title",
+      "type": "text",
+      "default": "Give the report a short header.",
+      "label": "no title"
+    },
+    {
+      "name": "no_body",
+      "type": "text",
+      "default": "Describe the issue.",
+      "label": "no body"
+    },
+    {
+      "name": "shot_not_image",
+      "type": "text",
+      "default": "The attachment must be an image (a screenshot).",
+      "label": "shot not image"
+    },
+    {
+      "name": "shot_too_big",
+      "type": "text",
+      "default": "That screenshot is over {mb} MB - attach a smaller one.",
+      "label": "shot too big"
+    },
+    {
+      "name": "bad_status",
+      "type": "text",
+      "default": "A report is open or resolved.",
+      "label": "bad status"
+    },
+    {
+      "name": "filed",
+      "type": "long",
+      "default": "Thank you - your report reached the portal admin. Their answer will show here in the portal.",
+      "label": "filed"
+    },
+    {
+      "name": "resolved",
+      "type": "text",
+      "default": "Resolved - the person who reported it sees your reply in the portal.",
+      "label": "resolved"
+    },
+    {
+      "name": "reopened",
+      "type": "text",
+      "default": "Open again.",
+      "label": "reopened"
+    },
+    {
+      "name": "too_many",
+      "type": "long",
+      "default": "You have sent many reports in a short time. Wait a little, then send this one.",
+      "label": "too many"
+    },
+    {
+      "name": "off",
+      "type": "text",
+      "default": "This cannot take a report right now."
+    },
+    {
+      "name": "not_yours",
+      "type": "text",
+      "default": "Only whoever answers reports can do that."
+    },
+    {
+      "name": "saved",
+      "type": "text",
+      "default": "Answer saved - they will see it in the portal."
+    },
+    {
+      "name": "removed",
+      "type": "text",
+      "default": "Report removed."
+    },
+    {
+      "name": "too_fast",
+      "type": "text",
+      "default": "One report every {s} seconds - try again in a moment."
+    },
+    {
+      "name": "bell_new",
+      "type": "text",
+      "default": "{who} reported an issue"
+    },
+    {
+      "name": "bell_reply",
+      "type": "text",
+      "default": "Your report {title} was answered"
+    },
+    {
+      "name": "someone",
+      "type": "text",
+      "default": "Someone"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "no_issue": "$no_issue",
+      "no_title": "$no_title",
+      "no_body": "$no_body",
+      "shot_not_image": "$shot_not_image",
+      "shot_too_big": "$shot_too_big",
+      "bad_status": "$bad_status",
+      "filed": "$filed",
+      "resolved": "$resolved",
+      "reopened": "$reopened",
+      "too_many": "$too_many",
+      "off": "$off",
+      "not_yours": "$not_yours",
+      "saved": "$saved",
+      "removed": "$removed",
+      "too_fast": "$too_fast",
+      "bell_new": "$bell_new",
+      "bell_reply": "$bell_reply",
+      "someone": "$someone"
+    }
+  },
+  "returns": "record",
+  "version": 2,
+  "status": "published",
+  "description_nl": "Every sentence of core/issues.py.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "no_issue": "That report is not here.",
+        "no_title": "Give the report a short header.",
+        "no_body": "Describe the issue.",
+        "shot_not_image": "The attachment must be an image (a screenshot).",
+        "shot_too_big": "That screenshot is over {mb} MB - attach a smaller one.",
+        "bad_status": "A report is open or resolved.",
+        "filed": "Thank you - your report reached the portal admin. Their answer will show here in the portal.",
+        "resolved": "Resolved - the person who reported it sees your reply in the portal.",
+        "reopened": "Open again.",
+        "too_many": "You have sent many reports in a short time. Wait a little, then send this one.",
+        "off": "This cannot take a report right now.",
+        "not_yours": "Only whoever answers reports can do that.",
+        "saved": "Answer saved - they will see it in the portal.",
+        "removed": "Report removed.",
+        "too_fast": "One report every {s} seconds - try again in a moment.",
+        "bell_new": "{who} reported an issue",
+        "bell_reply": "Your report {title} was answered",
+        "someone": "Someone"
+      }
+    }
+  ]
+}

@@ -1,0 +1,371 @@
+{
+  "chip_id": "ui.visitors",
+  "kind": "accessor",
+  "set": "ui",
+  "label": "Every word on the Visitors screen",
+  "aliases": [
+    "visitors screen words"
+  ],
+  "params": [
+    {
+      "name": "title",
+      "type": "text",
+      "default": "Visitors"
+    },
+    {
+      "name": "lede",
+      "type": "text",
+      "default": "Every screen shown in a browser — the sign-in page included — with where it was opened from and how long it stayed open. Bots are counted in the lists and left out of the totals."
+    },
+    {
+      "name": "geo_loading",
+      "type": "text",
+      "default": "The location database is downloading on the server (first start only, a few minutes). New visits get a place as soon as it opens, and earlier visits are filled in then."
+    },
+    {
+      "name": "geo_missing",
+      "type": "text",
+      "default": "The location database could not be opened or downloaded, so places read <b>unknown</b>. {error} It retries every few hours; or set <code>PORTAL_GEOIP_DB</code> to a GeoLite2-City or DB-IP .mmdb file."
+    },
+    {
+      "name": "geo_off",
+      "type": "text",
+      "default": "Location lookup is turned off on this server (<code>PORTAL_GEOIP=off</code>), and no CDN in front of it sends a place."
+    },
+    {
+      "name": "dbip_credit",
+      "type": "text",
+      "default": "<a href=\"https://db-ip.com\" target=\"_blank\" rel=\"noopener\">IP geolocation by DB-IP</a>"
+    },
+    {
+      "name": "world",
+      "type": "text",
+      "default": "World"
+    },
+    {
+      "name": "world_credit",
+      "type": "text",
+      "default": "Natural Earth (public domain){credit}"
+    },
+    {
+      "name": "india",
+      "type": "text",
+      "default": "India by state"
+    },
+    {
+      "name": "india_credit",
+      "type": "text",
+      "default": "DataMeet India (CC BY 4.0){credit}"
+    },
+    {
+      "name": "unit_views",
+      "type": "text",
+      "default": "page views"
+    },
+    {
+      "name": "no_india",
+      "type": "text",
+      "default": "No visits from India with a known state in this range."
+    },
+    {
+      "name": "off_map",
+      "type": "text",
+      "default": "Not on the map: {places}"
+    },
+    {
+      "name": "range_24h",
+      "type": "text",
+      "default": "24 hours"
+    },
+    {
+      "name": "range_7d",
+      "type": "text",
+      "default": "7 days"
+    },
+    {
+      "name": "range_30d",
+      "type": "text",
+      "default": "30 days"
+    },
+    {
+      "name": "range_90d",
+      "type": "text",
+      "default": "90 days"
+    },
+    {
+      "name": "range_all",
+      "type": "text",
+      "default": "All"
+    },
+    {
+      "name": "minutes",
+      "type": "text",
+      "default": "{n} min"
+    },
+    {
+      "name": "seconds",
+      "type": "text",
+      "default": "{n} s"
+    },
+    {
+      "name": "no_visits",
+      "type": "text",
+      "default": "No visits in this range."
+    },
+    {
+      "name": "views_over_time",
+      "type": "text",
+      "default": "Views over time"
+    },
+    {
+      "name": "bar_tip",
+      "type": "text",
+      "default": "{bucket}: {views} views, {sessions} sessions"
+    },
+    {
+      "name": "sessions_tip",
+      "type": "text",
+      "default": "{n} {n:session|sessions}"
+    },
+    {
+      "name": "nothing_yet",
+      "type": "text",
+      "default": "Nothing yet."
+    },
+    {
+      "name": "tile_visits",
+      "type": "text",
+      "default": "visits"
+    },
+    {
+      "name": "tile_people",
+      "type": "text",
+      "default": "people signed in"
+    },
+    {
+      "name": "tile_anonymous",
+      "type": "text",
+      "default": "signed-out views"
+    },
+    {
+      "name": "tile_dwell",
+      "type": "text",
+      "default": "average time on a page"
+    },
+    {
+      "name": "pages",
+      "type": "text",
+      "default": "Pages"
+    },
+    {
+      "name": "col_page",
+      "type": "text",
+      "default": "Page"
+    },
+    {
+      "name": "col_views",
+      "type": "text",
+      "default": "Views"
+    },
+    {
+      "name": "col_visits",
+      "type": "text",
+      "default": "Visits"
+    },
+    {
+      "name": "col_avg",
+      "type": "text",
+      "default": "Avg time"
+    },
+    {
+      "name": "no_pages",
+      "type": "text",
+      "default": "No page views yet."
+    },
+    {
+      "name": "countries",
+      "type": "text",
+      "default": "Countries"
+    },
+    {
+      "name": "cities",
+      "type": "text",
+      "default": "Cities"
+    },
+    {
+      "name": "referrers",
+      "type": "text",
+      "default": "Came from"
+    },
+    {
+      "name": "devices",
+      "type": "text",
+      "default": "Devices"
+    },
+    {
+      "name": "browsers",
+      "type": "text",
+      "default": "Browsers"
+    },
+    {
+      "name": "systems",
+      "type": "text",
+      "default": "Systems"
+    },
+    {
+      "name": "latest",
+      "type": "text",
+      "default": "Latest visits"
+    },
+    {
+      "name": "col_when",
+      "type": "text",
+      "default": "When (UTC)"
+    },
+    {
+      "name": "col_who",
+      "type": "text",
+      "default": "Who"
+    },
+    {
+      "name": "col_where",
+      "type": "text",
+      "default": "Where"
+    },
+    {
+      "name": "col_on",
+      "type": "text",
+      "default": "On"
+    },
+    {
+      "name": "col_stayed",
+      "type": "text",
+      "default": "Stayed"
+    },
+    {
+      "name": "signed_out",
+      "type": "text",
+      "default": "signed out"
+    },
+    {
+      "name": "unknown",
+      "type": "text",
+      "default": "unknown"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "title": "$title",
+      "lede": "$lede",
+      "geo_loading": "$geo_loading",
+      "geo_missing": "$geo_missing",
+      "geo_off": "$geo_off",
+      "dbip_credit": "$dbip_credit",
+      "world": "$world",
+      "world_credit": "$world_credit",
+      "india": "$india",
+      "india_credit": "$india_credit",
+      "unit_views": "$unit_views",
+      "no_india": "$no_india",
+      "off_map": "$off_map",
+      "range_24h": "$range_24h",
+      "range_7d": "$range_7d",
+      "range_30d": "$range_30d",
+      "range_90d": "$range_90d",
+      "range_all": "$range_all",
+      "minutes": "$minutes",
+      "seconds": "$seconds",
+      "no_visits": "$no_visits",
+      "views_over_time": "$views_over_time",
+      "bar_tip": "$bar_tip",
+      "sessions_tip": "$sessions_tip",
+      "nothing_yet": "$nothing_yet",
+      "tile_visits": "$tile_visits",
+      "tile_people": "$tile_people",
+      "tile_anonymous": "$tile_anonymous",
+      "tile_dwell": "$tile_dwell",
+      "pages": "$pages",
+      "col_page": "$col_page",
+      "col_views": "$col_views",
+      "col_visits": "$col_visits",
+      "col_avg": "$col_avg",
+      "no_pages": "$no_pages",
+      "countries": "$countries",
+      "cities": "$cities",
+      "referrers": "$referrers",
+      "devices": "$devices",
+      "browsers": "$browsers",
+      "systems": "$systems",
+      "latest": "$latest",
+      "col_when": "$col_when",
+      "col_who": "$col_who",
+      "col_where": "$col_where",
+      "col_on": "$col_on",
+      "col_stayed": "$col_stayed",
+      "signed_out": "$signed_out",
+      "unknown": "$unknown"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "The words of one screen. {placeholders} are filled on the page. A language overrides any of them with chip ui.visitors.<lang> (for example ui.visitors.hi).",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "title": "Visitors",
+        "lede": "Every screen shown in a browser — the sign-in page included — with where it was opened from and how long it stayed open. Bots are counted in the lists and left out of the totals.",
+        "geo_loading": "The location database is downloading on the server (first start only, a few minutes). New visits get a place as soon as it opens, and earlier visits are filled in then.",
+        "geo_missing": "The location database could not be opened or downloaded, so places read <b>unknown</b>. {error} It retries every few hours; or set <code>PORTAL_GEOIP_DB</code> to a GeoLite2-City or DB-IP .mmdb file.",
+        "geo_off": "Location lookup is turned off on this server (<code>PORTAL_GEOIP=off</code>), and no CDN in front of it sends a place.",
+        "dbip_credit": "<a href=\"https://db-ip.com\" target=\"_blank\" rel=\"noopener\">IP geolocation by DB-IP</a>",
+        "world": "World",
+        "world_credit": "Natural Earth (public domain){credit}",
+        "india": "India by state",
+        "india_credit": "DataMeet India (CC BY 4.0){credit}",
+        "unit_views": "page views",
+        "no_india": "No visits from India with a known state in this range.",
+        "off_map": "Not on the map: {places}",
+        "range_24h": "24 hours",
+        "range_7d": "7 days",
+        "range_30d": "30 days",
+        "range_90d": "90 days",
+        "range_all": "All",
+        "minutes": "{n} min",
+        "seconds": "{n} s",
+        "no_visits": "No visits in this range.",
+        "views_over_time": "Views over time",
+        "bar_tip": "{bucket}: {views} views, {sessions} sessions",
+        "sessions_tip": "{n} {n:session|sessions}",
+        "nothing_yet": "Nothing yet.",
+        "tile_visits": "visits",
+        "tile_people": "people signed in",
+        "tile_anonymous": "signed-out views",
+        "tile_dwell": "average time on a page",
+        "pages": "Pages",
+        "col_page": "Page",
+        "col_views": "Views",
+        "col_visits": "Visits",
+        "col_avg": "Avg time",
+        "no_pages": "No page views yet.",
+        "countries": "Countries",
+        "cities": "Cities",
+        "referrers": "Came from",
+        "devices": "Devices",
+        "browsers": "Browsers",
+        "systems": "Systems",
+        "latest": "Latest visits",
+        "col_when": "When (UTC)",
+        "col_who": "Who",
+        "col_where": "Where",
+        "col_on": "On",
+        "col_stayed": "Stayed",
+        "signed_out": "signed out",
+        "unknown": "unknown"
+      }
+    }
+  ],
+  "weight_basis": "Wording only. Every word on this screen lives here, never in JavaScript."
+}

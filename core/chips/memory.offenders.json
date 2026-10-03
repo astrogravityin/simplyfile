@@ -1,0 +1,108 @@
+{
+  "chip_id": "memory.offenders",
+  "kind": "accessor",
+  "set": "memory",
+  "audience": "admin",
+  "label": "Requests ranked by the most memory one call moved",
+  "aliases": [
+    "memory offenders",
+    "worst requests"
+  ],
+  "params": [
+    {
+      "name": "events",
+      "type": "string",
+      "default": []
+    },
+    {
+      "name": "shown",
+      "type": "number",
+      "default": 25
+    }
+  ],
+  "expr": {
+    "vop": "rank_rows",
+    "rows": {
+      "vop": "group_rows",
+      "rows": "$events",
+      "key": [
+        "method",
+        "path"
+      ],
+      "measures": {
+        "count": [
+          "count"
+        ],
+        "total_delta": [
+          "sum",
+          "delta"
+        ],
+        "max_delta": [
+          "max",
+          "delta"
+        ],
+        "last_at": [
+          "last",
+          "t"
+        ]
+      }
+    },
+    "by": [
+      "max_delta",
+      "total_delta"
+    ],
+    "descending": true,
+    "limit": "$shown"
+  },
+  "returns": "rows",
+  "version": 1,
+  "status": "published",
+  "description_nl": "Each request path once, with how often it moved memory, by how much in total and at most, and when last — the biggest single move first.",
+  "test_cases": [
+    {
+      "args": {
+        "events": [
+          {
+            "method": "GET",
+            "path": "/a",
+            "delta": 10,
+            "t": "1"
+          },
+          {
+            "method": "POST",
+            "path": "/b",
+            "delta": 70,
+            "t": "2"
+          },
+          {
+            "method": "GET",
+            "path": "/a",
+            "delta": 20,
+            "t": "3"
+          }
+        ]
+      },
+      "expect_value": [
+        {
+          "key": "POST /b",
+          "method": "POST",
+          "path": "/b",
+          "count": 1,
+          "total_delta": 70,
+          "max_delta": 70,
+          "last_at": "2"
+        },
+        {
+          "key": "GET /a",
+          "method": "GET",
+          "path": "/a",
+          "count": 2,
+          "total_delta": 30,
+          "max_delta": 20,
+          "last_at": "3"
+        }
+      ]
+    }
+  ],
+  "weight_basis": "Platform operations primitive, no business content. The knobs ARE the policy — edit them here, never in Python."
+}

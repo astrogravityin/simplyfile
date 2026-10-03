@@ -1,0 +1,119 @@
+{
+  "chip_id": "intake.row_state",
+  "kind": "accessor",
+  "set": "intake",
+  "label": "A statement row's state",
+  "aliases": [
+    "intake row_state"
+  ],
+  "params": [
+    {
+      "name": "has_ref",
+      "type": "boolean",
+      "default": false,
+      "label": "has ref"
+    },
+    {
+      "name": "ref_ok",
+      "type": "boolean",
+      "default": false,
+      "label": "ref ok"
+    },
+    {
+      "name": "has_suggestion",
+      "type": "boolean",
+      "default": false,
+      "label": "has suggestion"
+    },
+    {
+      "name": "has_label",
+      "type": "boolean",
+      "default": false,
+      "label": "has label"
+    }
+  ],
+  "expr": {
+    "vop": "choose",
+    "cases": [
+      {
+        "when": {
+          "op": "all",
+          "items": [
+            {
+              "op": "eq",
+              "left": "$has_ref",
+              "right": true
+            },
+            {
+              "op": "eq",
+              "left": "$ref_ok",
+              "right": true
+            }
+          ]
+        },
+        "then": "tagged"
+      },
+      {
+        "when": {
+          "op": "eq",
+          "left": "$has_ref",
+          "right": true
+        },
+        "then": "invalid"
+      },
+      {
+        "when": {
+          "op": "eq",
+          "left": "$has_suggestion",
+          "right": true
+        },
+        "then": "suggested"
+      },
+      {
+        "when": {
+          "op": "eq",
+          "left": "$has_label",
+          "right": true
+        },
+        "then": "untagged"
+      }
+    ],
+    "else": "total"
+  },
+  "returns": "text",
+  "version": 1,
+  "status": "published",
+  "description_nl": "tagged = a valid SF Ref; invalid = a ref that does not parse; suggested = none yet but a rule offers one; untagged = a labelled figure with nothing; total = a figure with no words (a sum), which needs no ref.",
+  "test_cases": [
+    {
+      "args": {
+        "has_ref": true,
+        "ref_ok": true
+      },
+      "expect_value": "tagged"
+    },
+    {
+      "args": {
+        "has_ref": true
+      },
+      "expect_value": "invalid"
+    },
+    {
+      "args": {
+        "has_suggestion": true,
+        "has_label": true
+      },
+      "expect_value": "suggested"
+    },
+    {
+      "args": {
+        "has_label": true
+      },
+      "expect_value": "untagged"
+    },
+    {
+      "args": {},
+      "expect_value": "total"
+    }
+  ]
+}

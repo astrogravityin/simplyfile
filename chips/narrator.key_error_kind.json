@@ -1,0 +1,118 @@
+{
+  "chip_id": "narrator.key_error_kind",
+  "kind": "accessor",
+  "set": "narrator",
+  "label": "Which way Google refused a Gemini key",
+  "aliases": [
+    "gemini key failure"
+  ],
+  "params": [
+    {
+      "name": "detail",
+      "type": "text",
+      "default": ""
+    },
+    {
+      "name": "model",
+      "type": "text",
+      "default": ""
+    },
+    {
+      "name": "invalid_pattern",
+      "type": "text",
+      "default": "API key not valid|API_KEY_INVALID|UNAUTHENTICATED"
+    },
+    {
+      "name": "refused_pattern",
+      "type": "text",
+      "default": "PERMISSION_DENIED|(?i:quota)|RESOURCE_EXHAUSTED"
+    },
+    {
+      "name": "network_pattern",
+      "type": "text",
+      "default": "Connection|timed out|getaddrinfo|SSL"
+    }
+  ],
+  "expr": {
+    "vop": "choose",
+    "cases": [
+      {
+        "when": {
+          "vop": "search",
+          "text": "$detail",
+          "pattern": "$invalid_pattern"
+        },
+        "then": "invalid"
+      },
+      {
+        "when": {
+          "chip": "narrator.model_refused",
+          "args": {
+            "detail": "$detail",
+            "model": "$model"
+          }
+        },
+        "then": "model"
+      },
+      {
+        "when": {
+          "vop": "search",
+          "text": "$detail",
+          "pattern": "$refused_pattern"
+        },
+        "then": "refused"
+      },
+      {
+        "when": {
+          "vop": "search",
+          "text": "$detail",
+          "pattern": "$network_pattern"
+        },
+        "then": "network"
+      }
+    ],
+    "else": "other"
+  },
+  "returns": "text",
+  "version": 1,
+  "status": "published",
+  "description_nl": "invalid (the key itself), model (see narrator.model_refused), refused (permission or quota), network (this server could not reach Google), else other. Tried in that order. Key FORMAT is never judged: \"AIza\" and \"AQ.\" keys are both real.",
+  "test_cases": [
+    {
+      "args": {
+        "detail": "400 INVALID_ARGUMENT. API key not valid. Please pass a valid API key.",
+        "model": "m"
+      },
+      "expect_value": "invalid"
+    },
+    {
+      "args": {
+        "detail": "404 NOT_FOUND. models/gemini-9 is not found",
+        "model": "gemini-9"
+      },
+      "expect_value": "model"
+    },
+    {
+      "args": {
+        "detail": "429 RESOURCE_EXHAUSTED. Quota exceeded",
+        "model": "m"
+      },
+      "expect_value": "refused"
+    },
+    {
+      "args": {
+        "detail": "SSL: CERTIFICATE_VERIFY_FAILED",
+        "model": "m"
+      },
+      "expect_value": "network"
+    },
+    {
+      "args": {
+        "detail": "404 NOT_FOUND. Requested entity was not found.",
+        "model": "gemini-2.5-flash"
+      },
+      "expect_value": "other"
+    }
+  ],
+  "weight_basis": "A yes/no or a value the portal acts on. The knobs ARE the policy — edit them here, never in Python."
+}

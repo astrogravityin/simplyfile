@@ -1,0 +1,61 @@
+{
+  "chip_id": "people.roles",
+  "kind": "accessor",
+  "set": "people",
+  "audience": "admin",
+  "label": "The roles an account can have",
+  "aliases": [
+    "roles",
+    "account roles"
+  ],
+  "params": [
+    {
+      "name": "roles",
+      "type": "rows",
+      "default": [
+        {
+          "id": "owner",
+          "label": "Owner",
+          "doc": "Opens everything, the admin screens included; publishes and deletes in the builders."
+        },
+        {
+          "id": "editor",
+          "label": "Editor",
+          "doc": "Uses the portal's screens; in the builders edits, reviews and publishes chips and rules."
+        },
+        {
+          "id": "author",
+          "label": "Author",
+          "doc": "Uses the portal's screens; in the builders drafts and tests their own chips and rules, then submits them."
+        },
+        {
+          "id": "member",
+          "label": "Member",
+          "doc": "Uses the portal's screens they are allowed. No builders."
+        }
+      ]
+    }
+  ],
+  "expr": "$roles",
+  "returns": "rows",
+  "version": 1,
+  "status": "published",
+  "description_nl": "Every role, most powerful first, with the words the People screen shows for it.",
+  "test_cases": [
+    {
+      "args": {
+        "roles": [
+          {
+            "id": "owner"
+          }
+        ]
+      },
+      "expect_value": [
+        {
+          "id": "owner"
+        }
+      ]
+    }
+  ],
+  "weight_basis": "Platform access primitive, no business content. The knobs ARE the policy — edit them here, never in Python."
+}

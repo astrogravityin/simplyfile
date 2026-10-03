@@ -1,0 +1,53 @@
+{
+  "chip_id": "people.public_fields",
+  "kind": "accessor",
+  "set": "people",
+  "label": "The fields of an account any screen may see (never the password)",
+  "aliases": [
+    "public fields"
+  ],
+  "params": [
+    {
+      "name": "fields",
+      "type": "list",
+      "default": [
+        "id",
+        "email",
+        "username",
+        "name",
+        "role",
+        "created_at",
+        "verified",
+        "must_change_password"
+      ],
+      "label": "fields shown"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "fields": "$fields"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-04 owner: \"Chips and ops audit for core/store.py\" - caps, user-name making, the last-owner test, the new role and the public fields the store held.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "fields": [
+          "id",
+          "email",
+          "username",
+          "name",
+          "role",
+          "created_at",
+          "verified",
+          "must_change_password"
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,79 @@
+{
+  "prod_base": "https://sf.valuestream.in",
+  "voice": "en-IN-NeerjaNeural",
+  "rate": "+0%",
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "blur": [
+    "#whoami",
+    "#userpop .head"
+  ],
+  "page_key": "sf-clients",
+  "title": "Clients & years",
+  "start_url": "/#/clients",
+  "covers": [
+    "the client register",
+    "assessment years",
+    "adding a client once",
+    "PAN and GSTIN checks",
+    "the year card: form, audit, stage"
+  ],
+  "steps": [
+    {
+      "chapter": "Welcome",
+      "say": "Clients and years is the firm's register. Every assessee is entered once, and carried into each assessment year.",
+      "do": [
+        {
+          "wait_for": "#cl-list"
+        }
+      ]
+    },
+    {
+      "chapter": "The year",
+      "say": "Pick the assessment year here. Each row shows the return form, a 3 C D tag when the year is audited, and the stage it has reached.",
+      "do": [
+        {
+          "highlight": "#cl-ay",
+          "optional": true
+        },
+        {
+          "wait": 1
+        }
+      ]
+    },
+    {
+      "chapter": "A new client",
+      "say": "New client opens the master: name, status, PAN, contacts, GST, bank accounts, and partners for a firm. The PAN's fourth letter must match the status, and a GSTIN must carry the same PAN, so a typing slip is caught before it reaches a return.",
+      "do": [
+        {
+          "click": "#cl-new"
+        },
+        {
+          "wait": 1
+        },
+        {
+          "highlight": "#c-pan",
+          "optional": true
+        },
+        {
+          "wait": 1
+        }
+      ]
+    },
+    {
+      "chapter": "Done",
+      "say": "Once saved, the client starts in the current year, ready for the statements to come in.",
+      "do": [
+        {
+          "key": "Escape",
+          "optional": true
+        },
+        {
+          "wait": 1
+        }
+      ]
+    }
+  ]
+}

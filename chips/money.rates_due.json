@@ -1,0 +1,49 @@
+{
+  "chip_id": "money.rates_due",
+  "kind": "predicate",
+  "set": "money",
+  "label": "Is it time to ask the rate feed again, given when it last answered and when it was last tried",
+  "aliases": [
+    "exchange rate refresh"
+  ],
+  "params": [
+    {
+      "name": "hours_since_fetched",
+      "type": "number",
+      "default": 9999
+    },
+    {
+      "name": "minutes_since_tried",
+      "type": "number",
+      "default": 9999
+    },
+    {
+      "name": "refresh_hours",
+      "type": "number",
+      "default": 24
+    },
+    {
+      "name": "retry_minutes",
+      "type": "number",
+      "default": 60
+    }
+  ],
+  "expr": {
+    "op": "all",
+    "items": [
+      {"op": "ge", "left": "$hours_since_fetched", "right": "$refresh_hours"},
+      {"op": "ge", "left": "$minutes_since_tried", "right": "$retry_minutes"}
+    ]
+  },
+  "returns": "boolean",
+  "version": 1,
+  "status": "published",
+  "description_nl": "The feed is asked once the last good answer is refresh_hours old - and never more often than every retry_minutes, so a feed that is down is not hammered on every screen. Both figures come from chip money.currencies.",
+  "test_cases": [
+    {"args": {}, "expect_value": true},
+    {"args": {"hours_since_fetched": 3, "minutes_since_tried": 9999}, "expect_value": false},
+    {"args": {"hours_since_fetched": 30, "minutes_since_tried": 5}, "expect_value": false},
+    {"args": {"hours_since_fetched": 30, "minutes_since_tried": 61}, "expect_value": true}
+  ],
+  "weight_basis": "The refresh cadence. Edit it here, never in Python."
+}

@@ -1,0 +1,107 @@
+{
+  "chip_id": "projects.settings",
+  "kind": "accessor",
+  "set": "projects",
+  "label": "Project keys, source kinds and field limits",
+  "aliases": [
+    "screen key rule",
+    "project limits"
+  ],
+  "params": [
+    {
+      "name": "screen_key_pattern",
+      "type": "text",
+      "default": "^[a-z0-9][a-z0-9._-]{0,63}$"
+    },
+    {
+      "name": "key_unsafe",
+      "type": "text",
+      "default": "[^a-z0-9]+"
+    },
+    {
+      "name": "project_key_fallback",
+      "type": "text",
+      "default": "project"
+    },
+    {
+      "name": "screen_key_fallback",
+      "type": "text",
+      "default": "screen"
+    },
+    {
+      "name": "source_git",
+      "type": "text",
+      "default": "git"
+    },
+    {
+      "name": "source_local",
+      "type": "text",
+      "default": "local"
+    },
+    {
+      "name": "masked_prefix",
+      "type": "text",
+      "default": "•"
+    },
+    {
+      "name": "limits",
+      "type": "record",
+      "default": {
+        "name": 120,
+        "git_url": 400,
+        "git_branch": 120,
+        "git_token": 400,
+        "screen_label": 120,
+        "screen_route": 200,
+        "screen_file": 400,
+        "screen_group": 60,
+        "link_label": 120,
+        "link_url": 1000
+      }
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "screen_key_pattern": "$screen_key_pattern",
+      "key_unsafe": "$key_unsafe",
+      "project_key_fallback": "$project_key_fallback",
+      "screen_key_fallback": "$screen_key_fallback",
+      "source_git": "$source_git",
+      "source_local": "$source_local",
+      "masked_prefix": "$masked_prefix",
+      "limits": "$limits"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "screen_key_pattern: what a screen key the browser sends must look like; anything else is rebuilt from the label. key_unsafe: characters a project or screen key replaces with '-'. project_key_fallback / screen_key_fallback: the key when a name has no letters. source_git / source_local: the two places a project's code can live (anything else is local). masked_prefix: a token that starts with this is the masked copy the browser was shown, so the stored token is kept. limits: the most characters kept per field.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "screen_key_pattern": "^[a-z0-9][a-z0-9._-]{0,63}$",
+        "key_unsafe": "[^a-z0-9]+",
+        "project_key_fallback": "project",
+        "screen_key_fallback": "screen",
+        "source_git": "git",
+        "source_local": "local",
+        "masked_prefix": "•",
+        "limits": {
+          "name": 120,
+          "git_url": 400,
+          "git_branch": 120,
+          "git_token": 400,
+          "screen_label": 120,
+          "screen_route": 200,
+          "screen_file": 400,
+          "screen_group": 60,
+          "link_label": 120,
+          "link_url": 1000
+        }
+      }
+    }
+  ],
+  "weight_basis": "Portal business setting of the Training & Video Portal. The knobs ARE the policy — edit them here, never in Python."
+}

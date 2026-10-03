@@ -1,0 +1,212 @@
+{
+  "chip_id": "guide.howto",
+  "kind": "accessor",
+  "set": "guide",
+  "label": "The step-by-step guide to How to Use links: every step, spotlight, narration and picture",
+  "aliases": [
+    "how to use links tour",
+    "how to use links guide",
+    "guide me"
+  ],
+  "params": [
+    {
+      "name": "title",
+      "type": "text",
+      "default": "How to Use links",
+      "label": "The tour's name (its cover card)"
+    },
+    {
+      "name": "lede",
+      "type": "long",
+      "default": "Give every screen of your project the help its readers need: a manual, a video, a recording or any page. Here is how to find the gaps, attach links and read them from your own app.",
+      "label": "The cover's opening line; {product} = this edition's name"
+    },
+    {
+      "name": "icon",
+      "type": "text",
+      "default": "link",
+      "label": "The emblem on the cover (an icon name)"
+    },
+    {
+      "name": "minutes",
+      "type": "number",
+      "default": 3,
+      "label": "How long the tour takes"
+    },
+    {
+      "name": "steps",
+      "type": "rows",
+      "default": [
+        {
+          "title": "Coverage at a glance",
+          "say": "This line counts the screens already documented and the live links your readers can reach. With no project yet, Register a project opens Setup, where its screens are scanned.",
+          "target": "#ht-stats|#ht-none",
+          "art": {
+            "kind": "meter",
+            "value": 65,
+            "label": "Documented",
+            "icon": "help",
+            "icon2": "link"
+          }
+        },
+        {
+          "title": "Find a screen",
+          "say": "Every screen of the project is listed on the left, grouped as in Setup. Type in the Find a screen box to narrow the list by name, key or route.",
+          "target": "#ht-q|#ht-none",
+          "art": {
+            "kind": "hero",
+            "icon": "search"
+          }
+        },
+        {
+          "title": "Only the gaps",
+          "say": "Tick only screens with nothing attached to see exactly which screens still need help. The number beside each screen is its count of live links.",
+          "target": "#ht-only|#ht-list",
+          "art": {
+            "kind": "check",
+            "items": [
+              "Home",
+              "Reports",
+              "Settings"
+            ],
+            "done": 1
+          }
+        },
+        {
+          "title": "Pick a screen",
+          "say": "Choose a screen to edit its links on the right. With unsaved changes, you are asked before switching, so no work is lost by accident.",
+          "target": "#ht-list [data-pick].on|#ht-list",
+          "art": {
+            "kind": "stack",
+            "items": [
+              "Home",
+              "Reports",
+              "Settings"
+            ],
+            "icon": "menu"
+          }
+        },
+        {
+          "title": "Add a link",
+          "say": "Press Add a link, write what the reader sees, and paste the address. A manual section, a YouTube walkthrough, a recording or any page will do.",
+          "target": "#ht-add|#ht-detail",
+          "art": {
+            "kind": "flow",
+            "items": [
+              "Label",
+              "Address",
+              "Type",
+              "Save links"
+            ],
+            "at": 0
+          }
+        },
+        {
+          "title": "The kind of link",
+          "say": "Leave the type on auto and it is read from the address: YouTube, Instagram, video, document or link. The icon beside it shows what your readers will get.",
+          "target": "#ht-rows select[data-f=\"type\"]|#ht-rows",
+          "art": {
+            "kind": "stack",
+            "items": [
+              "Manual",
+              "YouTube",
+              "Recording"
+            ],
+            "icon": "link"
+          }
+        },
+        {
+          "title": "Live or retired",
+          "say": "Unticking Live keeps a link here but hides it from readers. It is the way to retire a video without losing its address.",
+          "target": "#ht-rows input[data-f=\"active\"]|#ht-rows",
+          "art": {
+            "kind": "check",
+            "items": [
+              "Walkthrough",
+              "Old demo",
+              "Manual page"
+            ],
+            "done": 2
+          }
+        },
+        {
+          "title": "Links from a manual",
+          "say": "A row marked Published by a manual was placed here by User manuals. Publishing that manual again rewrites it, so make the change in the manual itself.",
+          "target": "#ht-rows .from|#ht-rows",
+          "art": {
+            "kind": "hero",
+            "icon": "book"
+          }
+        },
+        {
+          "title": "Save links",
+          "say": "Press Save links to put the changes live on this screen at once. Adding and editing links is free.",
+          "target": "#ht-save|#ht-detail",
+          "art": {
+            "kind": "flow",
+            "items": [
+              "Label",
+              "Address",
+              "Type",
+              "Save links"
+            ],
+            "at": 3
+          }
+        },
+        {
+          "title": "Reading these links from your app",
+          "say": "Your own application reads these links with one request: no login, any origin, any framework. Show them behind a How to Use button on each screen.",
+          "target": "#ht-reading|#ht-none",
+          "art": {
+            "kind": "hero",
+            "icon": "external"
+          }
+        }
+      ],
+      "label": "The steps in order: title, say (the narration), target (where the spotlight goes; alternatives split by |, the first on screen wins), art (the picture: hero/flow/roads/meter/stack/check), place (below/above/right/left/center, optional), open (optional: what the guide presses first when the part is not on screen - open the first item, go back Home; alternatives split by |)"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "title": "$title",
+      "lede": "$lede",
+      "icon": "$icon",
+      "minutes": "$minutes",
+      "steps": "$steps"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-09-27 owner: a screen tour guide on every tv / SteadyMove screen, step by step, professional narration with SVG pictures, all chips and ops. Drawn by core/static/guide.js, served by core/guide.py; Guide me appears in the top bar once this chip exists.",
+  "weight_basis": "page",
+  "test_cases": [
+    {
+      "args": {
+        "title": "T",
+        "lede": "L",
+        "icon": "spark",
+        "minutes": 1,
+        "steps": [
+          {
+            "title": "a",
+            "say": "b"
+          }
+        ]
+      },
+      "expect_value": {
+        "title": "T",
+        "lede": "L",
+        "icon": "spark",
+        "minutes": 1,
+        "steps": [
+          {
+            "title": "a",
+            "say": "b"
+          }
+        ]
+      }
+    }
+  ]
+}

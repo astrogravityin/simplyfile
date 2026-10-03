@@ -1,0 +1,69 @@
+{
+  "chip_id": "tourvideo.state",
+  "kind": "accessor",
+  "set": "tourvideo",
+  "label": "Is a tour's video missing, older than its script, or ready",
+  "aliases": [
+    "tour video state"
+  ],
+  "params": [
+    {
+      "name": "video_at",
+      "type": "number",
+      "default": 0,
+      "label": "When the MP4 was made (0 = never)"
+    },
+    {
+      "name": "script_at",
+      "type": "number",
+      "default": 0,
+      "label": "When the tour script or its Guide me last changed"
+    }
+  ],
+  "expr": {
+    "vop": "choose",
+    "cases": [
+      {
+        "when": {
+          "op": "le",
+          "left": "$video_at",
+          "right": 0
+        },
+        "then": "none"
+      },
+      {
+        "when": {
+          "op": "lt",
+          "left": "$video_at",
+          "right": "$script_at"
+        },
+        "then": "stale"
+      }
+    ],
+    "else": "ready"
+  },
+  "returns": "text",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-02 owner: \"if we update/create a module or screen we need to update Guide me and the Tour Video\" - a video older than its script (tour JSON or guide.<screen> chip) is stale and says so.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": "none"
+    },
+    {
+      "args": {
+        "video_at": 5,
+        "script_at": 9
+      },
+      "expect_value": "stale"
+    },
+    {
+      "args": {
+        "video_at": 9,
+        "script_at": 5
+      },
+      "expect_value": "ready"
+    }
+  ]
+}

@@ -1,0 +1,86 @@
+{
+  "prod_base": "https://sf.valuestream.in",
+  "voice": "en-IN-NeerjaNeural",
+  "rate": "+0%",
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "blur": [
+    "#whoami",
+    "#userpop .head",
+    ".tile .meta b",
+    "#vd-title"
+  ],
+  "page_key": "sf-buykey",
+  "title": "Buy a key",
+  "start_url": "/#/buykey",
+  "covers": [
+    "keys on sale",
+    "pick an amount",
+    "a note to the seller",
+    "request, then the seller approves",
+    "prepaid credit",
+    "withdraw a request"
+  ],
+  "steps": [
+    {
+      "chapter": "Welcome",
+      "say": "Buy a key: use AI on somebody else's key, paid in advance. Every key on sale is listed here with its seller.",
+      "do": [
+        {
+          "wait_for": "#bk-offers"
+        }
+      ]
+    },
+    {
+      "chapter": "The amount",
+      "say": "Pick an amount, or type your own. You spend up to what you bought and no further.",
+      "do": [
+        {
+          "click": "#bk-offers [data-buy]",
+          "optional": true
+        },
+        {
+          "wait": 1
+        },
+        {
+          "highlight": "[data-pack]",
+          "optional": true
+        },
+        {
+          "highlight": "#bk-amount",
+          "optional": true
+        }
+      ]
+    },
+    {
+      "say": "Add a note for the seller if you like, then send the request.",
+      "do": [
+        {
+          "highlight": "#bk-note",
+          "optional": true
+        },
+        {
+          "highlight": "#bk-go",
+          "optional": true
+        },
+        {
+          "press": "Escape",
+          "optional": true
+        }
+      ]
+    },
+    {
+      "chapter": "After",
+      "say": "The seller approves it and raises the bill; you settle with them the way you already do. Until then you can withdraw the request.",
+      "hold": 0.8,
+      "do": [
+        {
+          "highlight_target": "[data-withdraw]|#bk-orders-list|#bk-orders",
+          "optional": true
+        }
+      ]
+    }
+  ]
+}

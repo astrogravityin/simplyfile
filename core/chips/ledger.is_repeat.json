@@ -1,0 +1,80 @@
+{
+  "chip_id": "ledger.is_repeat",
+  "kind": "predicate",
+  "set": "ledger",
+  "audience": "admin",
+  "label": "A repeat of the same request, too soon to count again",
+  "aliases": [],
+  "params": [
+    {
+      "name": "method",
+      "type": "text",
+      "default": "GET"
+    },
+    {
+      "name": "status",
+      "type": "number",
+      "default": 200
+    },
+    {
+      "name": "seconds_since_last",
+      "type": "number",
+      "default": null
+    },
+    {
+      "name": "repeat_seconds",
+      "type": "number",
+      "default": 30
+    }
+  ],
+  "expr": {
+    "op": "all",
+    "items": [
+      {
+        "op": "eq",
+        "left": "$method",
+        "right": "GET"
+      },
+      {
+        "op": "lt",
+        "left": "$status",
+        "right": 400
+      },
+      {
+        "op": "lt",
+        "left": "$seconds_since_last",
+        "right": "$repeat_seconds"
+      }
+    ]
+  },
+  "returns": "boolean",
+  "version": 1,
+  "status": "published",
+  "description_nl": "Only a successful GET is folded: a failed call or a POST always counts. Unknown last time (first call) = not a repeat.",
+  "test_cases": [
+    {
+      "args": {
+        "seconds_since_last": 5
+      },
+      "expect": true
+    },
+    {
+      "args": {
+        "seconds_since_last": 45
+      },
+      "expect": false
+    },
+    {
+      "args": {
+        "method": "POST",
+        "seconds_since_last": 1
+      },
+      "expect": false
+    },
+    {
+      "args": {},
+      "expect": null
+    }
+  ],
+  "weight_basis": "Platform operations primitive, no business content. The knobs ARE the policy — edit them here, never in Python."
+}

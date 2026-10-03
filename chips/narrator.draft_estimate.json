@@ -1,0 +1,111 @@
+{
+  "chip_id": "narrator.draft_estimate",
+  "kind": "accessor",
+  "set": "narrator",
+  "label": "What Draft with AI should cost in tokens and time",
+  "aliases": [
+    "draft cost"
+  ],
+  "params": [
+    {
+      "name": "duration",
+      "type": "number",
+      "default": 0
+    },
+    {
+      "name": "video_tokens_per_second",
+      "type": "number",
+      "default": 290
+    },
+    {
+      "name": "prompt_tokens",
+      "type": "number",
+      "default": 1500
+    },
+    {
+      "name": "out_tokens_per_second",
+      "type": "number",
+      "default": 12
+    },
+    {
+      "name": "out_tokens_min",
+      "type": "number",
+      "default": 400
+    },
+    {
+      "name": "seconds_base",
+      "type": "number",
+      "default": 20
+    },
+    {
+      "name": "seconds_per_video_second",
+      "type": "number",
+      "default": 0.6
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "tokens_in": {
+        "vop": "add",
+        "a": {
+          "vop": "mul",
+          "a": "$duration",
+          "b": "$video_tokens_per_second"
+        },
+        "b": "$prompt_tokens"
+      },
+      "tokens_out": {
+        "vop": "largest",
+        "values": [
+          "$out_tokens_min",
+          {
+            "vop": "mul",
+            "a": "$duration",
+            "b": "$out_tokens_per_second"
+          }
+        ]
+      },
+      "seconds": {
+        "vop": "round_to",
+        "value": {
+          "vop": "add",
+          "a": "$seconds_base",
+          "b": {
+            "vop": "mul",
+            "a": "$duration",
+            "b": "$seconds_per_video_second"
+          }
+        },
+        "digits": 0
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "tokens_in: the video at video_tokens_per_second (the caller passes Google's rate) plus prompt_tokens for the prompt and manual text. tokens_out: about 2.3 spoken words a second written as JSON, out_tokens_per_second, never below out_tokens_min. seconds: seconds_base plus seconds_per_video_second for each second of video, rounded. The caller keeps whole tokens.",
+  "test_cases": [
+    {
+      "args": {
+        "duration": 100
+      },
+      "expect_value": {
+        "tokens_in": 30500,
+        "tokens_out": 1200,
+        "seconds": 80
+      }
+    },
+    {
+      "args": {
+        "duration": 10
+      },
+      "expect_value": {
+        "tokens_in": 4400,
+        "tokens_out": 400,
+        "seconds": 26
+      }
+    }
+  ],
+  "weight_basis": "A yes/no or a value the portal acts on. The knobs ARE the policy — edit them here, never in Python."
+}

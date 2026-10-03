@@ -1,0 +1,111 @@
+{
+  "page_key": "sf-keys",
+  "title": "Account & key",
+  "start_url": "/#/keys",
+  "prod_base": "https://sf.valuestream.in",
+  "voice": "en-IN-NeerjaNeural",
+  "rate": "+0%",
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "blur": [
+    "#whoami",
+    "#userpop .head",
+    ".tile .meta b",
+    "#vd-title"
+  ],
+  "covers": [
+    "Gemini key",
+    "test",
+    "key labels",
+    "several keys",
+    "budget and currency",
+    "other providers",
+    "who does what",
+    "runs and costs"
+  ],
+  "steps": [
+    {
+      "chapter": "Welcome",
+      "say": "Account and key holds your own AI keys. Every paid run uses your key and is billed to your own account.",
+      "do": [
+        {
+          "wait_for": "#k-edit"
+        },
+        {
+          "highlight": "#k-edit",
+          "optional": true
+        }
+      ]
+    },
+    {
+      "say": "Add or replace your Gemini key here. Give it a label, such as which Google account it came from, so you know which one to top up.",
+      "do": [
+        {
+          "highlight": "#k-edit",
+          "optional": true
+        }
+      ]
+    },
+    {
+      "say": "Test sends a few words to Google to prove the key works. It costs a fraction of a cent.",
+      "do": [
+        {
+          "highlight": "#k-test",
+          "optional": true
+        }
+      ]
+    },
+    {
+      "chapter": "Several keys",
+      "say": "Keep several keys. When one hits its limit, the next takes over, and the message names the key by its label.",
+      "do": [
+        {
+          "highlight": ".pool",
+          "optional": true
+        }
+      ]
+    },
+    {
+      "chapter": "Money",
+      "say": "Pick your currency, and set a budget. A run that would go past it stops and tells you.",
+      "do": [
+        {
+          "highlight": "#k-currency",
+          "optional": true
+        },
+        {
+          "highlight": "#k-loaded",
+          "optional": true
+        }
+      ]
+    },
+    {
+      "say": "Other providers can take over some of the work. Add their keys, then pick who does text and who draws stills.",
+      "do": [
+        {
+          "highlight": ".pv-grid",
+          "optional": true
+        },
+        {
+          "highlight": ".pv-picks",
+          "optional": true
+        }
+      ]
+    },
+    {
+      "chapter": "Receipts",
+      "say": "Every paid run is listed with its provider, its cost and how long it took.",
+      "do": [
+        {
+          "scroll": 900
+        },
+        {
+          "highlight": "table",
+          "optional": true
+        }
+      ]
+    }
+  ]
+}

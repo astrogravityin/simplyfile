@@ -1,0 +1,115 @@
+{
+  "chip_id": "narrator.fit",
+  "kind": "accessor",
+  "set": "narrator",
+  "label": "How Auto-fit spreads the lines over the recording",
+  "aliases": [
+    "auto adjust times",
+    "fix the timing"
+  ],
+  "params": [
+    {
+      "name": "words_per_second",
+      "type": "number",
+      "default": 2.3,
+      "label": "How fast a narrator speaks"
+    },
+    {
+      "name": "gap_seconds",
+      "type": "number",
+      "default": 0.35,
+      "label": "The breath kept between two lines"
+    },
+    {
+      "name": "min_line_seconds",
+      "type": "number",
+      "default": 1.2,
+      "label": "The shortest a line may be"
+    },
+    {
+      "name": "start_at",
+      "type": "number",
+      "default": 0,
+      "label": "When the first line starts"
+    },
+    {
+      "name": "tail_seconds",
+      "type": "number",
+      "default": 0.4,
+      "label": "Silence kept at the very end"
+    },
+    {
+      "name": "spread_to_end",
+      "type": "boolean",
+      "default": true,
+      "label": "Stretch a short script so it covers the whole recording"
+    },
+    {
+      "name": "keep_first_start",
+      "type": "boolean",
+      "default": false,
+      "label": "Leave the first line where the author put it"
+    },
+    {
+      "name": "sentence_split",
+      "type": "text",
+      "default": "(?<=[.!?])\\s+"
+    },
+    {
+      "name": "line_words",
+      "type": "number",
+      "default": 18
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "words_per_second": "$words_per_second",
+      "gap_seconds": "$gap_seconds",
+      "min_line_seconds": "$min_line_seconds",
+      "start_at": "$start_at",
+      "tail_seconds": "$tail_seconds",
+      "spread_to_end": "$spread_to_end",
+      "keep_first_start": "$keep_first_start",
+      "sentence_split": "$sentence_split",
+      "line_words": "$line_words"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "Auto-fit gives every line the time its own words need at words_per_second, keeps a gap_seconds breath between lines, and then stretches or squeezes the whole set to end tail_seconds before the recording does. With spread_to_end off, a script shorter than the recording keeps its natural pace and simply finishes early. Order and wording are never touched - only the clock.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "words_per_second": 2.3,
+        "gap_seconds": 0.35,
+        "min_line_seconds": 1.2,
+        "start_at": 0,
+        "tail_seconds": 0.4,
+        "spread_to_end": true,
+        "keep_first_start": false,
+        "sentence_split": "(?<=[.!?])\\s+",
+        "line_words": 18
+      }
+    },
+    {
+      "args": {
+        "words_per_second": 3
+      },
+      "expect_value": {
+        "words_per_second": 3,
+        "gap_seconds": 0.35,
+        "min_line_seconds": 1.2,
+        "start_at": 0,
+        "tail_seconds": 0.4,
+        "spread_to_end": true,
+        "keep_first_start": false,
+        "sentence_split": "(?<=[.!?])\\s+",
+        "line_words": 18
+      }
+    }
+  ],
+  "weight_basis": "Timing only, no wording. Slower speakers, longer gaps: change the knobs, never the code."
+}

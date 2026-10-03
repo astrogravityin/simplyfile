@@ -1,0 +1,83 @@
+{
+  "chip_id": "auth.display_name_problem",
+  "kind": "accessor",
+  "set": "auth",
+  "audience": "admin",
+  "label": "What is wrong with this display name (blank = nothing)",
+  "aliases": [],
+  "params": [
+    {
+      "name": "name",
+      "type": "text",
+      "default": ""
+    },
+    {
+      "name": "max_length",
+      "type": "number",
+      "default": 60
+    },
+    {
+      "name": "msg_empty",
+      "type": "text",
+      "default": "Tell us how your name should appear."
+    },
+    {
+      "name": "msg_long",
+      "type": "text",
+      "default": "A display name has at most {max_length} characters."
+    }
+  ],
+  "expr": {
+    "vop": "choose",
+    "cases": [
+      {
+        "when": {
+          "op": "eq",
+          "left": {
+            "vop": "text_length",
+            "text": "$name"
+          },
+          "right": 0
+        },
+        "then": "$msg_empty"
+      },
+      {
+        "when": {
+          "op": "gt",
+          "left": {
+            "vop": "text_length",
+            "text": "$name"
+          },
+          "right": "$max_length"
+        },
+        "then": {
+          "vop": "template",
+          "text": "$msg_long",
+          "values": {
+            "max_length": "$max_length"
+          }
+        }
+      }
+    ],
+    "else": ""
+  },
+  "returns": "text",
+  "version": 1,
+  "status": "published",
+  "description_nl": "Any script, 1 to max_length characters after trimming.",
+  "test_cases": [
+    {
+      "args": {
+        "name": "Chandra"
+      },
+      "expect_value": ""
+    },
+    {
+      "args": {
+        "name": "  "
+      },
+      "expect_value": "Tell us how your name should appear."
+    }
+  ],
+  "weight_basis": "Platform access primitive, no business content. The knobs ARE the policy — edit them here, never in Python."
+}

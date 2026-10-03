@@ -1,0 +1,127 @@
+{
+  "chip_id": "providers.model_lists",
+  "kind": "accessor",
+  "set": "providers",
+  "label": "Where each provider lists the models it offers today, which of them the portal cares about, and what kind of work a new one does",
+  "aliases": [
+    "check models",
+    "new models",
+    "model list"
+  ],
+  "params": [
+    {
+      "name": "rows",
+      "type": "rows",
+      "default": [
+        {
+          "provider": "gemini",
+          "url": "https://generativelanguage.googleapis.com/v1beta/models?pageSize=1000&key={key}",
+          "auth": "url",
+          "list": "models",
+          "id": "name",
+          "strip": "models/",
+          "include": "^(gemini|imagen|veo)",
+          "exclude": "embedding|aqa|tts|live|native-audio|learnlm|gemma|-exp|robotics|computer-use"
+        },
+        {
+          "provider": "openai",
+          "url": "{base}/models",
+          "auth": "bearer",
+          "list": "data",
+          "id": "id",
+          "strip": "",
+          "include": "^(gpt-|o\\d|gpt-image|chatgpt-)",
+          "exclude": "audio|realtime|transcribe|tts|search|embedding|moderation|instruct|codex|\\d{4}-\\d{2}-\\d{2}"
+        },
+        {
+          "provider": "groq",
+          "url": "{base}/models",
+          "auth": "bearer",
+          "list": "data",
+          "id": "id",
+          "strip": "",
+          "include": ".",
+          "exclude": "whisper|guard|tts|distil|playai"
+        },
+        {
+          "provider": "deepseek",
+          "url": "{base}/models",
+          "auth": "bearer",
+          "list": "data",
+          "id": "id",
+          "strip": "",
+          "include": ".",
+          "exclude": ""
+        },
+        {
+          "provider": "openrouter",
+          "url": "{base}/models",
+          "auth": "bearer",
+          "list": "data",
+          "id": "id",
+          "strip": "",
+          "include": "^(google/gemini|meta-llama/llama|deepseek/|qwen/qwen|mistralai/mistral)",
+          "exclude": ":free|preview|beta|vision"
+        },
+        {
+          "provider": "ollama",
+          "url": "{base}/models",
+          "auth": "none",
+          "list": "data",
+          "id": "id",
+          "strip": "",
+          "include": ".",
+          "exclude": "embed"
+        }
+      ],
+      "label": "One row per provider: url ({base} = its base URL, {key} = the key when auth is url), where the list and the id sit, a prefix to strip, which ids to include / exclude (patterns)"
+    },
+    {
+      "name": "kind_rows",
+      "type": "rows",
+      "default": [
+        {
+          "pattern": "(?i)veo|video|kling|hailuo|seedance|wan-",
+          "kind": "video"
+        },
+        {
+          "pattern": "(?i)image|imagen|dall-e",
+          "kind": "image"
+        }
+      ],
+      "label": "A new model's kind by its id: first pattern found wins, else text"
+    },
+    {
+      "name": "timeout_seconds",
+      "type": "number",
+      "default": 20
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "rows": "$rows",
+      "kind_rows": "$kind_rows",
+      "timeout_seconds": "$timeout_seconds"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-09-26 owner: \"new models are coming and going very fast - how will the portal know?\" Check models asks each provider (with the owner's key) which models it offers today and compares with providers.models / providers.model_facts: a new one can be added (the price is the owner's to confirm - only OpenRouter says it), a vanished one retired. Runway and fal publish no list.",
+  "weight_basis": "providers",
+  "test_cases": [
+    {
+      "args": {
+        "rows": [],
+        "kind_rows": [],
+        "timeout_seconds": 5
+      },
+      "expect_value": {
+        "rows": [],
+        "kind_rows": [],
+        "timeout_seconds": 5
+      }
+    }
+  ]
+}

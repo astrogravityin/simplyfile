@@ -1,0 +1,55 @@
+{
+  "chip_id": "limits.too_soon",
+  "kind": "predicate",
+  "set": "limits",
+  "label": "Is it too soon to do it again",
+  "aliases": [
+    "too soon"
+  ],
+  "params": [
+    {
+      "name": "since",
+      "type": "number",
+      "default": 0,
+      "label": "Seconds since the last time"
+    },
+    {
+      "name": "gap",
+      "type": "number",
+      "default": 0,
+      "label": "The least seconds between two (a chip's knob)"
+    }
+  ],
+  "expr": {
+    "op": "lt",
+    "left": "$since",
+    "right": "$gap"
+  },
+  "returns": "boolean",
+  "description_nl": "2026-09-28 owner (\"chips and ops only\"): a module never compares a count, a time or a text with a chip's number in Python - it asks this chip. True while fewer than gap seconds have passed since the last time (a comment, a message).",
+  "test_cases": [
+    {
+      "args": {
+        "since": 5,
+        "gap": 20
+      },
+      "expect_value": true
+    },
+    {
+      "args": {
+        "since": 20,
+        "gap": 20
+      },
+      "expect_value": false
+    },
+    {
+      "args": {
+        "since": 99,
+        "gap": 0
+      },
+      "expect_value": false
+    }
+  ],
+  "version": 1,
+  "status": "published"
+}

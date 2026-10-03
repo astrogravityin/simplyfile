@@ -1,0 +1,225 @@
+{
+  "chip_id": "manuals.allow_list",
+  "kind": "accessor",
+  "set": "manuals",
+  "audience": "admin",
+  "label": "Which author HTML survives in a manual page",
+  "aliases": [
+    "html sanitizer",
+    "manual html cleaner"
+  ],
+  "params": [
+    {
+      "name": "allowed_tags",
+      "type": "list",
+      "default": [
+        "p",
+        "br",
+        "b",
+        "strong",
+        "i",
+        "em",
+        "u",
+        "s",
+        "sub",
+        "sup",
+        "blockquote",
+        "code",
+        "pre",
+        "h1",
+        "h2",
+        "h3",
+        "h4",
+        "h5",
+        "h6",
+        "ul",
+        "ol",
+        "li",
+        "hr",
+        "span",
+        "div",
+        "table",
+        "thead",
+        "tbody",
+        "tr",
+        "td",
+        "th",
+        "a",
+        "img",
+        "figure",
+        "figcaption"
+      ]
+    },
+    {
+      "name": "allowed_attrs",
+      "type": "list",
+      "default": [
+        "href",
+        "src",
+        "alt",
+        "title",
+        "colspan",
+        "rowspan",
+        "width",
+        "height",
+        "style",
+        "class"
+      ]
+    },
+    {
+      "name": "void_tags",
+      "type": "list",
+      "default": [
+        "br",
+        "hr",
+        "img"
+      ]
+    },
+    {
+      "name": "drop_content_tags",
+      "type": "list",
+      "default": [
+        "script",
+        "style",
+        "iframe",
+        "object",
+        "embed",
+        "template",
+        "noscript"
+      ]
+    },
+    {
+      "name": "url_attrs",
+      "type": "list",
+      "default": [
+        "href",
+        "src"
+      ]
+    },
+    {
+      "name": "safe_url",
+      "type": "text",
+      "default": "(?i)^(https?:|mailto:|data:image/(png|jpe?g|gif|webp|svg\\+xml);base64,|[./#])"
+    },
+    {
+      "name": "style_attrs",
+      "type": "list",
+      "default": [
+        "style"
+      ]
+    },
+    {
+      "name": "safe_style",
+      "type": "text",
+      "default": "(?i)^[a-z0-9 :;%#(),.\\-'\"/_]*$"
+    },
+    {
+      "name": "style_banned_words",
+      "type": "list",
+      "default": [
+        "expression"
+      ]
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "allowed_tags": "$allowed_tags",
+      "allowed_attrs": "$allowed_attrs",
+      "void_tags": "$void_tags",
+      "drop_content_tags": "$drop_content_tags",
+      "url_attrs": "$url_attrs",
+      "safe_url": "$safe_url",
+      "style_attrs": "$style_attrs",
+      "safe_style": "$safe_style",
+      "style_banned_words": "$style_banned_words"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "A page's description is author HTML, cleaned on the way into every output (preview, download, public page). allowed_tags / allowed_attrs: everything else is dropped, tag and attribute alike (the text inside stays). void_tags: written self-closing. drop_content_tags: dropped WITH their text (a script's code never shows as words). url_attrs must match safe_url (web, mail, inline images, or a relative link — never javascript:). style_attrs must match safe_style and hold none of style_banned_words. Loosening this lets author HTML run in a reader's browser: add a tag only when you know it cannot carry script.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "allowed_tags": [
+          "p",
+          "br",
+          "b",
+          "strong",
+          "i",
+          "em",
+          "u",
+          "s",
+          "sub",
+          "sup",
+          "blockquote",
+          "code",
+          "pre",
+          "h1",
+          "h2",
+          "h3",
+          "h4",
+          "h5",
+          "h6",
+          "ul",
+          "ol",
+          "li",
+          "hr",
+          "span",
+          "div",
+          "table",
+          "thead",
+          "tbody",
+          "tr",
+          "td",
+          "th",
+          "a",
+          "img",
+          "figure",
+          "figcaption"
+        ],
+        "allowed_attrs": [
+          "href",
+          "src",
+          "alt",
+          "title",
+          "colspan",
+          "rowspan",
+          "width",
+          "height",
+          "style",
+          "class"
+        ],
+        "void_tags": [
+          "br",
+          "hr",
+          "img"
+        ],
+        "drop_content_tags": [
+          "script",
+          "style",
+          "iframe",
+          "object",
+          "embed",
+          "template",
+          "noscript"
+        ],
+        "url_attrs": [
+          "href",
+          "src"
+        ],
+        "safe_url": "(?i)^(https?:|mailto:|data:image/(png|jpe?g|gif|webp|svg\\+xml);base64,|[./#])",
+        "style_attrs": [
+          "style"
+        ],
+        "safe_style": "(?i)^[a-z0-9 :;%#(),.\\-'\"/_]*$",
+        "style_banned_words": [
+          "expression"
+        ]
+      }
+    }
+  ],
+  "weight_basis": "Portal business setting of the Training & Video Portal. The knobs ARE the policy — edit them here, never in Python. Owner-only (audience admin): a looser value here would open a security hole or spend the owner's disk, so editors see and test it but cannot change it."
+}

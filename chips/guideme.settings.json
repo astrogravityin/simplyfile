@@ -1,0 +1,130 @@
+{
+  "chip_id": "guideme.settings",
+  "kind": "accessor",
+  "set": "guideme",
+  "label": "What the Guide Me Builder takes in: the largest script, the card places, and the fields a script may carry",
+  "aliases": [
+    "guide me intake",
+    "guide me fields"
+  ],
+  "params": [
+    {
+      "name": "max_kb",
+      "type": "number",
+      "default": 256
+    },
+    {
+      "name": "top_keys",
+      "type": "list",
+      "default": [
+        "format",
+        "portal",
+        "page",
+        "title",
+        "lede",
+        "icon",
+        "minutes",
+        "voice",
+        "steps"
+      ]
+    },
+    {
+      "name": "step_keys",
+      "type": "list",
+      "default": [
+        "title",
+        "say",
+        "target",
+        "open",
+        "art",
+        "place"
+      ]
+    },
+    {
+      "name": "art_keys",
+      "type": "list",
+      "default": [
+        "kind",
+        "icon",
+        "icon2",
+        "items",
+        "at",
+        "value",
+        "label",
+        "done"
+      ]
+    },
+    {
+      "name": "voice_keys",
+      "type": "list",
+      "default": [
+        "voice_prefer",
+        "voice_name",
+        "voice_name_hint",
+        "rate",
+        "pitch",
+        "speak_by_default"
+      ]
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "max_kb": "$max_kb",
+      "top_keys": "$top_keys",
+      "step_keys": "$step_keys",
+      "art_keys": "$art_keys",
+      "voice_keys": "$voice_keys"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "Skill guide-me-script section 1 (format guide-me/1). The script's RULES are chip guide.check (core); this chip says what the Builder takes in before they run: max_kb, and the fields kept - a field not listed in top_keys / step_keys / art_keys / voice_keys is dropped.",
+  "weight_basis": "What a script may carry. Edit it here, never in Python.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "max_kb": 256,
+        "top_keys": [
+          "format",
+          "portal",
+          "page",
+          "title",
+          "lede",
+          "icon",
+          "minutes",
+          "voice",
+          "steps"
+        ],
+        "step_keys": [
+          "title",
+          "say",
+          "target",
+          "open",
+          "art",
+          "place"
+        ],
+        "art_keys": [
+          "kind",
+          "icon",
+          "icon2",
+          "items",
+          "at",
+          "value",
+          "label",
+          "done"
+        ],
+        "voice_keys": [
+          "voice_prefer",
+          "voice_name",
+          "voice_name_hint",
+          "rate",
+          "pitch",
+          "speak_by_default"
+        ]
+      }
+    }
+  ]
+}

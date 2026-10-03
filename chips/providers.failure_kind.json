@@ -1,0 +1,131 @@
+{
+  "chip_id": "providers.failure_kind",
+  "kind": "accessor",
+  "set": "providers",
+  "label": "What a provider's error means for the key: at its limit, invalid, or not the key's problem at all",
+  "aliases": [
+    "classify failure",
+    "quota or invalid"
+  ],
+  "params": [
+    {
+      "name": "detail",
+      "type": "text",
+      "default": ""
+    },
+    {
+      "name": "rows",
+      "type": "rows",
+      "default": [
+        {
+          "pattern": "(?i)model_not_found|models/[\\w.:-]+ is not found|model[ `'\"]+[\\w./:-]+[ `'\"]+(does not exist|not found|is not found|has been (deprecated|decommissioned|removed|shut down))|decommissioned|no longer (available|supported|served)|unknown model|invalid model",
+          "kind": "model_gone"
+        },
+        {
+          "pattern": "(?i)insufficient_quota|credit balance|out of credits?|credits? (are |have been )?(depleted|exhausted|used up)|insufficient (funds|balance|credits?)|payment required|\\b402\\b|prepaid (credit|balance)",
+          "kind": "no_credit"
+        },
+        {
+          "pattern": "(?i)API key not valid|API_KEY_INVALID|invalid_api_key|Incorrect API key|PERMISSION_DENIED|Unauthorized|\\b401\\b|\\b403\\b",
+          "kind": "invalid"
+        },
+        {
+          "pattern": "(?i)\\b429\\b|RESOURCE_EXHAUSTED|quota|rate.?limit|Too Many Requests|overloaded|\\b503\\b",
+          "kind": "exhausted"
+        }
+      ]
+    },
+    {
+      "name": "fallback",
+      "type": "text",
+      "default": "other"
+    }
+  ],
+  "expr": {
+    "vop": "first_matching",
+    "text": "$detail",
+    "rows": "$rows",
+    "pattern_field": "pattern",
+    "value_field": "kind",
+    "default": "$fallback"
+  },
+  "returns": "text",
+  "version": 1,
+  "status": "published",
+  "description_nl": "The rows are tried in order on the provider's own sentence: an invalid-key wording first (that key is set aside until a test passes), then a limit / quota / rate wording (that key steps aside for a while - providers.rotate revive_minutes - and the next key carries the call). Anything else is the call's own problem (a refused picture, a bad prompt): switching keys would not help, so it is raised as is. 2026-09-26: model_gone - the provider says the model itself is gone (withdrawn, decommissioned, not found): the model leaves every list, the key is not blamed.",
+  "test_cases": [
+    {
+      "args": {
+        "detail": "429 RESOURCE_EXHAUSTED: You exceeded your current quota"
+      },
+      "expect_value": "exhausted"
+    },
+    {
+      "args": {
+        "detail": "API key not valid. Please pass a valid API key."
+      },
+      "expect_value": "invalid"
+    },
+    {
+      "args": {
+        "detail": "The provider refused (401): Unauthorized"
+      },
+      "expect_value": "invalid"
+    },
+    {
+      "args": {
+        "detail": "The provider refused (429): rate limit reached"
+      },
+      "expect_value": "exhausted"
+    },
+    {
+      "args": {
+        "detail": "the picture was refused: safety"
+      },
+      "expect_value": "other"
+    },
+    {
+      "args": {
+        "detail": ""
+      },
+      "expect_value": "other"
+    },
+    {
+      "args": {
+        "detail": "Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details.', 'type': 'insufficient_quota'}}"
+      },
+      "expect_value": "no_credit"
+    },
+    {
+      "args": {
+        "detail": "Your credit balance is too low to access the API."
+      },
+      "expect_value": "no_credit"
+    },
+    {
+      "args": {
+        "detail": "The provider refused (402): Payment Required"
+      },
+      "expect_value": "no_credit"
+    },
+    {
+      "args": {
+        "detail": "429 RESOURCE_EXHAUSTED. You exceeded your current quota, please check your plan and billing details."
+      },
+      "expect_value": "exhausted"
+    },
+    {
+      "args": {
+        "detail": "Error code: 404 - The model `gpt-9-mini` does not exist or you do not have access to it."
+      },
+      "expect_value": "model_gone"
+    },
+    {
+      "args": {
+        "detail": "404 NOT_FOUND. models/gemini-1.0-pro is not found for API version v1beta"
+      },
+      "expect_value": "model_gone"
+    }
+  ],
+  "weight_basis": "The rotation decision. Edit the rows here, never in Python."
+}

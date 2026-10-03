@@ -1,0 +1,254 @@
+{
+  "chip_id": "find.score",
+  "kind": "accessor",
+  "set": "find",
+  "label": "How well one screen or action answers what was typed",
+  "aliases": [
+    "search ranking",
+    "why this hit is first"
+  ],
+  "params": [
+    {
+      "name": "label",
+      "type": "text",
+      "default": "",
+      "label": "The name shown in the menu"
+    },
+    {
+      "name": "group",
+      "type": "text",
+      "default": "",
+      "label": "The menu group it sits in"
+    },
+    {
+      "name": "keywords",
+      "type": "text",
+      "default": "",
+      "label": "Other words that should find it"
+    },
+    {
+      "name": "q",
+      "type": "text",
+      "default": "",
+      "label": "What was typed"
+    },
+    {
+      "name": "weight_starts",
+      "type": "number",
+      "default": 60,
+      "label": "The name begins with it"
+    },
+    {
+      "name": "weight_label",
+      "type": "number",
+      "default": 40,
+      "label": "The name holds it"
+    },
+    {
+      "name": "weight_keywords",
+      "type": "number",
+      "default": 25,
+      "label": "Another word for it"
+    },
+    {
+      "name": "weight_group",
+      "type": "number",
+      "default": 15,
+      "label": "Its menu group holds it"
+    },
+    {
+      "name": "words",
+      "type": "number",
+      "default": 0,
+      "label": "How many of the typed words it holds, 0 to 1 (op fuzzy_rows: a typo still counts)"
+    },
+    {
+      "name": "word_min",
+      "type": "number",
+      "default": 0.7,
+      "label": "Least share of the typed words that makes it a hit"
+    },
+    {
+      "name": "weight_words",
+      "type": "number",
+      "default": 50,
+      "label": "A hit by its words, times that share"
+    }
+  ],
+  "expr": {
+    "vop": "choose",
+    "cases": [
+      {
+        "when": {
+          "op": "eq",
+          "left": "$q",
+          "right": ""
+        },
+        "then": 0
+      },
+      {
+        "when": {
+          "op": "eq",
+          "left": {
+            "vop": "starts_with_any",
+            "text": "$label",
+            "prefixes": [
+              "$q"
+            ]
+          },
+          "right": true
+        },
+        "then": "$weight_starts"
+      },
+      {
+        "when": {
+          "op": "eq",
+          "left": {
+            "vop": "contains",
+            "text": "$label",
+            "part": "$q"
+          },
+          "right": true
+        },
+        "then": "$weight_label"
+      },
+      {
+        "when": {
+          "op": "ge",
+          "left": "$words",
+          "right": "$word_min"
+        },
+        "then": {
+          "vop": "mul",
+          "a": "$weight_words",
+          "b": "$words"
+        }
+      },
+      {
+        "when": {
+          "op": "eq",
+          "left": {
+            "vop": "contains",
+            "text": "$keywords",
+            "part": "$q"
+          },
+          "right": true
+        },
+        "then": "$weight_keywords"
+      },
+      {
+        "when": {
+          "op": "eq",
+          "left": {
+            "vop": "contains",
+            "text": "$group",
+            "part": "$q"
+          },
+          "right": true
+        },
+        "then": "$weight_group"
+      }
+    ],
+    "else": 0
+  },
+  "returns": "number",
+  "version": 1,
+  "status": "published",
+  "description_nl": "A hit whose name STARTS with what was typed comes first, then a name that holds it anywhere, then one found by another word for it, then one found by its menu group. Nothing matched is 0 and is not shown. Letter case never matters.",
+  "test_cases": [
+    {
+      "args": {
+        "label": "Storage",
+        "group": "Admin",
+        "keywords": "disk files quota",
+        "q": "sto"
+      },
+      "expect_value": 60
+    },
+    {
+      "args": {
+        "label": "Memory watch",
+        "group": "Admin",
+        "keywords": "ram cpu",
+        "q": "watch"
+      },
+      "expect_value": 40
+    },
+    {
+      "args": {
+        "label": "People & access",
+        "group": "Admin",
+        "keywords": "smtp email password reset",
+        "q": "smtp"
+      },
+      "expect_value": 25
+    },
+    {
+      "args": {
+        "label": "Visitors",
+        "group": "Admin",
+        "keywords": "map world india",
+        "q": "admin"
+      },
+      "expect_value": 15
+    },
+    {
+      "args": {
+        "label": "Videos",
+        "group": "Work",
+        "keywords": "narrator",
+        "q": "zzz"
+      },
+      "expect_value": 0
+    },
+    {
+      "args": {
+        "label": "Videos",
+        "group": "Work",
+        "keywords": "narrator",
+        "q": ""
+      },
+      "expect_value": 0
+    },
+    {
+      "args": {
+        "label": "Storage",
+        "group": "Admin",
+        "keywords": "",
+        "q": "STOR"
+      },
+      "expect_value": 60
+    },
+    {
+      "args": {
+        "label": "Storage",
+        "group": "Projects & portal",
+        "keywords": "largest upload storage each account",
+        "q": "how to change storage size",
+        "words": 0.8
+      },
+      "expect_value": 40
+    },
+    {
+      "args": {
+        "label": "Storage",
+        "group": "Admin",
+        "keywords": "",
+        "q": "storage size cost",
+        "words": 0.5
+      },
+      "expect_value": 0
+    },
+    {
+      "args": {
+        "label": "Import a deck",
+        "group": "Decks",
+        "keywords": "import deck zip",
+        "q": "import deck",
+        "words": 1
+      },
+      "expect_value": 50
+    }
+  ],
+  "weight_basis": "Ranking only: a bigger number means shown higher. The weights are the whole policy - change the order of the list by changing them here, never in Python."
+}

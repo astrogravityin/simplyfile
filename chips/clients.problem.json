@@ -1,0 +1,232 @@
+{
+  "chip_id": "clients.problem",
+  "kind": "accessor",
+  "set": "clients",
+  "label": "What is wrong with a client's master, if anything",
+  "aliases": [
+    "clients problem"
+  ],
+  "params": [
+    {
+      "name": "name",
+      "type": "text",
+      "default": "",
+      "label": "name"
+    },
+    {
+      "name": "pan",
+      "type": "text",
+      "default": "",
+      "label": "pan"
+    },
+    {
+      "name": "want_letter",
+      "type": "text",
+      "default": "",
+      "label": "want letter"
+    },
+    {
+      "name": "gst",
+      "type": "text",
+      "default": "",
+      "label": "gst"
+    },
+    {
+      "name": "email",
+      "type": "text",
+      "default": "",
+      "label": "email"
+    },
+    {
+      "name": "gst_pattern",
+      "type": "text",
+      "default": "[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][0-9A-Z]Z[0-9A-Z]",
+      "label": "gst pattern"
+    },
+    {
+      "name": "email_pattern",
+      "type": "text",
+      "default": "[^@\\s]+@[^@\\s]+\\.[^@\\s]+",
+      "label": "email pattern"
+    }
+  ],
+  "expr": {
+    "vop": "choose",
+    "cases": [
+      {
+        "when": {
+          "op": "not",
+          "item": {
+            "op": "gt",
+            "left": {
+              "vop": "text_length",
+              "text": "$name"
+            },
+            "right": 0
+          }
+        },
+        "then": "need_name"
+      },
+      {
+        "when": {
+          "op": "not",
+          "item": {
+            "op": "eq",
+            "left": {
+              "chip": "clients.shape_ok",
+              "args": {
+                "kind": "pan",
+                "value": "$pan"
+              }
+            },
+            "right": true
+          }
+        },
+        "then": "bad_pan"
+      },
+      {
+        "when": {
+          "op": "ne",
+          "left": {
+            "vop": "sub_text",
+            "text": "$pan",
+            "pattern": "^.{3}(.).*$",
+            "replacement": "\\1"
+          },
+          "right": "$want_letter"
+        },
+        "then": "pan_mismatch"
+      },
+      {
+        "when": {
+          "op": "all",
+          "items": [
+            {
+              "op": "gt",
+              "left": {
+                "vop": "text_length",
+                "text": "$gst"
+              },
+              "right": 0
+            },
+            {
+              "op": "any",
+              "items": [
+                {
+                  "op": "not",
+                  "item": {
+                    "op": "eq",
+                    "left": {
+                      "vop": "matches",
+                      "text": "$gst",
+                      "pattern": "$gst_pattern"
+                    },
+                    "right": true
+                  }
+                },
+                {
+                  "op": "ne",
+                  "left": {
+                    "vop": "sub_text",
+                    "text": "$gst",
+                    "pattern": "^..(.{10}).*$",
+                    "replacement": "\\1"
+                  },
+                  "right": "$pan"
+                }
+              ]
+            }
+          ]
+        },
+        "then": "bad_gst"
+      },
+      {
+        "when": {
+          "op": "all",
+          "items": [
+            {
+              "op": "gt",
+              "left": {
+                "vop": "text_length",
+                "text": "$email"
+              },
+              "right": 0
+            },
+            {
+              "op": "not",
+              "item": {
+                "op": "eq",
+                "left": {
+                  "vop": "matches",
+                  "text": "$email",
+                  "pattern": "$email_pattern"
+                },
+                "right": true
+              }
+            }
+          ]
+        },
+        "then": "bad_email"
+      }
+    ],
+    "else": ""
+  },
+  "returns": "text",
+  "version": 1,
+  "status": "published",
+  "description_nl": "The first thing wrong, as the key of its sentence in ui.clients, or empty when the master is fine: a name, a PAN of the right shape, the PAN's 4th letter matching the status (H = HUF, F = firm ...), a GSTIN that carries this PAN in places 3-12, an email address.",
+  "test_cases": [
+    {
+      "args": {
+        "name": "Sample HUF",
+        "pan": "AAAHS1234K",
+        "want_letter": "H",
+        "gst": "36AAAHS1234K1Z5",
+        "email": "a@b.in"
+      },
+      "expect_value": ""
+    },
+    {
+      "args": {
+        "name": "",
+        "pan": "AAAHS1234K",
+        "want_letter": "H"
+      },
+      "expect_value": "need_name"
+    },
+    {
+      "args": {
+        "name": "X",
+        "pan": "ABCD1234E",
+        "want_letter": "H"
+      },
+      "expect_value": "bad_pan"
+    },
+    {
+      "args": {
+        "name": "X",
+        "pan": "AAAHS1234K",
+        "want_letter": "P"
+      },
+      "expect_value": "pan_mismatch"
+    },
+    {
+      "args": {
+        "name": "X",
+        "pan": "AAAHS1234K",
+        "want_letter": "H",
+        "gst": "36AAAHS9999K1Z5"
+      },
+      "expect_value": "bad_gst"
+    },
+    {
+      "args": {
+        "name": "X",
+        "pan": "AAAHS1234K",
+        "want_letter": "H",
+        "email": "not-an-email"
+      },
+      "expect_value": "bad_email"
+    }
+  ]
+}

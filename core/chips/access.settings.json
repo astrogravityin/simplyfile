@@ -1,0 +1,64 @@
+{
+  "chip_id": "access.settings",
+  "kind": "accessor",
+  "set": "access",
+  "audience": "admin",
+  "label": "Sizes People & access keeps and shows",
+  "aliases": [
+    "access limits"
+  ],
+  "params": [
+    {
+      "name": "group_name_max",
+      "type": "number",
+      "default": 60
+    },
+    {
+      "name": "group_description_max",
+      "type": "number",
+      "default": 200
+    },
+    {
+      "name": "request_reason_max",
+      "type": "number",
+      "default": 500
+    },
+    {
+      "name": "requests_kept",
+      "type": "number",
+      "default": 1000
+    },
+    {
+      "name": "requests_shown",
+      "type": "number",
+      "default": 300
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "group_name_max": "$group_name_max",
+      "group_description_max": "$group_description_max",
+      "request_reason_max": "$request_reason_max",
+      "requests_kept": "$requests_kept",
+      "requests_shown": "$requests_shown"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "group_name_max / group_description_max / request_reason_max: characters kept. requests_kept: access requests remembered (oldest drop off). requests_shown: requests the People & access page lists.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "group_name_max": 60,
+        "group_description_max": 200,
+        "request_reason_max": 500,
+        "requests_kept": 1000,
+        "requests_shown": 300
+      }
+    }
+  ],
+  "weight_basis": "Platform access primitive, no business content. The knobs ARE the policy — edit them here, never in Python."
+}

@@ -1,0 +1,57 @@
+{
+  "chip_id": "ledger.messages",
+  "kind": "accessor",
+  "set": "ledger",
+  "audience": "admin",
+  "label": "Every sentence Portal activity's archive and beacon say",
+  "aliases": [
+    "archive wording"
+  ],
+  "params": [
+    {
+      "name": "bad_view_id",
+      "type": "text",
+      "default": "view_id"
+    },
+    {
+      "name": "pick_date",
+      "type": "text",
+      "default": "Pick a date (YYYY-MM-DD)."
+    },
+    {
+      "name": "bad_table",
+      "type": "text",
+      "default": "activity or views"
+    },
+    {
+      "name": "days_not_number",
+      "type": "text",
+      "default": "Days must be a number."
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "bad_view_id": "$bad_view_id",
+      "pick_date": "$pick_date",
+      "bad_table": "$bad_table",
+      "days_not_number": "$days_not_number"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "Errors of the page-view beacon and the archive (download, clear, keep days).",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "bad_view_id": "view_id",
+        "pick_date": "Pick a date (YYYY-MM-DD).",
+        "bad_table": "activity or views",
+        "days_not_number": "Days must be a number."
+      }
+    }
+  ],
+  "weight_basis": "Platform operations primitive, no business content. The knobs ARE the policy — edit them here, never in Python."
+}

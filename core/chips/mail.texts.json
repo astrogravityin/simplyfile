@@ -1,0 +1,120 @@
+{
+  "chip_id": "mail.texts",
+  "kind": "accessor",
+  "set": "mail",
+  "audience": "admin",
+  "label": "Every email the portal sends",
+  "aliases": [
+    "email wording"
+  ],
+  "params": [
+    {
+      "name": "code_subject_signup",
+      "type": "text",
+      "default": "{product}: your verification code is {code}"
+    },
+    {
+      "name": "code_text_signup",
+      "type": "text",
+      "default": "Your {product} verification code is {code}.\n\nType it on the sign-up page to confirm this address. It works once and expires in {minutes} minutes.\n\nIf you did not ask for it, ignore this message: nothing happens.\n"
+    },
+    {
+      "name": "code_subject_reset",
+      "type": "text",
+      "default": "{product}: your password reset code is {code}"
+    },
+    {
+      "name": "code_text_reset",
+      "type": "text",
+      "default": "Somebody asked to reset the password for this address on {product}.\n\nYour code is {code}. It works once and expires in {minutes} minutes.\n\nIf this was not you, ignore this message: your password has not changed.\n"
+    },
+    {
+      "name": "invite_subject",
+      "type": "text",
+      "default": "You have been given an account on {product}"
+    },
+    {
+      "name": "invite_text",
+      "type": "text",
+      "default": "{who} created an account for you on {product}.\n\nChoose your password here:\n{url}\n\nThe link works once and expires in {days} days.\n"
+    },
+    {
+      "name": "reset_by_owner_subject",
+      "type": "text",
+      "default": "Your {product} password has been reset"
+    },
+    {
+      "name": "reset_by_owner_text",
+      "type": "text",
+      "default": "{who} reset your password on {product}.\n\nYour new password: {password}\n\n{change_note}\n"
+    },
+    {
+      "name": "change_note",
+      "type": "text",
+      "default": "You will be asked to choose your own password when you sign in."
+    },
+    {
+      "name": "test_subject",
+      "type": "text",
+      "default": "{product}: mail is working"
+    },
+    {
+      "name": "test_text",
+      "type": "text",
+      "default": "If you are reading this, {product} can send mail.\n\nSign-up codes, password resets and invitations will reach people.\n"
+    },
+    {
+      "name": "signup_exists_subject",
+      "type": "text",
+      "default": "{product}: somebody tried to sign up with this address"
+    },
+    {
+      "name": "signup_exists_text",
+      "type": "text",
+      "default": "Somebody — perhaps you — tried to create an account on {product} with this address, but it already has one.\n\nIf it was you, sign in, or use Forgot password on the sign-in page to get a code.\n\nIf it was not you, ignore this message: nothing has changed.\n"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "code_subject_signup": "$code_subject_signup",
+      "code_text_signup": "$code_text_signup",
+      "code_subject_reset": "$code_subject_reset",
+      "code_text_reset": "$code_text_reset",
+      "invite_subject": "$invite_subject",
+      "invite_text": "$invite_text",
+      "reset_by_owner_subject": "$reset_by_owner_subject",
+      "reset_by_owner_text": "$reset_by_owner_text",
+      "change_note": "$change_note",
+      "test_subject": "$test_subject",
+      "test_text": "$test_text",
+      "signup_exists_subject": "$signup_exists_subject",
+      "signup_exists_text": "$signup_exists_text"
+    }
+  },
+  "returns": "record",
+  "version": 2,
+  "status": "published",
+  "description_nl": "Plain text on purpose: it lands in the inbox, not the promotions tab. {product}, {code}, {minutes}, {days}, {who}, {url}, {password}, {change_note} fill in.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "code_subject_signup": "{product}: your verification code is {code}",
+        "code_text_signup": "Your {product} verification code is {code}.\n\nType it on the sign-up page to confirm this address. It works once and expires in {minutes} minutes.\n\nIf you did not ask for it, ignore this message: nothing happens.\n",
+        "code_subject_reset": "{product}: your password reset code is {code}",
+        "code_text_reset": "Somebody asked to reset the password for this address on {product}.\n\nYour code is {code}. It works once and expires in {minutes} minutes.\n\nIf this was not you, ignore this message: your password has not changed.\n",
+        "invite_subject": "You have been given an account on {product}",
+        "invite_text": "{who} created an account for you on {product}.\n\nChoose your password here:\n{url}\n\nThe link works once and expires in {days} days.\n",
+        "reset_by_owner_subject": "Your {product} password has been reset",
+        "reset_by_owner_text": "{who} reset your password on {product}.\n\nYour new password: {password}\n\n{change_note}\n",
+        "change_note": "You will be asked to choose your own password when you sign in.",
+        "test_subject": "{product}: mail is working",
+        "test_text": "If you are reading this, {product} can send mail.\n\nSign-up codes, password resets and invitations will reach people.\n",
+        "signup_exists_subject": "{product}: somebody tried to sign up with this address",
+        "signup_exists_text": "Somebody — perhaps you — tried to create an account on {product} with this address, but it already has one.\n\nIf it was you, sign in, or use Forgot password on the sign-in page to get a code.\n\nIf it was not you, ignore this message: nothing has changed.\n"
+      }
+    }
+  ],
+  "weight_basis": "Platform access primitive, no business content. The knobs ARE the policy — edit them here, never in Python."
+}

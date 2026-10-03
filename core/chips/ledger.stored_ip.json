@@ -1,0 +1,56 @@
+{
+  "chip_id": "ledger.stored_ip",
+  "kind": "accessor",
+  "set": "ledger",
+  "audience": "admin",
+  "label": "An address cut to its network before it is stored",
+  "aliases": [],
+  "params": [
+    {
+      "name": "ip",
+      "type": "text",
+      "default": ""
+    },
+    {
+      "name": "ipv4_bits",
+      "type": "number",
+      "default": 24
+    },
+    {
+      "name": "ipv6_bits",
+      "type": "number",
+      "default": 48
+    }
+  ],
+  "expr": {
+    "vop": "ip_network",
+    "ip": "$ip",
+    "ipv4_bits": "$ipv4_bits",
+    "ipv6_bits": "$ipv6_bits"
+  },
+  "returns": "text",
+  "version": 1,
+  "status": "published",
+  "description_nl": "Enough to count and place visitors, not enough to name one. The place is looked up on the FULL address first.",
+  "test_cases": [
+    {
+      "args": {
+        "ip": "203.0.113.77"
+      },
+      "expect_value": "203.0.113.0/24"
+    },
+    {
+      "args": {
+        "ip": "2001:db8:abcd:12:1::5"
+      },
+      "expect_value": "2001:db8:abcd::/48"
+    },
+    {
+      "args": {
+        "ip": "not an ip"
+      },
+      "expect_value": ""
+    }
+  ],
+  "weight_basis": "Platform operations primitive, no business content. The knobs ARE the policy — edit them here, never in Python."
+}

@@ -1,0 +1,146 @@
+{
+  "chip_id": "ui.issues",
+  "kind": "accessor",
+  "set": "ui",
+  "label": "Every word on the Reported issues screen",
+  "aliases": [
+    "issues words"
+  ],
+  "params": [
+    {
+      "name": "title",
+      "type": "text",
+      "default": "Reported issues",
+      "label": "title"
+    },
+    {
+      "name": "lede",
+      "type": "long",
+      "default": "What people reported from any screen - broken things, wrong answers, rights-holder takedowns. Resolve with a reply: they see it in the portal.",
+      "label": "lede"
+    },
+    {
+      "name": "open",
+      "type": "text",
+      "default": "Open",
+      "label": "open"
+    },
+    {
+      "name": "resolved",
+      "type": "text",
+      "default": "Resolved",
+      "label": "resolved"
+    },
+    {
+      "name": "all",
+      "type": "text",
+      "default": "All",
+      "label": "all"
+    },
+    {
+      "name": "from",
+      "type": "text",
+      "default": "{name} ({email})",
+      "label": "from"
+    },
+    {
+      "name": "where",
+      "type": "text",
+      "default": "From {surface} {context}",
+      "label": "where"
+    },
+    {
+      "name": "filed",
+      "type": "text",
+      "default": "Filed {at}",
+      "label": "filed"
+    },
+    {
+      "name": "reply",
+      "type": "text",
+      "default": "Your reply (they see this in the portal)",
+      "label": "reply"
+    },
+    {
+      "name": "resolve",
+      "type": "text",
+      "default": "Resolve",
+      "label": "resolve"
+    },
+    {
+      "name": "reopen",
+      "type": "text",
+      "default": "Open again",
+      "label": "reopen"
+    },
+    {
+      "name": "shot",
+      "type": "text",
+      "default": "Screenshot",
+      "label": "shot"
+    },
+    {
+      "name": "none",
+      "type": "text",
+      "default": "No reports here.",
+      "label": "none"
+    },
+    {
+      "name": "answered",
+      "type": "text",
+      "default": "Answered by {by} on {at}: {reply}",
+      "label": "answered"
+    },
+    {
+      "name": "kind_issue",
+      "type": "text",
+      "default": "Reported issue"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "title": "$title",
+      "lede": "$lede",
+      "open": "$open",
+      "resolved": "$resolved",
+      "all": "$all",
+      "from": "$from",
+      "where": "$where",
+      "filed": "$filed",
+      "reply": "$reply",
+      "resolve": "$resolve",
+      "reopen": "$reopen",
+      "shot": "$shot",
+      "none": "$none",
+      "answered": "$answered",
+      "kind_issue": "$kind_issue"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "The admin side of Report an issue.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "title": "Reported issues",
+        "lede": "What people reported from any screen - broken things, wrong answers, rights-holder takedowns. Resolve with a reply: they see it in the portal.",
+        "open": "Open",
+        "resolved": "Resolved",
+        "all": "All",
+        "from": "{name} ({email})",
+        "where": "From {surface} {context}",
+        "filed": "Filed {at}",
+        "reply": "Your reply (they see this in the portal)",
+        "resolve": "Resolve",
+        "reopen": "Open again",
+        "shot": "Screenshot",
+        "none": "No reports here.",
+        "answered": "Answered by {by} on {at}: {reply}",
+        "kind_issue": "Reported issue"
+      }
+    }
+  ]
+}

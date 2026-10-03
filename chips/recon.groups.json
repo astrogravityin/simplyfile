@@ -1,0 +1,219 @@
+{
+  "chip_id": "recon.groups",
+  "kind": "accessor",
+  "set": "recon",
+  "label": "Which income head a TDS section or an AIS / TIS line belongs to",
+  "aliases": [
+    "recon groups"
+  ],
+  "params": [
+    {
+      "name": "section",
+      "type": "text",
+      "default": "",
+      "label": "section"
+    },
+    {
+      "name": "text",
+      "type": "text",
+      "default": "",
+      "label": "text"
+    },
+    {
+      "name": "label",
+      "type": "text",
+      "default": "",
+      "label": "label"
+    },
+    {
+      "name": "sections",
+      "type": "rows",
+      "default": [
+        {
+          "pattern": "^194A",
+          "group": "OS"
+        },
+        {
+          "pattern": "^193",
+          "group": "OS"
+        },
+        {
+          "pattern": "^194K",
+          "group": "OS"
+        },
+        {
+          "pattern": "^194DA",
+          "group": "OS"
+        },
+        {
+          "pattern": "^194B",
+          "group": "OS"
+        },
+        {
+          "pattern": "^194IB",
+          "group": "HP"
+        },
+        {
+          "pattern": "^194I",
+          "group": "HP"
+        },
+        {
+          "pattern": "^194[CJHQRO]",
+          "group": "BP"
+        },
+        {
+          "pattern": "^192",
+          "group": "SAL"
+        },
+        {
+          "pattern": "^194",
+          "group": "OS"
+        }
+      ],
+      "label": "sections"
+    },
+    {
+      "name": "categories",
+      "type": "rows",
+      "default": [
+        {
+          "pattern": "(?i)interest|dividend",
+          "group": "OS"
+        },
+        {
+          "pattern": "(?i)rent",
+          "group": "HP"
+        },
+        {
+          "pattern": "(?i)salary",
+          "group": "SAL"
+        },
+        {
+          "pattern": "(?i)business receipt|sale of goods|gst turnover|contract|professional",
+          "group": "BP"
+        },
+        {
+          "pattern": "(?i)sale of securities|sale of land|mutual fund",
+          "group": "CG"
+        }
+      ],
+      "label": "categories"
+    },
+    {
+      "name": "not_income_pattern",
+      "type": "text",
+      "default": "(?i)less|repairs|corporation tax|municipal|deduction",
+      "label": "not income pattern"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "group": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "gt",
+              "left": {
+                "vop": "text_length",
+                "text": "$section"
+              },
+              "right": 0
+            },
+            "then": {
+              "vop": "first_matching",
+              "rows": "$sections",
+              "pattern_field": "pattern",
+              "value_field": "group",
+              "default": "",
+              "text": {
+                "vop": "sub_text",
+                "text": "$section",
+                "pattern": "[\\s-]",
+                "replacement": ""
+              }
+            }
+          }
+        ],
+        "else": {
+          "vop": "first_matching",
+          "text": "$text",
+          "rows": "$categories",
+          "pattern_field": "pattern",
+          "value_field": "group",
+          "default": ""
+        }
+      },
+      "is_income": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "eq",
+              "left": {
+                "vop": "search",
+                "text": "$label",
+                "pattern": "$not_income_pattern"
+              },
+              "right": true
+            },
+            "then": false
+          }
+        ],
+        "else": true
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "A TDS section goes to the first row whose pattern matches its start (194IB before 194I before 194); an AIS / TIS line to the first category found in it. A book row whose label matches not_income_pattern is not income.",
+  "test_cases": [
+    {
+      "args": {
+        "section": "194I(B)"
+      },
+      "expect_value": {
+        "group": "HP",
+        "is_income": true
+      }
+    },
+    {
+      "args": {
+        "section": "194A"
+      },
+      "expect_value": {
+        "group": "OS",
+        "is_income": true
+      }
+    },
+    {
+      "args": {
+        "section": "194-J"
+      },
+      "expect_value": {
+        "group": "BP",
+        "is_income": true
+      }
+    },
+    {
+      "args": {
+        "text": "Interest from deposit"
+      },
+      "expect_value": {
+        "group": "OS",
+        "is_income": true
+      }
+    },
+    {
+      "args": {
+        "label": "Less: Repairs @ 30%"
+      },
+      "expect_value": {
+        "group": "",
+        "is_income": false
+      }
+    }
+  ]
+}

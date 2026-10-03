@@ -1,0 +1,284 @@
+{
+  "chip_id": "media.settings",
+  "kind": "accessor",
+  "set": "media",
+  "label": "Model prices, speaking pace and how narration is mixed",
+  "aliases": [
+    "gemini prices",
+    "narration timing",
+    "ffmpeg mix"
+  ],
+  "params": [
+    {
+      "name": "prices",
+      "type": "rows",
+      "default": [
+        {
+          "model": "gemini-flash-latest",
+          "in": 0.3,
+          "out": 2.5
+        },
+        {
+          "model": "gemini-pro-latest",
+          "in": 1.25,
+          "out": 10.0
+        },
+        {
+          "model": "gemini-2.5-flash",
+          "in": 0.3,
+          "out": 2.5
+        },
+        {
+          "model": "gemini-2.5-flash-lite",
+          "in": 0.1,
+          "out": 0.4
+        },
+        {
+          "model": "gemini-2.5-pro",
+          "in": 1.25,
+          "out": 10.0
+        },
+        {
+          "model": "gemini-2.0-flash",
+          "in": 0.1,
+          "out": 0.4
+        }
+      ]
+    },
+    {
+      "name": "tokens_per_price_unit",
+      "type": "number",
+      "default": 1000000
+    },
+    {
+      "name": "model_path_separator",
+      "type": "text",
+      "default": "/"
+    },
+    {
+      "name": "video_tokens_per_second",
+      "type": "number",
+      "default": 290
+    },
+    {
+      "name": "words_per_second",
+      "type": "number",
+      "default": 2.3
+    },
+    {
+      "name": "timeline_trusted_share",
+      "type": "number",
+      "default": 0.5
+    },
+    {
+      "name": "timeline_word_slack",
+      "type": "number",
+      "default": 1.5
+    },
+    {
+      "name": "min_window_seconds",
+      "type": "number",
+      "default": 0.5
+    },
+    {
+      "name": "window_gap_seconds",
+      "type": "number",
+      "default": 0.15
+    },
+    {
+      "name": "speed_up_cap_percent",
+      "type": "number",
+      "default": 35
+    },
+    {
+      "name": "speed_up_margin_percent",
+      "type": "number",
+      "default": 3
+    },
+    {
+      "name": "stagger_gap_seconds",
+      "type": "number",
+      "default": 0.12
+    },
+    {
+      "name": "original_audio_volume",
+      "type": "number",
+      "default": 0.15
+    },
+    {
+      "name": "audio_codec",
+      "type": "text",
+      "default": "aac"
+    },
+    {
+      "name": "audio_bitrate",
+      "type": "text",
+      "default": "160k"
+    },
+    {
+      "name": "ffmpeg_command",
+      "type": "text",
+      "default": "ffmpeg"
+    },
+    {
+      "name": "duration_pattern",
+      "type": "text",
+      "default": "Duration: (\\d+):(\\d+):([\\d.]+)"
+    },
+    {
+      "name": "fps_pattern",
+      "type": "text",
+      "default": "(\\d+(?:\\.\\d+)?) fps"
+    },
+    {
+      "name": "audio_stream_pattern",
+      "type": "text",
+      "default": "Stream #\\S+.*Audio:"
+    },
+    {
+      "name": "voices_file",
+      "type": "text",
+      "default": "voices.json"
+    },
+    {
+      "name": "duration_cache_max",
+      "type": "number",
+      "default": 20000
+    },
+    {
+      "name": "frame_size_pattern",
+      "type": "text",
+      "default": "Video:.*?(\\d{2,5})x(\\d{2,5})",
+      "label": "Reads a video's width and height from ffmpeg's stream line"
+    },
+    {
+      "name": "crop_pattern",
+      "type": "text",
+      "default": "crop=(\\d+):(\\d+):"
+    },
+    {
+      "name": "box_probe_at_s",
+      "type": "number",
+      "default": 1.0
+    },
+    {
+      "name": "box_filter",
+      "type": "text",
+      "default": "cropdetect=24:2:0"
+    },
+    {
+      "name": "spoken_cache_max",
+      "type": "number",
+      "default": 8000,
+      "label": "How many spoken lines (a line after the Setup pronunciation lexicon) are kept in memory, oldest dropped first. 2026-09-30: a list page worked each line out three times per scene"
+    },
+    {
+      "name": "audio_channels",
+      "type": "number",
+      "default": 2,
+      "label": "Every audio track is written with this many channels (2 = stereo)"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "prices": "$prices",
+      "tokens_per_price_unit": "$tokens_per_price_unit",
+      "model_path_separator": "$model_path_separator",
+      "video_tokens_per_second": "$video_tokens_per_second",
+      "words_per_second": "$words_per_second",
+      "timeline_trusted_share": "$timeline_trusted_share",
+      "timeline_word_slack": "$timeline_word_slack",
+      "min_window_seconds": "$min_window_seconds",
+      "window_gap_seconds": "$window_gap_seconds",
+      "speed_up_cap_percent": "$speed_up_cap_percent",
+      "speed_up_margin_percent": "$speed_up_margin_percent",
+      "stagger_gap_seconds": "$stagger_gap_seconds",
+      "original_audio_volume": "$original_audio_volume",
+      "audio_codec": "$audio_codec",
+      "audio_bitrate": "$audio_bitrate",
+      "ffmpeg_command": "$ffmpeg_command",
+      "duration_pattern": "$duration_pattern",
+      "fps_pattern": "$fps_pattern",
+      "audio_stream_pattern": "$audio_stream_pattern",
+      "voices_file": "$voices_file",
+      "duration_cache_max": "$duration_cache_max",
+      "frame_size_pattern": "$frame_size_pattern",
+      "crop_pattern": "$crop_pattern",
+      "box_probe_at_s": "$box_probe_at_s",
+      "box_filter": "$box_filter",
+      "spoken_cache_max": "$spoken_cache_max",
+      "audio_channels": "$audio_channels"
+    }
+  },
+  "returns": "record",
+  "version": 3,
+  "status": "published",
+  "description_nl": "prices: US dollars per tokens_per_price_unit tokens for each model name prefix (the longest prefix wins; a model with no row costs 'unknown', never $0). The '-latest' names follow Google's current Flash/Pro and are priced as those (an estimate). model_path_separator: 'models/x' is priced as 'x'. video_tokens_per_second: Gemini meters video at about 258 tokens a second of frames plus 32 of audio. words_per_second: how fast a narrator speaks — only used to judge whether a model's timeline is credible. timeline_trusted_share / timeline_word_slack: a script is rescaled to the video only when its last line ends before this share of the video AND its words need more than slack × the span it was given. min_window_seconds / window_gap_seconds: the shortest time a line may speak and the pause kept before the next. speed_up_cap_percent / speed_up_margin_percent: a line too long for its window is spoken faster, by what it needs plus the margin, never more than the cap. stagger_gap_seconds: the pause after a line that pushed the next one late. original_audio_volume: the recording's own sound under the narration. audio_codec / audio_bitrate: the MP4's sound. ffmpeg_command: used when the bundled ffmpeg is missing. duration_pattern / audio_stream_pattern: read ffmpeg's report (duration needs 3 groups: h, m, s). voices_file: the voice list beside the portal. duration_cache_max: how many clip lengths are remembered (each measured once by ffmpeg; a changed file is measured again).",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "prices": [
+          {
+            "model": "gemini-flash-latest",
+            "in": 0.3,
+            "out": 2.5
+          },
+          {
+            "model": "gemini-pro-latest",
+            "in": 1.25,
+            "out": 10.0
+          },
+          {
+            "model": "gemini-2.5-flash",
+            "in": 0.3,
+            "out": 2.5
+          },
+          {
+            "model": "gemini-2.5-flash-lite",
+            "in": 0.1,
+            "out": 0.4
+          },
+          {
+            "model": "gemini-2.5-pro",
+            "in": 1.25,
+            "out": 10.0
+          },
+          {
+            "model": "gemini-2.0-flash",
+            "in": 0.1,
+            "out": 0.4
+          }
+        ],
+        "tokens_per_price_unit": 1000000,
+        "model_path_separator": "/",
+        "video_tokens_per_second": 290,
+        "words_per_second": 2.3,
+        "timeline_trusted_share": 0.5,
+        "timeline_word_slack": 1.5,
+        "min_window_seconds": 0.5,
+        "window_gap_seconds": 0.15,
+        "speed_up_cap_percent": 35,
+        "speed_up_margin_percent": 3,
+        "stagger_gap_seconds": 0.12,
+        "original_audio_volume": 0.15,
+        "audio_codec": "aac",
+        "audio_bitrate": "160k",
+        "ffmpeg_command": "ffmpeg",
+        "duration_pattern": "Duration: (\\d+):(\\d+):([\\d.]+)",
+        "fps_pattern": "(\\d+(?:\\.\\d+)?) fps",
+        "audio_stream_pattern": "Stream #\\S+.*Audio:",
+        "voices_file": "voices.json",
+        "duration_cache_max": 20000,
+        "frame_size_pattern": "Video:.*?(\\d{2,5})x(\\d{2,5})",
+        "crop_pattern": "crop=(\\d+):(\\d+):",
+        "box_probe_at_s": 1.0,
+        "box_filter": "cropdetect=24:2:0",
+        "spoken_cache_max": 8000,
+        "audio_channels": 2
+      }
+    }
+  ],
+  "weight_basis": "Portal business setting of the Training & Video Portal. The knobs ARE the policy — edit them here, never in Python."
+}

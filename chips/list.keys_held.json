@@ -1,0 +1,91 @@
+{
+  "chip_id": "list.keys_held",
+  "kind": "accessor",
+  "set": "list",
+  "label": "Keys lent to me",
+  "aliases": [
+    "borrowed keys"
+  ],
+  "params": [
+    {
+      "name": "search_keys",
+      "type": "list",
+      "default": [
+        "owner_name",
+        "owner_email",
+        "holder_label",
+        "label_at_grant"
+      ],
+      "label": "search keys"
+    },
+    {
+      "name": "sort_key",
+      "type": "text",
+      "default": "granted_at",
+      "label": "sort key"
+    },
+    {
+      "name": "sort_desc",
+      "type": "boolean",
+      "default": true,
+      "label": "sort desc"
+    },
+    {
+      "name": "sorts",
+      "type": "list",
+      "default": [
+        "owner_name",
+        "granted_at"
+      ],
+      "label": "sorts"
+    },
+    {
+      "name": "page_size",
+      "type": "number",
+      "default": 10,
+      "label": "page size"
+    },
+    {
+      "name": "max_page_size",
+      "type": "number",
+      "default": 50,
+      "label": "max page size"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "search_keys": "$search_keys",
+      "sort_key": "$sort_key",
+      "sort_desc": "$sort_desc",
+      "sorts": "$sorts",
+      "page_size": "$page_size",
+      "max_page_size": "$max_page_size"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-09-28. A list that grows with the number of people: searched, sorted and paged on the server by op rows_view (core/lists.py); one page reaches the screen. search_keys = the fields a search looks in; sort_key/sort_desc = the order it opens in; sorts = the other fields a viewer may sort by; page_size rows a page (max_page_size at most).",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "search_keys": [
+          "owner_name",
+          "owner_email",
+          "holder_label",
+          "label_at_grant"
+        ],
+        "sort_key": "granted_at",
+        "sort_desc": true,
+        "sorts": [
+          "owner_name",
+          "granted_at"
+        ],
+        "page_size": 10,
+        "max_page_size": 50
+      }
+    }
+  ]
+}

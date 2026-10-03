@@ -1,0 +1,55 @@
+{
+  "chip_id": "limits.room_left",
+  "kind": "predicate",
+  "set": "limits",
+  "label": "Is there room for one more (count below the limit)",
+  "aliases": [
+    "room left"
+  ],
+  "params": [
+    {
+      "name": "count",
+      "type": "number",
+      "default": 0,
+      "label": "How many there are now"
+    },
+    {
+      "name": "most",
+      "type": "number",
+      "default": 0,
+      "label": "The most allowed (a chip's knob)"
+    }
+  ],
+  "expr": {
+    "op": "lt",
+    "left": "$count",
+    "right": "$most"
+  },
+  "returns": "boolean",
+  "description_nl": "2026-09-28 owner (\"chips and ops only\"): a module never compares a count, a time or a text with a chip's number in Python - it asks this chip. True while count < most: may one more work, list, member, saved item be added.",
+  "test_cases": [
+    {
+      "args": {
+        "count": 2,
+        "most": 3
+      },
+      "expect_value": true
+    },
+    {
+      "args": {
+        "count": 3,
+        "most": 3
+      },
+      "expect_value": false
+    },
+    {
+      "args": {
+        "count": 0,
+        "most": 0
+      },
+      "expect_value": false
+    }
+  ],
+  "version": 1,
+  "status": "published"
+}

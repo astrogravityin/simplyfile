@@ -1,0 +1,179 @@
+{
+  "chip_id": "issues.settings",
+  "kind": "accessor",
+  "set": "issues",
+  "label": "Reported issues: how long a report may be and how big its screenshot",
+  "aliases": [
+    "issue settings"
+  ],
+  "params": [
+    {
+      "name": "title_max",
+      "type": "number",
+      "default": 200,
+      "label": "title max"
+    },
+    {
+      "name": "shot_max_mb",
+      "type": "number",
+      "default": 2,
+      "label": "shot max mb"
+    },
+    {
+      "name": "statuses",
+      "type": "list",
+      "default": [
+        {
+          "id": "open",
+          "word": "open"
+        },
+        {
+          "id": "resolved",
+          "word": "resolved"
+        }
+      ],
+      "label": "statuses, first = new"
+    },
+    {
+      "name": "text_max",
+      "type": "number",
+      "default": 20000,
+      "label": "what is wrong, at most"
+    },
+    {
+      "name": "place_max",
+      "type": "number",
+      "default": 300,
+      "label": "where it was filed from, at most"
+    },
+    {
+      "name": "place_fields",
+      "type": "list",
+      "default": [],
+      "label": "where-fields a note carries"
+    },
+    {
+      "name": "gap_seconds",
+      "type": "number",
+      "default": 0,
+      "label": "seconds between two notes from one person"
+    },
+    {
+      "name": "shot_types",
+      "type": "list",
+      "default": [
+        "png",
+        "jpeg",
+        "webp",
+        "gif"
+      ],
+      "label": "screenshot picture types"
+    },
+    {
+      "name": "shot_accept",
+      "type": "text",
+      "default": "image/*",
+      "label": "file box accepts"
+    },
+    {
+      "name": "needs_title",
+      "type": "boolean",
+      "default": true,
+      "label": "a header is required"
+    },
+    {
+      "name": "rate",
+      "type": "text",
+      "default": "issue",
+      "label": "limits.allow action (empty = none)"
+    },
+    {
+      "name": "new_row",
+      "type": "record",
+      "default": {
+        "shot": "",
+        "status": "open",
+        "reply": "",
+        "action_date": "",
+        "seen_answerer": false,
+        "seen_giver": true
+      },
+      "label": "a new note's marks"
+    },
+    {
+      "name": "answered_marks",
+      "type": "record",
+      "default": {
+        "seen_giver": false,
+        "seen_answerer": true
+      },
+      "label": "marks after an answer"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "title_max": "$title_max",
+      "shot_max_mb": "$shot_max_mb",
+      "statuses": "$statuses",
+      "text_max": "$text_max",
+      "place_max": "$place_max",
+      "place_fields": "$place_fields",
+      "gap_seconds": "$gap_seconds",
+      "shot_types": "$shot_types",
+      "shot_accept": "$shot_accept",
+      "needs_title": "$needs_title",
+      "rate": "$rate",
+      "new_row": "$new_row",
+      "answered_marks": "$answered_marks"
+    }
+  },
+  "returns": "record",
+  "version": 2,
+  "status": "published",
+  "description_nl": "2026-09-28 owner: Report an issue replaces every email address on the portal (the AstroStage.in / TeDBook flow). 2026-10-03 owner: \"We already have Report Issue framework - why can't we use that ... chip ops only\" - Report an issue and Katha feedback are ONE framework (core/issues.py); a kind is a row here.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "title_max": 200,
+        "shot_max_mb": 2,
+        "statuses": [
+          {
+            "id": "open",
+            "word": "open"
+          },
+          {
+            "id": "resolved",
+            "word": "resolved"
+          }
+        ],
+        "text_max": 20000,
+        "place_max": 300,
+        "place_fields": [],
+        "gap_seconds": 0,
+        "shot_types": [
+          "png",
+          "jpeg",
+          "webp",
+          "gif"
+        ],
+        "shot_accept": "image/*",
+        "needs_title": true,
+        "rate": "issue",
+        "new_row": {
+          "shot": "",
+          "status": "open",
+          "reply": "",
+          "action_date": "",
+          "seen_answerer": false,
+          "seen_giver": true
+        },
+        "answered_marks": {
+          "seen_giver": false,
+          "seen_answerer": true
+        }
+      }
+    }
+  ]
+}

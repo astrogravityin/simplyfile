@@ -1,0 +1,93 @@
+{
+  "chip_id": "auth.signup_open",
+  "kind": "predicate",
+  "set": "auth",
+  "audience": "admin",
+  "label": "This address may sign itself up",
+  "aliases": [],
+  "params": [
+    {
+      "name": "mode",
+      "type": "text",
+      "default": "open",
+      "label": "open, domain or closed (Setup)"
+    },
+    {
+      "name": "domains",
+      "type": "text",
+      "default": "",
+      "label": "Allowed domains (Setup)"
+    },
+    {
+      "name": "domain",
+      "type": "text",
+      "default": "",
+      "label": "The part of the address after @"
+    }
+  ],
+  "expr": {
+    "op": "any",
+    "items": [
+      {
+        "op": "eq",
+        "left": "$mode",
+        "right": "open"
+      },
+      {
+        "op": "all",
+        "items": [
+          {
+            "op": "eq",
+            "left": "$mode",
+            "right": "domain"
+          },
+          {
+            "op": "in_set",
+            "value": "$domain",
+            "set": {
+              "vop": "split_text",
+              "text": "$domains"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "returns": "boolean",
+  "version": 1,
+  "status": "published",
+  "description_nl": "open: anyone. domain: an address whose domain is in the owner's list (commas or spaces, @ optional). closed: nobody — the owner creates every account.",
+  "test_cases": [
+    {
+      "args": {
+        "mode": "open",
+        "domain": "x.com"
+      },
+      "expect": true
+    },
+    {
+      "args": {
+        "mode": "domain",
+        "domains": "a.com, @b.org",
+        "domain": "b.org"
+      },
+      "expect": true
+    },
+    {
+      "args": {
+        "mode": "domain",
+        "domains": "a.com",
+        "domain": "c.com"
+      },
+      "expect": false
+    },
+    {
+      "args": {
+        "mode": "closed",
+        "domain": "a.com"
+      },
+      "expect": false
+    }
+  ],
+  "weight_basis": "Platform access primitive, no business content. The knobs ARE the policy — edit them here, never in Python."
+}

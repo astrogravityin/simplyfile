@@ -1,0 +1,66 @@
+{
+  "chip_id": "limits.newest",
+  "kind": "accessor",
+  "set": "limits",
+  "label": "The newest rows, at most keep of them",
+  "aliases": [
+    "newest"
+  ],
+  "params": [
+    {
+      "name": "rows",
+      "type": "list",
+      "default": [],
+      "label": "The rows"
+    },
+    {
+      "name": "keep",
+      "type": "number",
+      "default": 0,
+      "label": "How many to keep (a chip's knob)"
+    },
+    {
+      "name": "by",
+      "type": "text",
+      "default": "at",
+      "label": "The field that says how new a row is"
+    }
+  ],
+  "expr": {
+    "vop": "rank_rows",
+    "rows": "$rows",
+    "by": "$by",
+    "descending": true,
+    "limit": "$keep"
+  },
+  "returns": "list",
+  "description_nl": "2026-09-28 owner (\"chips and ops only\"): a module never compares a count, a time or a text with a chip's number in Python - it asks this chip. Rows sorted by `by` (newest first) and cut to keep - what a capped history, bell or suggestion list holds.",
+  "test_cases": [
+    {
+      "args": {
+        "rows": [
+          {
+            "at": "1"
+          },
+          {
+            "at": "3"
+          },
+          {
+            "at": "2"
+          }
+        ],
+        "keep": 2
+      },
+      "expect_value": [
+        {
+          "at": "3"
+        },
+        {
+          "at": "2"
+        }
+      ]
+    }
+  ],
+  "version": 1,
+  "status": "published"
+}

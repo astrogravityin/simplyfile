@@ -1,0 +1,359 @@
+{
+  "chip_id": "portal.messages",
+  "kind": "accessor",
+  "set": "portal",
+  "label": "Every sentence the portal's own screens and API say",
+  "aliases": [
+    "portal wording",
+    "api errors"
+  ],
+  "params": [
+    {
+      "name": "not_yours",
+      "type": "text",
+      "default": "{what} does not exist, or is not yours."
+    },
+    {
+      "name": "that",
+      "type": "text",
+      "default": "That"
+    },
+    {
+      "name": "that_project",
+      "type": "text",
+      "default": "That project"
+    },
+    {
+      "name": "that_manual",
+      "type": "text",
+      "default": "That manual"
+    },
+    {
+      "name": "that_recording",
+      "type": "text",
+      "default": "That recording"
+    },
+    {
+      "name": "over_quota",
+      "type": "text",
+      "default": "That would put you over your {quota_gb:g} GB of storage ({used_gb:.1f} GB used). Delete a recording you no longer need, or ask the portal's owner for more room."
+    },
+    {
+      "name": "not_a_number",
+      "type": "text",
+      "default": "{field} must be a number"
+    },
+    {
+      "name": "scan_owner_only",
+      "type": "text",
+      "default": "Only the portal owner can scan a folder on this server. Point the project at a Git repository instead."
+    },
+    {
+      "name": "folder_unreadable",
+      "type": "text",
+      "default": "That folder cannot be read."
+    },
+    {
+      "name": "folder_outside",
+      "type": "text",
+      "default": "That folder is outside what this portal may read. Allowed: {allowed}"
+    },
+    {
+      "name": "project_unreadable",
+      "type": "text",
+      "default": "Could not read the project: {error}"
+    },
+    {
+      "name": "manual_missing_title",
+      "type": "text",
+      "default": "Not found"
+    },
+    {
+      "name": "manual_missing",
+      "type": "text",
+      "default": "No published manual lives at this address."
+    },
+    {
+      "name": "listen_too_often",
+      "type": "text",
+      "default": "That is a lot of listening in a minute. Give it a moment."
+    },
+    {
+      "name": "listen_empty",
+      "type": "text",
+      "default": "Type what the voice should say first."
+    },
+    {
+      "name": "unknown_voice",
+      "type": "text",
+      "default": "Unknown voice."
+    },
+    {
+      "name": "voice_service_down",
+      "type": "text",
+      "default": "The voice service did not answer: {error}"
+    },
+    {
+      "name": "upload_not_video",
+      "type": "text",
+      "default": "Upload a video ({extensions})"
+    },
+    {
+      "name": "upload_too_big",
+      "type": "text",
+      "default": "That recording is larger than {cap_mb} MB, which is all this portal accepts in one upload."
+    },
+    {
+      "name": "upload_over_quota",
+      "type": "text",
+      "default": "That recording would put you over your {quota_gb:g} GB of storage."
+    },
+    {
+      "name": "not_a_video",
+      "type": "text",
+      "default": "That file could not be read as a video"
+    },
+    {
+      "name": "script_shape",
+      "type": "text",
+      "default": "Expected {\"segments\": [{\"start\", \"end\", \"chapter\", \"text\"}]}: {error}"
+    },
+    {
+      "name": "script_no_lines",
+      "type": "text",
+      "default": "No usable lines: each needs a start, an end after it, and text"
+    },
+    {
+      "name": "not_generated",
+      "type": "text",
+      "default": "Not generated yet"
+    },
+    {
+      "name": "unknown_file",
+      "type": "text",
+      "default": "Unknown file"
+    },
+    {
+      "name": "not_found",
+      "type": "text",
+      "default": "Not found"
+    },
+    {
+      "name": "guide_video_title",
+      "type": "text",
+      "default": "Watch how to get a Gemini key"
+    },
+    {
+      "name": "guide_video_link",
+      "type": "text",
+      "default": "Watch the walkthrough video"
+    },
+    {
+      "name": "guide_video_heading",
+      "type": "text",
+      "default": "Watch it instead"
+    },
+    {
+      "name": "sweep_what",
+      "type": "text",
+      "default": "Storage: removed recordings narrated over {days} days ago"
+    },
+    {
+      "name": "sweep_freed",
+      "type": "text",
+      "default": "{mb:.0f} MB freed"
+    },
+    {
+      "name": "embed_label",
+      "type": "text",
+      "default": "How to Use"
+    },
+    {
+      "name": "dl_manual",
+      "type": "text",
+      "default": "manual"
+    },
+    {
+      "name": "dl_video",
+      "type": "text",
+      "default": "video"
+    },
+    {
+      "name": "dl_file",
+      "type": "text",
+      "default": "file"
+    },
+    {
+      "name": "dl_picture",
+      "type": "text",
+      "default": "picture"
+    },
+    {
+      "name": "dl_film",
+      "type": "text",
+      "default": "film"
+    },
+    {
+      "name": "dl_frames",
+      "type": "text",
+      "default": "frames"
+    },
+    {
+      "name": "dl_audiobook",
+      "type": "text",
+      "default": "audiobook"
+    },
+    {
+      "name": "dl_doodle",
+      "type": "text",
+      "default": "doodle"
+    },
+    {
+      "name": "dl_how_to",
+      "type": "text",
+      "default": "how to use"
+    },
+    {
+      "name": "screen_added_by_hand",
+      "type": "text",
+      "default": "added by hand"
+    },
+    {
+      "name": "dl_earlier",
+      "type": "text",
+      "default": "{what} - earlier version {when}"
+    },
+    {
+      "name": "no_person",
+      "type": "text",
+      "default": "There is nobody with that account here."
+    },
+    {
+      "name": "person_limits_saved",
+      "type": "text",
+      "default": "Saved - this person has their own limits now."
+    },
+    {
+      "name": "person_limits_default",
+      "type": "text",
+      "default": "This person is back on the portal's defaults."
+    },
+    {
+      "name": "page_loading",
+      "type": "text",
+      "default": "Loading {product}…",
+      "label": "page loading"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "not_yours": "$not_yours",
+      "that": "$that",
+      "that_project": "$that_project",
+      "that_manual": "$that_manual",
+      "that_recording": "$that_recording",
+      "over_quota": "$over_quota",
+      "not_a_number": "$not_a_number",
+      "scan_owner_only": "$scan_owner_only",
+      "folder_unreadable": "$folder_unreadable",
+      "folder_outside": "$folder_outside",
+      "project_unreadable": "$project_unreadable",
+      "manual_missing_title": "$manual_missing_title",
+      "manual_missing": "$manual_missing",
+      "listen_too_often": "$listen_too_often",
+      "listen_empty": "$listen_empty",
+      "unknown_voice": "$unknown_voice",
+      "voice_service_down": "$voice_service_down",
+      "upload_not_video": "$upload_not_video",
+      "upload_too_big": "$upload_too_big",
+      "upload_over_quota": "$upload_over_quota",
+      "not_a_video": "$not_a_video",
+      "script_shape": "$script_shape",
+      "script_no_lines": "$script_no_lines",
+      "not_generated": "$not_generated",
+      "unknown_file": "$unknown_file",
+      "not_found": "$not_found",
+      "guide_video_title": "$guide_video_title",
+      "guide_video_link": "$guide_video_link",
+      "guide_video_heading": "$guide_video_heading",
+      "sweep_what": "$sweep_what",
+      "sweep_freed": "$sweep_freed",
+      "embed_label": "$embed_label",
+      "dl_manual": "$dl_manual",
+      "dl_video": "$dl_video",
+      "dl_file": "$dl_file",
+      "dl_picture": "$dl_picture",
+      "dl_film": "$dl_film",
+      "dl_frames": "$dl_frames",
+      "dl_audiobook": "$dl_audiobook",
+      "dl_doodle": "$dl_doodle",
+      "dl_how_to": "$dl_how_to",
+      "screen_added_by_hand": "$screen_added_by_hand",
+      "dl_earlier": "$dl_earlier",
+      "no_person": "$no_person",
+      "person_limits_saved": "$person_limits_saved",
+      "person_limits_default": "$person_limits_default",
+      "page_loading": "$page_loading"
+    }
+  },
+  "returns": "record",
+  "version": 2,
+  "status": "published",
+  "description_nl": "Errors and page text from app.py: ownership, storage quota and upload cap, folder scans, Listen, the script parser, generated files, the Gemini key guide, the retention sweep log and the embeddable How to Use button. {what}, {quota_gb}, {used_gb}, {field}, {allowed}, {error}, {extensions}, {cap_mb}, {days}, {mb} fill in; ':g', ':.1f' after a name set how a number is written.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "not_yours": "{what} does not exist, or is not yours.",
+        "that": "That",
+        "that_project": "That project",
+        "that_manual": "That manual",
+        "that_recording": "That recording",
+        "over_quota": "That would put you over your {quota_gb:g} GB of storage ({used_gb:.1f} GB used). Delete a recording you no longer need, or ask the portal's owner for more room.",
+        "not_a_number": "{field} must be a number",
+        "scan_owner_only": "Only the portal owner can scan a folder on this server. Point the project at a Git repository instead.",
+        "folder_unreadable": "That folder cannot be read.",
+        "folder_outside": "That folder is outside what this portal may read. Allowed: {allowed}",
+        "project_unreadable": "Could not read the project: {error}",
+        "manual_missing_title": "Not found",
+        "manual_missing": "No published manual lives at this address.",
+        "listen_too_often": "That is a lot of listening in a minute. Give it a moment.",
+        "listen_empty": "Type what the voice should say first.",
+        "unknown_voice": "Unknown voice.",
+        "voice_service_down": "The voice service did not answer: {error}",
+        "upload_not_video": "Upload a video ({extensions})",
+        "upload_too_big": "That recording is larger than {cap_mb} MB, which is all this portal accepts in one upload.",
+        "upload_over_quota": "That recording would put you over your {quota_gb:g} GB of storage.",
+        "not_a_video": "That file could not be read as a video",
+        "script_shape": "Expected {\"segments\": [{\"start\", \"end\", \"chapter\", \"text\"}]}: {error}",
+        "script_no_lines": "No usable lines: each needs a start, an end after it, and text",
+        "not_generated": "Not generated yet",
+        "unknown_file": "Unknown file",
+        "not_found": "Not found",
+        "guide_video_title": "Watch how to get a Gemini key",
+        "guide_video_link": "Watch the walkthrough video",
+        "guide_video_heading": "Watch it instead",
+        "sweep_what": "Storage: removed recordings narrated over {days} days ago",
+        "sweep_freed": "{mb:.0f} MB freed",
+        "embed_label": "How to Use",
+        "dl_manual": "manual",
+        "dl_video": "video",
+        "dl_file": "file",
+        "dl_picture": "picture",
+        "dl_film": "film",
+        "dl_frames": "frames",
+        "dl_audiobook": "audiobook",
+        "dl_doodle": "doodle",
+        "dl_how_to": "how to use",
+        "screen_added_by_hand": "added by hand",
+        "dl_earlier": "{what} - earlier version {when}",
+        "no_person": "There is nobody with that account here.",
+        "person_limits_saved": "Saved - this person has their own limits now.",
+        "person_limits_default": "This person is back on the portal's defaults.",
+        "page_loading": "Loading {product}…"
+      }
+    }
+  ],
+  "weight_basis": "Portal wording, no scoring. The knobs ARE the sentences — edit them here, never in Python."
+}

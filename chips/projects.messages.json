@@ -1,0 +1,47 @@
+{
+  "chip_id": "projects.messages",
+  "kind": "accessor",
+  "set": "projects",
+  "label": "What Setup and How to Use say when a project request is refused",
+  "aliases": [],
+  "params": [
+    {
+      "name": "need_name",
+      "type": "text",
+      "default": "Give the project a name."
+    },
+    {
+      "name": "no_project",
+      "type": "text",
+      "default": "No such project."
+    },
+    {
+      "name": "no_screen",
+      "type": "text",
+      "default": "No such screen in this project."
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "need_name": "$need_name",
+      "no_project": "$no_project",
+      "no_screen": "$no_screen"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "need_name: a project saved without a name. no_project / no_screen: the project or screen asked for does not exist.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "need_name": "Give the project a name.",
+        "no_project": "No such project.",
+        "no_screen": "No such screen in this project."
+      }
+    }
+  ],
+  "weight_basis": "Portal business setting of the Training & Video Portal. The knobs ARE the policy — edit them here, never in Python."
+}

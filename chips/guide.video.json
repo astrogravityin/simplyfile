@@ -1,0 +1,235 @@
+{
+  "chip_id": "guide.video",
+  "kind": "accessor",
+  "set": "guide",
+  "label": "The step-by-step guide to Videos: every step, spotlight, narration and picture",
+  "aliases": [
+    "videos tour",
+    "videos guide",
+    "guide me"
+  ],
+  "params": [
+    {
+      "name": "title",
+      "type": "text",
+      "default": "Videos",
+      "label": "The tour's name (its cover card)"
+    },
+    {
+      "name": "lede",
+      "type": "long",
+      "default": "Turn a plain screen recording into a narrated, subtitled video with chapters. This short tour walks you through the whole journey, from the first upload to the finished file.",
+      "label": "The cover's opening line; {product} = this edition's name"
+    },
+    {
+      "name": "icon",
+      "type": "text",
+      "default": "film",
+      "label": "The emblem on the cover (an icon name)"
+    },
+    {
+      "name": "minutes",
+      "type": "number",
+      "default": 3,
+      "label": "How long the tour takes"
+    },
+    {
+      "name": "steps",
+      "type": "rows",
+      "default": [
+        {
+          "title": "Your recordings, in one library",
+          "say": "Every recording you bring in lives here, newest first. Search by title in the box above the cards, and open any one to carry on exactly where you left off.",
+          "target": "section.as-home",
+          "art": {
+            "kind": "stack",
+            "items": [
+              "Onboarding tour",
+              "Billing walkthrough",
+              "Release notes"
+            ],
+            "icon": "film"
+          },
+          "open": "[data-fb=\"home\"]"
+        },
+        {
+          "title": "Start here",
+          "say": "New to {product}? This card covers the three things that matter on day one: your account, your own AI key and your first recording. Once they are in place, it steps aside.",
+          "target": "section.startcard|#as-new",
+          "art": {
+            "kind": "check",
+            "items": [
+              "Create your account",
+              "Add your AI key",
+              "Upload a recording"
+            ],
+            "done": 1
+          }
+        },
+        {
+          "title": "Upload a recording",
+          "say": "Press Upload a recording and drop in any screen capture: the Snipping Tool, OBS, even a phone video will do. Give it a title and say what the viewer should learn. That one line steers the whole script.",
+          "target": "#as-new|#vd-first",
+          "art": {
+            "kind": "flow",
+            "items": [
+              "Recording",
+              "Script",
+              "Voice",
+              "Narrated video"
+            ],
+            "at": 0
+          }
+        },
+        {
+          "title": "Know where you are",
+          "say": "Inside a recording, the stepper is your compass: Recording, Script, Voice, Narrated video. Each stage lights up as it is done, so the next move is always clear.",
+          "target": "ol.stepper",
+          "art": {
+            "kind": "flow",
+            "items": [
+              "Recording",
+              "Script",
+              "Voice",
+              "Narrated video"
+            ],
+            "at": 1
+          },
+          "open": "#as-cards [data-open]"
+        },
+        {
+          "title": "Four ways to write the script",
+          "say": "Choose the language of the narration, then pick a road. Portal does it turns pasted text into timed lines for free. LLM Bridge hands you a prompt for any chat model. Draft with AI watches the video and writes for you, priced before it starts. Do it yourself is yours, line by line.",
+          "target": ".cb-activity:has([data-act=\"vd-free\"])|[data-act=\"vd-free\"]",
+          "art": {
+            "kind": "roads"
+          }
+        },
+        {
+          "title": "Shape every line",
+          "say": "Each line carries its start and end time, a chapter and the words to be spoken. Listen to any line on its own, give it a different voice if you wish, and press Auto-fit times to pace the whole script to the picture.",
+          "target": "section[data-fix=\"script\"]",
+          "art": {
+            "kind": "flow",
+            "items": [
+              "0:00 Welcome",
+              "0:08 Sign in",
+              "0:21 First report"
+            ],
+            "at": 1
+          }
+        },
+        {
+          "title": "Voice & output",
+          "say": "Pick a narrator and press Hear this voice before you commit. Free voices cost nothing; premium voices show their price first. Tick Keep the recording's own sound underneath when the original audio should stay, quietly, in the background.",
+          "target": "section[data-fix=\"render\"]",
+          "art": {
+            "kind": "hero",
+            "icon": "mic"
+          }
+        },
+        {
+          "title": "Generate the video",
+          "say": "Save the script, then press Generate the video. Progress appears right here, with the time remaining and what it cost. You are free to keep working while it runs.",
+          "target": "#vd-render|[data-act=\"vd-make\"]",
+          "art": {
+            "kind": "meter",
+            "value": 72,
+            "label": "Generating",
+            "icon": "film",
+            "icon2": "clock"
+          }
+        },
+        {
+          "title": "Watch, download, share",
+          "say": "Switch between Narrated and Original to compare. Download the MP4 with its subtitles and YouTube chapters, or press Attach to How to Use so the video sits behind that screen's help button.",
+          "target": "#vd-switch|#vd-attach",
+          "art": {
+            "kind": "stack",
+            "items": [
+              "MP4",
+              "Subtitles",
+              "Chapters"
+            ],
+            "icon": "download"
+          }
+        },
+        {
+          "title": "Final check",
+          "say": "Before you publish, the Final check reads the whole video back: script, timing, voice and output. Anything short shows a Fix button that takes you straight to the part that needs you.",
+          "target": "#vd-check",
+          "art": {
+            "kind": "check",
+            "items": [
+              "Script covers video",
+              "Lines fit their times",
+              "Voice chosen",
+              "Video generated"
+            ],
+            "done": 3
+          }
+        },
+        {
+          "title": "Proof check",
+          "say": "The Proof check reads every word for spelling, grammar and originality. The free pass uses the portal's own rules and compares the text word for word with your other works and the public shelf; the LLM Bridge or AI check any language, AI priced first; or read it yourself and mark it reviewed. It only warns - nothing is blocked. Apply puts a fix into the words where they appear exactly once; what was made from them (lettering, voice, video) is then out of date and the card says so before you apply.",
+          "target": "#pf-box",
+          "art": {
+            "kind": "roads"
+          }
+        },
+        {
+          "title": "Translate or transliterate",
+          "say": "Translate or transliterate makes these words another language, or writes the same words in another script. Pick what to do and the language, then a road: free moves the letters between Indian scripts, the LLM Bridge or AI (price first) do any language, or type it yourself. Every road gives a draft, piece by piece - check it, change anything, then Apply here (the current words are kept in Earlier versions) or As a new copy (a copy in that language; this work stays as it is).",
+          "target": "#tr-box",
+          "art": {
+            "kind": "roads"
+          }
+        }
+      ],
+      "label": "The steps in order: title, say (the narration), target (where the spotlight goes; alternatives split by |, the first on screen wins), art (the picture: hero/flow/roads/meter/stack/check), place (below/above/right/left/center, optional), open (optional: what the guide presses first when the part is not on screen - open the first item, go back Home; alternatives split by |)"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "title": "$title",
+      "lede": "$lede",
+      "icon": "$icon",
+      "minutes": "$minutes",
+      "steps": "$steps"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-09-27 owner: a screen tour guide on every tv / SteadyMove screen, step by step, professional narration with SVG pictures, all chips and ops. Drawn by core/static/guide.js, served by core/guide.py; Guide me appears in the top bar once this chip exists.",
+  "weight_basis": "page",
+  "test_cases": [
+    {
+      "args": {
+        "title": "T",
+        "lede": "L",
+        "icon": "spark",
+        "minutes": 1,
+        "steps": [
+          {
+            "title": "a",
+            "say": "b"
+          }
+        ]
+      },
+      "expect_value": {
+        "title": "T",
+        "lede": "L",
+        "icon": "spark",
+        "minutes": 1,
+        "steps": [
+          {
+            "title": "a",
+            "say": "b"
+          }
+        ]
+      }
+    }
+  ]
+}

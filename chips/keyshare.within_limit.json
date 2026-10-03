@@ -1,0 +1,180 @@
+{
+  "chip_id": "keyshare.within_limit",
+  "kind": "predicate",
+  "set": "keyshare",
+  "label": "May this borrower still spend on this key, given the caps their lender set",
+  "aliases": [
+    "under the cap",
+    "limit not reached"
+  ],
+  "params": [
+    {
+      "name": "spent_day",
+      "type": "number",
+      "default": 0,
+      "label": "Charged in the last day window"
+    },
+    {
+      "name": "cap_day",
+      "type": "number",
+      "default": 0,
+      "label": "Day cap (0 = no cap)"
+    },
+    {
+      "name": "spent_week",
+      "type": "number",
+      "default": 0,
+      "label": "Charged in the last week window"
+    },
+    {
+      "name": "cap_week",
+      "type": "number",
+      "default": 0,
+      "label": "Week cap (0 = no cap)"
+    },
+    {
+      "name": "spent_month",
+      "type": "number",
+      "default": 0,
+      "label": "Charged in the last month window"
+    },
+    {
+      "name": "cap_month",
+      "type": "number",
+      "default": 0,
+      "label": "Month cap (0 = no cap)"
+    },
+    {
+      "name": "spent_total",
+      "type": "number",
+      "default": 0,
+      "label": "Charged since the share began"
+    },
+    {
+      "name": "cap_total",
+      "type": "number",
+      "default": 0,
+      "label": "Credit bought (0 = no credit, so no total cap)"
+    }
+  ],
+  "expr": {
+    "op": "all",
+    "items": [
+      {
+        "op": "any",
+        "items": [
+          {
+            "op": "le",
+            "left": "$cap_day",
+            "right": 0
+          },
+          {
+            "op": "lt",
+            "left": "$spent_day",
+            "right": "$cap_day"
+          }
+        ]
+      },
+      {
+        "op": "any",
+        "items": [
+          {
+            "op": "le",
+            "left": "$cap_week",
+            "right": 0
+          },
+          {
+            "op": "lt",
+            "left": "$spent_week",
+            "right": "$cap_week"
+          }
+        ]
+      },
+      {
+        "op": "any",
+        "items": [
+          {
+            "op": "le",
+            "left": "$cap_month",
+            "right": 0
+          },
+          {
+            "op": "lt",
+            "left": "$spent_month",
+            "right": "$cap_month"
+          }
+        ]
+      },
+      {
+        "op": "any",
+        "items": [
+          {
+            "op": "le",
+            "left": "$cap_total",
+            "right": 0
+          },
+          {
+            "op": "lt",
+            "left": "$spent_total",
+            "right": "$cap_total"
+          }
+        ]
+      }
+    ]
+  },
+  "returns": "boolean",
+  "version": 1,
+  "status": "published",
+  "description_nl": "Three rolling caps, any one of which stops the key. A cap of 0 means the lender set none. The amounts compared are the CHARGED price (with the lender's mark-up), because that is the number the borrower is shown and billed. spent_total / cap_total: credit that was BOUGHT rather than a rolling window - it never refills, and when it is used up the key stops for good.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": true
+    },
+    {
+      "args": {
+        "spent_day": 5,
+        "cap_day": 10
+      },
+      "expect_value": true
+    },
+    {
+      "args": {
+        "spent_day": 10,
+        "cap_day": 10
+      },
+      "expect_value": false
+    },
+    {
+      "args": {
+        "spent_day": 1,
+        "cap_day": 10,
+        "spent_week": 50,
+        "cap_week": 50
+      },
+      "expect_value": false
+    },
+    {
+      "args": {
+        "spent_month": 999,
+        "cap_month": 0
+      },
+      "expect_value": true
+    },
+    {
+      "args": {
+        "spent_total": 9.5,
+        "cap_total": 10
+      },
+      "expect_value": true
+    },
+    {
+      "args": {
+        "spent_total": 10,
+        "cap_total": 10
+      },
+      "expect_value": false
+    }
+  ],
+  "weight_basis": "The whole cap policy. A cap of 0 is no cap; a cap that is reached stops the key, it does not warn. Measured on the CHARGED price, which is what the borrower sees."
+}

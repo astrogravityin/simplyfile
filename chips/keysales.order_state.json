@@ -1,0 +1,130 @@
+{
+  "chip_id": "keysales.order_state",
+  "kind": "accessor",
+  "set": "keysales",
+  "label": "What a request to buy a key is now",
+  "aliases": [
+    "order state",
+    "buy request status"
+  ],
+  "params": [
+    {
+      "name": "decided",
+      "type": "boolean",
+      "default": false,
+      "label": "The seller has answered"
+    },
+    {
+      "name": "approved",
+      "type": "boolean",
+      "default": false,
+      "label": "The seller said yes"
+    },
+    {
+      "name": "withdrawn",
+      "type": "boolean",
+      "default": false,
+      "label": "The buyer took the request back"
+    },
+    {
+      "name": "requested_word",
+      "type": "text",
+      "default": "requested",
+      "label": "Waiting for the seller"
+    },
+    {
+      "name": "approved_word",
+      "type": "text",
+      "default": "approved",
+      "label": "The seller said yes and the credit is live"
+    },
+    {
+      "name": "rejected_word",
+      "type": "text",
+      "default": "rejected",
+      "label": "The seller said no"
+    },
+    {
+      "name": "withdrawn_word",
+      "type": "text",
+      "default": "withdrawn",
+      "label": "The buyer took it back"
+    }
+  ],
+  "expr": {
+    "vop": "decision_table",
+    "facts": {
+      "vop": "record",
+      "fields": {
+        "decided": "$decided",
+        "approved": "$approved",
+        "withdrawn": "$withdrawn"
+      }
+    },
+    "rules": [
+      {
+        "when": {
+          "withdrawn": true
+        },
+        "set": "$withdrawn_word"
+      },
+      {
+        "when": {
+          "decided": false
+        },
+        "set": "$requested_word"
+      },
+      {
+        "when": {
+          "approved": true
+        },
+        "set": "$approved_word"
+      },
+      {
+        "when": {
+          "decided": true
+        },
+        "set": "$rejected_word"
+      }
+    ],
+    "current": "$requested_word"
+  },
+  "returns": "text",
+  "version": 1,
+  "status": "published",
+  "description_nl": "The four states a request to buy can be in, and the words the screens group them under.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": "requested"
+    },
+    {
+      "args": {
+        "decided": true,
+        "approved": true
+      },
+      "expect_value": "approved"
+    },
+    {
+      "args": {
+        "decided": true
+      },
+      "expect_value": "rejected"
+    },
+    {
+      "args": {
+        "withdrawn": true
+      },
+      "expect_value": "withdrawn"
+    },
+    {
+      "args": {
+        "withdrawn": true,
+        "decided": true,
+        "approved": true
+      },
+      "expect_value": "withdrawn"
+    }
+  ],
+  "weight_basis": "Four states, one table. A request is never deleted - it keeps who asked, who answered and when."
+}

@@ -1,0 +1,82 @@
+{
+  "chip_id": "manuals.messages",
+  "kind": "accessor",
+  "set": "manuals",
+  "label": "Every word a manual reader sees that the author did not type",
+  "aliases": [],
+  "params": [
+    {
+      "name": "default_title",
+      "type": "text",
+      "default": "User Manual"
+    },
+    {
+      "name": "untitled_page",
+      "type": "text",
+      "default": "Untitled"
+    },
+    {
+      "name": "contents",
+      "type": "text",
+      "default": "Contents"
+    },
+    {
+      "name": "back_to_contents",
+      "type": "text",
+      "default": "Contents &uarr;"
+    },
+    {
+      "name": "page_label",
+      "type": "text",
+      "default": "Page {n}"
+    },
+    {
+      "name": "untitled_manual",
+      "type": "text",
+      "default": "Untitled manual"
+    },
+    {
+      "name": "help_label_page",
+      "type": "text",
+      "default": "User Manual — {header}"
+    },
+    {
+      "name": "help_label",
+      "type": "text",
+      "default": "User Manual"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "default_title": "$default_title",
+      "untitled_page": "$untitled_page",
+      "contents": "$contents",
+      "back_to_contents": "$back_to_contents",
+      "page_label": "$page_label",
+      "untitled_manual": "$untitled_manual",
+      "help_label_page": "$help_label_page",
+      "help_label": "$help_label"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "default_title: the cover (and file) title when none is given. untitled_page: a page with no header. contents / back_to_contents: the contents heading and the link back to it (HTML allowed). page_label: {n} = page number. untitled_manual: the title a saved manual gets when it has none. help_label_page ({header}) / help_label: the How to Use link a manual page adds to its screen.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "default_title": "User Manual",
+        "untitled_page": "Untitled",
+        "contents": "Contents",
+        "back_to_contents": "Contents &uarr;",
+        "page_label": "Page {n}",
+        "untitled_manual": "Untitled manual",
+        "help_label_page": "User Manual — {header}",
+        "help_label": "User Manual"
+      }
+    }
+  ],
+  "weight_basis": "Portal business setting of the Training & Video Portal. The knobs ARE the policy — edit them here, never in Python."
+}

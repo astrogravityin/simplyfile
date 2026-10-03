@@ -1,0 +1,252 @@
+{
+  "chip_id": "scan.patterns",
+  "kind": "accessor",
+  "set": "scan",
+  "label": "The patterns Scan reads names, routes and titles with",
+  "aliases": [
+    "route patterns",
+    "Spring GetMapping",
+    "ASP.NET Route"
+  ],
+  "params": [
+    {
+      "name": "screen_name",
+      "type": "text",
+      "default": "(?i)(page|screen|view|activity|fragment|frame|panel|dialog|window|form|wizard|modal|editor|dashboard|portal|home|report|list|detail|console|workbench)$"
+    },
+    {
+      "name": "routes",
+      "type": "rows",
+      "default": [
+        {
+          "framework": "React Router",
+          "pattern": "<Route\\s[^>]*path=[\"'`]([^\"'`]+)"
+        },
+        {
+          "framework": "Vue/Angular/React Router objects",
+          "pattern": "\\bpath\\s*:\\s*[\"'`](/[^\"'`]*)[\"'`]"
+        },
+        {
+          "framework": "Flask/FastAPI",
+          "pattern": "@(?:app|router|bp|blueprint)\\.(?:route|get|post)\\(\\s*[\"']([^\"']+)"
+        },
+        {
+          "framework": "Django urls.py",
+          "pattern": "\\bpath\\(\\s*r?[\"']([^\"']*)[\"']"
+        },
+        {
+          "framework": "Rails/Express-ish",
+          "pattern": "\\b(?:get|post)\\s+[\"']([^\"']+)[\"']\\s*(?:,|=>)"
+        },
+        {
+          "framework": "Laravel",
+          "pattern": "\\bRoute::(?:get|post|view)\\(\\s*[\"']([^\"']+)"
+        },
+        {
+          "framework": "Express",
+          "pattern": "\\brouter\\.(?:get|post)\\(\\s*[\"'`]([^\"'`]+)"
+        },
+        {
+          "framework": "Spring MVC",
+          "pattern": "@(?:Get|Post|Request)Mapping\\(\\s*(?:value\\s*=\\s*)?[\"']([^\"']+)"
+        },
+        {
+          "framework": "JAX-RS",
+          "pattern": "@Path\\(\\s*[\"']([^\"']+)"
+        },
+        {
+          "framework": "Struts",
+          "pattern": "<action\\s[^>]*path=[\"']([^\"']+)"
+        },
+        {
+          "framework": "ASP.NET attribute routing",
+          "pattern": "\\[Route\\(\\s*[\"']([^\"']+)"
+        },
+        {
+          "framework": "Blazor / Razor Pages",
+          "pattern": "@page\\s+[\"']([^\"']+)[\"']"
+        },
+        {
+          "framework": ".NET minimal APIs",
+          "pattern": "\\bMap(?:Get|Post|Razor|Fallback)?\\w*\\(\\s*[\"']([^\"']+)"
+        }
+      ]
+    },
+    {
+      "name": "api_route",
+      "type": "text",
+      "default": "(?i)^/?(api|v\\d+|graphql|health|static|assets|_)(/|$)"
+    },
+    {
+      "name": "not_a_screen",
+      "type": "text",
+      "default": "(?i)^(index|_app|_document|layout|_layout|_viewstart|_viewimports|_host|main|app|base|partial|head|header|footer|nav|menu|sidebar|program|startup|global|assemblyinfo|routes|router|styles|theme|themes|resources|strings|colors|dimens)$"
+    },
+    {
+      "name": "code_behind",
+      "type": "text",
+      "default": "(?i)\\.(aspx|ascx|master|razor|xaml|axaml|cshtml)\\.(cs|vb)$"
+    },
+    {
+      "name": "resource_layout",
+      "type": "text",
+      "default": "(?i)(^|/)res/layout[^/]*/"
+    },
+    {
+      "name": "titles",
+      "type": "list",
+      "default": [
+        "(?is)<title[^>]*>([^<]{2,80})</title>",
+        "(?is)<h1[^>]*>([^<]{2,80})</h1>"
+      ]
+    },
+    {
+      "name": "title_rejects",
+      "type": "list",
+      "default": [
+        "{{",
+        "{%"
+      ]
+    },
+    {
+      "name": "file_extension",
+      "type": "text",
+      "default": "\\.[A-Za-z0-9]{1,9}$"
+    },
+    {
+      "name": "role_suffix",
+      "type": "text",
+      "default": "(?i)\\.(page|screen|view|component|designer|razor|xaml|aspx|ascx)$"
+    },
+    {
+      "name": "word_separators",
+      "type": "list",
+      "default": [
+        "_",
+        "-"
+      ]
+    },
+    {
+      "name": "camel_boundary",
+      "type": "text",
+      "default": "([a-z0-9])([A-Z])"
+    },
+    {
+      "name": "camel_replacement",
+      "type": "text",
+      "default": "\\1 \\2"
+    },
+    {
+      "name": "key_unsafe",
+      "type": "text",
+      "default": "[^a-z0-9]+"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "screen_name": "$screen_name",
+      "routes": "$routes",
+      "api_route": "$api_route",
+      "not_a_screen": "$not_a_screen",
+      "code_behind": "$code_behind",
+      "resource_layout": "$resource_layout",
+      "titles": "$titles",
+      "title_rejects": "$title_rejects",
+      "file_extension": "$file_extension",
+      "role_suffix": "$role_suffix",
+      "word_separators": "$word_separators",
+      "camel_boundary": "$camel_boundary",
+      "camel_replacement": "$camel_replacement",
+      "key_unsafe": "$key_unsafe"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "Regular expressions; (?i) ignores case. screen_name: a file stem ending like a screen. routes: tried in order, each with ONE capture group, the path. api_route: routes that serve data, not a screen. not_a_screen: framing and plumbing stems (index, layout, header…) — skipped unless they declare a route, and then named by their folder. code_behind: the class file beside markup (Foo.aspx.cs) — the markup is the screen. resource_layout: Android res/layout folders. titles: <title>, then <h1>, name a page template; a title holding any of title_rejects is template code, not a name. file_extension and role_suffix are cut off a file name; word_separators become spaces; camel_boundary splits CamelCase with camel_replacement. key_unsafe: characters a screen key replaces with '-'.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "screen_name": "(?i)(page|screen|view|activity|fragment|frame|panel|dialog|window|form|wizard|modal|editor|dashboard|portal|home|report|list|detail|console|workbench)$",
+        "routes": [
+          {
+            "framework": "React Router",
+            "pattern": "<Route\\s[^>]*path=[\"'`]([^\"'`]+)"
+          },
+          {
+            "framework": "Vue/Angular/React Router objects",
+            "pattern": "\\bpath\\s*:\\s*[\"'`](/[^\"'`]*)[\"'`]"
+          },
+          {
+            "framework": "Flask/FastAPI",
+            "pattern": "@(?:app|router|bp|blueprint)\\.(?:route|get|post)\\(\\s*[\"']([^\"']+)"
+          },
+          {
+            "framework": "Django urls.py",
+            "pattern": "\\bpath\\(\\s*r?[\"']([^\"']*)[\"']"
+          },
+          {
+            "framework": "Rails/Express-ish",
+            "pattern": "\\b(?:get|post)\\s+[\"']([^\"']+)[\"']\\s*(?:,|=>)"
+          },
+          {
+            "framework": "Laravel",
+            "pattern": "\\bRoute::(?:get|post|view)\\(\\s*[\"']([^\"']+)"
+          },
+          {
+            "framework": "Express",
+            "pattern": "\\brouter\\.(?:get|post)\\(\\s*[\"'`]([^\"'`]+)"
+          },
+          {
+            "framework": "Spring MVC",
+            "pattern": "@(?:Get|Post|Request)Mapping\\(\\s*(?:value\\s*=\\s*)?[\"']([^\"']+)"
+          },
+          {
+            "framework": "JAX-RS",
+            "pattern": "@Path\\(\\s*[\"']([^\"']+)"
+          },
+          {
+            "framework": "Struts",
+            "pattern": "<action\\s[^>]*path=[\"']([^\"']+)"
+          },
+          {
+            "framework": "ASP.NET attribute routing",
+            "pattern": "\\[Route\\(\\s*[\"']([^\"']+)"
+          },
+          {
+            "framework": "Blazor / Razor Pages",
+            "pattern": "@page\\s+[\"']([^\"']+)[\"']"
+          },
+          {
+            "framework": ".NET minimal APIs",
+            "pattern": "\\bMap(?:Get|Post|Razor|Fallback)?\\w*\\(\\s*[\"']([^\"']+)"
+          }
+        ],
+        "api_route": "(?i)^/?(api|v\\d+|graphql|health|static|assets|_)(/|$)",
+        "not_a_screen": "(?i)^(index|_app|_document|layout|_layout|_viewstart|_viewimports|_host|main|app|base|partial|head|header|footer|nav|menu|sidebar|program|startup|global|assemblyinfo|routes|router|styles|theme|themes|resources|strings|colors|dimens)$",
+        "code_behind": "(?i)\\.(aspx|ascx|master|razor|xaml|axaml|cshtml)\\.(cs|vb)$",
+        "resource_layout": "(?i)(^|/)res/layout[^/]*/",
+        "titles": [
+          "(?is)<title[^>]*>([^<]{2,80})</title>",
+          "(?is)<h1[^>]*>([^<]{2,80})</h1>"
+        ],
+        "title_rejects": [
+          "{{",
+          "{%"
+        ],
+        "file_extension": "\\.[A-Za-z0-9]{1,9}$",
+        "role_suffix": "(?i)\\.(page|screen|view|component|designer|razor|xaml|aspx|ascx)$",
+        "word_separators": [
+          "_",
+          "-"
+        ],
+        "camel_boundary": "([a-z0-9])([A-Z])",
+        "camel_replacement": "\\1 \\2",
+        "key_unsafe": "[^a-z0-9]+"
+      }
+    }
+  ],
+  "weight_basis": "Portal business setting of the Training & Video Portal. The knobs ARE the policy — edit them here, never in Python."
+}

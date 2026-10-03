@@ -1,0 +1,211 @@
+{
+  "chip_id": "narrator.messages",
+  "kind": "accessor",
+  "set": "narrator",
+  "label": "Every refusal the Video Narrator gives",
+  "aliases": [
+    "video errors"
+  ],
+  "params": [
+    {
+      "name": "bad_id",
+      "type": "text",
+      "default": "Bad project id"
+    },
+    {
+      "name": "no_project",
+      "type": "text",
+      "default": "No such video project"
+    },
+    {
+      "name": "source_gone",
+      "type": "text",
+      "default": "The recording itself is no longer on this server - only the narrated video it produced. Upload it again to change the script."
+    },
+    {
+      "name": "job_running",
+      "type": "text",
+      "default": "A job is still running on it. Wait for it to finish."
+    },
+    {
+      "name": "in_use",
+      "type": "text",
+      "default": "This video is a How to Use link on: {screens}. Remove it there first (How to Use on this video, or How to Use pages), then delete it."
+    },
+    {
+      "name": "line_needs_times",
+      "type": "text",
+      "default": "Every line needs a start and an end in seconds"
+    },
+    {
+      "name": "line_ends_early",
+      "type": "text",
+      "default": "Line {n} ends before it starts"
+    },
+    {
+      "name": "line_after_video",
+      "type": "text",
+      "default": "Line {n} starts after the video ends ({duration:.1f}s)"
+    },
+    {
+      "name": "line_no_words",
+      "type": "text",
+      "default": "Line {n} has no words"
+    },
+    {
+      "name": "line_overlaps",
+      "type": "text",
+      "default": "Line {n} overlaps line {next}"
+    },
+    {
+      "name": "line_unknown_voice",
+      "type": "text",
+      "default": "Line {n}: unknown voice {voice}"
+    },
+    {
+      "name": "unknown_voice",
+      "type": "text",
+      "default": "Unknown voice"
+    },
+    {
+      "name": "busy",
+      "type": "text",
+      "default": "This video is already busy: {kind}"
+    },
+    {
+      "name": "save_key_first",
+      "type": "text",
+      "default": "Save a Gemini API key first."
+    },
+    {
+      "name": "missing_genai",
+      "type": "text",
+      "default": "This portal is missing the google-genai package."
+    },
+    {
+      "name": "draft_needs_key",
+      "type": "text",
+      "default": "Add your own Google Gemini API key in Key Management first, or use the LLM Bridge and run the prompt in a model you already pay for."
+    },
+    {
+      "name": "unknown_language",
+      "type": "text",
+      "default": "That is not one of the languages this portal offers."
+    },
+    {
+      "name": "nothing_to_translate",
+      "type": "text",
+      "default": "Write or draft the script first - there is nothing to translate."
+    },
+    {
+      "name": "already_that_language",
+      "type": "text",
+      "default": "This script is already in {language}."
+    },
+    {
+      "name": "sample_line",
+      "type": "text",
+      "default": "This is how this voice will read your script. Pick the one you like best."
+    },
+    {
+      "name": "script_first",
+      "type": "text",
+      "default": "Write or draft the script first"
+    },
+    {
+      "name": "tts_nothing_back",
+      "type": "text",
+      "default": "The voice model returned no sound for this line."
+    },
+    {
+      "name": "text_needed",
+      "type": "text",
+      "default": "Paste the text first - what the narration should say."
+    },
+    {
+      "name": "untitled_video",
+      "type": "text",
+      "default": "video"
+    },
+    {
+      "name": "how_to_name",
+      "type": "text",
+      "default": "how to use"
+    },
+    {
+      "name": "no_script",
+      "type": "text",
+      "default": "This video has no script yet - write or draft it first.",
+      "label": "no script"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "bad_id": "$bad_id",
+      "no_project": "$no_project",
+      "source_gone": "$source_gone",
+      "job_running": "$job_running",
+      "in_use": "$in_use",
+      "line_needs_times": "$line_needs_times",
+      "line_ends_early": "$line_ends_early",
+      "line_after_video": "$line_after_video",
+      "line_no_words": "$line_no_words",
+      "line_overlaps": "$line_overlaps",
+      "line_unknown_voice": "$line_unknown_voice",
+      "unknown_voice": "$unknown_voice",
+      "busy": "$busy",
+      "save_key_first": "$save_key_first",
+      "missing_genai": "$missing_genai",
+      "draft_needs_key": "$draft_needs_key",
+      "unknown_language": "$unknown_language",
+      "nothing_to_translate": "$nothing_to_translate",
+      "already_that_language": "$already_that_language",
+      "sample_line": "$sample_line",
+      "script_first": "$script_first",
+      "tts_nothing_back": "$tts_nothing_back",
+      "text_needed": "$text_needed",
+      "untitled_video": "$untitled_video",
+      "how_to_name": "$how_to_name",
+      "no_script": "$no_script"
+    }
+  },
+  "returns": "record",
+  "version": 2,
+  "status": "published",
+  "description_nl": "Errors a person sees on the Videos screen. {n}, {next}, {duration}, {voice}, {kind} fill in.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "bad_id": "Bad project id",
+        "no_project": "No such video project",
+        "source_gone": "The recording itself is no longer on this server - only the narrated video it produced. Upload it again to change the script.",
+        "job_running": "A job is still running on it. Wait for it to finish.",
+        "in_use": "This video is a How to Use link on: {screens}. Remove it there first (How to Use on this video, or How to Use pages), then delete it.",
+        "line_needs_times": "Every line needs a start and an end in seconds",
+        "line_ends_early": "Line {n} ends before it starts",
+        "line_after_video": "Line {n} starts after the video ends ({duration:.1f}s)",
+        "line_no_words": "Line {n} has no words",
+        "line_overlaps": "Line {n} overlaps line {next}",
+        "line_unknown_voice": "Line {n}: unknown voice {voice}",
+        "unknown_voice": "Unknown voice",
+        "busy": "This video is already busy: {kind}",
+        "save_key_first": "Save a Gemini API key first.",
+        "missing_genai": "This portal is missing the google-genai package.",
+        "draft_needs_key": "Add your own Google Gemini API key in Key Management first, or use the LLM Bridge and run the prompt in a model you already pay for.",
+        "unknown_language": "That is not one of the languages this portal offers.",
+        "nothing_to_translate": "Write or draft the script first - there is nothing to translate.",
+        "already_that_language": "This script is already in {language}.",
+        "sample_line": "This is how this voice will read your script. Pick the one you like best.",
+        "script_first": "Write or draft the script first",
+        "tts_nothing_back": "The voice model returned no sound for this line.",
+        "text_needed": "Paste the text first - what the narration should say.",
+        "untitled_video": "video",
+        "how_to_name": "how to use",
+        "no_script": "This video has no script yet - write or draft it first."
+      }
+    }
+  ],
+  "weight_basis": "Portal wording, no scoring. The knobs ARE the sentences — edit them here, never in Python."
+}

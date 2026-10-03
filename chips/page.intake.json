@@ -1,0 +1,95 @@
+{
+  "chip_id": "page.intake",
+  "kind": "accessor",
+  "set": "page",
+  "label": "Intake & map page settings",
+  "aliases": [
+    "page intake"
+  ],
+  "params": [
+    {
+      "name": "state_tag",
+      "type": "json",
+      "default": {
+        "tagged": "tag ok",
+        "suggested": "tag brand",
+        "untagged": "tag warn",
+        "invalid": "tag bad",
+        "total": "tag"
+      },
+      "label": "state tag"
+    },
+    {
+      "name": "open_states",
+      "type": "list",
+      "default": [
+        "suggested",
+        "untagged",
+        "invalid"
+      ],
+      "label": "open states"
+    },
+    {
+      "name": "money_locale",
+      "type": "text",
+      "default": "en-IN",
+      "label": "money locale"
+    },
+    {
+      "name": "money_digits",
+      "type": "number",
+      "default": 2,
+      "label": "money digits"
+    },
+    {
+      "name": "numbers_shown",
+      "type": "number",
+      "default": 3,
+      "label": "numbers shown"
+    },
+    {
+      "name": "heading_chars",
+      "type": "number",
+      "default": 90,
+      "label": "heading chars"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "state_tag": "$state_tag",
+      "open_states": "$open_states",
+      "money_locale": "$money_locale",
+      "money_digits": "$money_digits",
+      "numbers_shown": "$numbers_shown",
+      "heading_chars": "$heading_chars"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "How the Intake & map screen draws a row's state (tag class per state) and which states 'Needs a person' shows.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "state_tag": {
+          "tagged": "tag ok",
+          "suggested": "tag brand",
+          "untagged": "tag warn",
+          "invalid": "tag bad",
+          "total": "tag"
+        },
+        "open_states": [
+          "suggested",
+          "untagged",
+          "invalid"
+        ],
+        "money_locale": "en-IN",
+        "money_digits": 2,
+        "numbers_shown": 3,
+        "heading_chars": 90
+      }
+    }
+  ]
+}

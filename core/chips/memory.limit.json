@@ -1,0 +1,137 @@
+{
+  "chip_id": "memory.limit",
+  "kind": "accessor",
+  "set": "memory",
+  "audience": "admin",
+  "label": "The memory limit this process is killed at, and where it came from",
+  "aliases": [
+    "memory ceiling",
+    "oom limit"
+  ],
+  "params": [
+    {
+      "name": "env_mb",
+      "type": "number",
+      "default": null
+    },
+    {
+      "name": "cgroup_mb",
+      "type": "number",
+      "default": null
+    },
+    {
+      "name": "machine_mb",
+      "type": "number",
+      "default": null
+    },
+    {
+      "name": "fallback_mb",
+      "type": "number",
+      "default": 512
+    }
+  ],
+  "expr": {
+    "vop": "choose",
+    "cases": [
+      {
+        "when": {
+          "op": "gt",
+          "left": "$env_mb",
+          "right": 0
+        },
+        "then": {
+          "vop": "record",
+          "fields": {
+            "mb": "$env_mb",
+            "source": "PORTAL_MEMORY_LIMIT_MB"
+          }
+        }
+      },
+      {
+        "when": {
+          "op": "gt",
+          "left": "$cgroup_mb",
+          "right": 0
+        },
+        "then": {
+          "vop": "record",
+          "fields": {
+            "mb": "$cgroup_mb",
+            "source": "container limit"
+          }
+        }
+      },
+      {
+        "when": {
+          "op": "gt",
+          "left": "$machine_mb",
+          "right": 0
+        },
+        "then": {
+          "vop": "record",
+          "fields": {
+            "mb": "$machine_mb",
+            "source": "machine RAM"
+          }
+        }
+      }
+    ],
+    "else": {
+      "vop": "record",
+      "fields": {
+        "mb": "$fallback_mb",
+        "source": {
+          "vop": "template",
+          "text": "assumed {mb} MB",
+          "values": {
+            "mb": "$fallback_mb"
+          }
+        }
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "In order of authority: an operator's explicit PORTAL_MEMORY_LIMIT_MB; the container's cgroup limit (a container dies at ITS limit, not the host's RAM); the machine's RAM (a VPS has no container ceiling); else fallback_mb. A hard 512 default once made AstroStage say 'about to be killed' at 460 MB on a 16 GB VPS.",
+  "test_cases": [
+    {
+      "args": {
+        "env_mb": 700,
+        "cgroup_mb": 512,
+        "machine_mb": 16000
+      },
+      "expect_value": {
+        "mb": 700,
+        "source": "PORTAL_MEMORY_LIMIT_MB"
+      }
+    },
+    {
+      "args": {
+        "cgroup_mb": 512,
+        "machine_mb": 16000
+      },
+      "expect_value": {
+        "mb": 512,
+        "source": "container limit"
+      }
+    },
+    {
+      "args": {
+        "machine_mb": 16000
+      },
+      "expect_value": {
+        "mb": 16000,
+        "source": "machine RAM"
+      }
+    },
+    {
+      "args": {},
+      "expect_value": {
+        "mb": 512,
+        "source": "assumed 512 MB"
+      }
+    }
+  ],
+  "weight_basis": "Platform operations primitive, no business content. The knobs ARE the policy — edit them here, never in Python."
+}

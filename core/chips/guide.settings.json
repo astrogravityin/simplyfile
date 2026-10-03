@@ -1,0 +1,238 @@
+{
+  "chip_id": "guide.settings",
+  "kind": "accessor",
+  "set": "guide",
+  "label": "How a screen guide looks and speaks: the voice, its pace, the pictures it may draw",
+  "aliases": [
+    "screen guide settings",
+    "tour voice",
+    "guide me"
+  ],
+  "params": [
+    {
+      "name": "voice_prefer",
+      "type": "list",
+      "default": [
+        "en-IN",
+        "en-GB",
+        "en-US"
+      ],
+      "label": "Voices tried in this order (a browser voice whose language starts with one); the browser's own voice is free and nothing is sent anywhere"
+    },
+    {
+      "name": "voice_name_hint",
+      "type": "list",
+      "default": [
+        "Neural",
+        "Natural",
+        "Online",
+        "Google",
+        "Samantha",
+        "Daniel"
+      ],
+      "label": "Among those, a voice whose name holds one of these sounds most natural"
+    },
+    {
+      "name": "rate",
+      "type": "number",
+      "default": 0.98,
+      "label": "Speaking pace (1 = normal)"
+    },
+    {
+      "name": "pitch",
+      "type": "number",
+      "default": 1,
+      "label": "Voice pitch (1 = normal)"
+    },
+    {
+      "name": "speak_by_default",
+      "type": "boolean",
+      "default": false,
+      "label": "Read each step aloud as soon as the guide opens"
+    },
+    {
+      "name": "pad",
+      "type": "number",
+      "default": 10,
+      "label": "Room in pixels around a spotlighted part"
+    },
+    {
+      "name": "pulse_until_seen",
+      "type": "boolean",
+      "default": true,
+      "label": "Guide me glows on a screen until this person has taken its tour once"
+    },
+    {
+      "name": "art_kinds",
+      "type": "list",
+      "default": [
+        "hero",
+        "flow",
+        "roads",
+        "meter",
+        "stack",
+        "check"
+      ],
+      "label": "The pictures a step may draw (guide.js ART)"
+    },
+    {
+      "name": "not_tours",
+      "type": "list",
+      "default": [
+        "settings",
+        "messages",
+        "check"
+      ],
+      "label": "guide.* chips that are not a screen's tour"
+    },
+    {
+      "name": "voice_name",
+      "type": "text",
+      "default": "",
+      "label": "An exact voice name to use when the browser has it (blank = pick by language)"
+    },
+    {
+      "name": "open_wait_ms",
+      "type": "number",
+      "default": 5000,
+      "label": "How long the guide waits for a part to appear after it presses a step's open control (ms)"
+    },
+    {
+      "name": "sheet_below_px",
+      "type": "number",
+      "default": 640,
+      "label": "Below this screen width the card becomes a bottom sheet (px)"
+    },
+    {
+      "name": "sheet_min_px",
+      "type": "number",
+      "default": 160,
+      "label": "A sheet never gets shorter than this, even beside a target (px)"
+    },
+    {
+      "name": "sheet_max_share",
+      "type": "number",
+      "default": 0.72,
+      "label": "A sheet takes at most this share of the screen height (0-1)"
+    },
+    {
+      "name": "accept_portals",
+      "type": "list",
+      "default": [
+        "sm",
+        "tv"
+      ],
+      "label": "Which Guide me scripts How to Use pages may import here (the script's \"portal\")"
+    },
+    {
+      "name": "import_max_kb",
+      "type": "number",
+      "default": 256,
+      "label": "The largest Guide me script that may be imported (KB)"
+    },
+    {
+      "name": "voice_keys",
+      "type": "list",
+      "default": [
+        "voice_prefer",
+        "voice_name_hint",
+        "voice_name",
+        "rate",
+        "pitch",
+        "speak_by_default"
+      ],
+      "label": "Which voice settings a screen's own tour may carry (anything else in a script's voice is dropped)"
+    },
+    {
+      "name": "chip_template",
+      "type": "text",
+      "default": "video",
+      "label": "The tour whose chip shape a screen with no tour of its own is imported into"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "voice_prefer": "$voice_prefer",
+      "voice_name_hint": "$voice_name_hint",
+      "rate": "$rate",
+      "pitch": "$pitch",
+      "speak_by_default": "$speak_by_default",
+      "pad": "$pad",
+      "pulse_until_seen": "$pulse_until_seen",
+      "art_kinds": "$art_kinds",
+      "not_tours": "$not_tours",
+      "voice_name": "$voice_name",
+      "open_wait_ms": "$open_wait_ms",
+      "sheet_below_px": "$sheet_below_px",
+      "sheet_min_px": "$sheet_min_px",
+      "sheet_max_share": "$sheet_max_share",
+      "accept_portals": "$accept_portals",
+      "import_max_kb": "$import_max_kb",
+      "voice_keys": "$voice_keys",
+      "chip_template": "$chip_template"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-09-27 owner: a step-by-step tour guide on every screen of tv and SteadyMove, all chips and ops, professional narration with SVG pictures. The browser speaks (speechSynthesis), so a tour never costs money.",
+  "weight_basis": "page",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "voice_prefer": [
+          "en-IN",
+          "en-GB",
+          "en-US"
+        ],
+        "voice_name_hint": [
+          "Neural",
+          "Natural",
+          "Online",
+          "Google",
+          "Samantha",
+          "Daniel"
+        ],
+        "rate": 0.98,
+        "pitch": 1,
+        "speak_by_default": false,
+        "pad": 10,
+        "pulse_until_seen": true,
+        "art_kinds": [
+          "hero",
+          "flow",
+          "roads",
+          "meter",
+          "stack",
+          "check"
+        ],
+        "not_tours": [
+          "settings",
+          "messages",
+          "check"
+        ],
+        "voice_name": "",
+        "open_wait_ms": 5000,
+        "sheet_below_px": 640,
+        "sheet_min_px": 160,
+        "sheet_max_share": 0.72,
+        "accept_portals": [
+          "sm",
+          "tv"
+        ],
+        "import_max_kb": 256,
+        "voice_keys": [
+          "voice_prefer",
+          "voice_name_hint",
+          "voice_name",
+          "rate",
+          "pitch",
+          "speak_by_default"
+        ],
+        "chip_template": "video"
+      }
+    }
+  ]
+}

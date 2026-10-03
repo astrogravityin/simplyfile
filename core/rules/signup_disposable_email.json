@@ -1,0 +1,51 @@
+{
+  "rule_id": "signup_disposable_email",
+  "label": "Refuse throw-away email addresses at sign-up",
+  "description": "Switched OFF when shipped. Switch it on in Rules if strangers sign up with disposable addresses; edit the list of domains as you meet new ones.",
+  "trigger": "signup.submit",
+  "priority": 100,
+  "status": "inactive",
+  "version": 1,
+  "params": [
+    {
+      "name": "domains",
+      "type": "list",
+      "label": "Refused domains",
+      "default": [
+        "mailinator.com",
+        "guerrillamail.com",
+        "10minutemail.com",
+        "tempmail.com",
+        "yopmail.com"
+      ]
+    },
+    {
+      "name": "message",
+      "type": "text",
+      "label": "What they are told",
+      "default": "Please sign up with an email address you will keep — throw-away addresses cannot receive your password resets."
+    }
+  ],
+  "values": {},
+  "when": {
+    "op": "in_set",
+    "value": "$domain",
+    "set": "$domains"
+  },
+  "then": [
+    {
+      "kind": "refuse",
+      "message": "$message"
+    }
+  ],
+  "test_cases": [
+    {
+      "scenario": "signup_disposable",
+      "expect": true
+    },
+    {
+      "scenario": "signup_normal",
+      "expect": false
+    }
+  ]
+}

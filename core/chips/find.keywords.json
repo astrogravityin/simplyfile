@@ -1,0 +1,103 @@
+{
+  "chip_id": "find.keywords",
+  "kind": "accessor",
+  "set": "find",
+  "label": "Other words that should find a screen",
+  "aliases": [
+    "search synonyms",
+    "what people call a screen"
+  ],
+  "params": [
+    {
+      "name": "rows",
+      "type": "rows",
+      "default": [
+        {
+          "screen": "access",
+          "words": "people accounts users roles invite grant deny group password reset smtp email mail sign-up signup owner admin"
+        },
+        {
+          "screen": "activity",
+          "words": "ledger audit log history who did what requests report"
+        },
+        {
+          "screen": "visitors",
+          "words": "map world india country traffic page views sessions devices places geo"
+        },
+        {
+          "screen": "storage",
+          "words": "disk space files quota clean up delete recordings size"
+        },
+        {
+          "screen": "memory",
+          "words": "ram cpu server health load bandwidth alarm offenders watch"
+        },
+        {
+          "screen": "howto-config",
+          "words": "training help links guide tour teach"
+        },
+        {
+          "screen": "ocb",
+          "words": "build builder chips ops engine logic settings knobs publish draft"
+        },
+        {
+          "screen": "rcb",
+          "words": "build builder rules triggers banner refuse notify scenarios publish draft"
+        }
+      ],
+      "label": "Screen and the words that should find it"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "rows": "$rows"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "A screen is always found by its own name and its menu group. This chip adds the words people actually type instead - \"smtp\" for People & access, \"ram\" for Memory watch. A screen with no row here is still found by its name, so a new screen needs no change.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "rows": [
+          {
+            "screen": "access",
+            "words": "people accounts users roles invite grant deny group password reset smtp email mail sign-up signup owner admin"
+          },
+          {
+            "screen": "activity",
+            "words": "ledger audit log history who did what requests report"
+          },
+          {
+            "screen": "visitors",
+            "words": "map world india country traffic page views sessions devices places geo"
+          },
+          {
+            "screen": "storage",
+            "words": "disk space files quota clean up delete recordings size"
+          },
+          {
+            "screen": "memory",
+            "words": "ram cpu server health load bandwidth alarm offenders watch"
+          },
+          {
+            "screen": "howto-config",
+            "words": "training help links guide tour teach"
+          },
+          {
+            "screen": "ocb",
+            "words": "build builder chips ops engine logic settings knobs publish draft"
+          },
+          {
+            "screen": "rcb",
+            "words": "build builder rules triggers banner refuse notify scenarios publish draft"
+          }
+        ]
+      }
+    }
+  ],
+  "weight_basis": "Platform operations primitive, no business content. The words ARE the policy - add a synonym here, never in Python."
+}

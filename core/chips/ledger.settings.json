@@ -1,0 +1,146 @@
+{
+  "chip_id": "ledger.settings",
+  "kind": "accessor",
+  "set": "ledger",
+  "audience": "admin",
+  "label": "How the activity ledger and Visitors count and keep",
+  "aliases": [
+    "ledger retention",
+    "visitor lists"
+  ],
+  "params": [
+    {
+      "name": "repeat_seconds",
+      "type": "number",
+      "default": 30
+    },
+    {
+      "name": "keep_days_default",
+      "type": "number",
+      "default": 180
+    },
+    {
+      "name": "keep_days_min",
+      "type": "number",
+      "default": 1
+    },
+    {
+      "name": "keep_days_max",
+      "type": "number",
+      "default": 3650
+    },
+    {
+      "name": "beacon_per_minute",
+      "type": "number",
+      "default": 120
+    },
+    {
+      "name": "view_id_pattern",
+      "type": "text",
+      "default": "^[\\w-]{8,40}$"
+    },
+    {
+      "name": "activity_page_min",
+      "type": "number",
+      "default": 10
+    },
+    {
+      "name": "activity_page_max",
+      "type": "number",
+      "default": 200
+    },
+    {
+      "name": "report_people_shown",
+      "type": "number",
+      "default": 200
+    },
+    {
+      "name": "visitor_pages_shown",
+      "type": "number",
+      "default": 20
+    },
+    {
+      "name": "visitor_top_shown",
+      "type": "number",
+      "default": 12
+    },
+    {
+      "name": "visitor_devices_shown",
+      "type": "number",
+      "default": 6
+    },
+    {
+      "name": "visitor_browsers_shown",
+      "type": "number",
+      "default": 8
+    },
+    {
+      "name": "visitor_systems_shown",
+      "type": "number",
+      "default": 8
+    },
+    {
+      "name": "latest_shown",
+      "type": "number",
+      "default": 60
+    },
+    {
+      "name": "not_people",
+      "type": "list",
+      "default": [
+        "bot"
+      ]
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "repeat_seconds": "$repeat_seconds",
+      "keep_days_default": "$keep_days_default",
+      "keep_days_min": "$keep_days_min",
+      "keep_days_max": "$keep_days_max",
+      "beacon_per_minute": "$beacon_per_minute",
+      "view_id_pattern": "$view_id_pattern",
+      "activity_page_min": "$activity_page_min",
+      "activity_page_max": "$activity_page_max",
+      "report_people_shown": "$report_people_shown",
+      "visitor_pages_shown": "$visitor_pages_shown",
+      "visitor_top_shown": "$visitor_top_shown",
+      "visitor_devices_shown": "$visitor_devices_shown",
+      "visitor_browsers_shown": "$visitor_browsers_shown",
+      "visitor_systems_shown": "$visitor_systems_shown",
+      "latest_shown": "$latest_shown",
+      "not_people": "$not_people"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "repeat_seconds: the same person GETting the same path again within this is a poll, not a new visit. keep_days_default (clamped to keep_days_min..max): rows older than this are pruned. beacon_per_minute: page-view beacons one address may send. view_id_pattern: what a page view id must look like. The *_shown numbers size the report and Visitors lists. not_people: device kinds left out of totals and maps (bots).",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "repeat_seconds": 30,
+        "keep_days_default": 180,
+        "keep_days_min": 1,
+        "keep_days_max": 3650,
+        "beacon_per_minute": 120,
+        "view_id_pattern": "^[\\w-]{8,40}$",
+        "activity_page_min": 10,
+        "activity_page_max": 200,
+        "report_people_shown": 200,
+        "visitor_pages_shown": 20,
+        "visitor_top_shown": 12,
+        "visitor_devices_shown": 6,
+        "visitor_browsers_shown": 8,
+        "visitor_systems_shown": 8,
+        "latest_shown": 60,
+        "not_people": [
+          "bot"
+        ]
+      }
+    }
+  ],
+  "weight_basis": "Platform operations primitive, no business content. The knobs ARE the policy — edit them here, never in Python."
+}

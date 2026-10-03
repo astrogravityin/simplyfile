@@ -1,0 +1,256 @@
+{
+  "chip_id": "rich.allow_list",
+  "kind": "accessor",
+  "set": "rich",
+  "audience": "admin",
+  "label": "What an Article or a book part may hold - every tag and attribute not listed is dropped on save",
+  "aliases": [
+    "rich text allow list",
+    "article html"
+  ],
+  "params": [
+    {
+      "name": "allowed_tags",
+      "type": "json",
+      "default": [
+        "p",
+        "br",
+        "b",
+        "strong",
+        "i",
+        "em",
+        "u",
+        "s",
+        "sub",
+        "sup",
+        "blockquote",
+        "code",
+        "pre",
+        "h1",
+        "h2",
+        "h3",
+        "h4",
+        "h5",
+        "h6",
+        "ul",
+        "ol",
+        "li",
+        "hr",
+        "span",
+        "div",
+        "table",
+        "thead",
+        "tbody",
+        "tr",
+        "td",
+        "th",
+        "a",
+        "img",
+        "figure",
+        "figcaption",
+        "iframe",
+        "mark"
+      ],
+      "label": "allowed_tags"
+    },
+    {
+      "name": "allowed_attrs",
+      "type": "json",
+      "default": [
+        "href",
+        "src",
+        "alt",
+        "title",
+        "colspan",
+        "rowspan",
+        "width",
+        "height",
+        "style",
+        "class",
+        "allowfullscreen",
+        "frameborder",
+        "loading",
+        "data-align"
+      ],
+      "label": "allowed_attrs"
+    },
+    {
+      "name": "void_tags",
+      "type": "json",
+      "default": [
+        "br",
+        "hr",
+        "img"
+      ],
+      "label": "void_tags"
+    },
+    {
+      "name": "drop_content_tags",
+      "type": "json",
+      "default": [
+        "script",
+        "style",
+        "object",
+        "embed",
+        "template",
+        "noscript"
+      ],
+      "label": "drop_content_tags"
+    },
+    {
+      "name": "url_attrs",
+      "type": "json",
+      "default": [
+        "href",
+        "src"
+      ],
+      "label": "url_attrs"
+    },
+    {
+      "name": "safe_url",
+      "type": "text",
+      "default": "(?i)^(https?:|mailto:|data:image/(png|jpe?g|gif|webp|svg\\+xml);base64,|[./#])",
+      "label": "safe_url"
+    },
+    {
+      "name": "style_attrs",
+      "type": "json",
+      "default": [
+        "style"
+      ],
+      "label": "style_attrs"
+    },
+    {
+      "name": "safe_style",
+      "type": "text",
+      "default": "(?i)^[a-z0-9 :;%#(),.\\-'\"/_]*$",
+      "label": "safe_style"
+    },
+    {
+      "name": "style_banned_words",
+      "type": "json",
+      "default": [
+        "expression"
+      ],
+      "label": "style_banned_words"
+    },
+    {
+      "name": "tag_safe_url",
+      "type": "json",
+      "default": {
+        "iframe": "(?i)^https://www\\.(youtube|youtube-nocookie)\\.com/embed/[\\w-]+(\\?[\\w=&;-]*)?$"
+      },
+      "label": "A tag's own stricter URL rule (an iframe only from YouTube's embed address)"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "allowed_tags": "$allowed_tags",
+      "allowed_attrs": "$allowed_attrs",
+      "void_tags": "$void_tags",
+      "drop_content_tags": "$drop_content_tags",
+      "url_attrs": "$url_attrs",
+      "safe_url": "$safe_url",
+      "style_attrs": "$style_attrs",
+      "safe_style": "$safe_style",
+      "style_banned_words": "$style_banned_words",
+      "tag_safe_url": "$tag_safe_url"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-02 owner: Articles + Books (from AstroStage's Study Article and Build Your Own Digital Book) - rich text is cleaned on the SERVER on every save (AstroStage cleaned only in the browser). Manuals' allow-list cleaner (manuals.clean_html) with these rules.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "allowed_tags": [
+          "p",
+          "br",
+          "b",
+          "strong",
+          "i",
+          "em",
+          "u",
+          "s",
+          "sub",
+          "sup",
+          "blockquote",
+          "code",
+          "pre",
+          "h1",
+          "h2",
+          "h3",
+          "h4",
+          "h5",
+          "h6",
+          "ul",
+          "ol",
+          "li",
+          "hr",
+          "span",
+          "div",
+          "table",
+          "thead",
+          "tbody",
+          "tr",
+          "td",
+          "th",
+          "a",
+          "img",
+          "figure",
+          "figcaption",
+          "iframe",
+          "mark"
+        ],
+        "allowed_attrs": [
+          "href",
+          "src",
+          "alt",
+          "title",
+          "colspan",
+          "rowspan",
+          "width",
+          "height",
+          "style",
+          "class",
+          "allowfullscreen",
+          "frameborder",
+          "loading",
+          "data-align"
+        ],
+        "void_tags": [
+          "br",
+          "hr",
+          "img"
+        ],
+        "drop_content_tags": [
+          "script",
+          "style",
+          "object",
+          "embed",
+          "template",
+          "noscript"
+        ],
+        "url_attrs": [
+          "href",
+          "src"
+        ],
+        "safe_url": "(?i)^(https?:|mailto:|data:image/(png|jpe?g|gif|webp|svg\\+xml);base64,|[./#])",
+        "style_attrs": [
+          "style"
+        ],
+        "safe_style": "(?i)^[a-z0-9 :;%#(),.\\-'\"/_]*$",
+        "style_banned_words": [
+          "expression"
+        ],
+        "tag_safe_url": {
+          "iframe": "(?i)^https://www\\.(youtube|youtube-nocookie)\\.com/embed/[\\w-]+(\\?[\\w=&;-]*)?$"
+        }
+      }
+    }
+  ],
+  "weight_basis": "Portal business setting of the Training & Video Portal. The knobs ARE the policy — edit them here, never in Python. Owner-only (audience admin): a looser value here would open a security hole or spend the owner's disk, so editors see and test it but cannot change it."
+}

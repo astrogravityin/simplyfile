@@ -1,0 +1,127 @@
+{
+  "chip_id": "edition.settings",
+  "kind": "accessor",
+  "set": "edition",
+  "audience": "admin",
+  "label": "This portal: its name, its line under the logo, and which screens it shows",
+  "aliases": [
+    "steadymove",
+    "tv or steadymove",
+    "product editions"
+  ],
+  "params": [
+    {
+      "name": "default_edition",
+      "type": "text",
+      "default": "simplyfile",
+      "label": "The edition a server is when PORTAL_EDITION is not set"
+    },
+    {
+      "name": "rows",
+      "type": "rows",
+      "default": [
+        {
+          "id": "simplyfile",
+          "product_name": "SimplyFile",
+          "brand_sub": "Tax filing · 3CD · ITR-3 · ITR-5",
+          "landing": "#/clients",
+          "screens": [
+            "clients",
+            "intake",
+            "recon",
+            "manuals",
+            "howto",
+            "guideme",
+            "tourvideo",
+            "setup",
+            "keys",
+            "buykey",
+            "keysales"
+          ],
+          "words_prefix": "sf_",
+          "tour": null,
+          "selling": [
+            [
+              "users",
+              "sell_master",
+              "sell_master_line"
+            ],
+            [
+              "link",
+              "sell_map",
+              "sell_map_line"
+            ],
+            [
+              "check",
+              "sell_recon",
+              "sell_recon_line"
+            ]
+          ],
+          "jump_signin": true
+        }
+      ],
+      "label": "Each edition: its name, tagline, first screen and the screens it shows"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "default_edition": "$default_edition",
+      "rows": "$rows"
+    }
+  },
+  "returns": "record",
+  "version": 11,
+  "status": "published",
+  "description_nl": "One codebase, two products (owner, 2026-09-18: 'SteadyMove is tv + new features'). A server is told which it is by PORTAL_EDITION (a hosting fact, set in its service file). This chip says what each edition is called and which of the catalog's screens it shows; the framework's own admin screens are always there. tv is frozen - new screens are added to steadymove only, except what the owner names for both (2026-09-20: frames 'Frames from a video' and images 'Image Library' on tv AND SteadyMove; on tv the library has no Studio to send a picture to, so the page hides Use for a shot / character - the server says can_use). tour: the sign-in page's own tour video, served from static/tour (video, captions, poster). selling: the cards on the sign-in page, each [icon, title word, line word] (words are ui.app, with the edition's words_prefix). jump_signin: a Sign in button at the top of the sign-in page on a phone, where the form sits below the whole pitch. 2026-09-28: guideme (Guide Me Builder) on SteadyMove only. 2026-09-28 owner (\"make Katha standard as tv and sm\"): doors - another address of the same edition (katha.valuestream.in on SteadyMove) with its own name, line under the logo, first screen, pitch words (words_prefix) and cards; the same shell, sign-in card and menu, never a page of its own. read (Read stories) is SteadyMove's shelf screen, katha's first screen. A door's screens: the ONLY portal screens its menu and search show (Katha: Watch, Read, Listen - no editing; Continue this story opens SteadyMove). The framework's own admin screens stay for those who may open them. A door's launch: the Launch Studio button (top right) - for each of the door's hosts, the workshop address to open (katha.localhost opens the local SteadyMove). 2026-09-30 owner (Katha Groups): groups - make a group of people by email, they accept, works are shared with it - on SteadyMove (beside Publish & Circles) and on the Katha door. site_hides (2026-10-01 owner: \"I don't want Katha in sm's menu\"): screens the edition's OWN address leaves off its menu and search because a door shows them (Katha's reading screens live on katha.valuestream.in); they still open from a link or a bell. site_sends {this address: the door's address}: a link to a site_hides screen opened HERE is sent on to the door (2026-10-01 owner: \"send Katha links to katha.valuestream.in\") - bookmarks and bells land on Katha.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "default_edition": "simplyfile",
+        "rows": [
+          {
+            "id": "simplyfile",
+            "product_name": "SimplyFile",
+            "brand_sub": "Tax filing · 3CD · ITR-3 · ITR-5",
+            "landing": "#/clients",
+            "screens": [
+              "clients",
+              "intake",
+              "recon",
+              "manuals",
+              "howto",
+              "guideme",
+              "tourvideo",
+              "setup",
+              "keys",
+              "buykey",
+              "keysales"
+            ],
+            "words_prefix": "sf_",
+            "tour": null,
+            "selling": [
+              [
+                "users",
+                "sell_master",
+                "sell_master_line"
+              ],
+              [
+                "link",
+                "sell_map",
+                "sell_map_line"
+              ],
+              [
+                "check",
+                "sell_recon",
+                "sell_recon_line"
+              ]
+            ],
+            "jump_signin": true
+          }
+        ]
+      }
+    }
+  ],
+  "weight_basis": "Owner-only (audience admin): this decides what a whole product shows to everyone."
+}

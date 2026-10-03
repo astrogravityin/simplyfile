@@ -1,0 +1,68 @@
+{
+  "chip_id": "lists.searches_fuzzy",
+  "kind": "predicate",
+  "set": "lists",
+  "label": "Does this search go the forgiving way (typos, half words, best match first)",
+  "aliases": [
+    "searches fuzzy"
+  ],
+  "params": [
+    {
+      "name": "q",
+      "type": "text",
+      "default": "",
+      "label": "what was typed, trimmed"
+    },
+    {
+      "name": "fuzzy_min",
+      "type": "number",
+      "default": 0,
+      "label": "the list's fuzzy_min (0 = exact words)"
+    }
+  ],
+  "expr": {
+    "op": "all",
+    "items": [
+      {
+        "op": "not",
+        "item": {
+          "op": "eq",
+          "left": "$q",
+          "right": ""
+        }
+      },
+      {
+        "op": "gt",
+        "left": "$fuzzy_min",
+        "right": 0
+      }
+    ]
+  },
+  "returns": "boolean",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-04 owner: \"Chips and ops audit for core/lists.py\" - every number, word list and yes/no the list route held.",
+  "test_cases": [
+    {
+      "args": {
+        "q": "pedes",
+        "fuzzy_min": 0.75
+      },
+      "expect_value": true
+    },
+    {
+      "args": {
+        "q": "",
+        "fuzzy_min": 0.75
+      },
+      "expect_value": false
+    },
+    {
+      "args": {
+        "q": "pedes",
+        "fuzzy_min": 0
+      },
+      "expect_value": false
+    }
+  ]
+}

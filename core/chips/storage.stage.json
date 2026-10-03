@@ -1,0 +1,334 @@
+{
+  "chip_id": "storage.stage",
+  "kind": "accessor",
+  "set": "storage",
+  "audience": "admin",
+  "label": "Where one person's clean-up stands, and what the owner may do next",
+  "aliases": [
+    "cleanup timeline",
+    "storage requests"
+  ],
+  "params": [
+    {
+      "name": "requests",
+      "type": "number",
+      "default": 0
+    },
+    {
+      "name": "first_at",
+      "type": "number",
+      "default": null,
+      "label": "First request (seconds since 1970)"
+    },
+    {
+      "name": "last_at",
+      "type": "number",
+      "default": null,
+      "label": "Latest request (seconds since 1970)"
+    },
+    {
+      "name": "now",
+      "type": "number",
+      "default": 0
+    },
+    {
+      "name": "gap_days",
+      "type": "number",
+      "default": 3,
+      "label": "Days between one request and the next"
+    },
+    {
+      "name": "delete_after_days",
+      "type": "number",
+      "default": 7,
+      "label": "Days from the first request before deleting is allowed"
+    },
+    {
+      "name": "max_requests",
+      "type": "number",
+      "default": 3
+    },
+    {
+      "name": "label_none",
+      "type": "text",
+      "default": "No request sent"
+    },
+    {
+      "name": "label_sent",
+      "type": "text",
+      "default": "Request {n} of {max} sent {date}"
+    },
+    {
+      "name": "label_may_delete",
+      "type": "text",
+      "default": "May delete since {date}"
+    }
+  ],
+  "expr": {
+    "vop": "choose",
+    "cases": [
+      {
+        "when": {
+          "op": "eq",
+          "left": "$requests",
+          "right": 0
+        },
+        "then": {
+          "vop": "record",
+          "fields": {
+            "requests": 0,
+            "can_request": true,
+            "next_request_at": null,
+            "can_delete": false,
+            "delete_at": null,
+            "label": "$label_none"
+          }
+        }
+      }
+    ],
+    "else": {
+      "vop": "record",
+      "fields": {
+        "requests": "$requests",
+        "next_request_at": {
+          "vop": "choose",
+          "cases": [
+            {
+              "when": {
+                "op": "lt",
+                "left": "$requests",
+                "right": "$max_requests"
+              },
+              "then": {
+                "vop": "add",
+                "a": "$last_at",
+                "b": {
+                  "vop": "mul",
+                  "a": "$gap_days",
+                  "b": 86400
+                }
+              }
+            }
+          ],
+          "else": null
+        },
+        "can_request": {
+          "op": "all",
+          "items": [
+            {
+              "op": "lt",
+              "left": "$requests",
+              "right": "$max_requests"
+            },
+            {
+              "op": "ge",
+              "left": "$now",
+              "right": {
+                "vop": "add",
+                "a": "$last_at",
+                "b": {
+                  "vop": "mul",
+                  "a": "$gap_days",
+                  "b": 86400
+                }
+              }
+            }
+          ]
+        },
+        "delete_at": {
+          "vop": "add",
+          "a": "$first_at",
+          "b": {
+            "vop": "mul",
+            "a": "$delete_after_days",
+            "b": 86400
+          }
+        },
+        "can_delete": {
+          "op": "all",
+          "items": [
+            {
+              "op": "ge",
+              "left": "$requests",
+              "right": "$max_requests"
+            },
+            {
+              "op": "ge",
+              "left": "$now",
+              "right": {
+                "vop": "add",
+                "a": "$first_at",
+                "b": {
+                  "vop": "mul",
+                  "a": "$delete_after_days",
+                  "b": 86400
+                }
+              }
+            }
+          ]
+        },
+        "label": {
+          "vop": "choose",
+          "cases": [
+            {
+              "when": {
+                "op": "all",
+                "items": [
+                  {
+                    "op": "ge",
+                    "left": "$requests",
+                    "right": "$max_requests"
+                  },
+                  {
+                    "op": "ge",
+                    "left": "$now",
+                    "right": {
+                      "vop": "add",
+                      "a": "$first_at",
+                      "b": {
+                        "vop": "mul",
+                        "a": "$delete_after_days",
+                        "b": 86400
+                      }
+                    }
+                  }
+                ]
+              },
+              "then": {
+                "vop": "template",
+                "text": "$label_may_delete",
+                "values": {
+                  "date": {
+                    "vop": "epoch_date",
+                    "epoch": {
+                      "vop": "add",
+                      "a": "$first_at",
+                      "b": {
+                        "vop": "mul",
+                        "a": "$delete_after_days",
+                        "b": 86400
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ],
+          "else": {
+            "vop": "template",
+            "text": "$label_sent",
+            "values": {
+              "n": "$requests",
+              "max": "$max_requests",
+              "date": {
+                "vop": "epoch_date",
+                "epoch": "$last_at"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "The fair order, enforced on the server: request 1 any time → request 2 at least gap_days later → request 3 at least gap_days after that → from delete_after_days after the first, with all max_requests sent, the owner may delete some or all of that person's items.",
+  "test_cases": [
+    {
+      "args": {
+        "requests": 0,
+        "now": 1000
+      },
+      "expect_value": {
+        "requests": 0,
+        "can_request": true,
+        "next_request_at": null,
+        "can_delete": false,
+        "delete_at": null,
+        "label": "No request sent"
+      }
+    },
+    {
+      "args": {
+        "requests": 1,
+        "first_at": 0,
+        "last_at": 0,
+        "now": 86400
+      },
+      "expect_value": {
+        "requests": 1,
+        "next_request_at": 259200,
+        "can_request": false,
+        "delete_at": 604800,
+        "can_delete": false,
+        "label": "Request 1 of 3 sent 01 Jan 1970"
+      }
+    },
+    {
+      "args": {
+        "requests": 1,
+        "first_at": 0,
+        "last_at": 0,
+        "now": 260000
+      },
+      "expect_value": {
+        "requests": 1,
+        "next_request_at": 259200,
+        "can_request": true,
+        "delete_at": 604800,
+        "can_delete": false,
+        "label": "Request 1 of 3 sent 01 Jan 1970"
+      }
+    },
+    {
+      "args": {
+        "requests": 3,
+        "first_at": 0,
+        "last_at": 518400,
+        "now": 560000
+      },
+      "expect_value": {
+        "requests": 3,
+        "next_request_at": null,
+        "can_request": false,
+        "delete_at": 604800,
+        "can_delete": false,
+        "label": "Request 3 of 3 sent 07 Jan 1970"
+      }
+    },
+    {
+      "args": {
+        "requests": 3,
+        "first_at": 0,
+        "last_at": 518400,
+        "now": 700000
+      },
+      "expect_value": {
+        "requests": 3,
+        "next_request_at": null,
+        "can_request": false,
+        "delete_at": 604800,
+        "can_delete": true,
+        "label": "May delete since 08 Jan 1970"
+      }
+    },
+    {
+      "args": {
+        "requests": 2,
+        "first_at": 0,
+        "last_at": 300000,
+        "now": 9000000
+      },
+      "expect_value": {
+        "requests": 2,
+        "next_request_at": 559200,
+        "can_request": true,
+        "delete_at": 604800,
+        "can_delete": false,
+        "label": "Request 2 of 3 sent 04 Jan 1970"
+      }
+    }
+  ],
+  "weight_basis": "Platform operations primitive, no business content. The knobs ARE the policy — edit them here, never in Python."
+}

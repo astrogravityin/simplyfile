@@ -1,0 +1,307 @@
+{
+  "chip_id": "ui.keysales",
+  "kind": "accessor",
+  "set": "ui",
+  "label": "Every word on the Keys for sale screen",
+  "aliases": [
+    "key sales words"
+  ],
+  "params": [
+    {
+      "name": "title",
+      "type": "text",
+      "default": "Keys for sale",
+      "label": "title"
+    },
+    {
+      "name": "lede",
+      "type": "text",
+      "default": "Put one of your own keys up for sale and answer the requests to buy credit on it. Approving hands over prepaid credit and raises a bill — this portal does not take the money.",
+      "label": "lede"
+    },
+    {
+      "name": "offers_card",
+      "type": "text",
+      "default": "What you are selling",
+      "label": "offers_card"
+    },
+    {
+      "name": "new_offer",
+      "type": "text",
+      "default": "Sell a key",
+      "label": "new_offer"
+    },
+    {
+      "name": "offer_key",
+      "type": "text",
+      "default": "Which of your keys",
+      "label": "offer_key"
+    },
+    {
+      "name": "offer_title",
+      "type": "text",
+      "default": "Call it",
+      "label": "offer_title"
+    },
+    {
+      "name": "offer_note",
+      "type": "text",
+      "default": "What buyers should know (optional)",
+      "label": "offer_note"
+    },
+    {
+      "name": "offer_markup",
+      "type": "text",
+      "default": "Add on top of what each run costs (%)",
+      "label": "offer_markup"
+    },
+    {
+      "name": "offer_active",
+      "type": "text",
+      "default": "On sale",
+      "label": "offer_active"
+    },
+    {
+      "name": "offer_save",
+      "type": "text",
+      "default": "Save",
+      "label": "offer_save"
+    },
+    {
+      "name": "offer_delete",
+      "type": "text",
+      "default": "Remove",
+      "label": "offer_delete"
+    },
+    {
+      "name": "offer_delete_title",
+      "type": "text",
+      "default": "Remove {title}?",
+      "label": "offer_delete_title"
+    },
+    {
+      "name": "offer_delete_body",
+      "type": "text",
+      "default": "It comes off the shelf. Credit people already bought keeps working.",
+      "label": "offer_delete_body"
+    },
+    {
+      "name": "offer_off_tag",
+      "type": "text",
+      "default": "Not on sale",
+      "label": "offer_off_tag"
+    },
+    {
+      "name": "no_offers_title",
+      "type": "text",
+      "default": "No key on sale",
+      "label": "no_offers_title"
+    },
+    {
+      "name": "no_offers_body",
+      "type": "text",
+      "default": "Until you put one up, nobody sees a Buy a key menu at all.",
+      "label": "no_offers_body"
+    },
+    {
+      "name": "waiting_card",
+      "type": "text",
+      "default": "Requests waiting",
+      "label": "waiting_card"
+    },
+    {
+      "name": "answered_card",
+      "type": "text",
+      "default": "Already answered",
+      "label": "answered_card"
+    },
+    {
+      "name": "approve",
+      "type": "text",
+      "default": "Approve",
+      "label": "approve"
+    },
+    {
+      "name": "reject",
+      "type": "text",
+      "default": "Turn down",
+      "label": "reject"
+    },
+    {
+      "name": "approve_title",
+      "type": "text",
+      "default": "Give {buyer} {amount} of credit?",
+      "label": "approve_title"
+    },
+    {
+      "name": "approve_body",
+      "type": "text",
+      "default": "Their runs spend your key up to {amount} and stop there. A bill for it goes to them; no money moves through this portal.",
+      "label": "approve_body"
+    },
+    {
+      "name": "reject_title",
+      "type": "text",
+      "default": "Turn down {buyer}?",
+      "label": "reject_title"
+    },
+    {
+      "name": "reject_body",
+      "type": "text",
+      "default": "They are told no. Say why, if you like.",
+      "label": "reject_body"
+    },
+    {
+      "name": "reason_label",
+      "type": "text",
+      "default": "Reason (optional)",
+      "label": "reason_label"
+    },
+    {
+      "name": "no_waiting_title",
+      "type": "text",
+      "default": "Nothing waiting",
+      "label": "no_waiting_title"
+    },
+    {
+      "name": "no_waiting_body",
+      "type": "text",
+      "default": "Requests to buy credit on your keys land here.",
+      "label": "no_waiting_body"
+    },
+    {
+      "name": "col_when",
+      "type": "text",
+      "default": "Asked",
+      "label": "col_when"
+    },
+    {
+      "name": "col_buyer",
+      "type": "text",
+      "default": "Buyer",
+      "label": "col_buyer"
+    },
+    {
+      "name": "col_amount",
+      "type": "text",
+      "default": "Amount",
+      "label": "col_amount"
+    },
+    {
+      "name": "col_offer",
+      "type": "text",
+      "default": "Offer",
+      "label": "col_offer"
+    },
+    {
+      "name": "col_state",
+      "type": "text",
+      "default": "State",
+      "label": "col_state"
+    },
+    {
+      "name": "col_credit",
+      "type": "text",
+      "default": "Credit left",
+      "label": "col_credit"
+    },
+    {
+      "name": "cancel",
+      "type": "text",
+      "default": "Cancel",
+      "label": "cancel"
+    },
+    {
+      "name": "offer_edit",
+      "type": "text",
+      "default": "Edit"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "title": "$title",
+      "lede": "$lede",
+      "offers_card": "$offers_card",
+      "new_offer": "$new_offer",
+      "offer_key": "$offer_key",
+      "offer_title": "$offer_title",
+      "offer_note": "$offer_note",
+      "offer_markup": "$offer_markup",
+      "offer_active": "$offer_active",
+      "offer_save": "$offer_save",
+      "offer_delete": "$offer_delete",
+      "offer_delete_title": "$offer_delete_title",
+      "offer_delete_body": "$offer_delete_body",
+      "offer_off_tag": "$offer_off_tag",
+      "no_offers_title": "$no_offers_title",
+      "no_offers_body": "$no_offers_body",
+      "waiting_card": "$waiting_card",
+      "answered_card": "$answered_card",
+      "approve": "$approve",
+      "reject": "$reject",
+      "approve_title": "$approve_title",
+      "approve_body": "$approve_body",
+      "reject_title": "$reject_title",
+      "reject_body": "$reject_body",
+      "reason_label": "$reason_label",
+      "no_waiting_title": "$no_waiting_title",
+      "no_waiting_body": "$no_waiting_body",
+      "col_when": "$col_when",
+      "col_buyer": "$col_buyer",
+      "col_amount": "$col_amount",
+      "col_offer": "$col_offer",
+      "col_state": "$col_state",
+      "col_credit": "$col_credit",
+      "cancel": "$cancel",
+      "offer_edit": "$offer_edit"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "Every word the seller reads on the desk where offers are configured and requests are answered.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "title": "Keys for sale",
+        "lede": "Put one of your own keys up for sale and answer the requests to buy credit on it. Approving hands over prepaid credit and raises a bill — this portal does not take the money.",
+        "offers_card": "What you are selling",
+        "new_offer": "Sell a key",
+        "offer_key": "Which of your keys",
+        "offer_title": "Call it",
+        "offer_note": "What buyers should know (optional)",
+        "offer_markup": "Add on top of what each run costs (%)",
+        "offer_active": "On sale",
+        "offer_save": "Save",
+        "offer_delete": "Remove",
+        "offer_delete_title": "Remove {title}?",
+        "offer_delete_body": "It comes off the shelf. Credit people already bought keeps working.",
+        "offer_off_tag": "Not on sale",
+        "no_offers_title": "No key on sale",
+        "no_offers_body": "Until you put one up, nobody sees a Buy a key menu at all.",
+        "waiting_card": "Requests waiting",
+        "answered_card": "Already answered",
+        "approve": "Approve",
+        "reject": "Turn down",
+        "approve_title": "Give {buyer} {amount} of credit?",
+        "approve_body": "Their runs spend your key up to {amount} and stop there. A bill for it goes to them; no money moves through this portal.",
+        "reject_title": "Turn down {buyer}?",
+        "reject_body": "They are told no. Say why, if you like.",
+        "reason_label": "Reason (optional)",
+        "no_waiting_title": "Nothing waiting",
+        "no_waiting_body": "Requests to buy credit on your keys land here.",
+        "col_when": "Asked",
+        "col_buyer": "Buyer",
+        "col_amount": "Amount",
+        "col_offer": "Offer",
+        "col_state": "State",
+        "col_credit": "Credit left",
+        "cancel": "Cancel",
+        "offer_edit": "Edit"
+      }
+    }
+  ],
+  "weight_basis": "The seller's words."
+}

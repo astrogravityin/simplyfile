@@ -1,0 +1,92 @@
+{
+  "page_key": "sf-setup",
+  "title": "Projects & portal",
+  "start_url": "/#/setup",
+  "prod_base": "https://sf.valuestream.in",
+  "voice": "en-IN-NeerjaNeural",
+  "rate": "+0%",
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "blur": [
+    "#whoami",
+    "#userpop .head",
+    ".tile .meta b",
+    "#vd-title"
+  ],
+  "covers": [
+    "new project",
+    "folder or Git",
+    "portal settings",
+    "storage limits"
+  ],
+  "steps": [
+    {
+      "chapter": "Welcome",
+      "say": "Projects and portal is for documenting an application. Videos and Studio need none of it.",
+      "do": [
+        {
+          "wait_for": "#new-proj"
+        },
+        {
+          "highlight": "#new-proj",
+          "optional": true
+        }
+      ]
+    },
+    {
+      "chapter": "A project",
+      "say": "New project asks for a name, then where the code is: a folder on this machine, or a Git repository.",
+      "do": [
+        {
+          "click": "#new-proj"
+        },
+        {
+          "wait": 1.5
+        },
+        {
+          "highlight": "#pd-name",
+          "optional": true
+        },
+        {
+          "highlight": "#pd-kind",
+          "optional": true
+        }
+      ]
+    },
+    {
+      "say": "Save it, then Scan reads the project's screens, so manuals and How to Use links can hang off them.",
+      "do": [
+        {
+          "highlight": "#pd-save",
+          "optional": true
+        },
+        {
+          "press": "Escape",
+          "optional": true
+        },
+        {
+          "wait": 1
+        }
+      ]
+    },
+    {
+      "chapter": "Portal",
+      "say": "Narration settings: the How to get a Gemini key video and the say-as list, so your product's names are spoken properly. Storage limits for everyone, and for each person, live on Admin, Storage.",
+      "do": [
+        {
+          "scroll_to": "#setup-narration",
+          "optional": true
+        },
+        {
+          "highlight": "#setup-narration",
+          "optional": true
+        },
+        {
+          "wait": 1
+        }
+      ]
+    }
+  ]
+}

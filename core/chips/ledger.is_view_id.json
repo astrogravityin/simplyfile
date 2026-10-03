@@ -1,0 +1,54 @@
+{
+  "chip_id": "ledger.is_view_id",
+  "kind": "predicate",
+  "set": "ledger",
+  "audience": "admin",
+  "label": "A page-view id the beacon may use",
+  "aliases": [],
+  "params": [
+    {
+      "name": "view_id",
+      "type": "text",
+      "default": ""
+    },
+    {
+      "name": "pattern",
+      "type": "text",
+      "default": "^[\\w-]{8,40}$"
+    }
+  ],
+  "expr": {
+    "op": "eq",
+    "left": {
+      "vop": "matches",
+      "text": "$view_id",
+      "pattern": "$pattern"
+    },
+    "right": true
+  },
+  "returns": "boolean",
+  "version": 1,
+  "status": "published",
+  "description_nl": "The beacon is open to everyone, so what it sends is checked before anything is written.",
+  "test_cases": [
+    {
+      "args": {
+        "view_id": "abcdef012345"
+      },
+      "expect": true
+    },
+    {
+      "args": {
+        "view_id": "x"
+      },
+      "expect": false
+    },
+    {
+      "args": {
+        "view_id": "<script>alert(1)</script>"
+      },
+      "expect": false
+    }
+  ],
+  "weight_basis": "Platform operations primitive, no business content. The knobs ARE the policy — edit them here, never in Python."
+}

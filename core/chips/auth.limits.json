@@ -1,0 +1,106 @@
+{
+  "chip_id": "auth.limits",
+  "kind": "accessor",
+  "set": "auth",
+  "audience": "admin",
+  "label": "How hard one address may knock",
+  "aliases": [
+    "rate limit",
+    "lockout",
+    "session length"
+  ],
+  "params": [
+    {
+      "name": "auth_per_minute",
+      "type": "number",
+      "default": 20
+    },
+    {
+      "name": "lock_after",
+      "type": "number",
+      "default": 8
+    },
+    {
+      "name": "lock_for_seconds",
+      "type": "number",
+      "default": 900
+    },
+    {
+      "name": "sends_per_hour",
+      "type": "number",
+      "default": 3
+    },
+    {
+      "name": "session_days",
+      "type": "number",
+      "default": 14
+    },
+    {
+      "name": "sessions_kept",
+      "type": "number",
+      "default": 20000,
+      "label": "How many signed-in browsers are kept at once (the oldest beyond this are signed out)"
+    },
+    {
+      "name": "tokens_kept",
+      "type": "number",
+      "default": 500,
+      "label": "one-shot links kept at most (verify / reset / invite)"
+    },
+    {
+      "name": "codes_kept",
+      "type": "number",
+      "default": 2000,
+      "label": "emailed codes kept at most"
+    },
+    {
+      "name": "code_log_kept",
+      "type": "number",
+      "default": 5000,
+      "label": "rows of the code-send log kept at most"
+    },
+    {
+      "name": "code_log_seconds",
+      "type": "number",
+      "default": 86400,
+      "label": "how far back the code-send log reaches (the mail throttle's window)"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "auth_per_minute": "$auth_per_minute",
+      "lock_after": "$lock_after",
+      "lock_for_seconds": "$lock_for_seconds",
+      "sends_per_hour": "$sends_per_hour",
+      "session_days": "$session_days",
+      "sessions_kept": "$sessions_kept",
+      "tokens_kept": "$tokens_kept",
+      "codes_kept": "$codes_kept",
+      "code_log_kept": "$code_log_kept",
+      "code_log_seconds": "$code_log_seconds"
+    }
+  },
+  "returns": "record",
+  "version": 3,
+  "status": "published",
+  "description_nl": "auth_per_minute: sign-in calls one IP may make a minute. lock_after wrong passwords for one account rest it lock_for_seconds. sends_per_hour: codes one address may be sent an hour, so the portal can never be used to bombard somebody's inbox. session_days: how long a sign-in lasts. 2026-10-04 owner: \"Chips and ops audit for core/store.py\" - caps, user-name making, the last-owner test, the new role and the public fields the store held.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "auth_per_minute": 20,
+        "lock_after": 8,
+        "lock_for_seconds": 900,
+        "sends_per_hour": 3,
+        "session_days": 14,
+        "sessions_kept": 20000,
+        "tokens_kept": 500,
+        "codes_kept": 2000,
+        "code_log_kept": 5000,
+        "code_log_seconds": 86400
+      }
+    }
+  ],
+  "weight_basis": "Platform access primitive, no business content. The knobs ARE the policy — edit them here, never in Python."
+}

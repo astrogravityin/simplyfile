@@ -1,0 +1,58 @@
+{
+  "chip_id": "limits.too_big",
+  "kind": "predicate",
+  "set": "limits",
+  "label": "Is a file bigger than the most allowed (megabytes, a chip's knob)",
+  "aliases": [
+    "file too big",
+    "size limit"
+  ],
+  "params": [
+    {
+      "name": "size",
+      "type": "number",
+      "default": 0,
+      "label": "The file's size in bytes"
+    },
+    {
+      "name": "most_mb",
+      "type": "number",
+      "default": 0,
+      "label": "The most allowed, in MB (a chip's knob)"
+    }
+  ],
+  "expr": {
+    "op": "gt",
+    "left": "$size",
+    "right": {
+      "vop": "mul",
+      "a": "$most_mb",
+      "b": 1048576
+    }
+  },
+  "returns": "boolean",
+  "description_nl": "2026-10-02 (selfcheck run 48 caught `len(data) > float(k[...]) * 1024 * 1024` in Python): a module asks this chip whether a picture / screenshot / cover is too big - never compares bytes with a chip's number itself.",
+  "test_cases": [
+    {
+      "args": {
+        "size": 5242881,
+        "most_mb": 5
+      },
+      "expect_value": true
+    },
+    {
+      "args": {
+        "size": 5242880,
+        "most_mb": 5
+      },
+      "expect_value": false
+    },
+    {
+      "args": {
+        "size": 1,
+        "most_mb": 0
+      },
+      "expect_value": true
+    }
+  ]
+}

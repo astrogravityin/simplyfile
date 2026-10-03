@@ -1,0 +1,67 @@
+{
+  "chip_id": "memory.counts_nic",
+  "kind": "predicate",
+  "set": "memory",
+  "audience": "admin",
+  "label": "This network interface counts toward server bandwidth",
+  "aliases": [
+    "bandwidth interface"
+  ],
+  "params": [
+    {
+      "name": "name",
+      "type": "string",
+      "default": ""
+    },
+    {
+      "name": "skip",
+      "type": "string",
+      "default": [
+        "lo",
+        "docker",
+        "veth",
+        "br-",
+        "virbr",
+        "vethernet",
+        "loopback"
+      ]
+    }
+  ],
+  "expr": {
+    "op": "not",
+    "item": {
+      "op": "eq",
+      "left": {
+        "vop": "starts_with_any",
+        "text": "$name",
+        "prefixes": "$skip"
+      },
+      "right": true
+    }
+  },
+  "returns": "boolean",
+  "version": 1,
+  "status": "published",
+  "description_nl": "FALSE for loopback and container bridges: traffic between containers crosses them too, so counting them would count the same bytes twice.",
+  "test_cases": [
+    {
+      "args": {
+        "name": "eth0"
+      },
+      "expect": true
+    },
+    {
+      "args": {
+        "name": "docker0"
+      },
+      "expect": false
+    },
+    {
+      "args": {
+        "name": "lo"
+      },
+      "expect": false
+    }
+  ],
+  "weight_basis": "Platform operations primitive, no business content. The knobs ARE the policy — edit them here, never in Python."
+}

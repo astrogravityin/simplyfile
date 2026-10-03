@@ -1,0 +1,65 @@
+{
+  "chip_id": "auth.email_problem",
+  "kind": "accessor",
+  "set": "auth",
+  "audience": "admin",
+  "label": "What is wrong with this email address (blank = nothing)",
+  "aliases": [],
+  "params": [
+    {
+      "name": "email",
+      "type": "text",
+      "default": ""
+    },
+    {
+      "name": "pattern",
+      "type": "text",
+      "default": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$"
+    },
+    {
+      "name": "msg_bad",
+      "type": "text",
+      "default": "Enter a real email address, like you@example.com."
+    }
+  ],
+  "expr": {
+    "vop": "choose",
+    "cases": [
+      {
+        "when": {
+          "op": "not",
+          "item": {
+            "op": "eq",
+            "left": {
+              "vop": "matches",
+              "text": "$email",
+              "pattern": "$pattern"
+            },
+            "right": true
+          }
+        },
+        "then": "$msg_bad"
+      }
+    ],
+    "else": ""
+  },
+  "returns": "text",
+  "version": 1,
+  "status": "published",
+  "description_nl": "Shape only — whether the address is really theirs is what the emailed code proves.",
+  "test_cases": [
+    {
+      "args": {
+        "email": "you@example.com"
+      },
+      "expect_value": ""
+    },
+    {
+      "args": {
+        "email": "you@"
+      },
+      "expect_value": "Enter a real email address, like you@example.com."
+    }
+  ],
+  "weight_basis": "Platform access primitive, no business content. The knobs ARE the policy — edit them here, never in Python."
+}

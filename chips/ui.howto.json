@@ -1,0 +1,252 @@
+{
+  "chip_id": "ui.howto",
+  "kind": "accessor",
+  "set": "ui",
+  "label": "Every word on the How to Use screen",
+  "aliases": [
+    "howto screen words"
+  ],
+  "params": [
+    {
+      "name": "no_project_title",
+      "type": "text",
+      "default": "No project yet"
+    },
+    {
+      "name": "no_project_body",
+      "type": "text",
+      "default": "How to Use hangs off a project’s screens. Register one and scan it, then come back."
+    },
+    {
+      "name": "register_project",
+      "type": "text",
+      "default": "Register a project"
+    },
+    {
+      "name": "title",
+      "type": "text",
+      "default": "How to Use"
+    },
+    {
+      "name": "lede",
+      "type": "text",
+      "default": "Every screen of <b>{project}</b>, and the links a reader gets when they press “How to Use” on it — a manual, a YouTube video, a recording, anything with an address."
+    },
+    {
+      "name": "no_screens",
+      "type": "text",
+      "default": "This project has no screens yet — <a href=\"#/setup\">scan it in Setup</a> and they appear here."
+    },
+    {
+      "name": "documented",
+      "type": "text",
+      "default": "<b>{covered}</b> of <b>{total}</b> screens documented"
+    },
+    {
+      "name": "live_links",
+      "type": "text",
+      "default": "<b>{n}</b> live links"
+    },
+    {
+      "name": "find_placeholder",
+      "type": "text",
+      "default": "Find a screen…"
+    },
+    {
+      "name": "only_empty",
+      "type": "text",
+      "default": "only screens with nothing attached"
+    },
+    {
+      "name": "reading_title",
+      "type": "text",
+      "default": "Reading these links from your app"
+    },
+    {
+      "name": "reading_line",
+      "type": "text",
+      "default": "No login, any origin, any framework:"
+    },
+    {
+      "name": "nothing_matches",
+      "type": "text",
+      "default": "Nothing matches."
+    },
+    {
+      "name": "group_screens",
+      "type": "text",
+      "default": "Screens"
+    },
+    {
+      "name": "discard_confirm",
+      "type": "text",
+      "default": "Discard the unsaved links on this screen?"
+    },
+    {
+      "name": "discard_title",
+      "type": "text",
+      "default": "Unsaved links"
+    },
+    {
+      "name": "discard_yes",
+      "type": "text",
+      "default": "Discard and switch"
+    },
+    {
+      "name": "no_screen_title",
+      "type": "text",
+      "default": "No screen selected"
+    },
+    {
+      "name": "no_screen_body",
+      "type": "text",
+      "default": "Pick one on the left."
+    },
+    {
+      "name": "add_link",
+      "type": "text",
+      "default": "Add a link"
+    },
+    {
+      "name": "save_links",
+      "type": "text",
+      "default": "Save links"
+    },
+    {
+      "name": "live_note",
+      "type": "text",
+      "default": "Unticking <b>Live</b> keeps a link here but hides it from readers — the way to retire a video without losing its address."
+    },
+    {
+      "name": "live_tip",
+      "type": "text",
+      "default": "Live — unticked stays here but hides from readers"
+    },
+    {
+      "name": "label_placeholder",
+      "type": "text",
+      "default": "What the reader sees"
+    },
+    {
+      "name": "type_auto",
+      "type": "text",
+      "default": "auto"
+    },
+    {
+      "name": "remove",
+      "type": "text",
+      "default": "Remove"
+    },
+    {
+      "name": "from_manual",
+      "type": "text",
+      "default": "Published by a manual — re-publishing rewrites this row."
+    },
+    {
+      "name": "nothing_title",
+      "type": "text",
+      "default": "Nothing attached yet"
+    },
+    {
+      "name": "nothing_body",
+      "type": "text",
+      "default": "A manual section, a YouTube walkthrough, a recording — whatever helps on this screen."
+    },
+    {
+      "name": "saved",
+      "type": "text",
+      "default": "Saved — {screen}"
+    },
+    {
+      "name": "row_remove_title",
+      "type": "text",
+      "default": "Remove this link?"
+    },
+    {
+      "name": "row_remove_body",
+      "type": "text",
+      "default": "This link comes off the list for this screen. Nothing changes for your readers until you press Save links."
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "no_project_title": "$no_project_title",
+      "no_project_body": "$no_project_body",
+      "register_project": "$register_project",
+      "title": "$title",
+      "lede": "$lede",
+      "no_screens": "$no_screens",
+      "documented": "$documented",
+      "live_links": "$live_links",
+      "find_placeholder": "$find_placeholder",
+      "only_empty": "$only_empty",
+      "reading_title": "$reading_title",
+      "reading_line": "$reading_line",
+      "nothing_matches": "$nothing_matches",
+      "group_screens": "$group_screens",
+      "discard_confirm": "$discard_confirm",
+      "discard_title": "$discard_title",
+      "discard_yes": "$discard_yes",
+      "no_screen_title": "$no_screen_title",
+      "no_screen_body": "$no_screen_body",
+      "add_link": "$add_link",
+      "save_links": "$save_links",
+      "live_note": "$live_note",
+      "live_tip": "$live_tip",
+      "label_placeholder": "$label_placeholder",
+      "type_auto": "$type_auto",
+      "remove": "$remove",
+      "from_manual": "$from_manual",
+      "nothing_title": "$nothing_title",
+      "nothing_body": "$nothing_body",
+      "saved": "$saved",
+      "row_remove_title": "$row_remove_title",
+      "row_remove_body": "$row_remove_body"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "The words of one screen. {placeholders} are filled on the page. A language overrides any of them with chip ui.howto.<lang> (for example ui.howto.hi).",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "no_project_title": "No project yet",
+        "no_project_body": "How to Use hangs off a project’s screens. Register one and scan it, then come back.",
+        "register_project": "Register a project",
+        "title": "How to Use",
+        "lede": "Every screen of <b>{project}</b>, and the links a reader gets when they press “How to Use” on it — a manual, a YouTube video, a recording, anything with an address.",
+        "no_screens": "This project has no screens yet — <a href=\"#/setup\">scan it in Setup</a> and they appear here.",
+        "documented": "<b>{covered}</b> of <b>{total}</b> screens documented",
+        "live_links": "<b>{n}</b> live links",
+        "find_placeholder": "Find a screen…",
+        "only_empty": "only screens with nothing attached",
+        "reading_title": "Reading these links from your app",
+        "reading_line": "No login, any origin, any framework:",
+        "nothing_matches": "Nothing matches.",
+        "group_screens": "Screens",
+        "discard_confirm": "Discard the unsaved links on this screen?",
+        "discard_title": "Unsaved links",
+        "discard_yes": "Discard and switch",
+        "no_screen_title": "No screen selected",
+        "no_screen_body": "Pick one on the left.",
+        "add_link": "Add a link",
+        "save_links": "Save links",
+        "live_note": "Unticking <b>Live</b> keeps a link here but hides it from readers — the way to retire a video without losing its address.",
+        "live_tip": "Live — unticked stays here but hides from readers",
+        "label_placeholder": "What the reader sees",
+        "type_auto": "auto",
+        "remove": "Remove",
+        "from_manual": "Published by a manual — re-publishing rewrites this row.",
+        "nothing_title": "Nothing attached yet",
+        "nothing_body": "A manual section, a YouTube walkthrough, a recording — whatever helps on this screen.",
+        "saved": "Saved — {screen}",
+        "row_remove_title": "Remove this link?",
+        "row_remove_body": "This link comes off the list for this screen. Nothing changes for your readers until you press Save links."
+      }
+    }
+  ],
+  "weight_basis": "Wording only. Every word on this screen lives here, never in JavaScript."
+}

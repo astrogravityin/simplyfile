@@ -1,0 +1,286 @@
+{
+  "chip_id": "sound.music_beds",
+  "kind": "accessor",
+  "set": "sound",
+  "label": "Free soft music the portal composes itself: chords, pace, tone, level",
+  "aliases": [
+    "background music",
+    "music bed"
+  ],
+  "params": [
+    {
+      "name": "rows",
+      "type": "rows",
+      "default": [
+        {
+          "id": "warm",
+          "name": "Warm and gentle",
+          "chords": [
+            [
+              261.63,
+              329.63,
+              392.0
+            ],
+            [
+              220.0,
+              261.63,
+              329.63
+            ],
+            [
+              174.61,
+              220.0,
+              261.63
+            ],
+            [
+              196.0,
+              246.94,
+              293.66
+            ]
+          ],
+          "chord_seconds": 4,
+          "tremolo_hz": 0.25,
+          "lowpass_hz": 1800,
+          "level": 0.25,
+          "echo": "0.8:0.7:120:0.25"
+        },
+        {
+          "id": "bright",
+          "name": "Bright and hopeful",
+          "chords": [
+            [
+              261.63,
+              329.63,
+              392.0
+            ],
+            [
+              196.0,
+              246.94,
+              293.66
+            ],
+            [
+              220.0,
+              261.63,
+              329.63
+            ],
+            [
+              174.61,
+              220.0,
+              261.63
+            ]
+          ],
+          "chord_seconds": 3,
+          "tremolo_hz": 0.5,
+          "lowpass_hz": 2600,
+          "level": 0.22,
+          "echo": "0.8:0.6:90:0.2"
+        },
+        {
+          "id": "calm",
+          "name": "Calm and slow",
+          "chords": [
+            [
+              220.0,
+              261.63,
+              329.63
+            ],
+            [
+              174.61,
+              220.0,
+              261.63
+            ],
+            [
+              261.63,
+              329.63,
+              392.0
+            ],
+            [
+              164.81,
+              196.0,
+              246.94
+            ]
+          ],
+          "chord_seconds": 5,
+          "tremolo_hz": 0.15,
+          "lowpass_hz": 1400,
+          "level": 0.25,
+          "echo": "0.8:0.8:180:0.3"
+        },
+        {
+          "id": "festive",
+          "name": "Festive",
+          "chords": [
+            [
+              196.0,
+              246.94,
+              293.66
+            ],
+            [
+              261.63,
+              329.63,
+              392.0
+            ],
+            [
+              146.83,
+              174.61,
+              220.0
+            ],
+            [
+              196.0,
+              246.94,
+              293.66
+            ]
+          ],
+          "chord_seconds": 2.5,
+          "tremolo_hz": 1.0,
+          "lowpass_hz": 3000,
+          "level": 0.2,
+          "echo": "0.8:0.5:60:0.2"
+        }
+      ],
+      "label": "The beds: chords (Hz per note), seconds per chord, tremolo, tone (low-pass Hz), level, echo"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "rows": "$rows"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-03 owner: \"add soft background music to the free-road ads\". No licensed track is fetched: the portal plays chords itself (ffmpeg sine voices, soft tremolo, low-pass, a little echo) into a short loop; the Sound step loops it under the film at sound.settings music_volume. Free, no licence, every note editable here.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "rows": [
+          {
+            "id": "warm",
+            "name": "Warm and gentle",
+            "chords": [
+              [
+                261.63,
+                329.63,
+                392.0
+              ],
+              [
+                220.0,
+                261.63,
+                329.63
+              ],
+              [
+                174.61,
+                220.0,
+                261.63
+              ],
+              [
+                196.0,
+                246.94,
+                293.66
+              ]
+            ],
+            "chord_seconds": 4,
+            "tremolo_hz": 0.25,
+            "lowpass_hz": 1800,
+            "level": 0.25,
+            "echo": "0.8:0.7:120:0.25"
+          },
+          {
+            "id": "bright",
+            "name": "Bright and hopeful",
+            "chords": [
+              [
+                261.63,
+                329.63,
+                392.0
+              ],
+              [
+                196.0,
+                246.94,
+                293.66
+              ],
+              [
+                220.0,
+                261.63,
+                329.63
+              ],
+              [
+                174.61,
+                220.0,
+                261.63
+              ]
+            ],
+            "chord_seconds": 3,
+            "tremolo_hz": 0.5,
+            "lowpass_hz": 2600,
+            "level": 0.22,
+            "echo": "0.8:0.6:90:0.2"
+          },
+          {
+            "id": "calm",
+            "name": "Calm and slow",
+            "chords": [
+              [
+                220.0,
+                261.63,
+                329.63
+              ],
+              [
+                174.61,
+                220.0,
+                261.63
+              ],
+              [
+                261.63,
+                329.63,
+                392.0
+              ],
+              [
+                164.81,
+                196.0,
+                246.94
+              ]
+            ],
+            "chord_seconds": 5,
+            "tremolo_hz": 0.15,
+            "lowpass_hz": 1400,
+            "level": 0.25,
+            "echo": "0.8:0.8:180:0.3"
+          },
+          {
+            "id": "festive",
+            "name": "Festive",
+            "chords": [
+              [
+                196.0,
+                246.94,
+                293.66
+              ],
+              [
+                261.63,
+                329.63,
+                392.0
+              ],
+              [
+                146.83,
+                174.61,
+                220.0
+              ],
+              [
+                196.0,
+                246.94,
+                293.66
+              ]
+            ],
+            "chord_seconds": 2.5,
+            "tremolo_hz": 1.0,
+            "lowpass_hz": 3000,
+            "level": 0.2,
+            "echo": "0.8:0.5:60:0.2"
+          }
+        ]
+      }
+    }
+  ]
+}

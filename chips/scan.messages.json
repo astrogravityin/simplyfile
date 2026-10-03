@@ -1,0 +1,96 @@
+{
+  "chip_id": "scan.messages",
+  "kind": "accessor",
+  "set": "scan",
+  "label": "Every reason and note Scan shows",
+  "aliases": [],
+  "params": [
+    {
+      "name": "why_screen_dir",
+      "type": "text",
+      "default": "under {dirs}/"
+    },
+    {
+      "name": "why_named",
+      "type": "text",
+      "default": "named like a screen"
+    },
+    {
+      "name": "why_layout",
+      "type": "text",
+      "default": "an Android layout"
+    },
+    {
+      "name": "why_template",
+      "type": "text",
+      "default": "a page template"
+    },
+    {
+      "name": "why_route",
+      "type": "text",
+      "default": "declares {route}"
+    },
+    {
+      "name": "why_declared",
+      "type": "text",
+      "default": "declared in screens.json"
+    },
+    {
+      "name": "why_joiner",
+      "type": "text",
+      "default": ", "
+    },
+    {
+      "name": "note_declared",
+      "type": "text",
+      "default": "This project declares its screens in screens.json, so nothing was guessed."
+    },
+    {
+      "name": "note_none",
+      "type": "text",
+      "default": "No screen-shaped files found. Add them by hand below, or drop a screens.json in the project."
+    },
+    {
+      "name": "not_a_folder",
+      "type": "text",
+      "default": "Not a folder: {folder}"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "why_screen_dir": "$why_screen_dir",
+      "why_named": "$why_named",
+      "why_layout": "$why_layout",
+      "why_template": "$why_template",
+      "why_route": "$why_route",
+      "why_declared": "$why_declared",
+      "why_joiner": "$why_joiner",
+      "note_declared": "$note_declared",
+      "note_none": "$note_none",
+      "not_a_folder": "$not_a_folder"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "why_*: the reasons in the Setup grid's Why column, joined with why_joiner. {dirs} = the screen folders matched, {route} = the first route declared. note_*: the line under the grid. not_a_folder: {folder}.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "why_screen_dir": "under {dirs}/",
+        "why_named": "named like a screen",
+        "why_layout": "an Android layout",
+        "why_template": "a page template",
+        "why_route": "declares {route}",
+        "why_declared": "declared in screens.json",
+        "why_joiner": ", ",
+        "note_declared": "This project declares its screens in screens.json, so nothing was guessed.",
+        "note_none": "No screen-shaped files found. Add them by hand below, or drop a screens.json in the project.",
+        "not_a_folder": "Not a folder: {folder}"
+      }
+    }
+  ],
+  "weight_basis": "Portal business setting of the Training & Video Portal. The knobs ARE the policy — edit them here, never in Python."
+}

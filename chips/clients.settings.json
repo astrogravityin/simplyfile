@@ -1,0 +1,249 @@
+{
+  "chip_id": "clients.settings",
+  "kind": "accessor",
+  "set": "clients",
+  "label": "Client master: statuses, PAN and GSTIN shapes, forms, years and stages",
+  "aliases": [
+    "clients settings"
+  ],
+  "params": [
+    {
+      "name": "statuses",
+      "type": "rows",
+      "default": [
+        {
+          "id": "individual",
+          "label": "Individual",
+          "pan_letter": "P",
+          "form": "ITR-3",
+          "has_partners": false
+        },
+        {
+          "id": "huf",
+          "label": "HUF",
+          "pan_letter": "H",
+          "form": "ITR-3",
+          "has_partners": false
+        },
+        {
+          "id": "firm",
+          "label": "Partnership firm",
+          "pan_letter": "F",
+          "form": "ITR-5",
+          "has_partners": true
+        },
+        {
+          "id": "llp",
+          "label": "LLP",
+          "pan_letter": "F",
+          "form": "ITR-5",
+          "has_partners": true
+        },
+        {
+          "id": "aop",
+          "label": "AOP",
+          "pan_letter": "A",
+          "form": "ITR-5",
+          "has_partners": true
+        },
+        {
+          "id": "boi",
+          "label": "BOI",
+          "pan_letter": "B",
+          "form": "ITR-5",
+          "has_partners": true
+        }
+      ],
+      "label": "statuses"
+    },
+    {
+      "name": "forms",
+      "type": "list",
+      "default": [
+        "ITR-3",
+        "ITR-5"
+      ],
+      "label": "forms"
+    },
+    {
+      "name": "current_ay",
+      "type": "text",
+      "default": "2026-27",
+      "label": "current ay"
+    },
+    {
+      "name": "years",
+      "type": "list",
+      "default": [
+        "2025-26",
+        "2026-27",
+        "2027-28"
+      ],
+      "label": "years"
+    },
+    {
+      "name": "stages",
+      "type": "rows",
+      "default": [
+        {
+          "id": "collecting",
+          "label": "1 Collecting",
+          "tag": "tag"
+        },
+        {
+          "id": "mapping",
+          "label": "2 Mapping",
+          "tag": "tag"
+        },
+        {
+          "id": "reconciling",
+          "label": "3 Reconciling",
+          "tag": "tag warn"
+        },
+        {
+          "id": "review",
+          "label": "4 Review",
+          "tag": "tag brand"
+        },
+        {
+          "id": "filed",
+          "label": "5 Filed",
+          "tag": "tag ok"
+        }
+      ],
+      "label": "stages"
+    },
+    {
+      "name": "max_len",
+      "type": "json",
+      "default": {
+        "name": 120,
+        "relation": 120,
+        "address": 400,
+        "email": 120,
+        "phone": 30,
+        "bank_field": 60,
+        "partner_name": 120,
+        "share": 10,
+        "notes": 1000,
+        "year_field": 60
+      },
+      "label": "max len"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "statuses": "$statuses",
+      "forms": "$forms",
+      "current_ay": "$current_ay",
+      "years": "$years",
+      "stages": "$stages",
+      "max_len": "$max_len"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "Which statuses an assessee can have (with the PAN 4th letter and the ITR form each files), the PAN / GSTIN / IFSC shapes, the assessment years on offer and the stages a year moves through. An LLP's PAN carries F, like a firm.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "statuses": [
+          {
+            "id": "individual",
+            "label": "Individual",
+            "pan_letter": "P",
+            "form": "ITR-3",
+            "has_partners": false
+          },
+          {
+            "id": "huf",
+            "label": "HUF",
+            "pan_letter": "H",
+            "form": "ITR-3",
+            "has_partners": false
+          },
+          {
+            "id": "firm",
+            "label": "Partnership firm",
+            "pan_letter": "F",
+            "form": "ITR-5",
+            "has_partners": true
+          },
+          {
+            "id": "llp",
+            "label": "LLP",
+            "pan_letter": "F",
+            "form": "ITR-5",
+            "has_partners": true
+          },
+          {
+            "id": "aop",
+            "label": "AOP",
+            "pan_letter": "A",
+            "form": "ITR-5",
+            "has_partners": true
+          },
+          {
+            "id": "boi",
+            "label": "BOI",
+            "pan_letter": "B",
+            "form": "ITR-5",
+            "has_partners": true
+          }
+        ],
+        "forms": [
+          "ITR-3",
+          "ITR-5"
+        ],
+        "current_ay": "2026-27",
+        "years": [
+          "2025-26",
+          "2026-27",
+          "2027-28"
+        ],
+        "stages": [
+          {
+            "id": "collecting",
+            "label": "1 Collecting",
+            "tag": "tag"
+          },
+          {
+            "id": "mapping",
+            "label": "2 Mapping",
+            "tag": "tag"
+          },
+          {
+            "id": "reconciling",
+            "label": "3 Reconciling",
+            "tag": "tag warn"
+          },
+          {
+            "id": "review",
+            "label": "4 Review",
+            "tag": "tag brand"
+          },
+          {
+            "id": "filed",
+            "label": "5 Filed",
+            "tag": "tag ok"
+          }
+        ],
+        "max_len": {
+          "name": 120,
+          "relation": 120,
+          "address": 400,
+          "email": 120,
+          "phone": 30,
+          "bank_field": 60,
+          "partner_name": 120,
+          "share": 10,
+          "notes": 1000,
+          "year_field": 60
+        }
+      }
+    }
+  ]
+}

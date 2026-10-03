@@ -1,0 +1,77 @@
+{
+  "chip_id": "narrator.tts_cost",
+  "kind": "accessor",
+  "set": "narrator",
+  "label": "What one premium-voice call cost, from the usage the model reported",
+  "aliases": [
+    "tts booking"
+  ],
+  "params": [
+    {
+      "name": "tokens_in",
+      "type": "number",
+      "default": 0
+    },
+    {
+      "name": "tokens_out",
+      "type": "number",
+      "default": 0
+    },
+    {
+      "name": "usd_per_1m_in",
+      "type": "number",
+      "default": 0.5
+    },
+    {
+      "name": "usd_per_1m_out",
+      "type": "number",
+      "default": 10
+    }
+  ],
+  "expr": {
+    "vop": "round_to",
+    "value": {
+      "vop": "add",
+      "a": {
+        "vop": "mul",
+        "a": "$tokens_in",
+        "b": {
+          "vop": "div",
+          "a": "$usd_per_1m_in",
+          "b": 1000000
+        }
+      },
+      "b": {
+        "vop": "mul",
+        "a": "$tokens_out",
+        "b": {
+          "vop": "div",
+          "a": "$usd_per_1m_out",
+          "b": 1000000
+        }
+      }
+    },
+    "digits": 6
+  },
+  "returns": "number",
+  "status": "published",
+  "version": 1,
+  "description_nl": "tokens in x price in + tokens out x price out, per million (narrator.tts). Booked per line, at the model's reported usage.",
+  "test_cases": [
+    {
+      "args": {
+        "tokens_in": 100,
+        "tokens_out": 1000
+      },
+      "expect_value": 0.01005
+    },
+    {
+      "args": {
+        "tokens_in": 0,
+        "tokens_out": 0
+      },
+      "expect_value": 0
+    }
+  ],
+  "weight_basis": "Arithmetic of a paid call. Edit it here, never in Python."
+}

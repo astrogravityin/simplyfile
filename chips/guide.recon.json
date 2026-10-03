@@ -1,0 +1,141 @@
+{
+  "chip_id": "guide.recon",
+  "kind": "accessor",
+  "set": "guide",
+  "label": "Guide me: Reconcile",
+  "aliases": [
+    "reconcile guide"
+  ],
+  "params": [
+    {
+      "name": "title",
+      "type": "text",
+      "default": "Reconcile",
+      "label": "The tour's name (its cover card)"
+    },
+    {
+      "name": "lede",
+      "type": "long",
+      "default": "Put the client's books next to 26AS, AIS and TIS in {product}, and clear every difference before review.",
+      "label": "The cover's opening line; {product} = this edition's name"
+    },
+    {
+      "name": "icon",
+      "type": "text",
+      "default": "check",
+      "label": "The emblem on the cover (an icon name)"
+    },
+    {
+      "name": "minutes",
+      "type": "number",
+      "default": 2,
+      "label": "How long the tour takes"
+    },
+    {
+      "name": "steps",
+      "type": "rows",
+      "default": [
+        {
+          "title": "Portal files",
+          "say": "Upload the 26AS text export from TRACES, and AIS or TIS as CSV or Excel. Each file says what it is and how many entries were read.",
+          "target": "#rc-up|main",
+          "art": {
+            "kind": "stack",
+            "items": [
+              "26AS",
+              "AIS",
+              "TIS"
+            ],
+            "icon": "upload"
+          }
+        },
+        {
+          "title": "Findings",
+          "say": "Red first: TDS the books claim that 26AS does not show, income the portal reports beyond the books, tax paid that does not match. Amber needs a look; green agrees.",
+          "target": "#rc-find|main",
+          "art": {
+            "kind": "stack",
+            "items": [
+              "Red",
+              "Amber",
+              "Agrees"
+            ],
+            "icon": "check"
+          }
+        },
+        {
+          "title": "Only mapped rows count",
+          "say": "From the books, only rows whose SF Ref is saved or came with the file are counted. Accept the suggestions in Intake & map first.",
+          "target": "#rc-find|main",
+          "art": {
+            "kind": "flow",
+            "items": [
+              "Intake",
+              "Accept",
+              "Reconcile"
+            ],
+            "at": 2
+          }
+        },
+        {
+          "title": "Explain or fix",
+          "say": "Fix the statement and upload it again, or press Explain and write why it is fine. A year cannot move to Review while a red finding has no explanation.",
+          "target": "#rc-find|main",
+          "art": {
+            "kind": "flow",
+            "items": [
+              "Fix",
+              "Explain",
+              "Review"
+            ],
+            "at": 1
+          }
+        }
+      ],
+      "label": "The steps in order: title, say (the narration), target (where the spotlight goes; alternatives split by |, the first on screen wins), art (the picture: hero/flow/roads/meter/stack/check), place (below/above/right/left/center, optional), open (optional: what the guide presses first when the part is not on screen - open the first item, go back Home; alternatives split by |)"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "title": "$title",
+      "lede": "$lede",
+      "icon": "$icon",
+      "minutes": "$minutes",
+      "steps": "$steps"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-02 owner: Tour Video in sm, owner only - its own Guide me.",
+  "weight_basis": "page",
+  "test_cases": [
+    {
+      "args": {
+        "title": "T",
+        "lede": "L",
+        "icon": "spark",
+        "minutes": 1,
+        "steps": [
+          {
+            "title": "a",
+            "say": "b"
+          }
+        ]
+      },
+      "expect_value": {
+        "title": "T",
+        "lede": "L",
+        "icon": "spark",
+        "minutes": 1,
+        "steps": [
+          {
+            "title": "a",
+            "say": "b"
+          }
+        ]
+      }
+    }
+  ]
+}

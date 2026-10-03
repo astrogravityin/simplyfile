@@ -1,0 +1,64 @@
+{
+  "chip_id": "store.model_id_ok",
+  "kind": "predicate",
+  "set": "store",
+  "label": "A typed model id looks like a model id",
+  "aliases": [
+    "model id check"
+  ],
+  "params": [
+    {
+      "name": "model",
+      "type": "text",
+      "default": ""
+    }
+  ],
+  "expr": {
+    "vop": "matches",
+    "text": "$model",
+    "pattern": {
+      "vop": "get",
+      "value": {
+        "chip": "store.models"
+      },
+      "path": "model_id_pattern"
+    }
+  },
+  "returns": "boolean",
+  "version": 1,
+  "status": "published",
+  "description_nl": "Lower-case letter first, then 2–63 letters, digits, dot, underscore or dash; the whole text must fit. Anything else is a typo, refused on save rather than failing at Google on the next draft.",
+  "test_cases": [
+    {
+      "args": {
+        "model": "gemini-2.5-flash"
+      },
+      "expect_value": true
+    },
+    {
+      "args": {
+        "model": "gemini-flash-latest"
+      },
+      "expect_value": true
+    },
+    {
+      "args": {
+        "model": "gemi dsf"
+      },
+      "expect_value": false
+    },
+    {
+      "args": {
+        "model": "ab"
+      },
+      "expect_value": false
+    },
+    {
+      "args": {
+        "model": ""
+      },
+      "expect_value": false
+    }
+  ],
+  "weight_basis": "Portal business setting of the Training & Video Portal. The knobs ARE the policy — edit them here, never in Python."
+}

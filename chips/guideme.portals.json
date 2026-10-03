@@ -1,0 +1,129 @@
+{
+  "chip_id": "guideme.portals",
+  "kind": "accessor",
+  "set": "guideme",
+  "label": "The sites a Guide Me script may name",
+  "aliases": [
+    "guide me sites",
+    "guide me portals"
+  ],
+  "params": [
+    {
+      "name": "rows",
+      "type": "rows",
+      "default": [
+        {
+          "id": "astrostage",
+          "label": "AstroStage Studio",
+          "note": "astrostage.in"
+        },
+        {
+          "id": "individual",
+          "label": "AstroJnana (Individual)",
+          "note": "astrostage.in/ind"
+        },
+        {
+          "id": "grahauvacha",
+          "label": "GrahaUvacha",
+          "note": "family brand, same app"
+        },
+        {
+          "id": "astrosahai",
+          "label": "AstroSahai",
+          "note": "family brand, same app"
+        },
+        {
+          "id": "astrounwind",
+          "label": "AstroUnWind",
+          "note": "family brand, same app"
+        },
+        {
+          "id": "tedbook",
+          "label": "TeDBook",
+          "note": "tedbook.in"
+        },
+        {
+          "id": "familyos",
+          "label": "FamilyOS",
+          "note": "familyos.in"
+        },
+        {
+          "id": "sm",
+          "label": "SteadyMove",
+          "note": "sm.valuestream.in"
+        },
+        {
+          "id": "tv",
+          "label": "Training & Video Portal",
+          "note": "tv.valuestream.in"
+        }
+      ],
+      "label": "The sites (id, label, note)"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "rows": "$rows"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "Skill guide-me-script section 0: every script names ONE site. rows = the known sites (id, label, note); their ids are the list 'portals' handed to chip guide.check. Any institute workspace (workspace:<code>, e.g. workspace:astrogaami) is allowed by that chip's own rule row.",
+  "weight_basis": "Which sites exist. Edit it here, never in Python.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "rows": [
+          {
+            "id": "astrostage",
+            "label": "AstroStage Studio",
+            "note": "astrostage.in"
+          },
+          {
+            "id": "individual",
+            "label": "AstroJnana (Individual)",
+            "note": "astrostage.in/ind"
+          },
+          {
+            "id": "grahauvacha",
+            "label": "GrahaUvacha",
+            "note": "family brand, same app"
+          },
+          {
+            "id": "astrosahai",
+            "label": "AstroSahai",
+            "note": "family brand, same app"
+          },
+          {
+            "id": "astrounwind",
+            "label": "AstroUnWind",
+            "note": "family brand, same app"
+          },
+          {
+            "id": "tedbook",
+            "label": "TeDBook",
+            "note": "tedbook.in"
+          },
+          {
+            "id": "familyos",
+            "label": "FamilyOS",
+            "note": "familyos.in"
+          },
+          {
+            "id": "sm",
+            "label": "SteadyMove",
+            "note": "sm.valuestream.in"
+          },
+          {
+            "id": "tv",
+            "label": "Training & Video Portal",
+            "note": "tv.valuestream.in"
+          }
+        ]
+      }
+    }
+  ]
+}

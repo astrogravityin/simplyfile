@@ -1,0 +1,94 @@
+{
+  "chip_id": "howto.link_type",
+  "kind": "accessor",
+  "set": "howto",
+  "audience": "admin",
+  "label": "What kind of link a How to Use address is",
+  "aliases": [
+    "link type",
+    "youtube detection"
+  ],
+  "params": [
+    {
+      "name": "url",
+      "type": "text",
+      "default": ""
+    },
+    {
+      "name": "patterns",
+      "type": "rows",
+      "default": [
+        {
+          "pattern": "(?i)youtu\\.?be",
+          "name": "youtube"
+        },
+        {
+          "pattern": "(?i)instagram\\.",
+          "name": "instagram"
+        },
+        {
+          "pattern": "(?i)\\.(mp4|webm|mov)(\\?|$)",
+          "name": "video"
+        },
+        {
+          "pattern": "^/m/|(?i:\\.(pdf|html?|docx?)(\\?|$))",
+          "name": "doc"
+        }
+      ]
+    },
+    {
+      "name": "fallback",
+      "type": "text",
+      "default": "link"
+    }
+  ],
+  "expr": {
+    "vop": "first_matching",
+    "text": "$url",
+    "rows": "$patterns",
+    "default": "$fallback"
+  },
+  "returns": "text",
+  "version": 1,
+  "status": "published",
+  "description_nl": "When the author did not pick a type: the first pattern found in the address names it, tried in order; none found = fallback.",
+  "test_cases": [
+    {
+      "args": {
+        "url": "https://youtu.be/abc"
+      },
+      "expect_value": "youtube"
+    },
+    {
+      "args": {
+        "url": "https://www.instagram.com/p/x"
+      },
+      "expect_value": "instagram"
+    },
+    {
+      "args": {
+        "url": "https://cdn.example.com/tour.MP4?x=1"
+      },
+      "expect_value": "video"
+    },
+    {
+      "args": {
+        "url": "/m/guide"
+      },
+      "expect_value": "doc"
+    },
+    {
+      "args": {
+        "url": "https://example.com/manual.pdf"
+      },
+      "expect_value": "doc"
+    },
+    {
+      "args": {
+        "url": "https://example.com"
+      },
+      "expect_value": "link"
+    }
+  ],
+  "weight_basis": "Platform operations primitive, no business content. The knobs ARE the policy — edit them here, never in Python."
+}

@@ -1,0 +1,148 @@
+{
+  "chip_id": "export.finish",
+  "kind": "accessor",
+  "set": "export",
+  "label": "The last pass over an exported film: open and close on a fade, and captions burnt in",
+  "aliases": [
+    "captions",
+    "subtitles",
+    "fade in out",
+    "editing pass"
+  ],
+  "params": [
+    {
+      "name": "fade_in_seconds",
+      "type": "number",
+      "default": 0.6,
+      "label": "Open from black over this many seconds (0 = cut straight in)"
+    },
+    {
+      "name": "fade_out_seconds",
+      "type": "number",
+      "default": 0.8,
+      "label": "Close to black over this many seconds (0 = cut straight out)"
+    },
+    {
+      "name": "fade_sound",
+      "type": "yes_no",
+      "default": true,
+      "label": "Bring the sound up and down with the picture"
+    },
+    {
+      "name": "caption_font_size",
+      "type": "number",
+      "default": 22,
+      "label": "Caption size, in points of a 384-point-tall frame (libass scales it to the real frame)"
+    },
+    {
+      "name": "caption_colour",
+      "type": "text",
+      "default": "&H00FFFFFF",
+      "label": "Caption colour, in the subtitle format &HAABBGGRR (00 = solid)"
+    },
+    {
+      "name": "caption_outline_colour",
+      "type": "text",
+      "default": "&H00000000",
+      "label": "Outline colour, same format - an outline is what keeps words readable over any picture"
+    },
+    {
+      "name": "caption_outline",
+      "type": "number",
+      "default": 2,
+      "label": "Outline thickness"
+    },
+    {
+      "name": "caption_border_style",
+      "type": "number",
+      "default": 1,
+      "label": "1 = outline round the letters, 3 = a solid box behind them"
+    },
+    {
+      "name": "caption_shadow",
+      "type": "number",
+      "default": 0,
+      "label": "Drop shadow"
+    },
+    {
+      "name": "caption_margin",
+      "type": "number",
+      "default": 40,
+      "label": "How far the captions sit from the bottom edge"
+    },
+    {
+      "name": "caption_alignment",
+      "type": "number",
+      "default": 2,
+      "label": "Where the captions sit: 2 = bottom centre, 8 = top centre (subtitle numbering)"
+    },
+    {
+      "name": "caption_main_font",
+      "type": "text",
+      "default": "NotoSans-Regular.ttf",
+      "label": "The captions' main font (tv/fonts): Latin letters, digits and signs. A script it lacks (Hindi, Telugu...) comes from that script's own Noto font, the same size family"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "fade_in_seconds": "$fade_in_seconds",
+      "fade_out_seconds": "$fade_out_seconds",
+      "fade_sound": "$fade_sound",
+      "caption_font_size": "$caption_font_size",
+      "caption_colour": "$caption_colour",
+      "caption_outline_colour": "$caption_outline_colour",
+      "caption_outline": "$caption_outline",
+      "caption_shadow": "$caption_shadow",
+      "caption_margin": "$caption_margin",
+      "caption_alignment": "$caption_alignment",
+      "caption_border_style": "$caption_border_style",
+      "caption_main_font": "$caption_main_font"
+    }
+  },
+  "returns": "record",
+  "version": 2,
+  "status": "published",
+  "description_nl": "2026-09-20, the editing pass: a film that cuts in hard from nothing and stops dead reads like a clip, not a film, so the export opens and closes on a short fade - picture and sound together - without changing its length by a frame. Captions are the subtitle file the Sound step already writes (film.srt), burnt into the picture for the places that play a video silently; the words are never retyped, so they always match what was spoken. Whether captions go on is asked per export (the person ticks the box); everything about how they LOOK is here. Set both fades to 0 and the picture is passed through as it was.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "fade_in_seconds": 0.6,
+        "fade_out_seconds": 0.8,
+        "fade_sound": true,
+        "caption_font_size": 22,
+        "caption_colour": "&H00FFFFFF",
+        "caption_outline_colour": "&H00000000",
+        "caption_outline": 2,
+        "caption_shadow": 0,
+        "caption_margin": 40,
+        "caption_alignment": 2,
+        "caption_border_style": 1,
+        "caption_main_font": "NotoSans-Regular.ttf"
+      }
+    },
+    {
+      "args": {
+        "fade_in_seconds": 0,
+        "fade_out_seconds": 0,
+        "caption_alignment": 8
+      },
+      "expect_value": {
+        "fade_in_seconds": 0,
+        "fade_out_seconds": 0,
+        "fade_sound": true,
+        "caption_font_size": 22,
+        "caption_colour": "&H00FFFFFF",
+        "caption_outline_colour": "&H00000000",
+        "caption_outline": 2,
+        "caption_shadow": 0,
+        "caption_margin": 40,
+        "caption_alignment": 8,
+        "caption_border_style": 1,
+        "caption_main_font": "NotoSans-Regular.ttf"
+      }
+    }
+  ],
+  "weight_basis": "How the last pass looks. The person ticks captions on or off per export; the numbers live here."
+}

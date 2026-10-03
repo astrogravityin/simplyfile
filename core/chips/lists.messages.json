@@ -1,0 +1,35 @@
+{
+  "chip_id": "lists.messages",
+  "kind": "accessor",
+  "set": "lists",
+  "label": "Everything the list framework says",
+  "aliases": [
+    "list messages"
+  ],
+  "params": [
+    {
+      "name": "no_list",
+      "type": "text",
+      "default": "No such list.",
+      "label": "no list"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "no_list": "$no_list"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "Sentences of core/lists.py (GET /api/lists/<id>).",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "no_list": "No such list."
+      }
+    }
+  ]
+}

@@ -1,0 +1,226 @@
+{
+  "chip_id": "auth.messages",
+  "kind": "accessor",
+  "set": "auth",
+  "audience": "admin",
+  "label": "Every sentence the way in says",
+  "aliases": [
+    "login messages",
+    "auth wording"
+  ],
+  "params": [
+    {
+      "name": "wrong_password",
+      "type": "text",
+      "default": "That user name or email and password do not match."
+    },
+    {
+      "name": "locked",
+      "type": "text",
+      "default": "Too many wrong passwords. Try again in {minutes} minute(s), or use Forgot password."
+    },
+    {
+      "name": "rate_limited",
+      "type": "text",
+      "default": "Too many attempts from this address. Wait a minute."
+    },
+    {
+      "name": "verify_first",
+      "type": "text",
+      "default": "Confirm your email address first — use Forgot password to get a code."
+    },
+    {
+      "name": "signup_closed",
+      "type": "text",
+      "default": "Sign-up is not open on this portal. Ask the owner for an account."
+    },
+    {
+      "name": "signup_domains",
+      "type": "text",
+      "default": "Sign-up is open to these addresses only: {domains}"
+    },
+    {
+      "name": "signup_waits_for_mail",
+      "type": "text",
+      "default": "Sign-up opens once the owner sets up email."
+    },
+    {
+      "name": "no_owner_yet",
+      "type": "text",
+      "default": "This portal has no owner yet. The owner sets it up first."
+    },
+    {
+      "name": "owner_exists",
+      "type": "text",
+      "default": "This portal already has an owner. Ask them for an account."
+    },
+    {
+      "name": "owner_reserved",
+      "type": "text",
+      "default": "This portal is reserved for {email}. Sign in with that address to set it up."
+    },
+    {
+      "name": "taken_email",
+      "type": "text",
+      "default": "That email already has an account. Sign in, or use Forgot password."
+    },
+    {
+      "name": "taken_username",
+      "type": "text",
+      "default": "That user name is taken. Choose another."
+    },
+    {
+      "name": "code_sent",
+      "type": "text",
+      "default": "If that address can receive a code here, it is on its way. Check your inbox and spam folder."
+    },
+    {
+      "name": "code_wrong",
+      "type": "text",
+      "default": "That code is not right or has expired."
+    },
+    {
+      "name": "code_burned",
+      "type": "text",
+      "default": "Too many tries. Send a new code."
+    },
+    {
+      "name": "proof_expired",
+      "type": "text",
+      "default": "Your code expired. Send a new one."
+    },
+    {
+      "name": "no_mail_reset",
+      "type": "text",
+      "default": "This portal can't send email yet. Ask the portal owner to reset your password."
+    },
+    {
+      "name": "reset_done",
+      "type": "text",
+      "default": "Password updated. Sign in with your new password."
+    },
+    {
+      "name": "current_wrong",
+      "type": "text",
+      "default": "Your current password is not right."
+    },
+    {
+      "name": "same_password",
+      "type": "text",
+      "default": "Choose a password different from the one you have now."
+    },
+    {
+      "name": "must_change",
+      "type": "text",
+      "default": "Choose a new password before you go on."
+    },
+    {
+      "name": "invite_bad",
+      "type": "text",
+      "default": "That invitation link is expired or already used. Ask the owner for a new one."
+    },
+    {
+      "name": "self_reset",
+      "type": "text",
+      "default": "Use Change password for your own account."
+    },
+    {
+      "name": "signup_mode_bad",
+      "type": "text",
+      "default": "Sign-up must be open, domain or closed."
+    },
+    {
+      "name": "sign_in_first",
+      "type": "text",
+      "default": "Sign in to continue."
+    },
+    {
+      "name": "owner_only",
+      "type": "text",
+      "default": "Only an owner can do that."
+    },
+    {
+      "name": "bad_purpose",
+      "type": "text",
+      "default": "purpose is signup or reset"
+    },
+    {
+      "name": "unknown_link",
+      "type": "text",
+      "default": "Unknown link"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "wrong_password": "$wrong_password",
+      "locked": "$locked",
+      "rate_limited": "$rate_limited",
+      "verify_first": "$verify_first",
+      "signup_closed": "$signup_closed",
+      "signup_domains": "$signup_domains",
+      "signup_waits_for_mail": "$signup_waits_for_mail",
+      "no_owner_yet": "$no_owner_yet",
+      "owner_exists": "$owner_exists",
+      "owner_reserved": "$owner_reserved",
+      "taken_email": "$taken_email",
+      "taken_username": "$taken_username",
+      "code_sent": "$code_sent",
+      "code_wrong": "$code_wrong",
+      "code_burned": "$code_burned",
+      "proof_expired": "$proof_expired",
+      "no_mail_reset": "$no_mail_reset",
+      "reset_done": "$reset_done",
+      "current_wrong": "$current_wrong",
+      "same_password": "$same_password",
+      "must_change": "$must_change",
+      "invite_bad": "$invite_bad",
+      "self_reset": "$self_reset",
+      "signup_mode_bad": "$signup_mode_bad",
+      "sign_in_first": "$sign_in_first",
+      "owner_only": "$owner_only",
+      "bad_purpose": "$bad_purpose",
+      "unknown_link": "$unknown_link"
+    }
+  },
+  "returns": "record",
+  "version": 2,
+  "status": "published",
+  "description_nl": "Words shown on the sign-in card and in errors. {minutes}, {domains}, {email} fill in. Forgot and send-code answer the same sentence for a stranger and for a real account, so they cannot be used to find out who has one.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "wrong_password": "That user name or email and password do not match.",
+        "locked": "Too many wrong passwords. Try again in {minutes} minute(s), or use Forgot password.",
+        "rate_limited": "Too many attempts from this address. Wait a minute.",
+        "verify_first": "Confirm your email address first — use Forgot password to get a code.",
+        "signup_closed": "Sign-up is not open on this portal. Ask the owner for an account.",
+        "signup_domains": "Sign-up is open to these addresses only: {domains}",
+        "signup_waits_for_mail": "Sign-up opens once the owner sets up email.",
+        "no_owner_yet": "This portal has no owner yet. The owner sets it up first.",
+        "owner_exists": "This portal already has an owner. Ask them for an account.",
+        "owner_reserved": "This portal is reserved for {email}. Sign in with that address to set it up.",
+        "taken_email": "That email already has an account. Sign in, or use Forgot password.",
+        "taken_username": "That user name is taken. Choose another.",
+        "code_sent": "If that address can receive a code here, it is on its way. Check your inbox and spam folder.",
+        "code_wrong": "That code is not right or has expired.",
+        "code_burned": "Too many tries. Send a new code.",
+        "proof_expired": "Your code expired. Send a new one.",
+        "no_mail_reset": "This portal can't send email yet. Ask the portal owner to reset your password.",
+        "reset_done": "Password updated. Sign in with your new password.",
+        "current_wrong": "Your current password is not right.",
+        "same_password": "Choose a password different from the one you have now.",
+        "must_change": "Choose a new password before you go on.",
+        "invite_bad": "That invitation link is expired or already used. Ask the owner for a new one.",
+        "self_reset": "Use Change password for your own account.",
+        "signup_mode_bad": "Sign-up must be open, domain or closed.",
+        "sign_in_first": "Sign in to continue.",
+        "owner_only": "Only an owner can do that.",
+        "bad_purpose": "purpose is signup or reset",
+        "unknown_link": "Unknown link"
+      }
+    }
+  ],
+  "weight_basis": "Platform access primitive, no business content. The knobs ARE the policy — edit them here, never in Python."
+}

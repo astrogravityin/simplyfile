@@ -1,0 +1,209 @@
+{
+  "chip_id": "guide.manuals",
+  "kind": "accessor",
+  "set": "guide",
+  "label": "The step-by-step guide to User manuals: every step, spotlight, narration and picture",
+  "aliases": [
+    "user manuals tour",
+    "user manuals guide",
+    "guide me"
+  ],
+  "params": [
+    {
+      "name": "title",
+      "type": "text",
+      "default": "User manuals",
+      "label": "The tour's name (its cover card)"
+    },
+    {
+      "name": "lede",
+      "type": "long",
+      "default": "Write a manual once and use it everywhere: one file for a USB stick, a PDF for print and a public page on this portal. Here is how to build, preview, publish and link one.",
+      "label": "The cover's opening line; {product} = this edition's name"
+    },
+    {
+      "name": "icon",
+      "type": "text",
+      "default": "book",
+      "label": "The emblem on the cover (an icon name)"
+    },
+    {
+      "name": "minutes",
+      "type": "number",
+      "default": 3,
+      "label": "How long the tour takes"
+    },
+    {
+      "name": "steps",
+      "type": "rows",
+      "default": [
+        {
+          "title": "Your manuals",
+          "say": "Every manual of the current project is listed here with its page count, whether it is live or a draft, and who changed it last. Open carries on editing; a live manual shows its public address.",
+          "target": "#mn-list",
+          "art": {
+            "kind": "stack",
+            "items": [
+              "Getting started",
+              "Admin guide",
+              "Field Notes"
+            ],
+            "icon": "book"
+          },
+          "open": "#mn-back"
+        },
+        {
+          "title": "New manual",
+          "say": "Press New manual to begin with a cover and one blank page. All manuals brings you back to the list whenever you like.",
+          "target": "#mn-new|#mn-back",
+          "art": {
+            "kind": "flow",
+            "items": [
+              "Cover",
+              "Pages",
+              "Preview",
+              "Publish"
+            ],
+            "at": 0
+          }
+        },
+        {
+          "title": "The cover",
+          "say": "The Cover holds the title, subtitle, author, version, date and time, a background and an optional Cover picture. It is the first page every reader sees.",
+          "target": "#mn-cover",
+          "art": {
+            "kind": "hero",
+            "icon": "book"
+          },
+          "open": "#mn-list [data-open]"
+        },
+        {
+          "title": "Pages",
+          "say": "Each page has a Header, a Background, a Picture with its Picture label, and a Description. Format the text from the toolbar, add a Heading or a Link, and reorder pages with the arrow buttons.",
+          "target": "[data-page=\"0\"]|#mn-pages",
+          "art": {
+            "kind": "flow",
+            "items": [
+              "Cover",
+              "Pages",
+              "Preview",
+              "Publish"
+            ],
+            "at": 1
+          }
+        },
+        {
+          "title": "Documents which screen",
+          "say": "Documents which screen ties a page to a screen of your project. Once the manual is published, that screen's How to Use gains a link to this page, with no extra step.",
+          "target": "[data-page=\"0\"] select[data-f=\"screen_key\"]|#mn-pages",
+          "art": {
+            "kind": "hero",
+            "icon": "link"
+          }
+        },
+        {
+          "title": "Add a page",
+          "say": "Add a page appends a blank page at the end of the manual. Remove takes a page out, and asks first.",
+          "target": "#mn-addpage",
+          "art": {
+            "kind": "stack",
+            "items": [
+              "Page 1",
+              "Page 2",
+              "Page 3"
+            ],
+            "icon": "plus"
+          }
+        },
+        {
+          "title": "Preview",
+          "say": "The Preview redraws a moment after you type, exactly as your reader will see it. Refresh redraws it on demand, and Print / PDF prints the manual or saves it as a PDF.",
+          "target": "#mn-preview|#mn-side",
+          "art": {
+            "kind": "flow",
+            "items": [
+              "Cover",
+              "Pages",
+              "Preview",
+              "Publish"
+            ],
+            "at": 2
+          }
+        },
+        {
+          "title": "Save and publish",
+          "say": "Save keeps your work as a draft nobody else can read. Publish gives the manual a public link anyone can open without signing in; Unpublish takes it off that link again.",
+          "target": "#mn-publish|#mn-side",
+          "art": {
+            "kind": "flow",
+            "items": [
+              "Draft",
+              "Save",
+              "Publish",
+              "Public link"
+            ],
+            "at": 2
+          }
+        },
+        {
+          "title": "Download",
+          "say": "Download saves the whole manual as one HTML file that opens from a USB stick without a connection and prints cleanly. Building, publishing and downloading a manual is free.",
+          "target": "#mn-download|#mn-side",
+          "art": {
+            "kind": "stack",
+            "items": [
+              "HTML file",
+              "PDF",
+              "Public page"
+            ],
+            "icon": "download"
+          }
+        }
+      ],
+      "label": "The steps in order: title, say (the narration), target (where the spotlight goes; alternatives split by |, the first on screen wins), art (the picture: hero/flow/roads/meter/stack/check), place (below/above/right/left/center, optional), open (optional: what the guide presses first when the part is not on screen - open the first item, go back Home; alternatives split by |)"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "title": "$title",
+      "lede": "$lede",
+      "icon": "$icon",
+      "minutes": "$minutes",
+      "steps": "$steps"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-09-27 owner: a screen tour guide on every tv / SteadyMove screen, step by step, professional narration with SVG pictures, all chips and ops. Drawn by core/static/guide.js, served by core/guide.py; Guide me appears in the top bar once this chip exists.",
+  "weight_basis": "page",
+  "test_cases": [
+    {
+      "args": {
+        "title": "T",
+        "lede": "L",
+        "icon": "spark",
+        "minutes": 1,
+        "steps": [
+          {
+            "title": "a",
+            "say": "b"
+          }
+        ]
+      },
+      "expect_value": {
+        "title": "T",
+        "lede": "L",
+        "icon": "spark",
+        "minutes": 1,
+        "steps": [
+          {
+            "title": "a",
+            "say": "b"
+          }
+        ]
+      }
+    }
+  ]
+}

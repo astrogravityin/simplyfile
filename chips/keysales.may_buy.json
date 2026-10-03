@@ -1,0 +1,154 @@
+{
+  "chip_id": "keysales.may_buy",
+  "kind": "predicate",
+  "set": "keysales",
+  "label": "May this person ask to buy credit on this offer right now",
+  "aliases": [
+    "can buy key",
+    "buy allowed"
+  ],
+  "params": [
+    {
+      "name": "offer_live",
+      "type": "boolean",
+      "default": false,
+      "label": "The offer is switched on and its key still exists"
+    },
+    {
+      "name": "is_seller",
+      "type": "boolean",
+      "default": false,
+      "label": "The asker is the seller"
+    },
+    {
+      "name": "already_waiting",
+      "type": "boolean",
+      "default": false,
+      "label": "They already have a request waiting on this offer"
+    },
+    {
+      "name": "open_orders",
+      "type": "number",
+      "default": 0,
+      "label": "Requests this person has waiting anywhere"
+    },
+    {
+      "name": "open_orders_max",
+      "type": "number",
+      "default": 5,
+      "label": "Requests one person may have waiting at once"
+    },
+    {
+      "name": "amount_usd",
+      "type": "number",
+      "default": 0,
+      "label": "What they are asking for"
+    },
+    {
+      "name": "min_usd",
+      "type": "number",
+      "default": 1,
+      "label": "Smallest amount"
+    },
+    {
+      "name": "max_usd",
+      "type": "number",
+      "default": 500,
+      "label": "Largest amount"
+    }
+  ],
+  "expr": {
+    "op": "all",
+    "items": [
+      {
+        "op": "eq",
+        "left": "$offer_live",
+        "right": true
+      },
+      {
+        "op": "eq",
+        "left": "$is_seller",
+        "right": false
+      },
+      {
+        "op": "eq",
+        "left": "$already_waiting",
+        "right": false
+      },
+      {
+        "op": "lt",
+        "left": "$open_orders",
+        "right": "$open_orders_max"
+      },
+      {
+        "op": "ge",
+        "left": "$amount_usd",
+        "right": "$min_usd"
+      },
+      {
+        "op": "le",
+        "left": "$amount_usd",
+        "right": "$max_usd"
+      }
+    ]
+  },
+  "returns": "boolean",
+  "version": 1,
+  "status": "published",
+  "description_nl": "An offer that is switched off, a seller buying their own key, a second request on the same offer, too many waiting at once, or an amount outside what the shop sells: each is a no.",
+  "test_cases": [
+    {
+      "args": {
+        "offer_live": true,
+        "amount_usd": 10
+      },
+      "expect_value": true
+    },
+    {
+      "args": {
+        "offer_live": false,
+        "amount_usd": 10
+      },
+      "expect_value": false
+    },
+    {
+      "args": {
+        "offer_live": true,
+        "is_seller": true,
+        "amount_usd": 10
+      },
+      "expect_value": false
+    },
+    {
+      "args": {
+        "offer_live": true,
+        "already_waiting": true,
+        "amount_usd": 10
+      },
+      "expect_value": false
+    },
+    {
+      "args": {
+        "offer_live": true,
+        "amount_usd": 10,
+        "open_orders": 5
+      },
+      "expect_value": false
+    },
+    {
+      "args": {
+        "offer_live": true,
+        "amount_usd": 0.5
+      },
+      "expect_value": false
+    },
+    {
+      "args": {
+        "offer_live": true,
+        "amount_usd": 900
+      },
+      "expect_value": false
+    }
+  ],
+  "weight_basis": "The whole policy of who may ask to buy what. A seller never buys from themselves."
+}

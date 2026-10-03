@@ -1,0 +1,70 @@
+{
+  "chip_id": "source.branch_ok",
+  "kind": "predicate",
+  "set": "source",
+  "audience": "admin",
+  "label": "A branch name is safe to hand to git",
+  "aliases": [
+    "git branch validation"
+  ],
+  "params": [
+    {
+      "name": "branch",
+      "type": "text",
+      "default": ""
+    },
+    {
+      "name": "pattern",
+      "type": "text",
+      "default": "^[A-Za-z0-9._/-]{1,120}$"
+    }
+  ],
+  "expr": {
+    "vop": "matches",
+    "text": "$branch",
+    "pattern": "$pattern"
+  },
+  "returns": "boolean",
+  "version": 1,
+  "status": "published",
+  "description_nl": "SECURITY. Letters, digits, dot, underscore, slash and dash only, 1–120 characters, and the whole text must fit. An empty branch never reaches this check (it means the default branch).",
+  "test_cases": [
+    {
+      "args": {
+        "branch": "main"
+      },
+      "expect_value": true
+    },
+    {
+      "args": {
+        "branch": "feature/x-1.2"
+      },
+      "expect_value": true
+    },
+    {
+      "args": {
+        "branch": "main; rm -rf /"
+      },
+      "expect_value": false
+    },
+    {
+      "args": {
+        "branch": "main\n"
+      },
+      "expect_value": false
+    },
+    {
+      "args": {
+        "branch": "a b"
+      },
+      "expect_value": false
+    },
+    {
+      "args": {
+        "branch": ""
+      },
+      "expect_value": false
+    }
+  ],
+  "weight_basis": "Portal business setting of the Training & Video Portal. The knobs ARE the policy — edit them here, never in Python. Owner-only (audience admin): a looser value here would open a security hole or spend the owner's disk, so editors see and test it but cannot change it."
+}

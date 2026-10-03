@@ -1,0 +1,151 @@
+{
+  "chip_id": "guide.buykey",
+  "kind": "accessor",
+  "set": "guide",
+  "label": "The step-by-step guide to Buy a key: every step, spotlight, narration and picture",
+  "aliases": [
+    "buy a key tour",
+    "buy a key guide",
+    "guide me"
+  ],
+  "params": [
+    {
+      "name": "title",
+      "type": "text",
+      "default": "Buy a key",
+      "label": "The tour's name (its cover card)"
+    },
+    {
+      "name": "lede",
+      "type": "long",
+      "default": "{product} lets you buy credit on a key someone else offers and spend it as your own. Here is how to read an offer, ask for credit and follow your request.",
+      "label": "The cover's opening line; {product} = this edition's name"
+    },
+    {
+      "name": "icon",
+      "type": "text",
+      "default": "money",
+      "label": "The emblem on the cover (an icon name)"
+    },
+    {
+      "name": "minutes",
+      "type": "number",
+      "default": 2,
+      "label": "How long the tour takes"
+    },
+    {
+      "name": "steps",
+      "type": "rows",
+      "default": [
+        {
+          "title": "Credit on another key",
+          "say": "A seller on this portal offers credit on their AI key. Buy a pack and their key works for you up to what you paid for, with no daily or monthly limit.",
+          "target": "header.pagehead",
+          "art": {
+            "kind": "hero",
+            "icon": "money"
+          }
+        },
+        {
+          "title": "Before you buy",
+          "say": "This note sets out how the arrangement works. The portal records the credit and raises a bill; you and the seller settle it between yourselves.",
+          "target": "#bk-terms|header.pagehead",
+          "art": {
+            "kind": "check",
+            "items": [
+              "Read the terms",
+              "Portal bills",
+              "You settle"
+            ],
+            "done": 1
+          }
+        },
+        {
+          "title": "On sale",
+          "say": "Each offer shows the seller, the terms and the rates that set your price. Press Ask to buy, choose a pack or another amount, and the dialog shows the rates before you send.",
+          "target": "#bk-sale|header.pagehead",
+          "art": {
+            "kind": "flow",
+            "items": [
+              "Offer",
+              "Ask to buy",
+              "Seller answers",
+              "Credit"
+            ],
+            "at": 1
+          }
+        },
+        {
+          "title": "Your requests",
+          "say": "Your requests lists every ask with its amount and state. A request waiting for an answer can be withdrawn; once Approved, the Credit column shows what you have left.",
+          "target": "#bk-orders|header.pagehead",
+          "art": {
+            "kind": "stack",
+            "items": [
+              "Waiting",
+              "Approved",
+              "Turned down"
+            ],
+            "icon": "clock"
+          }
+        },
+        {
+          "title": "Credit running low",
+          "say": "When credit on a bought key runs low, a card appears at the top with Buy more beside it, so your work continues without a pause.",
+          "target": "#bk-low|#bk-sale",
+          "art": {
+            "kind": "meter",
+            "value": 18,
+            "label": "Left",
+            "icon": "money",
+            "icon2": "key"
+          }
+        }
+      ],
+      "label": "The steps in order: title, say (the narration), target (where the spotlight goes; alternatives split by |, the first on screen wins), art (the picture: hero/flow/roads/meter/stack/check), place (below/above/right/left/center, optional), open (optional: what the guide presses first when the part is not on screen - open the first item, go back Home; alternatives split by |)"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "title": "$title",
+      "lede": "$lede",
+      "icon": "$icon",
+      "minutes": "$minutes",
+      "steps": "$steps"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-09-27 owner: a screen tour guide on every tv / SteadyMove screen, step by step, professional narration with SVG pictures, all chips and ops. Drawn by core/static/guide.js, served by core/guide.py; Guide me appears in the top bar once this chip exists.",
+  "weight_basis": "page",
+  "test_cases": [
+    {
+      "args": {
+        "title": "T",
+        "lede": "L",
+        "icon": "spark",
+        "minutes": 1,
+        "steps": [
+          {
+            "title": "a",
+            "say": "b"
+          }
+        ]
+      },
+      "expect_value": {
+        "title": "T",
+        "lede": "L",
+        "icon": "spark",
+        "minutes": 1,
+        "steps": [
+          {
+            "title": "a",
+            "say": "b"
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "page_key": "sf-howto",
+  "title": "How to Use links",
+  "start_url": "/#/howto",
+  "prod_base": "https://sf.valuestream.in",
+  "voice": "en-IN-NeerjaNeural",
+  "rate": "+0%",
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "blur": [
+    "#whoami",
+    "#userpop .head",
+    ".tile .meta b",
+    "#vd-title"
+  ],
+  "covers": [
+    "what How to Use is",
+    "needs a project",
+    "register a project"
+  ],
+  "steps": [
+    {
+      "chapter": "Welcome",
+      "say": "How to Use lists every screen of a project, and the links a reader gets when they press How to Use on it: a manual, a YouTube video, a recording, anything with an address.",
+      "do": [
+        {
+          "wait_for": "main h1"
+        },
+        {
+          "highlight": "main",
+          "optional": true
+        }
+      ]
+    },
+    {
+      "chapter": "A project first",
+      "say": "The links hang off a project's screens. So first register the project, and scan it for its screens.",
+      "do": [
+        {
+          "highlight": "a[href='#/setup']",
+          "optional": true
+        }
+      ]
+    },
+    {
+      "chapter": "Then the links",
+      "say": "Once it is scanned, every screen is listed here. Search for one, add its links, and save. The How to Use button on that screen shows them at once.",
+      "hold": 1.0,
+      "do": []
+    }
+  ]
+}

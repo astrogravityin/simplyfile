@@ -1,0 +1,106 @@
+{
+  "chip_id": "jobs.messages",
+  "kind": "accessor",
+  "set": "jobs",
+  "label": "What a resumable job says when it starts again, keeps a part, or stops",
+  "aliases": [
+    "job wording",
+    "stopped at step"
+  ],
+  "params": [
+    {
+      "name": "resumed",
+      "type": "text",
+      "default": "carrying on from step {n} of {total} - {done} already made and kept"
+    },
+    {
+      "name": "kept",
+      "type": "text",
+      "default": "step {n} of {total} kept from the last run"
+    },
+    {
+      "name": "retrying",
+      "type": "text",
+      "default": "step {n} failed ({reason}); trying again ({attempt} of {tries})"
+    },
+    {
+      "name": "stopped_budget",
+      "type": "text",
+      "default": "Stopped before step {n} of {total}: {left} is left of your budget and that step needs about {need}. {ready} of {total} made so far are kept and can be played. The rest would cost about {rest} - top up, raise the budget in Account & key, then press the same button to carry on."
+    },
+    {
+      "name": "stopped_error",
+      "type": "text",
+      "default": "Stopped at step {n} of {total}: {reason}. {ready} of {total} made so far are kept - press the same button to carry on from there."
+    },
+    {
+      "name": "stopped_by_you",
+      "type": "text",
+      "default": "Stopped by you after step {ready} of {total}. Everything made so far is kept - press the same button to carry on."
+    },
+    {
+      "name": "stopped_partial",
+      "type": "text",
+      "default": "Only the steps asked for were made: {ready} of {total} ready. Press the same button to make the rest."
+    },
+    {
+      "name": "stopped_restart",
+      "type": "text",
+      "default": "The server restarted during this job after step {ready} of {total}. Everything made so far is kept - press the same button to carry on."
+    },
+    {
+      "name": "not_yours",
+      "type": "text",
+      "default": "That job is not yours."
+    },
+    {
+      "name": "no_job",
+      "type": "text",
+      "default": "No such job."
+    },
+    {
+      "name": "stopped_no_credit",
+      "type": "text",
+      "default": "Stopped at step {n} of {total}: {reason} {ready} of {total} made so far are kept. Add credit with that provider (or add another key in Account & key), then press the same button - the work carries on from step {n}, nothing is paid for twice."
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "resumed": "$resumed",
+      "kept": "$kept",
+      "retrying": "$retrying",
+      "stopped_budget": "$stopped_budget",
+      "stopped_error": "$stopped_error",
+      "stopped_by_you": "$stopped_by_you",
+      "stopped_partial": "$stopped_partial",
+      "stopped_restart": "$stopped_restart",
+      "not_yours": "$not_yours",
+      "no_job": "$no_job",
+      "stopped_no_credit": "$stopped_no_credit"
+    }
+  },
+  "returns": "record",
+  "version": 2,
+  "status": "published",
+  "description_nl": "Every sentence a resumable job says. {n} is the step it is at, {total} how many there are, {done} how many were already made, {ready} the last step that can be played, {left} {need} {rest} are dollars.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "resumed": "carrying on from step {n} of {total} - {done} already made and kept",
+        "kept": "step {n} of {total} kept from the last run",
+        "retrying": "step {n} failed ({reason}); trying again ({attempt} of {tries})",
+        "stopped_budget": "Stopped before step {n} of {total}: {left} is left of your budget and that step needs about {need}. {ready} of {total} made so far are kept and can be played. The rest would cost about {rest} - top up, raise the budget in Account & key, then press the same button to carry on.",
+        "stopped_error": "Stopped at step {n} of {total}: {reason}. {ready} of {total} made so far are kept - press the same button to carry on from there.",
+        "stopped_by_you": "Stopped by you after step {ready} of {total}. Everything made so far is kept - press the same button to carry on.",
+        "stopped_partial": "Only the steps asked for were made: {ready} of {total} ready. Press the same button to make the rest.",
+        "stopped_restart": "The server restarted during this job after step {ready} of {total}. Everything made so far is kept - press the same button to carry on.",
+        "not_yours": "That job is not yours.",
+        "no_job": "No such job.",
+        "stopped_no_credit": "Stopped at step {n} of {total}: {reason} {ready} of {total} made so far are kept. Add credit with that provider (or add another key in Account & key), then press the same button - the work carries on from step {n}, nothing is paid for twice."
+      }
+    }
+  ],
+  "weight_basis": "Wording only. Every sentence a resumable job shows lives here, never in Python."
+}

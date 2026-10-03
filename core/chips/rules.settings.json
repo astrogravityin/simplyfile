@@ -1,0 +1,65 @@
+{
+  "chip_id": "rules.settings",
+  "kind": "accessor",
+  "set": "rules",
+  "audience": "admin",
+  "label": "What rules keep, cut and default to",
+  "aliases": [
+    "rule limits",
+    "banner minutes"
+  ],
+  "params": [
+    {
+      "name": "rule_id_pattern",
+      "type": "text",
+      "default": "^[a-z][a-z0-9_]{2,59}$"
+    },
+    {
+      "name": "cooldown_keep_days",
+      "type": "number",
+      "default": 7
+    },
+    {
+      "name": "banner_text_max",
+      "type": "number",
+      "default": 500
+    },
+    {
+      "name": "banner_minutes_default",
+      "type": "number",
+      "default": 60
+    },
+    {
+      "name": "notice_subject_max",
+      "type": "number",
+      "default": 200
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "rule_id_pattern": "$rule_id_pattern",
+      "cooldown_keep_days": "$cooldown_keep_days",
+      "banner_text_max": "$banner_text_max",
+      "banner_minutes_default": "$banner_minutes_default",
+      "notice_subject_max": "$notice_subject_max"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "rule_id_pattern: what a rule id must look like. cooldown_keep_days: how long a rule's last send is remembered for its cooldown. banner_text_max / notice_subject_max: characters kept. banner_minutes_default: how long a banner shows when the rule does not say.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "rule_id_pattern": "^[a-z][a-z0-9_]{2,59}$",
+        "cooldown_keep_days": 7,
+        "banner_text_max": 500,
+        "banner_minutes_default": 60,
+        "notice_subject_max": 200
+      }
+    }
+  ],
+  "weight_basis": "Platform operations primitive, no business content. The knobs ARE the policy — edit them here, never in Python."
+}

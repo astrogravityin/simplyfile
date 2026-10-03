@@ -1,0 +1,93 @@
+{
+  "chip_id": "mail.errors",
+  "kind": "accessor",
+  "set": "mail",
+  "audience": "admin",
+  "label": "What the owner has to change when mail fails",
+  "aliases": [
+    "smtp errors",
+    "gmail app password"
+  ],
+  "params": [
+    {
+      "name": "auth_rejected",
+      "type": "text",
+      "default": "The mail server rejected that username and password."
+    },
+    {
+      "name": "auth_rejected_gmail",
+      "type": "text",
+      "default": "The mail server rejected that username and password. With Gmail you must use a 16-character App Password, not your normal password, and 2-Step Verification has to be on for the account. Make one at https://myaccount.google.com/apppasswords"
+    },
+    {
+      "name": "sender_refused",
+      "type": "text",
+      "default": "The server refused to send as \"{from_email}\". It usually has to be the same mailbox you signed in with, or an alias it owns."
+    },
+    {
+      "name": "recipient_refused",
+      "type": "text",
+      "default": "The server would not accept that recipient address."
+    },
+    {
+      "name": "timeout",
+      "type": "text",
+      "default": "No answer from {host}:{port} within {timeout}s. Check the port, and whether the host's firewall allows outbound mail."
+    },
+    {
+      "name": "tls",
+      "type": "text",
+      "default": "TLS failed. Port 587 wants Security = starttls; port 465 wants Security = ssl. They are not interchangeable."
+    },
+    {
+      "name": "unreachable",
+      "type": "text",
+      "default": "Could not reach {host}:{port} — {error}"
+    },
+    {
+      "name": "other",
+      "type": "text",
+      "default": "{kind}: {error}"
+    },
+    {
+      "name": "not_configured",
+      "type": "text",
+      "default": "No mail server is set up for this portal yet."
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "auth_rejected": "$auth_rejected",
+      "auth_rejected_gmail": "$auth_rejected_gmail",
+      "sender_refused": "$sender_refused",
+      "recipient_refused": "$recipient_refused",
+      "timeout": "$timeout",
+      "tls": "$tls",
+      "unreachable": "$unreachable",
+      "other": "$other",
+      "not_configured": "$not_configured"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "One sentence per kind of SMTP failure, instead of what the library called it. Python only says which kind happened and whether the server is Gmail. {from_email}, {host}, {port}, {timeout}, {error}, {kind} fill in.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "auth_rejected": "The mail server rejected that username and password.",
+        "auth_rejected_gmail": "The mail server rejected that username and password. With Gmail you must use a 16-character App Password, not your normal password, and 2-Step Verification has to be on for the account. Make one at https://myaccount.google.com/apppasswords",
+        "sender_refused": "The server refused to send as \"{from_email}\". It usually has to be the same mailbox you signed in with, or an alias it owns.",
+        "recipient_refused": "The server would not accept that recipient address.",
+        "timeout": "No answer from {host}:{port} within {timeout}s. Check the port, and whether the host's firewall allows outbound mail.",
+        "tls": "TLS failed. Port 587 wants Security = starttls; port 465 wants Security = ssl. They are not interchangeable.",
+        "unreachable": "Could not reach {host}:{port} — {error}",
+        "other": "{kind}: {error}",
+        "not_configured": "No mail server is set up for this portal yet."
+      }
+    }
+  ],
+  "weight_basis": "Platform access primitive, no business content. The knobs ARE the policy — edit them here, never in Python."
+}

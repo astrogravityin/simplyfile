@@ -1,0 +1,44 @@
+{
+  "chip_id": "speech.rules",
+  "kind": "accessor",
+  "set": "speech",
+  "label": "What every prompt that writes SPOKEN text tells the model (one place for all of them)",
+  "aliases": [
+    "write for the ear",
+    "tts prompt rules"
+  ],
+  "params": [
+    {
+      "name": "for_ear",
+      "type": "text",
+      "default": "\n\nEverything you write for a voice will be SPOKEN by a text-to-speech model. Write for the ear: full sentences, never bare lists of names or terms; spell every name and word in its normal spelling - never phonetic re-spellings, hyphenated syllables or IPA; write numbers, symbols and abbreviations the way they are said."
+    },
+    {
+      "name": "no_sound_split",
+      "type": "text",
+      "default": "(?<=[.!?;])\\s+",
+      "label": "When the voice model returns no sound for a line, it is asked again one sentence at a time (this pattern splits the sentences)"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "for_ear": "$for_ear",
+      "no_sound_split": "$no_sound_split"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-09-30 (owner: \"Gemini returned no audio ... update LLM Bridge and Draft with AI and any other places\"): the premium voice (Gemini TTS) returned NO SOUND for bare lists of terms and for hyphenated phonetic re-spellings. Every prompt whose answer is spoken - Avatar and Doodly scenes (doodle.script_prompt), Video narration (narrator.build_prompt, translate), film dialogue (pending.dialogue_prompt) - appends this, via media.for_ear().",
+  "weight_basis": "prompt",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "for_ear": "\n\nEverything you write for a voice will be SPOKEN by a text-to-speech model. Write for the ear: full sentences, never bare lists of names or terms; spell every name and word in its normal spelling - never phonetic re-spellings, hyphenated syllables or IPA; write numbers, symbols and abbreviations the way they are said.",
+        "no_sound_split": "(?<=[.!?;])\\s+"
+      }
+    }
+  ]
+}

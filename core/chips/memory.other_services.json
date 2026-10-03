@@ -1,0 +1,87 @@
+{
+  "chip_id": "memory.other_services",
+  "kind": "accessor",
+  "set": "memory",
+  "audience": "admin",
+  "label": "Other services on the server, busiest first",
+  "aliases": [
+    "other processes"
+  ],
+  "params": [
+    {
+      "name": "procs",
+      "type": "string",
+      "default": []
+    },
+    {
+      "name": "shown",
+      "type": "number",
+      "default": 12
+    }
+  ],
+  "expr": {
+    "vop": "rank_rows",
+    "rows": {
+      "vop": "group_rows",
+      "rows": "$procs",
+      "key": "name",
+      "measures": {
+        "count": [
+          "count"
+        ],
+        "cpu": [
+          "sum",
+          "cpu"
+        ],
+        "mem": [
+          "sum",
+          "mem"
+        ]
+      }
+    },
+    "by": [
+      "cpu",
+      "mem"
+    ],
+    "descending": true,
+    "limit": "$shown"
+  },
+  "returns": "rows",
+  "version": 1,
+  "status": "published",
+  "description_nl": "Every process that is not this portal, grouped by program name (twelve nginx workers are one row), busiest CPU first, then memory.",
+  "test_cases": [
+    {
+      "args": {
+        "procs": [
+          {
+            "name": "nginx",
+            "cpu": 1,
+            "mem": 10
+          },
+          {
+            "name": "postgres",
+            "cpu": 5,
+            "mem": 300
+          },
+          {
+            "name": "nginx",
+            "cpu": 2,
+            "mem": 12
+          }
+        ],
+        "shown": 1
+      },
+      "expect_value": [
+        {
+          "key": "postgres",
+          "name": "postgres",
+          "count": 1,
+          "cpu": 5,
+          "mem": 300
+        }
+      ]
+    }
+  ],
+  "weight_basis": "Platform operations primitive, no business content. The knobs ARE the policy — edit them here, never in Python."
+}

@@ -1,0 +1,484 @@
+{
+  "chip_id": "intake.suggest",
+  "kind": "accessor",
+  "set": "intake",
+  "label": "Suggested SF Ref for an untagged row",
+  "aliases": [
+    "intake suggest"
+  ],
+  "params": [
+    {
+      "name": "label",
+      "type": "text",
+      "default": "",
+      "label": "label"
+    },
+    {
+      "name": "heading",
+      "type": "text",
+      "default": "",
+      "label": "heading"
+    },
+    {
+      "name": "rules",
+      "type": "rows",
+      "default": [
+        {
+          "id": "hp_rent",
+          "pattern": "(?im)^label: .*rent ?(received|from)",
+          "ref": "{itr} HP"
+        },
+        {
+          "id": "hp_tax",
+          "pattern": "(?im)^label: .*(corporation|municipal|property) ?tax",
+          "ref": "{itr} HP"
+        },
+        {
+          "id": "hp_repairs",
+          "pattern": "(?im)^label: .*(repairs ?@|standard ?deduction)",
+          "ref": "{itr} HP"
+        },
+        {
+          "id": "bp",
+          "pattern": "(?im)^label: .*(net ?profit|fees ?to ?tax ?consultant|depreciation ?as ?per)",
+          "ref": "{itr} BP"
+        },
+        {
+          "id": "os",
+          "pattern": "(?im)^label: .*(interest ?on ?sb|interest ?from|savings ?bank ?interest|dividend)",
+          "ref": "{itr} OS"
+        },
+        {
+          "id": "paid",
+          "pattern": "(?im)^label: .*(advance ?tax|self ?assessment)",
+          "ref": "{itr} IT"
+        },
+        {
+          "id": "tti",
+          "pattern": "(?im)^label: .*(income ?returned|tax ?on ?income|surcharge|cess|interest ?u/s|234[abc])",
+          "ref": "{itr} TTI"
+        },
+        {
+          "id": "tds",
+          "pattern": "(?im)^heading: .*(tds ?as ?per|tds ?deducted|less: ?tds)",
+          "ref": "{itr} TDS2"
+        },
+        {
+          "id": "dep",
+          "pattern": "(?im)^heading: .*depreciation",
+          "ref": "3CD 18; {itr} DPM",
+          "number": true
+        },
+        {
+          "id": "rp40a",
+          "pattern": "(?im)^heading: .*40a ?\\(2\\) ?\\(b\\)",
+          "ref": "3CD 23",
+          "number": true
+        },
+        {
+          "id": "repaid",
+          "pattern": "(?im)^heading: .*(repaid|repayment ?of ?loans)",
+          "ref": "3CD 31(b)",
+          "number": true
+        },
+        {
+          "id": "loans",
+          "pattern": "(?im)^heading: .*loans ?(/|or|and) ?deposits",
+          "ref": "3CD 31(a)",
+          "number": true,
+          "by_column": [
+            {
+              "header": "accepted",
+              "ref": "3CD 31(a)"
+            },
+            {
+              "header": "repaid",
+              "ref": "3CD 31(b)"
+            }
+          ]
+        }
+      ],
+      "label": "rules"
+    },
+    {
+      "name": "date_like",
+      "type": "text",
+      "default": "\\d{1,2}[./-]\\d{1,2}[./-]\\d{2,4}",
+      "label": "date like"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "rules": "$rules",
+      "hit": {
+        "vop": "first_matching",
+        "rows": "$rules",
+        "pattern_field": "pattern",
+        "value_field": "id",
+        "default": "",
+        "text": {
+          "vop": "template",
+          "text": "label: {l}\nheading: {h}",
+          "values": {
+            "l": "$label",
+            "h": "$heading"
+          }
+        }
+      },
+      "continues": {
+        "vop": "matches",
+        "text": "$label",
+        "pattern": "$date_like"
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "First rule whose pattern is found wins. A pattern starting 'label:' looks at the row's first words, 'heading:' at the heading it sits under ((?i) = any case; ' ?' = a space or none, so '40A (2) (b)' and '40a(2)(b)' both match). {itr} becomes the year's form (ITR3 or ITR5). 'number' gives each 3CD row its serial in sheet order; 'by_column' picks refs by which column titles under the heading hold a figure (accepted -> 31(a), repaid -> 31(b)). A label that is a date continues the rule of the row above. A suggestion is a mapping only once a person accepts it.",
+  "test_cases": [
+    {
+      "args": {
+        "label": "Rent received from the premises"
+      },
+      "expect_value": {
+        "rules": [
+          {
+            "id": "hp_rent",
+            "pattern": "(?im)^label: .*rent ?(received|from)",
+            "ref": "{itr} HP"
+          },
+          {
+            "id": "hp_tax",
+            "pattern": "(?im)^label: .*(corporation|municipal|property) ?tax",
+            "ref": "{itr} HP"
+          },
+          {
+            "id": "hp_repairs",
+            "pattern": "(?im)^label: .*(repairs ?@|standard ?deduction)",
+            "ref": "{itr} HP"
+          },
+          {
+            "id": "bp",
+            "pattern": "(?im)^label: .*(net ?profit|fees ?to ?tax ?consultant|depreciation ?as ?per)",
+            "ref": "{itr} BP"
+          },
+          {
+            "id": "os",
+            "pattern": "(?im)^label: .*(interest ?on ?sb|interest ?from|savings ?bank ?interest|dividend)",
+            "ref": "{itr} OS"
+          },
+          {
+            "id": "paid",
+            "pattern": "(?im)^label: .*(advance ?tax|self ?assessment)",
+            "ref": "{itr} IT"
+          },
+          {
+            "id": "tti",
+            "pattern": "(?im)^label: .*(income ?returned|tax ?on ?income|surcharge|cess|interest ?u/s|234[abc])",
+            "ref": "{itr} TTI"
+          },
+          {
+            "id": "tds",
+            "pattern": "(?im)^heading: .*(tds ?as ?per|tds ?deducted|less: ?tds)",
+            "ref": "{itr} TDS2"
+          },
+          {
+            "id": "dep",
+            "pattern": "(?im)^heading: .*depreciation",
+            "ref": "3CD 18; {itr} DPM",
+            "number": true
+          },
+          {
+            "id": "rp40a",
+            "pattern": "(?im)^heading: .*40a ?\\(2\\) ?\\(b\\)",
+            "ref": "3CD 23",
+            "number": true
+          },
+          {
+            "id": "repaid",
+            "pattern": "(?im)^heading: .*(repaid|repayment ?of ?loans)",
+            "ref": "3CD 31(b)",
+            "number": true
+          },
+          {
+            "id": "loans",
+            "pattern": "(?im)^heading: .*loans ?(/|or|and) ?deposits",
+            "ref": "3CD 31(a)",
+            "number": true,
+            "by_column": [
+              {
+                "header": "accepted",
+                "ref": "3CD 31(a)"
+              },
+              {
+                "header": "repaid",
+                "ref": "3CD 31(b)"
+              }
+            ]
+          }
+        ],
+        "hit": "hp_rent",
+        "continues": false
+      }
+    },
+    {
+      "args": {
+        "label": "Plant & Machinery",
+        "heading": "Statement regarding depreciation as per IT Rules"
+      },
+      "expect_value": {
+        "rules": [
+          {
+            "id": "hp_rent",
+            "pattern": "(?im)^label: .*rent ?(received|from)",
+            "ref": "{itr} HP"
+          },
+          {
+            "id": "hp_tax",
+            "pattern": "(?im)^label: .*(corporation|municipal|property) ?tax",
+            "ref": "{itr} HP"
+          },
+          {
+            "id": "hp_repairs",
+            "pattern": "(?im)^label: .*(repairs ?@|standard ?deduction)",
+            "ref": "{itr} HP"
+          },
+          {
+            "id": "bp",
+            "pattern": "(?im)^label: .*(net ?profit|fees ?to ?tax ?consultant|depreciation ?as ?per)",
+            "ref": "{itr} BP"
+          },
+          {
+            "id": "os",
+            "pattern": "(?im)^label: .*(interest ?on ?sb|interest ?from|savings ?bank ?interest|dividend)",
+            "ref": "{itr} OS"
+          },
+          {
+            "id": "paid",
+            "pattern": "(?im)^label: .*(advance ?tax|self ?assessment)",
+            "ref": "{itr} IT"
+          },
+          {
+            "id": "tti",
+            "pattern": "(?im)^label: .*(income ?returned|tax ?on ?income|surcharge|cess|interest ?u/s|234[abc])",
+            "ref": "{itr} TTI"
+          },
+          {
+            "id": "tds",
+            "pattern": "(?im)^heading: .*(tds ?as ?per|tds ?deducted|less: ?tds)",
+            "ref": "{itr} TDS2"
+          },
+          {
+            "id": "dep",
+            "pattern": "(?im)^heading: .*depreciation",
+            "ref": "3CD 18; {itr} DPM",
+            "number": true
+          },
+          {
+            "id": "rp40a",
+            "pattern": "(?im)^heading: .*40a ?\\(2\\) ?\\(b\\)",
+            "ref": "3CD 23",
+            "number": true
+          },
+          {
+            "id": "repaid",
+            "pattern": "(?im)^heading: .*(repaid|repayment ?of ?loans)",
+            "ref": "3CD 31(b)",
+            "number": true
+          },
+          {
+            "id": "loans",
+            "pattern": "(?im)^heading: .*loans ?(/|or|and) ?deposits",
+            "ref": "3CD 31(a)",
+            "number": true,
+            "by_column": [
+              {
+                "header": "accepted",
+                "ref": "3CD 31(a)"
+              },
+              {
+                "header": "repaid",
+                "ref": "3CD 31(b)"
+              }
+            ]
+          }
+        ],
+        "hit": "dep",
+        "continues": false
+      }
+    },
+    {
+      "args": {
+        "label": "14.09.25"
+      },
+      "expect_value": {
+        "rules": [
+          {
+            "id": "hp_rent",
+            "pattern": "(?im)^label: .*rent ?(received|from)",
+            "ref": "{itr} HP"
+          },
+          {
+            "id": "hp_tax",
+            "pattern": "(?im)^label: .*(corporation|municipal|property) ?tax",
+            "ref": "{itr} HP"
+          },
+          {
+            "id": "hp_repairs",
+            "pattern": "(?im)^label: .*(repairs ?@|standard ?deduction)",
+            "ref": "{itr} HP"
+          },
+          {
+            "id": "bp",
+            "pattern": "(?im)^label: .*(net ?profit|fees ?to ?tax ?consultant|depreciation ?as ?per)",
+            "ref": "{itr} BP"
+          },
+          {
+            "id": "os",
+            "pattern": "(?im)^label: .*(interest ?on ?sb|interest ?from|savings ?bank ?interest|dividend)",
+            "ref": "{itr} OS"
+          },
+          {
+            "id": "paid",
+            "pattern": "(?im)^label: .*(advance ?tax|self ?assessment)",
+            "ref": "{itr} IT"
+          },
+          {
+            "id": "tti",
+            "pattern": "(?im)^label: .*(income ?returned|tax ?on ?income|surcharge|cess|interest ?u/s|234[abc])",
+            "ref": "{itr} TTI"
+          },
+          {
+            "id": "tds",
+            "pattern": "(?im)^heading: .*(tds ?as ?per|tds ?deducted|less: ?tds)",
+            "ref": "{itr} TDS2"
+          },
+          {
+            "id": "dep",
+            "pattern": "(?im)^heading: .*depreciation",
+            "ref": "3CD 18; {itr} DPM",
+            "number": true
+          },
+          {
+            "id": "rp40a",
+            "pattern": "(?im)^heading: .*40a ?\\(2\\) ?\\(b\\)",
+            "ref": "3CD 23",
+            "number": true
+          },
+          {
+            "id": "repaid",
+            "pattern": "(?im)^heading: .*(repaid|repayment ?of ?loans)",
+            "ref": "3CD 31(b)",
+            "number": true
+          },
+          {
+            "id": "loans",
+            "pattern": "(?im)^heading: .*loans ?(/|or|and) ?deposits",
+            "ref": "3CD 31(a)",
+            "number": true,
+            "by_column": [
+              {
+                "header": "accepted",
+                "ref": "3CD 31(a)"
+              },
+              {
+                "header": "repaid",
+                "ref": "3CD 31(b)"
+              }
+            ]
+          }
+        ],
+        "hit": "",
+        "continues": true
+      }
+    },
+    {
+      "args": {
+        "label": "Sri X",
+        "heading": "payments to persons specified in s.40A (2) (b)"
+      },
+      "expect_value": {
+        "rules": [
+          {
+            "id": "hp_rent",
+            "pattern": "(?im)^label: .*rent ?(received|from)",
+            "ref": "{itr} HP"
+          },
+          {
+            "id": "hp_tax",
+            "pattern": "(?im)^label: .*(corporation|municipal|property) ?tax",
+            "ref": "{itr} HP"
+          },
+          {
+            "id": "hp_repairs",
+            "pattern": "(?im)^label: .*(repairs ?@|standard ?deduction)",
+            "ref": "{itr} HP"
+          },
+          {
+            "id": "bp",
+            "pattern": "(?im)^label: .*(net ?profit|fees ?to ?tax ?consultant|depreciation ?as ?per)",
+            "ref": "{itr} BP"
+          },
+          {
+            "id": "os",
+            "pattern": "(?im)^label: .*(interest ?on ?sb|interest ?from|savings ?bank ?interest|dividend)",
+            "ref": "{itr} OS"
+          },
+          {
+            "id": "paid",
+            "pattern": "(?im)^label: .*(advance ?tax|self ?assessment)",
+            "ref": "{itr} IT"
+          },
+          {
+            "id": "tti",
+            "pattern": "(?im)^label: .*(income ?returned|tax ?on ?income|surcharge|cess|interest ?u/s|234[abc])",
+            "ref": "{itr} TTI"
+          },
+          {
+            "id": "tds",
+            "pattern": "(?im)^heading: .*(tds ?as ?per|tds ?deducted|less: ?tds)",
+            "ref": "{itr} TDS2"
+          },
+          {
+            "id": "dep",
+            "pattern": "(?im)^heading: .*depreciation",
+            "ref": "3CD 18; {itr} DPM",
+            "number": true
+          },
+          {
+            "id": "rp40a",
+            "pattern": "(?im)^heading: .*40a ?\\(2\\) ?\\(b\\)",
+            "ref": "3CD 23",
+            "number": true
+          },
+          {
+            "id": "repaid",
+            "pattern": "(?im)^heading: .*(repaid|repayment ?of ?loans)",
+            "ref": "3CD 31(b)",
+            "number": true
+          },
+          {
+            "id": "loans",
+            "pattern": "(?im)^heading: .*loans ?(/|or|and) ?deposits",
+            "ref": "3CD 31(a)",
+            "number": true,
+            "by_column": [
+              {
+                "header": "accepted",
+                "ref": "3CD 31(a)"
+              },
+              {
+                "header": "repaid",
+                "ref": "3CD 31(b)"
+              }
+            ]
+          }
+        ],
+        "hit": "rp40a",
+        "continues": false
+      }
+    }
+  ]
+}

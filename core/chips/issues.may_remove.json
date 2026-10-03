@@ -1,0 +1,38 @@
+{
+  "chip_id": "issues.may_remove",
+  "kind": "predicate",
+  "set": "issues",
+  "label": "May this person remove a reported issue",
+  "aliases": [
+    "may remove"
+  ],
+  "params": [
+    {
+      "name": "may_screen",
+      "type": "boolean",
+      "default": false,
+      "label": "Holds the Reported issues screen"
+    }
+  ],
+  "expr": {
+    "op": "eq",
+    "left": "$may_screen",
+    "right": true
+  },
+  "returns": "boolean",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-03 owner: \"We already have Report Issue framework - why can't we use that ... chip ops only\" - Report an issue and Katha feedback are ONE framework (core/issues.py); a kind is a row here.",
+  "test_cases": [
+    {
+      "args": {
+        "may_screen": true
+      },
+      "expect_value": true
+    },
+    {
+      "args": {},
+      "expect_value": false
+    }
+  ]
+}

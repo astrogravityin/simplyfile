@@ -1,0 +1,112 @@
+{
+  "chip_id": "recon.same_party",
+  "kind": "predicate",
+  "set": "recon",
+  "label": "Are two names the same deductor?",
+  "aliases": [
+    "recon same_party"
+  ],
+  "params": [
+    {
+      "name": "shared",
+      "type": "number",
+      "default": 0,
+      "label": "shared"
+    },
+    {
+      "name": "a_words",
+      "type": "number",
+      "default": 0,
+      "label": "a words"
+    },
+    {
+      "name": "b_words",
+      "type": "number",
+      "default": 0,
+      "label": "b words"
+    },
+    {
+      "name": "min_shared",
+      "type": "number",
+      "default": 2,
+      "label": "min shared"
+    }
+  ],
+  "expr": {
+    "vop": "choose",
+    "cases": [
+      {
+        "when": {
+          "op": "all",
+          "items": [
+            {
+              "op": "gt",
+              "left": "$shared",
+              "right": 0
+            },
+            {
+              "op": "any",
+              "items": [
+                {
+                  "op": "ge",
+                  "left": "$shared",
+                  "right": "$min_shared"
+                },
+                {
+                  "op": "eq",
+                  "left": "$shared",
+                  "right": "$a_words"
+                },
+                {
+                  "op": "eq",
+                  "left": "$shared",
+                  "right": "$b_words"
+                }
+              ]
+            }
+          ]
+        },
+        "then": true
+      }
+    ],
+    "else": false
+  },
+  "returns": "boolean",
+  "version": 1,
+  "status": "published",
+  "description_nl": "Names are compared on their significant words (recon.settings name_stop_words, min_word_len). Same party when they share at least min_shared words, or every word of one is in the other ('HDFC Bank Ltd' = 'HDFC BANK LIMITED').",
+  "test_cases": [
+    {
+      "args": {
+        "shared": 1,
+        "a_words": 1,
+        "b_words": 1
+      },
+      "expect_value": true
+    },
+    {
+      "args": {
+        "shared": 2,
+        "a_words": 4,
+        "b_words": 3
+      },
+      "expect_value": true
+    },
+    {
+      "args": {
+        "shared": 1,
+        "a_words": 3,
+        "b_words": 2
+      },
+      "expect_value": false
+    },
+    {
+      "args": {
+        "shared": 0,
+        "a_words": 0,
+        "b_words": 2
+      },
+      "expect_value": false
+    }
+  ]
+}

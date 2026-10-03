@@ -1,0 +1,58 @@
+{
+  "chip_id": "portal.defaults",
+  "kind": "accessor",
+  "set": "portal",
+  "audience": "admin",
+  "label": "The owner's storage settings before anything is saved",
+  "aliases": [
+    "storage defaults",
+    "upload cap"
+  ],
+  "params": [
+    {
+      "name": "help_video_url",
+      "type": "text",
+      "default": ""
+    },
+    {
+      "name": "max_upload_mb",
+      "type": "number",
+      "default": 1024
+    },
+    {
+      "name": "quota_gb",
+      "type": "number",
+      "default": 0
+    },
+    {
+      "name": "keep_source_days",
+      "type": "number",
+      "default": 0
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "help_video_url": "$help_video_url",
+      "max_upload_mb": "$max_upload_mb",
+      "quota_gb": "$quota_gb",
+      "keep_source_days": "$keep_source_days"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "What Settings holds on a fresh portal. help_video_url: the walkthrough shown on the Gemini key guide (blank = none). max_upload_mb: the largest single upload. quota_gb: what one account may hold (0 = no quota). keep_source_days: days a raw recording is kept after its narrated copy exists (0 = for ever). A portal on your own laptop wants these; a hosted portal sets all three, because storage is its only bill.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "help_video_url": "",
+        "max_upload_mb": 1024,
+        "quota_gb": 0,
+        "keep_source_days": 0
+      }
+    }
+  ],
+  "weight_basis": "Portal operating limits, no scoring. The knobs ARE the policy — edit them here, never in Python. Owner-only (audience admin): a looser value here would open a security hole or spend the owner's disk, so editors see and test it but cannot change it."
+}

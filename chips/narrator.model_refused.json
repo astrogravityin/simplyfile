@@ -1,0 +1,86 @@
+{
+  "chip_id": "narrator.model_refused",
+  "kind": "predicate",
+  "set": "narrator",
+  "label": "Google refused the MODEL, not the key",
+  "aliases": [
+    "model not available"
+  ],
+  "params": [
+    {
+      "name": "detail",
+      "type": "text",
+      "default": ""
+    },
+    {
+      "name": "model",
+      "type": "text",
+      "default": ""
+    },
+    {
+      "name": "not_found_pattern",
+      "type": "text",
+      "default": "NOT_FOUND|(?i:not found)"
+    },
+    {
+      "name": "model_mention",
+      "type": "text",
+      "default": "models/"
+    }
+  ],
+  "expr": {
+    "op": "all",
+    "items": [
+      {
+        "vop": "search",
+        "text": "$detail",
+        "pattern": "$not_found_pattern"
+      },
+      {
+        "op": "any",
+        "items": [
+          {
+            "vop": "contains",
+            "text": "$detail",
+            "part": "$model_mention",
+            "ignore_case": false
+          },
+          {
+            "vop": "contains",
+            "text": "$detail",
+            "part": "$model",
+            "ignore_case": false
+          }
+        ]
+      }
+    ]
+  },
+  "returns": "boolean",
+  "version": 1,
+  "status": "published",
+  "description_nl": "True only when Google's sentence says something was not found AND names a model (\"models/\" or the model picked). A bare \"not found\" is never blamed on the model. When true, Save and test moves to a model the key can see.",
+  "test_cases": [
+    {
+      "args": {
+        "detail": "404 NOT_FOUND. models/gemini-9 is not found for API version v1beta",
+        "model": "gemini-9"
+      },
+      "expect": true
+    },
+    {
+      "args": {
+        "detail": "404 NOT_FOUND. Requested entity was not found.",
+        "model": "gemini-2.5-flash"
+      },
+      "expect": false
+    },
+    {
+      "args": {
+        "detail": "400 INVALID_ARGUMENT. API key not valid.",
+        "model": "gemini-2.5-flash"
+      },
+      "expect": false
+    }
+  ],
+  "weight_basis": "A yes/no or a value the portal acts on. The knobs ARE the policy — edit them here, never in Python."
+}

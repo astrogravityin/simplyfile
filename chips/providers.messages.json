@@ -1,0 +1,258 @@
+{
+  "chip_id": "providers.messages",
+  "kind": "accessor",
+  "set": "providers",
+  "label": "Every sentence the provider layer says",
+  "aliases": [],
+  "params": [
+    {
+      "name": "no_provider",
+      "type": "text",
+      "default": "No provider called {provider} does that kind of work."
+    },
+    {
+      "name": "no_kind",
+      "type": "text",
+      "default": "{kind} is not a kind of work a provider does (text, image, video)."
+    },
+    {
+      "name": "no_model",
+      "type": "text",
+      "default": "{model} is not a model {provider} offers here - the list is chip providers.models."
+    },
+    {
+      "name": "no_key",
+      "type": "text",
+      "default": "No {provider} key on your account - add one in Account & key, or pick another provider there."
+    },
+    {
+      "name": "refused",
+      "type": "text",
+      "default": "The provider refused ({status}): {reason}"
+    },
+    {
+      "name": "nothing_back",
+      "type": "text",
+      "default": "The provider answered with nothing usable."
+    },
+    {
+      "name": "timed_out",
+      "type": "text",
+      "default": "The provider did not finish within {secs}s."
+    },
+    {
+      "name": "needs_image",
+      "type": "text",
+      "default": "{model} makes video from a picture: approve a storyboard still for this shot first (or let the shot before it finish, so its last frame can lead)."
+    },
+    {
+      "name": "all_keys_failed",
+      "type": "text",
+      "default": "Every {provider} key on your account failed - last one said: {reason}"
+    },
+    {
+      "name": "key_exhausted",
+      "type": "text",
+      "default": "{name} hit its limit ({reason}); moving to the next key."
+    },
+    {
+      "name": "key_invalid",
+      "type": "text",
+      "default": "{name} was refused as invalid ({reason}); it will not be used until it passes a test."
+    },
+    {
+      "name": "no_such_key",
+      "type": "text",
+      "default": "No such key on your account."
+    },
+    {
+      "name": "too_many_keys",
+      "type": "text",
+      "default": "At most {max} keys per provider."
+    },
+    {
+      "name": "key_too_short",
+      "type": "text",
+      "default": "That does not look like a key."
+    },
+    {
+      "name": "key_ok",
+      "type": "text",
+      "default": "{name} works ({model}, {secs}s)."
+    },
+    {
+      "name": "no_credit",
+      "type": "text",
+      "default": "Your {provider} account has run out of credit ({reason})."
+    },
+    {
+      "name": "key_no_credit",
+      "type": "text",
+      "default": "{name} has no credit left ({reason}); trying your next key."
+    },
+    {
+      "name": "model_gone",
+      "type": "text",
+      "default": "{provider} no longer offers the model \"{model}\" - it has been withdrawn. Nothing was charged. It is taken out of every model list; press the AI button again and pick another model."
+    },
+    {
+      "name": "check_failed",
+      "type": "text",
+      "default": "Could not ask {provider} for its models: {reason}"
+    },
+    {
+      "name": "check_no_key",
+      "type": "text",
+      "default": "No key for {provider} - add one to check its models."
+    },
+    {
+      "name": "chip_refused",
+      "type": "text",
+      "default": "The change was not saved: the chip's own checks failed ({reason})."
+    },
+    {
+      "name": "model_exists",
+      "type": "text",
+      "default": "{model} is already in the list."
+    },
+    {
+      "name": "model_kind_bad",
+      "type": "text",
+      "default": "Pick what the model does: text, image or video."
+    },
+    {
+      "name": "keys_resting",
+      "type": "text",
+      "default": "Your {provider} key is resting after the provider said: {reason} - the portal tries it again in about {minutes} minutes, or add another key in Account & key."
+    },
+    {
+      "name": "model_swapped",
+      "type": "long",
+      "default": "{old} is no longer offered by {provider}; using {new} instead (same price or less).",
+      "label": "model swapped"
+    },
+    {
+      "name": "watch_subject",
+      "type": "text",
+      "default": "Models changed: {gone} gone, {new} new",
+      "label": "watch subject"
+    },
+    {
+      "name": "watch_text",
+      "type": "long",
+      "default": "The daily model check on {date}:\n{lines}\nOpen Account & key -> Check models to add the new ones or retire the old.",
+      "label": "watch text"
+    },
+    {
+      "name": "watch_gone",
+      "type": "text",
+      "default": "- GONE {model} ({provider}){swap}",
+      "label": "watch gone"
+    },
+    {
+      "name": "watch_swap",
+      "type": "text",
+      "default": " -> everyone on it now uses {new}",
+      "label": "watch swap"
+    },
+    {
+      "name": "watch_noswap",
+      "type": "text",
+      "default": " -> no model at the same price or less; people on it must pick another",
+      "label": "watch noswap"
+    },
+    {
+      "name": "watch_new",
+      "type": "text",
+      "default": "- NEW {model} ({provider}, {kind})",
+      "label": "watch new"
+    },
+    {
+      "name": "watch_error",
+      "type": "text",
+      "default": "- could not ask {provider}: {reason}",
+      "label": "watch error"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "no_provider": "$no_provider",
+      "no_kind": "$no_kind",
+      "no_model": "$no_model",
+      "no_key": "$no_key",
+      "refused": "$refused",
+      "nothing_back": "$nothing_back",
+      "timed_out": "$timed_out",
+      "needs_image": "$needs_image",
+      "all_keys_failed": "$all_keys_failed",
+      "key_exhausted": "$key_exhausted",
+      "key_invalid": "$key_invalid",
+      "no_such_key": "$no_such_key",
+      "too_many_keys": "$too_many_keys",
+      "key_too_short": "$key_too_short",
+      "key_ok": "$key_ok",
+      "no_credit": "$no_credit",
+      "key_no_credit": "$key_no_credit",
+      "model_gone": "$model_gone",
+      "check_failed": "$check_failed",
+      "check_no_key": "$check_no_key",
+      "chip_refused": "$chip_refused",
+      "model_exists": "$model_exists",
+      "model_kind_bad": "$model_kind_bad",
+      "keys_resting": "$keys_resting",
+      "model_swapped": "$model_swapped",
+      "watch_subject": "$watch_subject",
+      "watch_text": "$watch_text",
+      "watch_gone": "$watch_gone",
+      "watch_swap": "$watch_swap",
+      "watch_noswap": "$watch_noswap",
+      "watch_new": "$watch_new",
+      "watch_error": "$watch_error"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "Every refusal and every failure the provider layer can say.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "no_provider": "No provider called {provider} does that kind of work.",
+        "no_kind": "{kind} is not a kind of work a provider does (text, image, video).",
+        "no_model": "{model} is not a model {provider} offers here - the list is chip providers.models.",
+        "no_key": "No {provider} key on your account - add one in Account & key, or pick another provider there.",
+        "refused": "The provider refused ({status}): {reason}",
+        "nothing_back": "The provider answered with nothing usable.",
+        "timed_out": "The provider did not finish within {secs}s.",
+        "needs_image": "{model} makes video from a picture: approve a storyboard still for this shot first (or let the shot before it finish, so its last frame can lead).",
+        "all_keys_failed": "Every {provider} key on your account failed - last one said: {reason}",
+        "key_exhausted": "{name} hit its limit ({reason}); moving to the next key.",
+        "key_invalid": "{name} was refused as invalid ({reason}); it will not be used until it passes a test.",
+        "no_such_key": "No such key on your account.",
+        "too_many_keys": "At most {max} keys per provider.",
+        "key_too_short": "That does not look like a key.",
+        "key_ok": "{name} works ({model}, {secs}s).",
+        "no_credit": "Your {provider} account has run out of credit ({reason}).",
+        "key_no_credit": "{name} has no credit left ({reason}); trying your next key.",
+        "model_gone": "{provider} no longer offers the model \"{model}\" - it has been withdrawn. Nothing was charged. It is taken out of every model list; press the AI button again and pick another model.",
+        "check_failed": "Could not ask {provider} for its models: {reason}",
+        "check_no_key": "No key for {provider} - add one to check its models.",
+        "chip_refused": "The change was not saved: the chip's own checks failed ({reason}).",
+        "model_exists": "{model} is already in the list.",
+        "model_kind_bad": "Pick what the model does: text, image or video.",
+        "keys_resting": "Your {provider} key is resting after the provider said: {reason} - the portal tries it again in about {minutes} minutes, or add another key in Account & key.",
+        "model_swapped": "{old} is no longer offered by {provider}; using {new} instead (same price or less).",
+        "watch_subject": "Models changed: {gone} gone, {new} new",
+        "watch_text": "The daily model check on {date}:\n{lines}\nOpen Account & key -> Check models to add the new ones or retire the old.",
+        "watch_gone": "- GONE {model} ({provider}){swap}",
+        "watch_swap": " -> everyone on it now uses {new}",
+        "watch_noswap": " -> no model at the same price or less; people on it must pick another",
+        "watch_new": "- NEW {model} ({provider}, {kind})",
+        "watch_error": "- could not ask {provider}: {reason}"
+      }
+    }
+  ],
+  "weight_basis": "Wording only."
+}

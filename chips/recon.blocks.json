@@ -1,0 +1,83 @@
+{
+  "chip_id": "recon.blocks",
+  "kind": "predicate",
+  "set": "recon",
+  "label": "Does Reconcile keep a year out of this stage?",
+  "aliases": [
+    "recon blocks"
+  ],
+  "params": [
+    {
+      "name": "stage",
+      "type": "text",
+      "default": "",
+      "label": "stage"
+    },
+    {
+      "name": "open_red",
+      "type": "number",
+      "default": 0,
+      "label": "open red"
+    },
+    {
+      "name": "block_stages",
+      "type": "list",
+      "default": [
+        "review",
+        "filed"
+      ],
+      "label": "block stages"
+    }
+  ],
+  "expr": {
+    "vop": "choose",
+    "cases": [
+      {
+        "when": {
+          "op": "all",
+          "items": [
+            {
+              "op": "in_set",
+              "value": "$stage",
+              "set": "$block_stages"
+            },
+            {
+              "op": "gt",
+              "left": "$open_red",
+              "right": 0
+            }
+          ]
+        },
+        "then": true
+      }
+    ],
+    "else": false
+  },
+  "returns": "boolean",
+  "version": 1,
+  "status": "published",
+  "description_nl": "A year cannot move to these stages while a red finding has no explanation.",
+  "test_cases": [
+    {
+      "args": {
+        "stage": "review",
+        "open_red": 2
+      },
+      "expect_value": true
+    },
+    {
+      "args": {
+        "stage": "review",
+        "open_red": 0
+      },
+      "expect_value": false
+    },
+    {
+      "args": {
+        "stage": "mapping",
+        "open_red": 5
+      },
+      "expect_value": false
+    }
+  ]
+}

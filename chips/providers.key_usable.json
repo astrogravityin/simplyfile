@@ -1,0 +1,108 @@
+{
+  "chip_id": "providers.key_usable",
+  "kind": "predicate",
+  "set": "providers",
+  "label": "May a key be tried now, given its state and how long ago it was marked",
+  "aliases": [
+    "key revive"
+  ],
+  "params": [
+    {
+      "name": "status",
+      "type": "text",
+      "default": "active"
+    },
+    {
+      "name": "minutes_since",
+      "type": "number",
+      "default": 0
+    },
+    {
+      "name": "revive_minutes",
+      "type": "number",
+      "default": 60
+    },
+    {
+      "name": "blocked",
+      "type": "boolean",
+      "default": false,
+      "label": "Held back for a reason outside its own status (a lender's cap)"
+    }
+  ],
+  "expr": {
+    "op": "all",
+    "items": [
+      {
+        "op": "eq",
+        "left": "$blocked",
+        "right": false
+      },
+      {
+        "op": "any",
+        "items": [
+          {
+            "op": "eq",
+            "left": "$status",
+            "right": "active"
+          },
+          {
+            "op": "all",
+            "items": [
+              {
+                "op": "eq",
+                "left": "$status",
+                "right": "exhausted"
+              },
+              {
+                "op": "ge",
+                "left": "$minutes_since",
+                "right": "$revive_minutes"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "returns": "boolean",
+  "version": 1,
+  "status": "published",
+  "description_nl": "An active key may always be tried. A key at its limit (exhausted) may be tried again once revive_minutes have passed since it was marked. An invalid key may not - it waits for a test that passes. blocked: something outside the key's own state holds it back - today the lender's spending cap on a borrowed key. Blocked beats every other answer.",
+  "test_cases": [
+    {
+      "args": {
+        "status": "active"
+      },
+      "expect_value": true
+    },
+    {
+      "args": {
+        "status": "exhausted",
+        "minutes_since": 10
+      },
+      "expect_value": false
+    },
+    {
+      "args": {
+        "status": "exhausted",
+        "minutes_since": 61
+      },
+      "expect_value": true
+    },
+    {
+      "args": {
+        "status": "invalid",
+        "minutes_since": 999
+      },
+      "expect_value": false
+    },
+    {
+      "args": {
+        "status": "active",
+        "blocked": true
+      },
+      "expect_value": false
+    }
+  ],
+  "weight_basis": "The revive rule. Edit it here, never in Python."
+}

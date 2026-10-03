@@ -1,0 +1,725 @@
+{
+  "chip_id": "ui.storage",
+  "kind": "accessor",
+  "set": "ui",
+  "label": "Every word on the Storage screen",
+  "aliases": [
+    "storage screen words"
+  ],
+  "params": [
+    {
+      "name": "title",
+      "type": "text",
+      "default": "Storage"
+    },
+    {
+      "name": "lede",
+      "type": "text",
+      "default": "Who holds the disk, and how to get it back. Ask someone to clean up; {gap} days later remind them, and again {gap} days after that. From day {day} you may delete their files."
+    },
+    {
+      "name": "no_email",
+      "type": "text",
+      "default": "Email is not set up, so requests reach people as a banner inside the portal only. Set up email on <a href=\"#/access\">People &amp; access → Portal &amp; sign-up</a> to send them by mail too."
+    },
+    {
+      "name": "today",
+      "type": "text",
+      "default": "today"
+    },
+    {
+      "name": "one_day",
+      "type": "text",
+      "default": "{n} day"
+    },
+    {
+      "name": "n_days",
+      "type": "text",
+      "default": "{n} {n:day|days}"
+    },
+    {
+      "name": "n_months",
+      "type": "text",
+      "default": "{n} {n:month|months}"
+    },
+    {
+      "name": "may_delete",
+      "type": "text",
+      "default": "may delete"
+    },
+    {
+      "name": "n_sent",
+      "type": "text",
+      "default": "{n}/{max} sent"
+    },
+    {
+      "name": "tile_held",
+      "type": "text",
+      "default": "held by all accounts"
+    },
+    {
+      "name": "tile_files",
+      "type": "text",
+      "default": "files"
+    },
+    {
+      "name": "tile_holders",
+      "type": "text",
+      "default": "accounts holding files"
+    },
+    {
+      "name": "tile_free",
+      "type": "text",
+      "default": "free on this disk"
+    },
+    {
+      "name": "tile_open",
+      "type": "text",
+      "default": "clean-ups in progress"
+    },
+    {
+      "name": "find_placeholder",
+      "type": "text",
+      "default": "Find an email"
+    },
+    {
+      "name": "n_files",
+      "type": "text",
+      "default": "{n} {n:file|files}"
+    },
+    {
+      "name": "held_for",
+      "type": "text",
+      "default": "held {age}"
+    },
+    {
+      "name": "no_match",
+      "type": "text",
+      "default": "No account matches."
+    },
+    {
+      "name": "no_accounts",
+      "type": "text",
+      "default": "No accounts yet."
+    },
+    {
+      "name": "ask",
+      "type": "text",
+      "default": "Ask to clean up"
+    },
+    {
+      "name": "final_reminder",
+      "type": "text",
+      "default": "Final reminder"
+    },
+    {
+      "name": "reminder",
+      "type": "text",
+      "default": "Reminder"
+    },
+    {
+      "name": "sent_email",
+      "type": "text",
+      "default": "Sent {date} by email"
+    },
+    {
+      "name": "sent_banner",
+      "type": "text",
+      "default": "Sent {date} (banner only)"
+    },
+    {
+      "name": "possible_from",
+      "type": "text",
+      "default": "Possible from {date}"
+    },
+    {
+      "name": "any_time",
+      "type": "text",
+      "default": "Any time"
+    },
+    {
+      "name": "after_previous",
+      "type": "text",
+      "default": "{n} {n:day|days} after the previous one"
+    },
+    {
+      "name": "send_final",
+      "type": "text",
+      "default": "Send final reminder"
+    },
+    {
+      "name": "send_reminder",
+      "type": "text",
+      "default": "Send reminder"
+    },
+    {
+      "name": "held",
+      "type": "text",
+      "default": "held"
+    },
+    {
+      "name": "files_in_one",
+      "type": "text",
+      "default": "files in {n} item"
+    },
+    {
+      "name": "files_in_n",
+      "type": "text",
+      "default": "files in {n} {n:item|items}"
+    },
+    {
+      "name": "since",
+      "type": "text",
+      "default": "since {date}"
+    },
+    {
+      "name": "holding_nothing",
+      "type": "text",
+      "default": "holding nothing"
+    },
+    {
+      "name": "cleanup",
+      "type": "text",
+      "default": "Clean-up"
+    },
+    {
+      "name": "delete_allowed",
+      "type": "text",
+      "default": "Delete allowed"
+    },
+    {
+      "name": "delete_since",
+      "type": "text",
+      "default": "Since {date}"
+    },
+    {
+      "name": "delete_from",
+      "type": "text",
+      "default": "From {date}, once all {n} {n:request has|requests have} gone"
+    },
+    {
+      "name": "delete_day",
+      "type": "text",
+      "default": "Day {n} after the first request"
+    },
+    {
+      "name": "no_files_to_ask",
+      "type": "text",
+      "default": "Holds no files — nothing to ask for."
+    },
+    {
+      "name": "next_from",
+      "type": "text",
+      "default": "Next one possible from {date}."
+    },
+    {
+      "name": "close_button",
+      "type": "text",
+      "default": "Close — they cleaned up"
+    },
+    {
+      "name": "their_items",
+      "type": "text",
+      "default": "Their items"
+    },
+    {
+      "name": "select_all",
+      "type": "text",
+      "default": "Select all"
+    },
+    {
+      "name": "col_item",
+      "type": "text",
+      "default": "Item"
+    },
+    {
+      "name": "col_files",
+      "type": "text",
+      "default": "Files"
+    },
+    {
+      "name": "col_size",
+      "type": "text",
+      "default": "Size"
+    },
+    {
+      "name": "col_created",
+      "type": "text",
+      "default": "Created"
+    },
+    {
+      "name": "col_age",
+      "type": "text",
+      "default": "Age"
+    },
+    {
+      "name": "delete_selected",
+      "type": "text",
+      "default": "Delete selected"
+    },
+    {
+      "name": "delete_all",
+      "type": "text",
+      "default": "Delete all {n}"
+    },
+    {
+      "name": "opens_on",
+      "type": "text",
+      "default": "Deleting opens on {date}."
+    },
+    {
+      "name": "opens_on_after_final",
+      "type": "text",
+      "default": "Deleting opens on {date}, after the final reminder."
+    },
+    {
+      "name": "opens_after_first",
+      "type": "text",
+      "default": "Deleting opens {n} {n:day|days} after the first request."
+    },
+    {
+      "name": "no_files",
+      "type": "text",
+      "default": "No files."
+    },
+    {
+      "name": "ask_title",
+      "type": "text",
+      "default": "{action}: {email}"
+    },
+    {
+      "name": "ask_body",
+      "type": "text",
+      "default": "They get an email and a banner in the portal saying they hold <b>{size}</b> in <b>{files}</b> files, with a link to clean up and the date from which you may delete."
+    },
+    {
+      "name": "ask_body_no_email",
+      "type": "text",
+      "default": "They get an email (not set up — banner only) and a banner in the portal saying they hold <b>{size}</b> in <b>{files}</b> files, with a link to clean up and the date from which you may delete."
+    },
+    {
+      "name": "note_label",
+      "type": "text",
+      "default": "A note from you (optional)"
+    },
+    {
+      "name": "note_placeholder",
+      "type": "text",
+      "default": "e.g. Please keep only the final narrated videos."
+    },
+    {
+      "name": "cancel",
+      "type": "text",
+      "default": "Cancel"
+    },
+    {
+      "name": "send",
+      "type": "text",
+      "default": "Send"
+    },
+    {
+      "name": "sent_to",
+      "type": "text",
+      "default": "Sent to {email}."
+    },
+    {
+      "name": "recorded",
+      "type": "text",
+      "default": "Recorded. {why}"
+    },
+    {
+      "name": "close_title",
+      "type": "text",
+      "default": "Close this clean-up?"
+    },
+    {
+      "name": "close_body",
+      "type": "text",
+      "default": "The banner goes away for them, and the next request starts again from the first."
+    },
+    {
+      "name": "closed",
+      "type": "text",
+      "default": "Closed."
+    },
+    {
+      "name": "close",
+      "type": "text",
+      "default": "Close"
+    },
+    {
+      "name": "delete_title_one",
+      "type": "text",
+      "default": "Delete {n} item of {email}?"
+    },
+    {
+      "name": "delete_title_n",
+      "type": "text",
+      "default": "Delete {n} {n:item|items} of {email}?"
+    },
+    {
+      "name": "delete_body_one",
+      "type": "text",
+      "default": "{size} is deleted for good, with every file in it. This cannot be undone."
+    },
+    {
+      "name": "delete_body_n",
+      "type": "text",
+      "default": "{size} is deleted for good, with every file in them. This cannot be undone."
+    },
+    {
+      "name": "delete_told",
+      "type": "text",
+      "default": " They are told by email."
+    },
+    {
+      "name": "deleted",
+      "type": "text",
+      "default": "Deleted {n} ({size} freed)."
+    },
+    {
+      "name": "skipped",
+      "type": "text",
+      "default": " Skipped {n}: {why}"
+    },
+    {
+      "name": "delete_for_good",
+      "type": "text",
+      "default": "Delete for good"
+    },
+    {
+      "name": "items_more",
+      "type": "text",
+      "default": "The {shown} biggest of {n} {n:item|items}. Delete all reaches every one of them.",
+      "label": "items more"
+    },
+    {
+      "name": "tick_first",
+      "type": "text",
+      "default": "Tick the items to delete first.",
+      "label": "tick first"
+    },
+    {
+      "name": "ask_wait",
+      "type": "text",
+      "default": "You can ask again on the date shown.",
+      "label": "ask wait"
+    },
+    {
+      "name": "delete_locked",
+      "type": "text",
+      "default": "Delete opens after the last reminder - see the date beside it.",
+      "label": "delete locked"
+    },
+    {
+      "name": "limits_title",
+      "type": "text",
+      "default": "Default for everyone"
+    },
+    {
+      "name": "limits_note",
+      "type": "text",
+      "default": "Everyone gets these unless you give a person their own - pick the person, then Edit limits."
+    },
+    {
+      "name": "limits_owner_only",
+      "type": "text",
+      "default": "Only the owner changes these."
+    },
+    {
+      "name": "save_limits",
+      "type": "text",
+      "default": "Save storage limits"
+    },
+    {
+      "name": "used_of",
+      "type": "text",
+      "default": "{used} of {quota}"
+    },
+    {
+      "name": "no_limit",
+      "type": "text",
+      "default": "no limit"
+    },
+    {
+      "name": "upload_up_to",
+      "type": "text",
+      "default": "Uploads up to {mb} MB"
+    },
+    {
+      "name": "own_badge",
+      "type": "text",
+      "default": "Own limits"
+    },
+    {
+      "name": "default_badge",
+      "type": "text",
+      "default": "Default"
+    },
+    {
+      "name": "their_limit",
+      "type": "text",
+      "default": "Storage limit"
+    },
+    {
+      "name": "allocated",
+      "type": "text",
+      "default": "allocated"
+    },
+    {
+      "name": "used_pct",
+      "type": "text",
+      "default": "{pct}% used"
+    },
+    {
+      "name": "edit_limits",
+      "type": "text",
+      "default": "Edit limits"
+    },
+    {
+      "name": "person_limits_title",
+      "type": "text",
+      "default": "Storage for {name}"
+    },
+    {
+      "name": "person_limits_note",
+      "type": "text",
+      "default": "Leave a box blank to follow the default for everyone."
+    },
+    {
+      "name": "default_hint",
+      "type": "text",
+      "default": "Default: {value}"
+    },
+    {
+      "name": "use_default",
+      "type": "text",
+      "default": "Use defaults"
+    },
+    {
+      "name": "use_default_title",
+      "type": "text",
+      "default": "Put {name} back on the defaults?"
+    },
+    {
+      "name": "use_default_body",
+      "type": "text",
+      "default": "Their own limits are forgotten; they follow the defaults for everyone. Nothing they hold is deleted."
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "title": "$title",
+      "lede": "$lede",
+      "no_email": "$no_email",
+      "today": "$today",
+      "one_day": "$one_day",
+      "n_days": "$n_days",
+      "n_months": "$n_months",
+      "may_delete": "$may_delete",
+      "n_sent": "$n_sent",
+      "tile_held": "$tile_held",
+      "tile_files": "$tile_files",
+      "tile_holders": "$tile_holders",
+      "tile_free": "$tile_free",
+      "tile_open": "$tile_open",
+      "find_placeholder": "$find_placeholder",
+      "n_files": "$n_files",
+      "held_for": "$held_for",
+      "no_match": "$no_match",
+      "no_accounts": "$no_accounts",
+      "ask": "$ask",
+      "final_reminder": "$final_reminder",
+      "reminder": "$reminder",
+      "sent_email": "$sent_email",
+      "sent_banner": "$sent_banner",
+      "possible_from": "$possible_from",
+      "any_time": "$any_time",
+      "after_previous": "$after_previous",
+      "send_final": "$send_final",
+      "send_reminder": "$send_reminder",
+      "held": "$held",
+      "files_in_one": "$files_in_one",
+      "files_in_n": "$files_in_n",
+      "since": "$since",
+      "holding_nothing": "$holding_nothing",
+      "cleanup": "$cleanup",
+      "delete_allowed": "$delete_allowed",
+      "delete_since": "$delete_since",
+      "delete_from": "$delete_from",
+      "delete_day": "$delete_day",
+      "no_files_to_ask": "$no_files_to_ask",
+      "next_from": "$next_from",
+      "close_button": "$close_button",
+      "their_items": "$their_items",
+      "select_all": "$select_all",
+      "col_item": "$col_item",
+      "col_files": "$col_files",
+      "col_size": "$col_size",
+      "col_created": "$col_created",
+      "col_age": "$col_age",
+      "delete_selected": "$delete_selected",
+      "delete_all": "$delete_all",
+      "opens_on": "$opens_on",
+      "opens_on_after_final": "$opens_on_after_final",
+      "opens_after_first": "$opens_after_first",
+      "no_files": "$no_files",
+      "ask_title": "$ask_title",
+      "ask_body": "$ask_body",
+      "ask_body_no_email": "$ask_body_no_email",
+      "note_label": "$note_label",
+      "note_placeholder": "$note_placeholder",
+      "cancel": "$cancel",
+      "send": "$send",
+      "sent_to": "$sent_to",
+      "recorded": "$recorded",
+      "close_title": "$close_title",
+      "close_body": "$close_body",
+      "closed": "$closed",
+      "close": "$close",
+      "delete_title_one": "$delete_title_one",
+      "delete_title_n": "$delete_title_n",
+      "delete_body_one": "$delete_body_one",
+      "delete_body_n": "$delete_body_n",
+      "delete_told": "$delete_told",
+      "deleted": "$deleted",
+      "skipped": "$skipped",
+      "delete_for_good": "$delete_for_good",
+      "items_more": "$items_more",
+      "tick_first": "$tick_first",
+      "ask_wait": "$ask_wait",
+      "delete_locked": "$delete_locked",
+      "limits_title": "$limits_title",
+      "limits_note": "$limits_note",
+      "limits_owner_only": "$limits_owner_only",
+      "save_limits": "$save_limits",
+      "used_of": "$used_of",
+      "no_limit": "$no_limit",
+      "upload_up_to": "$upload_up_to",
+      "own_badge": "$own_badge",
+      "default_badge": "$default_badge",
+      "their_limit": "$their_limit",
+      "allocated": "$allocated",
+      "used_pct": "$used_pct",
+      "edit_limits": "$edit_limits",
+      "person_limits_title": "$person_limits_title",
+      "person_limits_note": "$person_limits_note",
+      "default_hint": "$default_hint",
+      "use_default": "$use_default",
+      "use_default_title": "$use_default_title",
+      "use_default_body": "$use_default_body"
+    }
+  },
+  "returns": "record",
+  "version": 4,
+  "status": "published",
+  "description_nl": "The words of one screen. {placeholders} are filled on the page. A language overrides any of them with chip ui.storage.<lang> (for example ui.storage.hi).",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "title": "Storage",
+        "lede": "Who holds the disk, and how to get it back. Ask someone to clean up; {gap} days later remind them, and again {gap} days after that. From day {day} you may delete their files.",
+        "no_email": "Email is not set up, so requests reach people as a banner inside the portal only. Set up email on <a href=\"#/access\">People &amp; access → Portal &amp; sign-up</a> to send them by mail too.",
+        "today": "today",
+        "one_day": "{n} day",
+        "n_days": "{n} {n:day|days}",
+        "n_months": "{n} {n:month|months}",
+        "may_delete": "may delete",
+        "n_sent": "{n}/{max} sent",
+        "tile_held": "held by all accounts",
+        "tile_files": "files",
+        "tile_holders": "accounts holding files",
+        "tile_free": "free on this disk",
+        "tile_open": "clean-ups in progress",
+        "find_placeholder": "Find an email",
+        "n_files": "{n} {n:file|files}",
+        "held_for": "held {age}",
+        "no_match": "No account matches.",
+        "no_accounts": "No accounts yet.",
+        "ask": "Ask to clean up",
+        "final_reminder": "Final reminder",
+        "reminder": "Reminder",
+        "sent_email": "Sent {date} by email",
+        "sent_banner": "Sent {date} (banner only)",
+        "possible_from": "Possible from {date}",
+        "any_time": "Any time",
+        "after_previous": "{n} {n:day|days} after the previous one",
+        "send_final": "Send final reminder",
+        "send_reminder": "Send reminder",
+        "held": "held",
+        "files_in_one": "files in {n} item",
+        "files_in_n": "files in {n} {n:item|items}",
+        "since": "since {date}",
+        "holding_nothing": "holding nothing",
+        "cleanup": "Clean-up",
+        "delete_allowed": "Delete allowed",
+        "delete_since": "Since {date}",
+        "delete_from": "From {date}, once all {n} {n:request has|requests have} gone",
+        "delete_day": "Day {n} after the first request",
+        "no_files_to_ask": "Holds no files — nothing to ask for.",
+        "next_from": "Next one possible from {date}.",
+        "close_button": "Close — they cleaned up",
+        "their_items": "Their items",
+        "select_all": "Select all",
+        "col_item": "Item",
+        "col_files": "Files",
+        "col_size": "Size",
+        "col_created": "Created",
+        "col_age": "Age",
+        "delete_selected": "Delete selected",
+        "delete_all": "Delete all {n}",
+        "opens_on": "Deleting opens on {date}.",
+        "opens_on_after_final": "Deleting opens on {date}, after the final reminder.",
+        "opens_after_first": "Deleting opens {n} {n:day|days} after the first request.",
+        "no_files": "No files.",
+        "ask_title": "{action}: {email}",
+        "ask_body": "They get an email and a banner in the portal saying they hold <b>{size}</b> in <b>{files}</b> files, with a link to clean up and the date from which you may delete.",
+        "ask_body_no_email": "They get an email (not set up — banner only) and a banner in the portal saying they hold <b>{size}</b> in <b>{files}</b> files, with a link to clean up and the date from which you may delete.",
+        "note_label": "A note from you (optional)",
+        "note_placeholder": "e.g. Please keep only the final narrated videos.",
+        "cancel": "Cancel",
+        "send": "Send",
+        "sent_to": "Sent to {email}.",
+        "recorded": "Recorded. {why}",
+        "close_title": "Close this clean-up?",
+        "close_body": "The banner goes away for them, and the next request starts again from the first.",
+        "closed": "Closed.",
+        "close": "Close",
+        "delete_title_one": "Delete {n} item of {email}?",
+        "delete_title_n": "Delete {n} {n:item|items} of {email}?",
+        "delete_body_one": "{size} is deleted for good, with every file in it. This cannot be undone.",
+        "delete_body_n": "{size} is deleted for good, with every file in them. This cannot be undone.",
+        "delete_told": " They are told by email.",
+        "deleted": "Deleted {n} ({size} freed).",
+        "skipped": " Skipped {n}: {why}",
+        "delete_for_good": "Delete for good",
+        "items_more": "The {shown} biggest of {n} {n:item|items}. Delete all reaches every one of them.",
+        "tick_first": "Tick the items to delete first.",
+        "ask_wait": "You can ask again on the date shown.",
+        "delete_locked": "Delete opens after the last reminder - see the date beside it.",
+        "limits_title": "Default for everyone",
+        "limits_note": "Everyone gets these unless you give a person their own - pick the person, then Edit limits.",
+        "limits_owner_only": "Only the owner changes these.",
+        "save_limits": "Save storage limits",
+        "used_of": "{used} of {quota}",
+        "no_limit": "no limit",
+        "upload_up_to": "Uploads up to {mb} MB",
+        "own_badge": "Own limits",
+        "default_badge": "Default",
+        "their_limit": "Storage limit",
+        "allocated": "allocated",
+        "used_pct": "{pct}% used",
+        "edit_limits": "Edit limits",
+        "person_limits_title": "Storage for {name}",
+        "person_limits_note": "Leave a box blank to follow the default for everyone.",
+        "default_hint": "Default: {value}",
+        "use_default": "Use defaults",
+        "use_default_title": "Put {name} back on the defaults?",
+        "use_default_body": "Their own limits are forgotten; they follow the defaults for everyone. Nothing they hold is deleted."
+      }
+    }
+  ],
+  "weight_basis": "Wording only. Every word on this screen lives here, never in JavaScript."
+}

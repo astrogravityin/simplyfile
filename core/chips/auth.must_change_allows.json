@@ -1,0 +1,59 @@
+{
+  "chip_id": "auth.must_change_allows",
+  "kind": "predicate",
+  "set": "auth",
+  "audience": "admin",
+  "label": "Somebody who must choose a new password may still reach this",
+  "aliases": [],
+  "params": [
+    {
+      "name": "path",
+      "type": "text",
+      "default": ""
+    },
+    {
+      "name": "allowed",
+      "type": "list",
+      "default": [
+        "/api/bootstrap",
+        "/api/auth/",
+        "/api/core/view",
+        "/api/core/howto",
+        "/static/",
+        "/core-static/",
+        "/favicon",
+        "/health",
+        "/help/"
+      ]
+    }
+  ],
+  "expr": {
+    "op": "eq",
+    "left": {
+      "vop": "starts_with_any",
+      "text": "$path",
+      "prefixes": "$allowed",
+      "ignore_case": false
+    },
+    "right": true
+  },
+  "returns": "boolean",
+  "version": 1,
+  "status": "published",
+  "description_nl": "After the owner resets a password with 'require change at next login', every other route answers 403 until the person chooses their own. Enforced on the SERVER — a page can be skipped, a request cannot.",
+  "test_cases": [
+    {
+      "args": {
+        "path": "/api/auth/password"
+      },
+      "expect": true
+    },
+    {
+      "args": {
+        "path": "/api/projects"
+      },
+      "expect": false
+    }
+  ],
+  "weight_basis": "Platform access primitive, no business content. The knobs ARE the policy — edit them here, never in Python."
+}

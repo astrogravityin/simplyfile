@@ -1,0 +1,227 @@
+{
+  "chip_id": "manuals.settings",
+  "kind": "accessor",
+  "set": "manuals",
+  "label": "Manual swatches, defaults, limits and anchors",
+  "aliases": [
+    "manual backgrounds",
+    "manual slug"
+  ],
+  "params": [
+    {
+      "name": "backgrounds",
+      "type": "rows",
+      "default": [
+        {
+          "id": "white",
+          "label": "White",
+          "css": "#ffffff",
+          "fg": "#0f172a",
+          "muted": "#64748b"
+        },
+        {
+          "id": "cream",
+          "label": "Cream",
+          "css": "#fdf6e3",
+          "fg": "#3b2f1e",
+          "muted": "#8a7a5f"
+        },
+        {
+          "id": "slate",
+          "label": "Slate",
+          "css": "#f1f5f9",
+          "fg": "#0f172a",
+          "muted": "#64748b"
+        },
+        {
+          "id": "ink",
+          "label": "Ink",
+          "css": "#0f172a",
+          "fg": "#f8fafc",
+          "muted": "#94a3b8"
+        },
+        {
+          "id": "indigo",
+          "label": "Indigo",
+          "css": "linear-gradient(135deg,#eef2ff,#e0e7ff)",
+          "fg": "#1e1b4b",
+          "muted": "#4f46e5"
+        },
+        {
+          "id": "emerald",
+          "label": "Emerald",
+          "css": "linear-gradient(135deg,#ecfdf5,#d1fae5)",
+          "fg": "#064e3b",
+          "muted": "#047857"
+        },
+        {
+          "id": "saffron",
+          "label": "Saffron",
+          "css": "linear-gradient(135deg,#fff7ed,#ffedd5)",
+          "fg": "#7c2d12",
+          "muted": "#c2410c"
+        }
+      ]
+    },
+    {
+      "name": "page_background",
+      "type": "text",
+      "default": "white"
+    },
+    {
+      "name": "cover_background",
+      "type": "text",
+      "default": "indigo"
+    },
+    {
+      "name": "cover_version",
+      "type": "text",
+      "default": "V1.0"
+    },
+    {
+      "name": "contents_min_pages",
+      "type": "number",
+      "default": 2
+    },
+    {
+      "name": "page_anchor",
+      "type": "text",
+      "default": "mp-{n}"
+    },
+    {
+      "name": "toc_anchor",
+      "type": "text",
+      "default": "mp-contents"
+    },
+    {
+      "name": "stamp_joiner",
+      "type": "text",
+      "default": " · "
+    },
+    {
+      "name": "max_title_length",
+      "type": "number",
+      "default": 160
+    },
+    {
+      "name": "slug_unsafe",
+      "type": "text",
+      "default": "[^a-z0-9]+"
+    },
+    {
+      "name": "slug_fallback",
+      "type": "text",
+      "default": "manual"
+    },
+    {
+      "name": "help_link_type",
+      "type": "text",
+      "default": "doc"
+    },
+    {
+      "name": "body_css",
+      "type": "text",
+      "default": ".pg{padding:44px 48px;box-sizing:border-box;}\n.pg+.pg{border-top:1px solid rgba(100,116,139,.25);}\n.desc{font-size:15px;line-height:1.7;}\n.desc p{margin:0 0 12px;}\n.desc img,.desc svg{max-width:100%;}\n.desc ul,.desc ol{margin:0 0 12px;padding-left:22px;}\n.desc table{border-collapse:collapse;max-width:100%;}\n.desc td,.desc th{border:1px solid rgba(100,116,139,.35);padding:6px 9px;}\n.manual a[href^=\"#\"]:hover{text-decoration:underline;}\n@media print{.pg{break-after:page;page-break-after:always;}.pg:last-child{break-after:auto;page-break-after:auto;}.tolink{display:none;}}"
+    },
+    {
+      "name": "document_css",
+      "type": "text",
+      "default": "html,body{margin:0;padding:0;background:#e2e8f0;}@page{margin:12mm;}@media print{body{background:#fff;}}"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "backgrounds": "$backgrounds",
+      "page_background": "$page_background",
+      "cover_background": "$cover_background",
+      "cover_version": "$cover_version",
+      "contents_min_pages": "$contents_min_pages",
+      "page_anchor": "$page_anchor",
+      "toc_anchor": "$toc_anchor",
+      "stamp_joiner": "$stamp_joiner",
+      "max_title_length": "$max_title_length",
+      "slug_unsafe": "$slug_unsafe",
+      "slug_fallback": "$slug_fallback",
+      "help_link_type": "$help_link_type",
+      "body_css": "$body_css",
+      "document_css": "$document_css"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "backgrounds: the swatches an author picks (a key, never raw CSS); the FIRST is used for an unknown key. page_background / cover_background / cover_version: what a new page and cover start with. contents_min_pages: a contents page is drawn from this many pages up. page_anchor ({n} = page number) and toc_anchor: the section ids links jump to — a published How to Use link points at them, so changing one breaks links already handed out. stamp_joiner: between the cover's date and time. max_title_length, slug_unsafe (characters a public address replaces with '-') and slug_fallback. help_link_type: the link type a manual page adds to its screen. body_css: the manual's stylesheet; document_css: the downloaded file's page around it.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "backgrounds": [
+          {
+            "id": "white",
+            "label": "White",
+            "css": "#ffffff",
+            "fg": "#0f172a",
+            "muted": "#64748b"
+          },
+          {
+            "id": "cream",
+            "label": "Cream",
+            "css": "#fdf6e3",
+            "fg": "#3b2f1e",
+            "muted": "#8a7a5f"
+          },
+          {
+            "id": "slate",
+            "label": "Slate",
+            "css": "#f1f5f9",
+            "fg": "#0f172a",
+            "muted": "#64748b"
+          },
+          {
+            "id": "ink",
+            "label": "Ink",
+            "css": "#0f172a",
+            "fg": "#f8fafc",
+            "muted": "#94a3b8"
+          },
+          {
+            "id": "indigo",
+            "label": "Indigo",
+            "css": "linear-gradient(135deg,#eef2ff,#e0e7ff)",
+            "fg": "#1e1b4b",
+            "muted": "#4f46e5"
+          },
+          {
+            "id": "emerald",
+            "label": "Emerald",
+            "css": "linear-gradient(135deg,#ecfdf5,#d1fae5)",
+            "fg": "#064e3b",
+            "muted": "#047857"
+          },
+          {
+            "id": "saffron",
+            "label": "Saffron",
+            "css": "linear-gradient(135deg,#fff7ed,#ffedd5)",
+            "fg": "#7c2d12",
+            "muted": "#c2410c"
+          }
+        ],
+        "page_background": "white",
+        "cover_background": "indigo",
+        "cover_version": "V1.0",
+        "contents_min_pages": 2,
+        "page_anchor": "mp-{n}",
+        "toc_anchor": "mp-contents",
+        "stamp_joiner": " · ",
+        "max_title_length": 160,
+        "slug_unsafe": "[^a-z0-9]+",
+        "slug_fallback": "manual",
+        "help_link_type": "doc",
+        "body_css": ".pg{padding:44px 48px;box-sizing:border-box;}\n.pg+.pg{border-top:1px solid rgba(100,116,139,.25);}\n.desc{font-size:15px;line-height:1.7;}\n.desc p{margin:0 0 12px;}\n.desc img,.desc svg{max-width:100%;}\n.desc ul,.desc ol{margin:0 0 12px;padding-left:22px;}\n.desc table{border-collapse:collapse;max-width:100%;}\n.desc td,.desc th{border:1px solid rgba(100,116,139,.35);padding:6px 9px;}\n.manual a[href^=\"#\"]:hover{text-decoration:underline;}\n@media print{.pg{break-after:page;page-break-after:always;}.pg:last-child{break-after:auto;page-break-after:auto;}.tolink{display:none;}}",
+        "document_css": "html,body{margin:0;padding:0;background:#e2e8f0;}@page{margin:12mm;}@media print{body{background:#fff;}}"
+      }
+    }
+  ],
+  "weight_basis": "Portal business setting of the Training & Video Portal. The knobs ARE the policy — edit them here, never in Python."
+}

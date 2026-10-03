@@ -1,0 +1,62 @@
+{
+  "chip_id": "howto.url_allowed",
+  "kind": "predicate",
+  "set": "howto",
+  "audience": "admin",
+  "label": "A How to Use link is a web address or a path on this portal",
+  "aliases": [
+    "link scheme"
+  ],
+  "params": [
+    {
+      "name": "url",
+      "type": "text",
+      "default": ""
+    },
+    {
+      "name": "pattern",
+      "type": "text",
+      "default": "^(https?://|/(?!/))"
+    }
+  ],
+  "expr": {
+    "op": "eq",
+    "left": {
+      "vop": "search",
+      "text": "$url",
+      "pattern": "$pattern"
+    },
+    "right": true
+  },
+  "returns": "boolean",
+  "version": 1,
+  "status": "published",
+  "description_nl": "http(s) or a path on this portal — never javascript:, data: or anything a click could run. A protocol-relative //host is refused too.",
+  "test_cases": [
+    {
+      "args": {
+        "url": "https://youtu.be/abc"
+      },
+      "expect": true
+    },
+    {
+      "args": {
+        "url": "/m/guide"
+      },
+      "expect": true
+    },
+    {
+      "args": {
+        "url": "javascript:alert(1)"
+      },
+      "expect": false
+    },
+    {
+      "args": {
+        "url": "//evil.example"
+      },
+      "expect": false
+    }
+  ],
+  "weight_basis": "Platform operations primitive, no business content. The knobs ARE the policy — edit them here, never in Python."
+}

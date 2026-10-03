@@ -1,0 +1,413 @@
+{
+  "chip_id": "providers.settings",
+  "kind": "accessor",
+  "set": "providers",
+  "audience": "admin",
+  "label": "Which AI providers exist, what each can do, where its key comes from, how it is spoken to",
+  "aliases": [
+    "ai providers",
+    "openai",
+    "runway"
+  ],
+  "params": [
+    {
+      "name": "rows",
+      "type": "rows",
+      "default": [
+        {
+          "id": "gemini",
+          "label": "Google Gemini / Veo",
+          "kinds": [
+            "text",
+            "image",
+            "video"
+          ],
+          "key_field": "gemini_api_key",
+          "sdk": "google",
+          "base_url": "",
+          "where": "https://aistudio.google.com/apikey",
+          "free": false
+        },
+        {
+          "id": "openai",
+          "label": "OpenAI",
+          "kinds": [
+            "text",
+            "image"
+          ],
+          "key_field": "openai_api_key",
+          "sdk": "openai",
+          "base_url": "https://api.openai.com/v1",
+          "where": "https://platform.openai.com/api-keys",
+          "free": false
+        },
+        {
+          "id": "groq",
+          "label": "Groq (free tier)",
+          "kinds": [
+            "text"
+          ],
+          "key_field": "groq_api_key",
+          "sdk": "openai",
+          "base_url": "https://api.groq.com/openai/v1",
+          "where": "https://console.groq.com/keys",
+          "free": true
+        },
+        {
+          "id": "deepseek",
+          "label": "DeepSeek",
+          "kinds": [
+            "text"
+          ],
+          "key_field": "deepseek_api_key",
+          "sdk": "openai",
+          "base_url": "https://api.deepseek.com",
+          "where": "https://platform.deepseek.com/api_keys",
+          "free": false
+        },
+        {
+          "id": "openrouter",
+          "label": "OpenRouter (many models, one key)",
+          "kinds": [
+            "text"
+          ],
+          "key_field": "openrouter_api_key",
+          "sdk": "openai",
+          "base_url": "https://openrouter.ai/api/v1",
+          "where": "https://openrouter.ai/keys",
+          "free": false
+        },
+        {
+          "id": "ollama",
+          "label": "Ollama on this machine (free)",
+          "kinds": [
+            "text"
+          ],
+          "key_field": "",
+          "sdk": "openai",
+          "base_url": "http://127.0.0.1:11434/v1",
+          "where": "https://ollama.com/download",
+          "free": true
+        },
+        {
+          "id": "runway",
+          "label": "Runway",
+          "kinds": [
+            "video"
+          ],
+          "key_field": "runway_api_key",
+          "sdk": "runway",
+          "base_url": "https://api.dev.runwayml.com/v1",
+          "where": "https://dev.runwayml.com/",
+          "free": false
+        },
+        {
+          "id": "fal",
+          "label": "fal.ai (Kling, Hailuo, Seedance, Wan - one key)",
+          "kinds": [
+            "video"
+          ],
+          "key_field": "fal_api_key",
+          "sdk": "fal",
+          "base_url": "https://queue.fal.run",
+          "test_url": "https://api.fal.ai/v1/models?limit=1",
+          "test_auth": "Key",
+          "where": "https://fal.ai/dashboard/keys",
+          "free": false
+        }
+      ]
+    },
+    {
+      "name": "fal_auth_scheme",
+      "type": "text",
+      "default": "Key"
+    },
+    {
+      "name": "fal_status_done",
+      "type": "text",
+      "default": "COMPLETED"
+    },
+    {
+      "name": "fal_status_failed",
+      "type": "list",
+      "default": [
+        "FAILED",
+        "ERROR",
+        "CANCELLED"
+      ]
+    },
+    {
+      "name": "fal_prompt_max",
+      "type": "number",
+      "default": 2000
+    },
+    {
+      "name": "gemini_id",
+      "type": "text",
+      "default": "gemini"
+    },
+    {
+      "name": "text_default",
+      "type": "text",
+      "default": "gemini"
+    },
+    {
+      "name": "image_default",
+      "type": "text",
+      "default": "gemini"
+    },
+    {
+      "name": "video_default",
+      "type": "text",
+      "default": "gemini"
+    },
+    {
+      "name": "timeout_seconds",
+      "type": "number",
+      "default": 120
+    },
+    {
+      "name": "image_timeout_seconds",
+      "type": "number",
+      "default": 180
+    },
+    {
+      "name": "download_timeout_seconds",
+      "type": "number",
+      "default": 300
+    },
+    {
+      "name": "image_size",
+      "type": "text",
+      "default": "1024x1024"
+    },
+    {
+      "name": "image_sizes",
+      "type": "list",
+      "default": [
+        {
+          "aspect": "9:16",
+          "size": "1024x1536"
+        },
+        {
+          "aspect": "16:9",
+          "size": "1536x1024"
+        },
+        {
+          "aspect": "1:1",
+          "size": "1024x1024"
+        }
+      ]
+    },
+    {
+      "name": "runway_version",
+      "type": "text",
+      "default": "2024-11-06"
+    },
+    {
+      "name": "runway_prompt_max",
+      "type": "number",
+      "default": 1000
+    },
+    {
+      "name": "poll_seconds",
+      "type": "number",
+      "default": 10
+    },
+    {
+      "name": "max_polls",
+      "type": "number",
+      "default": 90
+    },
+    {
+      "name": "kinds",
+      "type": "list",
+      "default": [
+        "text"
+      ]
+    },
+    {
+      "name": "default_from",
+      "type": "record",
+      "default": {}
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "rows": "$rows",
+      "fal_auth_scheme": "$fal_auth_scheme",
+      "fal_status_done": "$fal_status_done",
+      "fal_status_failed": "$fal_status_failed",
+      "fal_prompt_max": "$fal_prompt_max",
+      "gemini_id": "$gemini_id",
+      "text_default": "$text_default",
+      "image_default": "$image_default",
+      "video_default": "$video_default",
+      "timeout_seconds": "$timeout_seconds",
+      "image_timeout_seconds": "$image_timeout_seconds",
+      "download_timeout_seconds": "$download_timeout_seconds",
+      "image_size": "$image_size",
+      "runway_version": "$runway_version",
+      "runway_prompt_max": "$runway_prompt_max",
+      "poll_seconds": "$poll_seconds",
+      "max_polls": "$max_polls",
+      "image_sizes": "$image_sizes",
+      "kinds": "$kinds",
+      "default_from": "$default_from"
+    }
+  },
+  "returns": "record",
+  "version": 2,
+  "status": "published",
+  "description_nl": "rows: every provider - id, label, the kinds of work it does (text / image / video), the per-person key field it reads (blank = no key needed, e.g. Ollama on this machine), sdk = the wire it is spoken to on (google = the Gemini SDK; openai = any OpenAI-shaped HTTP service, which is most of them; runway = Runway's task API; fal = fal.ai's queue API, 2026-09-20 owner: the cheap road - one key for Kling, Hailuo, Seedance and Wan at a few cents a second), base_url, where to get a key, free. A new OpenAI-shaped provider is one row here; a new model is one row in providers.models. *_default: the provider used until the person picks one (Gemini). Timeouts and Runway's API version / polling are the numbers of the wire. fal_*: the queue's words - the auth scheme in the header, the status that means done, the statuses that mean failed, the longest prompt sent. image_sizes: the still size asked of an OpenAI image model per film shape, so a storyboard still is already the clip's shape (a square still gave a vertical film black bars).",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "rows": [
+          {
+            "id": "gemini",
+            "label": "Google Gemini / Veo",
+            "kinds": [
+              "text",
+              "image",
+              "video"
+            ],
+            "key_field": "gemini_api_key",
+            "sdk": "google",
+            "base_url": "",
+            "where": "https://aistudio.google.com/apikey",
+            "free": false
+          },
+          {
+            "id": "openai",
+            "label": "OpenAI",
+            "kinds": [
+              "text",
+              "image"
+            ],
+            "key_field": "openai_api_key",
+            "sdk": "openai",
+            "base_url": "https://api.openai.com/v1",
+            "where": "https://platform.openai.com/api-keys",
+            "free": false
+          },
+          {
+            "id": "groq",
+            "label": "Groq (free tier)",
+            "kinds": [
+              "text"
+            ],
+            "key_field": "groq_api_key",
+            "sdk": "openai",
+            "base_url": "https://api.groq.com/openai/v1",
+            "where": "https://console.groq.com/keys",
+            "free": true
+          },
+          {
+            "id": "deepseek",
+            "label": "DeepSeek",
+            "kinds": [
+              "text"
+            ],
+            "key_field": "deepseek_api_key",
+            "sdk": "openai",
+            "base_url": "https://api.deepseek.com",
+            "where": "https://platform.deepseek.com/api_keys",
+            "free": false
+          },
+          {
+            "id": "openrouter",
+            "label": "OpenRouter (many models, one key)",
+            "kinds": [
+              "text"
+            ],
+            "key_field": "openrouter_api_key",
+            "sdk": "openai",
+            "base_url": "https://openrouter.ai/api/v1",
+            "where": "https://openrouter.ai/keys",
+            "free": false
+          },
+          {
+            "id": "ollama",
+            "label": "Ollama on this machine (free)",
+            "kinds": [
+              "text"
+            ],
+            "key_field": "",
+            "sdk": "openai",
+            "base_url": "http://127.0.0.1:11434/v1",
+            "where": "https://ollama.com/download",
+            "free": true
+          },
+          {
+            "id": "runway",
+            "label": "Runway",
+            "kinds": [
+              "video"
+            ],
+            "key_field": "runway_api_key",
+            "sdk": "runway",
+            "base_url": "https://api.dev.runwayml.com/v1",
+            "where": "https://dev.runwayml.com/",
+            "free": false
+          },
+          {
+            "id": "fal",
+            "label": "fal.ai (Kling, Hailuo, Seedance, Wan - one key)",
+            "kinds": [
+              "video"
+            ],
+            "key_field": "fal_api_key",
+            "sdk": "fal",
+            "base_url": "https://queue.fal.run",
+            "test_url": "https://api.fal.ai/v1/models?limit=1",
+            "test_auth": "Key",
+            "where": "https://fal.ai/dashboard/keys",
+            "free": false
+          }
+        ],
+        "fal_auth_scheme": "Key",
+        "fal_status_done": "COMPLETED",
+        "fal_status_failed": [
+          "FAILED",
+          "ERROR",
+          "CANCELLED"
+        ],
+        "fal_prompt_max": 2000,
+        "gemini_id": "gemini",
+        "text_default": "gemini",
+        "image_default": "gemini",
+        "video_default": "gemini",
+        "timeout_seconds": 120,
+        "image_timeout_seconds": 180,
+        "download_timeout_seconds": 300,
+        "image_size": "1024x1024",
+        "runway_version": "2024-11-06",
+        "runway_prompt_max": 1000,
+        "poll_seconds": 10,
+        "max_polls": 90,
+        "image_sizes": [
+          {
+            "aspect": "9:16",
+            "size": "1024x1536"
+          },
+          {
+            "aspect": "16:9",
+            "size": "1536x1024"
+          },
+          {
+            "aspect": "1:1",
+            "size": "1024x1024"
+          }
+        ],
+        "kinds": [
+          "text"
+        ],
+        "default_from": {}
+      }
+    }
+  ],
+  "weight_basis": "The provider registry. A new provider or a changed address is a row here, never Python."
+}

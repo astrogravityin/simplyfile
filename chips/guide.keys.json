@@ -1,0 +1,218 @@
+{
+  "chip_id": "guide.keys",
+  "kind": "accessor",
+  "set": "guide",
+  "label": "The step-by-step guide to Account & key: every step, spotlight, narration and picture",
+  "aliases": [
+    "account & key tour",
+    "account & key guide",
+    "guide me"
+  ],
+  "params": [
+    {
+      "name": "title",
+      "type": "text",
+      "default": "Account & key",
+      "label": "The tour's name (its cover card)"
+    },
+    {
+      "name": "lede",
+      "type": "long",
+      "default": "{product} works with your own AI key, so the quality and the spend stay in your hands. Here is how to connect a key, set a budget and see every paid run.",
+      "label": "The cover's opening line; {product} = this edition's name"
+    },
+    {
+      "name": "icon",
+      "type": "text",
+      "default": "key",
+      "label": "The emblem on the cover (an icon name)"
+    },
+    {
+      "name": "minutes",
+      "type": "number",
+      "default": 3,
+      "label": "How long the tour takes"
+    },
+    {
+      "name": "steps",
+      "type": "rows",
+      "default": [
+        {
+          "title": "Your AI key, at a glance",
+          "say": "This card tells you whether a key is connected and ready. Everything in {product} that uses AI runs on the key you connect here.",
+          "target": "section.keycard",
+          "art": {
+            "kind": "hero",
+            "icon": "key"
+          }
+        },
+        {
+          "title": "Get a key",
+          "say": "No key yet? How to get a key walks you through creating one in Google AI Studio in about two minutes. A free key is enough to begin.",
+          "target": "header.pagehead .acts a[href*=\"gemini-key\"]|header.pagehead",
+          "art": {
+            "kind": "flow",
+            "items": [
+              "AI Studio",
+              "Create key",
+              "Copy",
+              "Paste here"
+            ],
+            "at": 0
+          }
+        },
+        {
+          "title": "Add and test your key",
+          "say": "Press Add my key, paste it, give it a label so you remember whose account it came from, and choose the model. Save and test checks it with Google straight away; Google is the only judge of a key.",
+          "target": "#k-edit",
+          "art": {
+            "kind": "flow",
+            "items": [
+              "AI Studio",
+              "Create key",
+              "Copy",
+              "Paste here"
+            ],
+            "at": 3
+          }
+        },
+        {
+          "title": "Test at any time",
+          "say": "Test it re-checks the connected key whenever you like: useful after a billing change, or when a job refuses to start.",
+          "target": "#k-test|section.keycard",
+          "art": {
+            "kind": "check",
+            "items": [
+              "Key found",
+              "Google answered",
+              "Model available"
+            ],
+            "done": 3
+          }
+        },
+        {
+          "title": "Set a budget",
+          "say": "Choose the currency you think in, enter what you have budgeted and press Save budget. The meters show Budgeted, Spent here and Left, and every paid step checks this before it spends.",
+          "target": "#k-loaded|.split > section:first-child",
+          "art": {
+            "kind": "meter",
+            "value": 38,
+            "label": "Left",
+            "icon": "money",
+            "icon2": "pulse"
+          }
+        },
+        {
+          "title": "Your account",
+          "say": "Your name, email and role, with Change password one click away.",
+          "target": "#k-pass|.split > section:nth-child(2)",
+          "art": {
+            "kind": "hero",
+            "icon": "user"
+          }
+        },
+        {
+          "title": "More than one key",
+          "say": "Keep several Gemini keys and move between them. Make default decides which works first; Test, Lend and Remove sit beside each key.",
+          "target": "[data-pool-add=\"gemini\"]|[data-pool-secret=\"gemini\"]",
+          "art": {
+            "kind": "stack",
+            "items": [
+              "Studio key",
+              "Team key",
+              "Backup key"
+            ],
+            "icon": "key"
+          }
+        },
+        {
+          "title": "Other providers",
+          "say": "Connect other providers and decide who does what: which model writes the text and which draws the stills. You choose; the portal never picks a paid model on your behalf.",
+          "target": ".pv-grid",
+          "art": {
+            "kind": "stack",
+            "items": [
+              "Text",
+              "Stills",
+              "Voice"
+            ],
+            "icon": "spark"
+          }
+        },
+        {
+          "title": "Lend a key, safely",
+          "say": "Press Lend on one of your keys to let a colleague use it without ever seeing it. Their spend is billed back to you, shows under Shared keys, and you can stop lending at any time.",
+          "target": "[data-share]|[data-pool-add=\"gemini\"]",
+          "art": {
+            "kind": "flow",
+            "items": [
+              "Your key",
+              "Lend",
+              "They work",
+              "Billed to you"
+            ],
+            "at": 1
+          }
+        },
+        {
+          "title": "Every paid run, accounted for",
+          "say": "Key usage lists every paid run: which key, who ran it, what for, how long it took and what it cost. Search it by key, person or activity.",
+          "target": "#k-usage",
+          "art": {
+            "kind": "stack",
+            "items": [
+              "Film, 4 shots",
+              "Audiobook ch. 3",
+              "Script draft"
+            ],
+            "icon": "money"
+          }
+        }
+      ],
+      "label": "The steps in order: title, say (the narration), target (where the spotlight goes; alternatives split by |, the first on screen wins), art (the picture: hero/flow/roads/meter/stack/check), place (below/above/right/left/center, optional), open (optional: what the guide presses first when the part is not on screen - open the first item, go back Home; alternatives split by |)"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "title": "$title",
+      "lede": "$lede",
+      "icon": "$icon",
+      "minutes": "$minutes",
+      "steps": "$steps"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-09-27 owner: a screen tour guide on every tv / SteadyMove screen, step by step, professional narration with SVG pictures, all chips and ops. Drawn by core/static/guide.js, served by core/guide.py; Guide me appears in the top bar once this chip exists.",
+  "weight_basis": "page",
+  "test_cases": [
+    {
+      "args": {
+        "title": "T",
+        "lede": "L",
+        "icon": "spark",
+        "minutes": 1,
+        "steps": [
+          {
+            "title": "a",
+            "say": "b"
+          }
+        ]
+      },
+      "expect_value": {
+        "title": "T",
+        "lede": "L",
+        "icon": "spark",
+        "minutes": 1,
+        "steps": [
+          {
+            "title": "a",
+            "say": "b"
+          }
+        ]
+      }
+    }
+  ]
+}

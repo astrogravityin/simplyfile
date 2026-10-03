@@ -1,0 +1,55 @@
+{
+  "chip_id": "limits.request_too_big",
+  "kind": "predicate",
+  "set": "limits",
+  "label": "Is this JSON request too big to read (chip limits.request json_most_mb)",
+  "aliases": [
+    "request too big",
+    "body too big"
+  ],
+  "params": [
+    {
+      "name": "request_mb",
+      "type": "number",
+      "default": 0,
+      "label": "This request's size, MB"
+    },
+    {
+      "name": "json_most_mb",
+      "type": "number",
+      "default": 32,
+      "label": "Largest JSON request, MB (chip limits.request)"
+    }
+  ],
+  "expr": {
+    "op": "gt",
+    "left": "$request_mb",
+    "right": "$json_most_mb"
+  },
+  "returns": "boolean",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-02 owner (chips and ops only): the door's decision for core._json_cap - the request is refused (413) when bigger than the knob.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": false
+    },
+    {
+      "args": {
+        "request_mb": 33
+      },
+      "expect_value": true
+    },
+    {
+      "args": {
+        "request_mb": 32
+      },
+      "expect_value": false
+    }
+  ],
+  "weight_basis": "Platform safety primitive, no content.",
+  "evidence": {
+    "kind": "none"
+  }
+}

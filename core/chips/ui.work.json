@@ -1,0 +1,90 @@
+{
+  "chip_id": "ui.work",
+  "kind": "accessor",
+  "set": "ui",
+  "audience": "admin",
+  "label": "The work window: when it opens, how often it looks, how it estimates",
+  "aliases": [],
+  "params": [
+    {
+      "name": "download_show_ms",
+      "type": "number",
+      "default": 700
+    },
+    {
+      "name": "busy_show_ms",
+      "type": "number",
+      "default": 1500
+    },
+    {
+      "name": "poll_ms",
+      "type": "number",
+      "default": 1500
+    },
+    {
+      "name": "tick_ms",
+      "type": "number",
+      "default": 1000
+    },
+    {
+      "name": "close_done_ms",
+      "type": "number",
+      "default": 2500
+    },
+    {
+      "name": "close_busy_ms",
+      "type": "number",
+      "default": 1200
+    },
+    {
+      "name": "pace_after_pct",
+      "type": "number",
+      "default": 15
+    },
+    {
+      "name": "cost_pace_after_pct",
+      "type": "number",
+      "default": 5
+    },
+    {
+      "name": "rate_after_s",
+      "type": "number",
+      "default": 0.3
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "download_show_ms": "$download_show_ms",
+      "busy_show_ms": "$busy_show_ms",
+      "poll_ms": "$poll_ms",
+      "tick_ms": "$tick_ms",
+      "close_done_ms": "$close_done_ms",
+      "close_busy_ms": "$close_busy_ms",
+      "pace_after_pct": "$pace_after_pct",
+      "cost_pace_after_pct": "$cost_pace_after_pct",
+      "rate_after_s": "$rate_after_s"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "core/static/ui.js workWindow reads these (served with the words): download_show_ms / busy_show_ms = how long a download or a button's action runs before the window opens (a quick one never opens it); poll_ms = how often a followed job is asked; tick_ms = the clock; close_done_ms / close_busy_ms = how long a finished download / action stays on screen; pace_after_pct = from this % done the remaining time follows the pace so far instead of the given estimate; cost_pace_after_pct = from this % a missing cost total is projected from the pace; rate_after_s = seconds of bytes before a download speed is trusted.",
+  "weight_basis": "Owner 2026-09-24: 'only chips and ops for all' - the progress window's numbers are here, not in JavaScript.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "download_show_ms": 700,
+        "busy_show_ms": 1500,
+        "poll_ms": 1500,
+        "tick_ms": 1000,
+        "close_done_ms": 2500,
+        "close_busy_ms": 1200,
+        "pace_after_pct": 15,
+        "cost_pace_after_pct": 5,
+        "rate_after_s": 0.3
+      }
+    }
+  ]
+}

@@ -1,0 +1,191 @@
+{
+  "chip_id": "narrator.languages",
+  "kind": "accessor",
+  "set": "narrator",
+  "label": "The languages a script can be written or translated into",
+  "aliases": [
+    "script languages",
+    "translate into"
+  ],
+  "params": [
+    {
+      "name": "default_code",
+      "type": "text",
+      "default": "en",
+      "label": "The language a new script is written in"
+    },
+    {
+      "name": "rows",
+      "type": "rows",
+      "default": [
+        {
+          "code": "en",
+          "name": "English",
+          "native": "English",
+          "voice": "en-IN-NeerjaNeural"
+        },
+        {
+          "code": "hi",
+          "name": "Hindi",
+          "native": "हिन्दी",
+          "voice": "hi-IN-SwaraNeural"
+        },
+        {
+          "code": "te",
+          "name": "Telugu",
+          "native": "తెలుగు",
+          "voice": "te-IN-ShrutiNeural"
+        },
+        {
+          "code": "ta",
+          "name": "Tamil",
+          "native": "தமிழ்",
+          "voice": "ta-IN-PallaviNeural"
+        },
+        {
+          "code": "kn",
+          "name": "Kannada",
+          "native": "ಕನ್ನಡ",
+          "voice": "kn-IN-SapnaNeural"
+        },
+        {
+          "code": "ml",
+          "name": "Malayalam",
+          "native": "മലയാളം",
+          "voice": "ml-IN-SobhanaNeural"
+        },
+        {
+          "code": "mr",
+          "name": "Marathi",
+          "native": "मराठी",
+          "voice": "mr-IN-AarohiNeural"
+        },
+        {
+          "code": "bn",
+          "name": "Bengali",
+          "native": "বাংলা",
+          "voice": "bn-IN-TanishaaNeural"
+        },
+        {
+          "code": "gu",
+          "name": "Gujarati",
+          "native": "ગુજરાતી",
+          "voice": "gu-IN-DhwaniNeural"
+        },
+        {
+          "code": "es",
+          "name": "Spanish",
+          "native": "Español",
+          "voice": "es-ES-ElviraNeural"
+        },
+        {
+          "code": "fr",
+          "name": "French",
+          "native": "Français",
+          "voice": "fr-FR-DeniseNeural"
+        },
+        {
+          "code": "ar",
+          "name": "Arabic",
+          "native": "العربية",
+          "voice": "ar-EG-SalmaNeural"
+        }
+      ],
+      "label": "Code, English name, the name in its own script, and the voice that reads it"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "default_code": "$default_code",
+      "rows": "$rows"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "The list offered for \"Draft with AI\" and for translating a finished script. `voice` is the narrator a script in that language is read with, so a translated script is spoken by a mouth that knows the language - the portal switches to it and says so. Adding a language is one row here: a code, its names, and a voice from voices.json that speaks it.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "default_code": "en",
+        "rows": [
+          {
+            "code": "en",
+            "name": "English",
+            "native": "English",
+            "voice": "en-IN-NeerjaNeural"
+          },
+          {
+            "code": "hi",
+            "name": "Hindi",
+            "native": "हिन्दी",
+            "voice": "hi-IN-SwaraNeural"
+          },
+          {
+            "code": "te",
+            "name": "Telugu",
+            "native": "తెలుగు",
+            "voice": "te-IN-ShrutiNeural"
+          },
+          {
+            "code": "ta",
+            "name": "Tamil",
+            "native": "தமிழ்",
+            "voice": "ta-IN-PallaviNeural"
+          },
+          {
+            "code": "kn",
+            "name": "Kannada",
+            "native": "ಕನ್ನಡ",
+            "voice": "kn-IN-SapnaNeural"
+          },
+          {
+            "code": "ml",
+            "name": "Malayalam",
+            "native": "മലയാളം",
+            "voice": "ml-IN-SobhanaNeural"
+          },
+          {
+            "code": "mr",
+            "name": "Marathi",
+            "native": "मराठी",
+            "voice": "mr-IN-AarohiNeural"
+          },
+          {
+            "code": "bn",
+            "name": "Bengali",
+            "native": "বাংলা",
+            "voice": "bn-IN-TanishaaNeural"
+          },
+          {
+            "code": "gu",
+            "name": "Gujarati",
+            "native": "ગુજરાતી",
+            "voice": "gu-IN-DhwaniNeural"
+          },
+          {
+            "code": "es",
+            "name": "Spanish",
+            "native": "Español",
+            "voice": "es-ES-ElviraNeural"
+          },
+          {
+            "code": "fr",
+            "name": "French",
+            "native": "Français",
+            "voice": "fr-FR-DeniseNeural"
+          },
+          {
+            "code": "ar",
+            "name": "Arabic",
+            "native": "العربية",
+            "voice": "ar-EG-SalmaNeural"
+          }
+        ]
+      }
+    }
+  ],
+  "weight_basis": "A list, not a judgement. Add or remove a language here; nothing in Python names one."
+}

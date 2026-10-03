@@ -1,0 +1,64 @@
+{
+  "chip_id": "howto.messages",
+  "kind": "accessor",
+  "set": "howto",
+  "audience": "admin",
+  "label": "Every sentence How to Use pages say",
+  "aliases": [
+    "howto wording"
+  ],
+  "params": [
+    {
+      "name": "not_web_address",
+      "type": "text",
+      "default": "\"{url}\" is not a web address. Use https://… or a path like /m/guide."
+    },
+    {
+      "name": "needs_label",
+      "type": "text",
+      "default": "Every link needs a label."
+    },
+    {
+      "name": "no_page",
+      "type": "text",
+      "default": "No such page."
+    },
+    {
+      "name": "signin_page_label",
+      "type": "text",
+      "default": "Sign in & sign up"
+    },
+    {
+      "name": "signin_page_group",
+      "type": "text",
+      "default": "Way in"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "not_web_address": "$not_web_address",
+      "needs_label": "$needs_label",
+      "no_page": "$no_page",
+      "signin_page_label": "$signin_page_label",
+      "signin_page_group": "$signin_page_group"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "Errors when saving links, and the name of the sign-in page in the page list. {url} fills in.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "not_web_address": "\"{url}\" is not a web address. Use https://… or a path like /m/guide.",
+        "needs_label": "Every link needs a label.",
+        "no_page": "No such page.",
+        "signin_page_label": "Sign in & sign up",
+        "signin_page_group": "Way in"
+      }
+    }
+  ],
+  "weight_basis": "Platform operations primitive, no business content. The knobs ARE the policy — edit them here, never in Python."
+}

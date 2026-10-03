@@ -1,0 +1,180 @@
+{
+  "chip_id": "guide.setup",
+  "kind": "accessor",
+  "set": "guide",
+  "label": "The step-by-step guide to Projects & portal: every step, spotlight, narration and picture",
+  "aliases": [
+    "projects & portal tour",
+    "projects & portal guide",
+    "guide me"
+  ],
+  "params": [
+    {
+      "name": "title",
+      "type": "text",
+      "default": "Projects & portal",
+      "label": "The tour's name (its cover card)"
+    },
+    {
+      "name": "lede",
+      "type": "long",
+      "default": "{product} learns your application's screens once, and every module builds on that list. This tour covers registering a project, scanning it, and the narration settings. Storage limits live on Admin -> Storage.",
+      "label": "The cover's opening line; {product} = this edition's name"
+    },
+    {
+      "name": "icon",
+      "type": "text",
+      "default": "setup",
+      "label": "The emblem on the cover (an icon name)"
+    },
+    {
+      "name": "minutes",
+      "type": "number",
+      "default": 3,
+      "label": "How long the tour takes"
+    },
+    {
+      "name": "steps",
+      "type": "rows",
+      "default": [
+        {
+          "title": "Projects & portal",
+          "say": "This screen is for documenting an application. You point {product} at a project, scan it for screens, and How to Use and the manuals build on that list.",
+          "target": "#setup-start|#setup-projects",
+          "art": {
+            "kind": "hero",
+            "icon": "setup"
+          }
+        },
+        {
+          "title": "Getting started",
+          "say": "The Getting started list shows what is done and what is left: the portal's address, a project, its screens and email. Finished rows go quiet, so the next step is always clear.",
+          "target": "#setup-start|#setup-projects",
+          "art": {
+            "kind": "check",
+            "items": [
+              "Portal address",
+              "Register a project",
+              "Scan for screens",
+              "Email (optional)"
+            ],
+            "done": 1
+          }
+        },
+        {
+          "title": "Register a project",
+          "say": "Press Register a project and give it a name and where its code lives: a folder on the server or a Git repository. Edit and Delete sit beside every project in the table.",
+          "target": "#new-proj|#setup-projects",
+          "art": {
+            "kind": "flow",
+            "items": [
+              "Name",
+              "Code source",
+              "Scan",
+              "Screens"
+            ],
+            "at": 1
+          }
+        },
+        {
+          "title": "Scan for screens",
+          "say": "Scan for screens reads the project and lists every file that looks like a screen a person uses, in any framework. Add one by hand covers anything the scan misses.",
+          "target": "#scan|#setup-scan",
+          "art": {
+            "kind": "flow",
+            "items": [
+              "Name",
+              "Code source",
+              "Scan",
+              "Screens"
+            ],
+            "at": 2
+          }
+        },
+        {
+          "title": "Keep what is real",
+          "say": "Tick the screens that are real, rename labels that read badly, and remove the rest. Save screens makes this the list every module works from; a later scan adds, never overwrites.",
+          "target": "#save-screens|#scan-out|#setup-scan",
+          "art": {
+            "kind": "check",
+            "items": [
+              "Tick",
+              "Rename",
+              "Remove",
+              "Save screens"
+            ],
+            "done": 3
+          }
+        },
+        {
+          "title": "Narration",
+          "say": "Set the How to get a Gemini key video and the Say-as list, one written = spoken pair per line. The narrator reads that list first, so your product's names are spoken properly.",
+          "target": "#setup-narration",
+          "art": {
+            "kind": "hero",
+            "icon": "mic"
+          }
+        },
+        {
+          "title": "Wire it into your app",
+          "say": "Two framework-free ways to show your training inside your own product: fetch the links and draw your own button, or drop in the script the portal ships. Either way, help sits beside every screen.",
+          "target": "#setup-wire",
+          "art": {
+            "kind": "flow",
+            "items": [
+              "Project",
+              "Screens",
+              "Links",
+              "Your app"
+            ],
+            "at": 3
+          }
+        }
+      ],
+      "label": "The steps in order: title, say (the narration), target (where the spotlight goes; alternatives split by |, the first on screen wins), art (the picture: hero/flow/roads/meter/stack/check), place (below/above/right/left/center, optional), open (optional: what the guide presses first when the part is not on screen - open the first item, go back Home; alternatives split by |)"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "title": "$title",
+      "lede": "$lede",
+      "icon": "$icon",
+      "minutes": "$minutes",
+      "steps": "$steps"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-09-27 owner: a screen tour guide on every tv / SteadyMove screen, step by step, professional narration with SVG pictures, all chips and ops. Drawn by core/static/guide.js, served by core/guide.py; Guide me appears in the top bar once this chip exists.",
+  "weight_basis": "page",
+  "test_cases": [
+    {
+      "args": {
+        "title": "T",
+        "lede": "L",
+        "icon": "spark",
+        "minutes": 1,
+        "steps": [
+          {
+            "title": "a",
+            "say": "b"
+          }
+        ]
+      },
+      "expect_value": {
+        "title": "T",
+        "lede": "L",
+        "icon": "spark",
+        "minutes": 1,
+        "steps": [
+          {
+            "title": "a",
+            "say": "b"
+          }
+        ]
+      }
+    }
+  ]
+}

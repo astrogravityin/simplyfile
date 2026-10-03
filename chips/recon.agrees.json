@@ -1,0 +1,111 @@
+{
+  "chip_id": "recon.agrees",
+  "kind": "predicate",
+  "set": "recon",
+  "label": "Do two amounts agree?",
+  "aliases": [
+    "recon agrees"
+  ],
+  "params": [
+    {
+      "name": "books",
+      "type": "number",
+      "default": 0,
+      "label": "books"
+    },
+    {
+      "name": "portal",
+      "type": "number",
+      "default": 0,
+      "label": "portal"
+    },
+    {
+      "name": "tolerance_rs",
+      "type": "number",
+      "default": 10,
+      "label": "tolerance rs"
+    },
+    {
+      "name": "tolerance_pct",
+      "type": "number",
+      "default": 0.5,
+      "label": "tolerance pct"
+    }
+  ],
+  "expr": {
+    "vop": "choose",
+    "cases": [
+      {
+        "when": {
+          "op": "le",
+          "left": {
+            "vop": "largest",
+            "values": [
+              {
+                "vop": "sub",
+                "a": "$books",
+                "b": "$portal"
+              },
+              {
+                "vop": "sub",
+                "a": "$portal",
+                "b": "$books"
+              }
+            ]
+          },
+          "right": {
+            "vop": "largest",
+            "values": [
+              "$tolerance_rs",
+              {
+                "vop": "mul",
+                "a": "$portal",
+                "b": {
+                  "vop": "div",
+                  "a": "$tolerance_pct",
+                  "b": 100
+                }
+              }
+            ]
+          }
+        },
+        "then": true
+      }
+    ],
+    "else": false
+  },
+  "returns": "boolean",
+  "version": 1,
+  "status": "published",
+  "description_nl": "TRUE when the books and the portal differ by no more than the larger of a rupee amount and a percent of the portal figure.",
+  "test_cases": [
+    {
+      "args": {
+        "books": 26793,
+        "portal": 26793
+      },
+      "expect_value": true
+    },
+    {
+      "args": {
+        "books": 26800,
+        "portal": 26793
+      },
+      "expect_value": true
+    },
+    {
+      "args": {
+        "books": 2700,
+        "portal": 26793
+      },
+      "expect_value": false
+    },
+    {
+      "args": {
+        "books": 3202838,
+        "portal": 3210000
+      },
+      "expect_value": true
+    }
+  ]
+}

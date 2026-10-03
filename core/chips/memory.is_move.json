@@ -1,0 +1,96 @@
+{
+  "chip_id": "memory.is_move",
+  "kind": "predicate",
+  "set": "memory",
+  "audience": "admin",
+  "label": "A request moved memory enough to record",
+  "aliases": [
+    "memory event",
+    "request moved memory"
+  ],
+  "params": [
+    {
+      "name": "before_mb",
+      "type": "number",
+      "default": 0
+    },
+    {
+      "name": "after_mb",
+      "type": "number",
+      "default": 0
+    },
+    {
+      "name": "limit_mb",
+      "type": "number",
+      "default": 0
+    },
+    {
+      "name": "min_move_mb",
+      "type": "number",
+      "default": 5
+    },
+    {
+      "name": "record_above_pct",
+      "type": "number",
+      "default": 74
+    }
+  ],
+  "expr": {
+    "op": "any",
+    "items": [
+      {
+        "op": "ge",
+        "left": {
+          "vop": "sub",
+          "a": "$after_mb",
+          "b": "$before_mb"
+        },
+        "right": "$min_move_mb"
+      },
+      {
+        "op": "ge",
+        "left": "$after_mb",
+        "right": {
+          "vop": "div",
+          "a": {
+            "vop": "mul",
+            "a": "$limit_mb",
+            "b": "$record_above_pct"
+          },
+          "b": 100
+        }
+      }
+    ]
+  },
+  "returns": "boolean",
+  "version": 1,
+  "status": "published",
+  "description_nl": "TRUE when one request grew resident memory by min_move_mb or more, or ended above record_above_pct of the limit — so the request that kills the process has a name. Smaller moves are noise: requests run side by side.",
+  "test_cases": [
+    {
+      "args": {
+        "before_mb": 100,
+        "after_mb": 106,
+        "limit_mb": 1000
+      },
+      "expect": true
+    },
+    {
+      "args": {
+        "before_mb": 100,
+        "after_mb": 102,
+        "limit_mb": 1000
+      },
+      "expect": false
+    },
+    {
+      "args": {
+        "before_mb": 745,
+        "after_mb": 746,
+        "limit_mb": 1000
+      },
+      "expect": true
+    }
+  ],
+  "weight_basis": "Platform operations primitive, no business content. The knobs ARE the policy — edit them here, never in Python."
+}

@@ -1,0 +1,129 @@
+{
+  "chip_id": "keysales.settings",
+  "kind": "accessor",
+  "set": "keysales",
+  "label": "Selling a key: the packs offered, the limits and what a buyer must be told",
+  "aliases": [
+    "key sale settings",
+    "buy key knobs"
+  ],
+  "params": [
+    {
+      "name": "packs_usd",
+      "type": "list",
+      "default": [
+        5,
+        10,
+        25,
+        50,
+        100
+      ],
+      "label": "Amounts of credit a buyer may ask for"
+    },
+    {
+      "name": "pack_min_usd",
+      "type": "number",
+      "default": 1,
+      "label": "Smallest amount a buyer may ask for"
+    },
+    {
+      "name": "pack_max_usd",
+      "type": "number",
+      "default": 500,
+      "label": "Largest amount a buyer may ask for"
+    },
+    {
+      "name": "custom_ok",
+      "type": "boolean",
+      "default": true,
+      "label": "A buyer may type an amount of their own"
+    },
+    {
+      "name": "open_orders_max",
+      "type": "number",
+      "default": 5,
+      "label": "Requests one person may have waiting at once"
+    },
+    {
+      "name": "title_max",
+      "type": "number",
+      "default": 60,
+      "label": "Longest name an offer may have"
+    },
+    {
+      "name": "note_max",
+      "type": "number",
+      "default": 400,
+      "label": "Longest note on an offer or a request"
+    },
+    {
+      "name": "orders_kept",
+      "type": "number",
+      "default": 2000,
+      "label": "Requests kept per portal"
+    },
+    {
+      "name": "offers_max",
+      "type": "number",
+      "default": 50,
+      "label": "Offers one seller may have"
+    },
+    {
+      "name": "buy_note",
+      "type": "text",
+      "default": "Buying credit on somebody else's key is prepaid: you spend up to the amount you bought and no further. There is no daily, weekly or monthly limit on bought credit.",
+      "label": "buy_note"
+    },
+    {
+      "name": "billing_only",
+      "type": "text",
+      "default": "This portal raises the bill; it does not take the money. Settle with the seller however you already do, then mark the bill paid.",
+      "label": "billing_only"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "packs_usd": "$packs_usd",
+      "pack_min_usd": "$pack_min_usd",
+      "pack_max_usd": "$pack_max_usd",
+      "custom_ok": "$custom_ok",
+      "open_orders_max": "$open_orders_max",
+      "title_max": "$title_max",
+      "note_max": "$note_max",
+      "orders_kept": "$orders_kept",
+      "offers_max": "$offers_max",
+      "buy_note": "$buy_note",
+      "billing_only": "$billing_only"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "packs_usd: the amounts offered as buttons. pack_min_usd / pack_max_usd / custom_ok: whether a buyer may type their own amount and between what. open_orders_max: how many requests one person may have waiting. title_max / note_max / orders_kept / offers_max: sizes. buy_note: why bought credit has no daily, weekly or monthly cap. billing_only: this portal bills, it does NOT take money - it is shown on every request and every bill.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "packs_usd": [
+          5,
+          10,
+          25,
+          50,
+          100
+        ],
+        "pack_min_usd": 1,
+        "pack_max_usd": 500,
+        "custom_ok": true,
+        "open_orders_max": 5,
+        "title_max": 60,
+        "note_max": 400,
+        "orders_kept": 2000,
+        "offers_max": 50,
+        "buy_note": "Buying credit on somebody else's key is prepaid: you spend up to the amount you bought and no further. There is no daily, weekly or monthly limit on bought credit.",
+        "billing_only": "This portal raises the bill; it does not take the money. Settle with the seller however you already do, then mark the bill paid."
+      }
+    }
+  ],
+  "weight_basis": "The whole shop, in knobs: what may be bought, how much, and the two sentences a buyer must read."
+}

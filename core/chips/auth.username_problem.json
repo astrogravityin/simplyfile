@@ -1,0 +1,184 @@
+{
+  "chip_id": "auth.username_problem",
+  "kind": "accessor",
+  "set": "auth",
+  "audience": "admin",
+  "label": "What is wrong with this user name (blank = nothing)",
+  "aliases": [
+    "username rules"
+  ],
+  "params": [
+    {
+      "name": "username",
+      "type": "text",
+      "default": ""
+    },
+    {
+      "name": "min_length",
+      "type": "number",
+      "default": 3
+    },
+    {
+      "name": "max_length",
+      "type": "number",
+      "default": 30
+    },
+    {
+      "name": "pattern",
+      "type": "text",
+      "default": "^[a-z0-9][a-z0-9._-]*$"
+    },
+    {
+      "name": "reserved",
+      "type": "list",
+      "default": [
+        "admin",
+        "administrator",
+        "owner",
+        "root",
+        "support",
+        "system",
+        "api",
+        "help",
+        "portal",
+        "null"
+      ]
+    },
+    {
+      "name": "msg_empty",
+      "type": "text",
+      "default": "Choose a user name."
+    },
+    {
+      "name": "msg_short",
+      "type": "text",
+      "default": "A user name has at least {min_length} characters."
+    },
+    {
+      "name": "msg_long",
+      "type": "text",
+      "default": "A user name has at most {max_length} characters."
+    },
+    {
+      "name": "msg_chars",
+      "type": "text",
+      "default": "Use lower-case letters, digits and . _ - only, starting with a letter or digit."
+    },
+    {
+      "name": "msg_reserved",
+      "type": "text",
+      "default": "That user name is kept for the portal. Choose another."
+    }
+  ],
+  "expr": {
+    "vop": "choose",
+    "cases": [
+      {
+        "when": {
+          "op": "eq",
+          "left": {
+            "vop": "text_length",
+            "text": "$username"
+          },
+          "right": 0
+        },
+        "then": "$msg_empty"
+      },
+      {
+        "when": {
+          "op": "lt",
+          "left": {
+            "vop": "text_length",
+            "text": "$username"
+          },
+          "right": "$min_length"
+        },
+        "then": {
+          "vop": "template",
+          "text": "$msg_short",
+          "values": {
+            "min_length": "$min_length"
+          }
+        }
+      },
+      {
+        "when": {
+          "op": "gt",
+          "left": {
+            "vop": "text_length",
+            "text": "$username"
+          },
+          "right": "$max_length"
+        },
+        "then": {
+          "vop": "template",
+          "text": "$msg_long",
+          "values": {
+            "max_length": "$max_length"
+          }
+        }
+      },
+      {
+        "when": {
+          "op": "not",
+          "item": {
+            "op": "eq",
+            "left": {
+              "vop": "matches",
+              "text": "$username",
+              "pattern": "$pattern"
+            },
+            "right": true
+          }
+        },
+        "then": "$msg_chars"
+      },
+      {
+        "when": {
+          "op": "in_set",
+          "value": "$username",
+          "set": "$reserved"
+        },
+        "then": "$msg_reserved"
+      }
+    ],
+    "else": ""
+  },
+  "returns": "text",
+  "version": 1,
+  "status": "published",
+  "description_nl": "The server lower-cases and trims first. Blank answer = the user name is fine.",
+  "test_cases": [
+    {
+      "args": {
+        "username": "ravi.k"
+      },
+      "expect_value": ""
+    },
+    {
+      "args": {
+        "username": "ab"
+      },
+      "expect_value": "A user name has at least 3 characters."
+    },
+    {
+      "args": {
+        "username": "Ravi K"
+      },
+      "expect_value": "Use lower-case letters, digits and . _ - only, starting with a letter or digit."
+    },
+    {
+      "args": {
+        "username": "admin"
+      },
+      "expect_value": "That user name is kept for the portal. Choose another."
+    },
+    {
+      "args": {
+        "username": ""
+      },
+      "expect_value": "Choose a user name."
+    }
+  ],
+  "weight_basis": "Platform access primitive, no business content. The knobs ARE the policy — edit them here, never in Python."
+}

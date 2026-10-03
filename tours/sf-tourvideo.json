@@ -1,0 +1,61 @@
+{
+  "prod_base": "https://sf.valuestream.in",
+  "voice": "en-IN-NeerjaNeural",
+  "rate": "+0%",
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "blur": [
+    "#whoami",
+    "#userpop .head",
+    ".tile .meta b",
+    "#vd-title"
+  ],
+  "page_key": "sf-tourvideo",
+  "title": "Tour Video",
+  "start_url": "/#/tourvideo",
+  "covers": [
+    "every screen's tour",
+    "video state: none, stale, up to date",
+    "sign in once",
+    "check steps",
+    "record video",
+    "MP4, subtitles, description"
+  ],
+  "steps": [
+    {
+      "chapter": "Welcome",
+      "say": "Tour Video makes a narrated video of any SimplyFile screen from its tour script.",
+      "do": [
+        {
+          "wait_for": "#tv-list"
+        },
+        {
+          "highlight": "header.pagehead",
+          "optional": true
+        }
+      ]
+    },
+    {
+      "chapter": "State",
+      "say": "Each row says whether the video is missing, older than its script, or up to date.",
+      "do": [
+        {
+          "highlight": "#tv-list",
+          "optional": true
+        }
+      ]
+    },
+    {
+      "chapter": "Record",
+      "say": "Sign in once, check the steps, then record. Download the MP4 and subtitles and copy the description for YouTube.",
+      "do": [
+        {
+          "highlight": "#tv-login",
+          "optional": true
+        }
+      ]
+    }
+  ]
+}

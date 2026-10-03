@@ -1,0 +1,65 @@
+{
+  "chip_id": "work.statements",
+  "kind": "accessor",
+  "set": "work",
+  "audience": "admin",
+  "label": "Which words of a screen are statements, not work: a busy button saying one of these ('I checked it', 'Yes, run it', 'OK') never titles the work window - it reads ww_busy_title instead",
+  "aliases": [
+    "statement words",
+    "work window title"
+  ],
+  "params": [
+    {
+      "name": "words",
+      "type": "record",
+      "default": {}
+    },
+    {
+      "name": "pattern",
+      "type": "text",
+      "default": "^(I |I'|Yes|Got it|No,|Sure|(OK|Ok|Done|Right)(?![A-Za-z ]))"
+    }
+  ],
+  "expr": {
+    "vop": "values_matching",
+    "values": "$words",
+    "pattern": "$pattern"
+  },
+  "returns": "list",
+  "version": 1,
+  "status": "published",
+  "description_nl": "Every word of the screen whose text the pattern finds: a sentence the person says ('I checked it'), a confirm ('Yes, ...'), a bare OK / Done / Right. Words that name work ('Import a deck', 'Save') are never in it.",
+  "test_cases": [
+    {
+      "args": {
+        "words": {
+          "a": "I checked it",
+          "b": "Import a deck",
+          "c": "Yes, run it",
+          "d": "Save"
+        }
+      },
+      "expect_value": [
+        "I checked it",
+        "Yes, run it"
+      ]
+    },
+    {
+      "args": {
+        "words": {
+          "a": "OK",
+          "b": "Done",
+          "c": "Done: 3 drawn",
+          "d": "Right side",
+          "e": "Download PDF"
+        }
+      },
+      "expect_value": [
+        "OK",
+        "Done",
+        "Done: 3 drawn"
+      ]
+    }
+  ],
+  "weight_basis": "Platform presentation primitive, no business content. The pattern IS the policy - edit it here, never in JavaScript."
+}

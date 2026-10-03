@@ -1,0 +1,66 @@
+{
+  "chip_id": "providers.rotate",
+  "kind": "accessor",
+  "set": "providers",
+  "audience": "admin",
+  "label": "Several keys per provider: which failures move a call to the next key, and when a key comes back",
+  "aliases": [
+    "key rotation",
+    "quota",
+    "rate limit"
+  ],
+  "params": [
+    {
+      "name": "revive_minutes",
+      "type": "number",
+      "default": 60
+    },
+    {
+      "name": "keys_max",
+      "type": "number",
+      "default": 12
+    },
+    {
+      "name": "name_default",
+      "type": "text",
+      "default": "Key {n}"
+    },
+    {
+      "name": "name_max",
+      "type": "number",
+      "default": 60
+    },
+    {
+      "name": "test_prompt",
+      "type": "text",
+      "default": "Reply with JSON only: {\"ok\": true}"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "revive_minutes": "$revive_minutes",
+      "keys_max": "$keys_max",
+      "name_default": "$name_default",
+      "name_max": "$name_max",
+      "test_prompt": "$test_prompt"
+    }
+  },
+  "returns": "record",
+  "version": 2,
+  "status": "published",
+  "description_nl": "A person may keep several keys for one provider (free-tier Gemini keys from a few accounts, a spare paid one). A call goes to the default key first, then the next usable one. Which error means what is chip providers.failure_kind; whether a marked key may be tried again is chip providers.key_usable (an exhausted key after revive_minutes; an invalid one only after a test passes). keys_max: keys one person may keep per provider. name_default: the name a key gets when none is typed. name_max: the longest label a key may carry (the account it came from, so a limit message names the one to top up). test_prompt: what a Test sends to an OpenAI-shaped provider.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "revive_minutes": 60,
+        "keys_max": 12,
+        "name_default": "Key {n}",
+        "name_max": 60,
+        "test_prompt": "Reply with JSON only: {\"ok\": true}"
+      }
+    }
+  ],
+  "weight_basis": "The rotation policy. Edit it here, never in Python."
+}

@@ -1,0 +1,67 @@
+{
+  "chip_id": "ledger.place_source",
+  "kind": "accessor",
+  "set": "ledger",
+  "audience": "admin",
+  "label": "Where a visitor's place comes from: the CDN, or the local database",
+  "aliases": [],
+  "params": [
+    {
+      "name": "cdn_country",
+      "type": "text",
+      "default": ""
+    },
+    {
+      "name": "unknown_code",
+      "type": "text",
+      "default": "XX"
+    }
+  ],
+  "expr": {
+    "vop": "choose",
+    "cases": [
+      {
+        "when": {
+          "op": "all",
+          "items": [
+            {
+              "op": "ne",
+              "left": "$cdn_country",
+              "right": ""
+            },
+            {
+              "op": "ne",
+              "left": "$cdn_country",
+              "right": "$unknown_code"
+            }
+          ]
+        },
+        "then": "cdn"
+      }
+    ],
+    "else": "database"
+  },
+  "returns": "text",
+  "version": 1,
+  "status": "published",
+  "description_nl": "A CDN in front (Cloudflare cf-ipcountry, Vercel) knows best and wins; unknown_code is what Cloudflare sends when it does not know. Otherwise core/geo.py looks the full address up locally — nothing is sent anywhere.",
+  "test_cases": [
+    {
+      "args": {
+        "cdn_country": "IN"
+      },
+      "expect_value": "cdn"
+    },
+    {
+      "args": {
+        "cdn_country": "XX"
+      },
+      "expect_value": "database"
+    },
+    {
+      "args": {},
+      "expect_value": "database"
+    }
+  ],
+  "weight_basis": "Platform operations primitive, no business content. The knobs ARE the policy — edit them here, never in Python."
+}

@@ -1,0 +1,87 @@
+{
+  "chip_id": "list.manuals",
+  "kind": "accessor",
+  "set": "list",
+  "label": "Manuals of this person (one project or all)",
+  "aliases": [
+    "manuals"
+  ],
+  "params": [
+    {
+      "name": "search_keys",
+      "type": "list",
+      "default": [
+        "title",
+        "slug"
+      ],
+      "label": "search keys"
+    },
+    {
+      "name": "sort_key",
+      "type": "text",
+      "default": "updated_at",
+      "label": "sort key"
+    },
+    {
+      "name": "sort_desc",
+      "type": "boolean",
+      "default": true,
+      "label": "sort desc"
+    },
+    {
+      "name": "sorts",
+      "type": "list",
+      "default": [
+        "updated_at",
+        "title"
+      ],
+      "label": "sorts"
+    },
+    {
+      "name": "page_size",
+      "type": "number",
+      "default": 10,
+      "label": "page size"
+    },
+    {
+      "name": "max_page_size",
+      "type": "number",
+      "default": 200,
+      "label": "max page size"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "search_keys": "$search_keys",
+      "sort_key": "$sort_key",
+      "sort_desc": "$sort_desc",
+      "sorts": "$sorts",
+      "page_size": "$page_size",
+      "max_page_size": "$max_page_size"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-01 owner (Phase 3, \"1000s\"): Manuals of this person (one project or all) - was drawn whole; now searched and paged on the server (core/lists.py).",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "search_keys": [
+          "title",
+          "slug"
+        ],
+        "sort_key": "updated_at",
+        "sort_desc": true,
+        "sorts": [
+          "updated_at",
+          "title"
+        ],
+        "page_size": 10,
+        "max_page_size": 200
+      }
+    }
+  ]
+}

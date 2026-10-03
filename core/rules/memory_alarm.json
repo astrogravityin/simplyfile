@@ -1,0 +1,59 @@
+{
+  "rule_id": "memory_alarm",
+  "label": "Tell the owner when memory is close to the limit",
+  "description": "Memory watch judges every reading (chip memory.verdict). When the verdict reaches one of the levels below, the owner sees a red banner and gets an email — at most once per cooldown, because a reading arrives every few seconds.",
+  "trigger": "server.sample",
+  "priority": 100,
+  "status": "published",
+  "version": 1,
+  "params": [
+    {
+      "name": "levels",
+      "type": "list",
+      "label": "Verdict levels that raise the alarm",
+      "default": [
+        "warn",
+        "kill"
+      ]
+    },
+    {
+      "name": "email_every_minutes",
+      "type": "number",
+      "label": "Email at most once every (minutes)",
+      "default": 60
+    }
+  ],
+  "values": {},
+  "when": {
+    "op": "in_set",
+    "value": "$level",
+    "set": "$levels"
+  },
+  "then": [
+    {
+      "kind": "banner",
+      "audience": "owner",
+      "tone": "bad",
+      "text": "Memory — {title}. {message}",
+      "expires_minutes": 30,
+      "cooldown_minutes": 15
+    },
+    {
+      "kind": "notify",
+      "to": "owner",
+      "subject": "Memory watch: {title}",
+      "text": "{message}\n\nPortal memory {rss_mb} MB of {limit_mb} MB ({pct}%). Latest spike: {spike_path}.\nOpen Admin → Memory watch.",
+      "cooldown_minutes": "$email_every_minutes"
+    }
+  ],
+  "test_cases": [
+    {
+      "scenario": "server_kill",
+      "expect": true
+    },
+    {
+      "scenario": "server_calm",
+      "expect": false
+    }
+  ]
+}

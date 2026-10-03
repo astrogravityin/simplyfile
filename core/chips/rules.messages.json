@@ -1,0 +1,141 @@
+{
+  "chip_id": "rules.messages",
+  "kind": "accessor",
+  "set": "rules",
+  "audience": "admin",
+  "label": "Every sentence the rule runtime says",
+  "aliases": [
+    "rule problems wording"
+  ],
+  "params": [
+    {
+      "name": "refused",
+      "type": "text",
+      "default": "Not allowed."
+    },
+    {
+      "name": "notice_subject",
+      "type": "text",
+      "default": "Portal notice"
+    },
+    {
+      "name": "bad_id",
+      "type": "text",
+      "default": "The rule id must start with a letter and use lower-case letters, digits and _ (3–60)."
+    },
+    {
+      "name": "no_label",
+      "type": "text",
+      "default": "{rule}: label is empty"
+    },
+    {
+      "name": "no_trigger",
+      "type": "text",
+      "default": "{rule}: pick a trigger"
+    },
+    {
+      "name": "no_when",
+      "type": "text",
+      "default": "{rule}: the rule has no test (IF)"
+    },
+    {
+      "name": "no_then",
+      "type": "text",
+      "default": "{rule}: the rule does nothing (THEN is empty)"
+    },
+    {
+      "name": "unknown_name",
+      "type": "text",
+      "default": "{rule}: uses ${name}, which is not a fact of {subject}, a knob or a named value"
+    },
+    {
+      "name": "its_subject",
+      "type": "text",
+      "default": "its subject"
+    },
+    {
+      "name": "no_op",
+      "type": "text",
+      "default": "{rule}: no op named {name}"
+    },
+    {
+      "name": "no_chip",
+      "type": "text",
+      "default": "{rule}: no chip named {name}"
+    },
+    {
+      "name": "chip_off",
+      "type": "text",
+      "default": "{rule}: uses {name}, which is switched off"
+    },
+    {
+      "name": "no_kind",
+      "type": "text",
+      "default": "{rule}: no outcome kind {kind}"
+    },
+    {
+      "name": "kind_not_here",
+      "type": "text",
+      "default": "{rule}: a {kind} outcome cannot happen at {trigger}"
+    },
+    {
+      "name": "no_tests",
+      "type": "text",
+      "default": "{rule}: no test cases — say at least one scenario where it fires and one where it doesn't"
+    },
+    {
+      "name": "test_failed",
+      "type": "text",
+      "default": "{rule} test {n} ({scenario}): expected {want}, got {got}"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "refused": "$refused",
+      "notice_subject": "$notice_subject",
+      "bad_id": "$bad_id",
+      "no_label": "$no_label",
+      "no_trigger": "$no_trigger",
+      "no_when": "$no_when",
+      "no_then": "$no_then",
+      "unknown_name": "$unknown_name",
+      "its_subject": "$its_subject",
+      "no_op": "$no_op",
+      "no_chip": "$no_chip",
+      "chip_off": "$chip_off",
+      "no_kind": "$no_kind",
+      "kind_not_here": "$kind_not_here",
+      "no_tests": "$no_tests",
+      "test_failed": "$test_failed"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "The refuse and email fallbacks, and every problem a rule can have in the Rule Chip Builder. {rule}, {name}, {subject}, {kind}, {trigger}, {n}, {scenario}, {want}, {got} fill in.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "refused": "Not allowed.",
+        "notice_subject": "Portal notice",
+        "bad_id": "The rule id must start with a letter and use lower-case letters, digits and _ (3–60).",
+        "no_label": "{rule}: label is empty",
+        "no_trigger": "{rule}: pick a trigger",
+        "no_when": "{rule}: the rule has no test (IF)",
+        "no_then": "{rule}: the rule does nothing (THEN is empty)",
+        "unknown_name": "{rule}: uses ${name}, which is not a fact of {subject}, a knob or a named value",
+        "its_subject": "its subject",
+        "no_op": "{rule}: no op named {name}",
+        "no_chip": "{rule}: no chip named {name}",
+        "chip_off": "{rule}: uses {name}, which is switched off",
+        "no_kind": "{rule}: no outcome kind {kind}",
+        "kind_not_here": "{rule}: a {kind} outcome cannot happen at {trigger}",
+        "no_tests": "{rule}: no test cases — say at least one scenario where it fires and one where it doesn't",
+        "test_failed": "{rule} test {n} ({scenario}): expected {want}, got {got}"
+      }
+    }
+  ],
+  "weight_basis": "Platform operations primitive, no business content. The knobs ARE the policy — edit them here, never in Python."
+}

@@ -1,0 +1,33 @@
+{
+  "chip_id": "media.messages",
+  "kind": "accessor",
+  "set": "media",
+  "label": "What the video tools say when a recording cannot be read",
+  "aliases": [],
+  "params": [
+    {
+      "name": "no_duration",
+      "type": "text",
+      "default": "Could not read the duration of {name}"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "no_duration": "$no_duration"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "no_duration: ffmpeg could not report how long the recording is; {name} = the file name.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "no_duration": "Could not read the duration of {name}"
+      }
+    }
+  ],
+  "weight_basis": "Portal business setting of the Training & Video Portal. The knobs ARE the policy — edit them here, never in Python."
+}

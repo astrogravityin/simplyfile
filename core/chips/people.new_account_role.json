@@ -1,0 +1,30 @@
+{
+  "chip_id": "people.new_account_role",
+  "kind": "accessor",
+  "set": "people",
+  "audience": "admin",
+  "label": "The role a new sign-up gets",
+  "aliases": [
+    "default role",
+    "signup role"
+  ],
+  "params": [
+    {
+      "name": "role",
+      "type": "text",
+      "default": "member"
+    }
+  ],
+  "expr": "$role",
+  "returns": "text",
+  "version": 1,
+  "status": "published",
+  "description_nl": "What somebody who signs up themselves becomes. Member by default: open sign-up must never hand a stranger the power to publish rules that change how the portal behaves.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": "member"
+    }
+  ],
+  "weight_basis": "Platform access primitive, no business content. The knobs ARE the policy — edit them here, never in Python."
+}

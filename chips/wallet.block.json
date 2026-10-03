@@ -1,0 +1,98 @@
+{
+  "chip_id": "wallet.block",
+  "kind": "accessor",
+  "set": "wallet",
+  "label": "Why a wallet may not spend now: empty, over today's cap, or blank when it may",
+  "aliases": [
+    "wallet gate",
+    "credit left"
+  ],
+  "params": [
+    {
+      "name": "left_usd",
+      "type": "number",
+      "default": 0,
+      "label": "Credit left"
+    },
+    {
+      "name": "today_usd",
+      "type": "number",
+      "default": 0,
+      "label": "Charged today"
+    },
+    {
+      "name": "day_cap_usd",
+      "type": "number",
+      "default": 0,
+      "label": "Today's cap (0 = none)"
+    }
+  ],
+  "expr": {
+    "vop": "choose",
+    "cases": [
+      {
+        "when": {
+          "op": "le",
+          "left": "$left_usd",
+          "right": 0
+        },
+        "then": "empty"
+      },
+      {
+        "when": {
+          "op": "all",
+          "items": [
+            {
+              "op": "gt",
+              "left": "$day_cap_usd",
+              "right": 0
+            },
+            {
+              "op": "ge",
+              "left": "$today_usd",
+              "right": "$day_cap_usd"
+            }
+          ]
+        },
+        "then": "day_cap"
+      }
+    ],
+    "else": ""
+  },
+  "returns": "text",
+  "version": 1,
+  "status": "published",
+  "description_nl": "empty: no credit left - the owner adds more. day_cap: today's cap is used up - tomorrow it opens again. Blank: may spend.",
+  "test_cases": [
+    {
+      "args": {
+        "left_usd": 0
+      },
+      "expect_value": "empty"
+    },
+    {
+      "args": {
+        "left_usd": 5,
+        "today_usd": 3,
+        "day_cap_usd": 3
+      },
+      "expect_value": "day_cap"
+    },
+    {
+      "args": {
+        "left_usd": 5,
+        "today_usd": 1,
+        "day_cap_usd": 3
+      },
+      "expect_value": ""
+    },
+    {
+      "args": {
+        "left_usd": 5,
+        "today_usd": 9,
+        "day_cap_usd": 0
+      },
+      "expect_value": ""
+    }
+  ]
+}

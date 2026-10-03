@@ -1,0 +1,123 @@
+{
+  "chip_id": "intake.settings",
+  "kind": "accessor",
+  "set": "intake",
+  "label": "Intake: which files, how big, and how a sheet is read",
+  "aliases": [
+    "intake settings"
+  ],
+  "params": [
+    {
+      "name": "exts",
+      "type": "list",
+      "default": [
+        ".xls",
+        ".xlsx",
+        ".csv"
+      ],
+      "label": "exts"
+    },
+    {
+      "name": "max_mb",
+      "type": "number",
+      "default": 20,
+      "label": "max mb"
+    },
+    {
+      "name": "max_rows",
+      "type": "number",
+      "default": 20000,
+      "label": "max rows"
+    },
+    {
+      "name": "ref_headers",
+      "type": "list",
+      "default": [
+        "SF Ref",
+        "SF-Ref",
+        "SFRef",
+        "SF Reference"
+      ],
+      "label": "ref headers"
+    },
+    {
+      "name": "header_scan_rows",
+      "type": "number",
+      "default": 40,
+      "label": "header scan rows"
+    },
+    {
+      "name": "heading_words",
+      "type": "text",
+      "default": "statement|schedule|regarding|less:|add:|tds",
+      "label": "heading words"
+    },
+    {
+      "name": "serial_below",
+      "type": "number",
+      "default": 1000,
+      "label": "serial below"
+    },
+    {
+      "name": "max_len",
+      "type": "json",
+      "default": {
+        "label": 160,
+        "text": 300,
+        "heading": 160,
+        "file_name": 160,
+        "ref_echo": 60,
+        "column_title": 120
+      },
+      "label": "max len"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "exts": "$exts",
+      "max_mb": "$max_mb",
+      "max_rows": "$max_rows",
+      "ref_headers": "$ref_headers",
+      "header_scan_rows": "$header_scan_rows",
+      "heading_words": "$heading_words",
+      "serial_below": "$serial_below",
+      "max_len": "$max_len"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "Which files intake takes and how large, the names an SF Ref column may carry, how many top rows are searched for it, which words make a words-only row a heading, the serial-number column, and what a date in a label looks like.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "exts": [
+          ".xls",
+          ".xlsx",
+          ".csv"
+        ],
+        "max_mb": 20,
+        "max_rows": 20000,
+        "ref_headers": [
+          "SF Ref",
+          "SF-Ref",
+          "SFRef",
+          "SF Reference"
+        ],
+        "header_scan_rows": 40,
+        "heading_words": "statement|schedule|regarding|less:|add:|tds",
+        "serial_below": 1000,
+        "max_len": {
+          "label": 160,
+          "text": 300,
+          "heading": 160,
+          "file_name": 160,
+          "ref_echo": 60,
+          "column_title": 120
+        }
+      }
+    }
+  ]
+}

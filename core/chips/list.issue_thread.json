@@ -1,0 +1,98 @@
+{
+  "chip_id": "list.issue_thread",
+  "kind": "accessor",
+  "set": "list",
+  "label": "Reports and feedback: the notes on one thing this person may see (answerer: all, giver: their own), newest first",
+  "aliases": [
+    "issue thread",
+    "feedback thread"
+  ],
+  "params": [
+    {
+      "name": "search_keys",
+      "type": "list",
+      "default": [
+        "name",
+        "text",
+        "reply",
+        "status"
+      ],
+      "label": "search keys"
+    },
+    {
+      "name": "sort_key",
+      "type": "text",
+      "default": "at",
+      "label": "sort key"
+    },
+    {
+      "name": "sort_desc",
+      "type": "boolean",
+      "default": true,
+      "label": "sort desc"
+    },
+    {
+      "name": "sorts",
+      "type": "list",
+      "default": [
+        "at"
+      ],
+      "label": "sorts"
+    },
+    {
+      "name": "page_size",
+      "type": "number",
+      "default": 20,
+      "label": "page size"
+    },
+    {
+      "name": "max_page_size",
+      "type": "number",
+      "default": 100,
+      "label": "max page size"
+    },
+    {
+      "name": "fuzzy_min",
+      "type": "number",
+      "default": 0.75,
+      "label": "Forgiving search: how close a typo or half word must be (0 = exact words only; op fuzzy_rows)"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "search_keys": "$search_keys",
+      "sort_key": "at",
+      "sort_desc": "$sort_desc",
+      "sorts": "$sorts",
+      "page_size": "$page_size",
+      "max_page_size": "$max_page_size",
+      "fuzzy_min": "$fuzzy_min"
+    }
+  },
+  "returns": "record",
+  "version": 2,
+  "status": "published",
+  "description_nl": "2026-10-02 owner: a feedback cycle for every kind (katha_social._feedback_rows). 2026-10-03 owner merged Katha feedback into Report an issue (core/issues.py).",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "search_keys": [
+          "name",
+          "text",
+          "reply",
+          "status"
+        ],
+        "sort_key": "at",
+        "sort_desc": true,
+        "sorts": [
+          "at"
+        ],
+        "page_size": 20,
+        "max_page_size": 100,
+        "fuzzy_min": 0.75
+      }
+    }
+  ]
+}

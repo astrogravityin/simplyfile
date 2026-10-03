@@ -1,0 +1,330 @@
+{
+  "chip_id": "narrator.job_texts",
+  "kind": "accessor",
+  "set": "narrator",
+  "label": "What a narrator job writes in its log and the runs list",
+  "aliases": [
+    "job log",
+    "run names"
+  ],
+  "params": [
+    {
+      "name": "failed",
+      "type": "text",
+      "default": "FAILED: {reason}"
+    },
+    {
+      "name": "key_check",
+      "type": "text",
+      "default": "Key check"
+    },
+    {
+      "name": "key_check_failed",
+      "type": "text",
+      "default": "Key check (failed)"
+    },
+    {
+      "name": "uploading",
+      "type": "text",
+      "default": "uploading the video to the AI..."
+    },
+    {
+      "name": "processing",
+      "type": "text",
+      "default": "the AI is processing the video..."
+    },
+    {
+      "name": "processing_failed",
+      "type": "text",
+      "default": "the AI could not process this video"
+    },
+    {
+      "name": "writing",
+      "type": "text",
+      "default": "watching the video and writing the script..."
+    },
+    {
+      "name": "cost",
+      "type": "text",
+      "default": "cost: {money} ({tokens_in:,} tokens in, {tokens_out:,} out, model {model})"
+    },
+    {
+      "name": "money",
+      "type": "text",
+      "default": "{cost}"
+    },
+    {
+      "name": "money_unknown",
+      "type": "text",
+      "default": "unknown"
+    },
+    {
+      "name": "no_lines",
+      "type": "text",
+      "default": "the AI returned no usable lines"
+    },
+    {
+      "name": "translating",
+      "type": "text",
+      "default": "asking the model for {language}..."
+    },
+    {
+      "name": "voice_switched",
+      "type": "text",
+      "default": "voice changed to {voice}, which speaks {language}"
+    },
+    {
+      "name": "voice_mismatch",
+      "type": "text",
+      "default": "careful: {voice} does not speak {language}; the words will be read with the wrong mouth"
+    },
+    {
+      "name": "translate_ready",
+      "type": "text",
+      "default": "translated into {language}: {n} lines - read them before generating"
+    },
+    {
+      "name": "translate_run",
+      "type": "text",
+      "default": "Video Narrator: translate into {language} ({title})"
+    },
+    {
+      "name": "translate_none",
+      "type": "text",
+      "default": "the model returned nothing usable"
+    },
+    {
+      "name": "fitted",
+      "type": "text",
+      "default": "timing spread over the recording: {n} lines"
+    },
+    {
+      "name": "draft_ready",
+      "type": "text",
+      "default": "draft ready: {n} lines — read and edit them before generating"
+    },
+    {
+      "name": "draft_run",
+      "type": "text",
+      "default": "Video Narrator: draft script ({title})"
+    },
+    {
+      "name": "render_run",
+      "type": "text",
+      "default": "Video Narrator: generate ({title})"
+    },
+    {
+      "name": "line_voice",
+      "type": "text",
+      "default": " [{voice}]"
+    },
+    {
+      "name": "line_faster",
+      "type": "text",
+      "default": " (spoken {faster}% faster to fit)"
+    },
+    {
+      "name": "line_overrun",
+      "type": "text",
+      "default": " — WARNING: runs {over:.1f}s into the next line; shorten the words or move the next start"
+    },
+    {
+      "name": "line_ok",
+      "type": "text",
+      "default": "ok line {n}/{total}: {said:.1f}s of {window:.1f}s{note}"
+    },
+    {
+      "name": "voicing",
+      "type": "text",
+      "default": "voicing line {n} of {total}"
+    },
+    {
+      "name": "picture",
+      "type": "text",
+      "default": "picture: {codec} - {how}"
+    },
+    {
+      "name": "picture_unknown",
+      "type": "text",
+      "default": "unknown format"
+    },
+    {
+      "name": "picture_copied",
+      "type": "text",
+      "default": "kept as it is (every player handles it)"
+    },
+    {
+      "name": "picture_converted",
+      "type": "text",
+      "default": "converted to H.264, so it plays anywhere with nothing to buy"
+    },
+    {
+      "name": "step_line",
+      "type": "text",
+      "default": "line {n}"
+    },
+    {
+      "name": "step_mix",
+      "type": "text",
+      "default": "put the voices over the video"
+    },
+    {
+      "name": "line_kept",
+      "type": "text",
+      "default": "line {n} of {total}: kept from the last run"
+    },
+    {
+      "name": "partial_ready",
+      "type": "text",
+      "default": "ready to play: the first {n} of {total} lines, {seconds:.1f}s"
+    },
+    {
+      "name": "nothing_ready",
+      "type": "text",
+      "default": "no line is voiced yet - there is nothing to play"
+    },
+    {
+      "name": "combining",
+      "type": "text",
+      "default": "combining voice and video"
+    },
+    {
+      "name": "line_late",
+      "type": "text",
+      "default": "line {n} starts {late:.1f}s late — the line before it was still speaking. Shorten the words or move its start."
+    },
+    {
+      "name": "done",
+      "type": "text",
+      "default": "done: narrated.mp4, narrated.srt, description.txt"
+    },
+    {
+      "name": "ffmpeg_failed",
+      "type": "text",
+      "default": "ffmpeg: {reason}"
+    },
+    {
+      "name": "ffmpeg_unknown",
+      "type": "text",
+      "default": "failed"
+    },
+    {
+      "name": "line_paid",
+      "type": "text",
+      "default": " (premium voice, {cost})"
+    },
+    {
+      "name": "tts_run",
+      "type": "text",
+      "default": "Premium voice: {title}"
+    },
+    {
+      "name": "tts_sample",
+      "type": "text",
+      "default": "Premium voice sample"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "failed": "$failed",
+      "key_check": "$key_check",
+      "key_check_failed": "$key_check_failed",
+      "uploading": "$uploading",
+      "processing": "$processing",
+      "processing_failed": "$processing_failed",
+      "writing": "$writing",
+      "cost": "$cost",
+      "money": "$money",
+      "money_unknown": "$money_unknown",
+      "no_lines": "$no_lines",
+      "translating": "$translating",
+      "voice_switched": "$voice_switched",
+      "voice_mismatch": "$voice_mismatch",
+      "translate_ready": "$translate_ready",
+      "translate_run": "$translate_run",
+      "translate_none": "$translate_none",
+      "fitted": "$fitted",
+      "draft_ready": "$draft_ready",
+      "draft_run": "$draft_run",
+      "render_run": "$render_run",
+      "line_voice": "$line_voice",
+      "line_faster": "$line_faster",
+      "line_overrun": "$line_overrun",
+      "line_ok": "$line_ok",
+      "voicing": "$voicing",
+      "picture": "$picture",
+      "picture_unknown": "$picture_unknown",
+      "picture_copied": "$picture_copied",
+      "picture_converted": "$picture_converted",
+      "step_line": "$step_line",
+      "step_mix": "$step_mix",
+      "line_kept": "$line_kept",
+      "partial_ready": "$partial_ready",
+      "nothing_ready": "$nothing_ready",
+      "combining": "$combining",
+      "line_late": "$line_late",
+      "done": "$done",
+      "ffmpeg_failed": "$ffmpeg_failed",
+      "ffmpeg_unknown": "$ffmpeg_unknown",
+      "line_paid": "$line_paid",
+      "tts_run": "$tts_run",
+      "tts_sample": "$tts_sample"
+    }
+  },
+  "returns": "record",
+  "version": 2,
+  "status": "published",
+  "description_nl": "Stage lines and log lines of Draft with AI and Generate, plus the names paid runs are booked under. {reason}, {money}, {cost}, {tokens_in}, {tokens_out}, {model}, {n}, {total}, {title}, {voice}, {faster}, {over}, {said}, {window}, {note}, {late} fill in.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "failed": "FAILED: {reason}",
+        "key_check": "Key check",
+        "key_check_failed": "Key check (failed)",
+        "uploading": "uploading the video to the AI...",
+        "processing": "the AI is processing the video...",
+        "processing_failed": "the AI could not process this video",
+        "writing": "watching the video and writing the script...",
+        "cost": "cost: {money} ({tokens_in:,} tokens in, {tokens_out:,} out, model {model})",
+        "money": "{cost}",
+        "money_unknown": "unknown",
+        "no_lines": "the AI returned no usable lines",
+        "translating": "asking the model for {language}...",
+        "voice_switched": "voice changed to {voice}, which speaks {language}",
+        "voice_mismatch": "careful: {voice} does not speak {language}; the words will be read with the wrong mouth",
+        "translate_ready": "translated into {language}: {n} lines - read them before generating",
+        "translate_run": "Video Narrator: translate into {language} ({title})",
+        "translate_none": "the model returned nothing usable",
+        "fitted": "timing spread over the recording: {n} lines",
+        "draft_ready": "draft ready: {n} lines — read and edit them before generating",
+        "draft_run": "Video Narrator: draft script ({title})",
+        "render_run": "Video Narrator: generate ({title})",
+        "line_voice": " [{voice}]",
+        "line_faster": " (spoken {faster}% faster to fit)",
+        "line_overrun": " — WARNING: runs {over:.1f}s into the next line; shorten the words or move the next start",
+        "line_ok": "ok line {n}/{total}: {said:.1f}s of {window:.1f}s{note}",
+        "voicing": "voicing line {n} of {total}",
+        "picture": "picture: {codec} - {how}",
+        "picture_unknown": "unknown format",
+        "picture_copied": "kept as it is (every player handles it)",
+        "picture_converted": "converted to H.264, so it plays anywhere with nothing to buy",
+        "step_line": "line {n}",
+        "step_mix": "put the voices over the video",
+        "line_kept": "line {n} of {total}: kept from the last run",
+        "partial_ready": "ready to play: the first {n} of {total} lines, {seconds:.1f}s",
+        "nothing_ready": "no line is voiced yet - there is nothing to play",
+        "combining": "combining voice and video",
+        "line_late": "line {n} starts {late:.1f}s late — the line before it was still speaking. Shorten the words or move its start.",
+        "done": "done: narrated.mp4, narrated.srt, description.txt",
+        "ffmpeg_failed": "ffmpeg: {reason}",
+        "ffmpeg_unknown": "failed",
+        "line_paid": " (premium voice, {cost})",
+        "tts_run": "Premium voice: {title}",
+        "tts_sample": "Premium voice sample"
+      }
+    }
+  ],
+  "weight_basis": "Portal wording, no scoring. The knobs ARE the sentences — edit them here, never in Python."
+}

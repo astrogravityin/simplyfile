@@ -1,0 +1,28 @@
+{
+  "rule_id": "models_daily",
+  "label": "Once a day, ask every provider which models it still offers",
+  "description": "2026-09-28 owner: models come and go fast. Once a day the portal runs Check models on the owner's keys: a model its provider no longer lists is marked gone and handed over to its successor (chip providers.watch: same provider, never dearer); the owner gets one email (or a banner) saying what went and what came.",
+  "trigger": "daily",
+  "priority": 40,
+  "status": "published",
+  "version": 1,
+  "params": [],
+  "values": {},
+  "when": {
+    "op": "eq",
+    "left": 1,
+    "right": 1
+  },
+  "then": [
+    {
+      "kind": "model_watch",
+      "cooldown_minutes": 720
+    }
+  ],
+  "test_cases": [
+    {
+      "scenario": "portal_ok",
+      "expect": true
+    }
+  ]
+}

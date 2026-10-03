@@ -1,0 +1,147 @@
+"""Sending mail, so people can sign themselves up and reset their own passwords.
+
+The owner fills in one SMTP account in Setup. Gmail is the common case and the fiddly one, so the
+errors below translate its refusals into what actually has to change.
+
+stdlib `smtplib` only — nothing to install. Mail that cannot be sent raises with a sentence the
+owner can act on; it is never swallowed into a log nobody reads.
+"""
+from __future__ import annotations
+
+import smtplib
+import socket
+import ssl
+from email.message import EmailMessage
+from email.utils import formataddr
+
+from core import engine, ops, store
+
+
+def settings() -> dict:
+    """Default port and security, the connection timeout: chip mail.settings."""
+    return engine.run("mail.settings")
+
+
+def smtp_fields() -> dict:
+    """{field: {label, secret, hint}} in form order — chip mail.smtp_fields (the field names are the stored keys)."""
+    return {r["name"]: {k: v for k, v in r.items() if k != "name"} for r in engine.run("mail.smtp_fields")["fields"]}
+
+
+def defaults() -> dict:
+    s = settings()
+    return {f: "" for f in smtp_fields()} | {"port": str(s["default_port"]), "security": s["default_security"]}
+
+
+def config() -> dict:
+    return defaults() | store.read("smtp", {})
+
+
+def save(patch: dict) -> None:
+    """A BLANK secret means "keep the stored one" — the browser is never sent the real value, so an
+    empty box is ignorance, not an instruction to wipe it. Whitespace inside a secret is dropped:
+    Google prints an App Password as four groups of four, and people paste it exactly as shown."""
+    fields = smtp_fields()
+    with store._LOCK:                        # noqa: SLF001 - part of the store's own tooling
+        cur = store.read("smtp", {})
+        for field, value in (patch or {}).items():
+            if field not in fields:
+                continue
+            text = str(value if value is not None else "")
+            if fields[field]["secret"]:
+                text = "".join(text.split())
+                if not text:
+                    continue
+            cur[field] = text.strip()
+        store.write("smtp", cur)
+
+
+def configured() -> bool:
+    c = config()
+    return bool(c.get("host") and c.get("from_email"))
+
+
+def error_kind(error: Exception) -> str:
+    """Which kind of failure this is — a fact about the exception, not a sentence."""
+    if isinstance(error, smtplib.SMTPAuthenticationError):
+        return "auth_rejected"
+    if isinstance(error, smtplib.SMTPSenderRefused):
+        return "sender_refused"
+    if isinstance(error, smtplib.SMTPRecipientsRefused):
+        return "recipient_refused"
+    if isinstance(error, (socket.timeout, TimeoutError)):
+        return "timeout"
+    if isinstance(error, ssl.SSLError):
+        return "tls"
+    if isinstance(error, (socket.gaierror, ConnectionRefusedError, OSError)):
+        return "unreachable"
+    return "other"
+
+
+def _friendly(error: Exception, c: dict) -> str:
+    """What the owner has to change, not what the library called it: the sentence is chip mail.errors."""
+    kind = error_kind(error)
+    if kind == "auth_rejected" and "gmail" in (c.get("host") or "").lower():
+        kind = "auth_rejected_gmail"
+    return engine.say("mail.errors", kind, from_email=c.get("from_email"), host=c.get("host"), port=c.get("port"),
+                      timeout=settings()["timeout_seconds"], error=error, kind=type(error).__name__)
+
+
+def send(to: str, subject: str, text: str) -> None:
+    """One plain-text message. Plain text on purpose: it lands in the inbox, not the promotions tab,
+    and there is nothing in these mails that wants formatting."""
+    c = config()
+    if not configured():
+        raise RuntimeError(engine.say("mail.errors", "not_configured"))
+    msg = EmailMessage()
+    msg["From"] = formataddr((c["from_name"] or "", c["from_email"]))
+    msg["To"] = to
+    msg["Subject"] = subject
+    msg.set_content(text)
+
+    k = settings()
+    port = int(c["port"] or (k["ssl_port"] if c["security"] == "ssl" else k["starttls_port"]))
+    timeout = float(k["timeout_seconds"])
+    try:
+        if c["security"] == "ssl":
+            server = smtplib.SMTP_SSL(c["host"], port, timeout=timeout, context=ssl.create_default_context())
+        else:
+            server = smtplib.SMTP(c["host"], port, timeout=timeout)
+        with server:
+            server.ehlo()
+            if c["security"] == "starttls":
+                server.starttls(context=ssl.create_default_context())
+                server.ehlo()
+            if c["username"]:
+                server.login(c["username"], c["password"])
+            server.send_message(msg)
+    except Exception as e:  # noqa: BLE001 - every failure becomes one sentence the owner can act on
+        raise RuntimeError(_friendly(e, c)) from e
+
+
+# --- the messages this portal sends: their words are the chip mail.texts ------------------------------
+
+_KEYS = {"code_signup": ("code_subject_signup", "code_text_signup"), "code_reset": ("code_subject_reset", "code_text_reset"),
+         "invite": ("invite_subject", "invite_text"), "reset_by_owner": ("reset_by_owner_subject", "reset_by_owner_text"),
+         "test": ("test_subject", "test_text"), "signup_exists": ("signup_exists_subject", "signup_exists_text")}
+
+
+def compose(kind: str, **values) -> tuple[str, str]:
+    """(subject, text) for one of the portal's emails, from chip mail.texts with the values filled in."""
+    texts = engine.run("mail.texts")
+    subject_key, text_key = _KEYS[kind]
+    values = {"change_note": texts.get("change_note", "")} | values
+    return ops.template(texts[subject_key], values), ops.template(texts[text_key], values)
+
+
+if __name__ == "__main__":  # ponytail: one runnable self-check
+    gm = {"host": "smtp.gmail.com", "port": "587", "from_email": "me@gmail.com"}
+    assert "App Password" in _friendly(smtplib.SMTPAuthenticationError(535, b"bad"), gm)
+    assert "App Password" not in _friendly(smtplib.SMTPAuthenticationError(535, b"bad"),
+                                           {"host": "mail.example.com"})
+    assert "starttls" in _friendly(ssl.SSLError("wrong version number"), gm)
+    assert "me@gmail.com" in _friendly(smtplib.SMTPSenderRefused(553, b"no", "x"), gm)
+    assert _friendly(ValueError("odd"), gm) == "ValueError: odd" and set(smtp_fields()) >= {"host", "password"}
+    assert smtp_fields()["password"]["secret"] is True and defaults()["security"] == settings()["default_security"]
+    subject, body = compose("code_reset", product="My Portal", code="123456", minutes=60)
+    assert "123456" in body and "60 minutes" in body and "My Portal" in subject and "123456" in subject
+    print("core.mailer self-check OK")

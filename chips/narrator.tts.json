@@ -1,0 +1,100 @@
+{
+  "chip_id": "narrator.tts",
+  "kind": "accessor",
+  "set": "narrator",
+  "audience": "admin",
+  "label": "Premium voices: which model speaks them, what it costs, and how a voice id is told apart",
+  "aliases": [
+    "gemini tts",
+    "premium voice prices"
+  ],
+  "params": [
+    {
+      "name": "provider",
+      "type": "text",
+      "default": "gemini"
+    },
+    {
+      "name": "model",
+      "type": "text",
+      "default": "gemini-2.5-flash-preview-tts"
+    },
+    {
+      "name": "usd_per_1m_in",
+      "type": "number",
+      "default": 0.5
+    },
+    {
+      "name": "usd_per_1m_out",
+      "type": "number",
+      "default": 10
+    },
+    {
+      "name": "chars_per_token",
+      "type": "number",
+      "default": 4
+    },
+    {
+      "name": "chars_per_second",
+      "type": "number",
+      "default": 15
+    },
+    {
+      "name": "audio_tokens_per_second",
+      "type": "number",
+      "default": 25
+    },
+    {
+      "name": "sample_rate",
+      "type": "number",
+      "default": 24000
+    },
+    {
+      "name": "any_language",
+      "type": "text",
+      "default": "any"
+    },
+    {
+      "name": "voice_prefix",
+      "type": "text",
+      "default": "gemini:"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "provider": "$provider",
+      "model": "$model",
+      "usd_per_1m_in": "$usd_per_1m_in",
+      "usd_per_1m_out": "$usd_per_1m_out",
+      "chars_per_token": "$chars_per_token",
+      "chars_per_second": "$chars_per_second",
+      "audio_tokens_per_second": "$audio_tokens_per_second",
+      "sample_rate": "$sample_rate",
+      "any_language": "$any_language",
+      "voice_prefix": "$voice_prefix"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-09-20 owner: better voices. A voice in voices.json with `paid` set is spoken by this model on the person's OWN key (provider), never by the free edge-tts. Its id starts with voice_prefix, the rest is the model's voice name (Kore, Puck…). usd_per_1m_in / usd_per_1m_out: Google's price per million text tokens in and audio tokens out - edit from the pricing page. chars_per_token, chars_per_second, audio_tokens_per_second: how an estimate is made from the script's characters BEFORE anything is spent (the real usage comes back with every call and is what is booked). sample_rate: the PCM Google returns. any_language: the `lang` a premium voice carries - it speaks whatever language the script is in.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "provider": "gemini",
+        "model": "gemini-2.5-flash-preview-tts",
+        "usd_per_1m_in": 0.5,
+        "usd_per_1m_out": 10,
+        "chars_per_token": 4,
+        "chars_per_second": 15,
+        "audio_tokens_per_second": 25,
+        "sample_rate": 24000,
+        "any_language": "any",
+        "voice_prefix": "gemini:"
+      }
+    }
+  ],
+  "weight_basis": "Prices and names of a paid service. Edit them here, never in Python."
+}

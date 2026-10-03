@@ -1,0 +1,76 @@
+{
+  "chip_id": "howto.settings",
+  "kind": "accessor",
+  "set": "howto",
+  "audience": "admin",
+  "label": "What a How to Use link may be",
+  "aliases": [
+    "howto limits"
+  ],
+  "params": [
+    {
+      "name": "url_max",
+      "type": "number",
+      "default": 500
+    },
+    {
+      "name": "label_max",
+      "type": "number",
+      "default": 80
+    },
+    {
+      "name": "links_per_page",
+      "type": "number",
+      "default": 20
+    },
+    {
+      "name": "url_shown_in_error",
+      "type": "number",
+      "default": 60
+    },
+    {
+      "name": "types",
+      "type": "list",
+      "default": [
+        "doc",
+        "youtube",
+        "video",
+        "instagram",
+        "link"
+      ]
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "url_max": "$url_max",
+      "label_max": "$label_max",
+      "links_per_page": "$links_per_page",
+      "url_shown_in_error": "$url_shown_in_error",
+      "types": "$types"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "url_max / label_max: characters kept. links_per_page: links kept per page. url_shown_in_error: characters of a refused address repeated back. types: the link kinds a screen knows how to show.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "url_max": 500,
+        "label_max": 80,
+        "links_per_page": 20,
+        "url_shown_in_error": 60,
+        "types": [
+          "doc",
+          "youtube",
+          "video",
+          "instagram",
+          "link"
+        ]
+      }
+    }
+  ],
+  "weight_basis": "Platform operations primitive, no business content. The knobs ARE the policy — edit them here, never in Python."
+}

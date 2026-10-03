@@ -1,0 +1,90 @@
+{
+  "prod_base": "https://sf.valuestream.in",
+  "voice": "en-IN-NeerjaNeural",
+  "rate": "+0%",
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "blur": [
+    "#whoami",
+    "#userpop .head",
+    ".tile .meta b",
+    "#vd-title"
+  ],
+  "page_key": "sf-keysales",
+  "title": "Keys for sale",
+  "start_url": "/#/keysales",
+  "covers": [
+    "put a key on sale",
+    "title, markup, note",
+    "switch an offer on or off",
+    "requests to buy",
+    "approve or refuse",
+    "edit or drop an offer"
+  ],
+  "steps": [
+    {
+      "chapter": "Welcome",
+      "say": "Keys for sale is the seller's desk: which of your keys others may buy credit on, and the requests that come in.",
+      "do": [
+        {
+          "wait_for": "#s-new"
+        },
+        {
+          "highlight": "#s-new",
+          "optional": true
+        }
+      ]
+    },
+    {
+      "chapter": "An offer",
+      "say": "Put a key on sale: pick the key, give the offer a title and your markup, and switch it on.",
+      "do": [
+        {
+          "click": "#s-new",
+          "optional": true
+        },
+        {
+          "wait": 1
+        },
+        {
+          "highlight": "#so-key",
+          "optional": true
+        },
+        {
+          "highlight": "#so-markup",
+          "optional": true
+        },
+        {
+          "highlight": "#so-active",
+          "optional": true
+        },
+        {
+          "press": "Escape",
+          "optional": true
+        }
+      ]
+    },
+    {
+      "chapter": "Requests",
+      "say": "Each request shows the buyer and the amount. Approve it and the buyer can spend that much on your key; refuse it with a reason.",
+      "do": [
+        {
+          "highlight_target": "[data-yes]|#ks-waiting",
+          "optional": true
+        }
+      ]
+    },
+    {
+      "say": "Edit or drop an offer at any time. Analytics shows every key bought, lent and used.",
+      "hold": 0.8,
+      "do": [
+        {
+          "highlight_target": "[data-edit]|#ks-offers",
+          "optional": true
+        }
+      ]
+    }
+  ]
+}

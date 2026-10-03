@@ -1,0 +1,64 @@
+{
+  "chip_id": "narrator.line_need",
+  "kind": "accessor",
+  "set": "narrator",
+  "label": "How many seconds one line of narration needs",
+  "aliases": [
+    "line length",
+    "speaking time"
+  ],
+  "params": [
+    {
+      "name": "words",
+      "type": "number",
+      "default": 0,
+      "label": "Words in the line"
+    },
+    {
+      "name": "words_per_second",
+      "type": "number",
+      "default": 2.3
+    },
+    {
+      "name": "min_line_seconds",
+      "type": "number",
+      "default": 1.2
+    }
+  ],
+  "expr": {
+    "vop": "largest",
+    "values": [
+      "$min_line_seconds",
+      {
+        "vop": "div",
+        "a": "$words",
+        "b": "$words_per_second"
+      }
+    ]
+  },
+  "returns": "number",
+  "version": 1,
+  "status": "published",
+  "description_nl": "A line needs its words spoken at words_per_second, and never less than min_line_seconds - a two-word line still needs a moment. Auto-fit asks this for every line, then spreads the set over the recording.",
+  "test_cases": [
+    {
+      "args": {
+        "words": 23
+      },
+      "expect_value": 10
+    },
+    {
+      "args": {
+        "words": 1
+      },
+      "expect_value": 1.2
+    },
+    {
+      "args": {
+        "words": 0
+      },
+      "expect_value": 1.2
+    }
+  ],
+  "weight_basis": "Speaking pace. The knobs come from narrator.fit; change them there."
+}

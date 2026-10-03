@@ -1,0 +1,183 @@
+{
+  "chip_id": "builder.messages",
+  "kind": "accessor",
+  "set": "builder",
+  "audience": "admin",
+  "label": "Every sentence the Ops & Chips and Rule Chip Builders say",
+  "aliases": [
+    "builder wording"
+  ],
+  "params": [
+    {
+      "name": "cannot",
+      "type": "text",
+      "default": "An {role} cannot {action} this."
+    },
+    {
+      "name": "cannot_framework",
+      "type": "text",
+      "default": "An {role} cannot {action} this — it belongs to the framework, so only the owner can change it."
+    },
+    {
+      "name": "not_found",
+      "type": "text",
+      "default": "Nothing by that id."
+    },
+    {
+      "name": "chips_or_rules",
+      "type": "text",
+      "default": "chips or rules"
+    },
+    {
+      "name": "id_mismatch",
+      "type": "text",
+      "default": "{key} in the body must be {id}."
+    },
+    {
+      "name": "bad_chip_id",
+      "type": "text",
+      "default": "That id is not allowed: set.name, lower-case, e.g. video.too_long"
+    },
+    {
+      "name": "bad_rule_id",
+      "type": "text",
+      "default": "That id is not allowed: lower-case letters, digits and _"
+    },
+    {
+      "name": "no_draft",
+      "type": "text",
+      "default": "There is no draft of that."
+    },
+    {
+      "name": "not_published",
+      "type": "text",
+      "default": "Not published: fix the problems and failing tests first."
+    },
+    {
+      "name": "only_live_switch",
+      "type": "text",
+      "default": "Only a live item can be switched on or off."
+    },
+    {
+      "name": "switch_off_users_first",
+      "type": "text",
+      "default": "Switch these off first — they use it:"
+    },
+    {
+      "name": "nothing_live",
+      "type": "text",
+      "default": "Nothing live by that id."
+    },
+    {
+      "name": "shipped_no_delete",
+      "type": "text",
+      "default": "This one ships with the portal's code. Switch it off instead."
+    },
+    {
+      "name": "in_use",
+      "type": "text",
+      "default": "Other chips or rules use it. Change them first."
+    },
+    {
+      "name": "no_version",
+      "type": "text",
+      "default": "No such version."
+    },
+    {
+      "name": "restored_note",
+      "type": "text",
+      "default": "Restored from version {version}"
+    },
+    {
+      "name": "op_chip_or_scenario",
+      "type": "text",
+      "default": "op, chip or scenario"
+    },
+    {
+      "name": "bad_scenario_id",
+      "type": "text",
+      "default": "A scenario id is lower-case letters, digits and _ (3–60)."
+    },
+    {
+      "name": "scenario_subject",
+      "type": "text",
+      "default": "Pick what the scenario is about (its subject)."
+    },
+    {
+      "name": "scenario_facts",
+      "type": "text",
+      "default": "facts must be a set of named values."
+    },
+    {
+      "name": "scenario_not_deletable",
+      "type": "text",
+      "default": "Only a scenario made in the builder can be deleted."
+    },
+    {
+      "name": "no_op",
+      "type": "text",
+      "default": "No such op."
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "cannot": "$cannot",
+      "cannot_framework": "$cannot_framework",
+      "not_found": "$not_found",
+      "chips_or_rules": "$chips_or_rules",
+      "id_mismatch": "$id_mismatch",
+      "bad_chip_id": "$bad_chip_id",
+      "bad_rule_id": "$bad_rule_id",
+      "no_draft": "$no_draft",
+      "not_published": "$not_published",
+      "only_live_switch": "$only_live_switch",
+      "switch_off_users_first": "$switch_off_users_first",
+      "nothing_live": "$nothing_live",
+      "shipped_no_delete": "$shipped_no_delete",
+      "in_use": "$in_use",
+      "no_version": "$no_version",
+      "restored_note": "$restored_note",
+      "op_chip_or_scenario": "$op_chip_or_scenario",
+      "bad_scenario_id": "$bad_scenario_id",
+      "scenario_subject": "$scenario_subject",
+      "scenario_facts": "$scenario_facts",
+      "scenario_not_deletable": "$scenario_not_deletable",
+      "no_op": "$no_op"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "Refusals and notes of the builders' server. {role}, {action}, {key}, {id}, {version} fill in.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "cannot": "An {role} cannot {action} this.",
+        "cannot_framework": "An {role} cannot {action} this — it belongs to the framework, so only the owner can change it.",
+        "not_found": "Nothing by that id.",
+        "chips_or_rules": "chips or rules",
+        "id_mismatch": "{key} in the body must be {id}.",
+        "bad_chip_id": "That id is not allowed: set.name, lower-case, e.g. video.too_long",
+        "bad_rule_id": "That id is not allowed: lower-case letters, digits and _",
+        "no_draft": "There is no draft of that.",
+        "not_published": "Not published: fix the problems and failing tests first.",
+        "only_live_switch": "Only a live item can be switched on or off.",
+        "switch_off_users_first": "Switch these off first — they use it:",
+        "nothing_live": "Nothing live by that id.",
+        "shipped_no_delete": "This one ships with the portal's code. Switch it off instead.",
+        "in_use": "Other chips or rules use it. Change them first.",
+        "no_version": "No such version.",
+        "restored_note": "Restored from version {version}",
+        "op_chip_or_scenario": "op, chip or scenario",
+        "bad_scenario_id": "A scenario id is lower-case letters, digits and _ (3–60).",
+        "scenario_subject": "Pick what the scenario is about (its subject).",
+        "scenario_facts": "facts must be a set of named values.",
+        "scenario_not_deletable": "Only a scenario made in the builder can be deleted.",
+        "no_op": "No such op."
+      }
+    }
+  ],
+  "weight_basis": "Platform operations primitive, no business content. The knobs ARE the policy — edit them here, never in Python."
+}

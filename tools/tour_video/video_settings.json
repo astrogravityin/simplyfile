@@ -1,0 +1,1056 @@
+{
+  "note": "Video-only knobs for Utilities -> Tour Video, keyed by page key. The WORDS and the spotlights come from the page's Guide me script (backend/data/guides/<portal>/<page>.json); make_tour.py translates it at run time. start_url = where recording starts; before = demo actions run first (pick a demo chart, upload demo files); vars fill ${name} in them; anonymous = record signed out; blur = selectors blurred on screen; voice/rate/viewport/prod_base override defaults. Skill: .agents/skills/module-tour-video/SKILL.md.",
+  "defaults": {
+    "voice": "en-IN-NeerjaNeural",
+    "viewport": {
+      "width": 1280,
+      "height": 720
+    },
+    "prod_base": "https://astrostage.in",
+    "product": "AstroStage",
+    "settle_ms": 8000
+  },
+  "pages": {
+    "access-control": {
+      "start_url": "/?view=access-control"
+    },
+    "admin-billing": {
+      "start_url": "/?view=admin-billing"
+    },
+    "admin-logs": {
+      "start_url": "/?view=admin-logs"
+    },
+    "ag-birth-time-rectification": {
+      "start_url": "/?view=ag-birth-time-rectification"
+    },
+    "akashvani": {
+      "start_url": "/?view=graha-uvacha",
+      "vars": {
+        "chart": "Meera",
+        "question": "married"
+      },
+      "note": "Same screen as the Studio's AkashVani (graha-uvacha), so one video serves both. Picks the demo chart in 'chart'. Adds the first two readings in the list, so the result depends on what is published to the account. Saving a group is shown, not pressed, so the demo account's groups are not changed.",
+      "before": [
+        {
+          "wait_for": "text=What to show",
+          "timeout": 30
+        },
+        {
+          "pick_chart": "${chart}",
+          "timeout": 30
+        },
+        {
+          "wait": 3
+        }
+      ]
+    },
+    "all-access": {
+      "start_url": "/?view=all-access"
+    },
+    "anveshana": {
+      "start_url": "/ind/app?view=anveshana"
+    },
+    "api-designer": {
+      "start_url": "/?view=api-designer"
+    },
+    "appointment-consultation-charts": {
+      "start_url": "/?view=appointment-consultation-charts"
+    },
+    "appointment-requests": {
+      "start_url": "/?view=appointment-requests"
+    },
+    "area-journey": {
+      "start_url": "/?view=area_journey",
+      "vars": {
+        "chart": "Arjun"
+      },
+      "note": "Picks the saved DEMO chart named in 'chart' (never a real person). Import tools/tour_video/demo_charts/*.json into the demo account first, or change the name.",
+      "before": [
+        {
+          "pick_chart": "${chart}",
+          "timeout": 20
+        },
+        {
+          "wait": 4
+        }
+      ]
+    },
+    "area-systems": {
+      "start_url": "/?view=area_systems",
+      "vars": {
+        "chart": "Arjun"
+      },
+      "note": "Picks the saved DEMO chart named in 'chart' (never a real person). Import tools/tour_video/demo_charts/*.json into the demo account first, or change the name.",
+      "before": [
+        {
+          "pick_chart": "${chart}",
+          "timeout": 20
+        },
+        {
+          "wait": 4
+        }
+      ]
+    },
+    "articles": {
+      "start_url": "/ind/app?view=articles"
+    },
+    "aspect-of-life": {
+      "start_url": "/?view=aspect-of-life",
+      "vars": {
+        "chart": "Arjun"
+      },
+      "note": "Picks the saved DEMO chart named in 'chart' (never a real person). Import tools/tour_video/demo_charts/*.json into the demo account first, or change the name.",
+      "before": [
+        {
+          "pick_chart": "${chart}",
+          "timeout": 20
+        },
+        {
+          "wait": 4
+        }
+      ]
+    },
+    "astrogaami-workspace": {
+      "start_url": "/?ws=astrogaami",
+      "prod_base": "https://astrogaami.astrostage.in",
+      "note": "Recorded signed in as a member (or Portal Admin) with a primary chart in My Charts."
+    },
+    "astrogaami.bcp": {
+      "start_url": "/?ws=astrogaami&screen=bcp",
+      "vars": {
+        "chart": "Meera"
+      },
+      "note": "AstroGaami workspace screen; the demo account must be a member of the workspace."
+    },
+    "astrogaami.btr": {
+      "start_url": "/?ws=astrogaami&screen=btr",
+      "vars": {
+        "chart": "Meera"
+      },
+      "note": "AstroGaami workspace screen; the demo account must be a member of the workspace."
+    },
+    "astrogaami.gopihora": {
+      "start_url": "/?ws=astrogaami&screen=gopihora",
+      "vars": {
+        "chart": "Meera"
+      },
+      "note": "AstroGaami workspace screen; the demo account must be a member of the workspace."
+    },
+    "astrogaami.katapayadi": {
+      "start_url": "/?ws=astrogaami&screen=katapayadi",
+      "vars": {
+        "chart": "Meera"
+      },
+      "note": "AstroGaami workspace screen; the demo account must be a member of the workspace."
+    },
+    "astrogaami.matchmaking": {
+      "start_url": "/?ws=astrogaami&screen=matchmaking",
+      "vars": {
+        "chart": "Meera"
+      },
+      "note": "AstroGaami workspace screen; the demo account must be a member of the workspace."
+    },
+    "astrogaami.remedies": {
+      "start_url": "/?ws=astrogaami&screen=remedies",
+      "vars": {
+        "chart": "Meera"
+      },
+      "note": "AstroGaami workspace screen; the demo account must be a member of the workspace."
+    },
+    "astrogaami.rulebook": {
+      "start_url": "/?ws=astrogaami&screen=rulebook",
+      "vars": {
+        "chart": "Meera"
+      },
+      "note": "AstroGaami workspace screen; the demo account must be a member of the workspace."
+    },
+    "astrogaami.tarabalam": {
+      "start_url": "/?ws=astrogaami&screen=tarabalam",
+      "vars": {
+        "chart": "Meera"
+      },
+      "note": "AstroGaami workspace screen; the demo account must be a member of the workspace."
+    },
+    "astrogaami.temples": {
+      "start_url": "/?ws=astrogaami&screen=temples",
+      "vars": {
+        "chart": "Meera"
+      },
+      "note": "AstroGaami workspace screen; the demo account must be a member of the workspace."
+    },
+    "astrosahai-signin": {
+      "start_url": "/?sahai",
+      "anonymous": true,
+      "prod_base": "https://astrosahai.in",
+      "note": "Recorded signed out, as a first-time visitor sees it."
+    },
+    "astrounwind-signin": {
+      "start_url": "/?astrounwind",
+      "anonymous": true,
+      "prod_base": "https://astrounwind.com",
+      "note": "Recorded signed out, as a first-time visitor sees it."
+    },
+    "bazi": {
+      "start_url": "/?view=bazi",
+      "vars": {
+        "chart": "Arjun"
+      },
+      "note": "Picks the saved DEMO chart named in 'chart' (never a real person). Import tools/tour_video/demo_charts/*.json into the demo account first, or change the name.",
+      "before": [
+        {
+          "pick_chart": "${chart}",
+          "timeout": 20
+        },
+        {
+          "wait": 4
+        }
+      ]
+    },
+    "bhrigu-systems": {
+      "start_url": "/?view=bhrigu-systems",
+      "vars": {
+        "chart": "Arjun"
+      },
+      "note": "Picks the saved DEMO chart named in 'chart' (never a real person). Import tools/tour_video/demo_charts/*.json into the demo account first, or change the name.",
+      "before": [
+        {
+          "pick_chart": "${chart}",
+          "timeout": 20
+        },
+        {
+          "wait": 4
+        }
+      ]
+    },
+    "book": {
+      "start_url": "/ind/app?view=book"
+    },
+    "bookmarked": {
+      "start_url": "/ind/app?view=bookmarked"
+    },
+    "bottom-bar": {
+      "start_url": "/?view=graha-uvacha",
+      "note": "The bottom bar sits on every screen; recorded over the Studio's AkashVani, which the demo account can open."
+    },
+    "bulk-import-charts": {
+      "start_url": "/?view=bulk-import-charts"
+    },
+    "byod-designer": {
+      "start_url": "/?view=byod-designer"
+    },
+    "cache-governance": {
+      "start_url": "/?view=cache-governance"
+    },
+    "cases": {
+      "start_url": "/ind/app?view=cases"
+    },
+    "cases-assign": {
+      "start_url": "/ind/app?view=cases_assign"
+    },
+    "cases-by-me": {
+      "start_url": "/ind/app?view=cases_by_me"
+    },
+    "cases-mine": {
+      "start_url": "/ind/app?view=cases_mine"
+    },
+    "cases-to-me": {
+      "start_url": "/ind/app?view=cases_to_me"
+    },
+    "chart-areas-config": {
+      "start_url": "/?view=chart-areas-config"
+    },
+    "chart-proof": {
+      "start_url": "/?view=chart-proof",
+      "note": "Uses the first saved chart on the account. Adding events and registering a prediction are shown, not saved, so the demo account's data is not changed.",
+      "before": [
+        {
+          "wait_for": "text=Prashna Kosha",
+          "timeout": 30
+        }
+      ]
+    },
+    "chart-query": {
+      "start_url": "/?view=chart-query",
+      "vars": {},
+      "note": "Uses the saved DEMO charts in the demo account (never real people). Import tools/tour_video/demo_charts/*.json into the demo account first."
+    },
+    "chart-recovery": {
+      "start_url": "/?view=chart-recovery"
+    },
+    "charts": {
+      "start_url": "/ind/app?view=charts"
+    },
+    "charts-list": {
+      "start_url": "/ind/app?view=charts_list"
+    },
+    "charts-variant": {
+      "start_url": "/ind/app?view=charts_variant",
+      "vars": {
+        "chart": "Arjun"
+      },
+      "note": "Picks the saved DEMO chart named in 'chart' (never a real person). Import tools/tour_video/demo_charts/*.json into the demo account first, or change the name.",
+      "before": [
+        {
+          "pick_chart": "${chart}",
+          "timeout": 20
+        },
+        {
+          "wait": 4
+        }
+      ]
+    },
+    "chip-chat": {
+      "start_url": "/?view=chip-chat",
+      "vars": {
+        "chart": "Meera"
+      },
+      "note": "Asks in plain words through the shared ask bar; answers depend on the demo account's charts."
+    },
+    "chip-rule-builder": {
+      "start_url": "/?view=chip-rule-builder"
+    },
+    "chips-ops-audit": {
+      "start_url": "/?view=chips-ops-audit",
+      "note": "Portal Admin only; the demo account must be a Portal Admin to record it."
+    },
+    "chips-ops-catalog": {
+      "start_url": "/?view=chips-ops-catalog"
+    },
+    "collab-add-value": {
+      "start_url": "/?view=collab-add-value"
+    },
+    "collab-my-value": {
+      "start_url": "/?view=collab-my-value"
+    },
+    "collab-share-value": {
+      "start_url": "/?view=collab-share-value"
+    },
+    "collab-subscribed-value": {
+      "start_url": "/?view=collab-subscribed-value"
+    },
+    "component-designer": {
+      "start_url": "/?view=component-designer"
+    },
+    "cs-assigned": {
+      "start_url": "/ind/app?view=cs_assigned"
+    },
+    "cs-by-me": {
+      "start_url": "/ind/app?view=cs_by_me"
+    },
+    "cs-seen": {
+      "start_url": "/ind/app?view=cs_seen"
+    },
+    "dream-life": {
+      "start_url": "/?view=dream-life",
+      "vars": {
+        "chart": "Arjun"
+      },
+      "note": "Picks the saved DEMO chart named in 'chart' (never a real person). Import tools/tour_video/demo_charts/*.json into the demo account first, or change the name.",
+      "before": [
+        {
+          "pick_chart": "${chart}",
+          "timeout": 20
+        },
+        {
+          "wait": 4
+        }
+      ]
+    },
+    "emotion-cohort": {
+      "start_url": "/?view=emotion-cohort"
+    },
+    "emotion-wheel": {
+      "start_url": "/?view=emotion-wheel",
+      "vars": {
+        "chart": "Arjun"
+      },
+      "note": "Picks the saved DEMO chart named in 'chart' (never a real person). Import tools/tour_video/demo_charts/*.json into the demo account first, or change the name.",
+      "before": [
+        {
+          "pick_chart": "${chart}",
+          "timeout": 20
+        },
+        {
+          "wait": 4
+        }
+      ]
+    },
+    "environment-asset-sync": {
+      "start_url": "/?view=environment-asset-sync"
+    },
+    "eventful-years": {
+      "start_url": "/?view=eventful-years",
+      "vars": {
+        "chart": "Arjun"
+      },
+      "note": "Picks the saved DEMO chart named in 'chart' (never a real person). Import tools/tour_video/demo_charts/*.json into the demo account first, or change the name.",
+      "before": [
+        {
+          "pick_chart": "${chart}",
+          "timeout": 20
+        },
+        {
+          "wait": 4
+        }
+      ]
+    },
+    "explain-access": {
+      "start_url": "/?view=explain-access"
+    },
+    "failover-console": {
+      "start_url": "/?view=failover-console"
+    },
+    "family-os": {
+      "start_url": "/?view=family-os"
+    },
+    "familyos-signin": {
+      "start_url": "/?familyos",
+      "anonymous": true,
+      "prod_base": "https://familyos.in",
+      "note": "Recorded signed out, as an invited member first sees it."
+    },
+    "fyi": {
+      "start_url": "/r/${rule}",
+      "vars": {
+        "rule": "fyi_career_top3",
+        "chart": "Arjun"
+      },
+      "note": "Signed in as the demo account so My Charts can pick 'chart'. 'rule' is any published FYI id. The Narrated view appears only when narration is switched on for this rule AND assigned to the signed-in account (Narration Access), otherwise that step shows Certified only and its narration says so.",
+      "before": [
+        {
+          "wait_for": "text=The Pattern",
+          "timeout": 30
+        },
+        {
+          "wait_for": "text=Verdict",
+          "optional": true,
+          "timeout": 20
+        },
+        {
+          "click": "button:has-text('Birth Input')",
+          "optional": true,
+          "timeout": 5
+        },
+        {
+          "pick_chart": "${chart}",
+          "timeout": 30
+        },
+        {
+          "wait": 5
+        }
+      ]
+    },
+    "fyi-catalog": {
+      "start_url": "/?view=fyi-catalog"
+    },
+    "fyi-manager": {
+      "start_url": "/?view=fyi-manager"
+    },
+    "generate-chart": {
+      "start_url": "/?view=generate-chart"
+    },
+    "gochara": {
+      "start_url": "/?view=gochara",
+      "vars": {
+        "chart": "Arjun"
+      },
+      "note": "Picks the saved DEMO chart named in 'chart' (never a real person). Import tools/tour_video/demo_charts/*.json into the demo account first, or change the name.",
+      "before": [
+        {
+          "pick_chart": "${chart}",
+          "timeout": 20
+        },
+        {
+          "wait": 4
+        }
+      ]
+    },
+    "gochara-darpan": {
+      "start_url": "/?view=gochara-darpan",
+      "vars": {
+        "chart": "Arjun"
+      },
+      "note": "Picks the saved DEMO chart named in 'chart' (never a real person). Import tools/tour_video/demo_charts/*.json into the demo account first, or change the name.",
+      "before": [
+        {
+          "pick_chart": "${chart}",
+          "timeout": 20
+        },
+        {
+          "wait": 4
+        }
+      ]
+    },
+    "gochara-shrinkhala": {
+      "start_url": "/?view=gochara-shrinkhala",
+      "vars": {
+        "chart": "Arjun"
+      },
+      "note": "Picks the saved DEMO chart named in 'chart' (never a real person). Import tools/tour_video/demo_charts/*.json into the demo account first, or change the name.",
+      "before": [
+        {
+          "pick_chart": "${chart}",
+          "timeout": 20
+        },
+        {
+          "wait": 4
+        }
+      ]
+    },
+    "graha-uvacha": {
+      "start_url": "/ind/app?view=akashvani",
+      "vars": {
+        "chart": "Arjun",
+        "question": "married"
+      },
+      "note": "Same screen as the Studio's AkashVani (graha-uvacha), so one video serves both. Picks the demo chart in 'chart'. Adds the first two readings in the list, so the result depends on what is published to the account. Saving a group is shown, not pressed, so the demo account's groups are not changed.",
+      "before": [
+        {
+          "wait_for": "text=What to show",
+          "timeout": 30
+        },
+        {
+          "pick_chart": "${chart}",
+          "timeout": 30
+        },
+        {
+          "wait": 3
+        }
+      ]
+    },
+    "grahauvacha-signin": {
+      "start_url": "/?graha",
+      "anonymous": true,
+      "prod_base": "https://grahauvacha.in",
+      "note": "Recorded signed out, as a first-time visitor sees it."
+    },
+    "gravitas": {
+      "start_url": "/?view=gravitas"
+    },
+    "home": {
+      "start_url": "/?view=home"
+    },
+    "howto-config": {
+      "start_url": "/?view=howto-config"
+    },
+    "incidents": {
+      "start_url": "/?view=incidents"
+    },
+    "instant-meeting": {
+      "start_url": "/?view=instant-meeting"
+    },
+    "institute-access": {
+      "start_url": "/?view=institute-access"
+    },
+    "institution": {
+      "start_url": "/institution",
+      "note": "Multi-chart demo. The profiles come from tools/tour_video/demo_charts/*.json (fictional people), uploaded the same way a user uploads birth files, so no real birth ever appears on screen.",
+      "before": [
+        {
+          "wait_for": "button:has-text('Analyze')",
+          "timeout": 30
+        },
+        {
+          "upload": "input[type=file][accept*='json']",
+          "files": [
+            "demo_charts/demo_05_kabir.json",
+            "demo_charts/demo_06_isha.json"
+          ]
+        },
+        {
+          "wait": 2
+        }
+      ]
+    },
+    "interface-canvas": {
+      "start_url": "/?view=interface-canvas"
+    },
+    "interface-designer": {
+      "start_url": "/?view=interface-designer"
+    },
+    "issue-reports": {
+      "start_url": "/?view=issue-reports"
+    },
+    "jamakkol": {
+      "start_url": "/ind/app?view=jamakkol"
+    },
+    "key-management": {
+      "start_url": "/?view=key-management"
+    },
+    "knowledge-base": {
+      "start_url": "/?view=knowledge-base"
+    },
+    "kp-dashboard": {
+      "start_url": "/?view=kp-dashboard",
+      "vars": {
+        "chart": "Arjun"
+      },
+      "note": "Picks the saved DEMO chart named in 'chart' (never a real person). Import tools/tour_video/demo_charts/*.json into the demo account first, or change the name.",
+      "before": [
+        {
+          "pick_chart": "${chart}",
+          "timeout": 20
+        },
+        {
+          "wait": 4
+        }
+      ]
+    },
+    "maas-panchangam": {
+      "start_url": "/?view=maas-panchangam"
+    },
+    "manage-public-portal": {
+      "start_url": "/?view=manage-public-portal"
+    },
+    "manual-builder": {
+      "start_url": "/?view=manual-builder"
+    },
+    "medini-jyotish": {
+      "start_url": "/?view=medini-jyotish"
+    },
+    "memory-watch": {
+      "start_url": "/?view=memory-watch"
+    },
+    "menu-layout-config": {
+      "start_url": "/?view=menu-layout-config"
+    },
+    "mobile-publish": {
+      "start_url": "/?view=mobile-publish"
+    },
+    "more": {
+      "start_url": "/ind/app?view=more"
+    },
+    "muhurta": {
+      "start_url": "/?view=muhurta"
+    },
+    "my-appointments": {
+      "start_url": "/?view=my-appointments"
+    },
+    "my-charts": {
+      "start_url": "/?view=my-charts"
+    },
+    "nakshatra-disha": {
+      "start_url": "/?view=nakshatra-disha",
+      "vars": {
+        "chart": "Arjun"
+      },
+      "note": "Picks the saved DEMO chart named in 'chart' (never a real person). Import tools/tour_video/demo_charts/*.json into the demo account first, or change the name.",
+      "before": [
+        {
+          "pick_chart": "${chart}",
+          "timeout": 20
+        },
+        {
+          "wait": 4
+        }
+      ]
+    },
+    "nakshatra-wheel": {
+      "start_url": "/?view=nakshatra-wheel",
+      "vars": {
+        "chart": "Arjun"
+      },
+      "note": "Picks the saved DEMO chart named in 'chart' (never a real person). Import tools/tour_video/demo_charts/*.json into the demo account first, or change the name.",
+      "before": [
+        {
+          "pick_chart": "${chart}",
+          "timeout": 20
+        },
+        {
+          "wait": 4
+        }
+      ]
+    },
+    "narration-access": {
+      "start_url": "/?view=narration-access"
+    },
+    "navatara-system": {
+      "start_url": "/?view=navatara-system",
+      "vars": {
+        "chart": "Arjun"
+      },
+      "note": "Picks the saved DEMO chart named in 'chart' (never a real person). Import tools/tour_video/demo_charts/*.json into the demo account first, or change the name.",
+      "before": [
+        {
+          "pick_chart": "${chart}",
+          "timeout": 20
+        },
+        {
+          "wait": 4
+        }
+      ]
+    },
+    "numerology": {
+      "start_url": "/?view=numerology",
+      "vars": {
+        "chart": "Arjun"
+      },
+      "note": "Picks the saved DEMO chart named in 'chart' (never a real person). Import tools/tour_video/demo_charts/*.json into the demo account first, or change the name.",
+      "before": [
+        {
+          "pick_chart": "${chart}",
+          "timeout": 20
+        },
+        {
+          "wait": 4
+        }
+      ]
+    },
+    "ops-chip-builder": {
+      "start_url": "/?view=ops-chip-builder"
+    },
+    "package-manager-plus": {
+      "start_url": "/?view=package-manager-plus"
+    },
+    "pariksha": {
+      "start_url": "/ind/app?view=pariksha"
+    },
+    "perso-arabic": {
+      "start_url": "/?view=perso-arabic",
+      "vars": {
+        "chart": "Arjun"
+      },
+      "note": "Picks the saved DEMO chart named in 'chart' (never a real person). Import tools/tour_video/demo_charts/*.json into the demo account first, or change the name.",
+      "before": [
+        {
+          "pick_chart": "${chart}",
+          "timeout": 20
+        },
+        {
+          "wait": 4
+        }
+      ]
+    },
+    "portal-activity": {
+      "start_url": "/?view=portal-activity"
+    },
+    "portal.anveshana": {
+      "start_url": "/ind/app?view=anveshana"
+    },
+    "portal.articles": {
+      "start_url": "/ind/app?view=articles"
+    },
+    "portal.topics": {
+      "start_url": "/ind/app?view=swaadhyaya"
+    },
+    "practice-governance": {
+      "start_url": "/?view=practice-governance"
+    },
+    "prashna-kosha": {
+      "start_url": "/?view=prashna-kosha"
+    },
+    "prashna_kosha": {
+      "start_url": "/ind/app?view=prashna_kosha"
+    },
+    "process-designer": {
+      "start_url": "/?view=process-designer"
+    },
+    "process-runtime": {
+      "start_url": "/?view=process-runtime"
+    },
+    "prompt-designer": {
+      "start_url": "/?view=prompt-designer"
+    },
+    "prompt-for-api": {
+      "start_url": "/?view=prompt-for-api"
+    },
+    "property-wheel": {
+      "start_url": "/?view=property-wheel",
+      "vars": {
+        "chart": "Arjun"
+      },
+      "note": "Picks the saved DEMO chart named in 'chart' (never a real person). Import tools/tour_video/demo_charts/*.json into the demo account first, or change the name.",
+      "before": [
+        {
+          "pick_chart": "${chart}",
+          "timeout": 20
+        },
+        {
+          "wait": 4
+        }
+      ]
+    },
+    "public-feedback": {
+      "start_url": "/?view=public-feedback"
+    },
+    "public-share": {
+      "start_url": "/?view=public-share"
+    },
+    "ram": {
+      "start_url": "/ind/app?view=ram"
+    },
+    "remedies": {
+      "start_url": "/ind/app?view=remedies"
+    },
+    "remedy-designer": {
+      "start_url": "/?view=remedy-designer"
+    },
+    "req-find": {
+      "start_url": "/ind/app?view=req_find"
+    },
+    "req-mine": {
+      "start_url": "/ind/app?view=req_mine"
+    },
+    "req-remedy": {
+      "start_url": "/ind/app?view=req_remedy"
+    },
+    "requests-center": {
+      "start_url": "/?view=requests-center"
+    },
+    "ritual-certifier": {
+      "start_url": "/?view=ritual-certifier"
+    },
+    "rr-assigned": {
+      "start_url": "/ind/app?view=rr_assigned"
+    },
+    "rr-submitted": {
+      "start_url": "/ind/app?view=rr_submitted"
+    },
+    "rr-wip": {
+      "start_url": "/ind/app?view=rr_wip"
+    },
+    "rule-certifiers": {
+      "start_url": "/?view=rule-certifiers"
+    },
+    "rule-designer": {
+      "start_url": "/?view=rule-designer"
+    },
+    "runtime-interface": {
+      "start_url": "/?view=runtime-interface"
+    },
+    "sadhu-marriage": {
+      "start_url": "/?view=sadhu-marriage",
+      "vars": {
+        "chart": "Arjun"
+      },
+      "note": "Picks the saved DEMO chart named in 'chart' (never a real person). Import tools/tour_video/demo_charts/*.json into the demo account first, or change the name.",
+      "before": [
+        {
+          "pick_chart": "${chart}",
+          "timeout": 20
+        },
+        {
+          "wait": 4
+        }
+      ]
+    },
+    "sandhya": {
+      "start_url": "/?view=sandhya"
+    },
+    "sports-speculation": {
+      "start_url": "/?view=sports-speculation"
+    },
+    "study": {
+      "start_url": "/?view=study"
+    },
+    "swaadhyaya": {
+      "start_url": "/ind/app?view=swaadhyaya"
+    },
+    "system-health": {
+      "start_url": "/?view=system-health"
+    },
+    "tarpana": {
+      "start_url": "/?view=tarpana"
+    },
+    "tedbook": {
+      "start_url": "/?tedbook",
+      "vars": {
+        "book": "Advanced Ashtakavarga",
+        "reading": "Bindu Supply of the Twelve Houses",
+        "chart": "Arjun"
+      },
+      "prod_base": "https://tedbook.in",
+      "note": "Vars are data-dependent: 'book' must be on the signed-in account's shelf, 'reading' is text in that book's Jump-to-page list for a chapter carrying an FYI, 'chart' is a saved DEMO chart (never a real person's). Override with --var name=value.",
+      "rate": "+0%",
+      "before": [
+        {
+          "wait_for": "text=Library"
+        }
+      ]
+    },
+    "tedbook-signin": {
+      "start_url": "/?tedbook",
+      "anonymous": true,
+      "prod_base": "https://tedbook.in",
+      "note": "Recorded signed out, as a first-time visitor sees it."
+    },
+    "tithi-calculator": {
+      "start_url": "/?view=tithi-calculator"
+    },
+    "tour-video": {
+      "start_url": "/?view=tour-video",
+      "note": "Needs a Portal Admin session on the Studio. The tour stops at the buttons and never starts a real recording from inside a recording.",
+      "before": [
+        {
+          "wait_for": "text=Which site to record",
+          "timeout": 30
+        }
+      ]
+    },
+    "trajectory": {
+      "start_url": "/?view=trajectory",
+      "vars": {
+        "chart": "Arjun"
+      },
+      "note": "Picks the saved DEMO chart named in 'chart' (never a real person). Import tools/tour_video/demo_charts/*.json into the demo account first, or change the name.",
+      "before": [
+        {
+          "pick_chart": "${chart}",
+          "timeout": 20
+        },
+        {
+          "wait": 4
+        }
+      ]
+    },
+    "trajectory-astrologer": {
+      "start_url": "/?view=trajectory-astrologer",
+      "vars": {
+        "chart": "Arjun"
+      },
+      "note": "Picks the saved DEMO chart named in 'chart' (never a real person). Import tools/tour_video/demo_charts/*.json into the demo account first, or change the name.",
+      "before": [
+        {
+          "pick_chart": "${chart}",
+          "timeout": 20
+        },
+        {
+          "wait": 4
+        }
+      ]
+    },
+    "trajectory-business": {
+      "start_url": "/?view=trajectory-business",
+      "vars": {
+        "chart": "Arjun"
+      },
+      "note": "Picks the saved DEMO chart named in 'chart' (never a real person). Import tools/tour_video/demo_charts/*.json into the demo account first, or change the name.",
+      "before": [
+        {
+          "pick_chart": "${chart}",
+          "timeout": 20
+        },
+        {
+          "wait": 4
+        }
+      ]
+    },
+    "triveni": {
+      "start_url": "/?view=triveni",
+      "vars": {
+        "chart": "Arjun"
+      },
+      "note": "Picks the saved DEMO chart named in 'chart' (never a real person). Import tools/tour_video/demo_charts/*.json into the demo account first, or change the name.",
+      "before": [
+        {
+          "pick_chart": "${chart}",
+          "timeout": 20
+        },
+        {
+          "wait": 4
+        }
+      ]
+    },
+    "tts-studio": {
+      "start_url": "/?view=tts-studio"
+    },
+    "unwind": {
+      "start_url": "/?view=unwind"
+    },
+    "unwind.adb_import": {
+      "start_url": "/?view=unwind"
+    },
+    "unwind.cohort": {
+      "start_url": "/?view=unwind"
+    },
+    "unwind.library": {
+      "start_url": "/?view=unwind"
+    },
+    "unwind.query_builder": {
+      "start_url": "/?view=unwind"
+    },
+    "unwind.research_lab": {
+      "start_url": "/?view=unwind"
+    },
+    "user-access": {
+      "start_url": "/?view=user-access"
+    },
+    "user-asset-subscriptions": {
+      "start_url": "/?view=user-asset-subscriptions"
+    },
+    "util-birth-extract": {
+      "start_url": "/"
+    },
+    "util-card-designer": {
+      "start_url": "/card-designer.html"
+    },
+    "util-catalog-pulse": {
+      "start_url": "/"
+    },
+    "util-check-sync": {
+      "start_url": "/"
+    },
+    "util-console": {
+      "start_url": "/"
+    },
+    "util-md-convert": {
+      "start_url": "/"
+    },
+    "util-pdf-compress": {
+      "start_url": "/"
+    },
+    "util-pdf-word": {
+      "start_url": "/"
+    },
+    "util-pic-text": {
+      "start_url": "/"
+    },
+    "util-portal-probe": {
+      "start_url": "/"
+    },
+    "util-prompt-library": {
+      "start_url": "/"
+    },
+    "util-video-compress": {
+      "start_url": "/"
+    },
+    "video-narrator": {
+      "start_url": "/?view=video-narrator",
+      "note": "Shows the empty page and its controls; uploading and drafting are narrated, not performed, so no video is sent to the AI during a recording.",
+      "before": [
+        {
+          "wait_for": "text=Narrate a video you recorded",
+          "timeout": 30
+        }
+      ]
+    },
+    "visitor-dashboard": {
+      "start_url": "/?view=visitor-dashboard"
+    },
+    "vps-console": {
+      "start_url": "/?view=vps-console"
+    },
+    "western": {
+      "start_url": "/?view=western",
+      "vars": {
+        "chart": "Arjun"
+      },
+      "note": "Picks the saved DEMO chart named in 'chart' (never a real person). Import tools/tour_video/demo_charts/*.json into the demo account first, or change the name.",
+      "before": [
+        {
+          "pick_chart": "${chart}",
+          "timeout": 20
+        },
+        {
+          "wait": 4
+        }
+      ]
+    },
+    "your_prashna": {
+      "start_url": "/ind/app?view=prashna_kosha"
+    },
+    "yt-transcript": {
+      "start_url": "/?view=yt-transcript"
+    }
+  }
+}

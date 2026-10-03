@@ -1,0 +1,33 @@
+{
+  "chip_id": "store.messages",
+  "kind": "accessor",
+  "set": "store",
+  "label": "What the key form says when a value is refused",
+  "aliases": [],
+  "params": [
+    {
+      "name": "bad_model",
+      "type": "text",
+      "default": "\"{model}\" is not a model id. Pick one from the list, or type an id like gemini-2.5-flash."
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "bad_model": "$bad_model"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "bad_model: a typed model id that cannot be one; {model} = what was typed.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "bad_model": "\"{model}\" is not a model id. Pick one from the list, or type an id like gemini-2.5-flash."
+      }
+    }
+  ],
+  "weight_basis": "Portal business setting of the Training & Video Portal. The knobs ARE the policy — edit them here, never in Python."
+}

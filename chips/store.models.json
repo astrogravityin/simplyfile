@@ -1,0 +1,77 @@
+{
+  "chip_id": "store.models",
+  "kind": "accessor",
+  "set": "store",
+  "label": "Which Gemini models Draft with AI offers and falls back to",
+  "aliases": [
+    "gemini model",
+    "model fallback"
+  ],
+  "params": [
+    {
+      "name": "choices",
+      "type": "list",
+      "default": [
+        "gemini-flash-latest",
+        "gemini-pro-latest",
+        "gemini-2.5-flash",
+        "gemini-2.5-pro"
+      ]
+    },
+    {
+      "name": "default_model",
+      "type": "text",
+      "default": "gemini-flash-latest"
+    },
+    {
+      "name": "preference",
+      "type": "list",
+      "default": [
+        "gemini-flash-latest",
+        "gemini-2.5-flash",
+        "gemini-pro-latest",
+        "gemini-2.5-pro"
+      ]
+    },
+    {
+      "name": "model_id_pattern",
+      "type": "text",
+      "default": "^[a-z][a-z0-9._-]{2,63}$"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "choices": "$choices",
+      "default_model": "$default_model",
+      "preference": "$preference",
+      "model_id_pattern": "$model_id_pattern"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "choices: the models offered in the key form (a model released later can still be typed). default_model: used when none is chosen. The '-latest' names come first because Google refuses fixed versions such as gemini-2.5-flash to NEW keys ('no longer available to new users'), so a fixed default breaks for exactly the people just arriving. preference: when the chosen model is refused, the key test tries these in order among the models the key can see. model_id_pattern: what a model id can look like at all — anything else is a typo, refused on save.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "choices": [
+          "gemini-flash-latest",
+          "gemini-pro-latest",
+          "gemini-2.5-flash",
+          "gemini-2.5-pro"
+        ],
+        "default_model": "gemini-flash-latest",
+        "preference": [
+          "gemini-flash-latest",
+          "gemini-2.5-flash",
+          "gemini-pro-latest",
+          "gemini-2.5-pro"
+        ],
+        "model_id_pattern": "^[a-z][a-z0-9._-]{2,63}$"
+      }
+    }
+  ],
+  "weight_basis": "Portal business setting of the Training & Video Portal. The knobs ARE the policy — edit them here, never in Python."
+}

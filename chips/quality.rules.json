@@ -1,0 +1,1460 @@
+{
+  "chip_id": "quality.rules",
+  "kind": "accessor",
+  "set": "quality",
+  "audience": "admin",
+  "label": "Every module's mandatory steps and Final check",
+  "aliases": [],
+  "params": [
+    {
+      "name": "rows",
+      "type": "list",
+      "default": [
+        {
+          "id": "comic_cast",
+          "module": "comic",
+          "kind": "gate",
+          "step": "book",
+          "fact": "cast",
+          "op": ">=",
+          "value": 1,
+          "blocks": [
+            "script_ai",
+            "script_bridge",
+            "script_free",
+            "whole_ai",
+            "draw"
+          ],
+          "fix": "cast",
+          "word": "comic_cast"
+        },
+        {
+          "id": "comic_looks",
+          "module": "comic",
+          "kind": "gate",
+          "step": "book",
+          "fact": "cast_looks_missing",
+          "op": "==",
+          "value": 0,
+          "blocks": [
+            "whole_ai",
+            "draw"
+          ],
+          "fix": "looks",
+          "word": "comic_looks"
+        },
+        {
+          "id": "comic_faces",
+          "module": "comic",
+          "kind": "gate",
+          "step": "book",
+          "fact": "cast_faces_missing",
+          "op": "==",
+          "value": 0,
+          "blocks": [
+            "whole_ai",
+            "draw"
+          ],
+          "fix": "faces",
+          "word": "comic_faces"
+        },
+        {
+          "id": "comic_titles",
+          "module": "comic",
+          "kind": "final",
+          "step": "chapter",
+          "fact": "chapters_untitled",
+          "op": "==",
+          "value": 0,
+          "blocks": [
+            "publish"
+          ],
+          "fix": "title",
+          "word": "comic_titles"
+        },
+        {
+          "id": "comic_written",
+          "module": "comic",
+          "kind": "info",
+          "step": "chapter",
+          "fact": "chapters_unwritten",
+          "op": "==",
+          "value": 0,
+          "blocks": [],
+          "fix": "script",
+          "word": "comic_written"
+        },
+        {
+          "id": "comic_drawn",
+          "module": "comic",
+          "kind": "final",
+          "step": "chapter",
+          "fact": "cards_undrawn",
+          "op": "==",
+          "value": 0,
+          "blocks": [
+            "publish"
+          ],
+          "fix": "draw",
+          "word": "comic_drawn"
+        },
+        {
+          "id": "comic_lettered",
+          "module": "comic",
+          "kind": "final",
+          "step": "chapter",
+          "fact": "cards_unlettered",
+          "op": "==",
+          "value": 0,
+          "blocks": [
+            "publish"
+          ],
+          "fix": "letter",
+          "word": "comic_lettered"
+        },
+        {
+          "id": "comic_people",
+          "module": "comic",
+          "kind": "final",
+          "step": "chapter",
+          "fact": "cards_people_unknown",
+          "op": "==",
+          "value": 0,
+          "blocks": [],
+          "fix": "looks",
+          "word": "comic_people"
+        },
+        {
+          "id": "comic_jpeg",
+          "module": "comic",
+          "kind": "info",
+          "step": "book",
+          "fact": "pictures_png",
+          "op": "==",
+          "value": 0,
+          "blocks": [],
+          "fix": "shrink",
+          "word": "comic_jpeg"
+        },
+        {
+          "id": "ab_text",
+          "module": "audiobook",
+          "kind": "gate",
+          "step": "text",
+          "fact": "chapters_with_text",
+          "op": ">=",
+          "value": 1,
+          "blocks": [
+            "make"
+          ],
+          "fix": "text",
+          "word": "ab_text"
+        },
+        {
+          "id": "ab_voice",
+          "module": "audiobook",
+          "kind": "gate",
+          "step": "voice",
+          "fact": "voice_set",
+          "op": ">=",
+          "value": 1,
+          "blocks": [
+            "make"
+          ],
+          "fix": "voice",
+          "word": "ab_voice"
+        },
+        {
+          "id": "ab_first_letter",
+          "module": "audiobook",
+          "kind": "info",
+          "step": "text",
+          "fact": "chapters_first_letter_lost",
+          "op": "==",
+          "value": 0,
+          "blocks": [],
+          "fix": "text",
+          "word": "ab_first_letter"
+        },
+        {
+          "id": "ab_made",
+          "module": "audiobook",
+          "kind": "final",
+          "step": "make",
+          "fact": "chapters_unmade",
+          "op": "==",
+          "value": 0,
+          "blocks": [
+            "publish"
+          ],
+          "fix": "make",
+          "word": "ab_made"
+        },
+        {
+          "id": "ab_book",
+          "module": "audiobook",
+          "kind": "final",
+          "step": "make",
+          "fact": "book_ready",
+          "op": ">=",
+          "value": 1,
+          "blocks": [
+            "publish"
+          ],
+          "fix": "make",
+          "word": "ab_book"
+        },
+        {
+          "id": "tb_source",
+          "module": "tedbook",
+          "kind": "gate",
+          "step": "source",
+          "fact": "source_chars",
+          "op": ">=",
+          "value": 1,
+          "blocks": [
+            "write",
+            "publish"
+          ],
+          "fix": "source",
+          "word": "tb_source"
+        },
+        {
+          "id": "tb_plan",
+          "module": "tedbook",
+          "kind": "gate",
+          "step": "plan",
+          "fact": "parts_included",
+          "op": ">=",
+          "value": 1,
+          "blocks": [
+            "write",
+            "publish"
+          ],
+          "fix": "plan",
+          "word": "tb_plan"
+        },
+        {
+          "id": "tb_title",
+          "module": "tedbook",
+          "kind": "final",
+          "step": "source",
+          "fact": "title_set",
+          "op": ">=",
+          "value": 1,
+          "blocks": [
+            "publish"
+          ],
+          "fix": "title",
+          "word": "tb_title"
+        },
+        {
+          "id": "tb_written",
+          "module": "tedbook",
+          "kind": "final",
+          "step": "write",
+          "fact": "parts_unwritten",
+          "op": "==",
+          "value": 0,
+          "blocks": [
+            "publish"
+          ],
+          "fix": "write",
+          "word": "tb_written"
+        },
+        {
+          "id": "tb_author",
+          "module": "tedbook",
+          "kind": "info",
+          "step": "source",
+          "fact": "author_set",
+          "op": ">=",
+          "value": 1,
+          "blocks": [],
+          "fix": "title",
+          "word": "tb_author"
+        },
+        {
+          "id": "dd_scenes",
+          "module": "doodle",
+          "kind": "gate",
+          "step": "script",
+          "fact": "scenes",
+          "op": ">=",
+          "value": 1,
+          "blocks": [
+            "make",
+            "pictures_ai"
+          ],
+          "fix": "script",
+          "word": "dd_scenes"
+        },
+        {
+          "id": "dd_says",
+          "module": "doodle",
+          "kind": "gate",
+          "step": "script",
+          "fact": "scenes_empty",
+          "op": "==",
+          "value": 0,
+          "blocks": [
+            "make"
+          ],
+          "fix": "script",
+          "word": "dd_says"
+        },
+        {
+          "id": "dd_pictures",
+          "module": "doodle",
+          "kind": "gate",
+          "step": "pictures",
+          "fact": "pictures_missing",
+          "op": "==",
+          "value": 0,
+          "blocks": [
+            "make"
+          ],
+          "fix": "pictures",
+          "word": "dd_pictures"
+        },
+        {
+          "id": "dd_voice",
+          "module": "doodle",
+          "kind": "gate",
+          "step": "voice",
+          "fact": "voice_set",
+          "op": ">=",
+          "value": 1,
+          "blocks": [
+            "make"
+          ],
+          "fix": "voice",
+          "word": "dd_voice"
+        },
+        {
+          "id": "dd_video",
+          "module": "doodle",
+          "kind": "final",
+          "step": "video",
+          "fact": "video_ready",
+          "op": ">=",
+          "value": 1,
+          "blocks": [
+            "publish"
+          ],
+          "fix": "make",
+          "word": "dd_video"
+        },
+        {
+          "id": "av_face",
+          "module": "avatar",
+          "kind": "gate",
+          "step": "face",
+          "fact": "presenter_set",
+          "op": ">=",
+          "value": 1,
+          "blocks": [
+            "make"
+          ],
+          "fix": "face",
+          "word": "av_face"
+        },
+        {
+          "id": "av_scenes",
+          "module": "avatar",
+          "kind": "gate",
+          "step": "script",
+          "fact": "scenes",
+          "op": ">=",
+          "value": 1,
+          "blocks": [
+            "make",
+            "pictures_ai"
+          ],
+          "fix": "script",
+          "word": "av_scenes"
+        },
+        {
+          "id": "av_says",
+          "module": "avatar",
+          "kind": "gate",
+          "step": "script",
+          "fact": "scenes_empty",
+          "op": "==",
+          "value": 0,
+          "blocks": [
+            "make"
+          ],
+          "fix": "script",
+          "word": "av_says"
+        },
+        {
+          "id": "av_voice",
+          "module": "avatar",
+          "kind": "gate",
+          "step": "voice",
+          "fact": "voice_set",
+          "op": ">=",
+          "value": 1,
+          "blocks": [
+            "make"
+          ],
+          "fix": "voice",
+          "word": "av_voice"
+        },
+        {
+          "id": "av_lips",
+          "module": "avatar",
+          "kind": "info",
+          "step": "face",
+          "fact": "lips_ready",
+          "op": ">=",
+          "value": 1,
+          "blocks": [],
+          "fix": "face",
+          "word": "av_lips"
+        },
+        {
+          "id": "av_template",
+          "module": "avatar",
+          "kind": "info",
+          "step": "face",
+          "fact": "template_ready",
+          "op": ">=",
+          "value": 1,
+          "blocks": [],
+          "fix": "template",
+          "word": "av_template"
+        },
+        {
+          "id": "av_cutout",
+          "module": "avatar",
+          "kind": "info",
+          "step": "face",
+          "fact": "cutout_ready",
+          "op": ">=",
+          "value": 1,
+          "blocks": [],
+          "fix": "template",
+          "word": "av_cutout"
+        },
+        {
+          "id": "av_captions",
+          "module": "avatar",
+          "kind": "info",
+          "step": "video",
+          "fact": "captions_ready",
+          "op": ">=",
+          "value": 1,
+          "blocks": [],
+          "fix": "template",
+          "word": "av_captions"
+        },
+        {
+          "id": "av_video",
+          "module": "avatar",
+          "kind": "final",
+          "step": "video",
+          "fact": "video_ready",
+          "op": ">=",
+          "value": 1,
+          "blocks": [
+            "publish"
+          ],
+          "fix": "make",
+          "word": "av_video"
+        },
+        {
+          "id": "yt_moments",
+          "module": "youtube",
+          "kind": "final",
+          "step": "moments",
+          "fact": "moments",
+          "op": ">=",
+          "value": 1,
+          "blocks": [
+            "attach"
+          ],
+          "fix": "moments",
+          "word": "yt_moments"
+        },
+        {
+          "id": "vd_script",
+          "module": "video",
+          "kind": "final",
+          "step": "script",
+          "fact": "segments",
+          "op": ">=",
+          "value": 1,
+          "blocks": [
+            "publish"
+          ],
+          "fix": "script",
+          "word": "vd_script"
+        },
+        {
+          "id": "vd_made",
+          "module": "video",
+          "kind": "final",
+          "step": "render",
+          "fact": "made",
+          "op": ">=",
+          "value": 1,
+          "blocks": [
+            "publish"
+          ],
+          "fix": "render",
+          "word": "vd_made"
+        },
+        {
+          "id": "ar_title",
+          "module": "article",
+          "kind": "final",
+          "step": "write",
+          "fact": "title_set",
+          "op": ">=",
+          "value": 1,
+          "blocks": [
+            "publish"
+          ],
+          "fix": "title",
+          "word": "ar_title"
+        },
+        {
+          "id": "ar_text",
+          "module": "article",
+          "kind": "final",
+          "step": "write",
+          "fact": "chars",
+          "op": ">=",
+          "value": 1,
+          "blocks": [
+            "publish"
+          ],
+          "fix": "write",
+          "word": "ar_text"
+        },
+        {
+          "id": "ar_picture",
+          "module": "article",
+          "kind": "info",
+          "step": "write",
+          "fact": "pictures",
+          "op": ">=",
+          "value": 1,
+          "blocks": [],
+          "fix": "write",
+          "word": "ar_picture"
+        },
+        {
+          "id": "bk_name",
+          "module": "book",
+          "kind": "final",
+          "step": "details",
+          "fact": "name_set",
+          "op": ">=",
+          "value": 1,
+          "blocks": [
+            "publish"
+          ],
+          "fix": "name",
+          "word": "bk_name"
+        },
+        {
+          "id": "bk_parts",
+          "module": "book",
+          "kind": "final",
+          "step": "contents",
+          "fact": "parts",
+          "op": ">=",
+          "value": 1,
+          "blocks": [
+            "publish"
+          ],
+          "fix": "parts",
+          "word": "bk_parts"
+        },
+        {
+          "id": "bk_written",
+          "module": "book",
+          "kind": "final",
+          "step": "contents",
+          "fact": "parts_unwritten",
+          "op": "==",
+          "value": 0,
+          "blocks": [
+            "publish"
+          ],
+          "fix": "parts",
+          "word": "bk_written"
+        },
+        {
+          "id": "bk_cover",
+          "module": "book",
+          "kind": "info",
+          "step": "details",
+          "fact": "cover",
+          "op": ">=",
+          "value": 1,
+          "blocks": [],
+          "fix": "cover",
+          "word": "bk_cover"
+        },
+        {
+          "id": "bk_author",
+          "module": "book",
+          "kind": "info",
+          "step": "details",
+          "fact": "author_set",
+          "op": ">=",
+          "value": 1,
+          "blocks": [],
+          "fix": "name",
+          "word": "bk_author"
+        },
+        {
+          "id": "dk_items",
+          "module": "deck",
+          "kind": "final",
+          "step": "contents",
+          "fact": "items",
+          "op": ">=",
+          "value": 1,
+          "blocks": [
+            "publish"
+          ],
+          "fix": "items",
+          "word": "dk_items"
+        },
+        {
+          "id": "dk_gone",
+          "module": "deck",
+          "kind": "final",
+          "step": "contents",
+          "fact": "items_gone",
+          "op": "==",
+          "value": 0,
+          "blocks": [
+            "publish"
+          ],
+          "fix": "items",
+          "word": "dk_gone"
+        },
+        {
+          "id": "dk_made",
+          "module": "deck",
+          "kind": "final",
+          "step": "files",
+          "fact": "files_unmade",
+          "op": "==",
+          "value": 0,
+          "blocks": [
+            "publish"
+          ],
+          "fix": "make",
+          "word": "dk_made"
+        },
+        {
+          "id": "ad_business",
+          "module": "ad",
+          "kind": "final",
+          "step": "client",
+          "fact": "business_set",
+          "op": ">=",
+          "value": 1,
+          "blocks": [
+            "make"
+          ],
+          "fix": "client",
+          "word": "ad_business"
+        },
+        {
+          "id": "ad_asks",
+          "module": "ad",
+          "kind": "final",
+          "step": "facts",
+          "fact": "asks_empty",
+          "op": "==",
+          "value": 0,
+          "blocks": [
+            "make"
+          ],
+          "fix": "facts",
+          "word": "ad_asks"
+        },
+        {
+          "id": "ad_lines",
+          "module": "ad",
+          "kind": "final",
+          "step": "beats",
+          "fact": "lines_empty",
+          "op": "==",
+          "value": 0,
+          "blocks": [
+            "make"
+          ],
+          "fix": "beats",
+          "word": "ad_lines"
+        },
+        {
+          "id": "ad_photos",
+          "module": "ad",
+          "kind": "final",
+          "step": "beats",
+          "fact": "photos_missing",
+          "op": "==",
+          "value": 0,
+          "blocks": [],
+          "fix": "beats",
+          "word": "ad_photos"
+        },
+        {
+          "id": "ad_film",
+          "module": "ad",
+          "kind": "final",
+          "step": "film",
+          "fact": "film_made",
+          "op": ">=",
+          "value": 1,
+          "blocks": [
+            "publish"
+          ],
+          "fix": "film",
+          "word": "ad_film"
+        }
+      ]
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "rows": "$rows"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "Each row: the module (comic, audiobook, tedbook...), kind = gate (blocks the actions in `blocks` until it passes, and counts in the Final check) / final (the Final check only; `publish` in blocks keeps a book from leaving) / info (shown, never blocks); the fact the module reports, the comparison (op) and the value it needs (a number, or another fact's name); step = where it is fixed; fix = which road fixes it; word = its sentence in quality.messages. Add a row to make a step mandatory; the portal and the server both obey it.",
+  "weight_basis": "The owner's definition of 'done' for every module - edit here, never in Python.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "rows": [
+          {
+            "id": "comic_cast",
+            "module": "comic",
+            "kind": "gate",
+            "step": "book",
+            "fact": "cast",
+            "op": ">=",
+            "value": 1,
+            "blocks": [
+              "script_ai",
+              "script_bridge",
+              "script_free",
+              "whole_ai",
+              "draw"
+            ],
+            "fix": "cast",
+            "word": "comic_cast"
+          },
+          {
+            "id": "comic_looks",
+            "module": "comic",
+            "kind": "gate",
+            "step": "book",
+            "fact": "cast_looks_missing",
+            "op": "==",
+            "value": 0,
+            "blocks": [
+              "whole_ai",
+              "draw"
+            ],
+            "fix": "looks",
+            "word": "comic_looks"
+          },
+          {
+            "id": "comic_faces",
+            "module": "comic",
+            "kind": "gate",
+            "step": "book",
+            "fact": "cast_faces_missing",
+            "op": "==",
+            "value": 0,
+            "blocks": [
+              "whole_ai",
+              "draw"
+            ],
+            "fix": "faces",
+            "word": "comic_faces"
+          },
+          {
+            "id": "comic_titles",
+            "module": "comic",
+            "kind": "final",
+            "step": "chapter",
+            "fact": "chapters_untitled",
+            "op": "==",
+            "value": 0,
+            "blocks": [
+              "publish"
+            ],
+            "fix": "title",
+            "word": "comic_titles"
+          },
+          {
+            "id": "comic_written",
+            "module": "comic",
+            "kind": "info",
+            "step": "chapter",
+            "fact": "chapters_unwritten",
+            "op": "==",
+            "value": 0,
+            "blocks": [],
+            "fix": "script",
+            "word": "comic_written"
+          },
+          {
+            "id": "comic_drawn",
+            "module": "comic",
+            "kind": "final",
+            "step": "chapter",
+            "fact": "cards_undrawn",
+            "op": "==",
+            "value": 0,
+            "blocks": [
+              "publish"
+            ],
+            "fix": "draw",
+            "word": "comic_drawn"
+          },
+          {
+            "id": "comic_lettered",
+            "module": "comic",
+            "kind": "final",
+            "step": "chapter",
+            "fact": "cards_unlettered",
+            "op": "==",
+            "value": 0,
+            "blocks": [
+              "publish"
+            ],
+            "fix": "letter",
+            "word": "comic_lettered"
+          },
+          {
+            "id": "comic_people",
+            "module": "comic",
+            "kind": "final",
+            "step": "chapter",
+            "fact": "cards_people_unknown",
+            "op": "==",
+            "value": 0,
+            "blocks": [],
+            "fix": "looks",
+            "word": "comic_people"
+          },
+          {
+            "id": "comic_jpeg",
+            "module": "comic",
+            "kind": "info",
+            "step": "book",
+            "fact": "pictures_png",
+            "op": "==",
+            "value": 0,
+            "blocks": [],
+            "fix": "shrink",
+            "word": "comic_jpeg"
+          },
+          {
+            "id": "ab_text",
+            "module": "audiobook",
+            "kind": "gate",
+            "step": "text",
+            "fact": "chapters_with_text",
+            "op": ">=",
+            "value": 1,
+            "blocks": [
+              "make"
+            ],
+            "fix": "text",
+            "word": "ab_text"
+          },
+          {
+            "id": "ab_voice",
+            "module": "audiobook",
+            "kind": "gate",
+            "step": "voice",
+            "fact": "voice_set",
+            "op": ">=",
+            "value": 1,
+            "blocks": [
+              "make"
+            ],
+            "fix": "voice",
+            "word": "ab_voice"
+          },
+          {
+            "id": "ab_first_letter",
+            "module": "audiobook",
+            "kind": "info",
+            "step": "text",
+            "fact": "chapters_first_letter_lost",
+            "op": "==",
+            "value": 0,
+            "blocks": [],
+            "fix": "text",
+            "word": "ab_first_letter"
+          },
+          {
+            "id": "ab_made",
+            "module": "audiobook",
+            "kind": "final",
+            "step": "make",
+            "fact": "chapters_unmade",
+            "op": "==",
+            "value": 0,
+            "blocks": [
+              "publish"
+            ],
+            "fix": "make",
+            "word": "ab_made"
+          },
+          {
+            "id": "ab_book",
+            "module": "audiobook",
+            "kind": "final",
+            "step": "make",
+            "fact": "book_ready",
+            "op": ">=",
+            "value": 1,
+            "blocks": [
+              "publish"
+            ],
+            "fix": "make",
+            "word": "ab_book"
+          },
+          {
+            "id": "tb_source",
+            "module": "tedbook",
+            "kind": "gate",
+            "step": "source",
+            "fact": "source_chars",
+            "op": ">=",
+            "value": 1,
+            "blocks": [
+              "write",
+              "publish"
+            ],
+            "fix": "source",
+            "word": "tb_source"
+          },
+          {
+            "id": "tb_plan",
+            "module": "tedbook",
+            "kind": "gate",
+            "step": "plan",
+            "fact": "parts_included",
+            "op": ">=",
+            "value": 1,
+            "blocks": [
+              "write",
+              "publish"
+            ],
+            "fix": "plan",
+            "word": "tb_plan"
+          },
+          {
+            "id": "tb_title",
+            "module": "tedbook",
+            "kind": "final",
+            "step": "source",
+            "fact": "title_set",
+            "op": ">=",
+            "value": 1,
+            "blocks": [
+              "publish"
+            ],
+            "fix": "title",
+            "word": "tb_title"
+          },
+          {
+            "id": "tb_written",
+            "module": "tedbook",
+            "kind": "final",
+            "step": "write",
+            "fact": "parts_unwritten",
+            "op": "==",
+            "value": 0,
+            "blocks": [
+              "publish"
+            ],
+            "fix": "write",
+            "word": "tb_written"
+          },
+          {
+            "id": "tb_author",
+            "module": "tedbook",
+            "kind": "info",
+            "step": "source",
+            "fact": "author_set",
+            "op": ">=",
+            "value": 1,
+            "blocks": [],
+            "fix": "title",
+            "word": "tb_author"
+          },
+          {
+            "id": "dd_scenes",
+            "module": "doodle",
+            "kind": "gate",
+            "step": "script",
+            "fact": "scenes",
+            "op": ">=",
+            "value": 1,
+            "blocks": [
+              "make",
+              "pictures_ai"
+            ],
+            "fix": "script",
+            "word": "dd_scenes"
+          },
+          {
+            "id": "dd_says",
+            "module": "doodle",
+            "kind": "gate",
+            "step": "script",
+            "fact": "scenes_empty",
+            "op": "==",
+            "value": 0,
+            "blocks": [
+              "make"
+            ],
+            "fix": "script",
+            "word": "dd_says"
+          },
+          {
+            "id": "dd_pictures",
+            "module": "doodle",
+            "kind": "gate",
+            "step": "pictures",
+            "fact": "pictures_missing",
+            "op": "==",
+            "value": 0,
+            "blocks": [
+              "make"
+            ],
+            "fix": "pictures",
+            "word": "dd_pictures"
+          },
+          {
+            "id": "dd_voice",
+            "module": "doodle",
+            "kind": "gate",
+            "step": "voice",
+            "fact": "voice_set",
+            "op": ">=",
+            "value": 1,
+            "blocks": [
+              "make"
+            ],
+            "fix": "voice",
+            "word": "dd_voice"
+          },
+          {
+            "id": "dd_video",
+            "module": "doodle",
+            "kind": "final",
+            "step": "video",
+            "fact": "video_ready",
+            "op": ">=",
+            "value": 1,
+            "blocks": [
+              "publish"
+            ],
+            "fix": "make",
+            "word": "dd_video"
+          },
+          {
+            "id": "av_face",
+            "module": "avatar",
+            "kind": "gate",
+            "step": "face",
+            "fact": "presenter_set",
+            "op": ">=",
+            "value": 1,
+            "blocks": [
+              "make"
+            ],
+            "fix": "face",
+            "word": "av_face"
+          },
+          {
+            "id": "av_scenes",
+            "module": "avatar",
+            "kind": "gate",
+            "step": "script",
+            "fact": "scenes",
+            "op": ">=",
+            "value": 1,
+            "blocks": [
+              "make",
+              "pictures_ai"
+            ],
+            "fix": "script",
+            "word": "av_scenes"
+          },
+          {
+            "id": "av_says",
+            "module": "avatar",
+            "kind": "gate",
+            "step": "script",
+            "fact": "scenes_empty",
+            "op": "==",
+            "value": 0,
+            "blocks": [
+              "make"
+            ],
+            "fix": "script",
+            "word": "av_says"
+          },
+          {
+            "id": "av_voice",
+            "module": "avatar",
+            "kind": "gate",
+            "step": "voice",
+            "fact": "voice_set",
+            "op": ">=",
+            "value": 1,
+            "blocks": [
+              "make"
+            ],
+            "fix": "voice",
+            "word": "av_voice"
+          },
+          {
+            "id": "av_lips",
+            "module": "avatar",
+            "kind": "info",
+            "step": "face",
+            "fact": "lips_ready",
+            "op": ">=",
+            "value": 1,
+            "blocks": [],
+            "fix": "face",
+            "word": "av_lips"
+          },
+          {
+            "id": "av_template",
+            "module": "avatar",
+            "kind": "info",
+            "step": "face",
+            "fact": "template_ready",
+            "op": ">=",
+            "value": 1,
+            "blocks": [],
+            "fix": "template",
+            "word": "av_template"
+          },
+          {
+            "id": "av_cutout",
+            "module": "avatar",
+            "kind": "info",
+            "step": "face",
+            "fact": "cutout_ready",
+            "op": ">=",
+            "value": 1,
+            "blocks": [],
+            "fix": "template",
+            "word": "av_cutout"
+          },
+          {
+            "id": "av_captions",
+            "module": "avatar",
+            "kind": "info",
+            "step": "video",
+            "fact": "captions_ready",
+            "op": ">=",
+            "value": 1,
+            "blocks": [],
+            "fix": "template",
+            "word": "av_captions"
+          },
+          {
+            "id": "av_video",
+            "module": "avatar",
+            "kind": "final",
+            "step": "video",
+            "fact": "video_ready",
+            "op": ">=",
+            "value": 1,
+            "blocks": [
+              "publish"
+            ],
+            "fix": "make",
+            "word": "av_video"
+          },
+          {
+            "id": "yt_moments",
+            "module": "youtube",
+            "kind": "final",
+            "step": "moments",
+            "fact": "moments",
+            "op": ">=",
+            "value": 1,
+            "blocks": [
+              "attach"
+            ],
+            "fix": "moments",
+            "word": "yt_moments"
+          },
+          {
+            "id": "vd_script",
+            "module": "video",
+            "kind": "final",
+            "step": "script",
+            "fact": "segments",
+            "op": ">=",
+            "value": 1,
+            "blocks": [
+              "publish"
+            ],
+            "fix": "script",
+            "word": "vd_script"
+          },
+          {
+            "id": "vd_made",
+            "module": "video",
+            "kind": "final",
+            "step": "render",
+            "fact": "made",
+            "op": ">=",
+            "value": 1,
+            "blocks": [
+              "publish"
+            ],
+            "fix": "render",
+            "word": "vd_made"
+          },
+          {
+            "id": "ar_title",
+            "module": "article",
+            "kind": "final",
+            "step": "write",
+            "fact": "title_set",
+            "op": ">=",
+            "value": 1,
+            "blocks": [
+              "publish"
+            ],
+            "fix": "title",
+            "word": "ar_title"
+          },
+          {
+            "id": "ar_text",
+            "module": "article",
+            "kind": "final",
+            "step": "write",
+            "fact": "chars",
+            "op": ">=",
+            "value": 1,
+            "blocks": [
+              "publish"
+            ],
+            "fix": "write",
+            "word": "ar_text"
+          },
+          {
+            "id": "ar_picture",
+            "module": "article",
+            "kind": "info",
+            "step": "write",
+            "fact": "pictures",
+            "op": ">=",
+            "value": 1,
+            "blocks": [],
+            "fix": "write",
+            "word": "ar_picture"
+          },
+          {
+            "id": "bk_name",
+            "module": "book",
+            "kind": "final",
+            "step": "details",
+            "fact": "name_set",
+            "op": ">=",
+            "value": 1,
+            "blocks": [
+              "publish"
+            ],
+            "fix": "name",
+            "word": "bk_name"
+          },
+          {
+            "id": "bk_parts",
+            "module": "book",
+            "kind": "final",
+            "step": "contents",
+            "fact": "parts",
+            "op": ">=",
+            "value": 1,
+            "blocks": [
+              "publish"
+            ],
+            "fix": "parts",
+            "word": "bk_parts"
+          },
+          {
+            "id": "bk_written",
+            "module": "book",
+            "kind": "final",
+            "step": "contents",
+            "fact": "parts_unwritten",
+            "op": "==",
+            "value": 0,
+            "blocks": [
+              "publish"
+            ],
+            "fix": "parts",
+            "word": "bk_written"
+          },
+          {
+            "id": "bk_cover",
+            "module": "book",
+            "kind": "info",
+            "step": "details",
+            "fact": "cover",
+            "op": ">=",
+            "value": 1,
+            "blocks": [],
+            "fix": "cover",
+            "word": "bk_cover"
+          },
+          {
+            "id": "bk_author",
+            "module": "book",
+            "kind": "info",
+            "step": "details",
+            "fact": "author_set",
+            "op": ">=",
+            "value": 1,
+            "blocks": [],
+            "fix": "name",
+            "word": "bk_author"
+          },
+          {
+            "id": "dk_items",
+            "module": "deck",
+            "kind": "final",
+            "step": "contents",
+            "fact": "items",
+            "op": ">=",
+            "value": 1,
+            "blocks": [
+              "publish"
+            ],
+            "fix": "items",
+            "word": "dk_items"
+          },
+          {
+            "id": "dk_gone",
+            "module": "deck",
+            "kind": "final",
+            "step": "contents",
+            "fact": "items_gone",
+            "op": "==",
+            "value": 0,
+            "blocks": [
+              "publish"
+            ],
+            "fix": "items",
+            "word": "dk_gone"
+          },
+          {
+            "id": "dk_made",
+            "module": "deck",
+            "kind": "final",
+            "step": "files",
+            "fact": "files_unmade",
+            "op": "==",
+            "value": 0,
+            "blocks": [
+              "publish"
+            ],
+            "fix": "make",
+            "word": "dk_made"
+          },
+          {
+            "id": "ad_business",
+            "module": "ad",
+            "kind": "final",
+            "step": "client",
+            "fact": "business_set",
+            "op": ">=",
+            "value": 1,
+            "blocks": [
+              "make"
+            ],
+            "fix": "client",
+            "word": "ad_business"
+          },
+          {
+            "id": "ad_asks",
+            "module": "ad",
+            "kind": "final",
+            "step": "facts",
+            "fact": "asks_empty",
+            "op": "==",
+            "value": 0,
+            "blocks": [
+              "make"
+            ],
+            "fix": "facts",
+            "word": "ad_asks"
+          },
+          {
+            "id": "ad_lines",
+            "module": "ad",
+            "kind": "final",
+            "step": "beats",
+            "fact": "lines_empty",
+            "op": "==",
+            "value": 0,
+            "blocks": [
+              "make"
+            ],
+            "fix": "beats",
+            "word": "ad_lines"
+          },
+          {
+            "id": "ad_photos",
+            "module": "ad",
+            "kind": "final",
+            "step": "beats",
+            "fact": "photos_missing",
+            "op": "==",
+            "value": 0,
+            "blocks": [],
+            "fix": "beats",
+            "word": "ad_photos"
+          },
+          {
+            "id": "ad_film",
+            "module": "ad",
+            "kind": "final",
+            "step": "film",
+            "fact": "film_made",
+            "op": ">=",
+            "value": 1,
+            "blocks": [
+              "publish"
+            ],
+            "fix": "film",
+            "word": "ad_film"
+          }
+        ]
+      }
+    }
+  ]
+}

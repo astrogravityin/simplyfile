@@ -1,0 +1,65 @@
+{
+  "chip_id": "ledger.keep_days",
+  "kind": "accessor",
+  "set": "ledger",
+  "audience": "admin",
+  "label": "How many days the ledger keeps",
+  "aliases": [],
+  "params": [
+    {
+      "name": "stored",
+      "type": "number",
+      "default": null
+    },
+    {
+      "name": "default_days",
+      "type": "number",
+      "default": 180
+    },
+    {
+      "name": "min_days",
+      "type": "number",
+      "default": 1
+    },
+    {
+      "name": "max_days",
+      "type": "number",
+      "default": 3650
+    }
+  ],
+  "expr": {
+    "vop": "clamp",
+    "value": {
+      "vop": "coalesce",
+      "values": [
+        "$stored",
+        "$default_days"
+      ]
+    },
+    "low": "$min_days",
+    "high": "$max_days"
+  },
+  "returns": "number",
+  "version": 1,
+  "status": "published",
+  "description_nl": "The owner's saved number (Portal activity → archive), else the default; never below min_days or above max_days.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": 180
+    },
+    {
+      "args": {
+        "stored": 0
+      },
+      "expect_value": 1
+    },
+    {
+      "args": {
+        "stored": 99999
+      },
+      "expect_value": 3650
+    }
+  ],
+  "weight_basis": "Platform operations primitive, no business content. The knobs ARE the policy — edit them here, never in Python."
+}

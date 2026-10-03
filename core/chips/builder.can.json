@@ -1,0 +1,215 @@
+{
+  "chip_id": "builder.can",
+  "kind": "predicate",
+  "set": "builder",
+  "audience": "admin",
+  "label": "This role may do this in the Ops & Chips and Rule Chip Builders",
+  "aliases": [
+    "builder permission",
+    "who may publish",
+    "author editor owner"
+  ],
+  "params": [
+    {
+      "name": "role",
+      "type": "text",
+      "default": "member"
+    },
+    {
+      "name": "action",
+      "type": "text",
+      "default": "view"
+    },
+    {
+      "name": "own",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "framework",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "rules",
+      "type": "rows",
+      "default": [
+        {
+          "when": {
+            "role": "owner"
+          },
+          "set": true
+        },
+        {
+          "when": {
+            "role": "member"
+          },
+          "set": false
+        },
+        {
+          "when": {
+            "framework": true,
+            "action": "view"
+          },
+          "set": true
+        },
+        {
+          "when": {
+            "framework": true,
+            "action": "test"
+          },
+          "set": true
+        },
+        {
+          "when": {
+            "framework": true
+          },
+          "set": false
+        },
+        {
+          "when": {
+            "role": "editor",
+            "action": "delete"
+          },
+          "set": false
+        },
+        {
+          "when": {
+            "role": "editor",
+            "action": "op_override"
+          },
+          "set": false
+        },
+        {
+          "when": {
+            "role": "editor"
+          },
+          "set": true
+        },
+        {
+          "when": {
+            "role": "author",
+            "action": "view"
+          },
+          "set": true
+        },
+        {
+          "when": {
+            "role": "author",
+            "action": "test"
+          },
+          "set": true
+        },
+        {
+          "when": {
+            "role": "author",
+            "action": "scenario"
+          },
+          "set": true
+        },
+        {
+          "when": {
+            "role": "author",
+            "action": "draft",
+            "own": true
+          },
+          "set": true
+        },
+        {
+          "when": {
+            "role": "author",
+            "action": "submit",
+            "own": true
+          },
+          "set": true
+        }
+      ]
+    }
+  ],
+  "expr": {
+    "op": "eq",
+    "left": {
+      "vop": "decision_table",
+      "facts": {
+        "vop": "record",
+        "fields": {
+          "role": "$role",
+          "action": "$action",
+          "own": "$own",
+          "framework": "$framework"
+        }
+      },
+      "rules": "$rules",
+      "current": false
+    },
+    "right": true
+  },
+  "returns": "boolean",
+  "version": 1,
+  "status": "published",
+  "description_nl": "Who may do what in the two builders; first matching row wins, nothing matching = no. Actions: view, test, draft, submit, publish, return, deactivate, restore, delete, scenario, op_override. own = the draft is theirs (or new). framework = a chip shipped with core/ or meant for admins. Default: owner everything; editor everything except delete and switching ops off, never framework chips; author views, tests, makes scenarios, drafts and submits their OWN work; member nothing.",
+  "test_cases": [
+    {
+      "args": {
+        "role": "owner",
+        "action": "delete",
+        "framework": true
+      },
+      "expect": true
+    },
+    {
+      "args": {
+        "role": "editor",
+        "action": "publish"
+      },
+      "expect": true
+    },
+    {
+      "args": {
+        "role": "editor",
+        "action": "delete"
+      },
+      "expect": false
+    },
+    {
+      "args": {
+        "role": "editor",
+        "action": "publish",
+        "framework": true
+      },
+      "expect": false
+    },
+    {
+      "args": {
+        "role": "author",
+        "action": "draft",
+        "own": true
+      },
+      "expect": true
+    },
+    {
+      "args": {
+        "role": "author",
+        "action": "draft",
+        "own": false
+      },
+      "expect": false
+    },
+    {
+      "args": {
+        "role": "author",
+        "action": "publish",
+        "own": true
+      },
+      "expect": false
+    },
+    {
+      "args": {
+        "role": "member",
+        "action": "view"
+      },
+      "expect": false
+    }
+  ],
+  "weight_basis": "Platform access primitive, no business content. The knobs ARE the policy — edit them here, never in Python."
+}

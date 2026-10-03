@@ -1,0 +1,156 @@
+{
+  "chip_id": "voice.regions",
+  "kind": "accessor",
+  "set": "voice",
+  "label": "Where a voice sounds from - the region a person picks for a speaker",
+  "aliases": [
+    "accent",
+    "voice region",
+    "India US Europe"
+  ],
+  "params": [
+    {
+      "name": "rows",
+      "type": "rows",
+      "default": [
+        {
+          "id": "india",
+          "label": "India",
+          "accents": [
+            "Indian",
+            "Hindi",
+            "Telugu",
+            "Tamil",
+            "Kannada",
+            "Malayalam",
+            "Marathi",
+            "Bengali",
+            "Gujarati"
+          ],
+          "style": "Say this in a natural Indian English accent: {text}"
+        },
+        {
+          "id": "us",
+          "label": "US",
+          "accents": [
+            "US"
+          ],
+          "style": "Say this in a natural American English accent: {text}"
+        },
+        {
+          "id": "uk",
+          "label": "UK",
+          "accents": [
+            "British"
+          ],
+          "style": "Say this in a natural British English accent: {text}"
+        },
+        {
+          "id": "europe",
+          "label": "Europe",
+          "accents": [
+            "British",
+            "Spanish",
+            "French"
+          ],
+          "style": "Say this in a neutral European English accent: {text}"
+        },
+        {
+          "id": "australia",
+          "label": "Australia",
+          "accents": [
+            "Australian"
+          ],
+          "style": "Say this in a natural Australian English accent: {text}"
+        },
+        {
+          "id": "middle_east",
+          "label": "Middle East",
+          "accents": [
+            "Arabic (Egypt)"
+          ],
+          "style": "Say this in a natural Middle Eastern English accent: {text}"
+        }
+      ],
+      "label": "id; label = what the picker shows; accents = the free voices (voices.json accent) that sound from here; style = how a premium voice is asked to sound - {text} is the line"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "rows": "$rows"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-01 owner: Mohan sir's introduction came out in a woman's voice - a speaker is picked by gender AND region (India, US, Europe...). A free voice is one whose accent is in the region's accents; a premium voice speaks any accent, so it is asked for the region's accent in the style line.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "rows": [
+          {
+            "id": "india",
+            "label": "India",
+            "accents": [
+              "Indian",
+              "Hindi",
+              "Telugu",
+              "Tamil",
+              "Kannada",
+              "Malayalam",
+              "Marathi",
+              "Bengali",
+              "Gujarati"
+            ],
+            "style": "Say this in a natural Indian English accent: {text}"
+          },
+          {
+            "id": "us",
+            "label": "US",
+            "accents": [
+              "US"
+            ],
+            "style": "Say this in a natural American English accent: {text}"
+          },
+          {
+            "id": "uk",
+            "label": "UK",
+            "accents": [
+              "British"
+            ],
+            "style": "Say this in a natural British English accent: {text}"
+          },
+          {
+            "id": "europe",
+            "label": "Europe",
+            "accents": [
+              "British",
+              "Spanish",
+              "French"
+            ],
+            "style": "Say this in a neutral European English accent: {text}"
+          },
+          {
+            "id": "australia",
+            "label": "Australia",
+            "accents": [
+              "Australian"
+            ],
+            "style": "Say this in a natural Australian English accent: {text}"
+          },
+          {
+            "id": "middle_east",
+            "label": "Middle East",
+            "accents": [
+              "Arabic (Egypt)"
+            ],
+            "style": "Say this in a natural Middle Eastern English accent: {text}"
+          }
+        ]
+      }
+    }
+  ],
+  "weight_basis": "Platform operations primitive, no business content."
+}

@@ -1,0 +1,51 @@
+{
+  "chip_id": "page.tourvideo",
+  "kind": "accessor",
+  "set": "page",
+  "label": "Tour Video page settings",
+  "aliases": [
+    "page tourvideo"
+  ],
+  "params": [
+    {
+      "name": "state_tag",
+      "type": "json",
+      "default": {
+        "none": "tag",
+        "stale": "tag warn",
+        "ready": "tag ok"
+      },
+      "label": "state tag"
+    },
+    {
+      "name": "poll_ms",
+      "type": "number",
+      "default": 2000,
+      "label": "poll ms"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "state_tag": "$state_tag",
+      "poll_ms": "$poll_ms"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "How the Tour Video screen draws a row's state (tag class per state of chip tourvideo.state) and how often it asks how a job is going.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "state_tag": {
+          "none": "tag",
+          "stale": "tag warn",
+          "ready": "tag ok"
+        },
+        "poll_ms": 2000
+      }
+    }
+  ]
+}

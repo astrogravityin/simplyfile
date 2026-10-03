@@ -1,0 +1,551 @@
+{
+  "chip_id": "memory.verdict",
+  "kind": "accessor",
+  "set": "memory",
+  "audience": "admin",
+  "label": "What the memory numbers mean, in words a person can act on",
+  "aliases": [
+    "memory verdict",
+    "oom risk",
+    "headroom"
+  ],
+  "params": [
+    {
+      "name": "rss_mb",
+      "type": "number",
+      "default": 0
+    },
+    {
+      "name": "limit_mb",
+      "type": "number",
+      "default": 0
+    },
+    {
+      "name": "climb_mb",
+      "type": "number",
+      "default": 0
+    },
+    {
+      "name": "spike",
+      "type": "string",
+      "default": null
+    },
+    {
+      "name": "biggest",
+      "type": "string",
+      "default": null
+    },
+    {
+      "name": "kill_pct",
+      "type": "number",
+      "default": 90
+    },
+    {
+      "name": "warn_pct",
+      "type": "number",
+      "default": 75
+    },
+    {
+      "name": "climb_watch_mb",
+      "type": "number",
+      "default": 40
+    },
+    {
+      "name": "hint_move_mb",
+      "type": "number",
+      "default": 5
+    },
+    {
+      "name": "small_limit_mb",
+      "type": "number",
+      "default": 512
+    },
+    {
+      "name": "hint_pct",
+      "type": "number",
+      "default": 60
+    },
+    {
+      "name": "msg_kill",
+      "type": "string",
+      "default": "Resident memory is {rss} MB of {limit}. The next request that needs more than {free} MB gets the process killed with no error anywhere. Stop heavy work now, restart the service to reset, then find the request below that put it here."
+    },
+    {
+      "name": "msg_warn",
+      "type": "string",
+      "default": "{rss} MB of {limit} in use. One heavy job running beside another would be enough to tip this. Watch the moves below for anything above +50 MB."
+    },
+    {
+      "name": "msg_climb",
+      "type": "string",
+      "default": "The baseline is moving up, not spiking. Either a cache is filling or something leaks on every request. If it flattens within an hour it was a cache; if it keeps going, it is a leak — keep the offenders table."
+    },
+    {
+      "name": "msg_spike",
+      "type": "string",
+      "default": "That request moved resident memory from {before} to {after} MB in {ms} ms. A single request should never move it by 50 MB — that is a load-everything path. Report the path so it can be streamed."
+    },
+    {
+      "name": "msg_ok",
+      "type": "string",
+      "default": "{rss} MB of {limit} in use, {free} MB free. Nothing has moved memory by 50 MB or more in this window. This is what healthy looks like."
+    },
+    {
+      "name": "msg_no_reading",
+      "type": "string",
+      "default": "This platform gives no resident-memory figure. The chart stays empty; the moves table still records request timings."
+    },
+    {
+      "name": "msg_small_limit",
+      "type": "string",
+      "default": "A limit this small turns every load-everything request into a crash, not a slow page. A bigger instance turns crashes into log lines."
+    },
+    {
+      "name": "msg_high",
+      "type": "string",
+      "default": "Heavy jobs running side by side add up (a video render is the heaviest). Run them one at a time, or raise the limit."
+    }
+  ],
+  "expr": {
+    "vop": "merge",
+    "rows": [
+      {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "not",
+              "item": {
+                "op": "gt",
+                "left": "$rss_mb",
+                "right": 0
+              }
+            },
+            "then": {
+              "vop": "record",
+              "fields": {
+                "level": "watch",
+                "title": "No memory reading",
+                "message": "$msg_no_reading"
+              }
+            }
+          },
+          {
+            "when": {
+              "op": "ge",
+              "left": {
+                "vop": "pct",
+                "part": "$rss_mb",
+                "whole": "$limit_mb"
+              },
+              "right": "$kill_pct"
+            },
+            "then": {
+              "vop": "record",
+              "fields": {
+                "level": "kill",
+                "title": {
+                  "vop": "template",
+                  "text": "{free} MB from the limit",
+                  "values": {
+                    "free": {
+                      "vop": "sub",
+                      "a": "$limit_mb",
+                      "b": "$rss_mb"
+                    }
+                  }
+                },
+                "message": {
+                  "vop": "template",
+                  "text": "$msg_kill",
+                  "values": {
+                    "rss": "$rss_mb",
+                    "limit": "$limit_mb",
+                    "free": {
+                      "vop": "sub",
+                      "a": "$limit_mb",
+                      "b": "$rss_mb"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "when": {
+              "op": "ge",
+              "left": {
+                "vop": "pct",
+                "part": "$rss_mb",
+                "whole": "$limit_mb"
+              },
+              "right": "$warn_pct"
+            },
+            "then": {
+              "vop": "record",
+              "fields": {
+                "level": "warn",
+                "title": {
+                  "vop": "template",
+                  "text": "{free} MB headroom",
+                  "values": {
+                    "free": {
+                      "vop": "sub",
+                      "a": "$limit_mb",
+                      "b": "$rss_mb"
+                    }
+                  }
+                },
+                "message": {
+                  "vop": "template",
+                  "text": "$msg_warn",
+                  "values": {
+                    "rss": "$rss_mb",
+                    "limit": "$limit_mb"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "when": {
+              "op": "ge",
+              "left": "$climb_mb",
+              "right": "$climb_watch_mb"
+            },
+            "then": {
+              "vop": "record",
+              "fields": {
+                "level": "watch",
+                "title": {
+                  "vop": "template",
+                  "text": "Climbing: +{climb} MB in ten minutes",
+                  "values": {
+                    "climb": "$climb_mb"
+                  }
+                },
+                "message": "$msg_climb"
+              }
+            }
+          },
+          {
+            "when": {
+              "op": "not",
+              "item": {
+                "op": "eq",
+                "left": {
+                  "vop": "coalesce",
+                  "values": [
+                    {
+                      "vop": "get",
+                      "value": "$spike",
+                      "path": "path"
+                    },
+                    ""
+                  ]
+                },
+                "right": ""
+              }
+            },
+            "then": {
+              "vop": "record",
+              "fields": {
+                "level": "watch",
+                "title": {
+                  "vop": "template",
+                  "text": "Spike: {method} {path} +{delta} MB",
+                  "values": {
+                    "method": {
+                      "vop": "get",
+                      "value": "$spike",
+                      "path": "method"
+                    },
+                    "path": {
+                      "vop": "get",
+                      "value": "$spike",
+                      "path": "path"
+                    },
+                    "delta": {
+                      "vop": "get",
+                      "value": "$spike",
+                      "path": "delta"
+                    }
+                  }
+                },
+                "message": {
+                  "vop": "template",
+                  "text": "$msg_spike",
+                  "values": {
+                    "before": {
+                      "vop": "get",
+                      "value": "$spike",
+                      "path": "before"
+                    },
+                    "after": {
+                      "vop": "get",
+                      "value": "$spike",
+                      "path": "after"
+                    },
+                    "ms": {
+                      "vop": "get",
+                      "value": "$spike",
+                      "path": "ms"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "else": {
+          "vop": "record",
+          "fields": {
+            "level": "ok",
+            "title": "Flat",
+            "message": {
+              "vop": "template",
+              "text": "$msg_ok",
+              "values": {
+                "rss": "$rss_mb",
+                "limit": "$limit_mb",
+                "free": {
+                  "vop": "sub",
+                  "a": "$limit_mb",
+                  "b": "$rss_mb"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "vop": "record",
+        "fields": {
+          "pct": {
+            "vop": "coalesce",
+            "values": [
+              {
+                "vop": "pct",
+                "part": "$rss_mb",
+                "whole": "$limit_mb"
+              },
+              0
+            ]
+          },
+          "free_mb": {
+            "vop": "coalesce",
+            "values": [
+              {
+                "vop": "sub",
+                "a": "$limit_mb",
+                "b": "$rss_mb"
+              },
+              0
+            ]
+          },
+          "climb_mb": "$climb_mb",
+          "hints": {
+            "vop": "compact",
+            "values": [
+              {
+                "vop": "choose",
+                "cases": [
+                  {
+                    "when": {
+                      "op": "ge",
+                      "left": {
+                        "vop": "get",
+                        "value": "$biggest",
+                        "path": "delta"
+                      },
+                      "right": "$hint_move_mb"
+                    },
+                    "then": {
+                      "vop": "template",
+                      "text": "Largest single move since start: {method} {path} +{delta} MB.",
+                      "values": {
+                        "method": {
+                          "vop": "get",
+                          "value": "$biggest",
+                          "path": "method"
+                        },
+                        "path": {
+                          "vop": "get",
+                          "value": "$biggest",
+                          "path": "path"
+                        },
+                        "delta": {
+                          "vop": "get",
+                          "value": "$biggest",
+                          "path": "delta"
+                        }
+                      }
+                    }
+                  }
+                ]
+              },
+              {
+                "vop": "choose",
+                "cases": [
+                  {
+                    "when": {
+                      "op": "all",
+                      "items": [
+                        {
+                          "op": "gt",
+                          "left": "$limit_mb",
+                          "right": 0
+                        },
+                        {
+                          "op": "le",
+                          "left": "$limit_mb",
+                          "right": "$small_limit_mb"
+                        }
+                      ]
+                    },
+                    "then": "$msg_small_limit"
+                  }
+                ]
+              },
+              {
+                "vop": "choose",
+                "cases": [
+                  {
+                    "when": {
+                      "op": "ge",
+                      "left": {
+                        "vop": "pct",
+                        "part": "$rss_mb",
+                        "whole": "$limit_mb"
+                      },
+                      "right": "$hint_pct"
+                    },
+                    "then": "$msg_high"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "The Memory watch headline. level is what the box is about to do, not a mood: kill at kill_pct of the limit, warn at warn_pct, watch when the baseline climbed climb_watch_mb in ten minutes or a request spiked, else ok. Every sentence is a knob. hints add the largest move since start, a small-limit warning and a high-usage tip.",
+  "test_cases": [
+    {
+      "args": {
+        "rss_mb": 950,
+        "limit_mb": 1000
+      },
+      "expect_value": {
+        "level": "kill",
+        "title": "50 MB from the limit",
+        "message": "Resident memory is 950 MB of 1000. The next request that needs more than 50 MB gets the process killed with no error anywhere. Stop heavy work now, restart the service to reset, then find the request below that put it here.",
+        "pct": 95,
+        "free_mb": 50,
+        "climb_mb": 0,
+        "hints": [
+          "Heavy jobs running side by side add up (a video render is the heaviest). Run them one at a time, or raise the limit."
+        ]
+      }
+    },
+    {
+      "args": {
+        "rss_mb": 800,
+        "limit_mb": 1000,
+        "biggest": {
+          "method": "POST",
+          "path": "/api/x",
+          "delta": 30
+        }
+      },
+      "expect_value": {
+        "level": "warn",
+        "title": "200 MB headroom",
+        "message": "800 MB of 1000 in use. One heavy job running beside another would be enough to tip this. Watch the moves below for anything above +50 MB.",
+        "pct": 80,
+        "free_mb": 200,
+        "climb_mb": 0,
+        "hints": [
+          "Largest single move since start: POST /api/x +30 MB.",
+          "Heavy jobs running side by side add up (a video render is the heaviest). Run them one at a time, or raise the limit."
+        ]
+      }
+    },
+    {
+      "args": {
+        "rss_mb": 300,
+        "limit_mb": 16000,
+        "climb_mb": 45
+      },
+      "expect_value": {
+        "level": "watch",
+        "title": "Climbing: +45 MB in ten minutes",
+        "message": "The baseline is moving up, not spiking. Either a cache is filling or something leaks on every request. If it flattens within an hour it was a cache; if it keeps going, it is a leak — keep the offenders table.",
+        "pct": 2,
+        "free_mb": 15700,
+        "climb_mb": 45,
+        "hints": []
+      }
+    },
+    {
+      "args": {
+        "rss_mb": 300,
+        "limit_mb": 16000,
+        "spike": {
+          "method": "GET",
+          "path": "/api/big",
+          "delta": 70,
+          "before": 230,
+          "after": 300,
+          "ms": 900
+        }
+      },
+      "expect_value": {
+        "level": "watch",
+        "title": "Spike: GET /api/big +70 MB",
+        "message": "That request moved resident memory from 230 to 300 MB in 900 ms. A single request should never move it by 50 MB — that is a load-everything path. Report the path so it can be streamed.",
+        "pct": 2,
+        "free_mb": 15700,
+        "climb_mb": 0,
+        "hints": []
+      }
+    },
+    {
+      "args": {
+        "rss_mb": 200,
+        "limit_mb": 512
+      },
+      "expect_value": {
+        "level": "ok",
+        "title": "Flat",
+        "message": "200 MB of 512 in use, 312 MB free. Nothing has moved memory by 50 MB or more in this window. This is what healthy looks like.",
+        "pct": 39,
+        "free_mb": 312,
+        "climb_mb": 0,
+        "hints": [
+          "A limit this small turns every load-everything request into a crash, not a slow page. A bigger instance turns crashes into log lines."
+        ]
+      }
+    },
+    {
+      "args": {
+        "rss_mb": 0,
+        "limit_mb": 1000
+      },
+      "expect_value": {
+        "level": "watch",
+        "title": "No memory reading",
+        "message": "This platform gives no resident-memory figure. The chart stays empty; the moves table still records request timings.",
+        "pct": 0,
+        "free_mb": 1000,
+        "climb_mb": 0,
+        "hints": []
+      }
+    }
+  ],
+  "weight_basis": "Platform operations primitive, no business content. The knobs ARE the policy — edit them here, never in Python."
+}

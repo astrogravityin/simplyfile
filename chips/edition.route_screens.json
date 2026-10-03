@@ -1,0 +1,62 @@
+{
+  "chip_id": "edition.route_screens",
+  "kind": "accessor",
+  "set": "edition",
+  "label": "Which screen an address belongs to, for the addresses a screen guard does not already cover",
+  "aliases": [
+    "route screens",
+    "edition routes"
+  ],
+  "params": [
+    {
+      "name": "routes",
+      "type": "any",
+      "default": {
+        "/api/decks": "decks",
+        "/api/lists/decks_": "decks",
+        "/api/katha": "katha",
+        "/k/": "katha",
+        "=/k": "katha",
+        "/api/lists/katha_": "katha",
+        "/api/lists/buy_": "buykey",
+        "/api/lists/sales_": "keysales",
+        "/api/lists/studio_": "studio",
+        "/api/guideme": "guideme",
+        "/api/ads": "ads",
+        "/api/lists/ads_": "ads"
+      },
+      "label": "Address start -> screen id (\"=/k\" = exactly /k). A site whose catalog lacks the screen answers 404."
+    }
+  ],
+  "expr": {
+    "vop": "literal",
+    "value": "$routes"
+  },
+  "returns": "any",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-01 portal assessment (edition leakage): routes guarded only by sign-in (Decks templates, the Katha reader and social, Katha / deck / key / studio lists, Guide me) answered on every site, though only SteadyMove has those screens. app.py edition_routes refuses an address whose screen this site's catalog does not have.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "/api/decks": "decks",
+        "/api/lists/decks_": "decks",
+        "/api/katha": "katha",
+        "/k/": "katha",
+        "=/k": "katha",
+        "/api/lists/katha_": "katha",
+        "/api/lists/buy_": "buykey",
+        "/api/lists/sales_": "keysales",
+        "/api/lists/studio_": "studio",
+        "/api/guideme": "guideme",
+        "/api/ads": "ads",
+        "/api/lists/ads_": "ads"
+      }
+    }
+  ],
+  "weight_basis": "Platform access primitive, no content.",
+  "evidence": {
+    "kind": "none"
+  }
+}

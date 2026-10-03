@@ -1,0 +1,63 @@
+{
+  "chip_id": "builder.id_allowed",
+  "kind": "predicate",
+  "set": "builder",
+  "audience": "admin",
+  "label": "A new id fits its pattern",
+  "aliases": [
+    "id pattern"
+  ],
+  "params": [
+    {
+      "name": "id",
+      "type": "text",
+      "default": ""
+    },
+    {
+      "name": "pattern",
+      "type": "text",
+      "default": "^[a-z][a-z0-9_]{2,59}$"
+    }
+  ],
+  "expr": {
+    "op": "eq",
+    "left": {
+      "vop": "matches",
+      "text": "$id",
+      "pattern": "$pattern"
+    },
+    "right": true
+  },
+  "returns": "boolean",
+  "version": 1,
+  "status": "published",
+  "description_nl": "The whole id fits the pattern (builder.settings for scenarios, rules.settings for rules). A broken pattern refuses everything.",
+  "test_cases": [
+    {
+      "args": {
+        "id": "memory_alarm"
+      },
+      "expect": true
+    },
+    {
+      "args": {
+        "id": "ab"
+      },
+      "expect": false
+    },
+    {
+      "args": {
+        "id": "Bad-Id"
+      },
+      "expect": false
+    },
+    {
+      "args": {
+        "id": "x",
+        "pattern": "("
+      },
+      "expect": null
+    }
+  ],
+  "weight_basis": "Platform operations primitive, no business content. The knobs ARE the policy — edit them here, never in Python."
+}

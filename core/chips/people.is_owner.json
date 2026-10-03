@@ -1,0 +1,46 @@
+{
+  "chip_id": "people.is_owner",
+  "kind": "predicate",
+  "set": "people",
+  "label": "Is this person a portal owner",
+  "aliases": [
+    "is owner"
+  ],
+  "params": [
+    {
+      "name": "role",
+      "type": "text",
+      "default": "",
+      "label": "their role"
+    },
+    {
+      "name": "owner_role",
+      "type": "text",
+      "default": "owner",
+      "label": "the role that owns the portal"
+    }
+  ],
+  "expr": {
+    "op": "eq",
+    "left": "$role",
+    "right": "$owner_role"
+  },
+  "returns": "boolean",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-04 owner: \"Chips and ops audit for core/store.py\" - caps, user-name making, the last-owner test, the new role and the public fields the store held.",
+  "test_cases": [
+    {
+      "args": {
+        "role": "owner"
+      },
+      "expect_value": true
+    },
+    {
+      "args": {
+        "role": "member"
+      },
+      "expect_value": false
+    }
+  ]
+}

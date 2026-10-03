@@ -1,0 +1,153 @@
+{
+  "chip_id": "portal.settings",
+  "kind": "accessor",
+  "set": "portal",
+  "label": "Lengths, rates and samples the portal works to",
+  "aliases": [
+    "portal limits",
+    "listen rate"
+  ],
+  "params": [
+    {
+      "name": "help_video_url_max",
+      "type": "number",
+      "default": 200
+    },
+    {
+      "name": "lexicon_term_max",
+      "type": "number",
+      "default": 60
+    },
+    {
+      "name": "lexicon_say_max",
+      "type": "number",
+      "default": 120
+    },
+    {
+      "name": "runs_shown",
+      "type": "number",
+      "default": 40
+    },
+    {
+      "name": "listen_per_minute",
+      "type": "number",
+      "default": 40
+    },
+    {
+      "name": "listen_text_max",
+      "type": "number",
+      "default": 600
+    },
+    {
+      "name": "title_max",
+      "type": "number",
+      "default": 120
+    },
+    {
+      "name": "notes_max",
+      "type": "number",
+      "default": 2000
+    },
+    {
+      "name": "screen_key_max",
+      "type": "number",
+      "default": 80
+    },
+    {
+      "name": "embed_cache_seconds",
+      "type": "number",
+      "default": 300
+    },
+    {
+      "name": "sample_path_windows",
+      "type": "text",
+      "default": "D:\\MyApp"
+    },
+    {
+      "name": "sample_path_posix",
+      "type": "text",
+      "default": "/srv/myapp"
+    },
+    {
+      "name": "storage_tight_pct",
+      "type": "number",
+      "default": 85
+    },
+    {
+      "name": "request_caps",
+      "type": "record",
+      "default": {
+        "moments": 100,
+        "ids": 2000,
+        "chapters": 400,
+        "only": 1000,
+        "scenes": 200
+      }
+    },
+    {
+      "name": "file_name_max",
+      "type": "number",
+      "default": 120
+    },
+    {
+      "name": "chapter_file_title_max",
+      "type": "number",
+      "default": 60
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "help_video_url_max": "$help_video_url_max",
+      "lexicon_term_max": "$lexicon_term_max",
+      "lexicon_say_max": "$lexicon_say_max",
+      "runs_shown": "$runs_shown",
+      "listen_per_minute": "$listen_per_minute",
+      "listen_text_max": "$listen_text_max",
+      "title_max": "$title_max",
+      "notes_max": "$notes_max",
+      "screen_key_max": "$screen_key_max",
+      "embed_cache_seconds": "$embed_cache_seconds",
+      "sample_path_windows": "$sample_path_windows",
+      "sample_path_posix": "$sample_path_posix",
+      "storage_tight_pct": "$storage_tight_pct",
+      "request_caps": "$request_caps",
+      "file_name_max": "$file_name_max",
+      "chapter_file_title_max": "$chapter_file_title_max"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "help_video_url_max, lexicon_term_max, lexicon_say_max, title_max, notes_max, screen_key_max: characters kept from what is typed. runs_shown: paid runs listed on Key Management. listen_per_minute: Listen calls one person may make a minute; listen_text_max: characters Listen speaks. embed_cache_seconds: how long a browser keeps /embed/howto.js. sample_path_windows / sample_path_posix: the example folder shown in Setup.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "help_video_url_max": 200,
+        "lexicon_term_max": 60,
+        "lexicon_say_max": 120,
+        "runs_shown": 40,
+        "listen_per_minute": 40,
+        "listen_text_max": 600,
+        "title_max": 120,
+        "notes_max": 2000,
+        "screen_key_max": 80,
+        "embed_cache_seconds": 300,
+        "sample_path_windows": "D:\\MyApp",
+        "sample_path_posix": "/srv/myapp",
+        "storage_tight_pct": 85,
+        "request_caps": {
+          "moments": 100,
+          "ids": 2000,
+          "chapters": 400,
+          "only": 1000,
+          "scenes": 200
+        },
+        "file_name_max": 120,
+        "chapter_file_title_max": 60
+      }
+    }
+  ],
+  "weight_basis": "Portal operating limits, no scoring. The knobs ARE the policy — edit them here, never in Python."
+}

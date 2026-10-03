@@ -1,0 +1,1730 @@
+{
+  "chip_id": "ui.rcb",
+  "kind": "accessor",
+  "set": "ui",
+  "label": "Every word on the Rule Chip Builder (Rules) screen",
+  "aliases": [
+    "rules screen words"
+  ],
+  "params": [
+    {
+      "name": "title",
+      "type": "text",
+      "default": "Rules"
+    },
+    {
+      "name": "lede",
+      "type": "text",
+      "default": "<b>When</b> a trigger fires, <b>given</b> the facts it carries, <b>if</b> the rule's test holds, <b>then</b> its outcomes happen — a banner, an email, a refusal, a value or a flag. Every number and word is a knob you can change here. Drafts run only on scenarios and never send anything."
+    },
+    {
+      "name": "new_rule",
+      "type": "text",
+      "default": "New rule"
+    },
+    {
+      "name": "find_placeholder",
+      "type": "text",
+      "default": "Find a rule — id, label or trigger"
+    },
+    {
+      "name": "find_label",
+      "type": "text",
+      "default": "Find a rule"
+    },
+    {
+      "name": "filter_group",
+      "type": "text",
+      "default": "Show rules"
+    },
+    {
+      "name": "filter_all",
+      "type": "text",
+      "default": "All"
+    },
+    {
+      "name": "filter_live",
+      "type": "text",
+      "default": "Live"
+    },
+    {
+      "name": "filter_draft",
+      "type": "text",
+      "default": "Drafts & review"
+    },
+    {
+      "name": "filter_off",
+      "type": "text",
+      "default": "Off"
+    },
+    {
+      "name": "sec_about",
+      "type": "text",
+      "default": "About this rule"
+    },
+    {
+      "name": "sec_when",
+      "type": "text",
+      "default": "When and given"
+    },
+    {
+      "name": "sec_knobs",
+      "type": "text",
+      "default": "Knobs"
+    },
+    {
+      "name": "sec_values",
+      "type": "text",
+      "default": "Named values"
+    },
+    {
+      "name": "sec_if",
+      "type": "text",
+      "default": "If"
+    },
+    {
+      "name": "sec_then",
+      "type": "text",
+      "default": "Then"
+    },
+    {
+      "name": "sec_dry",
+      "type": "text",
+      "default": "Dry run"
+    },
+    {
+      "name": "sec_tests",
+      "type": "text",
+      "default": "Tests"
+    },
+    {
+      "name": "sec_check",
+      "type": "text",
+      "default": "Check"
+    },
+    {
+      "name": "sec_history",
+      "type": "text",
+      "default": "History"
+    },
+    {
+      "name": "sec_other",
+      "type": "text",
+      "default": "Other fields"
+    },
+    {
+      "name": "source_core",
+      "type": "text",
+      "default": "ships with the framework"
+    },
+    {
+      "name": "source_portal",
+      "type": "text",
+      "default": "ships with the portal"
+    },
+    {
+      "name": "source_data",
+      "type": "text",
+      "default": "made in the builder"
+    },
+    {
+      "name": "leave_title",
+      "type": "text",
+      "default": "Leave without saving?"
+    },
+    {
+      "name": "leave_body",
+      "type": "text",
+      "default": "Your changes to {id} are not saved. If you go on, they are lost."
+    },
+    {
+      "name": "leave_yes",
+      "type": "text",
+      "default": "Leave without saving"
+    },
+    {
+      "name": "unsaved",
+      "type": "text",
+      "default": "Unsaved changes"
+    },
+    {
+      "name": "no_trigger_group",
+      "type": "text",
+      "default": "No trigger"
+    },
+    {
+      "name": "not_saved_group",
+      "type": "text",
+      "default": "Not saved yet"
+    },
+    {
+      "name": "tag_new",
+      "type": "text",
+      "default": "new"
+    },
+    {
+      "name": "no_match",
+      "type": "text",
+      "default": "No rule matches."
+    },
+    {
+      "name": "pick_rule",
+      "type": "text",
+      "default": "Pick a rule"
+    },
+    {
+      "name": "no_rules",
+      "type": "text",
+      "default": "No rules yet"
+    },
+    {
+      "name": "empty_body",
+      "type": "text",
+      "default": "A rule says what the portal does when something happens: warn the owner, refuse a sign-up, flag a visit."
+    },
+    {
+      "name": "loading",
+      "type": "text",
+      "default": "Loading {id}…"
+    },
+    {
+      "name": "not_saved_meta",
+      "type": "text",
+      "default": "Not saved yet. Save draft keeps it; until it is published it runs only here, on scenarios."
+    },
+    {
+      "name": "meta_live_version",
+      "type": "text",
+      "default": "live version {v}"
+    },
+    {
+      "name": "meta_published_by",
+      "type": "text",
+      "default": "published by {by} · {at}"
+    },
+    {
+      "name": "meta_never_published",
+      "type": "text",
+      "default": "never published"
+    },
+    {
+      "name": "meta_in_review",
+      "type": "text",
+      "default": "in review by {by} · {at}"
+    },
+    {
+      "name": "meta_draft",
+      "type": "text",
+      "default": "draft by {by} · {at}"
+    },
+    {
+      "name": "someone",
+      "type": "text",
+      "default": "someone"
+    },
+    {
+      "name": "meta_last_edit",
+      "type": "text",
+      "default": "last edit by {by}"
+    },
+    {
+      "name": "returned_by",
+      "type": "text",
+      "default": "Returned by {by}:"
+    },
+    {
+      "name": "switched_off_note",
+      "type": "text",
+      "default": "Switched off — it does not fire until it is switched on."
+    },
+    {
+      "name": "act_save",
+      "type": "text",
+      "default": "Save draft"
+    },
+    {
+      "name": "act_check",
+      "type": "text",
+      "default": "Check"
+    },
+    {
+      "name": "act_submit",
+      "type": "text",
+      "default": "Submit for review"
+    },
+    {
+      "name": "act_publish",
+      "type": "text",
+      "default": "Publish"
+    },
+    {
+      "name": "act_return",
+      "type": "text",
+      "default": "Return with note"
+    },
+    {
+      "name": "act_discard",
+      "type": "text",
+      "default": "Discard draft"
+    },
+    {
+      "name": "act_off",
+      "type": "text",
+      "default": "Switch off"
+    },
+    {
+      "name": "act_on",
+      "type": "text",
+      "default": "Switch on"
+    },
+    {
+      "name": "act_delete",
+      "type": "text",
+      "default": "Delete"
+    },
+    {
+      "name": "act_copy",
+      "type": "text",
+      "default": "Copy as new rule"
+    },
+    {
+      "name": "act_cancel",
+      "type": "text",
+      "default": "Throw away"
+    },
+    {
+      "name": "actions_label",
+      "type": "text",
+      "default": "Rule actions"
+    },
+    {
+      "name": "step_rule",
+      "type": "text",
+      "default": "Rule"
+    },
+    {
+      "name": "label_label",
+      "type": "text",
+      "default": "Label"
+    },
+    {
+      "name": "label_placeholder",
+      "type": "text",
+      "default": "What the rule does, in one sentence"
+    },
+    {
+      "name": "desc_label",
+      "type": "text",
+      "default": "Description"
+    },
+    {
+      "name": "desc_placeholder",
+      "type": "text",
+      "default": "Why it exists, and when to switch it off — for the next person who reads it."
+    },
+    {
+      "name": "trigger_unregistered",
+      "type": "text",
+      "default": "{name} (not registered here)"
+    },
+    {
+      "name": "pick_trigger_opt",
+      "type": "text",
+      "default": "Pick a trigger…"
+    },
+    {
+      "name": "step_when",
+      "type": "text",
+      "default": "When"
+    },
+    {
+      "name": "when_title",
+      "type": "text",
+      "default": "a trigger fires"
+    },
+    {
+      "name": "trigger_label",
+      "type": "text",
+      "default": "Trigger"
+    },
+    {
+      "name": "outcomes_here",
+      "type": "text",
+      "default": "Outcomes that can happen here: {kinds}."
+    },
+    {
+      "name": "step_given",
+      "type": "text",
+      "default": "Given"
+    },
+    {
+      "name": "given_title_of",
+      "type": "text",
+      "default": "the facts of {subject}"
+    },
+    {
+      "name": "given_title",
+      "type": "text",
+      "default": "the facts of its subject"
+    },
+    {
+      "name": "facts_label",
+      "type": "text",
+      "default": "Facts this rule can read"
+    },
+    {
+      "name": "no_facts",
+      "type": "text",
+      "default": "This trigger hands over no facts."
+    },
+    {
+      "name": "pick_trigger_facts",
+      "type": "text",
+      "default": "Pick a trigger to see the facts a rule can read."
+    },
+    {
+      "name": "read_fact_hint",
+      "type": "text",
+      "default": "Read a fact in a test as Knob / fact, or inside outcome words as {name}."
+    },
+    {
+      "name": "change_trigger_title",
+      "type": "text",
+      "default": "Change the trigger?"
+    },
+    {
+      "name": "change_trigger_body",
+      "type": "text",
+      "default": "“{trigger}” cannot do: {kinds}. Those outcomes stay, and the check flags them until you change their kind or remove them."
+    },
+    {
+      "name": "change_trigger_yes",
+      "type": "text",
+      "default": "Change trigger"
+    },
+    {
+      "name": "knobs_title",
+      "type": "text",
+      "default": "numbers and words you can change without touching the logic"
+    },
+    {
+      "name": "knobs_sub",
+      "type": "text",
+      "default": "Read a knob in a test as Knob / fact, in outcome words as {name}, or press “use a knob” on an outcome field."
+    },
+    {
+      "name": "knobs_hint",
+      "type": "text",
+      "default": "Each knob has a name, a type and a default. Change the default here and the rule follows — no logic to touch."
+    },
+    {
+      "name": "name_rule",
+      "type": "text",
+      "default": "A name is letters, digits and _."
+    },
+    {
+      "name": "value_exists",
+      "type": "text",
+      "default": "There is already a value named {name}."
+    },
+    {
+      "name": "name_taken",
+      "type": "text",
+      "default": "{name} is already a fact or a knob — pick another name."
+    },
+    {
+      "name": "step_values",
+      "type": "text",
+      "default": "Values"
+    },
+    {
+      "name": "values_title",
+      "type": "text",
+      "default": "named values, worked out first"
+    },
+    {
+      "name": "values_sub",
+      "type": "text",
+      "default": "Optional. In order, before the test: each one can read the facts, the knobs and the values above it — as $name in a test, or {name} in outcome words."
+    },
+    {
+      "name": "value_name_label",
+      "type": "text",
+      "default": "Name of value {n}"
+    },
+    {
+      "name": "move_up",
+      "type": "text",
+      "default": "Move {name} up"
+    },
+    {
+      "name": "move_down",
+      "type": "text",
+      "default": "Move {name} down"
+    },
+    {
+      "name": "remove_named",
+      "type": "text",
+      "default": "Remove {name}"
+    },
+    {
+      "name": "no_values",
+      "type": "text",
+      "default": "No named values. Add one when the test or a message needs a number worked out first."
+    },
+    {
+      "name": "add_value",
+      "type": "text",
+      "default": "Add a named value"
+    },
+    {
+      "name": "scenario_label",
+      "type": "text",
+      "default": "Scenario"
+    },
+    {
+      "name": "pick_scenario_opt",
+      "type": "text",
+      "default": "Pick a scenario…"
+    },
+    {
+      "name": "no_scenarios",
+      "type": "text",
+      "default": "No scenarios yet"
+    },
+    {
+      "name": "about_subject",
+      "type": "text",
+      "default": " (about {subject})"
+    },
+    {
+      "name": "scen_hint_of",
+      "type": "text",
+      "default": "Saved facts of {subject}. Scenarios about something else are greyed out."
+    },
+    {
+      "name": "pick_trigger_first",
+      "type": "text",
+      "default": "Pick a trigger first."
+    },
+    {
+      "name": "if_title",
+      "type": "text",
+      "default": "this test holds"
+    },
+    {
+      "name": "if_sub",
+      "type": "text",
+      "default": "A test is true, false or unknown. Unknown — a fact it needs is missing — never fires the rule."
+    },
+    {
+      "name": "then_title",
+      "type": "text",
+      "default": "these outcomes happen"
+    },
+    {
+      "name": "then_sub",
+      "type": "text",
+      "default": "In this order, every time the rule fires."
+    },
+    {
+      "name": "then_hint",
+      "type": "text",
+      "default": "Words fill in when it fires: <code>{fact}</code>, <code>{knob}</code> and <code>{value.field}</code> are replaced by their values — e.g. <code>{rss_mb}</code>. A field can also take its value straight from a knob: press “use a knob”."
+    },
+    {
+      "name": "no_outcome",
+      "type": "text",
+      "default": "No outcome yet. A rule that does nothing cannot be published."
+    },
+    {
+      "name": "add_outcome",
+      "type": "text",
+      "default": "Add an outcome:"
+    },
+    {
+      "name": "pick_trigger_outcomes",
+      "type": "text",
+      "default": "Pick a trigger first — it decides which outcomes can happen."
+    },
+    {
+      "name": "priority_label",
+      "type": "text",
+      "default": "Priority"
+    },
+    {
+      "name": "priority_hint",
+      "type": "text",
+      "default": "Higher runs first when several rules share this trigger."
+    },
+    {
+      "name": "stop_label",
+      "type": "text",
+      "default": "Stop other rules when this fires"
+    },
+    {
+      "name": "stop_hint",
+      "type": "text",
+      "default": "Lower-priority rules on this trigger are skipped once this one has outcomes."
+    },
+    {
+      "name": "outcome_kind_label",
+      "type": "text",
+      "default": "Kind of outcome {n}"
+    },
+    {
+      "name": "unknown_kind",
+      "type": "text",
+      "default": "{kind} (unknown kind)"
+    },
+    {
+      "name": "no_kind",
+      "type": "text",
+      "default": "no kind"
+    },
+    {
+      "name": "not_at_trigger",
+      "type": "text",
+      "default": " (not at this trigger)"
+    },
+    {
+      "name": "move_outcome_up",
+      "type": "text",
+      "default": "Move outcome {n} up"
+    },
+    {
+      "name": "move_outcome_down",
+      "type": "text",
+      "default": "Move outcome {n} down"
+    },
+    {
+      "name": "remove_outcome",
+      "type": "text",
+      "default": "Remove outcome {n}"
+    },
+    {
+      "name": "kind_not_here",
+      "type": "text",
+      "default": "A {kind} outcome cannot happen at “{trigger}”. Change its kind or remove it."
+    },
+    {
+      "name": "type_value",
+      "type": "text",
+      "default": "type a value instead"
+    },
+    {
+      "name": "add_knob_first",
+      "type": "text",
+      "default": "Add a knob first"
+    },
+    {
+      "name": "use_knob",
+      "type": "text",
+      "default": "use a knob"
+    },
+    {
+      "name": "remove_field",
+      "type": "text",
+      "default": "remove field"
+    },
+    {
+      "name": "not_field",
+      "type": "text",
+      "default": "not a field of this kind"
+    },
+    {
+      "name": "default_value",
+      "type": "text",
+      "default": "default {v}"
+    },
+    {
+      "name": "not_set_default",
+      "type": "text",
+      "default": "not set ({v})"
+    },
+    {
+      "name": "not_set",
+      "type": "text",
+      "default": "not set"
+    },
+    {
+      "name": "not_choice",
+      "type": "text",
+      "default": "{v} (not one of the choices)"
+    },
+    {
+      "name": "yes",
+      "type": "text",
+      "default": "yes"
+    },
+    {
+      "name": "facts",
+      "type": "text",
+      "default": "Facts"
+    },
+    {
+      "name": "not_known",
+      "type": "text",
+      "default": "{name} (not known here)"
+    },
+    {
+      "name": "now_value",
+      "type": "text",
+      "default": "now {v}"
+    },
+    {
+      "name": "step_try",
+      "type": "text",
+      "default": "Try"
+    },
+    {
+      "name": "dry_title",
+      "type": "text",
+      "default": "a dry run"
+    },
+    {
+      "name": "dry_sub",
+      "type": "text",
+      "default": "Whether the rule fires on a scenario, and exactly what each outcome would say."
+    },
+    {
+      "name": "run",
+      "type": "text",
+      "default": "Run"
+    },
+    {
+      "name": "extra_facts",
+      "type": "text",
+      "default": "Extra facts over the scenario"
+    },
+    {
+      "name": "extra_facts_n",
+      "type": "text",
+      "default": "Extra facts over the scenario ({n})"
+    },
+    {
+      "name": "facts_known",
+      "type": "text",
+      "default": "Facts it knows: {names}"
+    },
+    {
+      "name": "dry_stale",
+      "type": "text",
+      "default": "The rule, scenario or facts changed since this run — press Run again."
+    },
+    {
+      "name": "dry_idle",
+      "type": "text",
+      "default": "Pick a scenario and press Run. Nothing is sent."
+    },
+    {
+      "name": "pick_scenario_first",
+      "type": "text",
+      "default": "Pick a scenario first."
+    },
+    {
+      "name": "pick_scenario_if",
+      "type": "text",
+      "default": "Pick a scenario first (under IF)."
+    },
+    {
+      "name": "value_fails",
+      "type": "text",
+      "default": "A named value fails: {error}"
+    },
+    {
+      "name": "on_scenario",
+      "type": "text",
+      "default": "On “{label}”."
+    },
+    {
+      "name": "failed",
+      "type": "text",
+      "default": "The rule failed: {error}"
+    },
+    {
+      "name": "fires",
+      "type": "text",
+      "default": "It fires."
+    },
+    {
+      "name": "not_fires",
+      "type": "text",
+      "default": "It does not fire."
+    },
+    {
+      "name": "unknown",
+      "type": "text",
+      "default": "Unknown — a fact or value it needs is missing, so it does not fire."
+    },
+    {
+      "name": "preview_note",
+      "type": "text",
+      "default": "{where} Nothing was sent — this is a preview."
+    },
+    {
+      "name": "named_value",
+      "type": "text",
+      "default": "Named value"
+    },
+    {
+      "name": "worked_out",
+      "type": "text",
+      "default": "Worked out as"
+    },
+    {
+      "name": "fires_no_outcome",
+      "type": "text",
+      "default": "It fires, but has no outcome."
+    },
+    {
+      "name": "every_min",
+      "type": "text",
+      "default": "at most once every {n} min"
+    },
+    {
+      "name": "out_banner",
+      "type": "text",
+      "default": "Banner"
+    },
+    {
+      "name": "shown_to",
+      "type": "text",
+      "default": "shown to {who}"
+    },
+    {
+      "name": "owner",
+      "type": "text",
+      "default": "owner"
+    },
+    {
+      "name": "for_min",
+      "type": "text",
+      "default": "for {n} min"
+    },
+    {
+      "name": "out_email",
+      "type": "text",
+      "default": "Email"
+    },
+    {
+      "name": "to_who",
+      "type": "text",
+      "default": "to {who}"
+    },
+    {
+      "name": "no_mail_banner",
+      "type": "text",
+      "default": "without mail set up it becomes a banner"
+    },
+    {
+      "name": "subject_label",
+      "type": "text",
+      "default": "Subject"
+    },
+    {
+      "name": "out_refuse",
+      "type": "text",
+      "default": "Refuse"
+    },
+    {
+      "name": "refuse_sub",
+      "type": "text",
+      "default": "the action is stopped and the person is told"
+    },
+    {
+      "name": "no_name",
+      "type": "text",
+      "default": "(no name)"
+    },
+    {
+      "name": "step_prove",
+      "type": "text",
+      "default": "Prove"
+    },
+    {
+      "name": "tests_title",
+      "type": "text",
+      "default": "tests"
+    },
+    {
+      "name": "tests_sub",
+      "type": "text",
+      "default": "Say at least one scenario where it fires and one where it does not. A publish is refused while a test fails."
+    },
+    {
+      "name": "check_title",
+      "type": "text",
+      "default": "ready to publish?"
+    },
+    {
+      "name": "check_sub",
+      "type": "text",
+      "default": "Problems and every test, run again a moment after each edit."
+    },
+    {
+      "name": "checking",
+      "type": "text",
+      "default": "Checking…"
+    },
+    {
+      "name": "check_failed",
+      "type": "text",
+      "default": "Could not check: {error}"
+    },
+    {
+      "name": "history_title",
+      "type": "text",
+      "default": "every publish, switch-off and restore"
+    },
+    {
+      "name": "history_sub",
+      "type": "text",
+      "default": "An old version comes back as a draft, checked again before it can go live."
+    },
+    {
+      "name": "other_sub",
+      "type": "text",
+      "default": "Fields this screen has no dedicated place for. They are kept, shown and saved with the rule."
+    },
+    {
+      "name": "version_title",
+      "type": "text",
+      "default": "{id} — version {v}"
+    },
+    {
+      "name": "version_meta",
+      "type": "text",
+      "default": "{action} by {by} · {at}. Read-only."
+    },
+    {
+      "name": "close",
+      "type": "text",
+      "default": "Close"
+    },
+    {
+      "name": "restore",
+      "type": "text",
+      "default": "Restore as draft"
+    },
+    {
+      "name": "restored",
+      "type": "text",
+      "default": "Version {v} is back as a draft. Check it, then publish."
+    },
+    {
+      "name": "restore_title",
+      "type": "text",
+      "default": "Restore this version as a draft?"
+    },
+    {
+      "name": "restore_lose",
+      "type": "text",
+      "default": "It replaces the current draft and any unsaved changes."
+    },
+    {
+      "name": "restore_body",
+      "type": "text",
+      "default": "The live rule does not change until the draft is published."
+    },
+    {
+      "name": "ro_priority",
+      "type": "text",
+      "default": "Priority {n}"
+    },
+    {
+      "name": "ro_stops",
+      "type": "text",
+      "default": "stops other rules when it fires"
+    },
+    {
+      "name": "ro_status",
+      "type": "text",
+      "default": "status {s}"
+    },
+    {
+      "name": "no_trigger",
+      "type": "text",
+      "default": "no trigger"
+    },
+    {
+      "name": "ro_knobs",
+      "type": "text",
+      "default": "knobs"
+    },
+    {
+      "name": "ro_values",
+      "type": "text",
+      "default": "named values"
+    },
+    {
+      "name": "draft_saved",
+      "type": "text",
+      "default": "Draft saved. It runs only here, on scenarios, until it is published."
+    },
+    {
+      "name": "ready",
+      "type": "text",
+      "default": "Ready to publish."
+    },
+    {
+      "name": "problems_count",
+      "type": "text",
+      "default": "{p} problem(s), {f} failing test(s)."
+    },
+    {
+      "name": "submitted",
+      "type": "text",
+      "default": "Sent for review. An editor can publish it, or return it with a note."
+    },
+    {
+      "name": "published",
+      "type": "text",
+      "default": "Published. It acts from the next time its trigger fires."
+    },
+    {
+      "name": "not_published",
+      "type": "text",
+      "default": "Not published: fix the problems and failing tests first."
+    },
+    {
+      "name": "return_title",
+      "type": "text",
+      "default": "Return with a note"
+    },
+    {
+      "name": "return_body",
+      "type": "text",
+      "default": "The draft goes back to {who} as a draft, with your note on top."
+    },
+    {
+      "name": "its_author",
+      "type": "text",
+      "default": "its author"
+    },
+    {
+      "name": "return_dropped",
+      "type": "text",
+      "default": "Your unsaved edits to it are dropped."
+    },
+    {
+      "name": "note_label",
+      "type": "text",
+      "default": "What needs to change"
+    },
+    {
+      "name": "note_placeholder",
+      "type": "text",
+      "default": "e.g. The cooldown is too short — the owner would get an email every minute."
+    },
+    {
+      "name": "review",
+      "type": "text",
+      "default": "Review"
+    },
+    {
+      "name": "cancel",
+      "type": "text",
+      "default": "Cancel"
+    },
+    {
+      "name": "return_go",
+      "type": "text",
+      "default": "Return to author"
+    },
+    {
+      "name": "write_note",
+      "type": "text",
+      "default": "Write what needs to change."
+    },
+    {
+      "name": "returned",
+      "type": "text",
+      "default": "Returned to the author with your note."
+    },
+    {
+      "name": "discard_title",
+      "type": "text",
+      "default": "Discard this draft?"
+    },
+    {
+      "name": "discard_body",
+      "type": "text",
+      "default": "The draft is thrown away."
+    },
+    {
+      "name": "discard_body_dirty",
+      "type": "text",
+      "default": "The draft and your unsaved changes are thrown away."
+    },
+    {
+      "name": "discard_live",
+      "type": "text",
+      "default": "The live rule stays exactly as it is."
+    },
+    {
+      "name": "discard_never",
+      "type": "text",
+      "default": "This rule was never published, so it leaves the list."
+    },
+    {
+      "name": "discarded",
+      "type": "text",
+      "default": "Draft discarded."
+    },
+    {
+      "name": "off_title",
+      "type": "text",
+      "default": "Switch this rule off?"
+    },
+    {
+      "name": "off_body",
+      "type": "text",
+      "default": "It stops firing straight away. Nothing is deleted — switch it on again any time."
+    },
+    {
+      "name": "switched_off",
+      "type": "text",
+      "default": "Switched off."
+    },
+    {
+      "name": "switched_on",
+      "type": "text",
+      "default": "Switched on. It fires from the next time its trigger does."
+    },
+    {
+      "name": "delete_title",
+      "type": "text",
+      "default": "Delete this rule?"
+    },
+    {
+      "name": "delete_body",
+      "type": "text",
+      "default": "{id} stops firing and its live file is removed."
+    },
+    {
+      "name": "delete_draft_stays",
+      "type": "text",
+      "default": "Its draft stays, so it can be published again."
+    },
+    {
+      "name": "delete_history",
+      "type": "text",
+      "default": "A copy stays in its history on the server."
+    },
+    {
+      "name": "deleted",
+      "type": "text",
+      "default": "Deleted."
+    },
+    {
+      "name": "delete_yes",
+      "type": "text",
+      "default": "Delete for good"
+    },
+    {
+      "name": "cancel_new_title",
+      "type": "text",
+      "default": "Throw away this new rule?"
+    },
+    {
+      "name": "cancel_new_body",
+      "type": "text",
+      "default": "It was never saved, so nothing else changes."
+    },
+    {
+      "name": "copy_intro",
+      "type": "text",
+      "default": "Everything in {id} — including edits not saved yet — goes into the copy. The original stays as it is saved."
+    },
+    {
+      "name": "id_label",
+      "type": "text",
+      "default": "Rule id"
+    },
+    {
+      "name": "id_placeholder",
+      "type": "text",
+      "default": "e.g. upload_too_big"
+    },
+    {
+      "name": "id_hint",
+      "type": "text",
+      "default": "Lower-case letters, digits and _ ; starts with a letter; 3–60 long. It cannot change later."
+    },
+    {
+      "name": "new_label_placeholder",
+      "type": "text",
+      "default": "What it does, in one sentence"
+    },
+    {
+      "name": "copy_label",
+      "type": "text",
+      "default": "{label} (copy)"
+    },
+    {
+      "name": "trigger_when",
+      "type": "text",
+      "default": "Trigger — when it runs"
+    },
+    {
+      "name": "no_triggers",
+      "type": "text",
+      "default": "No trigger is registered on this portal yet."
+    },
+    {
+      "name": "copy_title",
+      "type": "text",
+      "default": "Copy as a new rule"
+    },
+    {
+      "name": "make_copy",
+      "type": "text",
+      "default": "Make the copy"
+    },
+    {
+      "name": "create",
+      "type": "text",
+      "default": "Create"
+    },
+    {
+      "name": "outcomes_list",
+      "type": "text",
+      "default": "Outcomes: {kinds}."
+    },
+    {
+      "name": "id_missing",
+      "type": "text",
+      "default": "Give the rule an id."
+    },
+    {
+      "name": "id_bad",
+      "type": "text",
+      "default": "Lower-case letters, digits and _ only; start with a letter; 3–60 long."
+    },
+    {
+      "name": "id_taken",
+      "type": "text",
+      "default": "A rule with this id already exists."
+    },
+    {
+      "name": "id_good",
+      "type": "text",
+      "default": "Good. The id cannot change later."
+    },
+    {
+      "name": "need_label",
+      "type": "text",
+      "default": "Give the rule a label — one sentence saying what it does."
+    },
+    {
+      "name": "move_edge",
+      "type": "text",
+      "default": "It is already at that end of the list.",
+      "label": "move_edge"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "title": "$title",
+      "lede": "$lede",
+      "new_rule": "$new_rule",
+      "find_placeholder": "$find_placeholder",
+      "find_label": "$find_label",
+      "filter_group": "$filter_group",
+      "filter_all": "$filter_all",
+      "filter_live": "$filter_live",
+      "filter_draft": "$filter_draft",
+      "filter_off": "$filter_off",
+      "sec_about": "$sec_about",
+      "sec_when": "$sec_when",
+      "sec_knobs": "$sec_knobs",
+      "sec_values": "$sec_values",
+      "sec_if": "$sec_if",
+      "sec_then": "$sec_then",
+      "sec_dry": "$sec_dry",
+      "sec_tests": "$sec_tests",
+      "sec_check": "$sec_check",
+      "sec_history": "$sec_history",
+      "sec_other": "$sec_other",
+      "source_core": "$source_core",
+      "source_portal": "$source_portal",
+      "source_data": "$source_data",
+      "leave_title": "$leave_title",
+      "leave_body": "$leave_body",
+      "leave_yes": "$leave_yes",
+      "unsaved": "$unsaved",
+      "no_trigger_group": "$no_trigger_group",
+      "not_saved_group": "$not_saved_group",
+      "tag_new": "$tag_new",
+      "no_match": "$no_match",
+      "pick_rule": "$pick_rule",
+      "no_rules": "$no_rules",
+      "empty_body": "$empty_body",
+      "loading": "$loading",
+      "not_saved_meta": "$not_saved_meta",
+      "meta_live_version": "$meta_live_version",
+      "meta_published_by": "$meta_published_by",
+      "meta_never_published": "$meta_never_published",
+      "meta_in_review": "$meta_in_review",
+      "meta_draft": "$meta_draft",
+      "someone": "$someone",
+      "meta_last_edit": "$meta_last_edit",
+      "returned_by": "$returned_by",
+      "switched_off_note": "$switched_off_note",
+      "act_save": "$act_save",
+      "act_check": "$act_check",
+      "act_submit": "$act_submit",
+      "act_publish": "$act_publish",
+      "act_return": "$act_return",
+      "act_discard": "$act_discard",
+      "act_off": "$act_off",
+      "act_on": "$act_on",
+      "act_delete": "$act_delete",
+      "act_copy": "$act_copy",
+      "act_cancel": "$act_cancel",
+      "actions_label": "$actions_label",
+      "step_rule": "$step_rule",
+      "label_label": "$label_label",
+      "label_placeholder": "$label_placeholder",
+      "desc_label": "$desc_label",
+      "desc_placeholder": "$desc_placeholder",
+      "trigger_unregistered": "$trigger_unregistered",
+      "pick_trigger_opt": "$pick_trigger_opt",
+      "step_when": "$step_when",
+      "when_title": "$when_title",
+      "trigger_label": "$trigger_label",
+      "outcomes_here": "$outcomes_here",
+      "step_given": "$step_given",
+      "given_title_of": "$given_title_of",
+      "given_title": "$given_title",
+      "facts_label": "$facts_label",
+      "no_facts": "$no_facts",
+      "pick_trigger_facts": "$pick_trigger_facts",
+      "read_fact_hint": "$read_fact_hint",
+      "change_trigger_title": "$change_trigger_title",
+      "change_trigger_body": "$change_trigger_body",
+      "change_trigger_yes": "$change_trigger_yes",
+      "knobs_title": "$knobs_title",
+      "knobs_sub": "$knobs_sub",
+      "knobs_hint": "$knobs_hint",
+      "name_rule": "$name_rule",
+      "value_exists": "$value_exists",
+      "name_taken": "$name_taken",
+      "step_values": "$step_values",
+      "values_title": "$values_title",
+      "values_sub": "$values_sub",
+      "value_name_label": "$value_name_label",
+      "move_up": "$move_up",
+      "move_down": "$move_down",
+      "remove_named": "$remove_named",
+      "no_values": "$no_values",
+      "add_value": "$add_value",
+      "scenario_label": "$scenario_label",
+      "pick_scenario_opt": "$pick_scenario_opt",
+      "no_scenarios": "$no_scenarios",
+      "about_subject": "$about_subject",
+      "scen_hint_of": "$scen_hint_of",
+      "pick_trigger_first": "$pick_trigger_first",
+      "if_title": "$if_title",
+      "if_sub": "$if_sub",
+      "then_title": "$then_title",
+      "then_sub": "$then_sub",
+      "then_hint": "$then_hint",
+      "no_outcome": "$no_outcome",
+      "add_outcome": "$add_outcome",
+      "pick_trigger_outcomes": "$pick_trigger_outcomes",
+      "priority_label": "$priority_label",
+      "priority_hint": "$priority_hint",
+      "stop_label": "$stop_label",
+      "stop_hint": "$stop_hint",
+      "outcome_kind_label": "$outcome_kind_label",
+      "unknown_kind": "$unknown_kind",
+      "no_kind": "$no_kind",
+      "not_at_trigger": "$not_at_trigger",
+      "move_outcome_up": "$move_outcome_up",
+      "move_outcome_down": "$move_outcome_down",
+      "remove_outcome": "$remove_outcome",
+      "kind_not_here": "$kind_not_here",
+      "type_value": "$type_value",
+      "add_knob_first": "$add_knob_first",
+      "use_knob": "$use_knob",
+      "remove_field": "$remove_field",
+      "not_field": "$not_field",
+      "default_value": "$default_value",
+      "not_set_default": "$not_set_default",
+      "not_set": "$not_set",
+      "not_choice": "$not_choice",
+      "yes": "$yes",
+      "facts": "$facts",
+      "not_known": "$not_known",
+      "now_value": "$now_value",
+      "step_try": "$step_try",
+      "dry_title": "$dry_title",
+      "dry_sub": "$dry_sub",
+      "run": "$run",
+      "extra_facts": "$extra_facts",
+      "extra_facts_n": "$extra_facts_n",
+      "facts_known": "$facts_known",
+      "dry_stale": "$dry_stale",
+      "dry_idle": "$dry_idle",
+      "pick_scenario_first": "$pick_scenario_first",
+      "pick_scenario_if": "$pick_scenario_if",
+      "value_fails": "$value_fails",
+      "on_scenario": "$on_scenario",
+      "failed": "$failed",
+      "fires": "$fires",
+      "not_fires": "$not_fires",
+      "unknown": "$unknown",
+      "preview_note": "$preview_note",
+      "named_value": "$named_value",
+      "worked_out": "$worked_out",
+      "fires_no_outcome": "$fires_no_outcome",
+      "every_min": "$every_min",
+      "out_banner": "$out_banner",
+      "shown_to": "$shown_to",
+      "owner": "$owner",
+      "for_min": "$for_min",
+      "out_email": "$out_email",
+      "to_who": "$to_who",
+      "no_mail_banner": "$no_mail_banner",
+      "subject_label": "$subject_label",
+      "out_refuse": "$out_refuse",
+      "refuse_sub": "$refuse_sub",
+      "no_name": "$no_name",
+      "step_prove": "$step_prove",
+      "tests_title": "$tests_title",
+      "tests_sub": "$tests_sub",
+      "check_title": "$check_title",
+      "check_sub": "$check_sub",
+      "checking": "$checking",
+      "check_failed": "$check_failed",
+      "history_title": "$history_title",
+      "history_sub": "$history_sub",
+      "other_sub": "$other_sub",
+      "version_title": "$version_title",
+      "version_meta": "$version_meta",
+      "close": "$close",
+      "restore": "$restore",
+      "restored": "$restored",
+      "restore_title": "$restore_title",
+      "restore_lose": "$restore_lose",
+      "restore_body": "$restore_body",
+      "ro_priority": "$ro_priority",
+      "ro_stops": "$ro_stops",
+      "ro_status": "$ro_status",
+      "no_trigger": "$no_trigger",
+      "ro_knobs": "$ro_knobs",
+      "ro_values": "$ro_values",
+      "draft_saved": "$draft_saved",
+      "ready": "$ready",
+      "problems_count": "$problems_count",
+      "submitted": "$submitted",
+      "published": "$published",
+      "not_published": "$not_published",
+      "return_title": "$return_title",
+      "return_body": "$return_body",
+      "its_author": "$its_author",
+      "return_dropped": "$return_dropped",
+      "note_label": "$note_label",
+      "note_placeholder": "$note_placeholder",
+      "review": "$review",
+      "cancel": "$cancel",
+      "return_go": "$return_go",
+      "write_note": "$write_note",
+      "returned": "$returned",
+      "discard_title": "$discard_title",
+      "discard_body": "$discard_body",
+      "discard_body_dirty": "$discard_body_dirty",
+      "discard_live": "$discard_live",
+      "discard_never": "$discard_never",
+      "discarded": "$discarded",
+      "off_title": "$off_title",
+      "off_body": "$off_body",
+      "switched_off": "$switched_off",
+      "switched_on": "$switched_on",
+      "delete_title": "$delete_title",
+      "delete_body": "$delete_body",
+      "delete_draft_stays": "$delete_draft_stays",
+      "delete_history": "$delete_history",
+      "deleted": "$deleted",
+      "delete_yes": "$delete_yes",
+      "cancel_new_title": "$cancel_new_title",
+      "cancel_new_body": "$cancel_new_body",
+      "copy_intro": "$copy_intro",
+      "id_label": "$id_label",
+      "id_placeholder": "$id_placeholder",
+      "id_hint": "$id_hint",
+      "new_label_placeholder": "$new_label_placeholder",
+      "copy_label": "$copy_label",
+      "trigger_when": "$trigger_when",
+      "no_triggers": "$no_triggers",
+      "copy_title": "$copy_title",
+      "make_copy": "$make_copy",
+      "create": "$create",
+      "outcomes_list": "$outcomes_list",
+      "id_missing": "$id_missing",
+      "id_bad": "$id_bad",
+      "id_taken": "$id_taken",
+      "id_good": "$id_good",
+      "need_label": "$need_label",
+      "move_edge": "$move_edge"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "The words of one screen. {placeholders} are filled on the page. A language overrides any of them with chip ui.rcb.<lang> (for example ui.rcb.hi).",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "title": "Rules",
+        "lede": "<b>When</b> a trigger fires, <b>given</b> the facts it carries, <b>if</b> the rule's test holds, <b>then</b> its outcomes happen — a banner, an email, a refusal, a value or a flag. Every number and word is a knob you can change here. Drafts run only on scenarios and never send anything.",
+        "new_rule": "New rule",
+        "find_placeholder": "Find a rule — id, label or trigger",
+        "find_label": "Find a rule",
+        "filter_group": "Show rules",
+        "filter_all": "All",
+        "filter_live": "Live",
+        "filter_draft": "Drafts & review",
+        "filter_off": "Off",
+        "sec_about": "About this rule",
+        "sec_when": "When and given",
+        "sec_knobs": "Knobs",
+        "sec_values": "Named values",
+        "sec_if": "If",
+        "sec_then": "Then",
+        "sec_dry": "Dry run",
+        "sec_tests": "Tests",
+        "sec_check": "Check",
+        "sec_history": "History",
+        "sec_other": "Other fields",
+        "source_core": "ships with the framework",
+        "source_portal": "ships with the portal",
+        "source_data": "made in the builder",
+        "leave_title": "Leave without saving?",
+        "leave_body": "Your changes to {id} are not saved. If you go on, they are lost.",
+        "leave_yes": "Leave without saving",
+        "unsaved": "Unsaved changes",
+        "no_trigger_group": "No trigger",
+        "not_saved_group": "Not saved yet",
+        "tag_new": "new",
+        "no_match": "No rule matches.",
+        "pick_rule": "Pick a rule",
+        "no_rules": "No rules yet",
+        "empty_body": "A rule says what the portal does when something happens: warn the owner, refuse a sign-up, flag a visit.",
+        "loading": "Loading {id}…",
+        "not_saved_meta": "Not saved yet. Save draft keeps it; until it is published it runs only here, on scenarios.",
+        "meta_live_version": "live version {v}",
+        "meta_published_by": "published by {by} · {at}",
+        "meta_never_published": "never published",
+        "meta_in_review": "in review by {by} · {at}",
+        "meta_draft": "draft by {by} · {at}",
+        "someone": "someone",
+        "meta_last_edit": "last edit by {by}",
+        "returned_by": "Returned by {by}:",
+        "switched_off_note": "Switched off — it does not fire until it is switched on.",
+        "act_save": "Save draft",
+        "act_check": "Check",
+        "act_submit": "Submit for review",
+        "act_publish": "Publish",
+        "act_return": "Return with note",
+        "act_discard": "Discard draft",
+        "act_off": "Switch off",
+        "act_on": "Switch on",
+        "act_delete": "Delete",
+        "act_copy": "Copy as new rule",
+        "act_cancel": "Throw away",
+        "actions_label": "Rule actions",
+        "step_rule": "Rule",
+        "label_label": "Label",
+        "label_placeholder": "What the rule does, in one sentence",
+        "desc_label": "Description",
+        "desc_placeholder": "Why it exists, and when to switch it off — for the next person who reads it.",
+        "trigger_unregistered": "{name} (not registered here)",
+        "pick_trigger_opt": "Pick a trigger…",
+        "step_when": "When",
+        "when_title": "a trigger fires",
+        "trigger_label": "Trigger",
+        "outcomes_here": "Outcomes that can happen here: {kinds}.",
+        "step_given": "Given",
+        "given_title_of": "the facts of {subject}",
+        "given_title": "the facts of its subject",
+        "facts_label": "Facts this rule can read",
+        "no_facts": "This trigger hands over no facts.",
+        "pick_trigger_facts": "Pick a trigger to see the facts a rule can read.",
+        "read_fact_hint": "Read a fact in a test as Knob / fact, or inside outcome words as {name}.",
+        "change_trigger_title": "Change the trigger?",
+        "change_trigger_body": "“{trigger}” cannot do: {kinds}. Those outcomes stay, and the check flags them until you change their kind or remove them.",
+        "change_trigger_yes": "Change trigger",
+        "knobs_title": "numbers and words you can change without touching the logic",
+        "knobs_sub": "Read a knob in a test as Knob / fact, in outcome words as {name}, or press “use a knob” on an outcome field.",
+        "knobs_hint": "Each knob has a name, a type and a default. Change the default here and the rule follows — no logic to touch.",
+        "name_rule": "A name is letters, digits and _.",
+        "value_exists": "There is already a value named {name}.",
+        "name_taken": "{name} is already a fact or a knob — pick another name.",
+        "step_values": "Values",
+        "values_title": "named values, worked out first",
+        "values_sub": "Optional. In order, before the test: each one can read the facts, the knobs and the values above it — as $name in a test, or {name} in outcome words.",
+        "value_name_label": "Name of value {n}",
+        "move_up": "Move {name} up",
+        "move_down": "Move {name} down",
+        "remove_named": "Remove {name}",
+        "no_values": "No named values. Add one when the test or a message needs a number worked out first.",
+        "add_value": "Add a named value",
+        "scenario_label": "Scenario",
+        "pick_scenario_opt": "Pick a scenario…",
+        "no_scenarios": "No scenarios yet",
+        "about_subject": " (about {subject})",
+        "scen_hint_of": "Saved facts of {subject}. Scenarios about something else are greyed out.",
+        "pick_trigger_first": "Pick a trigger first.",
+        "if_title": "this test holds",
+        "if_sub": "A test is true, false or unknown. Unknown — a fact it needs is missing — never fires the rule.",
+        "then_title": "these outcomes happen",
+        "then_sub": "In this order, every time the rule fires.",
+        "then_hint": "Words fill in when it fires: <code>{fact}</code>, <code>{knob}</code> and <code>{value.field}</code> are replaced by their values — e.g. <code>{rss_mb}</code>. A field can also take its value straight from a knob: press “use a knob”.",
+        "no_outcome": "No outcome yet. A rule that does nothing cannot be published.",
+        "add_outcome": "Add an outcome:",
+        "pick_trigger_outcomes": "Pick a trigger first — it decides which outcomes can happen.",
+        "priority_label": "Priority",
+        "priority_hint": "Higher runs first when several rules share this trigger.",
+        "stop_label": "Stop other rules when this fires",
+        "stop_hint": "Lower-priority rules on this trigger are skipped once this one has outcomes.",
+        "outcome_kind_label": "Kind of outcome {n}",
+        "unknown_kind": "{kind} (unknown kind)",
+        "no_kind": "no kind",
+        "not_at_trigger": " (not at this trigger)",
+        "move_outcome_up": "Move outcome {n} up",
+        "move_outcome_down": "Move outcome {n} down",
+        "remove_outcome": "Remove outcome {n}",
+        "kind_not_here": "A {kind} outcome cannot happen at “{trigger}”. Change its kind or remove it.",
+        "type_value": "type a value instead",
+        "add_knob_first": "Add a knob first",
+        "use_knob": "use a knob",
+        "remove_field": "remove field",
+        "not_field": "not a field of this kind",
+        "default_value": "default {v}",
+        "not_set_default": "not set ({v})",
+        "not_set": "not set",
+        "not_choice": "{v} (not one of the choices)",
+        "yes": "yes",
+        "facts": "Facts",
+        "not_known": "{name} (not known here)",
+        "now_value": "now {v}",
+        "step_try": "Try",
+        "dry_title": "a dry run",
+        "dry_sub": "Whether the rule fires on a scenario, and exactly what each outcome would say.",
+        "run": "Run",
+        "extra_facts": "Extra facts over the scenario",
+        "extra_facts_n": "Extra facts over the scenario ({n})",
+        "facts_known": "Facts it knows: {names}",
+        "dry_stale": "The rule, scenario or facts changed since this run — press Run again.",
+        "dry_idle": "Pick a scenario and press Run. Nothing is sent.",
+        "pick_scenario_first": "Pick a scenario first.",
+        "pick_scenario_if": "Pick a scenario first (under IF).",
+        "value_fails": "A named value fails: {error}",
+        "on_scenario": "On “{label}”.",
+        "failed": "The rule failed: {error}",
+        "fires": "It fires.",
+        "not_fires": "It does not fire.",
+        "unknown": "Unknown — a fact or value it needs is missing, so it does not fire.",
+        "preview_note": "{where} Nothing was sent — this is a preview.",
+        "named_value": "Named value",
+        "worked_out": "Worked out as",
+        "fires_no_outcome": "It fires, but has no outcome.",
+        "every_min": "at most once every {n} min",
+        "out_banner": "Banner",
+        "shown_to": "shown to {who}",
+        "owner": "owner",
+        "for_min": "for {n} min",
+        "out_email": "Email",
+        "to_who": "to {who}",
+        "no_mail_banner": "without mail set up it becomes a banner",
+        "subject_label": "Subject",
+        "out_refuse": "Refuse",
+        "refuse_sub": "the action is stopped and the person is told",
+        "no_name": "(no name)",
+        "step_prove": "Prove",
+        "tests_title": "tests",
+        "tests_sub": "Say at least one scenario where it fires and one where it does not. A publish is refused while a test fails.",
+        "check_title": "ready to publish?",
+        "check_sub": "Problems and every test, run again a moment after each edit.",
+        "checking": "Checking…",
+        "check_failed": "Could not check: {error}",
+        "history_title": "every publish, switch-off and restore",
+        "history_sub": "An old version comes back as a draft, checked again before it can go live.",
+        "other_sub": "Fields this screen has no dedicated place for. They are kept, shown and saved with the rule.",
+        "version_title": "{id} — version {v}",
+        "version_meta": "{action} by {by} · {at}. Read-only.",
+        "close": "Close",
+        "restore": "Restore as draft",
+        "restored": "Version {v} is back as a draft. Check it, then publish.",
+        "restore_title": "Restore this version as a draft?",
+        "restore_lose": "It replaces the current draft and any unsaved changes.",
+        "restore_body": "The live rule does not change until the draft is published.",
+        "ro_priority": "Priority {n}",
+        "ro_stops": "stops other rules when it fires",
+        "ro_status": "status {s}",
+        "no_trigger": "no trigger",
+        "ro_knobs": "knobs",
+        "ro_values": "named values",
+        "draft_saved": "Draft saved. It runs only here, on scenarios, until it is published.",
+        "ready": "Ready to publish.",
+        "problems_count": "{p} problem(s), {f} failing test(s).",
+        "submitted": "Sent for review. An editor can publish it, or return it with a note.",
+        "published": "Published. It acts from the next time its trigger fires.",
+        "not_published": "Not published: fix the problems and failing tests first.",
+        "return_title": "Return with a note",
+        "return_body": "The draft goes back to {who} as a draft, with your note on top.",
+        "its_author": "its author",
+        "return_dropped": "Your unsaved edits to it are dropped.",
+        "note_label": "What needs to change",
+        "note_placeholder": "e.g. The cooldown is too short — the owner would get an email every minute.",
+        "review": "Review",
+        "cancel": "Cancel",
+        "return_go": "Return to author",
+        "write_note": "Write what needs to change.",
+        "returned": "Returned to the author with your note.",
+        "discard_title": "Discard this draft?",
+        "discard_body": "The draft is thrown away.",
+        "discard_body_dirty": "The draft and your unsaved changes are thrown away.",
+        "discard_live": "The live rule stays exactly as it is.",
+        "discard_never": "This rule was never published, so it leaves the list.",
+        "discarded": "Draft discarded.",
+        "off_title": "Switch this rule off?",
+        "off_body": "It stops firing straight away. Nothing is deleted — switch it on again any time.",
+        "switched_off": "Switched off.",
+        "switched_on": "Switched on. It fires from the next time its trigger does.",
+        "delete_title": "Delete this rule?",
+        "delete_body": "{id} stops firing and its live file is removed.",
+        "delete_draft_stays": "Its draft stays, so it can be published again.",
+        "delete_history": "A copy stays in its history on the server.",
+        "deleted": "Deleted.",
+        "delete_yes": "Delete for good",
+        "cancel_new_title": "Throw away this new rule?",
+        "cancel_new_body": "It was never saved, so nothing else changes.",
+        "copy_intro": "Everything in {id} — including edits not saved yet — goes into the copy. The original stays as it is saved.",
+        "id_label": "Rule id",
+        "id_placeholder": "e.g. upload_too_big",
+        "id_hint": "Lower-case letters, digits and _ ; starts with a letter; 3–60 long. It cannot change later.",
+        "new_label_placeholder": "What it does, in one sentence",
+        "copy_label": "{label} (copy)",
+        "trigger_when": "Trigger — when it runs",
+        "no_triggers": "No trigger is registered on this portal yet.",
+        "copy_title": "Copy as a new rule",
+        "make_copy": "Make the copy",
+        "create": "Create",
+        "outcomes_list": "Outcomes: {kinds}.",
+        "id_missing": "Give the rule an id.",
+        "id_bad": "Lower-case letters, digits and _ only; start with a letter; 3–60 long.",
+        "id_taken": "A rule with this id already exists.",
+        "id_good": "Good. The id cannot change later.",
+        "need_label": "Give the rule a label — one sentence saying what it does.",
+        "move_edge": "It is already at that end of the list."
+      }
+    }
+  ],
+  "weight_basis": "Wording only. Every word on this screen lives here, never in JavaScript."
+}

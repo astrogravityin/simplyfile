@@ -1,0 +1,28 @@
+{
+  "chip_id": "auth.no_mail_policy",
+  "kind": "accessor",
+  "set": "auth",
+  "audience": "admin",
+  "label": "What sign-up and Forgot password do when the portal cannot send email",
+  "aliases": [],
+  "params": [
+    {
+      "name": "policy",
+      "type": "text",
+      "default": "verify_later",
+      "label": "verify_later or closed"
+    }
+  ],
+  "expr": "$policy",
+  "returns": "text",
+  "version": 1,
+  "status": "published",
+  "description_nl": "verify_later (default): sign-up still works, the account is marked unconfirmed and asked to confirm once mail works; Forgot password tells people to ask the owner. closed: sign-up waits until the owner sets up email. A door gated on something not set up is a door nobody comes through (2026-09-17).",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": "verify_later"
+    }
+  ],
+  "weight_basis": "Platform access primitive, no business content. The knobs ARE the policy — edit them here, never in Python."
+}

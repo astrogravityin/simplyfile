@@ -1,0 +1,198 @@
+{
+  "chip_id": "guide.guideme",
+  "kind": "accessor",
+  "set": "guide",
+  "label": "The step-by-step guide to the Guide Me Builder: every step, spotlight, narration and picture",
+  "aliases": [
+    "guide me builder tour",
+    "guide me"
+  ],
+  "params": [
+    {
+      "name": "title",
+      "type": "text",
+      "default": "Guide Me Builder",
+      "label": "The tour's name (its cover card)"
+    },
+    {
+      "name": "lede",
+      "type": "text",
+      "default": "Turn a Guide Me script into a live tour you can preview and hand to any site. Here is the whole road, from import to export.",
+      "label": "The cover's opening line; {product} = this edition's name"
+    },
+    {
+      "name": "icon",
+      "type": "text",
+      "default": "spark",
+      "label": "The emblem on the cover (an icon name)"
+    },
+    {
+      "name": "minutes",
+      "type": "number",
+      "default": 3,
+      "label": "How long the tour takes"
+    },
+    {
+      "name": "steps",
+      "type": "rows",
+      "default": [
+        {
+          "title": "Your Guide Me builds",
+          "say": "Every tour you create lives here, with its site, its page, how many steps it has and when it last changed. Search finds one by title, site or page.",
+          "target": "#gm-list",
+          "open": "#gm-back",
+          "art": {
+            "kind": "stack",
+            "items": [
+              "Comic Book Studio",
+              "Field Notes",
+              "The Lighthouse"
+            ],
+            "icon": "spark"
+          }
+        },
+        {
+          "title": "Bring a script",
+          "say": "Drop or choose a Guide Me script file, or paste the script into the box. A script names its site and page, then the steps: what each one spotlights and what it says.",
+          "target": "#gm-import",
+          "art": {
+            "kind": "flow",
+            "items": [
+              "Script",
+              "Check",
+              "Preview",
+              "Export"
+            ],
+            "at": 0
+          }
+        },
+        {
+          "title": "Create Guide Me",
+          "say": "Press Create Guide Me. Every rule is checked at once and anything to fix is listed in plain words; nothing is saved until the script is clean.",
+          "target": "#gm-create",
+          "place": "above",
+          "art": {
+            "kind": "check",
+            "items": [
+              "Site and page",
+              "Three steps or more",
+              "Pictures and icons",
+              "Voice"
+            ],
+            "done": 4
+          }
+        },
+        {
+          "title": "About this tour",
+          "say": "An open build shows its site, its page, its title and its opening line, so you always know which page this tour belongs to.",
+          "target": "#gm-facts",
+          "open": "#gm-rows [data-open]",
+          "art": {
+            "kind": "hero",
+            "icon": "spark"
+          }
+        },
+        {
+          "title": "The steps",
+          "say": "Each row is one card of the tour: its title, its narration, the part it spotlights, anything it opens first, and its picture.",
+          "target": "#gm-steps",
+          "art": {
+            "kind": "flow",
+            "items": [
+              "Spotlight",
+              "Card",
+              "Picture",
+              "Voice"
+            ],
+            "at": 1
+          }
+        },
+        {
+          "title": "Preview",
+          "say": "Preview plays the tour right here, card by card, with Listen for the browser's own voice. The parts it points at live on its own site, so here each card sits in the middle.",
+          "target": "#gm-preview",
+          "art": {
+            "kind": "meter",
+            "value": 80,
+            "label": "Ready to share",
+            "icon": "play",
+            "icon2": "speaker"
+          }
+        },
+        {
+          "title": "Export",
+          "say": "Export downloads one zip with everything a page needs: the kit, the script, a ready Guide me button and a read-me. Any site can use it; our own portals import the script in How to Use instead.",
+          "target": "#gm-export",
+          "art": {
+            "kind": "stack",
+            "items": [
+              "guide-kit.js",
+              "The script",
+              "Guide me button",
+              "Read-me"
+            ],
+            "icon": "download"
+          }
+        },
+        {
+          "title": "Replace script",
+          "say": "Replace script brings a newer version into the same build. It passes the same checks first, so a build always holds a tour that works.",
+          "target": "#gm-replace",
+          "art": {
+            "kind": "check",
+            "items": [
+              "New script",
+              "Checked",
+              "Steps replaced"
+            ],
+            "done": 3
+          }
+        }
+      ],
+      "label": "The steps"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "title": "$title",
+      "lede": "$lede",
+      "icon": "$icon",
+      "minutes": "$minutes",
+      "steps": "$steps"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-09-28: the Guide Me Builder's own tour (skill screen-tour-guide). Step 1 targets the list only and opens it with All builds; the first step inside a build opens the first build.",
+  "weight_basis": "page",
+  "test_cases": [
+    {
+      "args": {
+        "title": "T",
+        "lede": "L",
+        "icon": "spark",
+        "minutes": 1,
+        "steps": [
+          {
+            "title": "a",
+            "say": "b"
+          }
+        ]
+      },
+      "expect_value": {
+        "title": "T",
+        "lede": "L",
+        "icon": "spark",
+        "minutes": 1,
+        "steps": [
+          {
+            "title": "a",
+            "say": "b"
+          }
+        ]
+      }
+    }
+  ]
+}

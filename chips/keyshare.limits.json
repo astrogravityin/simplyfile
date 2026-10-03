@@ -1,0 +1,95 @@
+{
+  "chip_id": "keyshare.limits",
+  "kind": "accessor",
+  "set": "keyshare",
+  "label": "Spending windows a lender may cap a borrower to, and when to warn",
+  "aliases": [
+    "share limits",
+    "daily weekly monthly cap"
+  ],
+  "params": [
+    {
+      "name": "day_hours",
+      "type": "number",
+      "default": 24,
+      "label": "Hours in the 'day' window"
+    },
+    {
+      "name": "week_hours",
+      "type": "number",
+      "default": 168,
+      "label": "Hours in the 'week' window"
+    },
+    {
+      "name": "month_hours",
+      "type": "number",
+      "default": 720,
+      "label": "Hours in the 'month' window"
+    },
+    {
+      "name": "total_hours",
+      "type": "number",
+      "default": 0,
+      "label": "Hours in the 'total' window (0 = since the share began)"
+    },
+    {
+      "name": "cap_max_usd",
+      "type": "number",
+      "default": 10000,
+      "label": "Largest cap a lender may type"
+    },
+    {
+      "name": "warn_at_pct",
+      "type": "number",
+      "default": 80,
+      "label": "Warn the borrower once this much of a window is used"
+    },
+    {
+      "name": "windows",
+      "type": "list",
+      "default": [
+        "day",
+        "week",
+        "month",
+        "total"
+      ],
+      "label": "The windows, in the order the screen shows them"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "day_hours": "$day_hours",
+      "week_hours": "$week_hours",
+      "month_hours": "$month_hours",
+      "total_hours": "$total_hours",
+      "cap_max_usd": "$cap_max_usd",
+      "warn_at_pct": "$warn_at_pct",
+      "windows": "$windows"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "day_hours, week_hours, month_hours: each cap is measured over a ROLLING window of this many hours back from now, which needs no time zone and no month length. cap_max_usd: the biggest number a lender may type into a cap box. warn_at_pct: the borrower is warned once this much of a window is used. windows: which windows exist and in what order they are shown. total_hours = 0 means the 'total' window is not rolling at all: it counts everything since the share began. That is how a BOUGHT key works - somebody pays for $10 of credit, so the only cap is the $10, and day, week and month are left at 0.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "day_hours": 24,
+        "week_hours": 168,
+        "month_hours": 720,
+        "total_hours": 0,
+        "cap_max_usd": 10000,
+        "warn_at_pct": 80,
+        "windows": [
+          "day",
+          "week",
+          "month",
+          "total"
+        ]
+      }
+    }
+  ],
+  "weight_basis": "Rolling windows, not calendar ones: a cap is what was spent in the last N hours."
+}

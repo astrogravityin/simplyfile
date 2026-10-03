@@ -1,0 +1,73 @@
+{
+  "chip_id": "guideme.list_view",
+  "kind": "accessor",
+  "set": "guideme",
+  "label": "How the Guide Me builds reach the screen: one searched, sorted page at a time",
+  "aliases": [
+    "guide me paging"
+  ],
+  "params": [
+    {
+      "name": "page_size",
+      "type": "number",
+      "default": 20
+    },
+    {
+      "name": "max_page_size",
+      "type": "number",
+      "default": 200
+    },
+    {
+      "name": "sort_key",
+      "type": "text",
+      "default": "updated_at"
+    },
+    {
+      "name": "sort_desc",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "name": "search_keys",
+      "type": "list",
+      "default": [
+        "title",
+        "portal",
+        "page",
+        "lede"
+      ]
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "page_size": "$page_size",
+      "max_page_size": "$max_page_size",
+      "sort_key": "$sort_key",
+      "sort_desc": "$sort_desc",
+      "search_keys": "$search_keys"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "page_size: builds per page. sort_key / sort_desc: last changed first. search_keys: which facts a search looks in.",
+  "weight_basis": "Paging only. Edit it here, never in Python.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "page_size": 20,
+        "max_page_size": 200,
+        "sort_key": "updated_at",
+        "sort_desc": true,
+        "search_keys": [
+          "title",
+          "portal",
+          "page",
+          "lede"
+        ]
+      }
+    }
+  ]
+}

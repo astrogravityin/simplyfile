@@ -1,0 +1,117 @@
+{
+  "chip_id": "narrator.translate_estimate",
+  "kind": "accessor",
+  "set": "narrator",
+  "label": "What translating a finished script should cost and take",
+  "aliases": [
+    "translation cost",
+    "cheaper than drafting again"
+  ],
+  "params": [
+    {
+      "name": "characters",
+      "type": "number",
+      "default": 0,
+      "label": "Letters in the script being translated"
+    },
+    {
+      "name": "lines",
+      "type": "number",
+      "default": 0,
+      "label": "Lines in the script"
+    },
+    {
+      "name": "characters_per_token",
+      "type": "number",
+      "default": 4,
+      "label": "Letters a model counts as one token"
+    },
+    {
+      "name": "prompt_tokens",
+      "type": "number",
+      "default": 400,
+      "label": "The instruction itself"
+    },
+    {
+      "name": "output_multiplier",
+      "type": "number",
+      "default": 1.6,
+      "label": "Another script comes back, often longer in another script system"
+    },
+    {
+      "name": "seconds_per_line",
+      "type": "number",
+      "default": 0.5,
+      "label": "How long a line takes to come back"
+    },
+    {
+      "name": "seconds_floor",
+      "type": "number",
+      "default": 5,
+      "label": "The shortest wait worth showing"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "tokens_in": {
+        "vop": "add",
+        "a": "$prompt_tokens",
+        "b": {
+          "vop": "div",
+          "a": "$characters",
+          "b": "$characters_per_token"
+        }
+      },
+      "tokens_out": {
+        "vop": "mul",
+        "a": {
+          "vop": "div",
+          "a": "$characters",
+          "b": "$characters_per_token"
+        },
+        "b": "$output_multiplier"
+      },
+      "seconds": {
+        "vop": "largest",
+        "values": [
+          "$seconds_floor",
+          {
+            "vop": "mul",
+            "a": "$lines",
+            "b": "$seconds_per_line"
+          }
+        ]
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "Translating sends only the WORDS, never the recording, so it costs a small fraction of Draft with AI - which uploads every frame. The screen shows both numbers before anything is spent, so the person can choose the cheaper road.",
+  "test_cases": [
+    {
+      "args": {
+        "characters": 4000,
+        "lines": 20
+      },
+      "expect_value": {
+        "tokens_in": 1400,
+        "tokens_out": 1600,
+        "seconds": 10
+      }
+    },
+    {
+      "args": {
+        "characters": 0,
+        "lines": 0
+      },
+      "expect_value": {
+        "tokens_in": 400,
+        "tokens_out": 0,
+        "seconds": 5
+      }
+    }
+  ],
+  "weight_basis": "An estimate shown before money is spent. Too low a guess is worse than too high: the knobs lean generous on purpose."
+}

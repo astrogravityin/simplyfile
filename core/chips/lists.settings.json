@@ -1,0 +1,59 @@
+{
+  "chip_id": "lists.settings",
+  "kind": "accessor",
+  "set": "lists",
+  "label": "The list framework's own knobs",
+  "aliases": [
+    "list settings"
+  ],
+  "params": [
+    {
+      "name": "q_max",
+      "type": "number",
+      "default": 200,
+      "label": "longest search text a list takes"
+    },
+    {
+      "name": "yes_words",
+      "type": "list",
+      "default": [
+        "1",
+        "true",
+        "yes"
+      ],
+      "label": "what desc= may say to mean newest/largest first"
+    },
+    {
+      "name": "match_key",
+      "type": "text",
+      "default": "_match",
+      "label": "the field a forgiving search writes each row's score into (and sorts by)"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "q_max": "$q_max",
+      "yes_words": "$yes_words",
+      "match_key": "$match_key"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-04 owner: \"Chips and ops audit for core/lists.py\" - every number, word list and yes/no the list route held.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "q_max": 200,
+        "yes_words": [
+          "1",
+          "true",
+          "yes"
+        ],
+        "match_key": "_match"
+      }
+    }
+  ]
+}

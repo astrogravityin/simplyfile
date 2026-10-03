@@ -1,0 +1,141 @@
+{
+  "chip_id": "guide.intake",
+  "kind": "accessor",
+  "set": "guide",
+  "label": "Guide me: Intake & map",
+  "aliases": [
+    "intake & map guide"
+  ],
+  "params": [
+    {
+      "name": "title",
+      "type": "text",
+      "default": "Intake & map",
+      "label": "The tour's name (its cover card)"
+    },
+    {
+      "name": "lede",
+      "type": "long",
+      "default": "Upload a client's statements and give every figure its SF Ref - the 3CD clause or ITR schedule it belongs to.",
+      "label": "The cover's opening line; {product} = this edition's name"
+    },
+    {
+      "name": "icon",
+      "type": "text",
+      "default": "upload",
+      "label": "The emblem on the cover (an icon name)"
+    },
+    {
+      "name": "minutes",
+      "type": "number",
+      "default": 2,
+      "label": "How long the tour takes"
+    },
+    {
+      "name": "steps",
+      "type": "rows",
+      "default": [
+        {
+          "title": "Upload",
+          "say": "Upload the client's Excel for the year - xls, xlsx or csv, Tally exports included. The file is kept exactly as uploaded.",
+          "target": "#in-up|main",
+          "art": {
+            "kind": "flow",
+            "items": [
+              "Excel",
+              "Rows",
+              "SF Ref"
+            ],
+            "at": 0
+          }
+        },
+        {
+          "title": "Map rows",
+          "say": "Map rows lists every row with a figure. A ref saved by a person wins, then the file's own SF Ref column, then a suggestion from the rules - shown, never applied until you accept it.",
+          "target": "main",
+          "art": {
+            "kind": "stack",
+            "items": [
+              "Saved",
+              "From the file",
+              "Suggested"
+            ],
+            "icon": "link"
+          }
+        },
+        {
+          "title": "Accept and fix",
+          "say": "Accept all suggestions takes every suggestion at once; type over any ref and press Save refs. A ref that is not 3CD, ITR3 or ITR5 with a real clause or schedule is refused, naming why.",
+          "target": "main",
+          "art": {
+            "kind": "flow",
+            "items": [
+              "Accept",
+              "Edit",
+              "Save"
+            ],
+            "at": 1
+          }
+        },
+        {
+          "title": "Back to the client",
+          "say": "Excel with SF Ref downloads the workbook with the column filled. Send it to the client: next year's file arrives already tagged.",
+          "target": "main",
+          "art": {
+            "kind": "flow",
+            "items": [
+              "Download",
+              "Client",
+              "Next year"
+            ],
+            "at": 2
+          }
+        }
+      ],
+      "label": "The steps in order: title, say (the narration), target (where the spotlight goes; alternatives split by |, the first on screen wins), art (the picture: hero/flow/roads/meter/stack/check), place (below/above/right/left/center, optional), open (optional: what the guide presses first when the part is not on screen - open the first item, go back Home; alternatives split by |)"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "title": "$title",
+      "lede": "$lede",
+      "icon": "$icon",
+      "minutes": "$minutes",
+      "steps": "$steps"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-02 owner: Tour Video in sm, owner only - its own Guide me.",
+  "weight_basis": "page",
+  "test_cases": [
+    {
+      "args": {
+        "title": "T",
+        "lede": "L",
+        "icon": "spark",
+        "minutes": 1,
+        "steps": [
+          {
+            "title": "a",
+            "say": "b"
+          }
+        ]
+      },
+      "expect_value": {
+        "title": "T",
+        "lede": "L",
+        "icon": "spark",
+        "minutes": 1,
+        "steps": [
+          {
+            "title": "a",
+            "say": "b"
+          }
+        ]
+      }
+    }
+  ]
+}

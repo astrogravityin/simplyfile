@@ -1,0 +1,77 @@
+{
+  "chip_id": "guideme.messages",
+  "kind": "accessor",
+  "set": "guideme",
+  "label": "Everything the Guide Me Builder says from the server (every problem a script can have)",
+  "aliases": [
+    "guide me problems"
+  ],
+  "params": [
+    {
+      "name": "not_script",
+      "type": "text",
+      "default": "That is not a whole Guide Me script. Check that the file or the pasted text runs from its first line to its last."
+    },
+    {
+      "name": "too_big",
+      "type": "text",
+      "default": "The script is larger than {kb} KB. Shorten its narration or split the tour in two."
+    },
+    {
+      "name": "has_problems",
+      "type": "text",
+      "default": "{n} {n:thing|things} to fix before this Guide Me can be created."
+    },
+    {
+      "name": "no_build",
+      "type": "text",
+      "default": "No such Guide Me build."
+    },
+    {
+      "name": "created",
+      "type": "text",
+      "default": "Guide Me created: {title}."
+    },
+    {
+      "name": "replaced",
+      "type": "text",
+      "default": "Script replaced: {title}."
+    },
+    {
+      "name": "deleted",
+      "type": "text",
+      "default": "Guide Me build deleted."
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "not_script": "$not_script",
+      "too_big": "$too_big",
+      "has_problems": "$has_problems",
+      "no_build": "$no_build",
+      "created": "$created",
+      "replaced": "$replaced",
+      "deleted": "$deleted"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "Plain sentences only - a person fixing a tour never reads a code word. The script's own rules and their sentences are chips guide.check + guide.messages (core); these are the Builder's own: a text that is not a script, one too large, the count, and what happened to a build.",
+  "weight_basis": "Wording only.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "not_script": "That is not a whole Guide Me script. Check that the file or the pasted text runs from its first line to its last.",
+        "too_big": "The script is larger than {kb} KB. Shorten its narration or split the tour in two.",
+        "has_problems": "{n} {n:thing|things} to fix before this Guide Me can be created.",
+        "no_build": "No such Guide Me build.",
+        "created": "Guide Me created: {title}.",
+        "replaced": "Script replaced: {title}.",
+        "deleted": "Guide Me build deleted."
+      }
+    }
+  ]
+}

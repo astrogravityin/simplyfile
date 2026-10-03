@@ -1,0 +1,156 @@
+/* Rule Chip Builder (page-rcb.js). Portal tokens only; the shared editors are styled in builder.css. */
+
+/* ── master / detail ─────────────────────────────────────────────────────── */
+.rcb .pane{height:calc(100vh - 190px);min-height:520px}
+.rcb-top{display:grid;gap:10px}
+.tabs.many.rcb-filter{margin:0;padding:3px}
+.tabs.many.rcb-filter button{padding:4px 10px;min-height:28px;font-size:12px}
+.tabs.many.rcb-filter .badge{min-width:18px;height:18px;font-size:10px;background:var(--panel);color:var(--muted)}
+.tabs.many.rcb-filter button.on .badge{background:var(--brand-soft);color:var(--brand)}
+.rcb .list button.stack-row{gap:8px}
+.rcb-id{display:block;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:11px;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted)}
+.rcb-tags{display:inline-flex;flex-wrap:wrap;gap:4px;align-items:center;flex:none}
+.rcb .list .rcb-tags .tag{font-size:9.5px;padding:2px 6px}
+
+/* The detail pane reflows on ITS width (the shared editors' @container rules read this container). */
+.rcb-detail{container-type:inline-size;container-name:rcb;position:relative}
+.rcb-detail thead th{position:static}               /* the rule's own head is the sticky one - a table head would slide under it */
+
+/* ── sticky header: who, what state, what you can do ─────────────────────── */
+.rcb-head{position:sticky;top:calc(-1 * var(--sb-pad,0px));z-index:6;background:var(--panel);margin:-20px -22px 18px;
+  padding:16px 22px 12px;border-bottom:1px solid var(--line);display:grid;gap:8px}
+.rcb-titlerow{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;min-width:0}
+.rcb-title{margin:0;font-size:18px;min-width:0;overflow-wrap:anywhere}
+.rcb-titlerow code{font-size:12px}
+.rcb-dirty{display:inline-flex;align-items:center;gap:6px;color:var(--warn);font-size:12px;font-weight:650}
+.rcb-dirty::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--warn)}
+.rcb-dirty[hidden]{display:none}
+.rcb-meta{margin:0;font-size:12.5px;color:var(--muted)}
+.rcb-head .note{margin:0;padding:8px 12px;font-size:13px}
+.rcb-actions{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.rcb-actions button[hidden]{display:none}
+
+/* ── the sentence: WHEN · GIVEN · IF · THEN, one card each ────────────────── */
+.rcb-flow{display:grid;grid-template-columns:minmax(0,1fr);gap:0}
+.rcb-card{position:relative;min-width:0;scroll-margin-top:150px;padding:18px 20px}
+.rcb-card[hidden]{display:none}
+.rcb-flow > .rcb-card + .rcb-card::before{content:"";position:absolute;left:36px;top:-19px;height:18px;
+  border-left:2px dashed var(--line-2)}
+.rcb-step{display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px;margin:0 0 12px}
+.rcb-step h2{margin:0;font-size:15.5px}
+.rcb-step p{flex-basis:100%;margin:0}
+.rcb-word{font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--brand);
+  background:var(--brand-soft);border:1px solid var(--brand-line);padding:2px 9px;border-radius:999px;line-height:1.5}
+.rcb-sub{margin-top:18px;padding-top:14px;border-top:1px dashed var(--line)}
+.rcb-hint{margin:0 0 12px}
+.rcb-hint code{font-size:11.5px}
+.rcb-err{color:var(--bad) !important}
+.rcb-pre{white-space:pre-wrap;overflow-wrap:anywhere;margin:0}
+
+.rcb-about{display:grid;gap:12px}
+.rcb-about .field + .field{margin-top:0}
+
+/* facts the trigger's subject carries */
+.rcb-facts{display:flex;flex-wrap:wrap;gap:6px}
+.rcb-fact{display:inline-flex;flex-wrap:wrap;gap:2px 6px;align-items:baseline;padding:4px 10px;border:1px solid var(--line);
+  border-radius:999px;background:var(--panel-2);font-size:12.5px;color:var(--ink-2);max-width:100%}
+.rcb-fact code{background:none;border:0;padding:0;color:var(--ink);font-weight:600}
+.rcb-ftype{font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint)}
+
+/* scenario picker */
+.rcb-scen{max-width:520px;margin:0 0 12px}
+
+/* named values */
+.rcb-values{display:grid;gap:10px}
+.rcb-value{border:1px solid var(--line);border-radius:var(--radius);padding:10px;display:grid;gap:8px;background:var(--panel-2)}
+.rcb-value-head{display:flex;gap:6px;align-items:center}
+.rcb-value-head input{width:auto;flex:1 1 180px;max-width:320px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13px}
+.rcb-dollar{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-weight:700;color:var(--brand)}
+.rcb-value-head .spacer{flex:1}
+
+/* outcomes */
+.rcb-outs{display:grid;gap:12px;margin:0 0 12px}
+.rcb-out{border:1px solid var(--line);border-left:3px solid var(--brand-line);border-radius:var(--radius);
+  padding:12px;display:grid;gap:10px;background:var(--panel)}
+.rcb-out-head{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.rcb-out-n{width:24px;height:24px;border-radius:999px;display:grid;place-items:center;flex:none;
+  background:var(--brand-soft);color:var(--brand);font-size:11.5px;font-weight:800}
+.rcb-kind{width:auto;min-width:160px;font-weight:650}
+.rcb-out-doc{margin:0}
+.rcb-out .note{margin:0}
+.rcb-field{display:grid;grid-template-columns:minmax(120px,200px) minmax(0,1fr);gap:6px 12px;align-items:start}
+.rcb-field > label{padding-top:10px;margin:0}
+.rcb-field-ctl{display:grid;gap:4px;min-width:0;justify-items:stretch}
+.rcb-field-ctl > .xb{width:100%}
+.rcb-field-acts{display:flex;flex-wrap:wrap;gap:4px;align-items:center;font-size:12px}
+.rcb-num{max-width:180px}
+.rcb-bool{padding-top:8px}
+.rcb-ref{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.rcb-ref select{width:auto;flex:1 1 220px;max-width:100%}
+.rcb-add{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:0 0 14px}
+.rcb-order{display:grid;grid-template-columns:minmax(0,220px) minmax(0,1fr);gap:12px 18px;align-items:start;
+  border-top:1px dashed var(--line);padding-top:14px}
+.rcb-order .check{padding-top:22px}
+.rcb-order .check .small{display:block}
+
+/* dry run */
+.rcb-dry-top{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;margin:0 0 10px}
+.rcb-dry-top .rcb-scen{flex:1 1 280px;margin:0}
+.rcb-extra{border:1px solid var(--line);border-radius:var(--radius);padding:8px 12px;margin:0 0 12px;background:var(--panel-2)}
+.rcb-extra > summary{cursor:pointer;font-size:13px;font-weight:600;color:var(--ink-2)}
+.rcb-extra[open] > summary{margin-bottom:8px}
+.rcb-dry{display:grid;gap:10px}
+.rcb-dry > .note{margin:0}
+.rcb-stale{margin:0}
+.rcb-vals td{padding:6px 10px;font-size:12.5px;vertical-align:top}
+.rcb-vals code{overflow-wrap:anywhere}
+.rcb-previews{display:grid;gap:10px}
+.rcb-prev{border:1px solid var(--line);border-radius:var(--radius);padding:10px 12px;display:grid;gap:8px;background:var(--panel-2)}
+.rcb-prev-head{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline}
+.rcb-prev-head b{font-size:13px}
+.rcb-prev .note{margin:0}
+.rcb-mail{border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:var(--panel)}
+.rcb-mail-subj{padding:8px 12px;border-bottom:1px solid var(--line);font-size:13.5px;overflow-wrap:anywhere}
+.rcb-mail-body{padding:10px 12px;font-size:13.5px;white-space:pre-wrap;overflow-wrap:anywhere;color:var(--ink-2)}
+.rcb-kv{font-size:13px;display:flex;flex-wrap:wrap;gap:6px;align-items:baseline}
+.rcb-kv code{overflow-wrap:anywhere}
+
+/* check */
+.rcb-live{display:flex;gap:6px;align-items:center;margin:0 0 8px}
+
+/* read-only version (history) */
+.rcb-ro{border:0;margin:0;padding:0;min-width:0;display:grid;gap:14px}
+.rcb-ro-block{border:1px solid var(--line);border-radius:var(--radius);padding:12px 14px;display:grid;gap:8px}
+.rcb-ro-block .rcb-step{margin:0}
+.rcb-ro button{display:none}
+
+/* ── narrow detail pane ──────────────────────────────────────────────────── */
+@container rcb (max-width:620px){
+  .rcb-head{margin:-20px -22px 14px;padding:12px 16px 10px}
+  .rcb-card{padding:14px}
+  .rcb-field{grid-template-columns:minmax(0,1fr)}
+  .rcb-field > label{padding-top:0}
+  .rcb-order{grid-template-columns:minmax(0,1fr)}
+  .rcb-order .check{padding-top:0}
+  .rcb-flow > .rcb-card + .rcb-card::before{left:24px}
+}
+@container rcb (max-width:420px){
+  .rcb-actions button{flex:1 1 auto}
+  .rcb-kind{min-width:0;flex:1}
+}
+@supports not (container-type:inline-size){
+  @media (max-width:1100px){
+    .rcb-field{grid-template-columns:minmax(0,1fr)}
+    .rcb-field > label{padding-top:0}
+  }
+}
+
+/* ── phones: the list on top, the rule below; the page scrolls, not the pane ─ */
+@media (max-width:900px){
+  .rcb .pane{height:auto;min-height:0}
+  .rcb .rcb-master{max-height:45vh}
+  .rcb .rcb-pane,.rcb .rcb-pane > .scrollbody{overflow:visible;max-height:none}
+  .rcb .rcb-pane > .scrollbody.pad{--sb-pad:0px;padding:16px}   /* the PAGE scrolls here: the head sticks at its top */
+  .rcb-head{margin:-16px -16px 14px;padding:12px 16px 10px;border-radius:var(--radius-lg) var(--radius-lg) 0 0}
+}

@@ -1,0 +1,271 @@
+{
+  "chip_id": "issues.kinds",
+  "kind": "accessor",
+  "set": "issues",
+  "label": "Reports and feedback: every kind of note, who answers it and how each side hears",
+  "aliases": [
+    "kinds"
+  ],
+  "params": [
+    {
+      "name": "kinds",
+      "type": "record",
+      "default": {
+        "issue": {
+          "settings": "issues.settings",
+          "words": "ui.issues",
+          "store": "issues",
+          "shots": "issue_shots",
+          "per_ref": false,
+          "chips": {
+            "file": "issues.may_file",
+            "answer": "issues.may_answer",
+            "see": "issues.may_see",
+            "remove": "issues.may_remove"
+          },
+          "screen": "issues",
+          "tell_answerer": "balloon",
+          "tell_giver": "banner",
+          "show_email": true,
+          "label_word": "kind_issue",
+          "messages": {},
+          "about": {
+            "owner_id": "",
+            "title": "",
+            "link": "",
+            "answer_link": "#/issues",
+            "open": true,
+            "keeper": false
+          }
+        },
+        "katha_feedback": {
+          "settings": "katha.feedback",
+          "words": "ui.katha_reader",
+          "store": "katha_feedback/{ref}",
+          "shots": "katha_feedback_shots/{ref}",
+          "per_ref": true,
+          "chips": {
+            "file": "katha.may_give_feedback",
+            "answer": "katha.may_answer_feedback",
+            "see": "katha.may_see_feedback",
+            "remove": "katha.may_remove_comment"
+          },
+          "screen": "",
+          "tell_answerer": "bell",
+          "tell_giver": "bell",
+          "show_email": false,
+          "label_word": "kind_katha_feedback",
+          "messages": {
+            "off": "This work is not taking feedback.",
+            "no_body": "Say what should change (or stay).",
+            "filed": "Feedback sent - the maker has been told.",
+            "saved": "Answer saved - the reader has been told.",
+            "removed": "Feedback removed.",
+            "not_yours": "Only the maker answers this feedback.",
+            "no_issue": "That feedback is not there any more.",
+            "bell_new": "{who} sent feedback on {title}",
+            "bell_reply": "The maker answered your feedback on {title}",
+            "too_fast": "One note every {s} seconds - try again in a moment."
+          }
+        }
+      },
+      "label": "one row per kind: settings chip, words chip, where rows / screenshots live, decision chips, who hears how"
+    },
+    {
+      "name": "legacy_keys",
+      "type": "record",
+      "default": {
+        "user_id": "by",
+        "body": "text",
+        "created_at": "at",
+        "resolved_by": "answered_by",
+        "seen_maker": "seen_answerer"
+      },
+      "label": "old row keys read as today's (rows written before the merge)"
+    },
+    {
+      "name": "default_kind",
+      "type": "text",
+      "default": "issue",
+      "label": "the kind a note is when none is named (Report an issue)"
+    },
+    {
+      "name": "queue_kind",
+      "type": "text",
+      "default": "issue",
+      "label": "the kind with the answerer's queue, its menu balloon and its banner replies"
+    },
+    {
+      "name": "index_store",
+      "type": "text",
+      "default": "issues_by/{uid}",
+      "label": "where each person's 'where I wrote' index lives (My reports)"
+    },
+    {
+      "name": "unseen_store",
+      "type": "text",
+      "default": "issues_unseen/{uid}",
+      "label": "banner replies waiting for one person"
+    },
+    {
+      "name": "data_url_pattern",
+      "type": "text",
+      "default": "^data:image/([a-z]+);base64,(.+)$",
+      "label": "a pasted screenshot: data URL of a picture"
+    },
+    {
+      "name": "public_fields",
+      "type": "list",
+      "default": [
+        "id",
+        "name",
+        "title",
+        "text",
+        "status",
+        "reply",
+        "action_date",
+        "at",
+        "updated",
+        "answered_by",
+        "surface",
+        "context",
+        "about",
+        "link"
+      ],
+      "label": "the fields of a note anyone allowed to see it gets"
+    },
+    {
+      "name": "answered_by_fields",
+      "type": "list",
+      "default": [
+        "name",
+        "email"
+      ],
+      "label": "who answered: the first of these the answerer has"
+    },
+    {
+      "name": "shot_cache",
+      "type": "text",
+      "default": "private, no-store",
+      "label": "Cache-Control of a note's screenshot"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "kinds": "$kinds",
+      "legacy_keys": "$legacy_keys",
+      "default_kind": "$default_kind",
+      "queue_kind": "$queue_kind",
+      "index_store": "$index_store",
+      "unseen_store": "$unseen_store",
+      "data_url_pattern": "$data_url_pattern",
+      "public_fields": "$public_fields",
+      "answered_by_fields": "$answered_by_fields",
+      "shot_cache": "$shot_cache"
+    }
+  },
+  "returns": "record",
+  "version": 2,
+  "status": "published",
+  "description_nl": "2026-10-03 owner: \"We already have Report Issue framework - why can't we use that ... chip ops only\" - Report an issue and Katha feedback are ONE framework (core/issues.py); a kind is a row here. 2026-10-03 owner: \"Chips and ops audit for core/issues.py\" - every name, path, field list, pattern and rule the code held.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "kinds": {
+          "issue": {
+            "settings": "issues.settings",
+            "words": "ui.issues",
+            "store": "issues",
+            "shots": "issue_shots",
+            "per_ref": false,
+            "chips": {
+              "file": "issues.may_file",
+              "answer": "issues.may_answer",
+              "see": "issues.may_see",
+              "remove": "issues.may_remove"
+            },
+            "screen": "issues",
+            "tell_answerer": "balloon",
+            "tell_giver": "banner",
+            "show_email": true,
+            "label_word": "kind_issue",
+            "messages": {},
+            "about": {
+              "owner_id": "",
+              "title": "",
+              "link": "",
+              "answer_link": "#/issues",
+              "open": true,
+              "keeper": false
+            }
+          },
+          "katha_feedback": {
+            "settings": "katha.feedback",
+            "words": "ui.katha_reader",
+            "store": "katha_feedback/{ref}",
+            "shots": "katha_feedback_shots/{ref}",
+            "per_ref": true,
+            "chips": {
+              "file": "katha.may_give_feedback",
+              "answer": "katha.may_answer_feedback",
+              "see": "katha.may_see_feedback",
+              "remove": "katha.may_remove_comment"
+            },
+            "screen": "",
+            "tell_answerer": "bell",
+            "tell_giver": "bell",
+            "show_email": false,
+            "label_word": "kind_katha_feedback",
+            "messages": {
+              "off": "This work is not taking feedback.",
+              "no_body": "Say what should change (or stay).",
+              "filed": "Feedback sent - the maker has been told.",
+              "saved": "Answer saved - the reader has been told.",
+              "removed": "Feedback removed.",
+              "not_yours": "Only the maker answers this feedback.",
+              "no_issue": "That feedback is not there any more.",
+              "bell_new": "{who} sent feedback on {title}",
+              "bell_reply": "The maker answered your feedback on {title}",
+              "too_fast": "One note every {s} seconds - try again in a moment."
+            }
+          }
+        },
+        "legacy_keys": {
+          "user_id": "by",
+          "body": "text",
+          "created_at": "at",
+          "resolved_by": "answered_by",
+          "seen_maker": "seen_answerer"
+        },
+        "default_kind": "issue",
+        "queue_kind": "issue",
+        "index_store": "issues_by/{uid}",
+        "unseen_store": "issues_unseen/{uid}",
+        "data_url_pattern": "^data:image/([a-z]+);base64,(.+)$",
+        "public_fields": [
+          "id",
+          "name",
+          "title",
+          "text",
+          "status",
+          "reply",
+          "action_date",
+          "at",
+          "updated",
+          "answered_by",
+          "surface",
+          "context",
+          "about",
+          "link"
+        ],
+        "answered_by_fields": [
+          "name",
+          "email"
+        ],
+        "shot_cache": "private, no-store"
+      }
+    }
+  ]
+}

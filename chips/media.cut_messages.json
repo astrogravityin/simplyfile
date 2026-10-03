@@ -1,0 +1,127 @@
+{
+  "chip_id": "media.cut_messages",
+  "kind": "accessor",
+  "set": "media",
+  "label": "What trimming and combining say when they refuse or finish",
+  "aliases": [
+    "trim messages",
+    "combine messages"
+  ],
+  "params": [
+    {
+      "name": "bad_range",
+      "type": "text",
+      "default": "The end has to come after the start."
+    },
+    {
+      "name": "too_short",
+      "type": "text",
+      "default": "That piece is shorter than {min}s - there would be nothing to watch."
+    },
+    {
+      "name": "past_end",
+      "type": "text",
+      "default": "The recording is only {duration:.1f}s long."
+    },
+    {
+      "name": "need_two",
+      "type": "text",
+      "default": "Pick at least two recordings to join."
+    },
+    {
+      "name": "too_many",
+      "type": "text",
+      "default": "At most {max} pieces can be joined at once."
+    },
+    {
+      "name": "not_yours",
+      "type": "text",
+      "default": "One of those recordings is not yours."
+    },
+    {
+      "name": "source_gone",
+      "type": "text",
+      "default": "The recording for \"{title}\" is no longer on this server."
+    },
+    {
+      "name": "trimming",
+      "type": "text",
+      "default": "cutting {from:.1f}s to {to:.1f}s..."
+    },
+    {
+      "name": "trimmed",
+      "type": "text",
+      "default": "trimmed: {seconds:.1f}s kept of {was:.1f}s"
+    },
+    {
+      "name": "joining",
+      "type": "text",
+      "default": "joining {n} recordings, one after another..."
+    },
+    {
+      "name": "joined",
+      "type": "text",
+      "default": "joined: {n} recordings, {seconds:.1f}s in total"
+    },
+    {
+      "name": "cut_failed",
+      "type": "text",
+      "default": "ffmpeg could not do it: {reason}"
+    },
+    {
+      "name": "trim_title",
+      "type": "text",
+      "default": "{title} (trimmed)"
+    },
+    {
+      "name": "join_title",
+      "type": "text",
+      "default": "{title} and {n} more"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "bad_range": "$bad_range",
+      "too_short": "$too_short",
+      "past_end": "$past_end",
+      "need_two": "$need_two",
+      "too_many": "$too_many",
+      "not_yours": "$not_yours",
+      "source_gone": "$source_gone",
+      "trimming": "$trimming",
+      "trimmed": "$trimmed",
+      "joining": "$joining",
+      "joined": "$joined",
+      "cut_failed": "$cut_failed",
+      "trim_title": "$trim_title",
+      "join_title": "$join_title"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "Every word trimming and combining say. {min} is the shortest piece allowed, {duration} the length of the recording, {n} how many pieces, {reason} ffmpeg's own last line.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "bad_range": "The end has to come after the start.",
+        "too_short": "That piece is shorter than {min}s - there would be nothing to watch.",
+        "past_end": "The recording is only {duration:.1f}s long.",
+        "need_two": "Pick at least two recordings to join.",
+        "too_many": "At most {max} pieces can be joined at once.",
+        "not_yours": "One of those recordings is not yours.",
+        "source_gone": "The recording for \"{title}\" is no longer on this server.",
+        "trimming": "cutting {from:.1f}s to {to:.1f}s...",
+        "trimmed": "trimmed: {seconds:.1f}s kept of {was:.1f}s",
+        "joining": "joining {n} recordings, one after another...",
+        "joined": "joined: {n} recordings, {seconds:.1f}s in total",
+        "cut_failed": "ffmpeg could not do it: {reason}",
+        "trim_title": "{title} (trimmed)",
+        "join_title": "{title} and {n} more"
+      }
+    }
+  ],
+  "weight_basis": "Wording only. Every sentence trimming and combining show lives here, never in Python."
+}

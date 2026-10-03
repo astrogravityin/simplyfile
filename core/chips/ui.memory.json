@@ -1,0 +1,525 @@
+{
+  "chip_id": "ui.memory",
+  "kind": "accessor",
+  "set": "ui",
+  "label": "Every word on the Memory watch screen",
+  "aliases": [
+    "memory screen words"
+  ],
+  "params": [
+    {
+      "name": "title",
+      "type": "text",
+      "default": "Memory watch"
+    },
+    {
+      "name": "lede",
+      "type": "text",
+      "default": "What this portal weighs, the whole server around it, and which request moved memory. A process killed for memory prints no error anywhere, so this keeps its own record. Nothing here is saved: a restart starts it again."
+    },
+    {
+      "name": "level_ok",
+      "type": "text",
+      "default": "Healthy"
+    },
+    {
+      "name": "level_watch",
+      "type": "text",
+      "default": "Watch"
+    },
+    {
+      "name": "level_warn",
+      "type": "text",
+      "default": "Warning"
+    },
+    {
+      "name": "level_kill",
+      "type": "text",
+      "default": "About to be killed"
+    },
+    {
+      "name": "collecting",
+      "type": "text",
+      "default": "Collecting readings… the first two arrive within a minute of the portal starting."
+    },
+    {
+      "name": "line_now",
+      "type": "text",
+      "default": "{label}: {value} now"
+    },
+    {
+      "name": "usage_portal",
+      "type": "text",
+      "default": "Portal {n}"
+    },
+    {
+      "name": "usage_other",
+      "type": "text",
+      "default": "Other {n}"
+    },
+    {
+      "name": "usage_total",
+      "type": "text",
+      "default": "Total {n}"
+    },
+    {
+      "name": "auto_on",
+      "type": "text",
+      "default": "Auto-refresh on"
+    },
+    {
+      "name": "auto_off",
+      "type": "text",
+      "default": "Auto-refresh off"
+    },
+    {
+      "name": "clear_tip",
+      "type": "text",
+      "default": "Forget recorded request moves; readings stay"
+    },
+    {
+      "name": "clear_moves",
+      "type": "text",
+      "default": "Clear moves"
+    },
+    {
+      "name": "tile_resident",
+      "type": "text",
+      "default": "Resident now"
+    },
+    {
+      "name": "tile_resident_sub",
+      "type": "text",
+      "default": "{pct}% of {limit} MB ({source})"
+    },
+    {
+      "name": "tile_headroom",
+      "type": "text",
+      "default": "Headroom"
+    },
+    {
+      "name": "tile_headroom_sub",
+      "type": "text",
+      "default": "before the kill"
+    },
+    {
+      "name": "tile_peak",
+      "type": "text",
+      "default": "Peak since start"
+    },
+    {
+      "name": "tile_up",
+      "type": "text",
+      "default": "Up for"
+    },
+    {
+      "name": "tile_up_sub",
+      "type": "text",
+      "default": "since {since} · pid {pid}"
+    },
+    {
+      "name": "tile_reader",
+      "type": "text",
+      "default": "Reader"
+    },
+    {
+      "name": "tile_reader_sub",
+      "type": "text",
+      "default": "every {s} s · Python {python}"
+    },
+    {
+      "name": "server_title",
+      "type": "text",
+      "default": "Whole server — this portal against other services"
+    },
+    {
+      "name": "legend_portal",
+      "type": "text",
+      "default": "Portal (and what it started)"
+    },
+    {
+      "name": "legend_other",
+      "type": "text",
+      "default": "Other"
+    },
+    {
+      "name": "cpu_usage",
+      "type": "text",
+      "default": "CPU usage"
+    },
+    {
+      "name": "cores",
+      "type": "text",
+      "default": "{n} {n:core|cores}"
+    },
+    {
+      "name": "memory_usage",
+      "type": "text",
+      "default": "Memory usage"
+    },
+    {
+      "name": "of",
+      "type": "text",
+      "default": "of {n}"
+    },
+    {
+      "name": "disk_usage",
+      "type": "text",
+      "default": "Disk usage"
+    },
+    {
+      "name": "disk_measuring",
+      "type": "text",
+      "default": "measuring… (every 10 min)"
+    },
+    {
+      "name": "bandwidth",
+      "type": "text",
+      "default": "Bandwidth"
+    },
+    {
+      "name": "bandwidth_sub",
+      "type": "text",
+      "default": "network in+out · Portal = request and response payload"
+    },
+    {
+      "name": "needs_linux",
+      "type": "text",
+      "default": "The per-process tables and bandwidth need Linux (/proc). This machine shows the portal's own figures only."
+    },
+    {
+      "name": "cpu_pct",
+      "type": "text",
+      "default": "CPU %"
+    },
+    {
+      "name": "total",
+      "type": "text",
+      "default": "Total"
+    },
+    {
+      "name": "portal",
+      "type": "text",
+      "default": "Portal"
+    },
+    {
+      "name": "portal_procs",
+      "type": "text",
+      "default": "Portal processes"
+    },
+    {
+      "name": "col_role",
+      "type": "text",
+      "default": "Role"
+    },
+    {
+      "name": "col_process",
+      "type": "text",
+      "default": "Process"
+    },
+    {
+      "name": "col_pid",
+      "type": "text",
+      "default": "PID"
+    },
+    {
+      "name": "col_cpu",
+      "type": "text",
+      "default": "CPU"
+    },
+    {
+      "name": "col_memory",
+      "type": "text",
+      "default": "Memory"
+    },
+    {
+      "name": "no_portal_procs",
+      "type": "text",
+      "default": "No portal process read yet."
+    },
+    {
+      "name": "other_procs",
+      "type": "text",
+      "default": "Other services — busiest first"
+    },
+    {
+      "name": "col_service",
+      "type": "text",
+      "default": "Service"
+    },
+    {
+      "name": "col_procs",
+      "type": "text",
+      "default": "Procs"
+    },
+    {
+      "name": "no_other_procs",
+      "type": "text",
+      "default": "Nothing else read."
+    },
+    {
+      "name": "resident_title",
+      "type": "text",
+      "default": "Resident memory, last {n} min"
+    },
+    {
+      "name": "resident_key",
+      "type": "text",
+      "default": "Drop to zero = restart. Red line = limit."
+    },
+    {
+      "name": "resident",
+      "type": "text",
+      "default": "Resident"
+    },
+    {
+      "name": "limit_line",
+      "type": "text",
+      "default": "limit {n}"
+    },
+    {
+      "name": "offenders_title",
+      "type": "text",
+      "default": "Offenders — requests ranked by the most memory one call moved"
+    },
+    {
+      "name": "col_request",
+      "type": "text",
+      "default": "Request"
+    },
+    {
+      "name": "col_max_move",
+      "type": "text",
+      "default": "Max move"
+    },
+    {
+      "name": "col_calls",
+      "type": "text",
+      "default": "Calls"
+    },
+    {
+      "name": "col_last",
+      "type": "text",
+      "default": "Last"
+    },
+    {
+      "name": "no_offenders",
+      "type": "text",
+      "default": "Nothing has moved memory noticeably since the last clear. Click through the screens you suspect."
+    },
+    {
+      "name": "recent_title",
+      "type": "text",
+      "default": "Recent moves — newest first"
+    },
+    {
+      "name": "col_when",
+      "type": "text",
+      "default": "When"
+    },
+    {
+      "name": "col_before_after",
+      "type": "text",
+      "default": "Before → after"
+    },
+    {
+      "name": "col_move",
+      "type": "text",
+      "default": "Move"
+    },
+    {
+      "name": "col_took",
+      "type": "text",
+      "default": "Took"
+    },
+    {
+      "name": "no_moves",
+      "type": "text",
+      "default": "No request has moved memory noticeably yet."
+    },
+    {
+      "name": "moves_note",
+      "type": "text",
+      "default": "Requests run side by side, so a move is where memory changed, not proof of who caused it."
+    },
+    {
+      "name": "clear_title",
+      "type": "text",
+      "default": "Clear recorded moves?"
+    },
+    {
+      "name": "clear_body",
+      "type": "text",
+      "default": "The request moves and the peak start again. Readings stay."
+    },
+    {
+      "name": "cleared",
+      "type": "text",
+      "default": "Cleared."
+    },
+    {
+      "name": "clear",
+      "type": "text",
+      "default": "Clear"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "title": "$title",
+      "lede": "$lede",
+      "level_ok": "$level_ok",
+      "level_watch": "$level_watch",
+      "level_warn": "$level_warn",
+      "level_kill": "$level_kill",
+      "collecting": "$collecting",
+      "line_now": "$line_now",
+      "usage_portal": "$usage_portal",
+      "usage_other": "$usage_other",
+      "usage_total": "$usage_total",
+      "auto_on": "$auto_on",
+      "auto_off": "$auto_off",
+      "clear_tip": "$clear_tip",
+      "clear_moves": "$clear_moves",
+      "tile_resident": "$tile_resident",
+      "tile_resident_sub": "$tile_resident_sub",
+      "tile_headroom": "$tile_headroom",
+      "tile_headroom_sub": "$tile_headroom_sub",
+      "tile_peak": "$tile_peak",
+      "tile_up": "$tile_up",
+      "tile_up_sub": "$tile_up_sub",
+      "tile_reader": "$tile_reader",
+      "tile_reader_sub": "$tile_reader_sub",
+      "server_title": "$server_title",
+      "legend_portal": "$legend_portal",
+      "legend_other": "$legend_other",
+      "cpu_usage": "$cpu_usage",
+      "cores": "$cores",
+      "memory_usage": "$memory_usage",
+      "of": "$of",
+      "disk_usage": "$disk_usage",
+      "disk_measuring": "$disk_measuring",
+      "bandwidth": "$bandwidth",
+      "bandwidth_sub": "$bandwidth_sub",
+      "needs_linux": "$needs_linux",
+      "cpu_pct": "$cpu_pct",
+      "total": "$total",
+      "portal": "$portal",
+      "portal_procs": "$portal_procs",
+      "col_role": "$col_role",
+      "col_process": "$col_process",
+      "col_pid": "$col_pid",
+      "col_cpu": "$col_cpu",
+      "col_memory": "$col_memory",
+      "no_portal_procs": "$no_portal_procs",
+      "other_procs": "$other_procs",
+      "col_service": "$col_service",
+      "col_procs": "$col_procs",
+      "no_other_procs": "$no_other_procs",
+      "resident_title": "$resident_title",
+      "resident_key": "$resident_key",
+      "resident": "$resident",
+      "limit_line": "$limit_line",
+      "offenders_title": "$offenders_title",
+      "col_request": "$col_request",
+      "col_max_move": "$col_max_move",
+      "col_calls": "$col_calls",
+      "col_last": "$col_last",
+      "no_offenders": "$no_offenders",
+      "recent_title": "$recent_title",
+      "col_when": "$col_when",
+      "col_before_after": "$col_before_after",
+      "col_move": "$col_move",
+      "col_took": "$col_took",
+      "no_moves": "$no_moves",
+      "moves_note": "$moves_note",
+      "clear_title": "$clear_title",
+      "clear_body": "$clear_body",
+      "cleared": "$cleared",
+      "clear": "$clear"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "The words of one screen. {placeholders} are filled on the page. A language overrides any of them with chip ui.memory.<lang> (for example ui.memory.hi).",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "title": "Memory watch",
+        "lede": "What this portal weighs, the whole server around it, and which request moved memory. A process killed for memory prints no error anywhere, so this keeps its own record. Nothing here is saved: a restart starts it again.",
+        "level_ok": "Healthy",
+        "level_watch": "Watch",
+        "level_warn": "Warning",
+        "level_kill": "About to be killed",
+        "collecting": "Collecting readings… the first two arrive within a minute of the portal starting.",
+        "line_now": "{label}: {value} now",
+        "usage_portal": "Portal {n}",
+        "usage_other": "Other {n}",
+        "usage_total": "Total {n}",
+        "auto_on": "Auto-refresh on",
+        "auto_off": "Auto-refresh off",
+        "clear_tip": "Forget recorded request moves; readings stay",
+        "clear_moves": "Clear moves",
+        "tile_resident": "Resident now",
+        "tile_resident_sub": "{pct}% of {limit} MB ({source})",
+        "tile_headroom": "Headroom",
+        "tile_headroom_sub": "before the kill",
+        "tile_peak": "Peak since start",
+        "tile_up": "Up for",
+        "tile_up_sub": "since {since} · pid {pid}",
+        "tile_reader": "Reader",
+        "tile_reader_sub": "every {s} s · Python {python}",
+        "server_title": "Whole server — this portal against other services",
+        "legend_portal": "Portal (and what it started)",
+        "legend_other": "Other",
+        "cpu_usage": "CPU usage",
+        "cores": "{n} {n:core|cores}",
+        "memory_usage": "Memory usage",
+        "of": "of {n}",
+        "disk_usage": "Disk usage",
+        "disk_measuring": "measuring… (every 10 min)",
+        "bandwidth": "Bandwidth",
+        "bandwidth_sub": "network in+out · Portal = request and response payload",
+        "needs_linux": "The per-process tables and bandwidth need Linux (/proc). This machine shows the portal's own figures only.",
+        "cpu_pct": "CPU %",
+        "total": "Total",
+        "portal": "Portal",
+        "portal_procs": "Portal processes",
+        "col_role": "Role",
+        "col_process": "Process",
+        "col_pid": "PID",
+        "col_cpu": "CPU",
+        "col_memory": "Memory",
+        "no_portal_procs": "No portal process read yet.",
+        "other_procs": "Other services — busiest first",
+        "col_service": "Service",
+        "col_procs": "Procs",
+        "no_other_procs": "Nothing else read.",
+        "resident_title": "Resident memory, last {n} min",
+        "resident_key": "Drop to zero = restart. Red line = limit.",
+        "resident": "Resident",
+        "limit_line": "limit {n}",
+        "offenders_title": "Offenders — requests ranked by the most memory one call moved",
+        "col_request": "Request",
+        "col_max_move": "Max move",
+        "col_calls": "Calls",
+        "col_last": "Last",
+        "no_offenders": "Nothing has moved memory noticeably since the last clear. Click through the screens you suspect.",
+        "recent_title": "Recent moves — newest first",
+        "col_when": "When",
+        "col_before_after": "Before → after",
+        "col_move": "Move",
+        "col_took": "Took",
+        "no_moves": "No request has moved memory noticeably yet.",
+        "moves_note": "Requests run side by side, so a move is where memory changed, not proof of who caused it.",
+        "clear_title": "Clear recorded moves?",
+        "clear_body": "The request moves and the peak start again. Readings stay.",
+        "cleared": "Cleared.",
+        "clear": "Clear"
+      }
+    }
+  ],
+  "weight_basis": "Wording only. Every word on this screen lives here, never in JavaScript."
+}

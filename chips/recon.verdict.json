@@ -1,0 +1,266 @@
+{
+  "chip_id": "recon.verdict",
+  "kind": "accessor",
+  "set": "recon",
+  "label": "How serious a reconcile finding is",
+  "aliases": [
+    "recon verdict"
+  ],
+  "params": [
+    {
+      "name": "kind",
+      "type": "text",
+      "default": "tds",
+      "label": "kind"
+    },
+    {
+      "name": "found",
+      "type": "boolean",
+      "default": false,
+      "label": "found"
+    },
+    {
+      "name": "books",
+      "type": "number",
+      "default": 0,
+      "label": "books"
+    },
+    {
+      "name": "portal",
+      "type": "number",
+      "default": 0,
+      "label": "portal"
+    },
+    {
+      "name": "tolerance_rs",
+      "type": "number",
+      "default": 10,
+      "label": "tolerance rs"
+    },
+    {
+      "name": "tolerance_pct",
+      "type": "number",
+      "default": 0.5,
+      "label": "tolerance pct"
+    }
+  ],
+  "expr": {
+    "vop": "choose",
+    "cases": [
+      {
+        "when": {
+          "op": "all",
+          "items": [
+            {
+              "op": "eq",
+              "left": "$kind",
+              "right": "tds"
+            },
+            {
+              "op": "not",
+              "item": {
+                "op": "eq",
+                "left": "$found",
+                "right": true
+              }
+            }
+          ]
+        },
+        "then": "amber"
+      },
+      {
+        "when": {
+          "op": "all",
+          "items": [
+            {
+              "op": "eq",
+              "left": "$kind",
+              "right": "tds"
+            },
+            {
+              "op": "eq",
+              "left": {
+                "chip": "recon.agrees",
+                "args": {
+                  "books": "$books",
+                  "portal": "$portal",
+                  "tolerance_rs": "$tolerance_rs",
+                  "tolerance_pct": "$tolerance_pct"
+                }
+              },
+              "right": true
+            }
+          ]
+        },
+        "then": "ok"
+      },
+      {
+        "when": {
+          "op": "eq",
+          "left": "$kind",
+          "right": "tds"
+        },
+        "then": "red"
+      },
+      {
+        "when": {
+          "op": "eq",
+          "left": "$kind",
+          "right": "tds_claim"
+        },
+        "then": "red"
+      },
+      {
+        "when": {
+          "op": "all",
+          "items": [
+            {
+              "op": "eq",
+              "left": "$kind",
+              "right": "income"
+            },
+            {
+              "op": "lt",
+              "left": {
+                "vop": "add",
+                "a": "$books",
+                "b": {
+                  "vop": "largest",
+                  "values": [
+                    "$tolerance_rs",
+                    {
+                      "vop": "mul",
+                      "a": "$portal",
+                      "b": {
+                        "vop": "div",
+                        "a": "$tolerance_pct",
+                        "b": 100
+                      }
+                    }
+                  ]
+                }
+              },
+              "right": "$portal"
+            }
+          ]
+        },
+        "then": "red"
+      },
+      {
+        "when": {
+          "op": "eq",
+          "left": "$kind",
+          "right": "income"
+        },
+        "then": "ok"
+      },
+      {
+        "when": {
+          "op": "all",
+          "items": [
+            {
+              "op": "eq",
+              "left": "$kind",
+              "right": "paid"
+            },
+            {
+              "op": "eq",
+              "left": "$found",
+              "right": true
+            }
+          ]
+        },
+        "then": "ok"
+      },
+      {
+        "when": {
+          "op": "eq",
+          "left": "$kind",
+          "right": "paid"
+        },
+        "then": "amber"
+      },
+      {
+        "when": {
+          "op": "eq",
+          "left": "$kind",
+          "right": "paid_claim"
+        },
+        "then": "red"
+      }
+    ],
+    "else": "amber"
+  },
+  "returns": "text",
+  "version": 1,
+  "status": "published",
+  "description_nl": "tds: in 26AS but not in the books = amber (credit unclaimed); amounts differ = red. tds_claim: the books claim TDS 26AS does not show = red (the credit is refused). income: the portal reports more than the books by over the tolerance = red. paid: a challan the books lack = amber; paid_claim: tax the books show and 26AS does not = red.",
+  "test_cases": [
+    {
+      "args": {
+        "kind": "tds",
+        "found": false
+      },
+      "expect_value": "amber"
+    },
+    {
+      "args": {
+        "kind": "tds",
+        "found": true,
+        "books": 26793,
+        "portal": 26793
+      },
+      "expect_value": "ok"
+    },
+    {
+      "args": {
+        "kind": "tds",
+        "found": true,
+        "books": 20000,
+        "portal": 26793
+      },
+      "expect_value": "red"
+    },
+    {
+      "args": {
+        "kind": "tds_claim"
+      },
+      "expect_value": "red"
+    },
+    {
+      "args": {
+        "kind": "income",
+        "books": 462700,
+        "portal": 727930
+      },
+      "expect_value": "red"
+    },
+    {
+      "args": {
+        "kind": "income",
+        "books": 3202838,
+        "portal": 3202838
+      },
+      "expect_value": "ok"
+    },
+    {
+      "args": {
+        "kind": "paid",
+        "found": true
+      },
+      "expect_value": "ok"
+    },
+    {
+      "args": {
+        "kind": "paid"
+      },
+      "expect_value": "amber"
+    },
+    {
+      "args": {
+        "kind": "paid_claim"
+      },
+      "expect_value": "red"
+    }
+  ]
+}

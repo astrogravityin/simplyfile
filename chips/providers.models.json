@@ -1,0 +1,77 @@
+{
+  "chip_id": "providers.models",
+  "kind": "accessor",
+  "set": "providers",
+  "audience": "admin",
+  "label": "Every non-Google model the portal offers: whose it is, what kind of work, what it costs",
+  "aliases": [
+    "model prices",
+    "gpt",
+    "llama",
+    "runway gen4"
+  ],
+  "params": [
+    {
+      "name": "rows",
+      "type": "rows",
+      "default": [
+        {"provider": "openai", "kind": "text", "id": "gpt-4.1-mini", "label": "GPT-4.1 mini", "in": 0.4, "out": 1.6},
+        {"provider": "openai", "kind": "text", "id": "gpt-4.1-nano", "label": "GPT-4.1 nano (cheapest)", "in": 0.1, "out": 0.4},
+        {"provider": "openai", "kind": "text", "id": "gpt-5-mini", "label": "GPT-5 mini", "in": 0.25, "out": 2.0},
+        {"provider": "groq", "kind": "text", "id": "llama-3.3-70b-versatile", "label": "Llama 3.3 70B on Groq", "in": 0.59, "out": 0.79},
+        {"provider": "groq", "kind": "text", "id": "llama-3.1-8b-instant", "label": "Llama 3.1 8B on Groq (fastest, cheapest)", "in": 0.05, "out": 0.08},
+        {"provider": "deepseek", "kind": "text", "id": "deepseek-chat", "label": "DeepSeek V3", "in": 0.27, "out": 1.1},
+        {"provider": "openrouter", "kind": "text", "id": "google/gemini-2.5-flash-lite", "label": "Gemini 2.5 Flash-Lite via OpenRouter", "in": 0.1, "out": 0.4},
+        {"provider": "openrouter", "kind": "text", "id": "meta-llama/llama-3.3-70b-instruct", "label": "Llama 3.3 70B via OpenRouter", "in": 0.1, "out": 0.3},
+        {"provider": "ollama", "kind": "text", "id": "llama3.1", "label": "Llama 3.1 (local, free)", "in": 0.0, "out": 0.0},
+        {"provider": "ollama", "kind": "text", "id": "qwen2.5", "label": "Qwen 2.5 (local, free)", "in": 0.0, "out": 0.0},
+        {"provider": "openai", "kind": "image", "id": "gpt-image-1-mini", "refs": true, "label": "GPT Image 1 mini (cheapest still)", "usd_per_image": 0.011, "size": "1024x1024"},
+        {"provider": "openai", "kind": "image", "id": "gpt-image-1", "refs": true, "label": "GPT Image 1", "usd_per_image": 0.04, "size": "1024x1024"},
+        {"provider": "runway", "kind": "video", "id": "gen4_turbo", "label": "Runway Gen-4 Turbo (needs a still per shot)", "usd_per_second_low": 0.05, "usd_per_second_high": 0.05, "seconds": [5, 10], "needs_image": true, "ratios": {"16:9": "1280:720", "9:16": "720:1280"}},
+        {"provider": "runway", "kind": "video", "id": "gen3a_turbo", "label": "Runway Gen-3 Alpha Turbo (needs a still per shot)", "usd_per_second_low": 0.05, "usd_per_second_high": 0.05, "seconds": [5, 10], "needs_image": true, "ratios": {"16:9": "1280:768", "9:16": "768:1280"}},
+        {"provider": "fal", "kind": "video", "id": "fal-ai/kling-video/v2.1/standard/text-to-video", "image_id": "fal-ai/kling-video/v2.1/standard/image-to-video", "label": "Kling 2.1 standard via fal.ai (cheap, no speech)", "usd_per_second_low": 0.05, "usd_per_second_high": 0.05, "seconds": [5, 10], "needs_image": false, "ratios": {"16:9": "16:9", "9:16": "9:16"}, "fields": {"prompt": "prompt", "image": "image_url", "duration": "duration", "aspect": "aspect_ratio", "negative": "negative_prompt", "resolution": ""}, "duration_text": true, "aspect_from_image": true, "resolution": "", "video_path": "video.url"},
+        {"provider": "fal", "kind": "video", "id": "fal-ai/minimax/hailuo-02/standard/text-to-video", "image_id": "fal-ai/minimax/hailuo-02/standard/image-to-video", "label": "Hailuo 02 standard via fal.ai (cheap, 768p, no speech)", "usd_per_second_low": 0.045, "usd_per_second_high": 0.048, "seconds": [6, 10], "needs_image": false, "ratios": {}, "fields": {"prompt": "prompt", "image": "image_url", "duration": "duration", "aspect": "", "negative": "", "resolution": ""}, "duration_text": true, "aspect_from_image": true, "resolution": "", "video_path": "video.url"},
+        {"provider": "fal", "kind": "video", "id": "fal-ai/bytedance/seedance/v1/lite/text-to-video", "image_id": "fal-ai/bytedance/seedance/v1/lite/image-to-video", "label": "Seedance 1.0 Lite via fal.ai (cheapest, 720p, no speech)", "usd_per_second_low": 0.036, "usd_per_second_high": 0.036, "seconds": [5, 10], "needs_image": false, "ratios": {"16:9": "16:9", "9:16": "9:16"}, "fields": {"prompt": "prompt", "image": "image_url", "duration": "duration", "aspect": "aspect_ratio", "negative": "", "resolution": "resolution"}, "duration_text": true, "aspect_from_image": true, "resolution": "720p", "video_path": "video.url"},
+        {"provider": "fal", "kind": "video", "id": "fal-ai/wan/v2.2-a14b/text-to-video", "image_id": "fal-ai/wan/v2.2-a14b/image-to-video", "label": "Wan 2.2 A14B via fal.ai (open model, 5 s clips, no speech)", "usd_per_second_low": 0.05, "usd_per_second_high": 0.08, "seconds": [5], "needs_image": false, "ratios": {"16:9": "16:9", "9:16": "9:16"}, "fields": {"prompt": "prompt", "image": "image_url", "duration": "", "aspect": "aspect_ratio", "negative": "negative_prompt", "resolution": "resolution"}, "duration_text": true, "aspect_from_image": true, "resolution": "720p", "video_path": "video.url"}
+      ]
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "rows": "$rows"
+    }
+  },
+  "returns": "record",
+  "version": 2,
+  "status": "published",
+  "description_nl": "One row per model: provider (a providers.settings id), kind (text / image / video), id (what the provider calls it), label, and its price - text: in / out USD per million tokens; image: usd_per_image and size; video: usd_per_second_low / high, the clip lengths it makes (seconds), needs_image (Runway makes video FROM a picture: the storyboard still or the chain's last frame), ratios per aspect. fal.ai rows (2026-09-20, the cheap road): id = the text-to-video endpoint, image_id = the image-to-video one (used when a shot has a first frame), fields = what each model CALLS the prompt / image / duration / aspect / negative / resolution ('' = the model has no such field, nothing is sent), duration_text = the seconds go as text ('5'), aspect_from_image = no aspect is sent with a picture (the picture decides), resolution = the fixed value sent, video_path = where the file's URL sits in the answer. Google's own models stay in store.models / board.settings / film.settings. Prices are what the providers publish today (2026-09; the fal.ai ones are approximate) - edit them when they change; an unpriced model shows as unknown, never $0.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "rows": [
+          {"provider": "openai", "kind": "text", "id": "gpt-4.1-mini", "label": "GPT-4.1 mini", "in": 0.4, "out": 1.6},
+          {"provider": "openai", "kind": "text", "id": "gpt-4.1-nano", "label": "GPT-4.1 nano (cheapest)", "in": 0.1, "out": 0.4},
+          {"provider": "openai", "kind": "text", "id": "gpt-5-mini", "label": "GPT-5 mini", "in": 0.25, "out": 2.0},
+          {"provider": "groq", "kind": "text", "id": "llama-3.3-70b-versatile", "label": "Llama 3.3 70B on Groq", "in": 0.59, "out": 0.79},
+          {"provider": "groq", "kind": "text", "id": "llama-3.1-8b-instant", "label": "Llama 3.1 8B on Groq (fastest, cheapest)", "in": 0.05, "out": 0.08},
+          {"provider": "deepseek", "kind": "text", "id": "deepseek-chat", "label": "DeepSeek V3", "in": 0.27, "out": 1.1},
+          {"provider": "openrouter", "kind": "text", "id": "google/gemini-2.5-flash-lite", "label": "Gemini 2.5 Flash-Lite via OpenRouter", "in": 0.1, "out": 0.4},
+          {"provider": "openrouter", "kind": "text", "id": "meta-llama/llama-3.3-70b-instruct", "label": "Llama 3.3 70B via OpenRouter", "in": 0.1, "out": 0.3},
+          {"provider": "ollama", "kind": "text", "id": "llama3.1", "label": "Llama 3.1 (local, free)", "in": 0.0, "out": 0.0},
+          {"provider": "ollama", "kind": "text", "id": "qwen2.5", "label": "Qwen 2.5 (local, free)", "in": 0.0, "out": 0.0},
+          {"provider": "openai", "kind": "image", "id": "gpt-image-1-mini", "refs": true, "label": "GPT Image 1 mini (cheapest still)", "usd_per_image": 0.011, "size": "1024x1024"},
+          {"provider": "openai", "kind": "image", "id": "gpt-image-1", "refs": true, "label": "GPT Image 1", "usd_per_image": 0.04, "size": "1024x1024"},
+          {"provider": "runway", "kind": "video", "id": "gen4_turbo", "label": "Runway Gen-4 Turbo (needs a still per shot)", "usd_per_second_low": 0.05, "usd_per_second_high": 0.05, "seconds": [5, 10], "needs_image": true, "ratios": {"16:9": "1280:720", "9:16": "720:1280"}},
+          {"provider": "runway", "kind": "video", "id": "gen3a_turbo", "label": "Runway Gen-3 Alpha Turbo (needs a still per shot)", "usd_per_second_low": 0.05, "usd_per_second_high": 0.05, "seconds": [5, 10], "needs_image": true, "ratios": {"16:9": "1280:768", "9:16": "768:1280"}},
+          {"provider": "fal", "kind": "video", "id": "fal-ai/kling-video/v2.1/standard/text-to-video", "image_id": "fal-ai/kling-video/v2.1/standard/image-to-video", "label": "Kling 2.1 standard via fal.ai (cheap, no speech)", "usd_per_second_low": 0.05, "usd_per_second_high": 0.05, "seconds": [5, 10], "needs_image": false, "ratios": {"16:9": "16:9", "9:16": "9:16"}, "fields": {"prompt": "prompt", "image": "image_url", "duration": "duration", "aspect": "aspect_ratio", "negative": "negative_prompt", "resolution": ""}, "duration_text": true, "aspect_from_image": true, "resolution": "", "video_path": "video.url"},
+          {"provider": "fal", "kind": "video", "id": "fal-ai/minimax/hailuo-02/standard/text-to-video", "image_id": "fal-ai/minimax/hailuo-02/standard/image-to-video", "label": "Hailuo 02 standard via fal.ai (cheap, 768p, no speech)", "usd_per_second_low": 0.045, "usd_per_second_high": 0.048, "seconds": [6, 10], "needs_image": false, "ratios": {}, "fields": {"prompt": "prompt", "image": "image_url", "duration": "duration", "aspect": "", "negative": "", "resolution": ""}, "duration_text": true, "aspect_from_image": true, "resolution": "", "video_path": "video.url"},
+          {"provider": "fal", "kind": "video", "id": "fal-ai/bytedance/seedance/v1/lite/text-to-video", "image_id": "fal-ai/bytedance/seedance/v1/lite/image-to-video", "label": "Seedance 1.0 Lite via fal.ai (cheapest, 720p, no speech)", "usd_per_second_low": 0.036, "usd_per_second_high": 0.036, "seconds": [5, 10], "needs_image": false, "ratios": {"16:9": "16:9", "9:16": "9:16"}, "fields": {"prompt": "prompt", "image": "image_url", "duration": "duration", "aspect": "aspect_ratio", "negative": "", "resolution": "resolution"}, "duration_text": true, "aspect_from_image": true, "resolution": "720p", "video_path": "video.url"},
+          {"provider": "fal", "kind": "video", "id": "fal-ai/wan/v2.2-a14b/text-to-video", "image_id": "fal-ai/wan/v2.2-a14b/image-to-video", "label": "Wan 2.2 A14B via fal.ai (open model, 5 s clips, no speech)", "usd_per_second_low": 0.05, "usd_per_second_high": 0.08, "seconds": [5], "needs_image": false, "ratios": {"16:9": "16:9", "9:16": "9:16"}, "fields": {"prompt": "prompt", "image": "image_url", "duration": "", "aspect": "aspect_ratio", "negative": "negative_prompt", "resolution": "resolution"}, "duration_text": true, "aspect_from_image": true, "resolution": "720p", "video_path": "video.url"}
+        ]
+      }
+    }
+  ],
+  "weight_basis": "A price list. Edit it here, never in Python."
+}

@@ -1,0 +1,78 @@
+{
+  "chip_id": "quality.held",
+  "kind": "accessor",
+  "set": "quality",
+  "label": "Final check: the failed rules standing in front of an action",
+  "aliases": [
+    "quality held"
+  ],
+  "params": [
+    {
+      "name": "rows",
+      "type": "list",
+      "default": [],
+      "label": "Every rule with its verdict"
+    },
+    {
+      "name": "action",
+      "type": "text",
+      "default": "",
+      "label": "The action"
+    }
+  ],
+  "expr": {
+    "vop": "rows_having",
+    "field": "blocks",
+    "value": "$action",
+    "rows": {
+      "vop": "filter_rows",
+      "field": "state",
+      "cmp": "eq",
+      "value": "fail",
+      "rows": "$rows"
+    }
+  },
+  "returns": "list",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-02 owner (confirm all chips and ops for final check): the failed rules whose `blocks` list names the action - ONE definition, used by quality.blocked (the server's refusal) and by the page's reasons (quality.py check -> blocked), so the page never works a gate out itself.",
+  "test_cases": [
+    {
+      "args": {
+        "rows": [
+          {
+            "id": "a",
+            "state": "fail",
+            "blocks": [
+              "draw"
+            ]
+          },
+          {
+            "id": "b",
+            "state": "pass",
+            "blocks": [
+              "draw"
+            ]
+          },
+          {
+            "id": "c",
+            "state": "fail",
+            "blocks": [
+              "publish"
+            ]
+          }
+        ],
+        "action": "draw"
+      },
+      "expect_value": [
+        {
+          "id": "a",
+          "state": "fail",
+          "blocks": [
+            "draw"
+          ]
+        }
+      ]
+    }
+  ]
+}

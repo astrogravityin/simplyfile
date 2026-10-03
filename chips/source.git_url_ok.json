@@ -1,0 +1,94 @@
+{
+  "chip_id": "source.git_url_ok",
+  "kind": "predicate",
+  "set": "source",
+  "audience": "admin",
+  "label": "A Git address is safe to hand to git",
+  "aliases": [
+    "git url validation"
+  ],
+  "params": [
+    {
+      "name": "url",
+      "type": "text",
+      "default": ""
+    },
+    {
+      "name": "pattern",
+      "type": "text",
+      "default": "^(?:https://|git@)[A-Za-z0-9._~:/?#\\[\\]@!$&'()*+,;=%-]{4,400}$"
+    }
+  ],
+  "expr": {
+    "vop": "matches",
+    "text": "$url",
+    "pattern": "$pattern"
+  },
+  "returns": "boolean",
+  "version": 1,
+  "status": "published",
+  "description_nl": "SECURITY. The address goes to a subprocess, so it must start https:// or git@ and hold only URL characters — no spaces, quotes, backticks, pipes, angle brackets, backslashes or newlines — and the WHOLE text must fit. file://, ext:: and option-looking text (--upload-pack=…) are refused. Never loosen this; the test cases are the refusals that must keep holding.",
+  "test_cases": [
+    {
+      "args": {
+        "url": "https://github.com/owner/repo.git"
+      },
+      "expect_value": true
+    },
+    {
+      "args": {
+        "url": "git@github.com:owner/repo.git"
+      },
+      "expect_value": true
+    },
+    {
+      "args": {
+        "url": "https://github.com/owner/repo.git; rm -rf /"
+      },
+      "expect_value": false
+    },
+    {
+      "args": {
+        "url": "https://github.com/o/r.git`id`"
+      },
+      "expect_value": false
+    },
+    {
+      "args": {
+        "url": "https://github.com/o/r.git|sh"
+      },
+      "expect_value": false
+    },
+    {
+      "args": {
+        "url": "https://github.com/o/r.git\n"
+      },
+      "expect_value": false
+    },
+    {
+      "args": {
+        "url": "file:///etc"
+      },
+      "expect_value": false
+    },
+    {
+      "args": {
+        "url": "ext::sh -c touch% /tmp/x"
+      },
+      "expect_value": false
+    },
+    {
+      "args": {
+        "url": "--upload-pack=touch /tmp/x"
+      },
+      "expect_value": false
+    },
+    {
+      "args": {
+        "url": ""
+      },
+      "expect_value": false
+    }
+  ],
+  "weight_basis": "Portal business setting of the Training & Video Portal. The knobs ARE the policy — edit them here, never in Python. Owner-only (audience admin): a looser value here would open a security hole or spend the owner's disk, so editors see and test it but cannot change it."
+}

@@ -1,0 +1,65 @@
+{
+  "chip_id": "mail.settings",
+  "kind": "accessor",
+  "set": "mail",
+  "audience": "admin",
+  "label": "How the portal talks to its mail server",
+  "aliases": [
+    "smtp settings",
+    "mail timeout"
+  ],
+  "params": [
+    {
+      "name": "default_port",
+      "type": "text",
+      "default": "587"
+    },
+    {
+      "name": "default_security",
+      "type": "text",
+      "default": "starttls"
+    },
+    {
+      "name": "timeout_seconds",
+      "type": "number",
+      "default": 20
+    },
+    {
+      "name": "ssl_port",
+      "type": "number",
+      "default": 465
+    },
+    {
+      "name": "starttls_port",
+      "type": "number",
+      "default": 587
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "default_port": "$default_port",
+      "default_security": "$default_security",
+      "timeout_seconds": "$timeout_seconds",
+      "ssl_port": "$ssl_port",
+      "starttls_port": "$starttls_port"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "default_port / default_security: what a new SMTP setup starts with. timeout_seconds: how long one connection may wait. ssl_port / starttls_port: the port used when none is set, by security.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "default_port": "587",
+        "default_security": "starttls",
+        "timeout_seconds": 20,
+        "ssl_port": 465,
+        "starttls_port": 587
+      }
+    }
+  ],
+  "weight_basis": "Platform access primitive, no business content. The knobs ARE the policy — edit them here, never in Python."
+}

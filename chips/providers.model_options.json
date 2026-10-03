@@ -1,0 +1,281 @@
+{
+  "chip_id": "providers.model_options",
+  "kind": "accessor",
+  "set": "providers",
+  "label": "The AI model picker: which models are listed, in what order, and which one is Recommended",
+  "aliases": [
+    "model picker",
+    "recommended model"
+  ],
+  "params": [
+    {
+      "name": "rows",
+      "type": "list",
+      "default": [],
+      "label": "Models of one kind of work, each with have_key, status, quality and cost_usd for this job"
+    },
+    {
+      "name": "recommend_min_quality",
+      "type": "number",
+      "default": 4,
+      "label": "Recommended only at this quality or above"
+    },
+    {
+      "name": "recommend_status",
+      "type": "text",
+      "default": "active",
+      "label": "Recommended only for models with this status"
+    },
+    {
+      "name": "hidden_status",
+      "type": "text",
+      "default": "retired",
+      "label": "Models with this status are not listed"
+    },
+    {
+      "name": "order_by",
+      "type": "list",
+      "default": [
+        "have_key",
+        "quality"
+      ],
+      "label": "List order (highest first): keys held, then quality"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "models": {
+        "vop": "rank_rows",
+        "rows": {
+          "vop": "filter_rows",
+          "rows": "$rows",
+          "field": "status",
+          "cmp": "ne",
+          "value": "$hidden_status"
+        },
+        "by": "$order_by",
+        "descending": true
+      },
+      "recommended": {
+        "vop": "get",
+        "path": "0.id",
+        "value": {
+          "vop": "rank_rows",
+          "rows": {
+            "vop": "filter_rows",
+            "field": "quality",
+            "cmp": "ge",
+            "value": "$recommend_min_quality",
+            "rows": {
+              "vop": "filter_rows",
+              "field": "cost_usd",
+              "cmp": "ge",
+              "value": 0,
+              "rows": {
+                "vop": "filter_rows",
+                "field": "status",
+                "cmp": "eq",
+                "value": "$recommend_status",
+                "rows": {
+                  "vop": "filter_rows",
+                  "rows": "$rows",
+                  "field": "have_key",
+                  "cmp": "eq",
+                  "value": true
+                }
+              }
+            }
+          },
+          "by": "cost_usd",
+          "descending": false,
+          "limit": 1
+        }
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-09-26 owner: \"chips and ops only\". Was Python in providers.options. Recommended = the cheapest model whose key is held, whose status is active, whose quality is at least recommend_min_quality and whose price is known (an unknown price never wins). A retired model is not listed.",
+  "weight_basis": "providers",
+  "test_cases": [
+    {
+      "args": {
+        "rows": [
+          {
+            "id": "a",
+            "have_key": true,
+            "status": "active",
+            "quality": 5,
+            "cost_usd": 0.04
+          },
+          {
+            "id": "b",
+            "have_key": true,
+            "status": "active",
+            "quality": 4,
+            "cost_usd": 0.01
+          },
+          {
+            "id": "c",
+            "have_key": true,
+            "status": "active",
+            "quality": 2,
+            "cost_usd": 0.0
+          },
+          {
+            "id": "d",
+            "have_key": false,
+            "status": "active",
+            "quality": 5,
+            "cost_usd": 0.001
+          },
+          {
+            "id": "e",
+            "have_key": true,
+            "status": "retired",
+            "quality": 5,
+            "cost_usd": 0.001
+          },
+          {
+            "id": "f",
+            "have_key": true,
+            "status": "active",
+            "quality": 5,
+            "cost_usd": null
+          }
+        ]
+      },
+      "expect_value": {
+        "models": [
+          {
+            "id": "a",
+            "have_key": true,
+            "status": "active",
+            "quality": 5,
+            "cost_usd": 0.04
+          },
+          {
+            "id": "f",
+            "have_key": true,
+            "status": "active",
+            "quality": 5,
+            "cost_usd": null
+          },
+          {
+            "id": "b",
+            "have_key": true,
+            "status": "active",
+            "quality": 4,
+            "cost_usd": 0.01
+          },
+          {
+            "id": "c",
+            "have_key": true,
+            "status": "active",
+            "quality": 2,
+            "cost_usd": 0.0
+          },
+          {
+            "id": "d",
+            "have_key": false,
+            "status": "active",
+            "quality": 5,
+            "cost_usd": 0.001
+          }
+        ],
+        "recommended": "b"
+      }
+    },
+    {
+      "args": {
+        "rows": [
+          {
+            "id": "a",
+            "have_key": true,
+            "status": "active",
+            "quality": 5,
+            "cost_usd": 0.04
+          },
+          {
+            "id": "b",
+            "have_key": true,
+            "status": "active",
+            "quality": 4,
+            "cost_usd": 0.01
+          },
+          {
+            "id": "c",
+            "have_key": true,
+            "status": "active",
+            "quality": 2,
+            "cost_usd": 0.0
+          },
+          {
+            "id": "d",
+            "have_key": false,
+            "status": "active",
+            "quality": 5,
+            "cost_usd": 0.001
+          },
+          {
+            "id": "e",
+            "have_key": true,
+            "status": "retired",
+            "quality": 5,
+            "cost_usd": 0.001
+          },
+          {
+            "id": "f",
+            "have_key": true,
+            "status": "active",
+            "quality": 5,
+            "cost_usd": null
+          }
+        ],
+        "recommend_min_quality": 5
+      },
+      "expect_value": {
+        "models": [
+          {
+            "id": "a",
+            "have_key": true,
+            "status": "active",
+            "quality": 5,
+            "cost_usd": 0.04
+          },
+          {
+            "id": "f",
+            "have_key": true,
+            "status": "active",
+            "quality": 5,
+            "cost_usd": null
+          },
+          {
+            "id": "b",
+            "have_key": true,
+            "status": "active",
+            "quality": 4,
+            "cost_usd": 0.01
+          },
+          {
+            "id": "c",
+            "have_key": true,
+            "status": "active",
+            "quality": 2,
+            "cost_usd": 0.0
+          },
+          {
+            "id": "d",
+            "have_key": false,
+            "status": "active",
+            "quality": 5,
+            "cost_usd": 0.001
+          }
+        ],
+        "recommended": "a"
+      }
+    }
+  ]
+}

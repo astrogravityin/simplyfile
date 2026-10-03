@@ -1,0 +1,58 @@
+{
+  "chip_id": "geo.settings",
+  "kind": "accessor",
+  "set": "geo",
+  "audience": "admin",
+  "label": "Where the local IP-to-place database comes from and how often",
+  "aliases": [
+    "geoip",
+    "db-ip"
+  ],
+  "params": [
+    {
+      "name": "url_template",
+      "type": "text",
+      "default": "https://download.db-ip.com/free/dbip-city-lite-{month}.mmdb.gz"
+    },
+    {
+      "name": "refresh_days",
+      "type": "number",
+      "default": 35
+    },
+    {
+      "name": "retry_seconds",
+      "type": "number",
+      "default": 21600
+    },
+    {
+      "name": "download_timeout_seconds",
+      "type": "number",
+      "default": 120
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "url_template": "$url_template",
+      "refresh_days": "$refresh_days",
+      "retry_seconds": "$retry_seconds",
+      "download_timeout_seconds": "$download_timeout_seconds"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "url_template: the DB-IP City Lite download ({month} = YYYY-MM). refresh_days: a file older than this is downloaded again (DB-IP publishes monthly). retry_seconds: how long the loop waits between checks, so a failed download never retries in a tight loop. download_timeout_seconds: one download's limit.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "url_template": "https://download.db-ip.com/free/dbip-city-lite-{month}.mmdb.gz",
+        "refresh_days": 35,
+        "retry_seconds": 21600,
+        "download_timeout_seconds": 120
+      }
+    }
+  ],
+  "weight_basis": "Platform operations primitive, no business content. The knobs ARE the policy — edit them here, never in Python."
+}

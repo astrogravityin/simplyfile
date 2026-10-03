@@ -1,0 +1,65 @@
+{
+  "chip_id": "memory.settings",
+  "kind": "accessor",
+  "set": "memory",
+  "audience": "admin",
+  "label": "How Memory watch samples and what it keeps",
+  "aliases": [
+    "sample interval",
+    "history length"
+  ],
+  "params": [
+    {
+      "name": "sample_seconds",
+      "type": "number",
+      "default": 15
+    },
+    {
+      "name": "keep_samples",
+      "type": "number",
+      "default": 960
+    },
+    {
+      "name": "keep_events",
+      "type": "number",
+      "default": 300
+    },
+    {
+      "name": "disk_every_seconds",
+      "type": "number",
+      "default": 600
+    },
+    {
+      "name": "events_shown",
+      "type": "number",
+      "default": 100
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "sample_seconds": "$sample_seconds",
+      "keep_samples": "$keep_samples",
+      "keep_events": "$keep_events",
+      "disk_every_seconds": "$disk_every_seconds",
+      "events_shown": "$events_shown"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "The sampler's cadence and memory: one reading every sample_seconds, the last keep_samples readings (960 x 15 s = 4 hours) and keep_events request moves, disk measured every disk_every_seconds (walking folders is not free). Read once at start; a change needs a restart.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "sample_seconds": 15,
+        "keep_samples": 960,
+        "keep_events": 300,
+        "disk_every_seconds": 600,
+        "events_shown": 100
+      }
+    }
+  ],
+  "weight_basis": "Platform operations primitive, no business content. The knobs ARE the policy — edit them here, never in Python."
+}

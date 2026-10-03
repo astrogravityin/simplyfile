@@ -1,0 +1,133 @@
+{
+  "chip_id": "portal.upload_rule",
+  "kind": "accessor",
+  "set": "portal",
+  "label": "The upload rule's subject: its facts and what they are called in the Rules screen",
+  "aliases": [
+    "upload rule subject"
+  ],
+  "params": [
+    {
+      "name": "subject_label",
+      "type": "text",
+      "default": "A recording being uploaded"
+    },
+    {
+      "name": "fields",
+      "type": "list",
+      "default": [
+        {
+          "name": "ext",
+          "type": "text",
+          "label": "File type (.mp4…)"
+        },
+        {
+          "name": "size_mb",
+          "type": "number",
+          "label": "Size the browser declared (MB)"
+        },
+        {
+          "name": "used_gb",
+          "type": "number",
+          "label": "What this account already holds (GB)"
+        },
+        {
+          "name": "quota_gb",
+          "type": "number",
+          "label": "Account quota (GB, 0 = none)"
+        },
+        {
+          "name": "role",
+          "type": "text",
+          "label": "Account role"
+        },
+        {
+          "name": "title",
+          "type": "text",
+          "label": "Title typed"
+        }
+      ]
+    },
+    {
+      "name": "trigger_label",
+      "type": "text",
+      "default": "A recording upload starts"
+    },
+    {
+      "name": "outcomes",
+      "type": "list",
+      "default": [
+        "refuse",
+        "banner",
+        "notify"
+      ]
+    },
+    {
+      "name": "trigger_note",
+      "type": "text",
+      "default": "Before a byte is written. A refuse outcome stops the upload with its message."
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "subject_label": "$subject_label",
+      "fields": "$fields",
+      "trigger_label": "$trigger_label",
+      "outcomes": "$outcomes",
+      "trigger_note": "$trigger_note"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-09-26: these labels were written into app.py at start-up.",
+  "weight_basis": "portal",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "subject_label": "A recording being uploaded",
+        "fields": [
+          {
+            "name": "ext",
+            "type": "text",
+            "label": "File type (.mp4…)"
+          },
+          {
+            "name": "size_mb",
+            "type": "number",
+            "label": "Size the browser declared (MB)"
+          },
+          {
+            "name": "used_gb",
+            "type": "number",
+            "label": "What this account already holds (GB)"
+          },
+          {
+            "name": "quota_gb",
+            "type": "number",
+            "label": "Account quota (GB, 0 = none)"
+          },
+          {
+            "name": "role",
+            "type": "text",
+            "label": "Account role"
+          },
+          {
+            "name": "title",
+            "type": "text",
+            "label": "Title typed"
+          }
+        ],
+        "trigger_label": "A recording upload starts",
+        "outcomes": [
+          "refuse",
+          "banner",
+          "notify"
+        ],
+        "trigger_note": "Before a byte is written. A refuse outcome stops the upload with its message."
+      }
+    }
+  ]
+}

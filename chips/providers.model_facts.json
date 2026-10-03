@@ -1,0 +1,197 @@
+{
+  "chip_id": "providers.model_facts",
+  "kind": "accessor",
+  "set": "providers",
+  "label": "What each AI model is like: quality (1-5, the portal's own rating), what it is good for, and its status (active / retiring / retired)",
+  "aliases": [
+    "model quality",
+    "model catalog",
+    "retire a model"
+  ],
+  "params": [
+    {
+      "name": "rows",
+      "type": "rows",
+      "default": [
+        {
+          "id": "gemini-2.5-pro",
+          "quality": 5,
+          "good_for": "Best writing and reasoning; slower, dearer",
+          "status": "active"
+        },
+        {
+          "id": "gemini-pro-latest",
+          "quality": 5,
+          "good_for": "Google's newest Pro - best writing",
+          "status": "active"
+        },
+        {
+          "id": "gemini-2.5-flash",
+          "quality": 4,
+          "good_for": "Good writing, fast, low price",
+          "status": "active"
+        },
+        {
+          "id": "gemini-flash-latest",
+          "quality": 4,
+          "good_for": "Google's newest Flash - good and fast",
+          "status": "active"
+        },
+        {
+          "id": "gpt-5-mini",
+          "quality": 4,
+          "good_for": "Good writing, careful with instructions",
+          "status": "active"
+        },
+        {
+          "id": "gpt-4.1-mini",
+          "quality": 4,
+          "good_for": "Good all-round writing",
+          "status": "active"
+        },
+        {
+          "id": "deepseek-chat",
+          "quality": 4,
+          "good_for": "Good writing at a low price",
+          "status": "active"
+        },
+        {
+          "id": "llama-3.3-70b-versatile",
+          "quality": 3,
+          "good_for": "Decent writing, very fast (Groq)",
+          "status": "active"
+        },
+        {
+          "id": "meta-llama/llama-3.3-70b-instruct",
+          "quality": 3,
+          "good_for": "Decent writing, cheap (OpenRouter)",
+          "status": "active"
+        },
+        {
+          "id": "google/gemini-2.5-flash-lite",
+          "quality": 3,
+          "good_for": "Plain writing, very cheap",
+          "status": "active"
+        },
+        {
+          "id": "gpt-4.1-nano",
+          "quality": 2,
+          "good_for": "Short simple text only - cheapest OpenAI",
+          "status": "active"
+        },
+        {
+          "id": "llama-3.1-8b-instant",
+          "quality": 2,
+          "good_for": "Short simple text only - fastest",
+          "status": "active"
+        },
+        {
+          "id": "llama3.1",
+          "quality": 2,
+          "good_for": "Runs on this computer, free; plain writing",
+          "status": "active"
+        },
+        {
+          "id": "qwen2.5",
+          "quality": 2,
+          "good_for": "Runs on this computer, free; plain writing",
+          "status": "active"
+        },
+        {
+          "id": "gpt-image-1",
+          "quality": 5,
+          "good_for": "Best detail and clean line art",
+          "status": "active"
+        },
+        {
+          "id": "gemini-2.5-flash-image",
+          "quality": 5,
+          "good_for": "Nano Banana - rich detail, keeps characters alike",
+          "status": "active"
+        },
+        {
+          "id": "gpt-image-1-mini",
+          "quality": 3,
+          "good_for": "Cheapest; simpler drawings",
+          "status": "active"
+        },
+        {
+          "id": "veo-3.1-generate-preview",
+          "quality": 5,
+          "good_for": "Best video, with sound",
+          "status": "active"
+        },
+        {
+          "id": "veo-3.1-fast-generate-preview",
+          "quality": 4,
+          "good_for": "Good video, faster and cheaper",
+          "status": "active"
+        },
+        {
+          "id": "veo-3.1-lite-generate-preview",
+          "quality": 3,
+          "good_for": "Plain video, cheapest Veo",
+          "status": "active"
+        },
+        {
+          "id": "gen4_turbo",
+          "quality": 4,
+          "good_for": "Runway - good motion",
+          "status": "active"
+        },
+        {
+          "id": "gen3a_turbo",
+          "quality": 3,
+          "good_for": "Runway - older, cheaper",
+          "status": "active"
+        },
+        {
+          "id": "fal-ai/kling-video/v2.1/standard/text-to-video",
+          "quality": 4,
+          "good_for": "Kling - good motion",
+          "status": "active"
+        },
+        {
+          "id": "fal-ai/minimax/hailuo-02/standard/text-to-video",
+          "quality": 4,
+          "good_for": "Hailuo - good motion",
+          "status": "active"
+        },
+        {
+          "id": "fal-ai/bytedance/seedance/v1/lite/text-to-video",
+          "quality": 3,
+          "good_for": "Seedance lite - cheap",
+          "status": "active"
+        },
+        {
+          "id": "fal-ai/wan/v2.2-a14b/text-to-video",
+          "quality": 3,
+          "good_for": "Wan - cheap",
+          "status": "active"
+        }
+      ],
+      "label": "One row per model id. status: active (offered), retiring (offered, never recommended), retired (hidden)"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "rows": "$rows"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-09-26 owner: every AI button asks which model, by the job - a text job lists text models, a picture job picture models - each with its price for THIS job and its quality. Prices stay where they were (providers.models, board/film settings, rates); this chip adds only quality, use and status. A new model = a row here + its price row; a model the provider drops = status retired.",
+  "weight_basis": "providers",
+  "test_cases": [
+    {
+      "args": {
+        "rows": []
+      },
+      "expect_value": {
+        "rows": []
+      }
+    }
+  ]
+}

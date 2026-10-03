@@ -1,0 +1,97 @@
+{
+  "chip_id": "scan.is_likely",
+  "kind": "predicate",
+  "set": "scan",
+  "label": "A scanned file is a likely screen (ticked for you)",
+  "aliases": [],
+  "params": [
+    {
+      "name": "in_screen_dir",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "named_screen",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "declares_route",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "android_layout",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "page_template",
+      "type": "boolean",
+      "default": false
+    }
+  ],
+  "expr": {
+    "op": "any",
+    "items": [
+      {
+        "op": "all",
+        "items": [
+          "$in_screen_dir",
+          "$named_screen"
+        ]
+      },
+      "$declares_route",
+      "$android_layout",
+      "$page_template"
+    ]
+  },
+  "returns": "boolean",
+  "version": 1,
+  "status": "published",
+  "description_nl": "A file is LIKELY (and pre-ticked) when it sits in a screen folder AND is named like a screen, or declares a route, or is an Android layout, or is a page template. Anything else that matched a reason is only a MAYBE.",
+  "test_cases": [
+    {
+      "args": {
+        "in_screen_dir": true,
+        "named_screen": true
+      },
+      "expect_value": true
+    },
+    {
+      "args": {
+        "in_screen_dir": true
+      },
+      "expect_value": false
+    },
+    {
+      "args": {
+        "named_screen": true
+      },
+      "expect_value": false
+    },
+    {
+      "args": {
+        "declares_route": true
+      },
+      "expect_value": true
+    },
+    {
+      "args": {
+        "android_layout": true
+      },
+      "expect_value": true
+    },
+    {
+      "args": {
+        "page_template": true
+      },
+      "expect_value": true
+    },
+    {
+      "args": {},
+      "expect_value": false
+    }
+  ],
+  "weight_basis": "Portal business setting of the Training & Video Portal. The knobs ARE the policy — edit them here, never in Python."
+}

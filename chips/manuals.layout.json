@@ -1,0 +1,148 @@
+{
+  "chip_id": "manuals.layout",
+  "kind": "accessor",
+  "set": "manuals",
+  "audience": "admin",
+  "label": "The HTML each part of a manual renders to",
+  "aliases": [
+    "manual html template"
+  ],
+  "params": [
+    {
+      "name": "cover_open",
+      "type": "text",
+      "default": "<section class=\"pg\" style=\"background:{css};color:{fg};text-align:center;\">"
+    },
+    {
+      "name": "cover_image",
+      "type": "text",
+      "default": "<img src=\"{src}\" alt=\"\" style=\"max-width:60%;max-height:340px;object-fit:contain;margin:0 auto 28px;display:block;border-radius:14px;\"/>"
+    },
+    {
+      "name": "cover_title",
+      "type": "text",
+      "default": "<h1 style=\"margin:0 0 10px;font-size:38px;line-height:1.2;letter-spacing:-0.5px;\">{title}</h1>"
+    },
+    {
+      "name": "cover_subtitle",
+      "type": "text",
+      "default": "<p style=\"margin:0 0 22px;font-size:18px;color:{muted};\">{subtitle}</p>"
+    },
+    {
+      "name": "cover_author",
+      "type": "text",
+      "default": "<p style=\"margin:0;font-size:14px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:{muted};\">{author}</p>"
+    },
+    {
+      "name": "cover_version",
+      "type": "text",
+      "default": "<p style=\"margin:8px 0 0;font-size:12px;color:{muted};\">{version}</p>"
+    },
+    {
+      "name": "cover_when",
+      "type": "text",
+      "default": "<p style=\"margin:6px 0 0;font-size:12px;color:{muted};\">{when}</p>"
+    },
+    {
+      "name": "section_close",
+      "type": "text",
+      "default": "</section>"
+    },
+    {
+      "name": "toc_row",
+      "type": "text",
+      "default": "<li style=\"margin:0 0 8px;\"><a href=\"#{anchor}\" style=\"color:inherit;text-decoration:none;display:flex;align-items:baseline;gap:10px;\"><span style=\"font-weight:800;min-width:26px;\">{n}.</span><span style=\"flex:1;border-bottom:1px dotted {muted};\">{header}</span></a></li>"
+    },
+    {
+      "name": "toc",
+      "type": "text",
+      "default": "<section class=\"pg\" id=\"{toc_anchor}\" style=\"background:{css};color:{fg};\"><h2 style=\"margin:0 0 18px;font-size:26px;border-bottom:2px solid {muted};padding-bottom:10px;\">{contents}</h2><ol style=\"list-style:none;margin:0;padding:0;font-size:16px;line-height:1.6;\">{rows}</ol></section>"
+    },
+    {
+      "name": "page_open",
+      "type": "text",
+      "default": "<section class=\"pg\" id=\"{anchor}\" style=\"background:{css};color:{fg};\"><header style=\"border-bottom:2px solid {muted};padding-bottom:10px;margin-bottom:20px;\"><span style=\"font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:{muted};\">{page_label}</span>{toc_link}<h2 style=\"margin:6px 0 0;font-size:26px;line-height:1.25;\">{header}</h2></header>"
+    },
+    {
+      "name": "page_toc_link",
+      "type": "text",
+      "default": "<a class=\"tolink\" href=\"#{toc_anchor}\" style=\"float:right;font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:{muted};text-decoration:none;\">{back}</a>"
+    },
+    {
+      "name": "page_figure",
+      "type": "text",
+      "default": "<figure style=\"margin:0 0 18px;text-align:center;\"><img src=\"{src}\" alt=\"{alt}\" style=\"max-width:100%;max-height:420px;object-fit:contain;border-radius:12px;\"/>{caption}</figure>"
+    },
+    {
+      "name": "page_caption",
+      "type": "text",
+      "default": "<figcaption style=\"margin-top:8px;font-size:12px;font-weight:700;color:{muted};\">{label}</figcaption>"
+    },
+    {
+      "name": "page_description",
+      "type": "text",
+      "default": "<div class=\"desc\">{html}</div>"
+    },
+    {
+      "name": "body",
+      "type": "text",
+      "default": "<div class=\"manual\" style=\"font-family:Georgia,'Times New Roman',serif;\"><style>{css}</style>{cover}{toc}{pages}</div>"
+    },
+    {
+      "name": "document",
+      "type": "text",
+      "default": "<!doctype html>\n<html lang=\"en\"><head><meta charset=\"utf-8\"/><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"/><title>{title}</title><style>{css}</style></head><body>{body}</body></html>"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "cover_open": "$cover_open",
+      "cover_image": "$cover_image",
+      "cover_title": "$cover_title",
+      "cover_subtitle": "$cover_subtitle",
+      "cover_author": "$cover_author",
+      "cover_version": "$cover_version",
+      "cover_when": "$cover_when",
+      "section_close": "$section_close",
+      "toc_row": "$toc_row",
+      "toc": "$toc",
+      "page_open": "$page_open",
+      "page_toc_link": "$page_toc_link",
+      "page_figure": "$page_figure",
+      "page_caption": "$page_caption",
+      "page_description": "$page_description",
+      "body": "$body",
+      "document": "$document"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "One renderer for the preview, the downloaded file and the public page. {placeholders} are filled with already-escaped values: {css} {fg} {muted} from the swatch, {title} {subtitle} {author} {version} {when} on the cover, {anchor} {n} {header} {rows} {contents} {toc_anchor} for the contents, {page_label} {toc_link} {back} {src} {alt} {caption} {label} {html} on a page, {cover} {toc} {pages} in body, {body} in document. Stylesheets are NOT here (they hold braces): see manuals.settings body_css / document_css.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "cover_open": "<section class=\"pg\" style=\"background:{css};color:{fg};text-align:center;\">",
+        "cover_image": "<img src=\"{src}\" alt=\"\" style=\"max-width:60%;max-height:340px;object-fit:contain;margin:0 auto 28px;display:block;border-radius:14px;\"/>",
+        "cover_title": "<h1 style=\"margin:0 0 10px;font-size:38px;line-height:1.2;letter-spacing:-0.5px;\">{title}</h1>",
+        "cover_subtitle": "<p style=\"margin:0 0 22px;font-size:18px;color:{muted};\">{subtitle}</p>",
+        "cover_author": "<p style=\"margin:0;font-size:14px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:{muted};\">{author}</p>",
+        "cover_version": "<p style=\"margin:8px 0 0;font-size:12px;color:{muted};\">{version}</p>",
+        "cover_when": "<p style=\"margin:6px 0 0;font-size:12px;color:{muted};\">{when}</p>",
+        "section_close": "</section>",
+        "toc_row": "<li style=\"margin:0 0 8px;\"><a href=\"#{anchor}\" style=\"color:inherit;text-decoration:none;display:flex;align-items:baseline;gap:10px;\"><span style=\"font-weight:800;min-width:26px;\">{n}.</span><span style=\"flex:1;border-bottom:1px dotted {muted};\">{header}</span></a></li>",
+        "toc": "<section class=\"pg\" id=\"{toc_anchor}\" style=\"background:{css};color:{fg};\"><h2 style=\"margin:0 0 18px;font-size:26px;border-bottom:2px solid {muted};padding-bottom:10px;\">{contents}</h2><ol style=\"list-style:none;margin:0;padding:0;font-size:16px;line-height:1.6;\">{rows}</ol></section>",
+        "page_open": "<section class=\"pg\" id=\"{anchor}\" style=\"background:{css};color:{fg};\"><header style=\"border-bottom:2px solid {muted};padding-bottom:10px;margin-bottom:20px;\"><span style=\"font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:{muted};\">{page_label}</span>{toc_link}<h2 style=\"margin:6px 0 0;font-size:26px;line-height:1.25;\">{header}</h2></header>",
+        "page_toc_link": "<a class=\"tolink\" href=\"#{toc_anchor}\" style=\"float:right;font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:{muted};text-decoration:none;\">{back}</a>",
+        "page_figure": "<figure style=\"margin:0 0 18px;text-align:center;\"><img src=\"{src}\" alt=\"{alt}\" style=\"max-width:100%;max-height:420px;object-fit:contain;border-radius:12px;\"/>{caption}</figure>",
+        "page_caption": "<figcaption style=\"margin-top:8px;font-size:12px;font-weight:700;color:{muted};\">{label}</figcaption>",
+        "page_description": "<div class=\"desc\">{html}</div>",
+        "body": "<div class=\"manual\" style=\"font-family:Georgia,'Times New Roman',serif;\"><style>{css}</style>{cover}{toc}{pages}</div>",
+        "document": "<!doctype html>\n<html lang=\"en\"><head><meta charset=\"utf-8\"/><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"/><title>{title}</title><style>{css}</style></head><body>{body}</body></html>"
+      }
+    }
+  ],
+  "weight_basis": "Portal business setting of the Training & Video Portal. The knobs ARE the policy — edit them here, never in Python. Owner-only (audience admin): a looser value here would open a security hole or spend the owner's disk, so editors see and test it but cannot change it."
+}

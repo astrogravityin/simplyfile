@@ -1,0 +1,129 @@
+{
+  "chip_id": "media.cut",
+  "kind": "accessor",
+  "set": "media",
+  "audience": "admin",
+  "label": "How a recording is trimmed and how several are joined into one",
+  "aliases": [
+    "trim",
+    "combine videos",
+    "end trim"
+  ],
+  "params": [
+    {
+      "name": "min_seconds",
+      "type": "number",
+      "default": 0.5,
+      "label": "The shortest piece worth keeping"
+    },
+    {
+      "name": "max_parts",
+      "type": "number",
+      "default": 40,
+      "label": "How many pieces may be joined at once"
+    },
+    {
+      "name": "fade_seconds",
+      "type": "number",
+      "default": 0.05,
+      "label": "Sound faded in and out at each cut, so it does not click"
+    },
+    {
+      "name": "width",
+      "type": "number",
+      "default": 1280,
+      "label": "The picture size everything is brought to before joining"
+    },
+    {
+      "name": "height",
+      "type": "number",
+      "default": 720,
+      "label": "Height of that size"
+    },
+    {
+      "name": "fps",
+      "type": "number",
+      "default": 30,
+      "label": "Frames a second in the joined video"
+    },
+    {
+      "name": "sample_rate",
+      "type": "number",
+      "default": 48000,
+      "label": "Sound samples a second in the joined video"
+    },
+    {
+      "name": "exact",
+      "type": "boolean",
+      "default": true,
+      "label": "Cut exactly where asked (re-encodes) instead of at the nearest keyframe (instant)"
+    },
+    {
+      "name": "end_tolerance_seconds",
+      "type": "number",
+      "default": 0.5,
+      "label": "How far past a recording's end a cut may be asked for before it is refused"
+    },
+    {
+      "name": "whole_tolerance_seconds",
+      "type": "number",
+      "default": 0.05,
+      "label": "A piece this close to the whole recording is joined whole, not cut"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "min_seconds": "$min_seconds",
+      "max_parts": "$max_parts",
+      "fade_seconds": "$fade_seconds",
+      "width": "$width",
+      "height": "$height",
+      "fps": "$fps",
+      "sample_rate": "$sample_rate",
+      "exact": "$exact",
+      "end_tolerance_seconds": "$end_tolerance_seconds",
+      "whole_tolerance_seconds": "$whole_tolerance_seconds"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "Trim keeps one stretch of a recording; Combine puts several one after another. Joining needs every piece to agree on size, frame rate and sound rate, so each is brought to the numbers here first - that is why a joined video is re-encoded while a plain trim with exact off is instant. With exact on, a trim lands on the frame asked for; with it off, it lands on the nearest keyframe, which can be a second out.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "min_seconds": 0.5,
+        "max_parts": 40,
+        "fade_seconds": 0.05,
+        "width": 1280,
+        "height": 720,
+        "fps": 30,
+        "sample_rate": 48000,
+        "exact": true,
+        "end_tolerance_seconds": 0.5,
+        "whole_tolerance_seconds": 0.05
+      }
+    },
+    {
+      "args": {
+        "exact": false,
+        "max_parts": 4
+      },
+      "expect_value": {
+        "min_seconds": 0.5,
+        "max_parts": 4,
+        "fade_seconds": 0.05,
+        "width": 1280,
+        "height": 720,
+        "fps": 30,
+        "sample_rate": 48000,
+        "exact": false,
+        "end_tolerance_seconds": 0.5,
+        "whole_tolerance_seconds": 0.05
+      }
+    }
+  ],
+  "weight_basis": "Owner-only (audience admin): these numbers decide how much CPU every cut and join costs on a server the owner pays for, and whether the result plays everywhere."
+}

@@ -1,0 +1,736 @@
+{
+  "chip_id": "ui.builder",
+  "kind": "accessor",
+  "set": "ui",
+  "label": "Every word of the builder editors (Ops & chips and Rule Chip Builder)",
+  "aliases": [
+    "builder editor words"
+  ],
+  "params": [
+    {
+      "name": "value_type_tip",
+      "type": "text",
+      "default": "What kind of value"
+    },
+    {
+      "name": "value_type",
+      "type": "text",
+      "default": "Value type"
+    },
+    {
+      "name": "yes",
+      "type": "text",
+      "default": "yes"
+    },
+    {
+      "name": "no",
+      "type": "text",
+      "default": "no"
+    },
+    {
+      "name": "remove",
+      "type": "text",
+      "default": "Remove"
+    },
+    {
+      "name": "remove_item",
+      "type": "text",
+      "default": "Remove item"
+    },
+    {
+      "name": "add_item",
+      "type": "text",
+      "default": "+ Add item"
+    },
+    {
+      "name": "name",
+      "type": "text",
+      "default": "Name"
+    },
+    {
+      "name": "remove_named",
+      "type": "text",
+      "default": "Remove {name}"
+    },
+    {
+      "name": "add_field",
+      "type": "text",
+      "default": "+ Add field"
+    },
+    {
+      "name": "no_rows",
+      "type": "text",
+      "default": "No rows yet."
+    },
+    {
+      "name": "move_up",
+      "type": "text",
+      "default": "Move up"
+    },
+    {
+      "name": "move_row_up",
+      "type": "text",
+      "default": "Move row up"
+    },
+    {
+      "name": "move_down",
+      "type": "text",
+      "default": "Move down"
+    },
+    {
+      "name": "move_row_down",
+      "type": "text",
+      "default": "Move row down"
+    },
+    {
+      "name": "remove_row",
+      "type": "text",
+      "default": "Remove row"
+    },
+    {
+      "name": "add_row",
+      "type": "text",
+      "default": "+ Add row"
+    },
+    {
+      "name": "test_all",
+      "type": "text",
+      "default": "All of these hold"
+    },
+    {
+      "name": "test_any",
+      "type": "text",
+      "default": "Any of these holds"
+    },
+    {
+      "name": "test_not",
+      "type": "text",
+      "default": "This does NOT hold"
+    },
+    {
+      "name": "test_at_least",
+      "type": "text",
+      "default": "At least N of these hold"
+    },
+    {
+      "name": "test_eq",
+      "type": "text",
+      "default": "equals"
+    },
+    {
+      "name": "test_ne",
+      "type": "text",
+      "default": "is not"
+    },
+    {
+      "name": "test_gt",
+      "type": "text",
+      "default": "is more than"
+    },
+    {
+      "name": "test_ge",
+      "type": "text",
+      "default": "is at least"
+    },
+    {
+      "name": "test_lt",
+      "type": "text",
+      "default": "is less than"
+    },
+    {
+      "name": "test_le",
+      "type": "text",
+      "default": "is at most"
+    },
+    {
+      "name": "test_in_set",
+      "type": "text",
+      "default": "is one of"
+    },
+    {
+      "name": "kind_value",
+      "type": "text",
+      "default": "Value"
+    },
+    {
+      "name": "kind_ref",
+      "type": "text",
+      "default": "Knob / fact"
+    },
+    {
+      "name": "kind_chip",
+      "type": "text",
+      "default": "Chip"
+    },
+    {
+      "name": "kind_vop",
+      "type": "text",
+      "default": "Op"
+    },
+    {
+      "name": "kind_choose",
+      "type": "text",
+      "default": "Choose"
+    },
+    {
+      "name": "kind_test",
+      "type": "text",
+      "default": "Test"
+    },
+    {
+      "name": "kind_aria",
+      "type": "text",
+      "default": "Kind of expression"
+    },
+    {
+      "name": "remove_field",
+      "type": "text",
+      "default": "Remove field"
+    },
+    {
+      "name": "ref_aria",
+      "type": "text",
+      "default": "Knob or fact"
+    },
+    {
+      "name": "unknown_here",
+      "type": "text",
+      "default": "{name} (unknown here)"
+    },
+    {
+      "name": "loading_chip",
+      "type": "text",
+      "default": "Loading the chip…"
+    },
+    {
+      "name": "no_chip",
+      "type": "text",
+      "default": "No chip named {id}."
+    },
+    {
+      "name": "knob_default",
+      "type": "text",
+      "default": "(knob default)"
+    },
+    {
+      "name": "use_default",
+      "type": "text",
+      "default": "use the default"
+    },
+    {
+      "name": "set_it",
+      "type": "text",
+      "default": "set"
+    },
+    {
+      "name": "unknown_op",
+      "type": "text",
+      "default": "{name} (unknown)"
+    },
+    {
+      "name": "op_off",
+      "type": "text",
+      "default": "{op} (switched off)"
+    },
+    {
+      "name": "leave_out",
+      "type": "text",
+      "default": "leave out"
+    },
+    {
+      "name": "give",
+      "type": "text",
+      "default": "+ give {name}"
+    },
+    {
+      "name": "when",
+      "type": "text",
+      "default": "When"
+    },
+    {
+      "name": "else_when",
+      "type": "text",
+      "default": "Else when"
+    },
+    {
+      "name": "remove_case",
+      "type": "text",
+      "default": "Remove case"
+    },
+    {
+      "name": "then",
+      "type": "text",
+      "default": "then"
+    },
+    {
+      "name": "add_case",
+      "type": "text",
+      "default": "+ Add case"
+    },
+    {
+      "name": "otherwise",
+      "type": "text",
+      "default": "Otherwise"
+    },
+    {
+      "name": "remove_condition",
+      "type": "text",
+      "default": "Remove condition"
+    },
+    {
+      "name": "add_condition",
+      "type": "text",
+      "default": "+ Add condition"
+    },
+    {
+      "name": "try_scenario",
+      "type": "text",
+      "default": "Try on scenario"
+    },
+    {
+      "name": "knobs_hint",
+      "type": "text",
+      "default": "Knobs are the numbers and words a person can change without touching the logic."
+    },
+    {
+      "name": "knob_name_ph",
+      "type": "text",
+      "default": "name"
+    },
+    {
+      "name": "knob_name",
+      "type": "text",
+      "default": "Knob name"
+    },
+    {
+      "name": "knob_type",
+      "type": "text",
+      "default": "Knob type"
+    },
+    {
+      "name": "knob_label_ph",
+      "type": "text",
+      "default": "what it means (shown to people)"
+    },
+    {
+      "name": "knob_label",
+      "type": "text",
+      "default": "Knob label"
+    },
+    {
+      "name": "remove_knob",
+      "type": "text",
+      "default": "Remove knob"
+    },
+    {
+      "name": "remove_knob_named",
+      "type": "text",
+      "default": "Remove knob {name}"
+    },
+    {
+      "name": "default",
+      "type": "text",
+      "default": "Default"
+    },
+    {
+      "name": "add_knob",
+      "type": "text",
+      "default": "Add knob"
+    },
+    {
+      "name": "test_n",
+      "type": "text",
+      "default": "Test {n}"
+    },
+    {
+      "name": "scenario",
+      "type": "text",
+      "default": "Scenario"
+    },
+    {
+      "name": "no_scenario",
+      "type": "text",
+      "default": "no scenario"
+    },
+    {
+      "name": "remove_test",
+      "type": "text",
+      "default": "Remove test"
+    },
+    {
+      "name": "remove_test_n",
+      "type": "text",
+      "default": "Remove test {n}"
+    },
+    {
+      "name": "facts_over",
+      "type": "text",
+      "default": "Facts (over the scenario)"
+    },
+    {
+      "name": "args_over",
+      "type": "text",
+      "default": "Arguments (over the scenario)"
+    },
+    {
+      "name": "known",
+      "type": "text",
+      "default": "Known: {names}"
+    },
+    {
+      "name": "expected_value",
+      "type": "text",
+      "default": "Expected value"
+    },
+    {
+      "name": "expected",
+      "type": "text",
+      "default": "Expected"
+    },
+    {
+      "name": "fires",
+      "type": "text",
+      "default": "fires"
+    },
+    {
+      "name": "word_true",
+      "type": "text",
+      "default": "true"
+    },
+    {
+      "name": "does_not_fire",
+      "type": "text",
+      "default": "does not fire"
+    },
+    {
+      "name": "word_false",
+      "type": "text",
+      "default": "false"
+    },
+    {
+      "name": "unknown",
+      "type": "text",
+      "default": "unknown"
+    },
+    {
+      "name": "add_test",
+      "type": "text",
+      "default": "Add test"
+    },
+    {
+      "name": "not_checked",
+      "type": "text",
+      "default": "Not checked yet."
+    },
+    {
+      "name": "ready",
+      "type": "text",
+      "default": "Ready to publish."
+    },
+    {
+      "name": "not_ready",
+      "type": "text",
+      "default": "Not ready to publish."
+    },
+    {
+      "name": "problems_one",
+      "type": "text",
+      "default": "{n} problem"
+    },
+    {
+      "name": "problems_many",
+      "type": "text",
+      "default": "{n} {n:problem|problems}"
+    },
+    {
+      "name": "tests_pass_one",
+      "type": "text",
+      "default": "{passed} of {n} test pass."
+    },
+    {
+      "name": "tests_pass_many",
+      "type": "text",
+      "default": "{passed} of {n} {n:test|tests} pass."
+    },
+    {
+      "name": "got",
+      "type": "text",
+      "default": "Got"
+    },
+    {
+      "name": "in_review",
+      "type": "text",
+      "default": "in review"
+    },
+    {
+      "name": "draft",
+      "type": "text",
+      "default": "draft"
+    },
+    {
+      "name": "live",
+      "type": "text",
+      "default": "live"
+    },
+    {
+      "name": "off",
+      "type": "text",
+      "default": "off"
+    },
+    {
+      "name": "no_history",
+      "type": "text",
+      "default": "No history yet — it starts with the first publish."
+    },
+    {
+      "name": "version",
+      "type": "text",
+      "default": "Version"
+    },
+    {
+      "name": "what",
+      "type": "text",
+      "default": "What"
+    },
+    {
+      "name": "by",
+      "type": "text",
+      "default": "By"
+    },
+    {
+      "name": "view",
+      "type": "text",
+      "default": "view"
+    },
+    {
+      "name": "restore_as_draft",
+      "type": "text",
+      "default": "restore as draft"
+    },
+    {
+      "name": "move_edge",
+      "type": "text",
+      "default": "It is already at that end of the list.",
+      "label": "move_edge"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "value_type_tip": "$value_type_tip",
+      "value_type": "$value_type",
+      "yes": "$yes",
+      "no": "$no",
+      "remove": "$remove",
+      "remove_item": "$remove_item",
+      "add_item": "$add_item",
+      "name": "$name",
+      "remove_named": "$remove_named",
+      "add_field": "$add_field",
+      "no_rows": "$no_rows",
+      "move_up": "$move_up",
+      "move_row_up": "$move_row_up",
+      "move_down": "$move_down",
+      "move_row_down": "$move_row_down",
+      "remove_row": "$remove_row",
+      "add_row": "$add_row",
+      "test_all": "$test_all",
+      "test_any": "$test_any",
+      "test_not": "$test_not",
+      "test_at_least": "$test_at_least",
+      "test_eq": "$test_eq",
+      "test_ne": "$test_ne",
+      "test_gt": "$test_gt",
+      "test_ge": "$test_ge",
+      "test_lt": "$test_lt",
+      "test_le": "$test_le",
+      "test_in_set": "$test_in_set",
+      "kind_value": "$kind_value",
+      "kind_ref": "$kind_ref",
+      "kind_chip": "$kind_chip",
+      "kind_vop": "$kind_vop",
+      "kind_choose": "$kind_choose",
+      "kind_test": "$kind_test",
+      "kind_aria": "$kind_aria",
+      "remove_field": "$remove_field",
+      "ref_aria": "$ref_aria",
+      "unknown_here": "$unknown_here",
+      "loading_chip": "$loading_chip",
+      "no_chip": "$no_chip",
+      "knob_default": "$knob_default",
+      "use_default": "$use_default",
+      "set_it": "$set_it",
+      "unknown_op": "$unknown_op",
+      "op_off": "$op_off",
+      "leave_out": "$leave_out",
+      "give": "$give",
+      "when": "$when",
+      "else_when": "$else_when",
+      "remove_case": "$remove_case",
+      "then": "$then",
+      "add_case": "$add_case",
+      "otherwise": "$otherwise",
+      "remove_condition": "$remove_condition",
+      "add_condition": "$add_condition",
+      "try_scenario": "$try_scenario",
+      "knobs_hint": "$knobs_hint",
+      "knob_name_ph": "$knob_name_ph",
+      "knob_name": "$knob_name",
+      "knob_type": "$knob_type",
+      "knob_label_ph": "$knob_label_ph",
+      "knob_label": "$knob_label",
+      "remove_knob": "$remove_knob",
+      "remove_knob_named": "$remove_knob_named",
+      "default": "$default",
+      "add_knob": "$add_knob",
+      "test_n": "$test_n",
+      "scenario": "$scenario",
+      "no_scenario": "$no_scenario",
+      "remove_test": "$remove_test",
+      "remove_test_n": "$remove_test_n",
+      "facts_over": "$facts_over",
+      "args_over": "$args_over",
+      "known": "$known",
+      "expected_value": "$expected_value",
+      "expected": "$expected",
+      "fires": "$fires",
+      "word_true": "$word_true",
+      "does_not_fire": "$does_not_fire",
+      "word_false": "$word_false",
+      "unknown": "$unknown",
+      "add_test": "$add_test",
+      "not_checked": "$not_checked",
+      "ready": "$ready",
+      "not_ready": "$not_ready",
+      "problems_one": "$problems_one",
+      "problems_many": "$problems_many",
+      "tests_pass_one": "$tests_pass_one",
+      "tests_pass_many": "$tests_pass_many",
+      "got": "$got",
+      "in_review": "$in_review",
+      "draft": "$draft",
+      "live": "$live",
+      "off": "$off",
+      "no_history": "$no_history",
+      "version": "$version",
+      "what": "$what",
+      "by": "$by",
+      "view": "$view",
+      "restore_as_draft": "$restore_as_draft",
+      "move_edge": "$move_edge"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "The words of one screen. {placeholders} are filled on the page. A language overrides any of them with chip ui.builder.<lang> (for example ui.builder.hi).",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "value_type_tip": "What kind of value",
+        "value_type": "Value type",
+        "yes": "yes",
+        "no": "no",
+        "remove": "Remove",
+        "remove_item": "Remove item",
+        "add_item": "+ Add item",
+        "name": "Name",
+        "remove_named": "Remove {name}",
+        "add_field": "+ Add field",
+        "no_rows": "No rows yet.",
+        "move_up": "Move up",
+        "move_row_up": "Move row up",
+        "move_down": "Move down",
+        "move_row_down": "Move row down",
+        "remove_row": "Remove row",
+        "add_row": "+ Add row",
+        "test_all": "All of these hold",
+        "test_any": "Any of these holds",
+        "test_not": "This does NOT hold",
+        "test_at_least": "At least N of these hold",
+        "test_eq": "equals",
+        "test_ne": "is not",
+        "test_gt": "is more than",
+        "test_ge": "is at least",
+        "test_lt": "is less than",
+        "test_le": "is at most",
+        "test_in_set": "is one of",
+        "kind_value": "Value",
+        "kind_ref": "Knob / fact",
+        "kind_chip": "Chip",
+        "kind_vop": "Op",
+        "kind_choose": "Choose",
+        "kind_test": "Test",
+        "kind_aria": "Kind of expression",
+        "remove_field": "Remove field",
+        "ref_aria": "Knob or fact",
+        "unknown_here": "{name} (unknown here)",
+        "loading_chip": "Loading the chip…",
+        "no_chip": "No chip named {id}.",
+        "knob_default": "(knob default)",
+        "use_default": "use the default",
+        "set_it": "set",
+        "unknown_op": "{name} (unknown)",
+        "op_off": "{op} (switched off)",
+        "leave_out": "leave out",
+        "give": "+ give {name}",
+        "when": "When",
+        "else_when": "Else when",
+        "remove_case": "Remove case",
+        "then": "then",
+        "add_case": "+ Add case",
+        "otherwise": "Otherwise",
+        "remove_condition": "Remove condition",
+        "add_condition": "+ Add condition",
+        "try_scenario": "Try on scenario",
+        "knobs_hint": "Knobs are the numbers and words a person can change without touching the logic.",
+        "knob_name_ph": "name",
+        "knob_name": "Knob name",
+        "knob_type": "Knob type",
+        "knob_label_ph": "what it means (shown to people)",
+        "knob_label": "Knob label",
+        "remove_knob": "Remove knob",
+        "remove_knob_named": "Remove knob {name}",
+        "default": "Default",
+        "add_knob": "Add knob",
+        "test_n": "Test {n}",
+        "scenario": "Scenario",
+        "no_scenario": "no scenario",
+        "remove_test": "Remove test",
+        "remove_test_n": "Remove test {n}",
+        "facts_over": "Facts (over the scenario)",
+        "args_over": "Arguments (over the scenario)",
+        "known": "Known: {names}",
+        "expected_value": "Expected value",
+        "expected": "Expected",
+        "fires": "fires",
+        "word_true": "true",
+        "does_not_fire": "does not fire",
+        "word_false": "false",
+        "unknown": "unknown",
+        "add_test": "Add test",
+        "not_checked": "Not checked yet.",
+        "ready": "Ready to publish.",
+        "not_ready": "Not ready to publish.",
+        "problems_one": "{n} problem",
+        "problems_many": "{n} {n:problem|problems}",
+        "tests_pass_one": "{passed} of {n} test pass.",
+        "tests_pass_many": "{passed} of {n} {n:test|tests} pass.",
+        "got": "Got",
+        "in_review": "in review",
+        "draft": "draft",
+        "live": "live",
+        "off": "off",
+        "no_history": "No history yet — it starts with the first publish.",
+        "version": "Version",
+        "what": "What",
+        "by": "By",
+        "view": "view",
+        "restore_as_draft": "restore as draft",
+        "move_edge": "It is already at that end of the list."
+      }
+    }
+  ],
+  "weight_basis": "Wording only. Every word on this screen lives here, never in JavaScript."
+}

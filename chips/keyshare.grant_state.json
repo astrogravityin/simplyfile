@@ -1,0 +1,98 @@
+{
+  "chip_id": "keyshare.grant_state",
+  "kind": "accessor",
+  "set": "keyshare",
+  "label": "What a share is now: in use, taken back by the owner, or given back by the borrower",
+  "aliases": [
+    "share state",
+    "grant status"
+  ],
+  "params": [
+    {
+      "name": "revoked",
+      "type": "boolean",
+      "default": false,
+      "label": "The share has an end date"
+    },
+    {
+      "name": "ended_by_owner",
+      "type": "boolean",
+      "default": false,
+      "label": "The owner ended it, not the borrower"
+    },
+    {
+      "name": "active_word",
+      "type": "text",
+      "default": "active",
+      "label": "State id while in use"
+    },
+    {
+      "name": "revoked_word",
+      "type": "text",
+      "default": "revoked",
+      "label": "State id when the owner took it back"
+    },
+    {
+      "name": "returned_word",
+      "type": "text",
+      "default": "returned",
+      "label": "State id when the borrower gave it back"
+    }
+  ],
+  "expr": {
+    "vop": "decision_table",
+    "facts": {
+      "vop": "record",
+      "fields": {
+        "revoked": "$revoked",
+        "ended_by_owner": "$ended_by_owner"
+      }
+    },
+    "rules": [
+      {
+        "when": {
+          "revoked": false
+        },
+        "set": "$active_word"
+      },
+      {
+        "when": {
+          "ended_by_owner": true
+        },
+        "set": "$revoked_word"
+      },
+      {
+        "when": {
+          "revoked": true
+        },
+        "set": "$returned_word"
+      }
+    ],
+    "current": "$active_word"
+  },
+  "returns": "text",
+  "version": 1,
+  "status": "published",
+  "description_nl": "The three states a share can be in, and the words the screen groups them under.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": "active"
+    },
+    {
+      "args": {
+        "revoked": true,
+        "ended_by_owner": true
+      },
+      "expect_value": "revoked"
+    },
+    {
+      "args": {
+        "revoked": true,
+        "ended_by_owner": false
+      },
+      "expect_value": "returned"
+    }
+  ],
+  "weight_basis": "Three states, one table. A share is never deleted - it keeps the day it began and the day it ended."
+}

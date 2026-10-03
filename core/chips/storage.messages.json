@@ -1,0 +1,162 @@
+{
+  "chip_id": "storage.messages",
+  "kind": "accessor",
+  "set": "storage",
+  "audience": "admin",
+  "label": "Every sentence the Storage clean-up says and sends",
+  "aliases": [
+    "cleanup email wording"
+  ],
+  "params": [
+    {
+      "name": "no_files",
+      "type": "text",
+      "default": "This account holds no files. There is nothing to ask for."
+    },
+    {
+      "name": "all_sent",
+      "type": "text",
+      "default": "All {max} requests have gone. From the delete date you may delete their files."
+    },
+    {
+      "name": "too_soon",
+      "type": "text",
+      "default": "The next reminder can go from {date} — {gap_days} days after the last one."
+    },
+    {
+      "name": "not_yet",
+      "type": "text",
+      "default": "Not yet. Deleting someone's files needs all {max} requests sent and {delete_after_days} days since the first{when}."
+    },
+    {
+      "name": "pick_one",
+      "type": "text",
+      "default": "Pick at least one of their items."
+    },
+    {
+      "name": "no_mail",
+      "type": "text",
+      "default": "Email is not set up; they will see it as a banner in the portal."
+    },
+    {
+      "name": "mail_failed",
+      "type": "text",
+      "default": "The email failed ({error}); they will still see it as a banner in the portal."
+    },
+    {
+      "name": "subject_first",
+      "type": "text",
+      "default": "{product}: please clean up your files"
+    },
+    {
+      "name": "subject_reminder",
+      "type": "text",
+      "default": "{product}: reminder {n} of {max} — please clean up your files"
+    },
+    {
+      "name": "body",
+      "type": "text",
+      "default": "Hello {name},\n\nYour account on {product} holds {size} in {files} files{since}.\n\nDisk space on this portal is shared. Please delete what you no longer need:\n{link}\n\n{note_block}{reminder_line}From {delete_date} the portal owner may delete files that are still here.\n"
+    },
+    {
+      "name": "since",
+      "type": "text",
+      "default": ", some of them since {date}"
+    },
+    {
+      "name": "note_block",
+      "type": "text",
+      "default": "A note from the portal owner:\n{note}\n\n"
+    },
+    {
+      "name": "reminder_line",
+      "type": "text",
+      "default": "This is reminder {n} of {max}. "
+    },
+    {
+      "name": "deleted_subject",
+      "type": "text",
+      "default": "{product}: some of your files were deleted"
+    },
+    {
+      "name": "deleted_body",
+      "type": "text",
+      "default": "Hello {name},\n\nAfter {max} requests to clean up, the owner of {product} deleted {count} of your items ({size}):\n{items}"
+    },
+    {
+      "name": "no_account",
+      "type": "text",
+      "default": "No such account."
+    },
+    {
+      "name": "delete_date_note",
+      "type": "text",
+      "default": " — that is {date}"
+    },
+    {
+      "name": "no_limits",
+      "type": "text",
+      "default": "This portal sets no storage limits."
+    },
+    {
+      "name": "limits_saved",
+      "type": "text",
+      "default": "Storage limits saved. Anyone with limits of their own keeps them."
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "no_files": "$no_files",
+      "all_sent": "$all_sent",
+      "too_soon": "$too_soon",
+      "not_yet": "$not_yet",
+      "pick_one": "$pick_one",
+      "no_mail": "$no_mail",
+      "mail_failed": "$mail_failed",
+      "subject_first": "$subject_first",
+      "subject_reminder": "$subject_reminder",
+      "body": "$body",
+      "since": "$since",
+      "note_block": "$note_block",
+      "reminder_line": "$reminder_line",
+      "deleted_subject": "$deleted_subject",
+      "deleted_body": "$deleted_body",
+      "no_account": "$no_account",
+      "delete_date_note": "$delete_date_note",
+      "no_limits": "$no_limits",
+      "limits_saved": "$limits_saved"
+    }
+  },
+  "returns": "record",
+  "version": 2,
+  "status": "published",
+  "description_nl": "Errors on the Storage screen and the three request emails plus the deletion notice. {product}, {name}, {size}, {files}, {since}, {link}, {note_block}, {reminder_line}, {delete_date}, {n}, {max}, {date}, {count}, {items} fill in. no_account is the answer for an unknown person; delete_date_note fills {when} in not_yet.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "no_files": "This account holds no files. There is nothing to ask for.",
+        "all_sent": "All {max} requests have gone. From the delete date you may delete their files.",
+        "too_soon": "The next reminder can go from {date} — {gap_days} days after the last one.",
+        "not_yet": "Not yet. Deleting someone's files needs all {max} requests sent and {delete_after_days} days since the first{when}.",
+        "pick_one": "Pick at least one of their items.",
+        "no_mail": "Email is not set up; they will see it as a banner in the portal.",
+        "mail_failed": "The email failed ({error}); they will still see it as a banner in the portal.",
+        "subject_first": "{product}: please clean up your files",
+        "subject_reminder": "{product}: reminder {n} of {max} — please clean up your files",
+        "body": "Hello {name},\n\nYour account on {product} holds {size} in {files} files{since}.\n\nDisk space on this portal is shared. Please delete what you no longer need:\n{link}\n\n{note_block}{reminder_line}From {delete_date} the portal owner may delete files that are still here.\n",
+        "since": ", some of them since {date}",
+        "note_block": "A note from the portal owner:\n{note}\n\n",
+        "reminder_line": "This is reminder {n} of {max}. ",
+        "deleted_subject": "{product}: some of your files were deleted",
+        "deleted_body": "Hello {name},\n\nAfter {max} requests to clean up, the owner of {product} deleted {count} of your items ({size}):\n{items}",
+        "no_account": "No such account.",
+        "delete_date_note": " — that is {date}",
+        "no_limits": "This portal sets no storage limits.",
+        "limits_saved": "Storage limits saved. Anyone with limits of their own keeps them."
+      }
+    }
+  ],
+  "weight_basis": "Platform operations primitive, no business content. The knobs ARE the policy — edit them here, never in Python."
+}

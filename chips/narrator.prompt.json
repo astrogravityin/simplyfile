@@ -1,0 +1,92 @@
+{
+  "chip_id": "narrator.prompt",
+  "kind": "accessor",
+  "set": "narrator",
+  "label": "The prompt that asks a model for a timed narration script",
+  "aliases": [
+    "draft prompt",
+    "llm bridge prompt"
+  ],
+  "params": [
+    {
+      "name": "template",
+      "type": "text",
+      "default": "You write the spoken narration for a \"How to Use\" screen recording of {product}.\nWatch the whole video. Return JSON only: {\"segments\": [{\"start\": seconds, \"end\": seconds, \"chapter\": \"\", \"text\": \"...\"}]}.\n\nRules:\n- Segments follow what happens on screen, in order, covering the whole video from 0 to {duration:.1f} seconds.\n- Start each segment when its action begins. It ends before the next one starts. No overlaps.\n- A segment's text must fit its time at about 2.3 words per second. Fewer words are better than rushed speech.\n- Second person (\"Pick a customer\", \"Press Save\"). One idea per segment. Name buttons, tabs and fields exactly as the screen writes them.\n- Say what the viewer gains from a step, not only what is clicked.\n- Give \"chapter\" a 2 to 4 word title at the start of each new part of the flow (the first segment always has one), otherwise \"\".\n- Never read out personal details visible on screen: no emails, phone numbers, birth dates or places of real people.\n- Plain English, no markdown, no emojis.\n\nTitle: {title}\n{context}"
+    },
+    {
+      "name": "product_fallback",
+      "type": "text",
+      "default": "this application"
+    },
+    {
+      "name": "context",
+      "type": "text",
+      "default": "Screen context (use its names for things):\n{lines}"
+    },
+    {
+      "name": "context_line",
+      "type": "text",
+      "default": "Manual — {header}: {text}"
+    },
+    {
+      "name": "page_fallback",
+      "type": "text",
+      "default": "page"
+    },
+    {
+      "name": "learn_line",
+      "type": "text",
+      "default": "\nWhat the viewer should learn: {notes}"
+    },
+    {
+      "name": "learn_default",
+      "type": "text",
+      "default": "how to use this screen"
+    },
+    {
+      "name": "language_line",
+      "type": "text",
+      "default": "\nWrite every line of narration in {language}. Keep product names and the words written on screen (buttons, tabs, fields) exactly as they appear, even when the rest of the line is not in English."
+    },
+    {
+      "name": "translate_template",
+      "type": "text",
+      "default": "Translate the narration below into {language}.\nReturn JSON only: {\"lines\": [\"...\", ...]} with exactly {n} strings, in the same order.\n\nRules:\n- Keep each line's meaning and its instruction; a line is spoken aloud over a screen recording.\n- Keep it to about the same length, so it still fits the time it has.\n- Keep product names and the words written on screen (buttons, tabs, fields) exactly as they are.\n- No markdown, no numbering, no commentary.\n\nLines:\n{lines}"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "template": "$template",
+      "product_fallback": "$product_fallback",
+      "context": "$context",
+      "context_line": "$context_line",
+      "page_fallback": "$page_fallback",
+      "learn_line": "$learn_line",
+      "learn_default": "$learn_default",
+      "language_line": "$language_line",
+      "translate_template": "$translate_template"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "template: what Draft with AI and the LLM Bridge send, with {product}, {duration:.1f}, {title} and {context} filled in. product_fallback: the name used when the recording has no project. context: the block of manual text about the screen, built from context_line per manual page ({header}, {text}; page_fallback when a page has no header). learn_line / learn_default: the closing line Draft with AI adds from the recording's notes.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "template": "You write the spoken narration for a \"How to Use\" screen recording of {product}.\nWatch the whole video. Return JSON only: {\"segments\": [{\"start\": seconds, \"end\": seconds, \"chapter\": \"\", \"text\": \"...\"}]}.\n\nRules:\n- Segments follow what happens on screen, in order, covering the whole video from 0 to {duration:.1f} seconds.\n- Start each segment when its action begins. It ends before the next one starts. No overlaps.\n- A segment's text must fit its time at about 2.3 words per second. Fewer words are better than rushed speech.\n- Second person (\"Pick a customer\", \"Press Save\"). One idea per segment. Name buttons, tabs and fields exactly as the screen writes them.\n- Say what the viewer gains from a step, not only what is clicked.\n- Give \"chapter\" a 2 to 4 word title at the start of each new part of the flow (the first segment always has one), otherwise \"\".\n- Never read out personal details visible on screen: no emails, phone numbers, birth dates or places of real people.\n- Plain English, no markdown, no emojis.\n\nTitle: {title}\n{context}",
+        "product_fallback": "this application",
+        "context": "Screen context (use its names for things):\n{lines}",
+        "context_line": "Manual — {header}: {text}",
+        "page_fallback": "page",
+        "learn_line": "\nWhat the viewer should learn: {notes}",
+        "learn_default": "how to use this screen",
+        "language_line": "\nWrite every line of narration in {language}. Keep product names and the words written on screen (buttons, tabs, fields) exactly as they appear, even when the rest of the line is not in English.",
+        "translate_template": "Translate the narration below into {language}.\nReturn JSON only: {\"lines\": [\"...\", ...]} with exactly {n} strings, in the same order.\n\nRules:\n- Keep each line's meaning and its instruction; a line is spoken aloud over a screen recording.\n- Keep it to about the same length, so it still fits the time it has.\n- Keep product names and the words written on screen (buttons, tabs, fields) exactly as they are.\n- No markdown, no numbering, no commentary.\n\nLines:\n{lines}"
+      }
+    }
+  ],
+  "weight_basis": "Portal wording, no scoring. The knobs ARE the sentences — edit them here, never in Python."
+}

@@ -1,0 +1,48 @@
+{
+  "chip_id": "limits.files",
+  "kind": "accessor",
+  "set": "limits",
+  "label": "How big an uploaded zip (pptx, docx, epub) may be once unpacked",
+  "aliases": [
+    "zip bomb",
+    "unpacked size"
+  ],
+  "params": [
+    {
+      "name": "unzip_most_mb",
+      "type": "number",
+      "default": 1024,
+      "label": "Largest unpacked size of one uploaded zip, MB"
+    },
+    {
+      "name": "too_big_unpacked",
+      "type": "long",
+      "default": "That file unpacks to more than {mb} MB, so it is not opened here.",
+      "label": "What is said when it is bigger"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "unzip_most_mb": "$unzip_most_mb",
+      "too_big_unpacked": "$too_big_unpacked"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-01 portal assessment: a PowerPoint template, a DOCX/EPUB assessment and a book cover were unzipped with no check of how big they unpack (a zip bomb fills memory). core/limits.zip_room asks this before anything is read out of the zip.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "unzip_most_mb": 1024,
+        "too_big_unpacked": "That file unpacks to more than {mb} MB, so it is not opened here."
+      }
+    }
+  ],
+  "weight_basis": "Platform safety primitive, no content.",
+  "evidence": {
+    "kind": "none"
+  }
+}

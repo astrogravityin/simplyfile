@@ -1,0 +1,96 @@
+{
+  "chip_id": "media.needs_reencode",
+  "kind": "predicate",
+  "set": "media",
+  "audience": "admin",
+  "label": "Must this recording's picture be re-encoded before it is handed out?",
+  "aliases": [
+    "hevc needs converting",
+    "free to play check"
+  ],
+  "params": [
+    {
+      "name": "codec",
+      "type": "text",
+      "default": "",
+      "label": "The picture format ffmpeg found in the recording"
+    },
+    {
+      "name": "portable_codecs",
+      "type": "list",
+      "default": [
+        "h264",
+        "mpeg4"
+      ],
+      "label": "Formats that may be kept as they are"
+    },
+    {
+      "name": "always",
+      "type": "boolean",
+      "default": false,
+      "label": "Re-encode whatever it is"
+    }
+  ],
+  "expr": {
+    "op": "any",
+    "items": [
+      {
+        "op": "eq",
+        "left": "$always",
+        "right": true
+      },
+      {
+        "op": "not",
+        "item": {
+          "op": "in_set",
+          "value": "$codec",
+          "set": "$portable_codecs"
+        }
+      }
+    ]
+  },
+  "returns": "boolean",
+  "version": 1,
+  "status": "published",
+  "description_nl": "TRUE when the narrated video must be re-encoded to H.264 first. A recording already in a portable format is copied, which is fast and loses nothing; HEVC, VP9, AV1 or an unreadable format is re-encoded, so nobody is asked to buy a codec to watch it.",
+  "test_cases": [
+    {
+      "args": {
+        "codec": "h264"
+      },
+      "expect": false
+    },
+    {
+      "args": {
+        "codec": "hevc"
+      },
+      "expect": true
+    },
+    {
+      "args": {
+        "codec": "vp9"
+      },
+      "expect": true
+    },
+    {
+      "args": {
+        "codec": "av1"
+      },
+      "expect": true
+    },
+    {
+      "args": {
+        "codec": ""
+      },
+      "expect": true
+    },
+    {
+      "args": {
+        "codec": "h264",
+        "always": true
+      },
+      "expect": true
+    }
+  ],
+  "weight_basis": "Owner-only (audience admin): loosening this hands out videos some people cannot play without paying for a codec."
+}

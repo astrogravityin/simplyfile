@@ -1,0 +1,91 @@
+{
+  "chip_id": "list.tour_videos",
+  "kind": "accessor",
+  "set": "list",
+  "label": "Tour Video list",
+  "aliases": [
+    "list tour videos"
+  ],
+  "params": [
+    {
+      "name": "search_keys",
+      "type": "list",
+      "default": [
+        "title",
+        "key",
+        "state"
+      ],
+      "label": "search keys"
+    },
+    {
+      "name": "sort_key",
+      "type": "text",
+      "default": "script_at",
+      "label": "sort key"
+    },
+    {
+      "name": "sort_desc",
+      "type": "boolean",
+      "default": true,
+      "label": "sort desc"
+    },
+    {
+      "name": "sorts",
+      "type": "list",
+      "default": [
+        "script_at",
+        "title",
+        "video_at"
+      ],
+      "label": "sorts"
+    },
+    {
+      "name": "page_size",
+      "type": "number",
+      "default": 25,
+      "label": "page size"
+    },
+    {
+      "name": "max_page_size",
+      "type": "number",
+      "default": 100,
+      "label": "max page size"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "search_keys": "$search_keys",
+      "sort_key": "$sort_key",
+      "sort_desc": "$sort_desc",
+      "sorts": "$sorts",
+      "page_size": "$page_size",
+      "max_page_size": "$max_page_size"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "Every SteadyMove tour script with its video's state, newest change first.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "search_keys": [
+          "title",
+          "key",
+          "state"
+        ],
+        "sort_key": "script_at",
+        "sort_desc": true,
+        "sorts": [
+          "script_at",
+          "title",
+          "video_at"
+        ],
+        "page_size": 25,
+        "max_page_size": 100
+      }
+    }
+  ]
+}

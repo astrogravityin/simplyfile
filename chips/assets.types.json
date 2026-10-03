@@ -1,0 +1,1378 @@
+{
+  "chip_id": "assets.types",
+  "kind": "accessor",
+  "set": "assets",
+  "audience": "admin",
+  "label": "Every asset type: one way to create, keep, open, rename, inspect, export and delete it",
+  "aliases": [],
+  "params": [
+    {
+      "name": "rows",
+      "type": "list",
+      "default": [
+        {
+          "id": "film",
+          "screen": "studio",
+          "icon": "film",
+          "name_field": "name",
+          "name_max": 160,
+          "words": {
+            "title": "title",
+            "lede": "lede",
+            "new": "film_new",
+            "mine": "film_mine",
+            "search": "film_search",
+            "empty_title": "film_none_title",
+            "empty_body": "film_none_body",
+            "delete_title": "film_delete_title",
+            "delete_body": "film_delete_body",
+            "delete_yes": "film_delete_yes",
+            "make": "film_make",
+            "import": "film_import",
+            "import_tip": "film_import_tip"
+          },
+          "fields": [
+            {
+              "name": "name",
+              "kind": "text",
+              "word": "f_film_name",
+              "required": true,
+              "max": 160
+            },
+            {
+              "name": "logline",
+              "kind": "textarea",
+              "word": "f_film_logline",
+              "max": 600
+            }
+          ],
+          "file": null,
+          "export": "/api/assets/film/{id}/pack",
+          "import": "/api/assets/film/pack",
+          "keep": "sm.project",
+          "makes": [
+            "comic",
+            "doodle",
+            "assessment"
+          ],
+          "cover_kind": "film",
+          "publish": "film"
+        },
+        {
+          "id": "comic",
+          "screen": "comics",
+          "icon": "image",
+          "name_field": "name",
+          "name_max": 120,
+          "words": {
+            "title": "title",
+            "lede": "lede",
+            "new": "new_title",
+            "mine": "mine",
+            "search": "search_ph",
+            "empty_title": "none_title",
+            "empty_body": "none_body",
+            "delete_title": "delete_book_title",
+            "delete_body": "delete_book_body",
+            "delete_yes": "delete_book",
+            "make": "make",
+            "import": "pack_import",
+            "import_tip": "pack_import_tip"
+          },
+          "fields": [
+            {
+              "name": "name",
+              "kind": "text",
+              "word": "f_name",
+              "required": true,
+              "max": 120
+            },
+            {
+              "name": "author",
+              "kind": "text",
+              "word": "f_author",
+              "max": 120
+            },
+            {
+              "name": "logline",
+              "kind": "textarea",
+              "word": "f_logline",
+              "max": 600
+            },
+            {
+              "name": "style",
+              "kind": "select",
+              "word": "f_style",
+              "options": "styles"
+            },
+            {
+              "name": "road",
+              "kind": "select",
+              "word": "f_road",
+              "options": "roads"
+            }
+          ],
+          "file": {
+            "word": "f_book",
+            "hint": "f_book_hint",
+            "required": false,
+            "accept": "extensions"
+          },
+          "export": "/api/assets/comic/{id}/pack",
+          "import": "/api/assets/comic/pack",
+          "keep": "sm.comic",
+          "makes": [
+            "film",
+            "doodle",
+            "assessment"
+          ],
+          "cover_kind": "comic",
+          "publish": "comic",
+          "deck": true
+        },
+        {
+          "id": "audiobook",
+          "screen": "audiobook",
+          "icon": "mic",
+          "name_field": "title",
+          "name_max": 160,
+          "words": {
+            "title": "title",
+            "lede": "lede",
+            "new": "new_title",
+            "mine": "mine",
+            "search": "search_ph",
+            "empty_title": "none_title",
+            "empty_body": "none_body",
+            "delete_title": "delete_title",
+            "delete_body": "delete_body",
+            "delete_yes": "delete",
+            "make": "make_from_file",
+            "import": "pack_import",
+            "import_tip": "pack_import_tip"
+          },
+          "fields": [
+            {
+              "name": "title",
+              "kind": "text",
+              "word": "f_title",
+              "max": 160
+            },
+            {
+              "name": "author",
+              "kind": "text",
+              "word": "f_author",
+              "max": 120
+            }
+          ],
+          "file": {
+            "word": "drop_title",
+            "hint": "drop_hint",
+            "required": true,
+            "accept": "extensions"
+          },
+          "export": "/api/assets/audiobook/{id}/pack",
+          "import": "/api/assets/audiobook/pack",
+          "keep": "sm.audiobook",
+          "makes": [
+            "comic",
+            "doodle",
+            "film",
+            "assessment"
+          ],
+          "cover_kind": "audiobook",
+          "publish": "audiobook"
+        },
+        {
+          "id": "tedbook",
+          "screen": "tedbook",
+          "icon": "book",
+          "name_field": "title",
+          "name_max": 160,
+          "words": {
+            "title": "title",
+            "lede": "lede",
+            "new": "new_title",
+            "mine": "mine",
+            "search": "search_ph",
+            "empty_title": "none_title",
+            "empty_body": "none_body",
+            "delete_title": "delete_title",
+            "delete_body": "delete_body",
+            "delete_yes": "delete",
+            "make": "make_from_file",
+            "import": "pack_import",
+            "import_tip": "pack_import_tip"
+          },
+          "fields": [
+            {
+              "name": "title",
+              "kind": "text",
+              "word": "f_title",
+              "max": 160
+            },
+            {
+              "name": "author",
+              "kind": "text",
+              "word": "f_author",
+              "max": 120
+            },
+            {
+              "name": "genre",
+              "kind": "select",
+              "word": "f_genre",
+              "options": "genres"
+            }
+          ],
+          "file": {
+            "word": "drop_title",
+            "hint": "drop_hint",
+            "required": true,
+            "accept": "extensions"
+          },
+          "export": "/api/assets/tedbook/{id}/pack",
+          "import": "/api/assets/tedbook/pack",
+          "keep": "sm.tedbook",
+          "makes": [
+            "comic",
+            "doodle",
+            "film",
+            "assessment"
+          ],
+          "cover_kind": "tedbook",
+          "publish": "tedbook"
+        },
+        {
+          "id": "assessment",
+          "screen": "assess",
+          "icon": "pulse",
+          "name_field": "name",
+          "name_max": 120,
+          "words": {
+            "title": "title",
+            "lede": "lede",
+            "new": "new_title",
+            "mine": "mine",
+            "search": "search_ph",
+            "empty_title": "none_title",
+            "empty_body": "none_body",
+            "delete_title": "delete_title",
+            "delete_body": "delete_body",
+            "delete_yes": "delete",
+            "make": "assess_btn",
+            "import": "pack_import",
+            "import_tip": "pack_import_tip"
+          },
+          "fields": [
+            {
+              "name": "name",
+              "kind": "text",
+              "word": "name_label",
+              "max": 120
+            },
+            {
+              "name": "author",
+              "kind": "text",
+              "word": "author_label",
+              "max": 120
+            }
+          ],
+          "file": {
+            "word": "drop_title",
+            "hint": "drop_hint",
+            "required": true,
+            "accept": "extensions"
+          },
+          "export": "/api/assets/assessment/{id}/pack",
+          "import": "/api/assets/assessment/pack",
+          "keep": "sm.assess",
+          "makes": [],
+          "publish": "assessment"
+        },
+        {
+          "id": "doodle",
+          "screen": "doodle",
+          "icon": "edit",
+          "name_field": "name",
+          "name_max": 160,
+          "words": {
+            "title": "title",
+            "lede": "lede",
+            "new": "new_title",
+            "mine": "mine",
+            "search": "search_ph",
+            "empty_title": "none_title",
+            "empty_body": "none_body",
+            "delete_title": "delete_title",
+            "delete_body": "delete_body",
+            "delete_yes": "delete",
+            "make": "make_btn",
+            "import": "pack_import",
+            "import_tip": "pack_import_tip"
+          },
+          "fields": [
+            {
+              "name": "name",
+              "kind": "text",
+              "word": "name_label",
+              "max": 160,
+              "required": true
+            },
+            {
+              "name": "topic",
+              "kind": "textarea",
+              "word": "topic_label",
+              "max": 20000
+            }
+          ],
+          "export": "/api/assets/doodle/{id}/pack",
+          "import": "/api/assets/doodle/pack",
+          "keep": "sm.doodle",
+          "makes": [
+            "avatar",
+            "comic",
+            "film",
+            "assessment"
+          ],
+          "cover_kind": "doodle",
+          "publish": "doodle",
+          "deck": true
+        },
+        {
+          "id": "avatar",
+          "screen": "avatar",
+          "icon": "user",
+          "name_field": "name",
+          "name_max": 160,
+          "words": {
+            "title": "title",
+            "lede": "lede",
+            "new": "new_title",
+            "mine": "mine",
+            "search": "search_ph",
+            "empty_title": "none_title",
+            "empty_body": "none_body",
+            "delete_title": "delete_title",
+            "delete_body": "delete_body",
+            "delete_yes": "delete",
+            "make": "make_btn",
+            "import": "pack_import",
+            "import_tip": "pack_import_tip"
+          },
+          "fields": [
+            {
+              "name": "name",
+              "kind": "text",
+              "word": "name_label",
+              "max": 160,
+              "required": true
+            },
+            {
+              "name": "topic",
+              "kind": "textarea",
+              "word": "topic_label",
+              "max": 20000
+            },
+            {
+              "name": "template",
+              "kind": "template",
+              "word": "tpl_label",
+              "max": 40
+            }
+          ],
+          "export": "/api/assets/avatar/{id}/pack",
+          "import": "/api/assets/avatar/pack",
+          "keep": "sm.avatar",
+          "makes": [
+            "doodle",
+            "comic",
+            "film",
+            "assessment"
+          ],
+          "cover_kind": "doodle",
+          "publish": "doodle",
+          "deck": true,
+          "templates": {
+            "api": "/api/avatar",
+            "words": "avatar",
+            "word_prefix": "tpl_",
+            "lede_word": "tpl_lede",
+            "pair_words": [
+              "tpl_intro",
+              "tpl_topic"
+            ],
+            "fresh": true
+          }
+        },
+        {
+          "id": "youtube",
+          "screen": "youtube",
+          "icon": "play",
+          "name_field": "title",
+          "name_max": 200,
+          "words": {
+            "title": "title",
+            "lede": "lede",
+            "new": "new_title",
+            "mine": "mine",
+            "search": "search_ph",
+            "empty_title": "none_title",
+            "empty_body": "none_body",
+            "delete_title": "forget_title",
+            "delete_body": "forget_body",
+            "delete_yes": "forget_yes",
+            "make": "make_btn",
+            "import": "pack_import",
+            "import_tip": "pack_import_tip"
+          },
+          "fields": [
+            {
+              "name": "url",
+              "kind": "text",
+              "word": "url_label",
+              "max": 300,
+              "required": true
+            },
+            {
+              "name": "road",
+              "kind": "select",
+              "word": "whose_card",
+              "options": "whose"
+            },
+            {
+              "name": "minutes",
+              "kind": "text",
+              "word": "length_label",
+              "max": 8
+            },
+            {
+              "name": "declared",
+              "kind": "check",
+              "word": "declare_label"
+            }
+          ],
+          "export": "/api/assets/youtube/{id}/pack",
+          "import": "/api/assets/youtube/pack",
+          "keep": "sm.youtube",
+          "makes": [],
+          "cover_field": "thumb",
+          "publish": "youtube"
+        },
+        {
+          "id": "video",
+          "screen": "video",
+          "icon": "film",
+          "name_field": "title",
+          "name_max": 120,
+          "words": {
+            "title": "title",
+            "lede": "lede",
+            "new": "upload_recording",
+            "mine": "as_mine",
+            "search": "search_placeholder",
+            "empty_title": "no_recordings_title",
+            "empty_body": "no_recordings_body",
+            "delete_title": "delete_title",
+            "delete_body": "delete_body",
+            "delete_yes": "delete",
+            "make": "upload",
+            "import": "pack_import",
+            "import_tip": "pack_import_tip"
+          },
+          "fields": [],
+          "export": "/api/assets/video/{id}/pack",
+          "import": "/api/assets/video/pack",
+          "keep": "",
+          "makes": [
+            "doodle",
+            "film",
+            "comic",
+            "assessment"
+          ],
+          "cover_kind": "video",
+          "publish": "video"
+        },
+        {
+          "id": "deck",
+          "screen": "decks",
+          "icon": "deck",
+          "name_field": "name",
+          "name_max": 160,
+          "words": {
+            "title": "title",
+            "lede": "lede",
+            "new": "new_title",
+            "mine": "mine",
+            "search": "search_ph",
+            "empty_title": "none_title",
+            "empty_body": "none_body",
+            "delete_title": "delete_title",
+            "delete_body": "delete_body",
+            "delete_yes": "delete",
+            "make": "make_btn",
+            "import": "pack_import",
+            "import_tip": "pack_import_tip",
+            "one": "one"
+          },
+          "fields": [
+            {
+              "name": "name",
+              "kind": "text",
+              "word": "f_name",
+              "required": true,
+              "max": 160
+            },
+            {
+              "name": "author",
+              "kind": "text",
+              "word": "f_author",
+              "max": 80
+            }
+          ],
+          "export": "/api/assets/deck/{id}/pack",
+          "import": "/api/assets/deck/pack",
+          "keep": "sm.deck",
+          "makes": [],
+          "cover_kind": "deck",
+          "publish": "deck"
+        },
+        {
+          "id": "ad",
+          "screen": "ads",
+          "icon": "film",
+          "name_field": "name",
+          "name_max": 80,
+          "words": {
+            "title": "title",
+            "lede": "lede",
+            "new": "new_title",
+            "mine": "mine",
+            "search": "search_ph",
+            "empty_title": "none_title",
+            "empty_body": "none_body",
+            "delete_title": "delete_title",
+            "delete_body": "delete_body",
+            "delete_yes": "delete",
+            "make": "make_btn",
+            "one": "one",
+            "import": "pack_import",
+            "import_tip": "pack_import_tip"
+          },
+          "fields": [
+            {
+              "name": "client",
+              "kind": "text",
+              "word": "f_client",
+              "required": true,
+              "max": 40
+            },
+            {
+              "name": "template",
+              "kind": "text",
+              "word": "templates_h",
+              "required": true,
+              "max": 40
+            }
+          ],
+          "keep": "sm.ad",
+          "makes": [],
+          "cover_kind": "ad",
+          "publish": "ad",
+          "export": "/api/assets/ad/{id}/pack",
+          "import": "/api/assets/ad/pack"
+        },
+        {
+          "id": "article",
+          "screen": "articles",
+          "icon": "edit",
+          "name_field": "title",
+          "name_max": 160,
+          "words": {
+            "title": "title",
+            "lede": "lede",
+            "new": "new_title",
+            "mine": "mine",
+            "search": "search_ph",
+            "empty_title": "none_title",
+            "empty_body": "none_body",
+            "delete_title": "delete_title",
+            "delete_body": "delete_body",
+            "delete_yes": "delete",
+            "make": "make_btn",
+            "import": "pack_import",
+            "import_tip": "pack_import_tip",
+            "one": "one"
+          },
+          "fields": [
+            {
+              "name": "title",
+              "kind": "text",
+              "word": "f_title",
+              "required": true,
+              "max": 160
+            }
+          ],
+          "export": "/api/assets/article/{id}/pack",
+          "import": "/api/assets/article/pack",
+          "keep": "sm.article",
+          "makes": [
+            "comic",
+            "doodle",
+            "avatar",
+            "film",
+            "assessment"
+          ],
+          "cover_kind": "article",
+          "publish": "article"
+        },
+        {
+          "id": "book",
+          "screen": "books",
+          "icon": "book",
+          "name_field": "name",
+          "name_max": 160,
+          "words": {
+            "title": "title",
+            "lede": "lede",
+            "new": "new_title",
+            "mine": "mine",
+            "search": "search_ph",
+            "empty_title": "none_title",
+            "empty_body": "none_body",
+            "delete_title": "delete_title",
+            "delete_body": "delete_body",
+            "delete_yes": "delete",
+            "make": "make_btn",
+            "import": "pack_import",
+            "import_tip": "pack_import_tip",
+            "one": "one"
+          },
+          "fields": [
+            {
+              "name": "name",
+              "kind": "text",
+              "word": "f_name",
+              "required": true,
+              "max": 160
+            },
+            {
+              "name": "subtitle",
+              "kind": "text",
+              "word": "f_subtitle",
+              "max": 160
+            },
+            {
+              "name": "author",
+              "kind": "text",
+              "word": "f_author",
+              "max": 80
+            }
+          ],
+          "export": "/api/assets/book/{id}/pack",
+          "import": "/api/assets/book/pack",
+          "keep": "sm.book",
+          "makes": [
+            "comic",
+            "doodle",
+            "avatar",
+            "film",
+            "assessment"
+          ],
+          "cover_kind": "book",
+          "publish": "book"
+        }
+      ]
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "rows": "$rows"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "One row per asset type (2026-09-24 owner: 'like Excel, Word and PowerPoint - one product, one standard'). screen = the menu screen that owns it (and whose access guards it); name_field / name_max = what Rename changes; words = the keys of that screen's words (ui.<screen>) the shared Home and New dialog show; fields = the New form (kind text | textarea | select, options = a list the screen passes in, required, max); file = the file New takes (required or not, accept = the screen's list of extensions); export / import = the pack routes ('' = none). A new type = a row here + its doors in assets.py. 2026-09-28 owner: 'browse a Doodle to create a comic book or film...' - `makes` = the types this one can become (Make into on its card; its story text becomes the new asset's source), `keep` = the key its screen reopens. cover_kind / cover_field (2026-09-29 owner: 'add covers to the home page cards'): a type's Home card shows its own picture - cover_kind = the Katha kind whose first picture it is (katha.cover_path), cover_field = a picture address on the record (a YouTube thumbnail); neither = the drawn cover (core ui.js coverArt). publish (2026-09-30 owner: 'Publish & Circles on every module'): the Katha kind this type publishes as - a Publish & Circles button on its Home card and its file bar opens the publish dialog with it chosen. deck (2026-09-30 owner: 'convert Comic, Doodle and Avatar as pdf and power point deck ... from the file bar, on a card, select multiple cards ... or save into another module called Decks'): true = a 'PDF & PowerPoint' button on its Home card and file bar, and Select on its Home (core ui.js assetHome) - Download PDF, Download PowerPoint, Save to Decks.",
+  "weight_basis": "Owner 2026-09-24: product standardisation - chips and ops only.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "rows": [
+          {
+            "id": "film",
+            "screen": "studio",
+            "icon": "film",
+            "name_field": "name",
+            "name_max": 160,
+            "words": {
+              "title": "title",
+              "lede": "lede",
+              "new": "film_new",
+              "mine": "film_mine",
+              "search": "film_search",
+              "empty_title": "film_none_title",
+              "empty_body": "film_none_body",
+              "delete_title": "film_delete_title",
+              "delete_body": "film_delete_body",
+              "delete_yes": "film_delete_yes",
+              "make": "film_make",
+              "import": "film_import",
+              "import_tip": "film_import_tip"
+            },
+            "fields": [
+              {
+                "name": "name",
+                "kind": "text",
+                "word": "f_film_name",
+                "required": true,
+                "max": 160
+              },
+              {
+                "name": "logline",
+                "kind": "textarea",
+                "word": "f_film_logline",
+                "max": 600
+              }
+            ],
+            "file": null,
+            "export": "/api/assets/film/{id}/pack",
+            "import": "/api/assets/film/pack",
+            "keep": "sm.project",
+            "makes": [
+              "comic",
+              "doodle",
+              "assessment"
+            ],
+            "cover_kind": "film",
+            "publish": "film"
+          },
+          {
+            "id": "comic",
+            "screen": "comics",
+            "icon": "image",
+            "name_field": "name",
+            "name_max": 120,
+            "words": {
+              "title": "title",
+              "lede": "lede",
+              "new": "new_title",
+              "mine": "mine",
+              "search": "search_ph",
+              "empty_title": "none_title",
+              "empty_body": "none_body",
+              "delete_title": "delete_book_title",
+              "delete_body": "delete_book_body",
+              "delete_yes": "delete_book",
+              "make": "make",
+              "import": "pack_import",
+              "import_tip": "pack_import_tip"
+            },
+            "fields": [
+              {
+                "name": "name",
+                "kind": "text",
+                "word": "f_name",
+                "required": true,
+                "max": 120
+              },
+              {
+                "name": "author",
+                "kind": "text",
+                "word": "f_author",
+                "max": 120
+              },
+              {
+                "name": "logline",
+                "kind": "textarea",
+                "word": "f_logline",
+                "max": 600
+              },
+              {
+                "name": "style",
+                "kind": "select",
+                "word": "f_style",
+                "options": "styles"
+              },
+              {
+                "name": "road",
+                "kind": "select",
+                "word": "f_road",
+                "options": "roads"
+              }
+            ],
+            "file": {
+              "word": "f_book",
+              "hint": "f_book_hint",
+              "required": false,
+              "accept": "extensions"
+            },
+            "export": "/api/assets/comic/{id}/pack",
+            "import": "/api/assets/comic/pack",
+            "keep": "sm.comic",
+            "makes": [
+              "film",
+              "doodle",
+              "assessment"
+            ],
+            "cover_kind": "comic",
+            "publish": "comic",
+            "deck": true
+          },
+          {
+            "id": "audiobook",
+            "screen": "audiobook",
+            "icon": "mic",
+            "name_field": "title",
+            "name_max": 160,
+            "words": {
+              "title": "title",
+              "lede": "lede",
+              "new": "new_title",
+              "mine": "mine",
+              "search": "search_ph",
+              "empty_title": "none_title",
+              "empty_body": "none_body",
+              "delete_title": "delete_title",
+              "delete_body": "delete_body",
+              "delete_yes": "delete",
+              "make": "make_from_file",
+              "import": "pack_import",
+              "import_tip": "pack_import_tip"
+            },
+            "fields": [
+              {
+                "name": "title",
+                "kind": "text",
+                "word": "f_title",
+                "max": 160
+              },
+              {
+                "name": "author",
+                "kind": "text",
+                "word": "f_author",
+                "max": 120
+              }
+            ],
+            "file": {
+              "word": "drop_title",
+              "hint": "drop_hint",
+              "required": true,
+              "accept": "extensions"
+            },
+            "export": "/api/assets/audiobook/{id}/pack",
+            "import": "/api/assets/audiobook/pack",
+            "keep": "sm.audiobook",
+            "makes": [
+              "comic",
+              "doodle",
+              "film",
+              "assessment"
+            ],
+            "cover_kind": "audiobook",
+            "publish": "audiobook"
+          },
+          {
+            "id": "tedbook",
+            "screen": "tedbook",
+            "icon": "book",
+            "name_field": "title",
+            "name_max": 160,
+            "words": {
+              "title": "title",
+              "lede": "lede",
+              "new": "new_title",
+              "mine": "mine",
+              "search": "search_ph",
+              "empty_title": "none_title",
+              "empty_body": "none_body",
+              "delete_title": "delete_title",
+              "delete_body": "delete_body",
+              "delete_yes": "delete",
+              "make": "make_from_file",
+              "import": "pack_import",
+              "import_tip": "pack_import_tip"
+            },
+            "fields": [
+              {
+                "name": "title",
+                "kind": "text",
+                "word": "f_title",
+                "max": 160
+              },
+              {
+                "name": "author",
+                "kind": "text",
+                "word": "f_author",
+                "max": 120
+              },
+              {
+                "name": "genre",
+                "kind": "select",
+                "word": "f_genre",
+                "options": "genres"
+              }
+            ],
+            "file": {
+              "word": "drop_title",
+              "hint": "drop_hint",
+              "required": true,
+              "accept": "extensions"
+            },
+            "export": "/api/assets/tedbook/{id}/pack",
+            "import": "/api/assets/tedbook/pack",
+            "keep": "sm.tedbook",
+            "makes": [
+              "comic",
+              "doodle",
+              "film",
+              "assessment"
+            ],
+            "cover_kind": "tedbook",
+            "publish": "tedbook"
+          },
+          {
+            "id": "assessment",
+            "screen": "assess",
+            "icon": "pulse",
+            "name_field": "name",
+            "name_max": 120,
+            "words": {
+              "title": "title",
+              "lede": "lede",
+              "new": "new_title",
+              "mine": "mine",
+              "search": "search_ph",
+              "empty_title": "none_title",
+              "empty_body": "none_body",
+              "delete_title": "delete_title",
+              "delete_body": "delete_body",
+              "delete_yes": "delete",
+              "make": "assess_btn",
+              "import": "pack_import",
+              "import_tip": "pack_import_tip"
+            },
+            "fields": [
+              {
+                "name": "name",
+                "kind": "text",
+                "word": "name_label",
+                "max": 120
+              },
+              {
+                "name": "author",
+                "kind": "text",
+                "word": "author_label",
+                "max": 120
+              }
+            ],
+            "file": {
+              "word": "drop_title",
+              "hint": "drop_hint",
+              "required": true,
+              "accept": "extensions"
+            },
+            "export": "/api/assets/assessment/{id}/pack",
+            "import": "/api/assets/assessment/pack",
+            "keep": "sm.assess",
+            "makes": [],
+            "publish": "assessment"
+          },
+          {
+            "id": "doodle",
+            "screen": "doodle",
+            "icon": "edit",
+            "name_field": "name",
+            "name_max": 160,
+            "words": {
+              "title": "title",
+              "lede": "lede",
+              "new": "new_title",
+              "mine": "mine",
+              "search": "search_ph",
+              "empty_title": "none_title",
+              "empty_body": "none_body",
+              "delete_title": "delete_title",
+              "delete_body": "delete_body",
+              "delete_yes": "delete",
+              "make": "make_btn",
+              "import": "pack_import",
+              "import_tip": "pack_import_tip"
+            },
+            "fields": [
+              {
+                "name": "name",
+                "kind": "text",
+                "word": "name_label",
+                "max": 160,
+                "required": true
+              },
+              {
+                "name": "topic",
+                "kind": "textarea",
+                "word": "topic_label",
+                "max": 20000
+              }
+            ],
+            "export": "/api/assets/doodle/{id}/pack",
+            "import": "/api/assets/doodle/pack",
+            "keep": "sm.doodle",
+            "makes": [
+              "avatar",
+              "comic",
+              "film",
+              "assessment"
+            ],
+            "cover_kind": "doodle",
+            "publish": "doodle",
+            "deck": true
+          },
+          {
+            "id": "avatar",
+            "screen": "avatar",
+            "icon": "user",
+            "name_field": "name",
+            "name_max": 160,
+            "words": {
+              "title": "title",
+              "lede": "lede",
+              "new": "new_title",
+              "mine": "mine",
+              "search": "search_ph",
+              "empty_title": "none_title",
+              "empty_body": "none_body",
+              "delete_title": "delete_title",
+              "delete_body": "delete_body",
+              "delete_yes": "delete",
+              "make": "make_btn",
+              "import": "pack_import",
+              "import_tip": "pack_import_tip"
+            },
+            "fields": [
+              {
+                "name": "name",
+                "kind": "text",
+                "word": "name_label",
+                "max": 160,
+                "required": true
+              },
+              {
+                "name": "topic",
+                "kind": "textarea",
+                "word": "topic_label",
+                "max": 20000
+              },
+              {
+                "name": "template",
+                "kind": "template",
+                "word": "tpl_label",
+                "max": 40
+              }
+            ],
+            "export": "/api/assets/avatar/{id}/pack",
+            "import": "/api/assets/avatar/pack",
+            "keep": "sm.avatar",
+            "makes": [
+              "doodle",
+              "comic",
+              "film",
+              "assessment"
+            ],
+            "cover_kind": "doodle",
+            "publish": "doodle",
+            "deck": true,
+            "templates": {
+              "api": "/api/avatar",
+              "words": "avatar",
+              "word_prefix": "tpl_",
+              "lede_word": "tpl_lede",
+              "pair_words": [
+                "tpl_intro",
+                "tpl_topic"
+              ],
+              "fresh": true
+            }
+          },
+          {
+            "id": "youtube",
+            "screen": "youtube",
+            "icon": "play",
+            "name_field": "title",
+            "name_max": 200,
+            "words": {
+              "title": "title",
+              "lede": "lede",
+              "new": "new_title",
+              "mine": "mine",
+              "search": "search_ph",
+              "empty_title": "none_title",
+              "empty_body": "none_body",
+              "delete_title": "forget_title",
+              "delete_body": "forget_body",
+              "delete_yes": "forget_yes",
+              "make": "make_btn",
+              "import": "pack_import",
+              "import_tip": "pack_import_tip"
+            },
+            "fields": [
+              {
+                "name": "url",
+                "kind": "text",
+                "word": "url_label",
+                "max": 300,
+                "required": true
+              },
+              {
+                "name": "road",
+                "kind": "select",
+                "word": "whose_card",
+                "options": "whose"
+              },
+              {
+                "name": "minutes",
+                "kind": "text",
+                "word": "length_label",
+                "max": 8
+              },
+              {
+                "name": "declared",
+                "kind": "check",
+                "word": "declare_label"
+              }
+            ],
+            "export": "/api/assets/youtube/{id}/pack",
+            "import": "/api/assets/youtube/pack",
+            "keep": "sm.youtube",
+            "makes": [],
+            "cover_field": "thumb",
+            "publish": "youtube"
+          },
+          {
+            "id": "video",
+            "screen": "video",
+            "icon": "film",
+            "name_field": "title",
+            "name_max": 120,
+            "words": {
+              "title": "title",
+              "lede": "lede",
+              "new": "upload_recording",
+              "mine": "as_mine",
+              "search": "search_placeholder",
+              "empty_title": "no_recordings_title",
+              "empty_body": "no_recordings_body",
+              "delete_title": "delete_title",
+              "delete_body": "delete_body",
+              "delete_yes": "delete",
+              "make": "upload",
+              "import": "pack_import",
+              "import_tip": "pack_import_tip"
+            },
+            "fields": [],
+            "export": "/api/assets/video/{id}/pack",
+            "import": "/api/assets/video/pack",
+            "keep": "",
+            "makes": [
+              "doodle",
+              "film",
+              "comic",
+              "assessment"
+            ],
+            "cover_kind": "video",
+            "publish": "video"
+          },
+          {
+            "id": "deck",
+            "screen": "decks",
+            "icon": "deck",
+            "name_field": "name",
+            "name_max": 160,
+            "words": {
+              "title": "title",
+              "lede": "lede",
+              "new": "new_title",
+              "mine": "mine",
+              "search": "search_ph",
+              "empty_title": "none_title",
+              "empty_body": "none_body",
+              "delete_title": "delete_title",
+              "delete_body": "delete_body",
+              "delete_yes": "delete",
+              "make": "make_btn",
+              "import": "pack_import",
+              "import_tip": "pack_import_tip",
+              "one": "one"
+            },
+            "fields": [
+              {
+                "name": "name",
+                "kind": "text",
+                "word": "f_name",
+                "required": true,
+                "max": 160
+              },
+              {
+                "name": "author",
+                "kind": "text",
+                "word": "f_author",
+                "max": 80
+              }
+            ],
+            "export": "/api/assets/deck/{id}/pack",
+            "import": "/api/assets/deck/pack",
+            "keep": "sm.deck",
+            "makes": [],
+            "cover_kind": "deck",
+            "publish": "deck"
+          },
+          {
+            "id": "ad",
+            "screen": "ads",
+            "icon": "film",
+            "name_field": "name",
+            "name_max": 80,
+            "words": {
+              "title": "title",
+              "lede": "lede",
+              "new": "new_title",
+              "mine": "mine",
+              "search": "search_ph",
+              "empty_title": "none_title",
+              "empty_body": "none_body",
+              "delete_title": "delete_title",
+              "delete_body": "delete_body",
+              "delete_yes": "delete",
+              "make": "make_btn",
+              "one": "one",
+              "import": "pack_import",
+              "import_tip": "pack_import_tip"
+            },
+            "fields": [
+              {
+                "name": "client",
+                "kind": "text",
+                "word": "f_client",
+                "required": true,
+                "max": 40
+              },
+              {
+                "name": "template",
+                "kind": "text",
+                "word": "templates_h",
+                "required": true,
+                "max": 40
+              }
+            ],
+            "keep": "sm.ad",
+            "makes": [],
+            "cover_kind": "ad",
+            "publish": "ad",
+            "export": "/api/assets/ad/{id}/pack",
+            "import": "/api/assets/ad/pack"
+          },
+          {
+            "id": "article",
+            "screen": "articles",
+            "icon": "edit",
+            "name_field": "title",
+            "name_max": 160,
+            "words": {
+              "title": "title",
+              "lede": "lede",
+              "new": "new_title",
+              "mine": "mine",
+              "search": "search_ph",
+              "empty_title": "none_title",
+              "empty_body": "none_body",
+              "delete_title": "delete_title",
+              "delete_body": "delete_body",
+              "delete_yes": "delete",
+              "make": "make_btn",
+              "import": "pack_import",
+              "import_tip": "pack_import_tip",
+              "one": "one"
+            },
+            "fields": [
+              {
+                "name": "title",
+                "kind": "text",
+                "word": "f_title",
+                "required": true,
+                "max": 160
+              }
+            ],
+            "export": "/api/assets/article/{id}/pack",
+            "import": "/api/assets/article/pack",
+            "keep": "sm.article",
+            "makes": [
+              "comic",
+              "doodle",
+              "avatar",
+              "film",
+              "assessment"
+            ],
+            "cover_kind": "article",
+            "publish": "article"
+          },
+          {
+            "id": "book",
+            "screen": "books",
+            "icon": "book",
+            "name_field": "name",
+            "name_max": 160,
+            "words": {
+              "title": "title",
+              "lede": "lede",
+              "new": "new_title",
+              "mine": "mine",
+              "search": "search_ph",
+              "empty_title": "none_title",
+              "empty_body": "none_body",
+              "delete_title": "delete_title",
+              "delete_body": "delete_body",
+              "delete_yes": "delete",
+              "make": "make_btn",
+              "import": "pack_import",
+              "import_tip": "pack_import_tip",
+              "one": "one"
+            },
+            "fields": [
+              {
+                "name": "name",
+                "kind": "text",
+                "word": "f_name",
+                "required": true,
+                "max": 160
+              },
+              {
+                "name": "subtitle",
+                "kind": "text",
+                "word": "f_subtitle",
+                "max": 160
+              },
+              {
+                "name": "author",
+                "kind": "text",
+                "word": "f_author",
+                "max": 80
+              }
+            ],
+            "export": "/api/assets/book/{id}/pack",
+            "import": "/api/assets/book/pack",
+            "keep": "sm.book",
+            "makes": [
+              "comic",
+              "doodle",
+              "avatar",
+              "film",
+              "assessment"
+            ],
+            "cover_kind": "book",
+            "publish": "book"
+          }
+        ]
+      }
+    }
+  ]
+}

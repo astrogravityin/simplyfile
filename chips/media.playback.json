@@ -1,0 +1,102 @@
+{
+  "chip_id": "media.playback",
+  "kind": "accessor",
+  "set": "media",
+  "audience": "admin",
+  "label": "What the narrated video is written as, so anyone can play it without buying a codec",
+  "aliases": [
+    "output codec",
+    "hevc",
+    "h264",
+    "free to play"
+  ],
+  "params": [
+    {
+      "name": "portable_codecs",
+      "type": "list",
+      "default": [
+        "h264",
+        "mpeg4"
+      ],
+      "label": "Picture formats that may be kept as they are"
+    },
+    {
+      "name": "encoder",
+      "type": "text",
+      "default": "libx264",
+      "label": "What anything else is re-encoded with"
+    },
+    {
+      "name": "crf",
+      "type": "text",
+      "default": "20",
+      "label": "Quality (lower is better and bigger)"
+    },
+    {
+      "name": "preset",
+      "type": "text",
+      "default": "veryfast",
+      "label": "How hard the encoder works"
+    },
+    {
+      "name": "pixel_format",
+      "type": "text",
+      "default": "yuv420p",
+      "label": "Pixel format every player understands"
+    },
+    {
+      "name": "faststart",
+      "type": "boolean",
+      "default": true,
+      "label": "Move the index to the front so it plays while downloading"
+    },
+    {
+      "name": "always_reencode",
+      "type": "boolean",
+      "default": false,
+      "label": "Re-encode even a recording that is already portable"
+    },
+    {
+      "name": "video_stream_pattern",
+      "type": "text",
+      "default": "Stream #\\S+.*Video:\\s*([A-Za-z0-9_]+)",
+      "label": "How ffmpeg's report names the picture format"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "portable_codecs": "$portable_codecs",
+      "encoder": "$encoder",
+      "crf": "$crf",
+      "preset": "$preset",
+      "pixel_format": "$pixel_format",
+      "faststart": "$faststart",
+      "always_reencode": "$always_reencode",
+      "video_stream_pattern": "$video_stream_pattern"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-09-18: a phone recording is often HEVC (H.265). Copied into the narrated MP4 it made Windows ask for a paid 'HEVC Video Extensions' codec before it would play. A recording in a portable_codecs format is copied as it is (fast, no quality lost); anything else is re-encoded to H.264, which every phone, browser and TV plays with nothing to buy.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "portable_codecs": [
+          "h264",
+          "mpeg4"
+        ],
+        "encoder": "libx264",
+        "crf": "20",
+        "preset": "veryfast",
+        "pixel_format": "yuv420p",
+        "faststart": true,
+        "always_reencode": false,
+        "video_stream_pattern": "Stream #\\S+.*Video:\\s*([A-Za-z0-9_]+)"
+      }
+    }
+  ],
+  "weight_basis": "Owner-only (audience admin): these knobs decide whether the video this portal hands out plays for free or asks the viewer to buy a codec, and how much CPU every render costs."
+}

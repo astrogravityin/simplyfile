@@ -1,0 +1,134 @@
+{
+  "chip_id": "keyshare.rate_card",
+  "kind": "accessor",
+  "set": "keyshare",
+  "label": "What a borrower is told a minute of video (or a still, or a page of text) will cost them",
+  "aliases": [
+    "cost per minute",
+    "rate card",
+    "price disclaimer"
+  ],
+  "params": [
+    {
+      "name": "seconds_per_minute",
+      "type": "number",
+      "default": 60,
+      "label": "Seconds priced as one minute of finished video"
+    },
+    {
+      "name": "stills_per_minute",
+      "type": "number",
+      "default": 6,
+      "label": "Stills a minute of video typically needs"
+    },
+    {
+      "name": "kinds",
+      "type": "list",
+      "default": [
+        "video",
+        "image",
+        "text"
+      ],
+      "label": "Kinds of work quoted, in order"
+    },
+    {
+      "name": "video_line",
+      "type": "text",
+      "default": "About {low} to {high} per minute of finished video on {model}.",
+      "label": "video_line"
+    },
+    {
+      "name": "image_line",
+      "type": "text",
+      "default": "About {usd} per still on {model}.",
+      "label": "image_line"
+    },
+    {
+      "name": "text_line",
+      "type": "text",
+      "default": "About {usd} per 1,000 words written on {model}.",
+      "label": "text_line"
+    },
+    {
+      "name": "with_markup",
+      "type": "text",
+      "default": "These are YOUR prices - they already include the {pct}% the key's owner adds.",
+      "label": "with_markup"
+    },
+    {
+      "name": "at_cost",
+      "type": "text",
+      "default": "These are the provider's own prices - the key's owner adds nothing on top.",
+      "label": "at_cost"
+    },
+    {
+      "name": "disclaimer",
+      "type": "text",
+      "default": "An estimate, not a quote. What a minute really costs depends on the model you pick, the resolution and quality, how many takes you redraw, how many stills the shots need, and how much the provider charges on the day. Check the cost shown before each run - that one is exact.",
+      "label": "disclaimer"
+    },
+    {
+      "name": "text_words",
+      "type": "number",
+      "default": 1000,
+      "label": "Words the text price is quoted for"
+    },
+    {
+      "name": "words_per_1k_tokens",
+      "type": "number",
+      "default": 750,
+      "label": "Words in a thousand tokens (for the text quote)"
+    },
+    {
+      "name": "decimals_extra",
+      "type": "number",
+      "default": 2,
+      "label": "Decimal places beyond the currency's own (a rate is smaller than a price)"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "seconds_per_minute": "$seconds_per_minute",
+      "stills_per_minute": "$stills_per_minute",
+      "kinds": "$kinds",
+      "video_line": "$video_line",
+      "image_line": "$image_line",
+      "text_line": "$text_line",
+      "with_markup": "$with_markup",
+      "at_cost": "$at_cost",
+      "disclaimer": "$disclaimer",
+      "text_words": "$text_words",
+      "words_per_1k_tokens": "$words_per_1k_tokens",
+      "decimals_extra": "$decimals_extra"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "seconds_per_minute and stills_per_minute: the shape of 'one minute of video' the quote is built on. kinds: which kinds are quoted and in what order. video_line / image_line / text_line: the sentences. with_markup / at_cost: which of the two follows them. disclaimer: the sentence that says this is an estimate and why it moves - it is never dropped. text_words and words_per_1k_tokens turn a token price into a price per so many words. decimals_extra: places shown beyond the currency's own, because a rate per still is far smaller than a price.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "seconds_per_minute": 60,
+        "stills_per_minute": 6,
+        "kinds": [
+          "video",
+          "image",
+          "text"
+        ],
+        "video_line": "About {low} to {high} per minute of finished video on {model}.",
+        "image_line": "About {usd} per still on {model}.",
+        "text_line": "About {usd} per 1,000 words written on {model}.",
+        "with_markup": "These are YOUR prices - they already include the {pct}% the key's owner adds.",
+        "at_cost": "These are the provider's own prices - the key's owner adds nothing on top.",
+        "disclaimer": "An estimate, not a quote. What a minute really costs depends on the model you pick, the resolution and quality, how many takes you redraw, how many stills the shots need, and how much the provider charges on the day. Check the cost shown before each run - that one is exact.",
+        "text_words": 1000,
+        "words_per_1k_tokens": 750,
+        "decimals_extra": 2
+      }
+    }
+  ],
+  "weight_basis": "What a borrower is promised before they accept a key. Every sentence and every assumption here."
+}

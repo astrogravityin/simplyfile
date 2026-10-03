@@ -1,0 +1,214 @@
+{
+  "chip_id": "quality.check",
+  "kind": "accessor",
+  "set": "quality",
+  "audience": "admin",
+  "label": "Every mandatory step and Final-check item of one asset, with its verdict",
+  "aliases": [],
+  "params": [
+    {
+      "name": "module",
+      "type": "text",
+      "default": ""
+    },
+    {
+      "name": "facts",
+      "type": "record",
+      "default": {}
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "rows": {
+        "vop": "rows_check",
+        "values": "$facts",
+        "rows": {
+          "vop": "filter_rows",
+          "rows": {
+            "vop": "get",
+            "value": {
+              "chip": "quality.rules"
+            },
+            "path": "rows"
+          },
+          "field": "module",
+          "cmp": "eq",
+          "value": "$module"
+        }
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "The module's rows of quality.rules, each compared (op rows_check) with the fact the module reports: state = pass | fail | skip (skip: nothing to look at yet). have / need = the two sides.",
+  "weight_basis": "Structure only - the rules are quality.rules.",
+  "test_cases": [
+    {
+      "args": {
+        "module": "comic",
+        "facts": {
+          "cast": 0
+        }
+      },
+      "expect_value": {
+        "rows": [
+          {
+            "id": "comic_cast",
+            "module": "comic",
+            "kind": "gate",
+            "step": "book",
+            "fact": "cast",
+            "op": ">=",
+            "value": 1,
+            "blocks": [
+              "script_ai",
+              "script_bridge",
+              "script_free",
+              "whole_ai",
+              "draw"
+            ],
+            "fix": "cast",
+            "word": "comic_cast",
+            "have": 0,
+            "need": 1,
+            "state": "fail"
+          },
+          {
+            "id": "comic_looks",
+            "module": "comic",
+            "kind": "gate",
+            "step": "book",
+            "fact": "cast_looks_missing",
+            "op": "==",
+            "value": 0,
+            "blocks": [
+              "whole_ai",
+              "draw"
+            ],
+            "fix": "looks",
+            "word": "comic_looks",
+            "have": null,
+            "need": 0,
+            "state": "skip"
+          },
+          {
+            "id": "comic_faces",
+            "module": "comic",
+            "kind": "gate",
+            "step": "book",
+            "fact": "cast_faces_missing",
+            "op": "==",
+            "value": 0,
+            "blocks": [
+              "whole_ai",
+              "draw"
+            ],
+            "fix": "faces",
+            "word": "comic_faces",
+            "have": null,
+            "need": 0,
+            "state": "skip"
+          },
+          {
+            "id": "comic_titles",
+            "module": "comic",
+            "kind": "final",
+            "step": "chapter",
+            "fact": "chapters_untitled",
+            "op": "==",
+            "value": 0,
+            "blocks": [
+              "publish"
+            ],
+            "fix": "title",
+            "word": "comic_titles",
+            "have": null,
+            "need": 0,
+            "state": "skip"
+          },
+          {
+            "id": "comic_written",
+            "module": "comic",
+            "kind": "info",
+            "step": "chapter",
+            "fact": "chapters_unwritten",
+            "op": "==",
+            "value": 0,
+            "blocks": [],
+            "fix": "script",
+            "word": "comic_written",
+            "have": null,
+            "need": 0,
+            "state": "skip"
+          },
+          {
+            "id": "comic_drawn",
+            "module": "comic",
+            "kind": "final",
+            "step": "chapter",
+            "fact": "cards_undrawn",
+            "op": "==",
+            "value": 0,
+            "blocks": [
+              "publish"
+            ],
+            "fix": "draw",
+            "word": "comic_drawn",
+            "have": null,
+            "need": 0,
+            "state": "skip"
+          },
+          {
+            "id": "comic_lettered",
+            "module": "comic",
+            "kind": "final",
+            "step": "chapter",
+            "fact": "cards_unlettered",
+            "op": "==",
+            "value": 0,
+            "blocks": [
+              "publish"
+            ],
+            "fix": "letter",
+            "word": "comic_lettered",
+            "have": null,
+            "need": 0,
+            "state": "skip"
+          },
+          {
+            "id": "comic_people",
+            "module": "comic",
+            "kind": "final",
+            "step": "chapter",
+            "fact": "cards_people_unknown",
+            "op": "==",
+            "value": 0,
+            "blocks": [],
+            "fix": "looks",
+            "word": "comic_people",
+            "have": null,
+            "need": 0,
+            "state": "skip"
+          },
+          {
+            "id": "comic_jpeg",
+            "module": "comic",
+            "kind": "info",
+            "step": "book",
+            "fact": "pictures_png",
+            "op": "==",
+            "value": 0,
+            "blocks": [],
+            "fix": "shrink",
+            "word": "comic_jpeg",
+            "have": null,
+            "need": 0,
+            "state": "skip"
+          }
+        ]
+      }
+    }
+  ]
+}

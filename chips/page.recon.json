@@ -1,0 +1,61 @@
+{
+  "chip_id": "page.recon",
+  "kind": "accessor",
+  "set": "page",
+  "label": "Reconcile page settings",
+  "aliases": [
+    "page recon"
+  ],
+  "params": [
+    {
+      "name": "severity_tag",
+      "type": "json",
+      "default": {
+        "red": "tag bad",
+        "amber": "tag warn",
+        "ok": "tag ok"
+      },
+      "label": "severity tag"
+    },
+    {
+      "name": "exts",
+      "type": "list",
+      "default": [
+        ".txt",
+        ".csv",
+        ".xls",
+        ".xlsx"
+      ],
+      "label": "exts offered in the upload box (recon.settings decides what is taken)"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "severity_tag": "$severity_tag",
+      "exts": "$exts"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "How the Reconcile screen colours a finding by its severity.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "severity_tag": {
+          "red": "tag bad",
+          "amber": "tag warn",
+          "ok": "tag ok"
+        },
+        "exts": [
+          ".txt",
+          ".csv",
+          ".xls",
+          ".xlsx"
+        ]
+      }
+    }
+  ]
+}

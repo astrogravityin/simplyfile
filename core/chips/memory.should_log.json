@@ -1,0 +1,87 @@
+{
+  "chip_id": "memory.should_log",
+  "kind": "predicate",
+  "set": "memory",
+  "audience": "admin",
+  "label": "A request moved memory enough to write a log line",
+  "aliases": [
+    "memory log line"
+  ],
+  "params": [
+    {
+      "name": "before_mb",
+      "type": "number",
+      "default": 0
+    },
+    {
+      "name": "after_mb",
+      "type": "number",
+      "default": 0
+    },
+    {
+      "name": "limit_mb",
+      "type": "number",
+      "default": 0
+    },
+    {
+      "name": "log_move_mb",
+      "type": "number",
+      "default": 25
+    },
+    {
+      "name": "log_above_pct",
+      "type": "number",
+      "default": 74
+    }
+  ],
+  "expr": {
+    "op": "any",
+    "items": [
+      {
+        "op": "ge",
+        "left": {
+          "vop": "sub",
+          "a": "$after_mb",
+          "b": "$before_mb"
+        },
+        "right": "$log_move_mb"
+      },
+      {
+        "op": "ge",
+        "left": "$after_mb",
+        "right": {
+          "vop": "div",
+          "a": {
+            "vop": "mul",
+            "a": "$limit_mb",
+            "b": "$log_above_pct"
+          },
+          "b": 100
+        }
+      }
+    ]
+  },
+  "returns": "boolean",
+  "version": 1,
+  "status": "published",
+  "description_nl": "TRUE when a move is big enough to also reach the server log (journalctl), because a killed process takes its in-memory history with it.",
+  "test_cases": [
+    {
+      "args": {
+        "before_mb": 100,
+        "after_mb": 130,
+        "limit_mb": 1000
+      },
+      "expect": true
+    },
+    {
+      "args": {
+        "before_mb": 100,
+        "after_mb": 110,
+        "limit_mb": 1000
+      },
+      "expect": false
+    }
+  ],
+  "weight_basis": "Platform operations primitive, no business content. The knobs ARE the policy — edit them here, never in Python."
+}

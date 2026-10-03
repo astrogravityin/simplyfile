@@ -1,0 +1,70 @@
+{
+  "chip_id": "keysales.may_sell",
+  "kind": "predicate",
+  "set": "keysales",
+  "label": "May this role put a key up for sale and answer the requests to buy it",
+  "aliases": [
+    "sales person",
+    "who may sell a key",
+    "keysales gate"
+  ],
+  "params": [
+    {
+      "name": "role",
+      "type": "text",
+      "default": "member",
+      "label": "The person's role"
+    },
+    {
+      "name": "action",
+      "type": "text",
+      "default": "view",
+      "label": "view or use"
+    },
+    {
+      "name": "seller_roles",
+      "type": "list",
+      "default": [
+        "owner",
+        "sales"
+      ],
+      "label": "Roles that may sell a key"
+    }
+  ],
+  "expr": {
+    "op": "in_set",
+    "value": "$role",
+    "set": "$seller_roles"
+  },
+  "returns": "boolean",
+  "version": 1,
+  "status": "published",
+  "description_nl": "seller_roles: every role allowed to configure a key for sale and to answer requests to buy it. The owner is always one. 'sales' is here ready for the Sales Person role; until that role exists in people.roles nobody holds it, and the entry does nothing.",
+  "test_cases": [
+    {
+      "args": {
+        "role": "owner"
+      },
+      "expect_value": true
+    },
+    {
+      "args": {
+        "role": "sales"
+      },
+      "expect_value": true
+    },
+    {
+      "args": {
+        "role": "editor"
+      },
+      "expect_value": false
+    },
+    {
+      "args": {
+        "role": "member"
+      },
+      "expect_value": false
+    }
+  ],
+  "weight_basis": "THE list of who may sell. A Sales Person is a role in this list - add the role to people.roles and its id here, and nothing in Python changes."
+}

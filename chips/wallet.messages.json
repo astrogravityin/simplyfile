@@ -1,0 +1,115 @@
+{
+  "chip_id": "wallet.messages",
+  "kind": "accessor",
+  "set": "wallet",
+  "label": "Everything the server says about wallets",
+  "aliases": [
+    "wallet messages"
+  ],
+  "params": [
+    {
+      "name": "empty",
+      "type": "text",
+      "default": "Your SteadyMove credit is used up. Ask the portal owner to add more.",
+      "label": "empty"
+    },
+    {
+      "name": "day_cap",
+      "type": "long",
+      "default": "Today's limit of {cap} is used up. It opens again tomorrow, or ask the portal owner to raise it.",
+      "label": "day cap"
+    },
+    {
+      "name": "low",
+      "type": "text",
+      "default": "Only {left} of credit left.",
+      "label": "low"
+    },
+    {
+      "name": "only_owner",
+      "type": "text",
+      "default": "Only the portal owner can do that.",
+      "label": "only owner"
+    },
+    {
+      "name": "no_person",
+      "type": "text",
+      "default": "Nobody here signs in as {email}.",
+      "label": "no person"
+    },
+    {
+      "name": "bad_amount",
+      "type": "text",
+      "default": "Give an amount between 0 and {max}.",
+      "label": "bad amount"
+    },
+    {
+      "name": "no_keys",
+      "type": "text",
+      "default": "Add your own key for at least one provider first - the wallet lends your keys.",
+      "label": "no keys"
+    },
+    {
+      "name": "added",
+      "type": "text",
+      "default": "Added {amount} to {email}'s wallet. {left} left now.",
+      "label": "added"
+    },
+    {
+      "name": "cap_set",
+      "type": "text",
+      "default": "{email} may now spend {cap} a day.",
+      "label": "cap set"
+    },
+    {
+      "name": "cap_off",
+      "type": "text",
+      "default": "{email} has no daily limit now.",
+      "label": "cap off"
+    },
+    {
+      "name": "wallet_key",
+      "type": "text",
+      "default": "SteadyMove credit",
+      "label": "wallet key"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "empty": "$empty",
+      "day_cap": "$day_cap",
+      "low": "$low",
+      "only_owner": "$only_owner",
+      "no_person": "$no_person",
+      "bad_amount": "$bad_amount",
+      "no_keys": "$no_keys",
+      "added": "$added",
+      "cap_set": "$cap_set",
+      "cap_off": "$cap_off",
+      "wallet_key": "$wallet_key"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "Every sentence the wallet routes answer with. {placeholders} are filled by the server.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "empty": "Your SteadyMove credit is used up. Ask the portal owner to add more.",
+        "day_cap": "Today's limit of {cap} is used up. It opens again tomorrow, or ask the portal owner to raise it.",
+        "low": "Only {left} of credit left.",
+        "only_owner": "Only the portal owner can do that.",
+        "no_person": "Nobody here signs in as {email}.",
+        "bad_amount": "Give an amount between 0 and {max}.",
+        "no_keys": "Add your own key for at least one provider first - the wallet lends your keys.",
+        "added": "Added {amount} to {email}'s wallet. {left} left now.",
+        "cap_set": "{email} may now spend {cap} a day.",
+        "cap_off": "{email} has no daily limit now.",
+        "wallet_key": "SteadyMove credit"
+      }
+    }
+  ]
+}

@@ -1,0 +1,101 @@
+{
+  "chip_id": "keyshare.bill_view",
+  "kind": "accessor",
+  "set": "keyshare",
+  "label": "How usage becomes a bill line: what is grouped and what is totalled",
+  "aliases": [
+    "bill grouping",
+    "usage bill"
+  ],
+  "params": [
+    {
+      "name": "group_by",
+      "type": "list",
+      "default": [
+        "key_id",
+        "user_id"
+      ],
+      "label": "A bill line is one key and one person"
+    },
+    {
+      "name": "measures",
+      "type": "record",
+      "default": {
+        "runs": [
+          "count",
+          "at"
+        ],
+        "cost_usd": [
+          "sum",
+          "cost_usd"
+        ],
+        "seconds": [
+          "sum",
+          "elapsed_s"
+        ],
+        "first_at": [
+          "first",
+          "at"
+        ],
+        "last_at": [
+          "last",
+          "at"
+        ]
+      },
+      "label": "What each bill line totals"
+    },
+    {
+      "name": "min_usd",
+      "type": "number",
+      "default": 0.0001,
+      "label": "Below this a line is not worth billing"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "group_by": "$group_by",
+      "measures": "$measures",
+      "min_usd": "$min_usd"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "group_by: one bill line per key per person. measures: the totals each line carries - how many runs, what they cost, how long they ran, and the first and last run in the period. min_usd: a line smaller than this is not billed, because rounding dust is not an invoice.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "group_by": [
+          "key_id",
+          "user_id"
+        ],
+        "measures": {
+          "runs": [
+            "count",
+            "at"
+          ],
+          "cost_usd": [
+            "sum",
+            "cost_usd"
+          ],
+          "seconds": [
+            "sum",
+            "elapsed_s"
+          ],
+          "first_at": [
+            "first",
+            "at"
+          ],
+          "last_at": [
+            "last",
+            "at"
+          ]
+        },
+        "min_usd": 0.0001
+      }
+    }
+  ],
+  "weight_basis": "A bill is a sum of runs. Which runs, and what is summed, is decided here."
+}

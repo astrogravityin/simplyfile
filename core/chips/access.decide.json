@@ -1,0 +1,463 @@
+{
+  "chip_id": "access.decide",
+  "kind": "accessor",
+  "set": "access",
+  "audience": "admin",
+  "label": "May this person open this screen (or use this function) — and why",
+  "aliases": [
+    "access resolver",
+    "deny wins"
+  ],
+  "params": [
+    {
+      "name": "signed_in",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "role",
+      "type": "text",
+      "default": "member"
+    },
+    {
+      "name": "known",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "name": "admin",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "available",
+      "type": "text",
+      "default": "yes",
+      "label": "yes or no - has this person anything on that screen at all"
+    },
+    {
+      "name": "gate",
+      "type": "text",
+      "default": "none",
+      "label": "none, yes or no"
+    },
+    {
+      "name": "screen",
+      "type": "text",
+      "default": ""
+    },
+    {
+      "name": "label",
+      "type": "text",
+      "default": ""
+    },
+    {
+      "name": "deny_by",
+      "type": "text",
+      "default": ""
+    },
+    {
+      "name": "deny_on",
+      "type": "text",
+      "default": ""
+    },
+    {
+      "name": "allow_by",
+      "type": "text",
+      "default": ""
+    },
+    {
+      "name": "allow_on",
+      "type": "text",
+      "default": ""
+    },
+    {
+      "name": "msg_signed_out",
+      "type": "text",
+      "default": "Not signed in."
+    },
+    {
+      "name": "msg_owner",
+      "type": "text",
+      "default": "Owners can open everything."
+    },
+    {
+      "name": "msg_unknown",
+      "type": "text",
+      "default": "\"{screen}\" is not a screen in this portal."
+    },
+    {
+      "name": "msg_admin",
+      "type": "text",
+      "default": "Only the portal owner can open this."
+    },
+    {
+      "name": "msg_gate",
+      "type": "text",
+      "default": "A {role} cannot use {label}. Ask the portal owner to make you an author or an editor."
+    },
+    {
+      "name": "msg_denied",
+      "type": "text",
+      "default": "Denied for {deny_by} on {deny_on}."
+    },
+    {
+      "name": "msg_allowed",
+      "type": "text",
+      "default": "Allowed for {allow_by} on {allow_on}."
+    },
+    {
+      "name": "msg_open",
+      "type": "text",
+      "default": "Open to every account; no rule says otherwise."
+    },
+    {
+      "name": "msg_unavailable",
+      "type": "text",
+      "default": "{label} is not open yet - there is nothing on it for you.",
+      "label": "msg_unavailable"
+    }
+  ],
+  "expr": {
+    "vop": "choose",
+    "cases": [
+      {
+        "when": {
+          "op": "eq",
+          "left": "$signed_in",
+          "right": false
+        },
+        "then": {
+          "vop": "record",
+          "fields": {
+            "allowed": false,
+            "why": {
+              "vop": "template",
+              "text": "$msg_signed_out",
+              "values": {
+                "screen": "$screen",
+                "label": "$label",
+                "role": "$role",
+                "deny_by": "$deny_by",
+                "deny_on": "$deny_on",
+                "allow_by": "$allow_by",
+                "allow_on": "$allow_on"
+              }
+            }
+          }
+        }
+      },
+      {
+        "when": {
+          "op": "eq",
+          "left": "$known",
+          "right": false
+        },
+        "then": {
+          "vop": "record",
+          "fields": {
+            "allowed": false,
+            "why": {
+              "vop": "template",
+              "text": "$msg_unknown",
+              "values": {
+                "screen": "$screen",
+                "label": "$label",
+                "role": "$role",
+                "deny_by": "$deny_by",
+                "deny_on": "$deny_on",
+                "allow_by": "$allow_by",
+                "allow_on": "$allow_on"
+              }
+            }
+          }
+        }
+      },
+      {
+        "when": {
+          "op": "eq",
+          "left": "$available",
+          "right": "no"
+        },
+        "then": {
+          "vop": "record",
+          "fields": {
+            "allowed": false,
+            "why": {
+              "vop": "template",
+              "text": "$msg_unavailable",
+              "values": {
+                "screen": "$screen",
+                "label": "$label",
+                "role": "$role",
+                "deny_by": "$deny_by",
+                "deny_on": "$deny_on",
+                "allow_by": "$allow_by",
+                "allow_on": "$allow_on"
+              }
+            }
+          }
+        }
+      },
+      {
+        "when": {
+          "op": "eq",
+          "left": "$role",
+          "right": "owner"
+        },
+        "then": {
+          "vop": "record",
+          "fields": {
+            "allowed": true,
+            "why": {
+              "vop": "template",
+              "text": "$msg_owner",
+              "values": {
+                "screen": "$screen",
+                "label": "$label",
+                "role": "$role",
+                "deny_by": "$deny_by",
+                "deny_on": "$deny_on",
+                "allow_by": "$allow_by",
+                "allow_on": "$allow_on"
+              }
+            }
+          }
+        }
+      },
+      {
+        "when": {
+          "op": "eq",
+          "left": "$admin",
+          "right": true
+        },
+        "then": {
+          "vop": "record",
+          "fields": {
+            "allowed": false,
+            "why": {
+              "vop": "template",
+              "text": "$msg_admin",
+              "values": {
+                "screen": "$screen",
+                "label": "$label",
+                "role": "$role",
+                "deny_by": "$deny_by",
+                "deny_on": "$deny_on",
+                "allow_by": "$allow_by",
+                "allow_on": "$allow_on"
+              }
+            }
+          }
+        }
+      },
+      {
+        "when": {
+          "op": "eq",
+          "left": "$gate",
+          "right": "no"
+        },
+        "then": {
+          "vop": "record",
+          "fields": {
+            "allowed": false,
+            "why": {
+              "vop": "template",
+              "text": "$msg_gate",
+              "values": {
+                "screen": "$screen",
+                "label": "$label",
+                "role": "$role",
+                "deny_by": "$deny_by",
+                "deny_on": "$deny_on",
+                "allow_by": "$allow_by",
+                "allow_on": "$allow_on"
+              }
+            }
+          }
+        }
+      },
+      {
+        "when": {
+          "op": "ne",
+          "left": "$deny_by",
+          "right": ""
+        },
+        "then": {
+          "vop": "record",
+          "fields": {
+            "allowed": false,
+            "why": {
+              "vop": "template",
+              "text": "$msg_denied",
+              "values": {
+                "screen": "$screen",
+                "label": "$label",
+                "role": "$role",
+                "deny_by": "$deny_by",
+                "deny_on": "$deny_on",
+                "allow_by": "$allow_by",
+                "allow_on": "$allow_on"
+              }
+            }
+          }
+        }
+      },
+      {
+        "when": {
+          "op": "ne",
+          "left": "$allow_by",
+          "right": ""
+        },
+        "then": {
+          "vop": "record",
+          "fields": {
+            "allowed": true,
+            "why": {
+              "vop": "template",
+              "text": "$msg_allowed",
+              "values": {
+                "screen": "$screen",
+                "label": "$label",
+                "role": "$role",
+                "deny_by": "$deny_by",
+                "deny_on": "$deny_on",
+                "allow_by": "$allow_by",
+                "allow_on": "$allow_on"
+              }
+            }
+          }
+        }
+      }
+    ],
+    "else": {
+      "vop": "record",
+      "fields": {
+        "allowed": true,
+        "why": {
+          "vop": "template",
+          "text": "$msg_open",
+          "values": {
+            "screen": "$screen",
+            "label": "$label",
+            "role": "$role",
+            "deny_by": "$deny_by",
+            "deny_on": "$deny_on",
+            "allow_by": "$allow_by",
+            "allow_on": "$allow_on"
+          }
+        }
+      }
+    }
+  },
+  "returns": "record",
+  "version": 2,
+  "status": "published",
+  "description_nl": "The one resolver behind the menu, every API guard and 'Check a person'. Order: signed out → no; owner → always (the way back in can never be locked); unknown screen → no; admin screen → owner only; a role gate chip says no → no; ANY deny for the person or a group they are in → no (deny wins); any allow → yes; nothing said → open. A screen this portal does not have is closed to everyone, the owner included (2026-09-18: the tv edition served SteadyMove's YouTube API to its owner). available: a screen the host portal registered a test for (access.register_available) answers 'no' when this person has nothing on it at all - it is refused before every other rule, the owner included, and a catalog entry marked hide_when_denied then leaves the menu altogether.",
+  "test_cases": [
+    {
+      "args": {
+        "signed_in": true,
+        "role": "owner",
+        "admin": true
+      },
+      "expect_value": {
+        "allowed": true,
+        "why": "Owners can open everything."
+      }
+    },
+    {
+      "args": {
+        "signed_in": true,
+        "role": "member",
+        "admin": true
+      },
+      "expect_value": {
+        "allowed": false,
+        "why": "Only the portal owner can open this."
+      }
+    },
+    {
+      "args": {
+        "signed_in": true,
+        "role": "member",
+        "gate": "no",
+        "label": "Rules"
+      },
+      "expect_value": {
+        "allowed": false,
+        "why": "A member cannot use Rules. Ask the portal owner to make you an author or an editor."
+      }
+    },
+    {
+      "args": {
+        "signed_in": true,
+        "role": "editor",
+        "deny_by": "group \"Interns\"",
+        "deny_on": "Videos",
+        "allow_by": "ravi@x.io",
+        "allow_on": "Videos"
+      },
+      "expect_value": {
+        "allowed": false,
+        "why": "Denied for group \"Interns\" on Videos."
+      }
+    },
+    {
+      "args": {
+        "signed_in": true,
+        "role": "member",
+        "allow_by": "ravi@x.io",
+        "allow_on": "Videos"
+      },
+      "expect_value": {
+        "allowed": true,
+        "why": "Allowed for ravi@x.io on Videos."
+      }
+    },
+    {
+      "args": {
+        "signed_in": true,
+        "role": "member"
+      },
+      "expect_value": {
+        "allowed": true,
+        "why": "Open to every account; no rule says otherwise."
+      }
+    },
+    {
+      "args": {},
+      "expect_value": {
+        "allowed": false,
+        "why": "Not signed in."
+      }
+    },
+    {
+      "args": {
+        "signed_in": true,
+        "role": "owner",
+        "known": false,
+        "screen": "youtube",
+        "label": "youtube"
+      },
+      "expect_value": {
+        "allowed": false,
+        "why": "\"youtube\" is not a screen in this portal."
+      }
+    },
+    {
+      "args": {
+        "signed_in": true,
+        "known": true,
+        "role": "owner",
+        "available": "no",
+        "label": "Buy a key"
+      },
+      "expect_value": {
+        "allowed": false,
+        "why": "Buy a key is not open yet - there is nothing on it for you."
+      }
+    }
+  ],
+  "weight_basis": "Platform access primitive, no business content. The knobs ARE the policy — edit them here, never in Python."
+}

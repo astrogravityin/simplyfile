@@ -1,0 +1,419 @@
+{
+  "chip_id": "ui.recon",
+  "kind": "accessor",
+  "set": "ui",
+  "label": "Reconcile screen words",
+  "aliases": [
+    "ui recon"
+  ],
+  "params": [
+    {
+      "name": "title",
+      "type": "text",
+      "default": "Reconcile",
+      "label": "title"
+    },
+    {
+      "name": "lede",
+      "type": "long",
+      "default": "Books against the Income-tax portal: 26AS, AIS and TIS. Only rows with a saved or file SF Ref count from the books.",
+      "label": "lede"
+    },
+    {
+      "name": "upload",
+      "type": "text",
+      "default": "Upload 26AS / AIS / TIS",
+      "label": "upload"
+    },
+    {
+      "name": "no_files",
+      "type": "long",
+      "default": "No portal files yet. Upload the 26AS text export from TRACES, or AIS / TIS as CSV or Excel.",
+      "label": "no files"
+    },
+    {
+      "name": "src_26as",
+      "type": "text",
+      "default": "26AS",
+      "label": "src 26as"
+    },
+    {
+      "name": "src_ais",
+      "type": "text",
+      "default": "AIS",
+      "label": "src ais"
+    },
+    {
+      "name": "src_tis",
+      "type": "text",
+      "default": "TIS",
+      "label": "src tis"
+    },
+    {
+      "name": "src_other",
+      "type": "text",
+      "default": "Portal file",
+      "label": "src other"
+    },
+    {
+      "name": "n_entries",
+      "type": "text",
+      "default": "{n} {n:entry|entries}",
+      "label": "n entries"
+    },
+    {
+      "name": "pan_missing",
+      "type": "text",
+      "default": "client PAN not found in this file",
+      "label": "pan missing"
+    },
+    {
+      "name": "delete_title",
+      "type": "text",
+      "default": "Delete {name}?",
+      "label": "delete title"
+    },
+    {
+      "name": "delete_body",
+      "type": "long",
+      "default": "The portal file is removed; findings are worked out again without it.",
+      "label": "delete body"
+    },
+    {
+      "name": "deleted",
+      "type": "text",
+      "default": "Deleted",
+      "label": "deleted"
+    },
+    {
+      "name": "delete",
+      "type": "text",
+      "default": "Delete file",
+      "label": "delete"
+    },
+    {
+      "name": "counts",
+      "type": "text",
+      "default": "{red} red · {amber} amber · {ok} agree",
+      "label": "counts"
+    },
+    {
+      "name": "books_portal",
+      "type": "text",
+      "default": "{books} book rows · {portal} portal entries",
+      "label": "books portal"
+    },
+    {
+      "name": "explain",
+      "type": "text",
+      "default": "Explain",
+      "label": "explain"
+    },
+    {
+      "name": "explained",
+      "type": "text",
+      "default": "Explained by {by}: {text}",
+      "label": "explained"
+    },
+    {
+      "name": "explain_title",
+      "type": "text",
+      "default": "Explain this finding",
+      "label": "explain title"
+    },
+    {
+      "name": "explain_hint",
+      "type": "long",
+      "default": "Why it is fine, or what was done. Clear the box to remove the note.",
+      "label": "explain hint"
+    },
+    {
+      "name": "save",
+      "type": "text",
+      "default": "Save note",
+      "label": "save"
+    },
+    {
+      "name": "saved",
+      "type": "text",
+      "default": "Saved",
+      "label": "saved"
+    },
+    {
+      "name": "nothing",
+      "type": "text",
+      "default": "Upload a portal file to see findings.",
+      "label": "nothing"
+    },
+    {
+      "name": "head_OS",
+      "type": "text",
+      "default": "Other sources",
+      "label": "head OS"
+    },
+    {
+      "name": "head_HP",
+      "type": "text",
+      "default": "House property",
+      "label": "head HP"
+    },
+    {
+      "name": "head_BP",
+      "type": "text",
+      "default": "Business",
+      "label": "head BP"
+    },
+    {
+      "name": "head_SAL",
+      "type": "text",
+      "default": "Salary",
+      "label": "head SAL"
+    },
+    {
+      "name": "head_CG",
+      "type": "text",
+      "default": "Capital gains",
+      "label": "head CG"
+    },
+    {
+      "name": "tds_ok",
+      "type": "text",
+      "default": "TDS from {party} agrees: {portal}.",
+      "label": "tds ok"
+    },
+    {
+      "name": "tds_red",
+      "type": "long",
+      "default": "TDS from {party}: 26AS shows {portal}, the books claim {books}.",
+      "label": "tds red"
+    },
+    {
+      "name": "tds_amber",
+      "type": "long",
+      "default": "TDS of {portal} from {party} is in 26AS but not in the books - credit left unclaimed?",
+      "label": "tds amber"
+    },
+    {
+      "name": "tds_claim_red",
+      "type": "long",
+      "default": "The books claim TDS of {books} from {party}, which 26AS does not show - the credit will be refused.",
+      "label": "tds claim red"
+    },
+    {
+      "name": "income_ok",
+      "type": "text",
+      "default": "{head}: books {books} cover the {portal} the portal reports.",
+      "label": "income ok"
+    },
+    {
+      "name": "income_red",
+      "type": "long",
+      "default": "{head}: the portal reports {portal}, the books show {books} - {gap} of income may be missing.",
+      "label": "income red"
+    },
+    {
+      "name": "paid_ok",
+      "type": "text",
+      "default": "Tax paid {amount} on {date} agrees.",
+      "label": "paid ok"
+    },
+    {
+      "name": "paid_amber",
+      "type": "text",
+      "default": "Tax paid {amount} on {date} is in 26AS but not in the books.",
+      "label": "paid amber"
+    },
+    {
+      "name": "paid_claim_red",
+      "type": "long",
+      "default": "The books show tax paid {amount} ({label}) that 26AS does not.",
+      "label": "paid claim red"
+    },
+    {
+      "name": "bad_type",
+      "type": "text",
+      "default": "Upload one of {exts}.",
+      "label": "bad type"
+    },
+    {
+      "name": "too_big",
+      "type": "text",
+      "default": "That file is larger than {mb} MB.",
+      "label": "too big"
+    },
+    {
+      "name": "unreadable",
+      "type": "text",
+      "default": "{name} could not be read.",
+      "label": "unreadable"
+    },
+    {
+      "name": "nothing_read",
+      "type": "long",
+      "default": "Nothing could be read from {name} - is it a 26AS, AIS or TIS export?",
+      "label": "nothing read"
+    },
+    {
+      "name": "same_file",
+      "type": "text",
+      "default": "{name} is already uploaded for this year.",
+      "label": "same file"
+    },
+    {
+      "name": "no_file",
+      "type": "text",
+      "default": "That file is not here.",
+      "label": "no file"
+    },
+    {
+      "name": "no_finding",
+      "type": "text",
+      "default": "That finding is no longer there.",
+      "label": "no finding"
+    },
+    {
+      "name": "blocked",
+      "type": "long",
+      "default": "{n} red finding(s) in Reconcile have no explanation yet - clear or explain them before moving to {stage}.",
+      "label": "blocked"
+    },
+    {
+      "name": "sev_red",
+      "type": "text",
+      "default": "red",
+      "label": "sev_red"
+    },
+    {
+      "name": "sev_amber",
+      "type": "text",
+      "default": "amber",
+      "label": "sev_amber"
+    },
+    {
+      "name": "sev_ok",
+      "type": "text",
+      "default": "agrees",
+      "label": "sev_ok"
+    },
+    {
+      "name": "ay",
+      "type": "text",
+      "default": "Assessment year",
+      "label": "ay"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "title": "$title",
+      "lede": "$lede",
+      "upload": "$upload",
+      "no_files": "$no_files",
+      "src_26as": "$src_26as",
+      "src_ais": "$src_ais",
+      "src_tis": "$src_tis",
+      "src_other": "$src_other",
+      "n_entries": "$n_entries",
+      "pan_missing": "$pan_missing",
+      "delete_title": "$delete_title",
+      "delete_body": "$delete_body",
+      "deleted": "$deleted",
+      "delete": "$delete",
+      "counts": "$counts",
+      "books_portal": "$books_portal",
+      "explain": "$explain",
+      "explained": "$explained",
+      "explain_title": "$explain_title",
+      "explain_hint": "$explain_hint",
+      "save": "$save",
+      "saved": "$saved",
+      "nothing": "$nothing",
+      "head_OS": "$head_OS",
+      "head_HP": "$head_HP",
+      "head_BP": "$head_BP",
+      "head_SAL": "$head_SAL",
+      "head_CG": "$head_CG",
+      "tds_ok": "$tds_ok",
+      "tds_red": "$tds_red",
+      "tds_amber": "$tds_amber",
+      "tds_claim_red": "$tds_claim_red",
+      "income_ok": "$income_ok",
+      "income_red": "$income_red",
+      "paid_ok": "$paid_ok",
+      "paid_amber": "$paid_amber",
+      "paid_claim_red": "$paid_claim_red",
+      "bad_type": "$bad_type",
+      "too_big": "$too_big",
+      "unreadable": "$unreadable",
+      "nothing_read": "$nothing_read",
+      "same_file": "$same_file",
+      "no_file": "$no_file",
+      "no_finding": "$no_finding",
+      "blocked": "$blocked",
+      "sev_red": "$sev_red",
+      "sev_amber": "$sev_amber",
+      "sev_ok": "$sev_ok",
+      "ay": "$ay"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "The words of the Reconcile screen, its findings and its error sentences. {placeholders} are filled by the server.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "title": "Reconcile",
+        "lede": "Books against the Income-tax portal: 26AS, AIS and TIS. Only rows with a saved or file SF Ref count from the books.",
+        "upload": "Upload 26AS / AIS / TIS",
+        "no_files": "No portal files yet. Upload the 26AS text export from TRACES, or AIS / TIS as CSV or Excel.",
+        "src_26as": "26AS",
+        "src_ais": "AIS",
+        "src_tis": "TIS",
+        "src_other": "Portal file",
+        "n_entries": "{n} {n:entry|entries}",
+        "pan_missing": "client PAN not found in this file",
+        "delete_title": "Delete {name}?",
+        "delete_body": "The portal file is removed; findings are worked out again without it.",
+        "deleted": "Deleted",
+        "delete": "Delete file",
+        "counts": "{red} red · {amber} amber · {ok} agree",
+        "books_portal": "{books} book rows · {portal} portal entries",
+        "explain": "Explain",
+        "explained": "Explained by {by}: {text}",
+        "explain_title": "Explain this finding",
+        "explain_hint": "Why it is fine, or what was done. Clear the box to remove the note.",
+        "save": "Save note",
+        "saved": "Saved",
+        "nothing": "Upload a portal file to see findings.",
+        "head_OS": "Other sources",
+        "head_HP": "House property",
+        "head_BP": "Business",
+        "head_SAL": "Salary",
+        "head_CG": "Capital gains",
+        "tds_ok": "TDS from {party} agrees: {portal}.",
+        "tds_red": "TDS from {party}: 26AS shows {portal}, the books claim {books}.",
+        "tds_amber": "TDS of {portal} from {party} is in 26AS but not in the books - credit left unclaimed?",
+        "tds_claim_red": "The books claim TDS of {books} from {party}, which 26AS does not show - the credit will be refused.",
+        "income_ok": "{head}: books {books} cover the {portal} the portal reports.",
+        "income_red": "{head}: the portal reports {portal}, the books show {books} - {gap} of income may be missing.",
+        "paid_ok": "Tax paid {amount} on {date} agrees.",
+        "paid_amber": "Tax paid {amount} on {date} is in 26AS but not in the books.",
+        "paid_claim_red": "The books show tax paid {amount} ({label}) that 26AS does not.",
+        "bad_type": "Upload one of {exts}.",
+        "too_big": "That file is larger than {mb} MB.",
+        "unreadable": "{name} could not be read.",
+        "nothing_read": "Nothing could be read from {name} - is it a 26AS, AIS or TIS export?",
+        "same_file": "{name} is already uploaded for this year.",
+        "no_file": "That file is not here.",
+        "no_finding": "That finding is no longer there.",
+        "blocked": "{n} red finding(s) in Reconcile have no explanation yet - clear or explain them before moving to {stage}.",
+        "sev_red": "red",
+        "sev_amber": "amber",
+        "sev_ok": "agrees",
+        "ay": "Assessment year"
+      }
+    }
+  ]
+}

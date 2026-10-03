@@ -1,0 +1,225 @@
+{
+  "chip_id": "guide.messages",
+  "kind": "accessor",
+  "set": "guide",
+  "label": "Every sentence the screen guide says from the server",
+  "aliases": [
+    "guide wording"
+  ],
+  "params": [
+    {
+      "name": "no_tour",
+      "type": "text",
+      "default": "This screen has no guide yet."
+    },
+    {
+      "name": "bad_format",
+      "type": "text",
+      "default": "This is not a Guide me script: it must say \"format\": \"guide-me/1\"."
+    },
+    {
+      "name": "no_title",
+      "type": "text",
+      "default": "The tour needs a title."
+    },
+    {
+      "name": "few_steps",
+      "type": "text",
+      "default": "A tour needs at least three steps."
+    },
+    {
+      "name": "step_no_title",
+      "type": "text",
+      "default": "Step {n} has no title."
+    },
+    {
+      "name": "step_no_say",
+      "type": "text",
+      "default": "Step {n} has nothing to say."
+    },
+    {
+      "name": "bad_art",
+      "type": "text",
+      "default": "Step {n} asks for a picture this guide cannot draw."
+    },
+    {
+      "name": "bad_place",
+      "type": "text",
+      "default": "Step {n} places its card on a side the guide does not know (below, above, right, left or center)."
+    },
+    {
+      "name": "bad_icon",
+      "type": "text",
+      "default": "An icon name in this script is not one the portal has."
+    },
+    {
+      "name": "bad_portal",
+      "type": "text",
+      "default": "The script names a portal the Builder does not know."
+    },
+    {
+      "name": "bad_page",
+      "type": "text",
+      "default": "The page name may hold only small letters, digits, dashes and underscores."
+    },
+    {
+      "name": "bad_rate",
+      "type": "text",
+      "default": "The voice speed must be between 0.5 and 2."
+    },
+    {
+      "name": "bad_pitch",
+      "type": "text",
+      "default": "The voice pitch must be between 0 and 2."
+    },
+    {
+      "name": "list_must_open",
+      "type": "text",
+      "default": "The tour starts on a list but never opens an item, so every step about the inside would say \"not on screen\"."
+    },
+    {
+      "name": "step1_must_open",
+      "type": "text",
+      "default": "Step 1 starts on the list, so it must also bring the list back (open the Home button) for someone who presses Back."
+    },
+    {
+      "name": "wrong_page",
+      "type": "text",
+      "default": "This script is for a different page. Import it on the page it names, or change its \"page\"."
+    },
+    {
+      "name": "not_json",
+      "type": "text",
+      "default": "That is not a Guide me script: the file could not be read as JSON."
+    },
+    {
+      "name": "too_big",
+      "type": "text",
+      "default": "That script is larger than {kb} KB."
+    },
+    {
+      "name": "script_refused",
+      "type": "text",
+      "default": "The script was not imported - {n} thing(s) to fix."
+    },
+    {
+      "name": "chip_refused",
+      "type": "text",
+      "default": "The tour could not be saved as it stands."
+    },
+    {
+      "name": "nothing_imported",
+      "type": "text",
+      "default": "This page has no imported Guide me to take off."
+    },
+    {
+      "name": "chip_label",
+      "type": "text",
+      "default": "The step-by-step guide to {screen}: every step, spotlight, narration and picture"
+    },
+    {
+      "name": "knob_title",
+      "type": "text",
+      "default": "The tour's name (its cover card)"
+    },
+    {
+      "name": "knob_lede",
+      "type": "text",
+      "default": "The cover's opening line; {product} = this edition's name"
+    },
+    {
+      "name": "knob_icon",
+      "type": "text",
+      "default": "The emblem on the cover (an icon name)"
+    },
+    {
+      "name": "knob_minutes",
+      "type": "text",
+      "default": "How long the tour takes"
+    },
+    {
+      "name": "knob_steps",
+      "type": "text",
+      "default": "The steps in order: title, say, target, art, place, open"
+    },
+    {
+      "name": "knob_voice",
+      "type": "text",
+      "default": "This page's voice: overrides guide.settings for this tour only"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "no_tour": "$no_tour",
+      "bad_format": "$bad_format",
+      "no_title": "$no_title",
+      "few_steps": "$few_steps",
+      "step_no_title": "$step_no_title",
+      "step_no_say": "$step_no_say",
+      "bad_art": "$bad_art",
+      "bad_place": "$bad_place",
+      "bad_icon": "$bad_icon",
+      "bad_portal": "$bad_portal",
+      "bad_page": "$bad_page",
+      "bad_rate": "$bad_rate",
+      "bad_pitch": "$bad_pitch",
+      "list_must_open": "$list_must_open",
+      "step1_must_open": "$step1_must_open",
+      "wrong_page": "$wrong_page",
+      "not_json": "$not_json",
+      "too_big": "$too_big",
+      "script_refused": "$script_refused",
+      "chip_refused": "$chip_refused",
+      "nothing_imported": "$nothing_imported",
+      "chip_label": "$chip_label",
+      "knob_title": "$knob_title",
+      "knob_lede": "$knob_lede",
+      "knob_icon": "$knob_icon",
+      "knob_minutes": "$knob_minutes",
+      "knob_steps": "$knob_steps",
+      "knob_voice": "$knob_voice"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "Sentences of core/guide.py, and the problems chip guide.check names ({n} = the step number).",
+  "weight_basis": "page",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "no_tour": "This screen has no guide yet.",
+        "bad_format": "This is not a Guide me script: it must say \"format\": \"guide-me/1\".",
+        "no_title": "The tour needs a title.",
+        "few_steps": "A tour needs at least three steps.",
+        "step_no_title": "Step {n} has no title.",
+        "step_no_say": "Step {n} has nothing to say.",
+        "bad_art": "Step {n} asks for a picture this guide cannot draw.",
+        "bad_place": "Step {n} places its card on a side the guide does not know (below, above, right, left or center).",
+        "bad_icon": "An icon name in this script is not one the portal has.",
+        "bad_portal": "The script names a portal the Builder does not know.",
+        "bad_page": "The page name may hold only small letters, digits, dashes and underscores.",
+        "bad_rate": "The voice speed must be between 0.5 and 2.",
+        "bad_pitch": "The voice pitch must be between 0 and 2.",
+        "list_must_open": "The tour starts on a list but never opens an item, so every step about the inside would say \"not on screen\".",
+        "step1_must_open": "Step 1 starts on the list, so it must also bring the list back (open the Home button) for someone who presses Back.",
+        "wrong_page": "This script is for a different page. Import it on the page it names, or change its \"page\".",
+        "not_json": "That is not a Guide me script: the file could not be read as JSON.",
+        "too_big": "That script is larger than {kb} KB.",
+        "script_refused": "The script was not imported - {n} thing(s) to fix.",
+        "chip_refused": "The tour could not be saved as it stands.",
+        "nothing_imported": "This page has no imported Guide me to take off.",
+        "chip_label": "The step-by-step guide to {screen}: every step, spotlight, narration and picture",
+        "knob_title": "The tour's name (its cover card)",
+        "knob_lede": "The cover's opening line; {product} = this edition's name",
+        "knob_icon": "The emblem on the cover (an icon name)",
+        "knob_minutes": "How long the tour takes",
+        "knob_steps": "The steps in order: title, say, target, art, place, open",
+        "knob_voice": "This page's voice: overrides guide.settings for this tour only"
+      }
+    }
+  ],
+  "audience": "admin"
+}

@@ -1,0 +1,65 @@
+{
+  "chip_id": "builder.settings",
+  "kind": "accessor",
+  "set": "builder",
+  "audience": "admin",
+  "label": "What the builders accept and keep",
+  "aliases": [
+    "builder limits",
+    "scenario id"
+  ],
+  "params": [
+    {
+      "name": "scenario_id_pattern",
+      "type": "text",
+      "default": "^[a-z][a-z0-9_]{2,59}$"
+    },
+    {
+      "name": "return_note_max",
+      "type": "number",
+      "default": 1000
+    },
+    {
+      "name": "op_note_max",
+      "type": "number",
+      "default": 500
+    },
+    {
+      "name": "scenario_label_max",
+      "type": "number",
+      "default": 120
+    },
+    {
+      "name": "dismissed_banners_kept",
+      "type": "number",
+      "default": 200
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "scenario_id_pattern": "$scenario_id_pattern",
+      "return_note_max": "$return_note_max",
+      "op_note_max": "$op_note_max",
+      "scenario_label_max": "$scenario_label_max",
+      "dismissed_banners_kept": "$dismissed_banners_kept"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "scenario_id_pattern: what a new scenario id must look like (the server also refuses anything that is not a plain file name). return_note_max / op_note_max / scenario_label_max: characters kept. dismissed_banners_kept: dismissed banner ids remembered per person.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "scenario_id_pattern": "^[a-z][a-z0-9_]{2,59}$",
+        "return_note_max": 1000,
+        "op_note_max": 500,
+        "scenario_label_max": 120,
+        "dismissed_banners_kept": 200
+      }
+    }
+  ],
+  "weight_basis": "Platform operations primitive, no business content. The knobs ARE the policy — edit them here, never in Python."
+}

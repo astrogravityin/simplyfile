@@ -1,0 +1,110 @@
+{
+  "chip_id": "keyshare.name_seen",
+  "kind": "accessor",
+  "set": "keyshare",
+  "label": "How much of a run's name this viewer is shown",
+  "aliases": [
+    "activity name masking",
+    "owner sees"
+  ],
+  "params": [
+    {
+      "name": "name",
+      "type": "text",
+      "default": "",
+      "label": "What the run was called"
+    },
+    {
+      "name": "is_mine",
+      "type": "boolean",
+      "default": true,
+      "label": "The viewer is the person who made this run"
+    },
+    {
+      "name": "chars",
+      "type": "number",
+      "default": 14,
+      "label": "Characters a viewer who did not make it may see"
+    },
+    {
+      "name": "tail",
+      "type": "text",
+      "default": "…",
+      "label": "Put after a shortened name"
+    }
+  ],
+  "expr": {
+    "vop": "choose",
+    "cases": [
+      {
+        "when": {
+          "op": "eq",
+          "left": "$is_mine",
+          "right": true
+        },
+        "then": "$name"
+      },
+      {
+        "when": {
+          "op": "le",
+          "left": {
+            "vop": "text_length",
+            "text": "$name"
+          },
+          "right": "$chars"
+        },
+        "then": "$name"
+      }
+    ],
+    "else": {
+      "vop": "template",
+      "text": "{short}{tail}",
+      "values": {
+        "vop": "record",
+        "fields": {
+          "short": {
+            "vop": "truncate",
+            "text": "$name",
+            "length": "$chars"
+          },
+          "tail": "$tail"
+        }
+      }
+    }
+  },
+  "returns": "text",
+  "version": 1,
+  "status": "published",
+  "description_nl": "Who sees a whole title and who sees only the beginning of it. Change the length here.",
+  "test_cases": [
+    {
+      "args": {
+        "name": "Draft: Quarterly review film",
+        "is_mine": true
+      },
+      "expect_value": "Draft: Quarterly review film"
+    },
+    {
+      "args": {
+        "name": "Draft: Quarterly review film",
+        "is_mine": false
+      },
+      "expect_value": "Draft: Quarter…"
+    },
+    {
+      "args": {
+        "name": "Short one",
+        "is_mine": false
+      },
+      "expect_value": "Short one"
+    },
+    {
+      "args": {
+        "name": "",
+        "is_mine": false
+      },
+      "expect_value": ""
+    }
+  ],
+  "weight_basis": "The privacy rule of the usage table: a key's owner is billed for a run, so they see that it happened and what it cost, but not the whole title of somebody else's work."
+}

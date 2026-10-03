@@ -1,0 +1,110 @@
+{
+  "chip_id": "source.messages",
+  "kind": "accessor",
+  "set": "source",
+  "label": "What Scan says when a project's code cannot be reached",
+  "aliases": [],
+  "params": [
+    {
+      "name": "bad_git_url",
+      "type": "text",
+      "default": "That does not look like a Git address. Use https://… or git@…"
+    },
+    {
+      "name": "bad_branch",
+      "type": "text",
+      "default": "That branch name has characters a branch name cannot have."
+    },
+    {
+      "name": "no_git",
+      "type": "text",
+      "default": "git is not installed on this machine, so a Git project cannot be fetched. Install git, or clone the repository yourself and register it as a folder."
+    },
+    {
+      "name": "git_failed",
+      "type": "text",
+      "default": "git {command}: {error}"
+    },
+    {
+      "name": "git_failed_blank",
+      "type": "text",
+      "default": "git failed"
+    },
+    {
+      "name": "pulled",
+      "type": "text",
+      "default": "pulled"
+    },
+    {
+      "name": "cloned",
+      "type": "text",
+      "default": "cloned"
+    },
+    {
+      "name": "synced",
+      "type": "text",
+      "default": "{note} at {commit}"
+    },
+    {
+      "name": "no_folder",
+      "type": "text",
+      "default": "No folder is set for this project. Edit it and give a path, or point it at a Git repository."
+    },
+    {
+      "name": "windows_path_on_server",
+      "type": "text",
+      "default": "This portal runs on {system}, and \"{path}\" is a path on your own Windows computer — the server cannot see it. Point the project at its Git repository instead, or give a path that exists on the server, or add the screens by hand."
+    },
+    {
+      "name": "unknown_system",
+      "type": "text",
+      "default": "a server"
+    },
+    {
+      "name": "folder_not_found",
+      "type": "text",
+      "default": "The server that runs this portal cannot find \"{path}\". Remember it looks on ITS OWN disk, not on your computer: use a Git repository, a path that exists on the server, or add the screens by hand."
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "bad_git_url": "$bad_git_url",
+      "bad_branch": "$bad_branch",
+      "no_git": "$no_git",
+      "git_failed": "$git_failed",
+      "git_failed_blank": "$git_failed_blank",
+      "pulled": "$pulled",
+      "cloned": "$cloned",
+      "synced": "$synced",
+      "no_folder": "$no_folder",
+      "windows_path_on_server": "$windows_path_on_server",
+      "unknown_system": "$unknown_system",
+      "folder_not_found": "$folder_not_found"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "bad_git_url / bad_branch / no_git: a Git project that cannot be fetched. git_failed: {command} and the last line of git's {error} (already scrubbed of tokens); git_failed_blank when git said nothing. pulled / cloned and synced ({note} at {commit}): the line after a fetch. no_folder / folder_not_found ({path}) / windows_path_on_server ({system}, {path}; unknown_system when the server does not say): a local project's folder is missing.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "bad_git_url": "That does not look like a Git address. Use https://… or git@…",
+        "bad_branch": "That branch name has characters a branch name cannot have.",
+        "no_git": "git is not installed on this machine, so a Git project cannot be fetched. Install git, or clone the repository yourself and register it as a folder.",
+        "git_failed": "git {command}: {error}",
+        "git_failed_blank": "git failed",
+        "pulled": "pulled",
+        "cloned": "cloned",
+        "synced": "{note} at {commit}",
+        "no_folder": "No folder is set for this project. Edit it and give a path, or point it at a Git repository.",
+        "windows_path_on_server": "This portal runs on {system}, and \"{path}\" is a path on your own Windows computer — the server cannot see it. Point the project at its Git repository instead, or give a path that exists on the server, or add the screens by hand.",
+        "unknown_system": "a server",
+        "folder_not_found": "The server that runs this portal cannot find \"{path}\". Remember it looks on ITS OWN disk, not on your computer: use a Git repository, a path that exists on the server, or add the screens by hand."
+      }
+    }
+  ],
+  "weight_basis": "Portal business setting of the Training & Video Portal. The knobs ARE the policy — edit them here, never in Python."
+}

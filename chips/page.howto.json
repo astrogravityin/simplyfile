@@ -1,0 +1,47 @@
+{
+  "chip_id": "page.howto",
+  "kind": "accessor",
+  "set": "page",
+  "label": "How-to pages: the kinds of link and the icon of each",
+  "aliases": [
+    "howto page settings"
+  ],
+  "params": [
+    {
+      "name": "types",
+      "type": "list",
+      "default": [
+        "doc",
+        "youtube",
+        "video",
+        "instagram",
+        "link"
+      ]
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "types": "$types"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-09-26 (owner: 'move the rest to chips'): the page's own numbers, lists and maps - they were written in its JavaScript. Loaded with the page's words (core/words.py), read with ps('howto').",
+  "weight_basis": "page",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "types": [
+          "doc",
+          "youtube",
+          "video",
+          "instagram",
+          "link"
+        ]
+      }
+    }
+  ]
+}

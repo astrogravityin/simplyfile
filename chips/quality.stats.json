@@ -1,0 +1,190 @@
+{
+  "chip_id": "quality.stats",
+  "kind": "accessor",
+  "set": "quality",
+  "audience": "admin",
+  "label": "What one asset has cost, in time and money, and which AI did it",
+  "aliases": [],
+  "params": [
+    {
+      "name": "runs",
+      "type": "list",
+      "default": []
+    },
+    {
+      "name": "key",
+      "type": "text",
+      "default": ""
+    },
+    {
+      "name": "id",
+      "type": "text",
+      "default": ""
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "runs": {
+        "vop": "rows_aggregate",
+        "agg": "count",
+        "rows": {
+          "vop": "filter_rows",
+          "rows": "$runs",
+          "field": "$key",
+          "cmp": "eq",
+          "value": "$id"
+        }
+      },
+      "spent_usd": {
+        "vop": "rows_aggregate",
+        "agg": "sum",
+        "key": "cost_usd",
+        "rows": {
+          "vop": "filter_rows",
+          "rows": "$runs",
+          "field": "$key",
+          "cmp": "eq",
+          "value": "$id"
+        }
+      },
+      "work_s": {
+        "vop": "rows_aggregate",
+        "agg": "sum",
+        "key": "elapsed_s",
+        "rows": {
+          "vop": "filter_rows",
+          "rows": "$runs",
+          "field": "$key",
+          "cmp": "eq",
+          "value": "$id"
+        }
+      },
+      "first_at": {
+        "vop": "get",
+        "path": "0.at",
+        "value": {
+          "vop": "filter_rows",
+          "rows": "$runs",
+          "field": "$key",
+          "cmp": "eq",
+          "value": "$id"
+        }
+      },
+      "last_at": {
+        "vop": "get",
+        "path": "-1.at",
+        "value": {
+          "vop": "filter_rows",
+          "rows": "$runs",
+          "field": "$key",
+          "cmp": "eq",
+          "value": "$id"
+        }
+      },
+      "models": {
+        "vop": "rank_rows",
+        "by": "cost_usd",
+        "descending": true,
+        "rows": {
+          "vop": "group_rows",
+          "key": [
+            "provider",
+            "model"
+          ],
+          "rows": {
+            "vop": "filter_rows",
+            "rows": "$runs",
+            "field": "$key",
+            "cmp": "eq",
+            "value": "$id"
+          },
+          "measures": {
+            "runs": [
+              "count"
+            ],
+            "cost_usd": [
+              "sum",
+              "cost_usd"
+            ],
+            "elapsed_s": [
+              "sum",
+              "elapsed_s"
+            ]
+          }
+        }
+      },
+      "receipts": {
+        "vop": "rank_rows",
+        "by": "at",
+        "descending": true,
+        "limit": 200,
+        "rows": {
+          "vop": "filter_rows",
+          "rows": "$runs",
+          "field": "$key",
+          "cmp": "eq",
+          "value": "$id"
+        }
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "The run log rows stamped with this asset (key = comic | script | audiobook | tedbook, id = its id): how many runs, money and working seconds, first and last run, each provider·model with its runs and cost, and the receipts (newest first).",
+  "weight_basis": "Structure only - the money is the run log's.",
+  "test_cases": [
+    {
+      "args": {
+        "runs": [
+          {
+            "comic": "a",
+            "provider": "gemini",
+            "model": "m",
+            "cost_usd": 0.5,
+            "elapsed_s": 2,
+            "at": "2026-09-24T01:00:00"
+          },
+          {
+            "comic": "b",
+            "provider": "gemini",
+            "model": "m",
+            "cost_usd": 9,
+            "elapsed_s": 1,
+            "at": "2026-09-24T02:00:00"
+          }
+        ],
+        "key": "comic",
+        "id": "a"
+      },
+      "expect_value": {
+        "runs": 1,
+        "spent_usd": 0.5,
+        "work_s": 2,
+        "first_at": "2026-09-24T01:00:00",
+        "last_at": "2026-09-24T01:00:00",
+        "models": [
+          {
+            "key": "gemini m",
+            "provider": "gemini",
+            "model": "m",
+            "runs": 1,
+            "cost_usd": 0.5,
+            "elapsed_s": 2
+          }
+        ],
+        "receipts": [
+          {
+            "comic": "a",
+            "provider": "gemini",
+            "model": "m",
+            "cost_usd": 0.5,
+            "elapsed_s": 2,
+            "at": "2026-09-24T01:00:00"
+          }
+        ]
+      }
+    }
+  ]
+}

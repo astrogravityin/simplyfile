@@ -1,0 +1,109 @@
+{
+  "chip_id": "jobs.may_continue",
+  "kind": "predicate",
+  "set": "jobs",
+  "label": "May a job take its next step without running the budget dry?",
+  "aliases": [
+    "budget check",
+    "stop before the money runs out"
+  ],
+  "params": [
+    {
+      "name": "has_budget",
+      "type": "boolean",
+      "default": false,
+      "label": "The person set a budget for this provider"
+    },
+    {
+      "name": "left_usd",
+      "type": "number",
+      "default": null,
+      "label": "What is left of that budget"
+    },
+    {
+      "name": "step_usd",
+      "type": "number",
+      "default": 0,
+      "label": "What the next step should cost"
+    },
+    {
+      "name": "stop_when_left_usd",
+      "type": "number",
+      "default": 0.05,
+      "label": "The floor the budget must not go under"
+    }
+  ],
+  "expr": {
+    "op": "any",
+    "items": [
+      {
+        "op": "eq",
+        "left": "$step_usd",
+        "right": 0
+      },
+      {
+        "op": "not",
+        "item": {
+          "op": "eq",
+          "left": "$has_budget",
+          "right": true
+        }
+      },
+      {
+        "op": "ge",
+        "left": {
+          "vop": "sub",
+          "a": "$left_usd",
+          "b": "$step_usd"
+        },
+        "right": "$stop_when_left_usd"
+      }
+    ]
+  },
+  "returns": "boolean",
+  "version": 1,
+  "status": "published",
+  "description_nl": "TRUE when the next step may run: it is free, or the person set no budget (then Google's own limits are the only brake, and the screen said the cost before the job started), or the budget still has at least stop_when_left_usd after paying for it. A step whose cost would push the budget under that floor makes the job stop cleanly, keeping everything made so far.",
+  "test_cases": [
+    {
+      "args": {
+        "step_usd": 0,
+        "has_budget": true,
+        "left_usd": 0
+      },
+      "expect": true
+    },
+    {
+      "args": {
+        "step_usd": 0.4,
+        "has_budget": false
+      },
+      "expect": true
+    },
+    {
+      "args": {
+        "step_usd": 0.4,
+        "has_budget": true,
+        "left_usd": 1.0
+      },
+      "expect": true
+    },
+    {
+      "args": {
+        "step_usd": 0.4,
+        "has_budget": true,
+        "left_usd": 0.42
+      },
+      "expect": false
+    },
+    {
+      "args": {
+        "step_usd": 0.4,
+        "has_budget": true,
+        "left_usd": 0.1
+      },
+      "expect": false
+    }
+  ],
+  "weight_basis": "Owner's money rule: never spend past the floor the person set. Loosen it only by lowering stop_when_left_usd in jobs.partial."
+}

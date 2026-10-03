@@ -1,0 +1,76 @@
+{
+  "chip_id": "wallet.settings",
+  "kind": "accessor",
+  "set": "wallet",
+  "label": "Wallet: the mark-up on the portal's keys, the daily cap and when to warn",
+  "aliases": [
+    "wallet settings",
+    "managed credits"
+  ],
+  "params": [
+    {
+      "name": "markup_pct",
+      "type": "number",
+      "default": 30,
+      "label": "markup pct"
+    },
+    {
+      "name": "day_cap_usd",
+      "type": "number",
+      "default": 3,
+      "label": "day cap usd"
+    },
+    {
+      "name": "low_at_usd",
+      "type": "number",
+      "default": 1,
+      "label": "low at usd"
+    },
+    {
+      "name": "add_max_usd",
+      "type": "number",
+      "default": 500,
+      "label": "add max usd"
+    },
+    {
+      "name": "note_max",
+      "type": "number",
+      "default": 200,
+      "label": "note max"
+    },
+    {
+      "name": "adds_shown",
+      "type": "number",
+      "default": 20,
+      "label": "adds shown"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "markup_pct": "$markup_pct",
+      "day_cap_usd": "$day_cap_usd",
+      "low_at_usd": "$low_at_usd",
+      "add_max_usd": "$add_max_usd",
+      "note_max": "$note_max",
+      "adds_shown": "$adds_shown"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-09-28 owner: managed credits - teachers and kids never make an API key. The portal owner adds credit by hand (the person pays by UPI or bank); every key the owner lends through the wallet draws on ONE balance. markup_pct: added to what each run really cost. day_cap_usd: the most one person may be charged in a day (0 = no cap; the owner can change it per person). low_at_usd: warn when this much is left. add_max_usd: the largest single top-up. Refunds: a picture the check threw away and drew again is never charged - the portal pays for its own mistakes.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "markup_pct": 30,
+        "day_cap_usd": 3,
+        "low_at_usd": 1,
+        "add_max_usd": 500,
+        "note_max": 200,
+        "adds_shown": 20
+      }
+    }
+  ]
+}

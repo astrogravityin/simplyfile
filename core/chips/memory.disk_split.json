@@ -1,0 +1,93 @@
+{
+  "chip_id": "memory.disk_split",
+  "kind": "accessor",
+  "set": "memory",
+  "audience": "admin",
+  "label": "Disk: this portal against everything else",
+  "aliases": [
+    "disk usage"
+  ],
+  "params": [
+    {
+      "name": "used_mb",
+      "type": "number",
+      "default": 0
+    },
+    {
+      "name": "parts",
+      "type": "string",
+      "default": []
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "app_mb": {
+        "vop": "smallest",
+        "values": [
+          {
+            "vop": "rows_aggregate",
+            "rows": "$parts",
+            "agg": "sum",
+            "key": "mb"
+          },
+          "$used_mb"
+        ]
+      },
+      "other_mb": {
+        "vop": "largest",
+        "values": [
+          0,
+          {
+            "vop": "sub",
+            "a": "$used_mb",
+            "b": {
+              "vop": "rows_aggregate",
+              "rows": "$parts",
+              "agg": "sum",
+              "key": "mb"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "The portal's share of the disk is the sum of its measured folders, never more than what is used; Other is the rest of the used space, so the two always add up.",
+  "test_cases": [
+    {
+      "args": {
+        "used_mb": 1000,
+        "parts": [
+          {
+            "mb": 200
+          },
+          {
+            "mb": 50
+          }
+        ]
+      },
+      "expect_value": {
+        "app_mb": 250,
+        "other_mb": 750
+      }
+    },
+    {
+      "args": {
+        "used_mb": 100,
+        "parts": [
+          {
+            "mb": 200
+          }
+        ]
+      },
+      "expect_value": {
+        "app_mb": 100,
+        "other_mb": 0
+      }
+    }
+  ],
+  "weight_basis": "Platform operations primitive, no business content. The knobs ARE the policy — edit them here, never in Python."
+}
