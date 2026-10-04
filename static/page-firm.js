@@ -206,7 +206,7 @@ export async function firmPage(host) {
       } catch (err) { toast(err.message, 'bad', 8); }
     }), w('submit'), { tone: 'brand' });
   };
-  wireHistory(host, { firm: true });
+  wireHistory(host, { firm: true, name: f.name });
   if ($('#fi-add')) $('#fi-add').onclick = () => addPerson(d, host);
   if ($('#fi-team')) listBox($('#fi-team'), { list: 'firm_team', row: teamRow(d),
     wrap: (html) => `<table class="fi-team"><thead><tr><th>${esc(w('t_name'))}</th><th>${esc(w('t_role'))}</th><th></th></tr></thead><tbody>${html}</tbody></table>`,

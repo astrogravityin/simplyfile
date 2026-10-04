@@ -1,0 +1,41 @@
+{
+  "chip_id": "page.changes",
+  "kind": "accessor",
+  "set": "page",
+  "label": "History look",
+  "aliases": [
+    "history look"
+  ],
+  "params": [
+    {
+      "name": "kinds",
+      "type": "json",
+      "default": [
+        "info",
+        "doc"
+      ],
+      "label": "kinds"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "kinds": "$kinds"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-05: the History tabs after Everything - one per kind of change.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "kinds": [
+          "info",
+          "doc"
+        ]
+      }
+    }
+  ]
+}

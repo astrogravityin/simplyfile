@@ -91,7 +91,7 @@ def _named(area: str, path: str, v):
 
 def _entry(w: dict, scope: str, field_path: str, old, new, cid: str = "", ay: str = "", file: dict | None = None, area_path: str = "") -> dict:
     old, new = (_named(w["id"], area_path or field_path, v) for v in (old, new))
-    return {"id": store.new_id(), "at": store.now(), "by": WHO.get() or settings()["system_by"], "scope": scope, "cid": cid, "ay": ay,
+    return {"id": store.new_id(), "batch": _BATCH.get(), "at": store.now(), "by": WHO.get() or settings()["system_by"], "scope": scope, "cid": cid, "ay": ay,
             "area": w["id"], "kind": w["kind"], "path": field_path, "field": _label(w["id"], area_path or field_path),
             "old": _value(old), "new": _value(new), **({"file": file} if file else {})}
 
@@ -115,7 +115,11 @@ def _docs(w: dict, g: dict, old: list, new: list) -> list[dict]:
     return out
 
 
+_BATCH: ContextVar = ContextVar("changes_batch", default="")
+
+
 def on_write(name: str, old, new) -> None:
+    _BATCH.set(store.new_id())            # every field one save changed belongs to one event on the History screen
     for w in _watch():
         m = re.search(w["pattern"], name)
         if not m:
@@ -180,7 +184,13 @@ def listed(u: dict, args: dict) -> list[dict]:
             raise HTTPException(404, say("none"))
         rows = store.read(f"sf_changes/client-{cid}", [])
     ay, kind = str(args.get("ay") or ""), str(args.get("kind") or "")
-    return [r | {"area_label": say(f"a_{r['area']}")} for r in rows if (not ay or r.get("ay") in ("", ay)) and (not kind or r["kind"] == kind)]
+    every = settings()["yearless_in_every_year"]
+    return [r | {"area_label": say(f"a_{r['area']}")} for r in rows
+            if (not ay or r.get("ay") == ay or (every and not r.get("ay"))) and (not kind or r["kind"] == kind)]
+
+
+def who_of(u: dict) -> str:
+    return next((str(u[f]) for f in settings()["who_fields"] if u.get(f)), "")
 
 
 def kept_file(cid: str, ay: str, kept_in: str, fid: str, v: int):

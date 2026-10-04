@@ -1953,6 +1953,35 @@ table.ap-facts{display:table;width:100%;border-collapse:collapse;table-layout:fi
 :root:not([data-theme="light"]) .cx-route.cx-answer{background:#022c22;color:#a7f3d0}
 :root:not([data-theme="light"]) .cx-open{color:#a5b4fc}:root:not([data-theme="light"]) .cx-hint{color:#fbbf24}
 }
-/* History (change log) */
-.ch-tabs{margin:8px 0;display:inline-flex;width:auto}.ch-tbl td{vertical-align:top}.ch-old{color:var(--bad,#be123c)}.ch-new{color:var(--ok,#047857)}
-.ch-old,.ch-new{max-width:260px;word-break:break-word}.ch-dl{margin-left:6px;display:inline-flex;vertical-align:middle}
+/* History (change log) - 2026-10-05 redesign: one card per save, old struck through, new highlighted, days grouped */
+.ch-lede{margin:0 0 12px;color:var(--muted);font-size:13.5px;line-height:1.5}
+.ch-bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:6px}.ch-tabs{display:inline-flex;width:auto;margin:0}
+.ch-bar select{width:auto;min-width:130px}.ch-search{flex:1;min-width:220px;display:flex;align-items:center;gap:8px;margin:0;padding:0 12px;
+  border:1px solid var(--line);border-radius:10px;background:var(--panel);text-transform:none;letter-spacing:0;color:var(--muted)}
+.ch-search input{border:0;background:transparent;padding:9px 0;box-shadow:none;outline:none}
+.ch-count{margin:6px 2px 4px}.ch-log{display:grid;gap:10px;max-height:62vh;overflow:auto;padding:2px 4px 2px 0}
+.ch-day{margin:10px 0 0;font-size:11.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.ch-ev{display:grid;grid-template-columns:34px 1fr;gap:12px;padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:var(--panel)}
+.ch-av{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:800;color:var(--brand);
+  background:color-mix(in srgb,var(--brand) 14%,transparent)}
+.ch-doc .ch-av{color:var(--warn);background:color-mix(in srgb,var(--warn) 16%,transparent)}
+.ch-body header{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline;margin-bottom:8px}.ch-body header b{font-size:14px}
+.ch-meta{font-size:12px;color:var(--muted)}.ch-lines{display:grid;gap:6px}
+.ch-line{display:grid;grid-template-columns:minmax(150px,220px) 1fr auto;gap:10px;align-items:center;padding-top:6px;border-top:1px dashed var(--line)}
+.ch-line:first-child{border-top:0;padding-top:0}.ch-field{display:flex;gap:6px;align-items:center;font-size:12.5px;font-weight:700;color:var(--ink)}
+.ch-vals{display:flex;flex-wrap:wrap;gap:6px;align-items:center;min-width:0}.ch-arrow{color:var(--muted);display:inline-flex}
+.ch-old,.ch-new{padding:2px 8px;border-radius:6px;font-size:13px;word-break:break-word;max-width:100%}
+.ch-old{text-decoration:line-through;text-decoration-color:color-mix(in srgb,var(--bad) 70%,transparent);color:var(--muted);
+  background:color-mix(in srgb,var(--bad) 9%,transparent)}
+.ch-new{color:var(--ink);font-weight:600;background:color-mix(in srgb,var(--ok) 14%,transparent)}.ch-blank{font-style:italic;opacity:.75;text-decoration:none}
+.ch-dl{display:inline-flex;gap:6px;align-items:center;font-size:12px;font-weight:700;white-space:nowrap}
+.ch-state{display:grid;justify-items:center;gap:8px;padding:36px 16px;text-align:center;color:var(--muted)}.ch-state p{margin:0;max-width:520px;line-height:1.5}
+.ch-state b{color:var(--ink);font-size:15px}.ch-empty-ic{width:54px;height:54px;border-radius:50%;display:grid;place-items:center;color:var(--brand);
+  background:color-mix(in srgb,var(--brand) 12%,transparent)}.ch-fail{color:var(--bad)}
+.ch-pager{display:flex;gap:10px;align-items:center;justify-content:flex-end;margin-top:10px}
+@media (max-width:640px){.ch-line{grid-template-columns:1fr}.ch-ev{grid-template-columns:1fr}.ch-av{display:none}}
+/* 2026-10-05 owner: "Father name label is cut" - in a form window a long label wraps to a second line, never "...";
+   the boxes of one row still line up at the bottom */
+.modal .field > label{white-space:normal;overflow:visible;text-overflow:clip;line-height:1.35}
+.modal .grid > .field{display:flex;flex-direction:column;justify-content:flex-end}
+.ch-old:has(.ch-blank),.ch-new:has(.ch-blank){text-decoration:none;background:transparent}

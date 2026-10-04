@@ -107,7 +107,7 @@ async def who_changes(request: Request, call_next):
     if request.method in ("POST", "PUT", "PATCH", "DELETE") and request.url.path.startswith("/api/"):
         u = auth.current_user(request)
         if u:
-            changelog.WHO.set(u.get("name") or u.get("email") or "")
+            changelog.WHO.set(changelog.who_of(u))
     return await call_next(request)
 
 
@@ -1240,7 +1240,7 @@ def api_compute_3cd(cid: str, ay: str, _: dict = Depends(firms.gate("compute")))
 def api_changes_file(cid: str, ay: str, kept_in: str, fid: str, v: int, name: str = "", _: dict = Depends(firms.gate("clients"))):
     p = changelog.kept_file(cid, ay, kept_in, fid, v)
     nice = re.sub(r"[^\w .()-]", "", name)[:120].strip()          # the file's own name, as the log shows it
-    return FileResponse(p, filename=f"{Path(nice).stem or p.stem} (v{v}){p.suffix}")
+    return FileResponse(p, filename=changelog.say("file_name", name=Path(nice).stem or p.stem, v=v) + p.suffix)
 
 
 # --- Tax audit (2026-10-04 owner: "phase 1, tax audit for SMEs"): applicability, year on year, the 3CD checklist, points (audit.py)

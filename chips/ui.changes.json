@@ -22,13 +22,19 @@
     {
       "name": "title_firm",
       "type": "text",
-      "default": "History · the firm",
+      "default": "History · {firm}",
       "label": "title firm"
+    },
+    {
+      "name": "the_firm",
+      "type": "text",
+      "default": "your firm",
+      "label": "the firm"
     },
     {
       "name": "lede",
       "type": "text",
-      "default": "Every change, field by field: what it was, what it became, when and who - and every earlier version of a document.",
+      "default": "Every change is kept: what each field was, what it became, when, and who made it. Replaced or deleted documents are kept too - download any earlier version.",
       "label": "lede"
     },
     {
@@ -46,7 +52,7 @@
     {
       "name": "info",
       "type": "text",
-      "default": "Information",
+      "default": "Details",
       "label": "info"
     },
     {
@@ -56,52 +62,106 @@
       "label": "doc"
     },
     {
-      "name": "h_when",
+      "name": "all_years",
       "type": "text",
-      "default": "When",
-      "label": "h when"
+      "default": "All years",
+      "label": "all years"
     },
     {
-      "name": "h_who",
+      "name": "search",
       "type": "text",
-      "default": "Who",
-      "label": "h who"
+      "default": "Search a field, a value or a person",
+      "label": "search"
     },
     {
-      "name": "h_area",
+      "name": "count",
       "type": "text",
-      "default": "Where",
-      "label": "h area"
+      "default": "{n} changes",
+      "label": "count"
     },
     {
-      "name": "h_field",
+      "name": "count_one",
       "type": "text",
-      "default": "Field",
-      "label": "h field"
+      "default": "1 change",
+      "label": "count one"
     },
     {
-      "name": "h_old",
+      "name": "showing",
+      "type": "text",
+      "default": "Showing {from}-{to} of {total}",
+      "label": "showing"
+    },
+    {
+      "name": "prev",
+      "type": "text",
+      "default": "Newer",
+      "label": "prev"
+    },
+    {
+      "name": "next",
+      "type": "text",
+      "default": "Older",
+      "label": "next"
+    },
+    {
+      "name": "today",
+      "type": "text",
+      "default": "Today",
+      "label": "today"
+    },
+    {
+      "name": "yesterday",
+      "type": "text",
+      "default": "Yesterday",
+      "label": "yesterday"
+    },
+    {
+      "name": "ev_info",
+      "type": "text",
+      "default": "{who} changed {n} fields",
+      "label": "ev info"
+    },
+    {
+      "name": "ev_info_one",
+      "type": "text",
+      "default": "{who} changed 1 field",
+      "label": "ev info one"
+    },
+    {
+      "name": "ev_doc_added",
+      "type": "text",
+      "default": "{who} added a document",
+      "label": "ev doc added"
+    },
+    {
+      "name": "ev_doc_replaced",
+      "type": "text",
+      "default": "{who} replaced a document",
+      "label": "ev doc replaced"
+    },
+    {
+      "name": "ev_doc_removed",
+      "type": "text",
+      "default": "{who} removed a document",
+      "label": "ev doc removed"
+    },
+    {
+      "name": "was",
       "type": "text",
       "default": "Was",
-      "label": "h old"
+      "label": "was"
     },
     {
-      "name": "h_new",
+      "name": "now",
       "type": "text",
       "default": "Now",
-      "label": "h new"
+      "label": "now"
     },
     {
-      "name": "field_of",
+      "name": "blank",
       "type": "text",
-      "default": "{field} · {item}",
-      "label": "field of"
-    },
-    {
-      "name": "none",
-      "type": "text",
-      "default": "No changes yet.",
-      "label": "none"
+      "default": "(blank)",
+      "label": "blank"
     },
     {
       "name": "yes",
@@ -116,39 +176,93 @@
       "label": "no"
     },
     {
-      "name": "added",
-      "type": "text",
-      "default": "Added",
-      "label": "added"
-    },
-    {
-      "name": "removed",
-      "type": "text",
-      "default": "Removed",
-      "label": "removed"
-    },
-    {
-      "name": "empty",
-      "type": "text",
-      "default": "-",
-      "label": "empty"
-    },
-    {
       "name": "download",
       "type": "text",
-      "default": "Download this version",
+      "default": "Download {name}",
       "label": "download"
     },
     {
-      "name": "all_years",
+      "name": "kept",
       "type": "text",
-      "default": "All years",
-      "label": "all years"
+      "default": "Earlier version kept",
+      "label": "kept"
+    },
+    {
+      "name": "empty_title",
+      "type": "text",
+      "default": "Nothing has changed yet",
+      "label": "empty title"
+    },
+    {
+      "name": "empty_body",
+      "type": "text",
+      "default": "From now on every change to {what} is recorded here - what it was, what it became, when and who. Earlier versions of statements and of 26AS, AIS and TIS are kept too.",
+      "label": "empty body"
+    },
+    {
+      "name": "empty_client",
+      "type": "text",
+      "default": "this client",
+      "label": "empty client"
+    },
+    {
+      "name": "empty_firm",
+      "type": "text",
+      "default": "your firm's details and team",
+      "label": "empty firm"
+    },
+    {
+      "name": "no_match",
+      "type": "text",
+      "default": "No change matches your search.",
+      "label": "no match"
+    },
+    {
+      "name": "fail_title",
+      "type": "text",
+      "default": "History could not be loaded",
+      "label": "fail title"
+    },
+    {
+      "name": "fail_body",
+      "type": "text",
+      "default": "{why}",
+      "label": "fail body"
+    },
+    {
+      "name": "fail_old_server",
+      "type": "text",
+      "default": "This server has not been restarted since History was added. Please ask the portal admin to deploy again.",
+      "label": "fail old server"
+    },
+    {
+      "name": "retry",
+      "type": "text",
+      "default": "Try again",
+      "label": "retry"
+    },
+    {
+      "name": "field_of",
+      "type": "text",
+      "default": "{field} · {item}",
+      "label": "field of"
+    },
+    {
+      "name": "file_name",
+      "type": "text",
+      "default": "{name} (v{v})",
+      "label": "file name"
+    },
+    {
+      "name": "none",
+      "type": "text",
+      "default": "No changes yet.",
+      "label": "none"
     },
     {
       "name": "a_client",
       "type": "text",
-      "default": "Client",
+      "default": "Client details",
       "label": "a client"
     },
     {
@@ -190,7 +304,7 @@
     {
       "name": "a_firm",
       "type": "text",
-      "default": "My firm",
+      "default": "Firm details",
       "label": "a firm"
     },
     {
@@ -206,26 +320,45 @@
       "title": "$title",
       "title_client": "$title_client",
       "title_firm": "$title_firm",
+      "the_firm": "$the_firm",
       "lede": "$lede",
       "open": "$open",
       "all": "$all",
       "info": "$info",
       "doc": "$doc",
-      "h_when": "$h_when",
-      "h_who": "$h_who",
-      "h_area": "$h_area",
-      "h_field": "$h_field",
-      "h_old": "$h_old",
-      "h_new": "$h_new",
-      "field_of": "$field_of",
-      "none": "$none",
+      "all_years": "$all_years",
+      "search": "$search",
+      "count": "$count",
+      "count_one": "$count_one",
+      "showing": "$showing",
+      "prev": "$prev",
+      "next": "$next",
+      "today": "$today",
+      "yesterday": "$yesterday",
+      "ev_info": "$ev_info",
+      "ev_info_one": "$ev_info_one",
+      "ev_doc_added": "$ev_doc_added",
+      "ev_doc_replaced": "$ev_doc_replaced",
+      "ev_doc_removed": "$ev_doc_removed",
+      "was": "$was",
+      "now": "$now",
+      "blank": "$blank",
       "yes": "$yes",
       "no": "$no",
-      "added": "$added",
-      "removed": "$removed",
-      "empty": "$empty",
       "download": "$download",
-      "all_years": "$all_years",
+      "kept": "$kept",
+      "empty_title": "$empty_title",
+      "empty_body": "$empty_body",
+      "empty_client": "$empty_client",
+      "empty_firm": "$empty_firm",
+      "no_match": "$no_match",
+      "fail_title": "$fail_title",
+      "fail_body": "$fail_body",
+      "fail_old_server": "$fail_old_server",
+      "retry": "$retry",
+      "field_of": "$field_of",
+      "file_name": "$file_name",
+      "none": "$none",
       "a_client": "$a_client",
       "a_computation": "$a_computation",
       "a_mapping": "$a_mapping",
@@ -247,35 +380,54 @@
       "expect_value": {
         "title": "History",
         "title_client": "History · {name}",
-        "title_firm": "History · the firm",
-        "lede": "Every change, field by field: what it was, what it became, when and who - and every earlier version of a document.",
+        "title_firm": "History · {firm}",
+        "the_firm": "your firm",
+        "lede": "Every change is kept: what each field was, what it became, when, and who made it. Replaced or deleted documents are kept too - download any earlier version.",
         "open": "History",
         "all": "Everything",
-        "info": "Information",
+        "info": "Details",
         "doc": "Documents",
-        "h_when": "When",
-        "h_who": "Who",
-        "h_area": "Where",
-        "h_field": "Field",
-        "h_old": "Was",
-        "h_new": "Now",
-        "field_of": "{field} · {item}",
-        "none": "No changes yet.",
+        "all_years": "All years",
+        "search": "Search a field, a value or a person",
+        "count": "{n} changes",
+        "count_one": "1 change",
+        "showing": "Showing {from}-{to} of {total}",
+        "prev": "Newer",
+        "next": "Older",
+        "today": "Today",
+        "yesterday": "Yesterday",
+        "ev_info": "{who} changed {n} fields",
+        "ev_info_one": "{who} changed 1 field",
+        "ev_doc_added": "{who} added a document",
+        "ev_doc_replaced": "{who} replaced a document",
+        "ev_doc_removed": "{who} removed a document",
+        "was": "Was",
+        "now": "Now",
+        "blank": "(blank)",
         "yes": "Yes",
         "no": "No",
-        "added": "Added",
-        "removed": "Removed",
-        "empty": "-",
-        "download": "Download this version",
-        "all_years": "All years",
-        "a_client": "Client",
+        "download": "Download {name}",
+        "kept": "Earlier version kept",
+        "empty_title": "Nothing has changed yet",
+        "empty_body": "From now on every change to {what} is recorded here - what it was, what it became, when and who. Earlier versions of statements and of 26AS, AIS and TIS are kept too.",
+        "empty_client": "this client",
+        "empty_firm": "your firm's details and team",
+        "no_match": "No change matches your search.",
+        "fail_title": "History could not be loaded",
+        "fail_body": "{why}",
+        "fail_old_server": "This server has not been restarted since History was added. Please ask the portal admin to deploy again.",
+        "retry": "Try again",
+        "field_of": "{field} · {item}",
+        "file_name": "{name} (v{v})",
+        "none": "No changes yet.",
+        "a_client": "Client details",
         "a_computation": "Compute & close",
         "a_mapping": "Intake & map",
         "a_statements": "Statements",
         "a_portal_files": "26AS / AIS / TIS",
         "a_explanations": "Reconcile",
         "a_tax_audit": "Tax audit",
-        "a_firm": "My firm",
+        "a_firm": "Firm details",
         "a_team": "Team"
       }
     }

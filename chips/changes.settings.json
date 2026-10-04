@@ -42,6 +42,21 @@
         "doc"
       ],
       "label": "kinds"
+    },
+    {
+      "name": "yearless_in_every_year",
+      "type": "json",
+      "default": true,
+      "label": "yearless in every year"
+    },
+    {
+      "name": "who_fields",
+      "type": "json",
+      "default": [
+        "name",
+        "email"
+      ],
+      "label": "who fields"
     }
   ],
   "expr": {
@@ -51,7 +66,9 @@
       "keep_max": "$keep_max",
       "list_keys": "$list_keys",
       "system_by": "$system_by",
-      "kinds": "$kinds"
+      "kinds": "$kinds",
+      "yearless_in_every_year": "$yearless_in_every_year",
+      "who_fields": "$who_fields"
     }
   },
   "returns": "record",
@@ -72,6 +89,11 @@
         "kinds": [
           "info",
           "doc"
+        ],
+        "yearless_in_every_year": true,
+        "who_fields": [
+          "name",
+          "email"
         ]
       }
     }
