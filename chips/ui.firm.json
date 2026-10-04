@@ -238,7 +238,7 @@
     {
       "name": "add_hint",
       "type": "text",
-      "default": "They get a one-time password (by email when mail is set up, else shown to you once) and set their own at first sign-in.",
+      "default": "Each person signs in with their own email - never share a sign-in. Every upload, sign-off and filing is recorded under the person who did it. Need another firm admin? Pick Firm admin as the role. They get a one-time password (by email when mail is set up, else shown to you once) and set their own at first sign-in.",
       "label": "add hint"
     },
     {
@@ -930,6 +930,48 @@
       "type": "text",
       "default": "Give the Address.",
       "label": "need address"
+    },
+    {
+      "name": "ready_title",
+      "type": "text",
+      "default": "Keep these ready before you start",
+      "label": "ready_title"
+    },
+    {
+      "name": "ready_lede",
+      "type": "text",
+      "default": "About 10 minutes once you have them at hand. Details are typed; papers are uploaded as a PDF or a photo.",
+      "label": "ready_lede"
+    },
+    {
+      "name": "ready_numbers",
+      "type": "text",
+      "default": "Numbers and details",
+      "label": "ready_numbers"
+    },
+    {
+      "name": "ready_papers",
+      "type": "text",
+      "default": "Papers to upload",
+      "label": "ready_papers"
+    },
+    {
+      "name": "ready_files",
+      "type": "text",
+      "default": "PDF or a photo ({exts}), up to {mb} MB each.",
+      "label": "ready_files"
+    },
+    {
+      "name": "ready_done",
+      "type": "text",
+      "default": "{done} of {n} ready",
+      "label": "ready_done"
+    },
+    {
+      "name": "ready_req",
+      "type": "text",
+      "default": "required",
+      "label": "ready_req"
     }
   ],
   "expr": {
@@ -1088,7 +1130,14 @@
       "bad_email": "$bad_email",
       "f_address": "$f_address",
       "h_address": "$h_address",
-      "need_address": "$need_address"
+      "need_address": "$need_address",
+      "ready_title": "$ready_title",
+      "ready_lede": "$ready_lede",
+      "ready_numbers": "$ready_numbers",
+      "ready_papers": "$ready_papers",
+      "ready_files": "$ready_files",
+      "ready_done": "$ready_done",
+      "ready_req": "$ready_req"
     }
   },
   "returns": "record",
@@ -1137,7 +1186,7 @@
         "t_email": "Email",
         "t_role": "Role",
         "t_first": "has not signed in yet",
-        "add_hint": "They get a one-time password (by email when mail is set up, else shown to you once) and set their own at first sign-in.",
+        "add_hint": "Each person signs in with their own email - never share a sign-in. Every upload, sign-off and filing is recorded under the person who did it. Need another firm admin? Pick Firm admin as the role. They get a one-time password (by email when mail is set up, else shown to you once) and set their own at first sign-in.",
         "added": "Person added",
         "added_pw": "Give {email} this one-time password. It is shown only now; they choose their own at first sign-in.",
         "added_mail": "Added - {email} has the sign-in details by email.",
@@ -1252,7 +1301,14 @@
         "bad_email": "The Email is not right. Mail about the approval comes here.",
         "f_address": "Address",
         "h_address": "Where the firm practises.",
-        "need_address": "Give the Address."
+        "need_address": "Give the Address.",
+        "ready_title": "Keep these ready before you start",
+        "ready_lede": "About 10 minutes once you have them at hand. Details are typed; papers are uploaded as a PDF or a photo.",
+        "ready_numbers": "Numbers and details",
+        "ready_papers": "Papers to upload",
+        "ready_files": "PDF or a photo ({exts}), up to {mb} MB each.",
+        "ready_done": "{done} of {n} ready",
+        "ready_req": "required"
       }
     }
   ]

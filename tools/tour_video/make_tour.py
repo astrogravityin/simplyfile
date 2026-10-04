@@ -66,7 +66,7 @@ ACTION_KEYS = ACTIONS | {"nth", "text", "value", "files", "frame", "optional", "
 DEMO = TOOL   # upload "files" are relative to tools/tour_video/
 STEP_KEYS = {"say", "speak", "chapter", "do", "hold", "picture"}
 PICTURE = re.compile(r"^pictures/(?!\.\.?/)[\w.-]+/[0-9a-f]{8}\.(png|jpg)$")
-TOUR_KEYS = {"page_key", "title", "start_url", "prod_base", "also", "anonymous", "review", "covers", "voice", "rate", "viewport", "vars", "steps", "note", "blur", "settle_ms"}
+TOUR_KEYS = {"page_key", "title", "start_url", "prod_base", "also", "anonymous", "review", "covers", "voice", "rate", "viewport", "vars", "steps", "note", "blur", "settle_ms", "type_emails", "locale"}
 SETTING_KEYS = {"start_url", "anonymous", "vars", "before", "viewport", "voice", "rate", "prod_base", "blur", "note", "product", "settle_ms"}
 PROD_BASE = "https://astrostage.in"   # a tour on another production host (tedbook.in) says so in prod_base
 
@@ -110,6 +110,7 @@ MASK_JS = """
       if (n.nodeValue && RE.test(n.nodeValue)) n.nodeValue = n.nodeValue.replace(RE, SAFE);
     }
     for (const el of document.querySelectorAll('input,textarea')) {
+      if (window.__tourKeepInputs) break;   // a tour that types made-up emails (type_emails) must save what it typed
       if (el.value && RE.test(el.value)) el.value = el.value.replace(RE, SAFE);
       const ph = el.getAttribute('placeholder');
       if (ph && RE.test(ph) && !/example\.com$/.test(ph)) el.setAttribute('placeholder', SAFE);
@@ -398,6 +399,10 @@ def run_action(page, base: str, a: dict) -> None:
         if verb == "click":
             el.click(timeout=ms)
         elif verb == "fill":
+            if el.get_attribute("type") == "date":     # typed keys follow the browser's locale order; fill takes yyyy-mm-dd
+                el.fill(a["text"])
+                el.dispatch_event("change")
+                return
             el.fill("")
             el.press_sequentially(a["text"], delay=45)   # visible typing, not a paste
         elif verb == "select":   # exact option value, else the first option whose text contains it
@@ -513,11 +518,13 @@ def walk(tour: dict, base: str, out: Path, durs: list[float] | None, headed: boo
     with sync_playwright() as pw:
         browser = pw.chromium.launch(headless=not (headed and has_screen()), args=launch_args())
         # anonymous: the page as a signed-out visitor sees it (a landing page, a public FYI link).
-        ctx = browser.new_context(viewport=vp, storage_state=str(AUTH) if AUTH.exists() and not tour.get("anonymous") else None,
+        ctx = browser.new_context(viewport=vp, locale=tour.get("locale"), storage_state=str(AUTH) if AUTH.exists() and not tour.get("anonymous") else None,
                                   **({"record_video_dir": str(out / "raw"), "record_video_size": vp} if record else {}))
         if AUTH.exists() and not tour.get("anonymous"):
             ctx.add_init_script(session_storage_js(json.loads(AUTH.read_text(encoding="utf-8"))))
         ctx.add_init_script(CURSOR_JS)
+        if tour.get("type_emails"):
+            ctx.add_init_script("window.__tourKeepInputs = 1")
         ctx.add_init_script(MASK_JS)      # no real email address is ever recorded
         if tour.get("blur"):              # names, titles: anything personal the tour lists stays unreadable
             ctx.add_init_script(blur_js(tour["blur"]))

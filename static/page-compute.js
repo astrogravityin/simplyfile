@@ -69,7 +69,9 @@ export async function computePage(host) {
   const base = `/api/compute/${encodeURIComponent(cid)}/${encodeURIComponent(ay)}`;
   host.innerHTML = '<div class="loading"></div>';
 
+  let drawn = 0;                               // a later draw wins: checks still in flight from an older one are dropped
   const draw = (d) => {
+    const gen = ++drawn;
     const ro = d.locked;
     const x = d.tax;
     const line = (label, v, cls = '') => `<tr class="${cls}"><td>${esc(label)}</td><td class="num">${esc(signed(v))}</td></tr>`;
@@ -156,7 +158,7 @@ export async function computePage(host) {
 
     api(`${base}/itr-check`).then((r) => {                       // the CBDT schema's own verdict, shown before anyone uploads
       const el = host.querySelector('#cc-itr-check');
-      if (!el) return;
+      if (!el || gen !== drawn) return;
       el.className = `cc-check ${r.valid ? 'is-ok' : 'is-bad'}`;
       el.textContent = r.valid ? w('itr_valid', { schema: r.schema }) : w('itr_issues', { n: r.error_count });
       const bk = r.books || {};                                   // balance sheet and P&L from mapped rows: do they tie?
@@ -173,7 +175,7 @@ export async function computePage(host) {
     }).catch((err) => { const el = host.querySelector('#cc-itr-check'); if (el) el.textContent = err.message; });
     if (d.client.audit) api(`${base}/3cd-check`).then((r) => {   // the tax audit report against its own CBDT schema
       const el = host.querySelector('#cc-3cd-check');
-      if (!el) return;
+      if (!el || gen !== drawn) return;
       el.className = `cc-check ${r.valid ? 'is-ok' : 'is-bad'}`;
       el.textContent = r.valid ? w('itr_valid', { schema: r.schema }) : w('itr_issues', { n: r.error_count });
       if (!r.valid) el.insertAdjacentHTML('afterend', `<details class="cc-itr-list small"><summary>${esc(w('itr_show'))}</summary><ul>${r.errors.map((e) =>

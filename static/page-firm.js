@@ -30,8 +30,36 @@ function badge(state) {
     <path d="M24 2l19 7v14c0 13-8 22-19 27C13 45 5 36 5 23V9z" fill="url(#fi-g)"/>${mark}</svg>`;
 }
 
+// Keep these ready: every number and paper a kind asks for (chip firm.settings kinds), each with where to find it.
+// With a firm, what it already has is ticked - its saved details and uploaded papers.
+function readyList(d, kind, f) {
+  const item = (label, hint, req, done) => `<li class="${done ? 'on' : ''}"><span class="fi-tick">${done ? icon('check', 11) : ''}</span>
+    <div><b>${esc(label)}</b>${req ? '' : ` <span class="tag">${esc(w('optional'))}</span>`}<div class="small muted">${esc(hint)}</div></div></li>`;
+  const has = (k) => !!(f && String(f[k] || '').trim());
+  const got = (id) => !!(f && f.docs.some((x) => x.kind === id));
+  const docs = kind.docs_required.map((x) => [x, true]).concat(kind.docs_optional.map((x) => [x, false]));
+  return `<div class="fi-ready-col"><h4>${icon('edit', 14)} ${esc(w('ready_numbers'))}</h4><ul class="fi-ready-list">
+      ${kind.fields.map((k) => item(w(`f_${k}`), w(`h_${k}`), kind.required.includes(k), has(k))).join('')}</ul></div>
+    <div class="fi-ready-col"><h4>${icon('folder', 14)} ${esc(w('ready_papers'))}</h4><ul class="fi-ready-list">
+      ${docs.map(([x, req]) => item(docOf(d, x).label, docOf(d, x).hint, req, got(x))).join('')}</ul>
+      <p class="small muted">${esc(w('ready_files', { exts: d.settings.doc_exts.join(' '), mb: d.settings.doc_max_mb }))}</p></div>`;
+}
+
+function readyCard(d, f) {
+  const kind = d.settings.kinds.find((k) => k.id === f.kind);
+  const req = kind.required.map((k) => !!String(f[k] || '').trim()).concat(kind.docs_required.map((x) => f.docs.some((y) => y.kind === x)));
+  return `<section class="card fi-ready"><div class="fi-ready-h">${icon('info', 18)}<div><h3>${esc(w('ready_title'))}</h3>
+      <div class="small muted">${esc(w('ready_lede'))}</div></div>
+      <span class="tag ${req.every(Boolean) ? 'ok' : 'warn'}">${esc(w('ready_done', { done: req.filter(Boolean).length, n: req.length }))}</span></div>
+    <div class="fi-ready-grid">${readyList(d, kind, f)}</div></section>`;
+}
+
 function chooseKind(host, d) {
   host.innerHTML = pageHead(w('title'), esc(w('lede_new')))
+    + `<section class="card fi-ready"><div class="fi-ready-h">${icon('info', 18)}<div><h3>${esc(w('ready_title'))}</h3>
+        <div class="small muted">${esc(w('ready_lede'))}</div></div></div>
+      ${d.settings.kinds.map((k) => `<details class="fi-ready-kind" ${k === d.settings.kinds[0] ? 'open' : ''}><summary><b>${esc(k.label)}</b></summary>
+        <div class="fi-ready-grid">${readyList(d, k, null)}</div></details>`).join('')}</section>`
     + `<section class="fi-kinds">${d.settings.kinds.map((k) => `<button type="button" class="fi-kind card" data-kind="${esc(k.id)}">
         <span class="fi-kind-ic">${icon((P().kind_icon || {})[k.id] || 'users', 26)}</span>
         <b>${esc(k.label)}</b><span class="muted">${esc(k.sub)}</span>
@@ -144,6 +172,7 @@ export async function firmPage(host) {
         <div class="fi-meta"><span class="${esc(stateOf(d, f.state).tag)}">${esc(stateOf(d, f.state).label)}</span><span>${esc(f.kind_label)}</span>
           ${f.pan ? `<code>${esc(f.pan)}</code>` : ''}<span>${esc(w('you_are', { role: d.role.label }))}</span></div>
         ${road(f.steps, d.settings.steps)}</div></section>`
+    + (f.editable ? readyCard(d, f) : '')
     + banner(d) + (f.state === d.settings.working_state ? teamCard(d) + details(d) + papers(d) : details(d) + papers(d) + teamCard(d))
     + `<p class="small muted fi-privacy">${icon('lock', 13)} ${esc(w('privacy'))}</p>`;
   const $ = (s) => host.querySelector(s);
@@ -168,7 +197,7 @@ export async function firmPage(host) {
         const r = await api(`/api/firm/${f.id}/move`, { method: 'POST', body: { action: 'submit' } });
         toast(r.say, 'ok'); firmPage(host);
       } catch (err) { toast(err.message, 'bad', 8); }
-    }), w('submit'), { tone: 'ok' });
+    }), w('submit'), { tone: 'brand' });
   };
   if ($('#fi-add')) $('#fi-add').onclick = () => addPerson(d, host);
   host.querySelectorAll('[data-uid]').forEach((tr) => {

@@ -198,7 +198,7 @@ export function modal(title, bodyHtml, { onOpen, onClose, wide = false, footer =
  *  label - "Reject", "Take out" or any Telugu/Hindi label got a green tick; no guessing, red by default.
  *  Cancel has the focus, so Enter on a reflex never deletes anything. */
 export function confirmDialog(title, message, onYes, yesLabel = sw('delete'), { tone = 'danger', eyebrow = '' } = {}) {
-  const t = tone;
+  const t = ['danger', 'warn', 'brand'].includes(tone) ? tone : 'brand';   // an unknown tone had no colour: a white Yes on white
   const label = eyebrow || { danger: sw('confirm_delete'), warn: sw('please_confirm'), brand: sw('confirm') }[t];
   const glyph = { danger: 'trash', warn: 'refresh', brand: 'check' }[t];
   modal(title, `<p class="confirm-msg">${esc(message)}</p>`, {
