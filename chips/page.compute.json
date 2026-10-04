@@ -1,0 +1,79 @@
+{
+  "chip_id": "page.compute",
+  "kind": "accessor",
+  "set": "page",
+  "label": "Compute & close: the steps strip and the waterfall colours",
+  "aliases": [
+    "compute page"
+  ],
+  "params": [
+    {
+      "name": "step_states",
+      "type": "json",
+      "default": [
+        "s_map",
+        "s_recon",
+        "s_compute",
+        "s_sign",
+        "s_file",
+        "s_close"
+      ],
+      "label": "step states"
+    },
+    {
+      "name": "bar_color",
+      "type": "json",
+      "default": {
+        "income": "--brand",
+        "tax": "--warn",
+        "credit": "--ok",
+        "balance_payable": "--bad",
+        "balance_refund": "--ok",
+        "balance_nil": "--muted"
+      },
+      "label": "bar color"
+    },
+    {
+      "name": "money_locale",
+      "type": "text",
+      "default": "en-IN",
+      "label": "money locale"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "step_states": "$step_states",
+      "bar_color": "$bar_color",
+      "money_locale": "$money_locale"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "Presentation knobs of the Compute & close screen.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "step_states": [
+          "s_map",
+          "s_recon",
+          "s_compute",
+          "s_sign",
+          "s_file",
+          "s_close"
+        ],
+        "bar_color": {
+          "income": "--brand",
+          "tax": "--warn",
+          "credit": "--ok",
+          "balance_payable": "--bad",
+          "balance_refund": "--ok",
+          "balance_nil": "--muted"
+        },
+        "money_locale": "en-IN"
+      }
+    }
+  ]
+}

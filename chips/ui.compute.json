@@ -1,0 +1,811 @@
+{
+  "chip_id": "ui.compute",
+  "kind": "accessor",
+  "set": "ui",
+  "label": "Words: Compute & close",
+  "aliases": [
+    "compute words"
+  ],
+  "params": [
+    {
+      "name": "title",
+      "type": "text",
+      "default": "Compute & close",
+      "label": "title"
+    },
+    {
+      "name": "lede",
+      "type": "text",
+      "default": "The return's figures from the mapped books and 26AS: total income, tax, credit and what is left - then sign-off, filing and closing the year.",
+      "label": "lede"
+    },
+    {
+      "name": "ay",
+      "type": "text",
+      "default": "Assessment year",
+      "label": "ay"
+    },
+    {
+      "name": "regime",
+      "type": "text",
+      "default": "Tax regime",
+      "label": "regime"
+    },
+    {
+      "name": "regime_new",
+      "type": "text",
+      "default": "New regime (115BAC)",
+      "label": "regime new"
+    },
+    {
+      "name": "regime_old",
+      "type": "text",
+      "default": "Old regime",
+      "label": "regime old"
+    },
+    {
+      "name": "regime_firm",
+      "type": "text",
+      "default": "Firm / LLP rate",
+      "label": "regime firm"
+    },
+    {
+      "name": "interest",
+      "type": "text",
+      "default": "Interest u/s 234A / 234B / 234C",
+      "label": "interest"
+    },
+    {
+      "name": "interest_hint",
+      "type": "text",
+      "default": "As you worked it out; added to the tax.",
+      "label": "interest hint"
+    },
+    {
+      "name": "save_interest",
+      "type": "text",
+      "default": "Save",
+      "label": "save interest"
+    },
+    {
+      "name": "head_SAL",
+      "type": "text",
+      "default": "Salaries",
+      "label": "head SAL"
+    },
+    {
+      "name": "head_HP",
+      "type": "text",
+      "default": "Income from house property",
+      "label": "head HP"
+    },
+    {
+      "name": "head_BP",
+      "type": "text",
+      "default": "Profits and gains of business or profession",
+      "label": "head BP"
+    },
+    {
+      "name": "head_CG",
+      "type": "text",
+      "default": "Capital gains",
+      "label": "head CG"
+    },
+    {
+      "name": "head_OS",
+      "type": "text",
+      "default": "Income from other sources",
+      "label": "head OS"
+    },
+    {
+      "name": "head_total",
+      "type": "text",
+      "default": "Income under this head",
+      "label": "head total"
+    },
+    {
+      "name": "hp_nav",
+      "type": "text",
+      "default": "Net annual value",
+      "label": "hp nav"
+    },
+    {
+      "name": "hp_std",
+      "type": "text",
+      "default": "Less: standard deduction u/s 24(a) @ 30%",
+      "label": "hp std"
+    },
+    {
+      "name": "gti",
+      "type": "text",
+      "default": "Gross total income",
+      "label": "gti"
+    },
+    {
+      "name": "deductions",
+      "type": "text",
+      "default": "Less: deductions under Chapter VI-A",
+      "label": "deductions"
+    },
+    {
+      "name": "total_income",
+      "type": "text",
+      "default": "Total income (rounded u/s 288A)",
+      "label": "total income"
+    },
+    {
+      "name": "t_tax",
+      "type": "text",
+      "default": "Tax on total income",
+      "label": "t tax"
+    },
+    {
+      "name": "t_rebate",
+      "type": "text",
+      "default": "Less: rebate u/s 87A",
+      "label": "t rebate"
+    },
+    {
+      "name": "t_surcharge",
+      "type": "text",
+      "default": "Add: surcharge @ {rate}%",
+      "label": "t surcharge"
+    },
+    {
+      "name": "t_relief",
+      "type": "text",
+      "default": "Less: marginal relief",
+      "label": "t relief"
+    },
+    {
+      "name": "t_cess",
+      "type": "text",
+      "default": "Add: health & education cess @ 4%",
+      "label": "t cess"
+    },
+    {
+      "name": "t_total",
+      "type": "text",
+      "default": "Tax payable (rounded u/s 288B)",
+      "label": "t total"
+    },
+    {
+      "name": "t_interest",
+      "type": "text",
+      "default": "Add: interest u/s 234A/B/C",
+      "label": "t interest"
+    },
+    {
+      "name": "t_tds",
+      "type": "text",
+      "default": "Less: TDS / TCS as per 26AS",
+      "label": "t tds"
+    },
+    {
+      "name": "t_paid",
+      "type": "text",
+      "default": "Less: advance + self-assessment tax as per 26AS",
+      "label": "t paid"
+    },
+    {
+      "name": "bal_payable",
+      "type": "text",
+      "default": "Balance tax payable",
+      "label": "bal payable"
+    },
+    {
+      "name": "bal_refund",
+      "type": "text",
+      "default": "Refund due",
+      "label": "bal refund"
+    },
+    {
+      "name": "bal_nil",
+      "type": "text",
+      "default": "Nothing payable, nothing due",
+      "label": "bal nil"
+    },
+    {
+      "name": "tds_title",
+      "type": "text",
+      "default": "TDS credit (26AS)",
+      "label": "tds title"
+    },
+    {
+      "name": "paid_title",
+      "type": "text",
+      "default": "Tax paid (26AS challans)",
+      "label": "paid title"
+    },
+    {
+      "name": "challan",
+      "type": "text",
+      "default": "Challan",
+      "label": "challan"
+    },
+    {
+      "name": "bsr",
+      "type": "text",
+      "default": "BSR",
+      "label": "bsr"
+    },
+    {
+      "name": "no_books",
+      "type": "text",
+      "default": "No mapped rows yet - map the statements in Intake & map first.",
+      "label": "no books"
+    },
+    {
+      "name": "no_26as",
+      "type": "text",
+      "default": "No 26AS uploaded - the credit side is empty. Upload it in Reconcile.",
+      "label": "no 26as"
+    },
+    {
+      "name": "red_open",
+      "type": "text",
+      "default": "{n} red {n:finding|findings} in Reconcile still need clearing before sign-off.",
+      "label": "red open"
+    },
+    {
+      "name": "steps",
+      "type": "text",
+      "default": "Closing the year",
+      "label": "steps"
+    },
+    {
+      "name": "s_map",
+      "type": "text",
+      "default": "Statements mapped",
+      "label": "s map"
+    },
+    {
+      "name": "s_recon",
+      "type": "text",
+      "default": "Reconciled",
+      "label": "s recon"
+    },
+    {
+      "name": "s_compute",
+      "type": "text",
+      "default": "Computed",
+      "label": "s compute"
+    },
+    {
+      "name": "s_sign",
+      "type": "text",
+      "default": "Signed off",
+      "label": "s sign"
+    },
+    {
+      "name": "s_file",
+      "type": "text",
+      "default": "Statement",
+      "label": "s file"
+    },
+    {
+      "name": "s_close",
+      "type": "text",
+      "default": "Closed",
+      "label": "s close"
+    },
+    {
+      "name": "sign",
+      "type": "text",
+      "default": "Sign off the computation",
+      "label": "sign"
+    },
+    {
+      "name": "unsign",
+      "type": "text",
+      "default": "Withdraw sign-off",
+      "label": "unsign"
+    },
+    {
+      "name": "signed_by",
+      "type": "text",
+      "default": "Signed off by {by} on {at}",
+      "label": "signed by"
+    },
+    {
+      "name": "sign_stale",
+      "type": "text",
+      "default": "The figures changed after the sign-off - sign off again.",
+      "label": "sign stale"
+    },
+    {
+      "name": "sign_title",
+      "type": "text",
+      "default": "Sign off this computation?",
+      "label": "sign title"
+    },
+    {
+      "name": "sign_body",
+      "type": "text",
+      "default": "You stand behind total income {income}, tax {tax} and {balance}. Any later change to the figures shows the sign-off as stale.",
+      "label": "sign body"
+    },
+    {
+      "name": "signoff_stage",
+      "type": "text",
+      "default": "Move the year to Review in Clients & years before signing off.",
+      "label": "signoff stage"
+    },
+    {
+      "name": "signoff_red",
+      "type": "text",
+      "default": "{n} red {n:finding|findings} in Reconcile have no explanation yet.",
+      "label": "signoff red"
+    },
+    {
+      "name": "file_title",
+      "type": "text",
+      "default": "Mark as filed",
+      "label": "file title"
+    },
+    {
+      "name": "ack",
+      "type": "text",
+      "default": "Acknowledgement no. (ITR-V)",
+      "label": "ack"
+    },
+    {
+      "name": "file",
+      "type": "text",
+      "default": "Mark filed & close the year",
+      "label": "file"
+    },
+    {
+      "name": "file_body",
+      "type": "text",
+      "default": "The year moves to Filed and closes: no new statements, refs, portal files or notes until it is reopened.",
+      "label": "file body"
+    },
+    {
+      "name": "filed_ok",
+      "type": "text",
+      "default": "Filed and closed.",
+      "label": "filed ok"
+    },
+    {
+      "name": "reopen",
+      "type": "text",
+      "default": "Reopen the year",
+      "label": "reopen"
+    },
+    {
+      "name": "reopened",
+      "type": "text",
+      "default": "Reopened - back to Review.",
+      "label": "reopened"
+    },
+    {
+      "name": "closed_note",
+      "type": "text",
+      "default": "Closed. This year is filed; everything is kept as it was.",
+      "label": "closed note"
+    },
+    {
+      "name": "need_signoff",
+      "type": "text",
+      "default": "Sign off the computation before marking the year filed.",
+      "label": "need signoff"
+    },
+    {
+      "name": "need_ack",
+      "type": "text",
+      "default": "Give the acknowledgement number of the filed return.",
+      "label": "need ack"
+    },
+    {
+      "name": "no_reopen",
+      "type": "text",
+      "default": "Only someone with the reopen right can take a filed year back.",
+      "label": "no reopen"
+    },
+    {
+      "name": "not_allowed",
+      "type": "text",
+      "default": "That move is not allowed.",
+      "label": "not allowed"
+    },
+    {
+      "name": "bad_regime",
+      "type": "text",
+      "default": "Pick one of the regimes.",
+      "label": "bad regime"
+    },
+    {
+      "name": "bad_interest",
+      "type": "text",
+      "default": "Interest must be a number of rupees.",
+      "label": "bad interest"
+    },
+    {
+      "name": "downloads",
+      "type": "text",
+      "default": "Files for filing",
+      "label": "downloads"
+    },
+    {
+      "name": "dl_comp",
+      "type": "text",
+      "default": "Computation (Excel)",
+      "label": "dl comp"
+    },
+    {
+      "name": "dl_util",
+      "type": "text",
+      "default": "ITR utility imports (CSV_TDS2 + CSV_IT)",
+      "label": "dl util"
+    },
+    {
+      "name": "dl_3cd",
+      "type": "text",
+      "default": "3CD clause schedule (Excel)",
+      "label": "dl 3cd"
+    },
+    {
+      "name": "dl_util_hint",
+      "type": "text",
+      "default": "Open the ITR-3 utility › TDS2 / IT sheets › Import CSV.",
+      "label": "dl util hint"
+    },
+    {
+      "name": "waterfall",
+      "type": "text",
+      "default": "From income to balance",
+      "label": "waterfall"
+    },
+    {
+      "name": "saved",
+      "type": "text",
+      "default": "Saved",
+      "label": "saved"
+    },
+    {
+      "name": "x_sheet",
+      "type": "text",
+      "default": "Computation",
+      "label": "x sheet"
+    },
+    {
+      "name": "x_title",
+      "type": "text",
+      "default": "Computation of total income",
+      "label": "x title"
+    },
+    {
+      "name": "s_sheet",
+      "type": "text",
+      "default": "3CD schedule",
+      "label": "s sheet"
+    },
+    {
+      "name": "s_title",
+      "type": "text",
+      "default": "Form 3CD - rows by clause",
+      "label": "s title"
+    },
+    {
+      "name": "s_clause",
+      "type": "text",
+      "default": "Clause",
+      "label": "s clause"
+    },
+    {
+      "name": "s_serial",
+      "type": "text",
+      "default": "Serial",
+      "label": "s serial"
+    },
+    {
+      "name": "s_label",
+      "type": "text",
+      "default": "Particulars",
+      "label": "s label"
+    },
+    {
+      "name": "s_amount",
+      "type": "text",
+      "default": "Amount",
+      "label": "s amount"
+    },
+    {
+      "name": "s_row",
+      "type": "text",
+      "default": "Row",
+      "label": "s row"
+    },
+    {
+      "name": "lines",
+      "type": "text",
+      "default": "{n} {n:line|lines}",
+      "label": "lines"
+    },
+    {
+      "name": "from_books",
+      "type": "text",
+      "default": "From the books",
+      "label": "from books"
+    },
+    {
+      "name": "wf_tax",
+      "type": "text",
+      "default": "Tax",
+      "label": "wf tax"
+    },
+    {
+      "name": "wf_surcharge",
+      "type": "text",
+      "default": "Surcharge {rate}%",
+      "label": "wf surcharge"
+    },
+    {
+      "name": "wf_relief",
+      "type": "text",
+      "default": "Marginal relief",
+      "label": "wf relief"
+    },
+    {
+      "name": "wf_cess",
+      "type": "text",
+      "default": "Cess 4%",
+      "label": "wf cess"
+    },
+    {
+      "name": "wf_total",
+      "type": "text",
+      "default": "Tax payable",
+      "label": "wf total"
+    },
+    {
+      "name": "wf_interest",
+      "type": "text",
+      "default": "Interest",
+      "label": "wf interest"
+    },
+    {
+      "name": "wf_tds",
+      "type": "text",
+      "default": "TDS / TCS",
+      "label": "wf tds"
+    },
+    {
+      "name": "wf_paid",
+      "type": "text",
+      "default": "Taxes paid",
+      "label": "wf paid"
+    },
+    {
+      "name": "wf_payable",
+      "type": "text",
+      "default": "Balance payable",
+      "label": "wf payable"
+    },
+    {
+      "name": "wf_refund",
+      "type": "text",
+      "default": "Refund due",
+      "label": "wf refund"
+    },
+    {
+      "name": "wf_nil",
+      "type": "text",
+      "default": "Nil",
+      "label": "wf nil"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "title": "$title",
+      "lede": "$lede",
+      "ay": "$ay",
+      "regime": "$regime",
+      "regime_new": "$regime_new",
+      "regime_old": "$regime_old",
+      "regime_firm": "$regime_firm",
+      "interest": "$interest",
+      "interest_hint": "$interest_hint",
+      "save_interest": "$save_interest",
+      "head_SAL": "$head_SAL",
+      "head_HP": "$head_HP",
+      "head_BP": "$head_BP",
+      "head_CG": "$head_CG",
+      "head_OS": "$head_OS",
+      "head_total": "$head_total",
+      "hp_nav": "$hp_nav",
+      "hp_std": "$hp_std",
+      "gti": "$gti",
+      "deductions": "$deductions",
+      "total_income": "$total_income",
+      "t_tax": "$t_tax",
+      "t_rebate": "$t_rebate",
+      "t_surcharge": "$t_surcharge",
+      "t_relief": "$t_relief",
+      "t_cess": "$t_cess",
+      "t_total": "$t_total",
+      "t_interest": "$t_interest",
+      "t_tds": "$t_tds",
+      "t_paid": "$t_paid",
+      "bal_payable": "$bal_payable",
+      "bal_refund": "$bal_refund",
+      "bal_nil": "$bal_nil",
+      "tds_title": "$tds_title",
+      "paid_title": "$paid_title",
+      "challan": "$challan",
+      "bsr": "$bsr",
+      "no_books": "$no_books",
+      "no_26as": "$no_26as",
+      "red_open": "$red_open",
+      "steps": "$steps",
+      "s_map": "$s_map",
+      "s_recon": "$s_recon",
+      "s_compute": "$s_compute",
+      "s_sign": "$s_sign",
+      "s_file": "$s_file",
+      "s_close": "$s_close",
+      "sign": "$sign",
+      "unsign": "$unsign",
+      "signed_by": "$signed_by",
+      "sign_stale": "$sign_stale",
+      "sign_title": "$sign_title",
+      "sign_body": "$sign_body",
+      "signoff_stage": "$signoff_stage",
+      "signoff_red": "$signoff_red",
+      "file_title": "$file_title",
+      "ack": "$ack",
+      "file": "$file",
+      "file_body": "$file_body",
+      "filed_ok": "$filed_ok",
+      "reopen": "$reopen",
+      "reopened": "$reopened",
+      "closed_note": "$closed_note",
+      "need_signoff": "$need_signoff",
+      "need_ack": "$need_ack",
+      "no_reopen": "$no_reopen",
+      "not_allowed": "$not_allowed",
+      "bad_regime": "$bad_regime",
+      "bad_interest": "$bad_interest",
+      "downloads": "$downloads",
+      "dl_comp": "$dl_comp",
+      "dl_util": "$dl_util",
+      "dl_3cd": "$dl_3cd",
+      "dl_util_hint": "$dl_util_hint",
+      "waterfall": "$waterfall",
+      "saved": "$saved",
+      "x_sheet": "$x_sheet",
+      "x_title": "$x_title",
+      "s_sheet": "$s_sheet",
+      "s_title": "$s_title",
+      "s_clause": "$s_clause",
+      "s_serial": "$s_serial",
+      "s_label": "$s_label",
+      "s_amount": "$s_amount",
+      "s_row": "$s_row",
+      "lines": "$lines",
+      "from_books": "$from_books",
+      "wf_tax": "$wf_tax",
+      "wf_surcharge": "$wf_surcharge",
+      "wf_relief": "$wf_relief",
+      "wf_cess": "$wf_cess",
+      "wf_total": "$wf_total",
+      "wf_interest": "$wf_interest",
+      "wf_tds": "$wf_tds",
+      "wf_paid": "$wf_paid",
+      "wf_payable": "$wf_payable",
+      "wf_refund": "$wf_refund",
+      "wf_nil": "$wf_nil"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "Every word of Compute & close (and the sentences compute.py answers with).",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "title": "Compute & close",
+        "lede": "The return's figures from the mapped books and 26AS: total income, tax, credit and what is left - then sign-off, filing and closing the year.",
+        "ay": "Assessment year",
+        "regime": "Tax regime",
+        "regime_new": "New regime (115BAC)",
+        "regime_old": "Old regime",
+        "regime_firm": "Firm / LLP rate",
+        "interest": "Interest u/s 234A / 234B / 234C",
+        "interest_hint": "As you worked it out; added to the tax.",
+        "save_interest": "Save",
+        "head_SAL": "Salaries",
+        "head_HP": "Income from house property",
+        "head_BP": "Profits and gains of business or profession",
+        "head_CG": "Capital gains",
+        "head_OS": "Income from other sources",
+        "head_total": "Income under this head",
+        "hp_nav": "Net annual value",
+        "hp_std": "Less: standard deduction u/s 24(a) @ 30%",
+        "gti": "Gross total income",
+        "deductions": "Less: deductions under Chapter VI-A",
+        "total_income": "Total income (rounded u/s 288A)",
+        "t_tax": "Tax on total income",
+        "t_rebate": "Less: rebate u/s 87A",
+        "t_surcharge": "Add: surcharge @ {rate}%",
+        "t_relief": "Less: marginal relief",
+        "t_cess": "Add: health & education cess @ 4%",
+        "t_total": "Tax payable (rounded u/s 288B)",
+        "t_interest": "Add: interest u/s 234A/B/C",
+        "t_tds": "Less: TDS / TCS as per 26AS",
+        "t_paid": "Less: advance + self-assessment tax as per 26AS",
+        "bal_payable": "Balance tax payable",
+        "bal_refund": "Refund due",
+        "bal_nil": "Nothing payable, nothing due",
+        "tds_title": "TDS credit (26AS)",
+        "paid_title": "Tax paid (26AS challans)",
+        "challan": "Challan",
+        "bsr": "BSR",
+        "no_books": "No mapped rows yet - map the statements in Intake & map first.",
+        "no_26as": "No 26AS uploaded - the credit side is empty. Upload it in Reconcile.",
+        "red_open": "{n} red {n:finding|findings} in Reconcile still need clearing before sign-off.",
+        "steps": "Closing the year",
+        "s_map": "Statements mapped",
+        "s_recon": "Reconciled",
+        "s_compute": "Computed",
+        "s_sign": "Signed off",
+        "s_file": "Statement",
+        "s_close": "Closed",
+        "sign": "Sign off the computation",
+        "unsign": "Withdraw sign-off",
+        "signed_by": "Signed off by {by} on {at}",
+        "sign_stale": "The figures changed after the sign-off - sign off again.",
+        "sign_title": "Sign off this computation?",
+        "sign_body": "You stand behind total income {income}, tax {tax} and {balance}. Any later change to the figures shows the sign-off as stale.",
+        "signoff_stage": "Move the year to Review in Clients & years before signing off.",
+        "signoff_red": "{n} red {n:finding|findings} in Reconcile have no explanation yet.",
+        "file_title": "Mark as filed",
+        "ack": "Acknowledgement no. (ITR-V)",
+        "file": "Mark filed & close the year",
+        "file_body": "The year moves to Filed and closes: no new statements, refs, portal files or notes until it is reopened.",
+        "filed_ok": "Filed and closed.",
+        "reopen": "Reopen the year",
+        "reopened": "Reopened - back to Review.",
+        "closed_note": "Closed. This year is filed; everything is kept as it was.",
+        "need_signoff": "Sign off the computation before marking the year filed.",
+        "need_ack": "Give the acknowledgement number of the filed return.",
+        "no_reopen": "Only someone with the reopen right can take a filed year back.",
+        "not_allowed": "That move is not allowed.",
+        "bad_regime": "Pick one of the regimes.",
+        "bad_interest": "Interest must be a number of rupees.",
+        "downloads": "Files for filing",
+        "dl_comp": "Computation (Excel)",
+        "dl_util": "ITR utility imports (CSV_TDS2 + CSV_IT)",
+        "dl_3cd": "3CD clause schedule (Excel)",
+        "dl_util_hint": "Open the ITR-3 utility › TDS2 / IT sheets › Import CSV.",
+        "waterfall": "From income to balance",
+        "saved": "Saved",
+        "x_sheet": "Computation",
+        "x_title": "Computation of total income",
+        "s_sheet": "3CD schedule",
+        "s_title": "Form 3CD - rows by clause",
+        "s_clause": "Clause",
+        "s_serial": "Serial",
+        "s_label": "Particulars",
+        "s_amount": "Amount",
+        "s_row": "Row",
+        "lines": "{n} {n:line|lines}",
+        "from_books": "From the books",
+        "wf_tax": "Tax",
+        "wf_surcharge": "Surcharge {rate}%",
+        "wf_relief": "Marginal relief",
+        "wf_cess": "Cess 4%",
+        "wf_total": "Tax payable",
+        "wf_interest": "Interest",
+        "wf_tds": "TDS / TCS",
+        "wf_paid": "Taxes paid",
+        "wf_payable": "Balance payable",
+        "wf_refund": "Refund due",
+        "wf_nil": "Nil"
+      }
+    }
+  ]
+}

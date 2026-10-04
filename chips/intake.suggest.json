@@ -45,7 +45,7 @@
         },
         {
           "id": "os",
-          "pattern": "(?im)^label: .*(interest ?on ?sb|interest ?from|savings ?bank ?interest|dividend)",
+          "pattern": "(?im)^label: .*(interest ?on ?(sb|fd|fixed ?deposits?|deposits?)|interest ?from|savings ?bank ?interest|dividend)",
           "ref": "{itr} OS"
         },
         {
@@ -166,7 +166,7 @@
           },
           {
             "id": "os",
-            "pattern": "(?im)^label: .*(interest ?on ?sb|interest ?from|savings ?bank ?interest|dividend)",
+            "pattern": "(?im)^label: .*(interest ?on ?(sb|fd|fixed ?deposits?|deposits?)|interest ?from|savings ?bank ?interest|dividend)",
             "ref": "{itr} OS"
           },
           {
@@ -252,7 +252,7 @@
           },
           {
             "id": "os",
-            "pattern": "(?im)^label: .*(interest ?on ?sb|interest ?from|savings ?bank ?interest|dividend)",
+            "pattern": "(?im)^label: .*(interest ?on ?(sb|fd|fixed ?deposits?|deposits?)|interest ?from|savings ?bank ?interest|dividend)",
             "ref": "{itr} OS"
           },
           {
@@ -337,7 +337,7 @@
           },
           {
             "id": "os",
-            "pattern": "(?im)^label: .*(interest ?on ?sb|interest ?from|savings ?bank ?interest|dividend)",
+            "pattern": "(?im)^label: .*(interest ?on ?(sb|fd|fixed ?deposits?|deposits?)|interest ?from|savings ?bank ?interest|dividend)",
             "ref": "{itr} OS"
           },
           {
@@ -423,7 +423,7 @@
           },
           {
             "id": "os",
-            "pattern": "(?im)^label: .*(interest ?on ?sb|interest ?from|savings ?bank ?interest|dividend)",
+            "pattern": "(?im)^label: .*(interest ?on ?(sb|fd|fixed ?deposits?|deposits?)|interest ?from|savings ?bank ?interest|dividend)",
             "ref": "{itr} OS"
           },
           {
@@ -477,6 +477,92 @@
           }
         ],
         "hit": "rp40a",
+        "continues": false
+      }
+    },
+    {
+      "args": {
+        "label": "Interest on FD with HDFC Bank",
+        "heading": ""
+      },
+      "expect_value": {
+        "rules": [
+          {
+            "id": "hp_rent",
+            "pattern": "(?im)^label: .*rent ?(received|from)",
+            "ref": "{itr} HP"
+          },
+          {
+            "id": "hp_tax",
+            "pattern": "(?im)^label: .*(corporation|municipal|property) ?tax",
+            "ref": "{itr} HP"
+          },
+          {
+            "id": "hp_repairs",
+            "pattern": "(?im)^label: .*(repairs ?@|standard ?deduction)",
+            "ref": "{itr} HP"
+          },
+          {
+            "id": "bp",
+            "pattern": "(?im)^label: .*(net ?profit|fees ?to ?tax ?consultant|depreciation ?as ?per)",
+            "ref": "{itr} BP"
+          },
+          {
+            "id": "os",
+            "pattern": "(?im)^label: .*(interest ?on ?(sb|fd|fixed ?deposits?|deposits?)|interest ?from|savings ?bank ?interest|dividend)",
+            "ref": "{itr} OS"
+          },
+          {
+            "id": "paid",
+            "pattern": "(?im)^label: .*(advance ?tax|self ?assessment)",
+            "ref": "{itr} IT"
+          },
+          {
+            "id": "tti",
+            "pattern": "(?im)^label: .*(income ?returned|tax ?on ?income|surcharge|cess|interest ?u/s|234[abc])",
+            "ref": "{itr} TTI"
+          },
+          {
+            "id": "tds",
+            "pattern": "(?im)^heading: .*(tds ?as ?per|tds ?deducted|less: ?tds)",
+            "ref": "{itr} TDS2"
+          },
+          {
+            "id": "dep",
+            "pattern": "(?im)^heading: .*depreciation",
+            "ref": "3CD 18; {itr} DPM",
+            "number": true
+          },
+          {
+            "id": "rp40a",
+            "pattern": "(?im)^heading: .*40a ?\\(2\\) ?\\(b\\)",
+            "ref": "3CD 23",
+            "number": true
+          },
+          {
+            "id": "repaid",
+            "pattern": "(?im)^heading: .*(repaid|repayment ?of ?loans)",
+            "ref": "3CD 31(b)",
+            "number": true
+          },
+          {
+            "id": "loans",
+            "pattern": "(?im)^heading: .*loans ?(/|or|and) ?deposits",
+            "ref": "3CD 31(a)",
+            "number": true,
+            "by_column": [
+              {
+                "header": "accepted",
+                "ref": "3CD 31(a)"
+              },
+              {
+                "header": "repaid",
+                "ref": "3CD 31(b)"
+              }
+            ]
+          }
+        ],
+        "hit": "os",
         "continues": false
       }
     }

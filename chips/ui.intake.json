@@ -408,6 +408,24 @@
       "type": "text",
       "default": "Enter moves to the next row",
       "label": "enter hint"
+    },
+    {
+      "name": "expand_all",
+      "type": "text",
+      "default": "Expand all",
+      "label": "expand all"
+    },
+    {
+      "name": "collapse_all",
+      "type": "text",
+      "default": "Collapse all",
+      "label": "collapse all"
+    },
+    {
+      "name": "group_todo",
+      "type": "text",
+      "default": "{n} to do",
+      "label": "group todo"
     }
   ],
   "expr": {
@@ -479,7 +497,10 @@
       "no_heading": "$no_heading",
       "leave_unsaved": "$leave_unsaved",
       "group_count": "$group_count",
-      "enter_hint": "$enter_hint"
+      "enter_hint": "$enter_hint",
+      "expand_all": "$expand_all",
+      "collapse_all": "$collapse_all",
+      "group_todo": "$group_todo"
     }
   },
   "returns": "record",
@@ -556,7 +577,10 @@
         "no_heading": "Rows",
         "leave_unsaved": "You have unsaved SF Refs. Leave without saving?",
         "group_count": "{n} {n:row|rows}",
-        "enter_hint": "Enter moves to the next row"
+        "enter_hint": "Enter moves to the next row",
+        "expand_all": "Expand all",
+        "collapse_all": "Collapse all",
+        "group_todo": "{n} to do"
       }
     }
   ]

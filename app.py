@@ -58,6 +58,7 @@ import guideme
 import clients
 import intake
 import recon
+import compute
 import providers
 import keyshare
 import keysales
@@ -824,6 +825,7 @@ def api_clients_update(cid: str, body: dict = Body(...), u: dict = Depends(scree
 def api_clients_year(cid: str, ay: str, body: dict = Body(...), u: dict = Depends(screen("clients"))):
     if "stage" in body:
         recon.gate(cid, ay, str(body["stage"]))       # red findings in Reconcile keep a year out of review / filed
+        compute.gate_move(u, cid, ay, str(body["stage"]), body.get("ack_no"), access.may(u, "compute", "reopen"))
     return clients.set_year(u, cid, ay, body)
 
 
@@ -870,6 +872,61 @@ def api_intake_download(cid: str, ay: str, fid: str, _: dict = Depends(screen("i
 def api_intake_delete(cid: str, ay: str, fid: str, _: dict = Depends(screen("intake", "delete"))):
     intake.delete(cid, ay, fid)
     return {"ok": True}
+
+
+# --- Compute & close (SimplyFile phases 4 + 5, 2026-10-04): the computation, the filing files, sign-off, close (compute.py) ---
+XLSX = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+
+
+@app.get("/api/compute/{cid}/{ay}")
+def api_compute(cid: str, ay: str, _: dict = Depends(screen("compute"))):
+    return compute.compute(cid, ay)
+
+
+@app.put("/api/compute/{cid}/{ay}")
+def api_compute_set(cid: str, ay: str, body: dict = Body(...), u: dict = Depends(screen("compute"))):
+    return compute.set_state(u, cid, ay, body)
+
+
+@app.post("/api/compute/{cid}/{ay}/signoff")
+def api_compute_signoff(cid: str, ay: str, body: dict = Body(...), u: dict = Depends(screen("compute", "signoff"))):
+    return compute.sign_off(u, cid, ay, bool(body.get("on", True)))
+
+
+@app.post("/api/compute/{cid}/{ay}/file")
+def api_compute_file(cid: str, ay: str, body: dict = Body(...), u: dict = Depends(screen("compute", "file"))):
+    """Mark the return filed (with its acknowledgement number) - the year closes. Same gates as Clients & years."""
+    stage = engine.run("close.settings")["filed_stage"]
+    recon.gate(cid, ay, stage)
+    compute.gate_move(u, cid, ay, stage, str(body.get("ack_no") or ""), access.may(u, "compute", "reopen"))
+    clients.set_year(u, cid, ay, {"stage": stage, "ack_no": str(body.get("ack_no") or "")})
+    return compute.compute(cid, ay)
+
+
+@app.post("/api/compute/{cid}/{ay}/reopen")
+def api_compute_reopen(cid: str, ay: str, u: dict = Depends(screen("compute", "reopen"))):
+    to = engine.run("close.settings")["signoff_stages"][0]
+    compute.gate_move(u, cid, ay, to, None, True)
+    clients.set_year(u, cid, ay, {"stage": to})
+    return compute.compute(cid, ay)
+
+
+@app.get("/api/compute/{cid}/{ay}/computation.xlsx")
+def api_compute_xlsx(cid: str, ay: str, _: dict = Depends(screen("compute"))):
+    name, data = compute.computation_xlsx(cid, ay)
+    return Response(data, media_type=XLSX, headers=named(name.removesuffix(".xlsx"), ".xlsx"))
+
+
+@app.get("/api/compute/{cid}/{ay}/utility.zip")
+def api_compute_zip(cid: str, ay: str, _: dict = Depends(screen("compute"))):
+    name, data = compute.utility_zip(cid, ay)
+    return Response(data, media_type="application/zip", headers=named(name.removesuffix(".zip"), ".zip"))
+
+
+@app.get("/api/compute/{cid}/{ay}/3cd.xlsx")
+def api_compute_3cd(cid: str, ay: str, _: dict = Depends(screen("compute"))):
+    name, data = compute.schedule_3cd_xlsx(cid, ay)
+    return Response(data, media_type=XLSX, headers=named(name.removesuffix(".xlsx"), ".xlsx"))
 
 
 # --- Reconcile (SimplyFile phase 3, 2026-10-04): books against 26AS / AIS / TIS (recon.py) ------------------------------

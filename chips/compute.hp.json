@@ -1,0 +1,108 @@
+{
+  "chip_id": "compute.hp",
+  "kind": "accessor",
+  "set": "compute",
+  "label": "Compute: house property after the 30% deduction and the loss cap",
+  "aliases": [
+    "house property 24(a)"
+  ],
+  "params": [
+    {
+      "name": "nav",
+      "type": "number",
+      "default": 0,
+      "label": "net annual value (rent less municipal taxes)"
+    },
+    {
+      "name": "std_pct",
+      "type": "number",
+      "default": 30,
+      "label": "standard deduction u/s 24(a), %"
+    },
+    {
+      "name": "loss_cap",
+      "type": "number",
+      "default": 200000,
+      "label": "house-property loss that may be set off"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "std": {
+        "vop": "round_to",
+        "value": {
+          "vop": "mul",
+          "a": {
+            "vop": "largest",
+            "values": [
+              "$nav",
+              0
+            ]
+          },
+          "b": {
+            "vop": "div",
+            "a": "$std_pct",
+            "b": 100
+          }
+        }
+      },
+      "net": {
+        "vop": "largest",
+        "values": [
+          {
+            "vop": "sub",
+            "a": "$nav",
+            "b": {
+              "vop": "round_to",
+              "value": {
+                "vop": "mul",
+                "a": {
+                  "vop": "largest",
+                  "values": [
+                    "$nav",
+                    0
+                  ]
+                },
+                "b": {
+                  "vop": "div",
+                  "a": "$std_pct",
+                  "b": 100
+                }
+              }
+            }
+          },
+          {
+            "vop": "sub",
+            "a": 0,
+            "b": "$loss_cap"
+          }
+        ]
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "30% of a positive net annual value comes off; a loss counts only up to the set-off cap.",
+  "test_cases": [
+    {
+      "args": {
+        "nav": 2340000
+      },
+      "expect_value": {
+        "std": 702000,
+        "net": 1638000
+      }
+    },
+    {
+      "args": {
+        "nav": -500000
+      },
+      "expect_value": {
+        "std": 0,
+        "net": -200000
+      }
+    }
+  ]
+}

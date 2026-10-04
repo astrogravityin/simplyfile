@@ -1,0 +1,117 @@
+{
+  "chip_id": "compute.total_income",
+  "kind": "accessor",
+  "set": "compute",
+  "label": "Compute: total income from gross total income and deductions",
+  "aliases": [
+    "compute: total income from gross total i"
+  ],
+  "params": [
+    {
+      "name": "gti",
+      "type": "number",
+      "default": 0,
+      "label": "gross total income"
+    },
+    {
+      "name": "deductions",
+      "type": "number",
+      "default": 0,
+      "label": "Chapter VI-A deductions claimed"
+    },
+    {
+      "name": "round_to",
+      "type": "number",
+      "default": 10,
+      "label": "round to (section 288A)"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "deductions": {
+        "vop": "smallest",
+        "values": [
+          "$deductions",
+          {
+            "vop": "largest",
+            "values": [
+              "$gti",
+              0
+            ]
+          }
+        ]
+      },
+      "income": {
+        "vop": "largest",
+        "values": [
+          {
+            "vop": "mul",
+            "a": {
+              "vop": "round_to",
+              "value": {
+                "vop": "div",
+                "a": {
+                  "vop": "sub",
+                  "a": "$gti",
+                  "b": {
+                    "vop": "smallest",
+                    "values": [
+                      "$deductions",
+                      {
+                        "vop": "largest",
+                        "values": [
+                          "$gti",
+                          0
+                        ]
+                      }
+                    ]
+                  }
+                },
+                "b": "$round_to"
+              }
+            },
+            "b": "$round_to"
+          },
+          0
+        ]
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "Chapter VI-A deductions cannot exceed the gross total income; the total income is rounded to the nearest ten and is never negative.",
+  "test_cases": [
+    {
+      "args": {
+        "gti": 20736504,
+        "deductions": 0
+      },
+      "expect_value": {
+        "deductions": 0,
+        "income": 20736500
+      }
+    },
+    {
+      "args": {
+        "gti": 500000,
+        "deductions": 900000
+      },
+      "expect_value": {
+        "deductions": 500000,
+        "income": 0
+      }
+    },
+    {
+      "args": {
+        "gti": -100000,
+        "deductions": 150000
+      },
+      "expect_value": {
+        "deductions": 0,
+        "income": 0
+      }
+    }
+  ]
+}

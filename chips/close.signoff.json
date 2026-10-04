@@ -1,0 +1,99 @@
+{
+  "chip_id": "close.signoff",
+  "kind": "accessor",
+  "set": "close",
+  "label": "Close: may the computation be signed off now?",
+  "aliases": [
+    "close: may the computation be signed off"
+  ],
+  "params": [
+    {
+      "name": "facts",
+      "type": "json",
+      "default": {},
+      "label": "in_stage (the year is in a sign-off stage), has_red (an unexplained red finding)"
+    },
+    {
+      "name": "rules",
+      "type": "json",
+      "default": [
+        {
+          "when": {
+            "in_stage": false
+          },
+          "set": {
+            "ok": false,
+            "say": "signoff_stage"
+          }
+        },
+        {
+          "when": {
+            "has_red": true
+          },
+          "set": {
+            "ok": false,
+            "say": "signoff_red"
+          }
+        }
+      ],
+      "label": "First matching row wins"
+    },
+    {
+      "name": "otherwise",
+      "type": "json",
+      "default": {
+        "ok": true,
+        "say": ""
+      },
+      "label": "When no row matches"
+    }
+  ],
+  "expr": {
+    "vop": "decision_table",
+    "facts": "$facts",
+    "rules": "$rules",
+    "current": "$otherwise"
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "A reviewer signs off only in Review (chip close.settings signoff_stages) and only with every red finding in Reconcile explained.",
+  "test_cases": [
+    {
+      "args": {
+        "facts": {
+          "in_stage": false,
+          "has_red": false
+        }
+      },
+      "expect_value": {
+        "ok": false,
+        "say": "signoff_stage"
+      }
+    },
+    {
+      "args": {
+        "facts": {
+          "in_stage": true,
+          "has_red": true
+        }
+      },
+      "expect_value": {
+        "ok": false,
+        "say": "signoff_red"
+      }
+    },
+    {
+      "args": {
+        "facts": {
+          "in_stage": true,
+          "has_red": false
+        }
+      },
+      "expect_value": {
+        "ok": true,
+        "say": ""
+      }
+    }
+  ]
+}

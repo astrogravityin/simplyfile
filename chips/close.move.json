@@ -1,0 +1,128 @@
+{
+  "chip_id": "close.move",
+  "kind": "accessor",
+  "set": "close",
+  "label": "Close: may a year move to this stage?",
+  "aliases": [
+    "close: may a year move to this stage?"
+  ],
+  "params": [
+    {
+      "name": "facts",
+      "type": "json",
+      "default": {},
+      "label": "to_filed, signed, has_ack, from_closed, to_closed, may_reopen"
+    },
+    {
+      "name": "rules",
+      "type": "json",
+      "default": [
+        {
+          "when": {
+            "to_filed": true,
+            "signed": false
+          },
+          "set": {
+            "ok": false,
+            "say": "need_signoff"
+          }
+        },
+        {
+          "when": {
+            "to_filed": true,
+            "has_ack": false
+          },
+          "set": {
+            "ok": false,
+            "say": "need_ack"
+          }
+        },
+        {
+          "when": {
+            "from_closed": true,
+            "to_closed": false,
+            "may_reopen": false
+          },
+          "set": {
+            "ok": false,
+            "say": "no_reopen"
+          }
+        }
+      ],
+      "label": "First matching row wins"
+    },
+    {
+      "name": "otherwise",
+      "type": "json",
+      "default": {
+        "ok": true,
+        "say": ""
+      },
+      "label": "When no row matches"
+    }
+  ],
+  "expr": {
+    "vop": "decision_table",
+    "facts": "$facts",
+    "rules": "$rules",
+    "current": "$otherwise"
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "Filed needs a reviewer's sign-off and the acknowledgement number; leaving a closed year needs the reopen right.",
+  "test_cases": [
+    {
+      "args": {
+        "facts": {
+          "to_filed": true,
+          "signed": false,
+          "has_ack": true
+        }
+      },
+      "expect_value": {
+        "ok": false,
+        "say": "need_signoff"
+      }
+    },
+    {
+      "args": {
+        "facts": {
+          "to_filed": true,
+          "signed": true,
+          "has_ack": false
+        }
+      },
+      "expect_value": {
+        "ok": false,
+        "say": "need_ack"
+      }
+    },
+    {
+      "args": {
+        "facts": {
+          "to_filed": true,
+          "signed": true,
+          "has_ack": true
+        }
+      },
+      "expect_value": {
+        "ok": true,
+        "say": ""
+      }
+    },
+    {
+      "args": {
+        "facts": {
+          "from_closed": true,
+          "to_closed": false,
+          "may_reopen": false
+        }
+      },
+      "expect_value": {
+        "ok": false,
+        "say": "no_reopen"
+      }
+    }
+  ]
+}

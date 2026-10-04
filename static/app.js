@@ -17,6 +17,7 @@ import { guidemePage } from './page-guideme.js';
 import { clientsPage } from './page-clients.js';
 import { intakePage } from './page-intake.js';
 import { reconPage } from './page-recon.js';
+import { computePage } from './page-compute.js';
 import { api, BASE, esc, t, ps, loadWords, keep, kept, uploadBox, confirmDialog, setCurrency, shownMoney } from '../core-static/ui.js';
 import { icon, logo } from './icons.js';
 
@@ -147,7 +148,7 @@ const NEEDS_PROJECT = new Set(['manuals', 'howto']);
 const keyScreen = () => ps('shell').key_screen;          // the Account & key screen (chip page.shell key_screen)
 
 startPortal({
-  views: { clients: clientsPage, intake: intakePage, recon: reconPage, manuals: manualPage, howto: howtoPage, guideme: guidemePage, setup: setupPage, keys: keysPage, buykey: buyKeyPage, keysales: keySalesPage, tourvideo: tourVideoPage },
+  views: { clients: clientsPage, intake: intakePage, recon: reconPage, compute: computePage, manuals: manualPage, howto: howtoPage, guideme: guidemePage, setup: setupPage, keys: keysPage, buykey: buyKeyPage, keysales: keySalesPage, tourvideo: tourVideoPage },
   // The edition (tv or SteadyMove, chip edition.settings) names the line under the logo.
   pitch, logo, brandSub: () => (state.edition && state.edition.brand_sub) || '',
   landing: () => (state.edition && state.edition.landing) || '#/video',   // a door (chip edition.settings doors) has its own first screen

@@ -115,6 +115,21 @@ def year_defaults(c: dict) -> dict:
             "assigned": "", "ack_no": ""}
 
 
+def year_of(cid: str, ay: str) -> dict:
+    c = get(cid)
+    return (c.get("years") or {}).get(ay) or year_defaults(c)
+
+
+def locked(cid: str, ay: str) -> bool:
+    """A closed year (stage in chip close.settings locked_stages) takes no new statements, refs, portal files or notes."""
+    return year_of(cid, ay).get("stage") in engine.run("close.settings")["locked_stages"]
+
+
+def guard_open(cid: str, ay: str) -> None:
+    if locked(cid, ay):
+        raise HTTPException(409, say("year_closed", ay=ay))
+
+
 def set_year(user: dict, cid: str, ay: str, body: dict) -> dict:
     k = settings()
     if ay not in k["years"]:

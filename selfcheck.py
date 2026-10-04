@@ -21,9 +21,9 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 PY = sys.executable
-MODULES = ["clients", "intake", "recon", "edition", "tourvideo", "manuals", "projects", "scan", "source", "keyshare",
+MODULES = ["clients", "intake", "recon", "compute", "edition", "tourvideo", "manuals", "projects", "scan", "source", "keyshare",
            "keysales", "wallet", "guideme"]
-SCREENS = ["clients", "intake", "recon", "manuals", "howto", "guideme", "tourvideo", "setup", "keys", "buykey", "keysales"]
+SCREENS = ["clients", "intake", "recon", "compute", "manuals", "howto", "guideme", "tourvideo", "setup", "keys", "buykey", "keysales"]
 
 
 def run(args: list[str], what: str) -> None:
@@ -118,12 +118,75 @@ def api_check() -> None:
         red = next(x for x in d["findings"] if x["severity"] == "red")
         c.put(f"{rb}/notes/{red['id']}", json={"note": "checked with the client"})
         assert c.put(f"/api/clients/{cl['id']}/years/2026-27", json={"stage": "review"}).status_code == 200
-    print(f"  api: owner, menu, {sum(1 for r in app.app.routes if '/api/' in getattr(r, 'path', ''))} routes, clients -> intake -> reconcile OK")
+        # Compute & close: the computation, the three files, sign-off, filed = closed, every write refused, reopen
+        cb = f"/api/compute/{cl['id']}/2026-27"
+        cd = c.get(cb).json()
+        assert cd["income"] > 0 and cd["tax"]["total"] > 0 and cd["tds_total"] > 0 and cd["balance"]["kind"] in ("payable", "refund", "nil"), cd
+        for part in ("computation.xlsx", "utility.zip", "3cd.xlsx"):
+            assert c.get(f"{cb}/{part}").status_code == 200, part
+        assert c.post(f"{cb}/file", json={"ack_no": "123"}).status_code == 409, "filing needs a sign-off"
+        assert c.post(f"{cb}/signoff", json={"on": True}).json()["signed"]
+        assert c.post(f"{cb}/file", json={"ack_no": ""}).status_code == 409, "filing needs the acknowledgement"
+        assert c.post(f"{cb}/file", json={"ack_no": "998877665544332"}).json()["locked"]
+        assert c.post(base, files={"file": ("more.csv", b"a,1")}).status_code == 409, "a filed year takes no new statement"
+        assert c.put(cb, json={"interest": 10}).status_code == 409 and c.post(rb, files={"file": ("x.txt", b"x")}).status_code == 409
+        assert not c.post(f"{cb}/reopen").json()["locked"]
+    print(f"  api: owner, menu, {sum(1 for r in app.app.routes if '/api/' in getattr(r, 'path', ''))} routes, clients -> intake -> reconcile -> compute -> filed -> reopen OK")
+
+
+# Chips-first guard (2026-10-04 audit). Every rate, threshold and decision of the Filing screens is a chip; these are the
+# shapes they had when they slipped into code once. A match means a decision came back - put it in its chip instead.
+LEAKS = {
+    "compute.py": [
+        ("r[\"statuses\"]", "which regime a status may use -> chip compute.regime / compute.settings status_regimes"),
+        ("max(gti", "deductions capped at gross total income -> chip compute.total_income"),
+        ("min(sum(", "deductions capped at gross total income -> chip compute.total_income"),
+        ("* k[\"hp_std_pct\"]", "the 30% of house property -> chip compute.hp"),
+        ("-k[\"hp_loss_cap\"]", "the house-property loss cap -> chip compute.hp"),
+        ("if on and d[\"open_red\"]", "sign-off with red findings -> chip close.signoff"),
+        ("== \"26as\"] or portal", "where the credit is read from -> compute.settings credit_sources"),
+        (", \"OS\")", "the default head in the utility CSV -> compute.settings csv_head_default"),
+        ("2400000", "a slab edge -> compute.settings regimes"),
+        ("20000000", "a surcharge band -> compute.settings regimes"),
+        ("cess_pct = 4", "the cess rate -> compute.settings cess_pct"),
+    ],
+    "recon.py": [
+        ("e[\"kind\"] in (\"tds\", \"income\") and e[\"gross\"]:\n            g = ", "income from every source at once -> recon.settings income_sources"),
+    ],
+    "static/page-compute.js": [
+        ("s_recon:", "which steps are done -> chip close.steps (the page only draws d.steps)"),
+        ("d.has_26as && !d.open_red", "which steps are done -> chip close.steps"),
+        ("open_red ?", "the verdict is the server's open_red count, not a rule in the page"),
+    ],
+    "static/page-recon.js": [
+        ("['tds', 'tds_claim']", "which findings belong to which check -> chip page.recon checks"),
+    ],
+}
+REQUIRED_CHIPS = ["compute.settings", "compute.tax", "compute.tax_parts", "compute.balance", "compute.regime", "compute.total_income",
+                  "compute.hp", "close.move", "close.settings", "close.signoff", "close.steps", "recon.settings", "page.recon",
+                  "page.intake", "ui.compute"]
+
+
+def leaks_in(text: str, rules: list) -> list[str]:
+    return [why for needle, why in rules if needle in text]
+
+
+def chips_first_check() -> None:
+    # the guard itself first: it must catch a planted leak, and pass clean code
+    assert leaks_in("x = min(sum(a), max(gti, 0))", LEAKS["compute.py"]), "the guard no longer sees a planted leak"
+    assert not leaks_in("x = 1", LEAKS["compute.py"])
+    found = [f"{name}: {why}" for name, rules in LEAKS.items()
+             for why in leaks_in((HERE / name).read_text(encoding="utf-8"), rules)]
+    assert not found, "decisions are back in code:\n  " + "\n  ".join(found)
+    missing = [c for c in REQUIRED_CHIPS if not (HERE / "chips" / f"{c}.json").exists()]
+    assert not missing, f"chips missing: {missing}"
+    print(f"  chips first: no decision in code ({sum(len(r) for r in LEAKS.values())} shapes watched), {len(REQUIRED_CHIPS)} chips present OK")
 
 
 if __name__ == "__main__":
     print("SimplyFile - self-check")
     module_checks()
     static_checks()
+    chips_first_check()
     api_check()
     print("All checks passed.")

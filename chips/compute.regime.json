@@ -1,0 +1,84 @@
+{
+  "chip_id": "compute.regime",
+  "kind": "accessor",
+  "set": "compute",
+  "label": "Compute: which regime a status is taxed under",
+  "aliases": [
+    "compute: which regime a status is taxed "
+  ],
+  "params": [
+    {
+      "name": "chosen",
+      "type": "text",
+      "default": "",
+      "label": "what the person picked"
+    },
+    {
+      "name": "allowed",
+      "type": "json",
+      "default": [
+        "new",
+        "old"
+      ],
+      "label": "the regimes this status may choose"
+    },
+    {
+      "name": "default",
+      "type": "text",
+      "default": "new",
+      "label": "the status's default"
+    }
+  ],
+  "expr": {
+    "vop": "choose",
+    "cases": [
+      {
+        "when": {
+          "op": "in_set",
+          "value": "$chosen",
+          "set": "$allowed"
+        },
+        "then": "$chosen"
+      }
+    ],
+    "else": "$default"
+  },
+  "returns": "text",
+  "version": 1,
+  "status": "published",
+  "description_nl": "A firm or LLP has one rate (no choice); individuals, HUFs, AOPs and BOIs choose new or old. compute.settings status_regimes holds the lists.",
+  "test_cases": [
+    {
+      "args": {
+        "chosen": "old",
+        "allowed": [
+          "new",
+          "old"
+        ],
+        "default": "new"
+      },
+      "expect_value": "old"
+    },
+    {
+      "args": {
+        "chosen": "old",
+        "allowed": [
+          "firm"
+        ],
+        "default": "firm"
+      },
+      "expect_value": "firm"
+    },
+    {
+      "args": {
+        "chosen": "",
+        "allowed": [
+          "new",
+          "old"
+        ],
+        "default": "new"
+      },
+      "expect_value": "new"
+    }
+  ]
+}

@@ -137,6 +137,7 @@ def files(cid: str, ay: str) -> list[dict]:
 
 
 def add(user: dict, cid: str, ay: str, name: str, data: bytes) -> dict:
+    clients.guard_open(cid, ay)                                  # a closed (filed) year changes no more
     k = settings()
     ext = Path(name).suffix.lower()
     if ext not in k["exts"]:
@@ -168,6 +169,7 @@ def add(user: dict, cid: str, ay: str, name: str, data: bytes) -> dict:
 
 
 def delete(cid: str, ay: str, fid: str) -> None:
+    clients.guard_open(cid, ay)                                  # a closed (filed) year changes no more
     with _LOCK:
         metas = files(cid, ay)
         m = next((m for m in metas if m["id"] == fid), None)
@@ -272,9 +274,11 @@ def findings(cid: str, ay: str) -> dict:
         if r["key"] not in used:
             add("tds_claim", r["key"], {}, {"books": r["amount"], "portal": 0}, party=r["label"], books=_inr(r["amount"]))
 
-    # 2. income per head
+    # 2. income per head - from ONE source: the first of chip income_sources that is uploaded (each repeats the others)
+    have = {e["source"] for e in portal}
+    src = next((x for x in k["income_sources"] if x in have), None)
     p_inc: dict[str, float] = {}
-    for e in portal:
+    for e in [e for e in portal if e["source"] == src]:
         g = group_of(e["section"], e["category"] or e["party"])
         if g and e["kind"] in ("tds", "income") and e["gross"]:
             p_inc[g] = p_inc.get(g, 0.0) + e["gross"]
@@ -306,6 +310,7 @@ def findings(cid: str, ay: str) -> dict:
 
 
 def explain(user: dict, cid: str, ay: str, fid: str, note: str) -> dict:
+    clients.guard_open(cid, ay)                                  # a closed (filed) year changes no more
     f = findings(cid, ay)
     if not any(x["id"] == fid for x in f["findings"]):
         _bad("no_finding", 404)

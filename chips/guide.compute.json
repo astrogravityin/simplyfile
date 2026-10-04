@@ -1,0 +1,110 @@
+{
+  "chip_id": "guide.compute",
+  "kind": "accessor",
+  "set": "guide",
+  "label": "Guide me: Compute & close",
+  "aliases": [
+    "compute guide"
+  ],
+  "params": [
+    {
+      "name": "title",
+      "type": "text",
+      "default": "Compute & close",
+      "label": "The tour's name (its cover card)"
+    },
+    {
+      "name": "lede",
+      "type": "long",
+      "default": "Turn the mapped books and 26AS into the return's figures in {product}, hand over the files for filing, sign off, file and close the year.",
+      "label": "The cover's opening line; {product} = this edition's name"
+    },
+    {
+      "name": "icon",
+      "type": "text",
+      "default": "money",
+      "label": "The emblem on the cover (an icon name)"
+    },
+    {
+      "name": "minutes",
+      "type": "number",
+      "default": 2,
+      "label": "How long the tour takes"
+    },
+    {
+      "name": "steps",
+      "type": "rows",
+      "default": [
+        {
+          "title": "Where the year stands",
+          "say": "The strip shows each step: mapped, reconciled, computed, signed off, filed, closed.",
+          "target": ".cc-steps|main"
+        },
+        {
+          "title": "The computation",
+          "say": "Each head adds up the rows mapped to it; open a head to see them. House property gets its 30%. Pick the regime here.",
+          "target": ".cc-comp|main"
+        },
+        {
+          "title": "From tax to balance",
+          "say": "The waterfall: tax, surcharge and relief, cess, then the credit from 26AS, down to payable or refund.",
+          "target": ".cc-wf|main"
+        },
+        {
+          "title": "Files for filing",
+          "say": "The computation in Excel, the ITR utility's TDS and tax-paid imports, and the 3CD clause schedule.",
+          "target": ".cc-dl|main"
+        },
+        {
+          "title": "Sign off, file, close",
+          "say": "A reviewer signs off; the acknowledgement number marks it filed and the year closes.",
+          "target": ".cc-close|main"
+        }
+      ],
+      "label": "The steps in order: title, say (the narration), target (where the spotlight goes; alternatives split by |, the first on screen wins), art (the picture: hero/flow/roads/meter/stack/check), place (below/above/right/left/center, optional), open (optional: what the guide presses first when the part is not on screen - open the first item, go back Home; alternatives split by |)"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "title": "$title",
+      "lede": "$lede",
+      "icon": "$icon",
+      "minutes": "$minutes",
+      "steps": "$steps"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-02 owner: Tour Video in sm, owner only - its own Guide me.",
+  "weight_basis": "page",
+  "test_cases": [
+    {
+      "args": {
+        "title": "T",
+        "lede": "L",
+        "icon": "spark",
+        "minutes": 1,
+        "steps": [
+          {
+            "title": "a",
+            "say": "b"
+          }
+        ]
+      },
+      "expect_value": {
+        "title": "T",
+        "lede": "L",
+        "icon": "spark",
+        "minutes": 1,
+        "steps": [
+          {
+            "title": "a",
+            "say": "b"
+          }
+        ]
+      }
+    }
+  ]
+}

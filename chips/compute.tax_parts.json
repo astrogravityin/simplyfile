@@ -1,0 +1,155 @@
+{
+  "chip_id": "compute.tax_parts",
+  "kind": "accessor",
+  "set": "compute",
+  "label": "Compute: slab tax and surcharge at one income",
+  "aliases": [
+    "compute: slab tax and surcharge at one i"
+  ],
+  "params": [
+    {
+      "name": "income",
+      "type": "number",
+      "default": 0,
+      "label": "income"
+    },
+    {
+      "name": "slabs",
+      "type": "json",
+      "default": [
+        {
+          "upto": 400000,
+          "rate": 0
+        },
+        {
+          "upto": 800000,
+          "rate": 5
+        },
+        {
+          "upto": 1200000,
+          "rate": 10
+        },
+        {
+          "upto": 1600000,
+          "rate": 15
+        },
+        {
+          "upto": 2000000,
+          "rate": 20
+        },
+        {
+          "upto": 2400000,
+          "rate": 25
+        },
+        {
+          "upto": null,
+          "rate": 30
+        }
+      ],
+      "label": "slabs"
+    },
+    {
+      "name": "steps",
+      "type": "json",
+      "default": [
+        {
+          "above": 5000000,
+          "rate": 10
+        },
+        {
+          "above": 10000000,
+          "rate": 15
+        },
+        {
+          "above": 20000000,
+          "rate": 25
+        }
+      ],
+      "label": "surcharge steps"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "tax": {
+        "vop": "slab_tax",
+        "amount": "$income",
+        "slabs": "$slabs"
+      },
+      "rate": {
+        "vop": "coalesce",
+        "values": [
+          {
+            "vop": "step_rate",
+            "amount": "$income",
+            "steps": "$steps"
+          },
+          0
+        ]
+      },
+      "surcharge": {
+        "vop": "mul",
+        "a": {
+          "vop": "slab_tax",
+          "amount": "$income",
+          "slabs": "$slabs"
+        },
+        "b": {
+          "vop": "div",
+          "a": {
+            "vop": "coalesce",
+            "values": [
+              {
+                "vop": "step_rate",
+                "amount": "$income",
+                "steps": "$steps"
+              },
+              0
+            ]
+          },
+          "b": 100
+        }
+      },
+      "threshold": {
+        "vop": "coalesce",
+        "values": [
+          {
+            "vop": "step_rate",
+            "amount": "$income",
+            "steps": "$steps",
+            "field": "above"
+          },
+          0
+        ]
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "Slab tax, surcharge rate, surcharge and the band edge for one income; compute.tax asks it twice for marginal relief.",
+  "test_cases": [
+    {
+      "args": {
+        "income": 900000
+      },
+      "expect_value": {
+        "tax": 30000,
+        "rate": 0,
+        "surcharge": 0,
+        "threshold": 0
+      }
+    },
+    {
+      "args": {
+        "income": 20721500
+      },
+      "expect_value": {
+        "tax": 5796450,
+        "rate": 25,
+        "surcharge": 1449112.5,
+        "threshold": 20000000
+      }
+    }
+  ]
+}

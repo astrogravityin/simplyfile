@@ -1,0 +1,1030 @@
+{
+  "chip_id": "compute.tax",
+  "kind": "accessor",
+  "set": "compute",
+  "label": "Compute: tax on total income (slabs, rebate, surcharge with marginal relief, cess)",
+  "aliases": [
+    "compute: tax on total income (slabs, reb"
+  ],
+  "params": [
+    {
+      "name": "income",
+      "type": "number",
+      "default": 0,
+      "label": "total income"
+    },
+    {
+      "name": "status",
+      "type": "text",
+      "default": "huf",
+      "label": "status"
+    },
+    {
+      "name": "slabs",
+      "type": "json",
+      "default": [
+        {
+          "upto": 400000,
+          "rate": 0
+        },
+        {
+          "upto": 800000,
+          "rate": 5
+        },
+        {
+          "upto": 1200000,
+          "rate": 10
+        },
+        {
+          "upto": 1600000,
+          "rate": 15
+        },
+        {
+          "upto": 2000000,
+          "rate": 20
+        },
+        {
+          "upto": 2400000,
+          "rate": 25
+        },
+        {
+          "upto": null,
+          "rate": 30
+        }
+      ],
+      "label": "slabs"
+    },
+    {
+      "name": "steps",
+      "type": "json",
+      "default": [
+        {
+          "above": 5000000,
+          "rate": 10
+        },
+        {
+          "above": 10000000,
+          "rate": 15
+        },
+        {
+          "above": 20000000,
+          "rate": 25
+        }
+      ],
+      "label": "surcharge steps"
+    },
+    {
+      "name": "cess_pct",
+      "type": "number",
+      "default": 4,
+      "label": "cess %"
+    },
+    {
+      "name": "round_to",
+      "type": "number",
+      "default": 10,
+      "label": "round tax to"
+    },
+    {
+      "name": "rebate_statuses",
+      "type": "json",
+      "default": [
+        "individual"
+      ],
+      "label": "who gets the 87A rebate"
+    },
+    {
+      "name": "rebate_upto",
+      "type": "number",
+      "default": 1200000,
+      "label": "rebate up to income"
+    },
+    {
+      "name": "rebate_most",
+      "type": "number",
+      "default": 60000,
+      "label": "rebate at most"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "tax": {
+        "vop": "get",
+        "value": {
+          "chip": "compute.tax_parts",
+          "args": {
+            "income": "$income",
+            "slabs": "$slabs",
+            "steps": "$steps"
+          }
+        },
+        "path": "tax"
+      },
+      "rebate": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "in_set",
+                  "value": "$status",
+                  "set": "$rebate_statuses"
+                },
+                {
+                  "op": "le",
+                  "left": "$income",
+                  "right": "$rebate_upto"
+                }
+              ]
+            },
+            "then": {
+              "vop": "smallest",
+              "values": [
+                {
+                  "vop": "get",
+                  "value": {
+                    "chip": "compute.tax_parts",
+                    "args": {
+                      "income": "$income",
+                      "slabs": "$slabs",
+                      "steps": "$steps"
+                    }
+                  },
+                  "path": "tax"
+                },
+                "$rebate_most"
+              ]
+            }
+          }
+        ],
+        "else": 0
+      },
+      "surcharge_rate": {
+        "vop": "get",
+        "value": {
+          "chip": "compute.tax_parts",
+          "args": {
+            "income": "$income",
+            "slabs": "$slabs",
+            "steps": "$steps"
+          }
+        },
+        "path": "rate"
+      },
+      "surcharge": {
+        "vop": "get",
+        "value": {
+          "chip": "compute.tax_parts",
+          "args": {
+            "income": "$income",
+            "slabs": "$slabs",
+            "steps": "$steps"
+          }
+        },
+        "path": "surcharge"
+      },
+      "relief": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "gt",
+              "left": {
+                "vop": "get",
+                "value": {
+                  "chip": "compute.tax_parts",
+                  "args": {
+                    "income": "$income",
+                    "slabs": "$slabs",
+                    "steps": "$steps"
+                  }
+                },
+                "path": "threshold"
+              },
+              "right": 0
+            },
+            "then": {
+              "vop": "round_to",
+              "value": {
+                "vop": "largest",
+                "values": [
+                  0,
+                  {
+                    "vop": "sub",
+                    "a": {
+                      "vop": "add",
+                      "a": {
+                        "vop": "get",
+                        "value": {
+                          "chip": "compute.tax_parts",
+                          "args": {
+                            "income": "$income",
+                            "slabs": "$slabs",
+                            "steps": "$steps"
+                          }
+                        },
+                        "path": "tax"
+                      },
+                      "b": {
+                        "vop": "get",
+                        "value": {
+                          "chip": "compute.tax_parts",
+                          "args": {
+                            "income": "$income",
+                            "slabs": "$slabs",
+                            "steps": "$steps"
+                          }
+                        },
+                        "path": "surcharge"
+                      }
+                    },
+                    "b": {
+                      "vop": "add",
+                      "a": {
+                        "vop": "add",
+                        "a": {
+                          "vop": "get",
+                          "value": {
+                            "chip": "compute.tax_parts",
+                            "args": {
+                              "income": {
+                                "vop": "get",
+                                "value": {
+                                  "chip": "compute.tax_parts",
+                                  "args": {
+                                    "income": "$income",
+                                    "slabs": "$slabs",
+                                    "steps": "$steps"
+                                  }
+                                },
+                                "path": "threshold"
+                              },
+                              "slabs": "$slabs",
+                              "steps": "$steps"
+                            }
+                          },
+                          "path": "tax"
+                        },
+                        "b": {
+                          "vop": "get",
+                          "value": {
+                            "chip": "compute.tax_parts",
+                            "args": {
+                              "income": {
+                                "vop": "get",
+                                "value": {
+                                  "chip": "compute.tax_parts",
+                                  "args": {
+                                    "income": "$income",
+                                    "slabs": "$slabs",
+                                    "steps": "$steps"
+                                  }
+                                },
+                                "path": "threshold"
+                              },
+                              "slabs": "$slabs",
+                              "steps": "$steps"
+                            }
+                          },
+                          "path": "surcharge"
+                        }
+                      },
+                      "b": {
+                        "vop": "sub",
+                        "a": "$income",
+                        "b": {
+                          "vop": "get",
+                          "value": {
+                            "chip": "compute.tax_parts",
+                            "args": {
+                              "income": "$income",
+                              "slabs": "$slabs",
+                              "steps": "$steps"
+                            }
+                          },
+                          "path": "threshold"
+                        }
+                      }
+                    }
+                  }
+                ]
+              },
+              "digits": 2
+            }
+          }
+        ],
+        "else": 0
+      },
+      "cess": {
+        "vop": "round_to",
+        "value": {
+          "vop": "mul",
+          "a": {
+            "vop": "add",
+            "a": {
+              "vop": "sub",
+              "a": {
+                "vop": "get",
+                "value": {
+                  "chip": "compute.tax_parts",
+                  "args": {
+                    "income": "$income",
+                    "slabs": "$slabs",
+                    "steps": "$steps"
+                  }
+                },
+                "path": "tax"
+              },
+              "b": {
+                "vop": "choose",
+                "cases": [
+                  {
+                    "when": {
+                      "op": "all",
+                      "items": [
+                        {
+                          "op": "in_set",
+                          "value": "$status",
+                          "set": "$rebate_statuses"
+                        },
+                        {
+                          "op": "le",
+                          "left": "$income",
+                          "right": "$rebate_upto"
+                        }
+                      ]
+                    },
+                    "then": {
+                      "vop": "smallest",
+                      "values": [
+                        {
+                          "vop": "get",
+                          "value": {
+                            "chip": "compute.tax_parts",
+                            "args": {
+                              "income": "$income",
+                              "slabs": "$slabs",
+                              "steps": "$steps"
+                            }
+                          },
+                          "path": "tax"
+                        },
+                        "$rebate_most"
+                      ]
+                    }
+                  }
+                ],
+                "else": 0
+              }
+            },
+            "b": {
+              "vop": "sub",
+              "a": {
+                "vop": "get",
+                "value": {
+                  "chip": "compute.tax_parts",
+                  "args": {
+                    "income": "$income",
+                    "slabs": "$slabs",
+                    "steps": "$steps"
+                  }
+                },
+                "path": "surcharge"
+              },
+              "b": {
+                "vop": "choose",
+                "cases": [
+                  {
+                    "when": {
+                      "op": "gt",
+                      "left": {
+                        "vop": "get",
+                        "value": {
+                          "chip": "compute.tax_parts",
+                          "args": {
+                            "income": "$income",
+                            "slabs": "$slabs",
+                            "steps": "$steps"
+                          }
+                        },
+                        "path": "threshold"
+                      },
+                      "right": 0
+                    },
+                    "then": {
+                      "vop": "round_to",
+                      "value": {
+                        "vop": "largest",
+                        "values": [
+                          0,
+                          {
+                            "vop": "sub",
+                            "a": {
+                              "vop": "add",
+                              "a": {
+                                "vop": "get",
+                                "value": {
+                                  "chip": "compute.tax_parts",
+                                  "args": {
+                                    "income": "$income",
+                                    "slabs": "$slabs",
+                                    "steps": "$steps"
+                                  }
+                                },
+                                "path": "tax"
+                              },
+                              "b": {
+                                "vop": "get",
+                                "value": {
+                                  "chip": "compute.tax_parts",
+                                  "args": {
+                                    "income": "$income",
+                                    "slabs": "$slabs",
+                                    "steps": "$steps"
+                                  }
+                                },
+                                "path": "surcharge"
+                              }
+                            },
+                            "b": {
+                              "vop": "add",
+                              "a": {
+                                "vop": "add",
+                                "a": {
+                                  "vop": "get",
+                                  "value": {
+                                    "chip": "compute.tax_parts",
+                                    "args": {
+                                      "income": {
+                                        "vop": "get",
+                                        "value": {
+                                          "chip": "compute.tax_parts",
+                                          "args": {
+                                            "income": "$income",
+                                            "slabs": "$slabs",
+                                            "steps": "$steps"
+                                          }
+                                        },
+                                        "path": "threshold"
+                                      },
+                                      "slabs": "$slabs",
+                                      "steps": "$steps"
+                                    }
+                                  },
+                                  "path": "tax"
+                                },
+                                "b": {
+                                  "vop": "get",
+                                  "value": {
+                                    "chip": "compute.tax_parts",
+                                    "args": {
+                                      "income": {
+                                        "vop": "get",
+                                        "value": {
+                                          "chip": "compute.tax_parts",
+                                          "args": {
+                                            "income": "$income",
+                                            "slabs": "$slabs",
+                                            "steps": "$steps"
+                                          }
+                                        },
+                                        "path": "threshold"
+                                      },
+                                      "slabs": "$slabs",
+                                      "steps": "$steps"
+                                    }
+                                  },
+                                  "path": "surcharge"
+                                }
+                              },
+                              "b": {
+                                "vop": "sub",
+                                "a": "$income",
+                                "b": {
+                                  "vop": "get",
+                                  "value": {
+                                    "chip": "compute.tax_parts",
+                                    "args": {
+                                      "income": "$income",
+                                      "slabs": "$slabs",
+                                      "steps": "$steps"
+                                    }
+                                  },
+                                  "path": "threshold"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      "digits": 2
+                    }
+                  }
+                ],
+                "else": 0
+              }
+            }
+          },
+          "b": {
+            "vop": "div",
+            "a": "$cess_pct",
+            "b": 100
+          }
+        },
+        "digits": 2
+      },
+      "total": {
+        "vop": "mul",
+        "a": {
+          "vop": "round_to",
+          "value": {
+            "vop": "div",
+            "a": {
+              "vop": "add",
+              "a": {
+                "vop": "add",
+                "a": {
+                  "vop": "sub",
+                  "a": {
+                    "vop": "get",
+                    "value": {
+                      "chip": "compute.tax_parts",
+                      "args": {
+                        "income": "$income",
+                        "slabs": "$slabs",
+                        "steps": "$steps"
+                      }
+                    },
+                    "path": "tax"
+                  },
+                  "b": {
+                    "vop": "choose",
+                    "cases": [
+                      {
+                        "when": {
+                          "op": "all",
+                          "items": [
+                            {
+                              "op": "in_set",
+                              "value": "$status",
+                              "set": "$rebate_statuses"
+                            },
+                            {
+                              "op": "le",
+                              "left": "$income",
+                              "right": "$rebate_upto"
+                            }
+                          ]
+                        },
+                        "then": {
+                          "vop": "smallest",
+                          "values": [
+                            {
+                              "vop": "get",
+                              "value": {
+                                "chip": "compute.tax_parts",
+                                "args": {
+                                  "income": "$income",
+                                  "slabs": "$slabs",
+                                  "steps": "$steps"
+                                }
+                              },
+                              "path": "tax"
+                            },
+                            "$rebate_most"
+                          ]
+                        }
+                      }
+                    ],
+                    "else": 0
+                  }
+                },
+                "b": {
+                  "vop": "sub",
+                  "a": {
+                    "vop": "get",
+                    "value": {
+                      "chip": "compute.tax_parts",
+                      "args": {
+                        "income": "$income",
+                        "slabs": "$slabs",
+                        "steps": "$steps"
+                      }
+                    },
+                    "path": "surcharge"
+                  },
+                  "b": {
+                    "vop": "choose",
+                    "cases": [
+                      {
+                        "when": {
+                          "op": "gt",
+                          "left": {
+                            "vop": "get",
+                            "value": {
+                              "chip": "compute.tax_parts",
+                              "args": {
+                                "income": "$income",
+                                "slabs": "$slabs",
+                                "steps": "$steps"
+                              }
+                            },
+                            "path": "threshold"
+                          },
+                          "right": 0
+                        },
+                        "then": {
+                          "vop": "round_to",
+                          "value": {
+                            "vop": "largest",
+                            "values": [
+                              0,
+                              {
+                                "vop": "sub",
+                                "a": {
+                                  "vop": "add",
+                                  "a": {
+                                    "vop": "get",
+                                    "value": {
+                                      "chip": "compute.tax_parts",
+                                      "args": {
+                                        "income": "$income",
+                                        "slabs": "$slabs",
+                                        "steps": "$steps"
+                                      }
+                                    },
+                                    "path": "tax"
+                                  },
+                                  "b": {
+                                    "vop": "get",
+                                    "value": {
+                                      "chip": "compute.tax_parts",
+                                      "args": {
+                                        "income": "$income",
+                                        "slabs": "$slabs",
+                                        "steps": "$steps"
+                                      }
+                                    },
+                                    "path": "surcharge"
+                                  }
+                                },
+                                "b": {
+                                  "vop": "add",
+                                  "a": {
+                                    "vop": "add",
+                                    "a": {
+                                      "vop": "get",
+                                      "value": {
+                                        "chip": "compute.tax_parts",
+                                        "args": {
+                                          "income": {
+                                            "vop": "get",
+                                            "value": {
+                                              "chip": "compute.tax_parts",
+                                              "args": {
+                                                "income": "$income",
+                                                "slabs": "$slabs",
+                                                "steps": "$steps"
+                                              }
+                                            },
+                                            "path": "threshold"
+                                          },
+                                          "slabs": "$slabs",
+                                          "steps": "$steps"
+                                        }
+                                      },
+                                      "path": "tax"
+                                    },
+                                    "b": {
+                                      "vop": "get",
+                                      "value": {
+                                        "chip": "compute.tax_parts",
+                                        "args": {
+                                          "income": {
+                                            "vop": "get",
+                                            "value": {
+                                              "chip": "compute.tax_parts",
+                                              "args": {
+                                                "income": "$income",
+                                                "slabs": "$slabs",
+                                                "steps": "$steps"
+                                              }
+                                            },
+                                            "path": "threshold"
+                                          },
+                                          "slabs": "$slabs",
+                                          "steps": "$steps"
+                                        }
+                                      },
+                                      "path": "surcharge"
+                                    }
+                                  },
+                                  "b": {
+                                    "vop": "sub",
+                                    "a": "$income",
+                                    "b": {
+                                      "vop": "get",
+                                      "value": {
+                                        "chip": "compute.tax_parts",
+                                        "args": {
+                                          "income": "$income",
+                                          "slabs": "$slabs",
+                                          "steps": "$steps"
+                                        }
+                                      },
+                                      "path": "threshold"
+                                    }
+                                  }
+                                }
+                              }
+                            ]
+                          },
+                          "digits": 2
+                        }
+                      }
+                    ],
+                    "else": 0
+                  }
+                }
+              },
+              "b": {
+                "vop": "round_to",
+                "value": {
+                  "vop": "mul",
+                  "a": {
+                    "vop": "add",
+                    "a": {
+                      "vop": "sub",
+                      "a": {
+                        "vop": "get",
+                        "value": {
+                          "chip": "compute.tax_parts",
+                          "args": {
+                            "income": "$income",
+                            "slabs": "$slabs",
+                            "steps": "$steps"
+                          }
+                        },
+                        "path": "tax"
+                      },
+                      "b": {
+                        "vop": "choose",
+                        "cases": [
+                          {
+                            "when": {
+                              "op": "all",
+                              "items": [
+                                {
+                                  "op": "in_set",
+                                  "value": "$status",
+                                  "set": "$rebate_statuses"
+                                },
+                                {
+                                  "op": "le",
+                                  "left": "$income",
+                                  "right": "$rebate_upto"
+                                }
+                              ]
+                            },
+                            "then": {
+                              "vop": "smallest",
+                              "values": [
+                                {
+                                  "vop": "get",
+                                  "value": {
+                                    "chip": "compute.tax_parts",
+                                    "args": {
+                                      "income": "$income",
+                                      "slabs": "$slabs",
+                                      "steps": "$steps"
+                                    }
+                                  },
+                                  "path": "tax"
+                                },
+                                "$rebate_most"
+                              ]
+                            }
+                          }
+                        ],
+                        "else": 0
+                      }
+                    },
+                    "b": {
+                      "vop": "sub",
+                      "a": {
+                        "vop": "get",
+                        "value": {
+                          "chip": "compute.tax_parts",
+                          "args": {
+                            "income": "$income",
+                            "slabs": "$slabs",
+                            "steps": "$steps"
+                          }
+                        },
+                        "path": "surcharge"
+                      },
+                      "b": {
+                        "vop": "choose",
+                        "cases": [
+                          {
+                            "when": {
+                              "op": "gt",
+                              "left": {
+                                "vop": "get",
+                                "value": {
+                                  "chip": "compute.tax_parts",
+                                  "args": {
+                                    "income": "$income",
+                                    "slabs": "$slabs",
+                                    "steps": "$steps"
+                                  }
+                                },
+                                "path": "threshold"
+                              },
+                              "right": 0
+                            },
+                            "then": {
+                              "vop": "round_to",
+                              "value": {
+                                "vop": "largest",
+                                "values": [
+                                  0,
+                                  {
+                                    "vop": "sub",
+                                    "a": {
+                                      "vop": "add",
+                                      "a": {
+                                        "vop": "get",
+                                        "value": {
+                                          "chip": "compute.tax_parts",
+                                          "args": {
+                                            "income": "$income",
+                                            "slabs": "$slabs",
+                                            "steps": "$steps"
+                                          }
+                                        },
+                                        "path": "tax"
+                                      },
+                                      "b": {
+                                        "vop": "get",
+                                        "value": {
+                                          "chip": "compute.tax_parts",
+                                          "args": {
+                                            "income": "$income",
+                                            "slabs": "$slabs",
+                                            "steps": "$steps"
+                                          }
+                                        },
+                                        "path": "surcharge"
+                                      }
+                                    },
+                                    "b": {
+                                      "vop": "add",
+                                      "a": {
+                                        "vop": "add",
+                                        "a": {
+                                          "vop": "get",
+                                          "value": {
+                                            "chip": "compute.tax_parts",
+                                            "args": {
+                                              "income": {
+                                                "vop": "get",
+                                                "value": {
+                                                  "chip": "compute.tax_parts",
+                                                  "args": {
+                                                    "income": "$income",
+                                                    "slabs": "$slabs",
+                                                    "steps": "$steps"
+                                                  }
+                                                },
+                                                "path": "threshold"
+                                              },
+                                              "slabs": "$slabs",
+                                              "steps": "$steps"
+                                            }
+                                          },
+                                          "path": "tax"
+                                        },
+                                        "b": {
+                                          "vop": "get",
+                                          "value": {
+                                            "chip": "compute.tax_parts",
+                                            "args": {
+                                              "income": {
+                                                "vop": "get",
+                                                "value": {
+                                                  "chip": "compute.tax_parts",
+                                                  "args": {
+                                                    "income": "$income",
+                                                    "slabs": "$slabs",
+                                                    "steps": "$steps"
+                                                  }
+                                                },
+                                                "path": "threshold"
+                                              },
+                                              "slabs": "$slabs",
+                                              "steps": "$steps"
+                                            }
+                                          },
+                                          "path": "surcharge"
+                                        }
+                                      },
+                                      "b": {
+                                        "vop": "sub",
+                                        "a": "$income",
+                                        "b": {
+                                          "vop": "get",
+                                          "value": {
+                                            "chip": "compute.tax_parts",
+                                            "args": {
+                                              "income": "$income",
+                                              "slabs": "$slabs",
+                                              "steps": "$steps"
+                                            }
+                                          },
+                                          "path": "threshold"
+                                        }
+                                      }
+                                    }
+                                  }
+                                ]
+                              },
+                              "digits": 2
+                            }
+                          }
+                        ],
+                        "else": 0
+                      }
+                    }
+                  },
+                  "b": {
+                    "vop": "div",
+                    "a": "$cess_pct",
+                    "b": 100
+                  }
+                },
+                "digits": 2
+              }
+            },
+            "b": "$round_to"
+          }
+        },
+        "b": "$round_to"
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "Marginal relief: tax + surcharge above a band never exceeds the tax + surcharge at the band's edge plus the income over it.",
+  "test_cases": [
+    {
+      "args": {
+        "income": 20721500,
+        "status": "huf"
+      },
+      "expect_value": {
+        "tax": 5796450,
+        "rebate": 0,
+        "surcharge_rate": 25,
+        "surcharge": 1449112.5,
+        "relief": 107062.5,
+        "cess": 285540,
+        "total": 7424040
+      }
+    },
+    {
+      "args": {
+        "income": 34291707,
+        "status": "huf"
+      },
+      "expect_value": {
+        "tax": 9867512.1,
+        "rebate": 0,
+        "surcharge_rate": 25,
+        "surcharge": 2466878.025,
+        "relief": 0,
+        "cess": 493375.6,
+        "total": 12827770
+      }
+    },
+    {
+      "args": {
+        "income": 1100000,
+        "status": "individual"
+      },
+      "expect_value": {
+        "tax": 50000,
+        "rebate": 50000,
+        "surcharge_rate": 0,
+        "surcharge": 0,
+        "relief": 0,
+        "cess": 0,
+        "total": 0
+      }
+    }
+  ]
+}

@@ -438,6 +438,24 @@
       "type": "text",
       "default": "Stage {i} of {n}",
       "label": "stage of"
+    },
+    {
+      "name": "year_closed",
+      "type": "text",
+      "default": "{ay} is closed (filed) for this client. Reopen it in Clients & years to change anything.",
+      "label": "year closed"
+    },
+    {
+      "name": "y_closed",
+      "type": "text",
+      "default": "Closed",
+      "label": "y closed"
+    },
+    {
+      "name": "y_signed",
+      "type": "text",
+      "default": "Signed off by {by}",
+      "label": "y signed"
     }
   ],
   "expr": {
@@ -514,7 +532,10 @@
       "k_audit_sub": "$k_audit_sub",
       "k_pipeline": "$k_pipeline",
       "k_none_year": "$k_none_year",
-      "stage_of": "$stage_of"
+      "stage_of": "$stage_of",
+      "year_closed": "$year_closed",
+      "y_closed": "$y_closed",
+      "y_signed": "$y_signed"
     }
   },
   "returns": "record",
@@ -596,7 +617,10 @@
         "k_audit_sub": "Form 3CD with the return",
         "k_pipeline": "Where {ay} stands",
         "k_none_year": "Nobody added to {ay} yet",
-        "stage_of": "Stage {i} of {n}"
+        "stage_of": "Stage {i} of {n}",
+        "year_closed": "{ay} is closed (filed) for this client. Reopen it in Clients & years to change anything.",
+        "y_closed": "Closed",
+        "y_signed": "Signed off by {by}"
       }
     }
   ]

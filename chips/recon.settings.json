@@ -103,6 +103,16 @@
       "type": "number",
       "default": 160,
       "label": "file name max"
+    },
+    {
+      "name": "income_sources",
+      "type": "list",
+      "default": [
+        "tis",
+        "ais",
+        "26as"
+      ],
+      "label": "Where the income check reads the portal's income: the first of these that is uploaded (TIS and AIS repeat what 26AS shows - adding them up counted the same interest twice)"
     }
   ],
   "expr": {
@@ -118,7 +128,8 @@
       "sniff_lines": "$sniff_lines",
       "note_max": "$note_max",
       "severity_order": "$severity_order",
-      "file_name_max": "$file_name_max"
+      "file_name_max": "$file_name_max",
+      "income_sources": "$income_sources"
     }
   },
   "returns": "record",
@@ -170,7 +181,12 @@
           "amber",
           "ok"
         ],
-        "file_name_max": 160
+        "file_name_max": 160,
+        "income_sources": [
+          "tis",
+          "ais",
+          "26as"
+        ]
       }
     }
   ]

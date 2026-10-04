@@ -1,0 +1,150 @@
+{
+  "chip_id": "close.steps",
+  "kind": "accessor",
+  "set": "close",
+  "label": "Close: which steps of the year are done",
+  "aliases": [
+    "close: which steps of the year are done"
+  ],
+  "params": [
+    {
+      "name": "has_books",
+      "type": "boolean",
+      "default": false,
+      "label": "mapped rows exist"
+    },
+    {
+      "name": "has_26as",
+      "type": "boolean",
+      "default": false,
+      "label": "26AS uploaded"
+    },
+    {
+      "name": "open_red",
+      "type": "number",
+      "default": 0,
+      "label": "unexplained red findings"
+    },
+    {
+      "name": "signed",
+      "type": "boolean",
+      "default": false,
+      "label": "a current sign-off"
+    },
+    {
+      "name": "has_ack",
+      "type": "boolean",
+      "default": false,
+      "label": "acknowledgement number given"
+    },
+    {
+      "name": "locked",
+      "type": "boolean",
+      "default": false,
+      "label": "the year is closed"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "s_map": {
+        "op": "eq",
+        "left": "$has_books",
+        "right": true
+      },
+      "s_recon": {
+        "op": "all",
+        "items": [
+          {
+            "op": "eq",
+            "left": "$has_26as",
+            "right": true
+          },
+          {
+            "op": "eq",
+            "left": "$open_red",
+            "right": 0
+          }
+        ]
+      },
+      "s_compute": {
+        "op": "all",
+        "items": [
+          {
+            "op": "eq",
+            "left": "$has_books",
+            "right": true
+          },
+          {
+            "op": "eq",
+            "left": "$has_26as",
+            "right": true
+          }
+        ]
+      },
+      "s_sign": {
+        "op": "eq",
+        "left": "$signed",
+        "right": true
+      },
+      "s_file": {
+        "op": "all",
+        "items": [
+          {
+            "op": "eq",
+            "left": "$has_ack",
+            "right": true
+          },
+          {
+            "op": "eq",
+            "left": "$locked",
+            "right": true
+          }
+        ]
+      },
+      "s_close": {
+        "op": "eq",
+        "left": "$locked",
+        "right": true
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "The strip on Compute & close: the server works out the facts, this chip says which steps are done; the page only draws them.",
+  "test_cases": [
+    {
+      "args": {
+        "has_books": true,
+        "has_26as": true,
+        "open_red": 1
+      },
+      "expect_value": {
+        "s_map": true,
+        "s_recon": false,
+        "s_compute": true,
+        "s_sign": false,
+        "s_file": false,
+        "s_close": false
+      }
+    },
+    {
+      "args": {
+        "has_books": true,
+        "has_26as": true,
+        "signed": true,
+        "has_ack": true,
+        "locked": true
+      },
+      "expect_value": {
+        "s_map": true,
+        "s_recon": true,
+        "s_compute": true,
+        "s_sign": true,
+        "s_file": true,
+        "s_close": true
+      }
+    }
+  ]
+}

@@ -1,0 +1,175 @@
+{
+  "chip_id": "compute.balance",
+  "kind": "accessor",
+  "set": "compute",
+  "label": "Compute: tax payable or refund after TDS, tax paid and interest",
+  "aliases": [
+    "compute: tax payable or refund after tds"
+  ],
+  "params": [
+    {
+      "name": "total",
+      "type": "number",
+      "default": 0,
+      "label": "tax on total income"
+    },
+    {
+      "name": "interest",
+      "type": "number",
+      "default": 0,
+      "label": "interest 234A/B/C"
+    },
+    {
+      "name": "tds",
+      "type": "number",
+      "default": 0,
+      "label": "TDS / TCS credit"
+    },
+    {
+      "name": "paid",
+      "type": "number",
+      "default": 0,
+      "label": "advance + self-assessment tax"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "net": {
+        "vop": "sub",
+        "a": {
+          "vop": "add",
+          "a": "$total",
+          "b": "$interest"
+        },
+        "b": {
+          "vop": "add",
+          "a": "$tds",
+          "b": "$paid"
+        }
+      },
+      "kind": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "gt",
+              "left": {
+                "vop": "sub",
+                "a": {
+                  "vop": "add",
+                  "a": "$total",
+                  "b": "$interest"
+                },
+                "b": {
+                  "vop": "add",
+                  "a": "$tds",
+                  "b": "$paid"
+                }
+              },
+              "right": 0
+            },
+            "then": "payable"
+          },
+          {
+            "when": {
+              "op": "lt",
+              "left": {
+                "vop": "sub",
+                "a": {
+                  "vop": "add",
+                  "a": "$total",
+                  "b": "$interest"
+                },
+                "b": {
+                  "vop": "add",
+                  "a": "$tds",
+                  "b": "$paid"
+                }
+              },
+              "right": 0
+            },
+            "then": "refund"
+          }
+        ],
+        "else": "nil"
+      },
+      "amount": {
+        "vop": "largest",
+        "values": [
+          {
+            "vop": "sub",
+            "a": {
+              "vop": "add",
+              "a": "$total",
+              "b": "$interest"
+            },
+            "b": {
+              "vop": "add",
+              "a": "$tds",
+              "b": "$paid"
+            }
+          },
+          {
+            "vop": "sub",
+            "a": 0,
+            "b": {
+              "vop": "sub",
+              "a": {
+                "vop": "add",
+                "a": "$total",
+                "b": "$interest"
+              },
+              "b": {
+                "vop": "add",
+                "a": "$tds",
+                "b": "$paid"
+              }
+            }
+          }
+        ]
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "Total tax plus interest, less TDS and tax paid: payable when above nil, refund when below.",
+  "test_cases": [
+    {
+      "args": {
+        "total": 7424040,
+        "tds": 306000,
+        "paid": 7200000
+      },
+      "expect_value": {
+        "net": -81960,
+        "kind": "refund",
+        "amount": 81960
+      }
+    },
+    {
+      "args": {
+        "total": 100,
+        "paid": 100
+      },
+      "expect_value": {
+        "net": 0,
+        "kind": "nil",
+        "amount": 0
+      }
+    },
+    {
+      "args": {
+        "total": 500,
+        "interest": 20,
+        "tds": 100
+      },
+      "expect_value": {
+        "net": 420,
+        "kind": "payable",
+        "amount": 420
+      }
+    }
+  ]
+}

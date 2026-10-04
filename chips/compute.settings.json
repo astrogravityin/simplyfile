@@ -1,0 +1,619 @@
+{
+  "chip_id": "compute.settings",
+  "kind": "accessor",
+  "set": "compute",
+  "label": "Compute: rate tables, heads and the utility export formats",
+  "aliases": [
+    "compute: rate tables, heads and the util"
+  ],
+  "params": [
+    {
+      "name": "regimes",
+      "type": "json",
+      "default": [
+        {
+          "id": "new",
+          "slabs": [
+            {
+              "upto": 400000,
+              "rate": 0
+            },
+            {
+              "upto": 800000,
+              "rate": 5
+            },
+            {
+              "upto": 1200000,
+              "rate": 10
+            },
+            {
+              "upto": 1600000,
+              "rate": 15
+            },
+            {
+              "upto": 2000000,
+              "rate": 20
+            },
+            {
+              "upto": 2400000,
+              "rate": 25
+            },
+            {
+              "upto": null,
+              "rate": 30
+            }
+          ],
+          "surcharge": [
+            {
+              "above": 5000000,
+              "rate": 10
+            },
+            {
+              "above": 10000000,
+              "rate": 15
+            },
+            {
+              "above": 20000000,
+              "rate": 25
+            }
+          ],
+          "allows_via": false,
+          "rebate_statuses": [
+            "individual"
+          ],
+          "rebate_upto": 1200000,
+          "rebate_most": 60000
+        },
+        {
+          "id": "old",
+          "slabs": [
+            {
+              "upto": 250000,
+              "rate": 0
+            },
+            {
+              "upto": 500000,
+              "rate": 5
+            },
+            {
+              "upto": 1000000,
+              "rate": 20
+            },
+            {
+              "upto": null,
+              "rate": 30
+            }
+          ],
+          "surcharge": [
+            {
+              "above": 5000000,
+              "rate": 10
+            },
+            {
+              "above": 10000000,
+              "rate": 15
+            },
+            {
+              "above": 20000000,
+              "rate": 25
+            },
+            {
+              "above": 50000000,
+              "rate": 37
+            }
+          ],
+          "allows_via": true,
+          "rebate_statuses": [
+            "individual"
+          ],
+          "rebate_upto": 500000,
+          "rebate_most": 12500
+        },
+        {
+          "id": "firm",
+          "slabs": [
+            {
+              "upto": null,
+              "rate": 30
+            }
+          ],
+          "surcharge": [
+            {
+              "above": 10000000,
+              "rate": 12
+            }
+          ],
+          "allows_via": true,
+          "rebate_statuses": [],
+          "rebate_upto": 0,
+          "rebate_most": 0
+        }
+      ],
+      "label": "regimes"
+    },
+    {
+      "name": "cess_pct",
+      "type": "number",
+      "default": 4,
+      "label": "cess pct"
+    },
+    {
+      "name": "round_to",
+      "type": "number",
+      "default": 10,
+      "label": "round to"
+    },
+    {
+      "name": "heads",
+      "type": "json",
+      "default": [
+        {
+          "id": "SAL",
+          "tables": [
+            "SAL"
+          ]
+        },
+        {
+          "id": "HP",
+          "tables": [
+            "HP"
+          ]
+        },
+        {
+          "id": "BP",
+          "tables": [
+            "BP"
+          ]
+        },
+        {
+          "id": "CG",
+          "tables": [
+            "CG",
+            "STCG",
+            "LTCG"
+          ]
+        },
+        {
+          "id": "OS",
+          "tables": [
+            "OS"
+          ]
+        }
+      ],
+      "label": "heads"
+    },
+    {
+      "name": "deduction_tables",
+      "type": "json",
+      "default": [
+        "VIA"
+      ],
+      "label": "deduction tables"
+    },
+    {
+      "name": "hp_std_pct",
+      "type": "number",
+      "default": 30,
+      "label": "hp std pct"
+    },
+    {
+      "name": "hp_skip_pattern",
+      "type": "text",
+      "default": "(?i)repairs\\s*@?\\s*30|standard deduction|24\\s*\\(a\\)",
+      "label": "hp skip pattern"
+    },
+    {
+      "name": "hp_loss_cap",
+      "type": "number",
+      "default": 200000,
+      "label": "hp loss cap"
+    },
+    {
+      "name": "prepaid_tds_kinds",
+      "type": "json",
+      "default": [
+        "tds",
+        "tcs"
+      ],
+      "label": "prepaid tds kinds"
+    },
+    {
+      "name": "prepaid_paid_kinds",
+      "type": "json",
+      "default": [
+        "paid"
+      ],
+      "label": "prepaid paid kinds"
+    },
+    {
+      "name": "interest_max",
+      "type": "number",
+      "default": 100000000,
+      "label": "interest max"
+    },
+    {
+      "name": "csv_tds2_header",
+      "type": "json",
+      "default": [
+        "TDS Credit related to self/ other person as per rule 37BA(2) \n(Col 2)",
+        "PAN of other person\n(Col 3i)",
+        "Aadhaar of other person\n(Col 3ii)",
+        "Tax Deduction Account No.[TAN] of the Employer\n(Col 4)",
+        "Section under which TDS is deducted",
+        "Financial year in which TDS deducted - UTBF\n(Col 5)",
+        "TDS b/f - UTBF\n(Col 6)",
+        "Deducted in own hands  - TCFY \n(Col 7)",
+        "Income - Deducted in hands of any other person as per rule 37BA(2) (if applicable)  - TCFY \n(Col 8)",
+        "TDS - Deducted in hands of any other person as per rule 37BA(2) (if applicable)  - TCFY \n(Col 8a)",
+        "claimed in own hands - TC \n(Col 9)",
+        "Income - CHS - TC \n(Col 10a)",
+        "TDS - CHS - TC (Col 10b)",
+        "PAN - CHS - TC (Col 10c)",
+        "Aadhar No - CHS - TC (Col 10d)",
+        "Gross amount  - CRO\n(Col 11)",
+        "Head of income - CRO\n(Col 12)",
+        "TDS Credit being carried forward\n(13)"
+      ],
+      "label": "csv tds2 header"
+    },
+    {
+      "name": "csv_it_header",
+      "type": "json",
+      "default": [
+        "BSR Code\nMust be filled to include the payment in the Total",
+        "Date of Deposit\n(DD/MM/YYYY)",
+        "Serial Number of\nChallan",
+        "Amount (Rs)"
+      ],
+      "label": "csv it header"
+    },
+    {
+      "name": "csv_self",
+      "type": "text",
+      "default": "S",
+      "label": "csv self"
+    },
+    {
+      "name": "csv_head_codes",
+      "type": "json",
+      "default": {
+        "OS": "OS",
+        "HP": "HP",
+        "BP": "BP",
+        "CG": "CG",
+        "SAL": "SA"
+      },
+      "label": "csv head codes"
+    },
+    {
+      "name": "status_regimes",
+      "type": "json",
+      "default": {
+        "individual": [
+          "new",
+          "old"
+        ],
+        "huf": [
+          "new",
+          "old"
+        ],
+        "aop": [
+          "new",
+          "old"
+        ],
+        "boi": [
+          "new",
+          "old"
+        ],
+        "firm": [
+          "firm"
+        ],
+        "llp": [
+          "firm"
+        ]
+      },
+      "label": "The regimes each status may choose"
+    },
+    {
+      "name": "status_default",
+      "type": "json",
+      "default": {
+        "individual": "new",
+        "huf": "new",
+        "aop": "new",
+        "boi": "new",
+        "firm": "firm",
+        "llp": "firm"
+      },
+      "label": "Each status's regime when none is chosen"
+    },
+    {
+      "name": "credit_sources",
+      "type": "json",
+      "default": [
+        "26as"
+      ],
+      "label": "Where the TDS / tax-paid credit is read from: the first of these that is uploaded, else every portal file"
+    },
+    {
+      "name": "csv_head_default",
+      "type": "text",
+      "default": "OS",
+      "label": "Head of income written for a TDS section no head matches"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "regimes": "$regimes",
+      "cess_pct": "$cess_pct",
+      "round_to": "$round_to",
+      "heads": "$heads",
+      "deduction_tables": "$deduction_tables",
+      "hp_std_pct": "$hp_std_pct",
+      "hp_skip_pattern": "$hp_skip_pattern",
+      "hp_loss_cap": "$hp_loss_cap",
+      "prepaid_tds_kinds": "$prepaid_tds_kinds",
+      "prepaid_paid_kinds": "$prepaid_paid_kinds",
+      "interest_max": "$interest_max",
+      "csv_tds2_header": "$csv_tds2_header",
+      "csv_it_header": "$csv_it_header",
+      "csv_self": "$csv_self",
+      "csv_head_codes": "$csv_head_codes",
+      "status_regimes": "$status_regimes",
+      "status_default": "$status_default",
+      "credit_sources": "$credit_sources",
+      "csv_head_default": "$csv_head_default"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "AY 2026-27 rates. Every number the computation uses is here; compute.py only adds up the books.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "regimes": [
+          {
+            "id": "new",
+            "slabs": [
+              {
+                "upto": 400000,
+                "rate": 0
+              },
+              {
+                "upto": 800000,
+                "rate": 5
+              },
+              {
+                "upto": 1200000,
+                "rate": 10
+              },
+              {
+                "upto": 1600000,
+                "rate": 15
+              },
+              {
+                "upto": 2000000,
+                "rate": 20
+              },
+              {
+                "upto": 2400000,
+                "rate": 25
+              },
+              {
+                "upto": null,
+                "rate": 30
+              }
+            ],
+            "surcharge": [
+              {
+                "above": 5000000,
+                "rate": 10
+              },
+              {
+                "above": 10000000,
+                "rate": 15
+              },
+              {
+                "above": 20000000,
+                "rate": 25
+              }
+            ],
+            "allows_via": false,
+            "rebate_statuses": [
+              "individual"
+            ],
+            "rebate_upto": 1200000,
+            "rebate_most": 60000
+          },
+          {
+            "id": "old",
+            "slabs": [
+              {
+                "upto": 250000,
+                "rate": 0
+              },
+              {
+                "upto": 500000,
+                "rate": 5
+              },
+              {
+                "upto": 1000000,
+                "rate": 20
+              },
+              {
+                "upto": null,
+                "rate": 30
+              }
+            ],
+            "surcharge": [
+              {
+                "above": 5000000,
+                "rate": 10
+              },
+              {
+                "above": 10000000,
+                "rate": 15
+              },
+              {
+                "above": 20000000,
+                "rate": 25
+              },
+              {
+                "above": 50000000,
+                "rate": 37
+              }
+            ],
+            "allows_via": true,
+            "rebate_statuses": [
+              "individual"
+            ],
+            "rebate_upto": 500000,
+            "rebate_most": 12500
+          },
+          {
+            "id": "firm",
+            "slabs": [
+              {
+                "upto": null,
+                "rate": 30
+              }
+            ],
+            "surcharge": [
+              {
+                "above": 10000000,
+                "rate": 12
+              }
+            ],
+            "allows_via": true,
+            "rebate_statuses": [],
+            "rebate_upto": 0,
+            "rebate_most": 0
+          }
+        ],
+        "cess_pct": 4,
+        "round_to": 10,
+        "heads": [
+          {
+            "id": "SAL",
+            "tables": [
+              "SAL"
+            ]
+          },
+          {
+            "id": "HP",
+            "tables": [
+              "HP"
+            ]
+          },
+          {
+            "id": "BP",
+            "tables": [
+              "BP"
+            ]
+          },
+          {
+            "id": "CG",
+            "tables": [
+              "CG",
+              "STCG",
+              "LTCG"
+            ]
+          },
+          {
+            "id": "OS",
+            "tables": [
+              "OS"
+            ]
+          }
+        ],
+        "deduction_tables": [
+          "VIA"
+        ],
+        "hp_std_pct": 30,
+        "hp_skip_pattern": "(?i)repairs\\s*@?\\s*30|standard deduction|24\\s*\\(a\\)",
+        "hp_loss_cap": 200000,
+        "prepaid_tds_kinds": [
+          "tds",
+          "tcs"
+        ],
+        "prepaid_paid_kinds": [
+          "paid"
+        ],
+        "interest_max": 100000000,
+        "csv_tds2_header": [
+          "TDS Credit related to self/ other person as per rule 37BA(2) \n(Col 2)",
+          "PAN of other person\n(Col 3i)",
+          "Aadhaar of other person\n(Col 3ii)",
+          "Tax Deduction Account No.[TAN] of the Employer\n(Col 4)",
+          "Section under which TDS is deducted",
+          "Financial year in which TDS deducted - UTBF\n(Col 5)",
+          "TDS b/f - UTBF\n(Col 6)",
+          "Deducted in own hands  - TCFY \n(Col 7)",
+          "Income - Deducted in hands of any other person as per rule 37BA(2) (if applicable)  - TCFY \n(Col 8)",
+          "TDS - Deducted in hands of any other person as per rule 37BA(2) (if applicable)  - TCFY \n(Col 8a)",
+          "claimed in own hands - TC \n(Col 9)",
+          "Income - CHS - TC \n(Col 10a)",
+          "TDS - CHS - TC (Col 10b)",
+          "PAN - CHS - TC (Col 10c)",
+          "Aadhar No - CHS - TC (Col 10d)",
+          "Gross amount  - CRO\n(Col 11)",
+          "Head of income - CRO\n(Col 12)",
+          "TDS Credit being carried forward\n(13)"
+        ],
+        "csv_it_header": [
+          "BSR Code\nMust be filled to include the payment in the Total",
+          "Date of Deposit\n(DD/MM/YYYY)",
+          "Serial Number of\nChallan",
+          "Amount (Rs)"
+        ],
+        "csv_self": "S",
+        "csv_head_codes": {
+          "OS": "OS",
+          "HP": "HP",
+          "BP": "BP",
+          "CG": "CG",
+          "SAL": "SA"
+        },
+        "status_regimes": {
+          "individual": [
+            "new",
+            "old"
+          ],
+          "huf": [
+            "new",
+            "old"
+          ],
+          "aop": [
+            "new",
+            "old"
+          ],
+          "boi": [
+            "new",
+            "old"
+          ],
+          "firm": [
+            "firm"
+          ],
+          "llp": [
+            "firm"
+          ]
+        },
+        "status_default": {
+          "individual": "new",
+          "huf": "new",
+          "aop": "new",
+          "boi": "new",
+          "firm": "firm",
+          "llp": "firm"
+        },
+        "credit_sources": [
+          "26as"
+        ],
+        "csv_head_default": "OS"
+      }
+    }
+  ]
+}

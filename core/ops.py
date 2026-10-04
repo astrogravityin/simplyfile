@@ -162,6 +162,39 @@ def first_at_least(items: Any = None, value: Any = None) -> Any:
     return _tidy(next((n for n in nums if n >= want), nums[-1]))
 
 
+def slab_tax(amount: Any = None, slabs: Any = None) -> Any:
+    """Progressive tax on an amount: slabs = [{upto, rate}] in order (rate in %, the last upto may be null = no top).
+    Each slice between the previous upto and this one is taxed at its rate (income-tax slabs, tiered fees)."""
+    a = _num(amount)
+    if a is None or not isinstance(slabs, list):
+        return None
+    tax, low = 0.0, 0.0
+    for s in slabs:
+        top = _num((s or {}).get("upto"))
+        rate = _num((s or {}).get("rate")) or 0.0
+        hi = a if top is None else min(a, top)
+        if hi > low:
+            tax += (hi - low) * rate / 100
+        if top is None or a <= top:
+            break
+        low = top
+    return _tidy(round(tax, 2))
+
+
+def step_rate(amount: Any = None, steps: Any = None, field: Any = "rate") -> Any:
+    """The `field` of the last step whose `above` the amount exceeds: steps = [{above, rate}] ascending
+    (surcharge bands: above 50 lakh 10%, above 1 crore 15% ...). None below the first step's `above`."""
+    a = _num(amount)
+    if a is None or not isinstance(steps, list):
+        return None
+    hit = None
+    for s in steps:
+        above = _num((s or {}).get("above"))
+        if above is not None and a > above:
+            hit = s
+    return None if hit is None else hit.get(field)
+
+
 def median(values: Any = None) -> Any:
     """The middle value of a list: the upper middle when the count is even (as AstroStage)."""
     nums = sorted(n for n in (_num(v) for v in (values or [])) if n is not None)
@@ -1214,7 +1247,7 @@ def get(value: Any = None, path: Any = "") -> Any:
 
 
 OPS = {f.__name__: f for f in (
-    add, sub, mul, div, pct, round_to, floor_to, first_free_slot, clamp, largest, smallest, first_at_least, median, median_shift,
+    add, sub, mul, div, pct, round_to, floor_to, first_free_slot, clamp, largest, smallest, first_at_least, slab_tax, step_rate, median, median_shift,
     template, starts_with_any, ends_with_any, text_length, matches, split_text, key_sentences, pattern_hits, shared_runs, replace_once, first_with, html_texts, html_put_texts, script_of, script_shift, same_members, search, text_pick, values_matching, cut_at_any,
     truncate, sub_text, contains, ip_network, first_matching, epoch_date,
     pluck, slice_list, count, last, compact, coalesce, json_in_text, fit_count, match_case, stable_hash, hash_hex, strings_in, total, first_named, pack_text, trim_to_sentence, after_heading, last_line, pack_words, name_value_lines, ease, filter_rows, rank_rows, rows_view, fuzzy_rows, match_rows, rows_math, group_rows, rows_aggregate,
@@ -1243,6 +1276,12 @@ def _params(fn) -> frozenset:
 
 
 if __name__ == "__main__":
+    _new = [{"upto": 400000, "rate": 0}, {"upto": 800000, "rate": 5}, {"upto": 1200000, "rate": 10}, {"upto": 1600000, "rate": 15},
+            {"upto": 2000000, "rate": 20}, {"upto": 2400000, "rate": 25}, {"upto": None, "rate": 30}]
+    assert slab_tax(34291707, _new) == 9867512.1 and slab_tax(300000, _new) == 0 and slab_tax(900000, _new) == 30000
+    _sur = [{"above": 5000000, "rate": 10}, {"above": 10000000, "rate": 15}, {"above": 20000000, "rate": 25}]
+    assert step_rate(20000000, _sur) == 15 and step_rate(20000001, _sur) == 25 and step_rate(100, _sur) is None
+    assert step_rate(20721500, _sur, "above") == 20000000
     # 2026-10-02 "1 people": {n:one|many} - the word for one, or for any other count
     assert template("{n} {n:person|people}", {"n": 1}) == "1 person" and template("{n} {n:person|people}", {"n": 2}) == "2 people"
     assert template("{n:work|works}", {"n": "1"}) == "work" and template("{n:work|works}", {}) == "works"

@@ -224,6 +224,7 @@ def files(cid: str, ay: str) -> dict:
 
 
 def add(user: dict, cid: str, ay: str, name: str, data: bytes) -> dict:
+    clients.guard_open(cid, ay)                                  # a closed (filed) year changes no more
     k = settings()
     ext = Path(name).suffix.lower()
     if ext not in k["exts"]:
@@ -296,6 +297,7 @@ def counts(cid: str, ay: str, fid: str) -> dict:
 
 def set_tags(user: dict, cid: str, ay: str, fid: str, tags: dict) -> dict:
     """{row key: ref}; "" clears a saved ref. A ref that is not valid is refused, naming it."""
+    clients.guard_open(cid, ay)                                  # a closed (filed) year changes no more
     _meta(cid, ay, fid)
     keys = {x["key"] for x in store.read(f"sf_files/{cid}/{ay}/{fid}.rows.json", [])}
     with _LOCK:
@@ -321,6 +323,7 @@ def accept_all(user: dict, cid: str, ay: str, fid: str) -> dict:
 
 
 def delete(cid: str, ay: str, fid: str) -> None:
+    clients.guard_open(cid, ay)                                  # a closed (filed) year changes no more
     m = _meta(cid, ay, fid)
     d = _dir(cid, ay)
     with _LOCK:

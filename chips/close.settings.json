@@ -1,0 +1,61 @@
+{
+  "chip_id": "close.settings",
+  "kind": "accessor",
+  "set": "close",
+  "label": "Close: which stages lock a year, which stage a sign-off belongs to",
+  "aliases": [
+    "close: which stages lock a year, which s"
+  ],
+  "params": [
+    {
+      "name": "locked_stages",
+      "type": "json",
+      "default": [
+        "filed"
+      ],
+      "label": "A year in these stages takes no new statements, refs, portal files or notes"
+    },
+    {
+      "name": "signoff_stages",
+      "type": "json",
+      "default": [
+        "review",
+        "filed"
+      ],
+      "label": "Sign-off is given while the year is in one of these"
+    },
+    {
+      "name": "filed_stage",
+      "type": "text",
+      "default": "filed",
+      "label": "The stage that means the return is filed"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "locked_stages": "$locked_stages",
+      "signoff_stages": "$signoff_stages",
+      "filed_stage": "$filed_stage"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "Which stages lock a year and when a sign-off may be given. compute.py and clients.guard_open read it.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "locked_stages": [
+          "filed"
+        ],
+        "signoff_stages": [
+          "review",
+          "filed"
+        ],
+        "filed_stage": "filed"
+      }
+    }
+  ]
+}

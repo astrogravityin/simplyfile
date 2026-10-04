@@ -158,13 +158,20 @@ async function mapper(host, cid, ay, fid) {
         <div class="mp-prog"><div id="in-ring"></div><div class="sf-sum-txt"><b id="in-progress"></b><div class="sf-legend" id="in-legend"></div></div></div>
         <div class="tabs sf-only" role="tablist" aria-label="${esc(w('filter'))}">${[['', w('f_all')], ['1', w('f_open')]].map(([id, label]) =>
           `<button type="button" role="tab" data-only="${id}" class="${id ? '' : 'on'}">${esc(label)}<span class="cl-count" data-c="${id}"></span></button>`).join('')}</div></section>
-      <p class="mp-hint">${icon('info', 13)} <span>${esc(w('ref_hint'))}</span><span class="muted">· ${esc(w('enter_hint'))}</span></p>
+      <div class="mp-tools"><p class="mp-hint">${icon('info', 13)} <span>${esc(w('ref_hint'))}</span><span class="muted">· ${esc(w('enter_hint'))}</span></p>
+        <span class="spacer"></span><button type="button" class="small ghost" id="in-expand">${icon('down', 13)} ${esc(w('expand_all'))}</button>
+        <button type="button" class="small ghost" id="in-collapse">${icon('up', 13)} ${esc(w('collapse_all'))}</button></div>
       <div id="in-rows" class="mp-rows"></div>
       <datalist id="in-refs"></datalist>
       <div class="sf-bar" role="region" aria-label="${esc(w('save'))}"><span class="sf-bar-state" id="in-state"></span><span class="spacer"></span>
         <button type="button" class="ghost" id="in-accept">${icon('check', 14)} ${esc(w('accept_all'))}</button>
         <button type="button" class="primary" id="in-save">${icon('save', 15)} ${esc(w('save'))}</button></div>`;
   const body = host.querySelector('#in-rows');
+  // Which headings are folded: a per-viewer convenience, kept per file in this browser (never needed to work).
+  const foldKey = `sf.map.closed.${fid}`;
+  let closed = new Set();
+  try { closed = new Set(JSON.parse(localStorage.getItem(foldKey) || '[]')); } catch { /* private window: start open */ }
+  const keepFolds = () => { try { localStorage.setItem(foldKey, JSON.stringify([...closed])); } catch { /* fine */ } };
   const state = () => {
     const el = host.querySelector('#in-state');
     el.className = `sf-bar-state ${unsaved() ? 'is-dirty' : 'is-clean'}`;
@@ -204,10 +211,32 @@ async function mapper(host, cid, ay, fid) {
       if (!groups.length || groups[groups.length - 1].h !== h) groups.push({ h, rows: [] });
       groups[groups.length - 1].rows.push(x);
     });
-    body.innerHTML = rows.length ? groups.map((g) => `<section class="mp-group">
-        <h3 class="mp-group-h"><span>${esc((g.h || w('no_heading')).slice(0, P.heading_chars))}</span><span class="mp-group-n">${esc(w('group_count', { n: g.rows.length }))}</span></h3>
-        ${g.rows.map(card).join('')}</section>`).join('')
+    // Each heading folds: its title, the row numbers it covers, how many rows, their total and what still needs a person.
+    body.innerHTML = rows.length ? groups.map((g, gi) => {
+      const key = g.h || '-';
+      const sum = g.rows.reduce((a, x) => a + (Number(x.numbers[0]) || 0), 0);
+      const todo = g.rows.filter((x) => P.open_states.includes(x.state)).length;
+      const span = g.rows.length > 1 ? `${g.rows[0].key} – ${g.rows[g.rows.length - 1].key}` : g.rows[0].key;
+      const shut = closed.has(key);
+      return `<section class="mp-group ${shut ? 'is-closed' : ''}" data-g="${esc(key)}">
+        <button type="button" class="mp-group-h" aria-expanded="${!shut}" aria-controls="mp-g${gi}">
+          <svg class="mp-chev" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span class="mp-group-t">${esc((g.h || w('no_heading')).slice(0, P.heading_chars))}</span>
+          <span class="mp-group-meta"><span class="mp-chip">${esc(span)}</span><span class="mp-chip">${esc(w('group_count', { n: g.rows.length }))}</span>
+            ${todo ? `<span class="mp-chip is-todo">${esc(w('group_todo', { n: todo }))}</span>` : ''}<b class="mp-sum">${money(sum)}</b></span></button>
+        <div class="mp-group-body" id="mp-g${gi}">${g.rows.map(card).join('')}</div></section>`;
+    }).join('')
       : `<div class="card sf-empty">${icon('check', 20)} ${esc(w('none_open'))}</div>`;
+    body.querySelectorAll('.mp-group-h').forEach((b) => {
+      b.onclick = () => {
+        const sec = b.closest('[data-g]');
+        const shut = !sec.classList.contains('is-closed');
+        sec.classList.toggle('is-closed', shut);
+        b.setAttribute('aria-expanded', String(!shut));
+        if (shut) closed.add(sec.dataset.g); else closed.delete(sec.dataset.g);
+        keepFolds();
+      };
+    });
     const inputs = [...body.querySelectorAll('[data-ref]')];
     inputs.forEach((inp, i) => {
       const r = inp.closest('[data-k]');
@@ -218,9 +247,10 @@ async function mapper(host, cid, ay, fid) {
         r.classList.toggle('is-dirty', r.dataset.k in typed);
         state();
       };
-      inp.onkeydown = (e) => { if (e.key === 'Enter') { e.preventDefault(); (inputs[i + 1] || inp).focus(); } };
+      const next = () => inputs.slice(i + 1).find((x) => x.offsetParent) || inp;      // skip rows in a folded heading
+      inp.onkeydown = (e) => { if (e.key === 'Enter') { e.preventDefault(); next().focus(); } };
       const use = r.querySelector('[data-use]');
-      if (use) use.onclick = () => { inp.value = v.rows.find((x) => x.key === r.dataset.k).suggestion; inp.oninput(); (inputs[i + 1] || inp).focus(); };
+      if (use) use.onclick = () => { inp.value = v.rows.find((x) => x.key === r.dataset.k).suggestion; inp.oninput(); next().focus(); };
     });
     state();
   };
@@ -231,6 +261,16 @@ async function mapper(host, cid, ay, fid) {
   window.addEventListener('hashchange', () => window.removeEventListener('beforeunload', guard), { once: true });
   const leave = () => { if (!unsaved() || window.confirm(w('leave_unsaved'))) { window.removeEventListener('beforeunload', guard); go({ c: cid, ay }); } };
   host.querySelector('#in-back').onclick = leave;
+  const foldAll = (shut) => () => {
+    body.querySelectorAll('[data-g]').forEach((sec) => {
+      sec.classList.toggle('is-closed', shut);
+      sec.querySelector('.mp-group-h').setAttribute('aria-expanded', String(!shut));
+      if (shut) closed.add(sec.dataset.g); else closed.delete(sec.dataset.g);
+    });
+    keepFolds();
+  };
+  host.querySelector('#in-expand').onclick = foldAll(false);
+  host.querySelector('#in-collapse').onclick = foldAll(true);
   host.querySelectorAll('[data-only]').forEach((b) => {
     b.onclick = () => { only = !!b.dataset.only; host.querySelectorAll('[data-only]').forEach((x) => x.classList.toggle('on', x === b)); draw(); };
   });
