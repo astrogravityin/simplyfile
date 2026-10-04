@@ -60,6 +60,7 @@ import firms
 import intake
 import recon
 import audit
+import changelog
 import compute
 import itr_json
 import analytics
@@ -96,6 +97,18 @@ STORAGE_LIMITS = ("max_upload_mb", "quota_gb", "keep_source_days")
 # (catalog.json marks it hide_when_denied, chip access.decide refuses it, the shell leaves it out).
 access.register_available("buykey", keysales.anything_to_buy)
 firms.install()
+changelog.install()
+
+
+@app.middleware("http")
+async def who_changes(request: Request, call_next):
+    """2026-10-05 change log: whoever is signed in on a request that may change something is the 'who' of every field it
+    changes (changelog.py)."""
+    if request.method in ("POST", "PUT", "PATCH", "DELETE") and request.url.path.startswith("/api/"):
+        u = auth.current_user(request)
+        if u:
+            changelog.WHO.set(u.get("name") or u.get("email") or "")
+    return await call_next(request)
 
 
 @app.middleware("http")
@@ -1034,8 +1047,9 @@ def api_portalstats(ay: str = "", _: dict = Depends(screen("portalstats"))):
     """Portal analytics (2026-10-04 owner): firms, people, returns, files, and the firms that need the admin (chips portalstats.*)."""
     r = portal_stats.report(ay)
     # the firms and each card's names come one page at a time (list.portal_firms, list.portal_flags); here only counts and the first few
-    n = engine.run("page.portalstats")["flag_chips"]
-    flags = {k: r["roll"][k] for k in ("review", "stuck", "empty", "dormant")}
+    look = engine.run("page.portalstats")
+    n = look["flag_chips"]
+    flags = {k: r["roll"][k] for k in look["flags"]}
     return {k: v for k, v in r.items() if k != "firms"} | {"roll": r["roll"] | {k: v[:n] for k, v in flags.items()},
                                                           "flag_n": {k: len(v) for k, v in flags.items()}}
 
@@ -1219,6 +1233,14 @@ def api_compute_itr_json(cid: str, ay: str, _: dict = Depends(firms.gate("comput
 def api_compute_3cd(cid: str, ay: str, _: dict = Depends(firms.gate("compute"))):
     name, data = compute.schedule_3cd_xlsx(cid, ay)
     return Response(data, media_type=XLSX, headers=named(name.removesuffix(".xlsx"), ".xlsx"))
+
+
+# --- History (2026-10-05 owner: "change log - field, old value, new value, when, who - and earlier versions of a document")
+@app.get("/api/changes/file/{cid}/{ay}/{kept_in}/{fid}/{v}")
+def api_changes_file(cid: str, ay: str, kept_in: str, fid: str, v: int, name: str = "", _: dict = Depends(firms.gate("clients"))):
+    p = changelog.kept_file(cid, ay, kept_in, fid, v)
+    nice = re.sub(r"[^\w .()-]", "", name)[:120].strip()          # the file's own name, as the log shows it
+    return FileResponse(p, filename=f"{Path(nice).stem or p.stem} (v{v}){p.suffix}")
 
 
 # --- Tax audit (2026-10-04 owner: "phase 1, tax audit for SMEs"): applicability, year on year, the 3CD checklist, points (audit.py)

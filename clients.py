@@ -281,10 +281,11 @@ def listed(args: dict, user: dict | None = None) -> list[dict]:
     """The Clients list (this person's firm's only): `view=archived` is the Archived tab, anything else the active clients."""
     archived = str(args.get("view") or "") == "archived"
     ay = str(args.get("ay") or settings()["current_ay"])
-    # the Archived tab also holds an active client whose filing for this year was archived on its own (to restore it)
-    return [row(c, ay) for c in _mine(user)
-            if (bool(c.get("archived_at")) or bool(((c.get("years") or {}).get(ay) or {}).get("archived_at"))) == archived
-            or (not archived and not c.get("archived_at"))]
+    # which tab: chip clients.in_tab (the Archived tab also holds an active client whose filing was archived alone)
+    view = "archived" if archived else ""
+    return [row(c, ay) for c in _mine(user) if engine.run("clients.in_tab", {
+        "view": view, "client_archived": bool(c.get("archived_at")),
+        "filing_archived": bool(((c.get("years") or {}).get(ay) or {}).get("archived_at"))}) is True]
 
 
 lists.source("clients", lambda user, args: listed(args, user), screen="clients")

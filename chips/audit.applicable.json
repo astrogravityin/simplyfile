@@ -57,117 +57,144 @@
     }
   ],
   "expr": {
-    "vop": "choose",
-    "cases": [
-      {
-        "when": {
-          "op": "le",
-          "left": "$turnover",
-          "right": 0
-        },
-        "then": {
-          "need": "unknown",
-          "why": "why_unknown"
+    "vop": "record",
+    "fields": {
+      "verdict": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "le",
+              "left": "$turnover",
+              "right": 0
+            },
+            "then": {
+              "need": "unknown",
+              "why": "why_unknown"
+            }
+          },
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "eq",
+                  "left": "$business",
+                  "right": true
+                },
+                {
+                  "op": "eq",
+                  "left": "$cash_ok",
+                  "right": true
+                },
+                {
+                  "op": "gt",
+                  "left": "$turnover",
+                  "right": "$business_limit_cash_ok"
+                }
+              ]
+            },
+            "then": {
+              "need": "yes",
+              "why": "why_business_cash_ok"
+            }
+          },
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "eq",
+                  "left": "$business",
+                  "right": true
+                },
+                {
+                  "op": "eq",
+                  "left": "$cash_ok",
+                  "right": false
+                },
+                {
+                  "op": "gt",
+                  "left": "$turnover",
+                  "right": "$business_limit"
+                }
+              ]
+            },
+            "then": {
+              "need": "yes",
+              "why": "why_business"
+            }
+          },
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "eq",
+                  "left": "$business",
+                  "right": false
+                },
+                {
+                  "op": "gt",
+                  "left": "$turnover",
+                  "right": "$profession_limit"
+                }
+              ]
+            },
+            "then": {
+              "need": "yes",
+              "why": "why_profession"
+            }
+          },
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "eq",
+                  "left": "$presumptive_lower",
+                  "right": true
+                },
+                {
+                  "op": "eq",
+                  "left": "$income_above_exempt",
+                  "right": true
+                }
+              ]
+            },
+            "then": {
+              "need": "yes",
+              "why": "why_presumptive"
+            }
+          }
+        ],
+        "else": {
+          "need": "no",
+          "why": "why_below"
         }
       },
-      {
-        "when": {
-          "op": "all",
-          "items": [
-            {
+      "limit": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
               "op": "eq",
               "left": "$business",
-              "right": true
+              "right": false
             },
-            {
+            "then": "$profession_limit"
+          },
+          {
+            "when": {
               "op": "eq",
               "left": "$cash_ok",
               "right": true
             },
-            {
-              "op": "gt",
-              "left": "$turnover",
-              "right": "$business_limit_cash_ok"
-            }
-          ]
-        },
-        "then": {
-          "need": "yes",
-          "why": "why_business_cash_ok"
-        }
-      },
-      {
-        "when": {
-          "op": "all",
-          "items": [
-            {
-              "op": "eq",
-              "left": "$business",
-              "right": true
-            },
-            {
-              "op": "eq",
-              "left": "$cash_ok",
-              "right": false
-            },
-            {
-              "op": "gt",
-              "left": "$turnover",
-              "right": "$business_limit"
-            }
-          ]
-        },
-        "then": {
-          "need": "yes",
-          "why": "why_business"
-        }
-      },
-      {
-        "when": {
-          "op": "all",
-          "items": [
-            {
-              "op": "eq",
-              "left": "$business",
-              "right": false
-            },
-            {
-              "op": "gt",
-              "left": "$turnover",
-              "right": "$profession_limit"
-            }
-          ]
-        },
-        "then": {
-          "need": "yes",
-          "why": "why_profession"
-        }
-      },
-      {
-        "when": {
-          "op": "all",
-          "items": [
-            {
-              "op": "eq",
-              "left": "$presumptive_lower",
-              "right": true
-            },
-            {
-              "op": "eq",
-              "left": "$income_above_exempt",
-              "right": true
-            }
-          ]
-        },
-        "then": {
-          "need": "yes",
-          "why": "why_presumptive"
-        }
+            "then": "$business_limit_cash_ok"
+          }
+        ],
+        "else": "$business_limit"
       }
-    ],
-    "else": {
-      "need": "no",
-      "why": "why_below"
     }
   },
   "returns": "record",
@@ -181,8 +208,11 @@
         "turnover": 25000000
       },
       "expect_value": {
-        "need": "yes",
-        "why": "why_business"
+        "verdict": {
+          "need": "yes",
+          "why": "why_business"
+        },
+        "limit": 10000000
       }
     },
     {
@@ -192,8 +222,11 @@
         "cash_ok": true
       },
       "expect_value": {
-        "need": "no",
-        "why": "why_below"
+        "verdict": {
+          "need": "no",
+          "why": "why_below"
+        },
+        "limit": 100000000
       }
     },
     {
@@ -203,8 +236,11 @@
         "cash_ok": true
       },
       "expect_value": {
-        "need": "yes",
-        "why": "why_business_cash_ok"
+        "verdict": {
+          "need": "yes",
+          "why": "why_business_cash_ok"
+        },
+        "limit": 100000000
       }
     },
     {
@@ -213,8 +249,11 @@
         "turnover": 6000000
       },
       "expect_value": {
-        "need": "yes",
-        "why": "why_profession"
+        "verdict": {
+          "need": "yes",
+          "why": "why_profession"
+        },
+        "limit": 5000000
       }
     },
     {
@@ -225,8 +264,11 @@
         "income_above_exempt": true
       },
       "expect_value": {
-        "need": "yes",
-        "why": "why_presumptive"
+        "verdict": {
+          "need": "yes",
+          "why": "why_presumptive"
+        },
+        "limit": 10000000
       }
     },
     {
@@ -235,8 +277,11 @@
         "turnover": 4000000
       },
       "expect_value": {
-        "need": "no",
-        "why": "why_below"
+        "verdict": {
+          "need": "no",
+          "why": "why_below"
+        },
+        "limit": 10000000
       }
     },
     {
@@ -245,8 +290,11 @@
         "turnover": 0
       },
       "expect_value": {
-        "need": "unknown",
-        "why": "why_unknown"
+        "verdict": {
+          "need": "unknown",
+          "why": "why_unknown"
+        },
+        "limit": 10000000
       }
     }
   ]

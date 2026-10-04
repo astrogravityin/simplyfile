@@ -4,6 +4,7 @@
 import { api, esc, toast, pageHead, t, ps, loadWords, when } from './app.js';
 import { clientPicker } from './page-intake.js';
 import { icon } from './icons.js';
+import { historyButton, wireHistory } from './changes.js';
 
 const w = (k, v) => t('audit', k, v);
 const P = () => ps('audit');
@@ -11,7 +12,7 @@ const money = (n) => `₹${Math.round(Number(n || 0)).toLocaleString(P().money_l
 const pill = (tone, text) => `<span class="sv-pill" style="--c:var(${tone})">${esc(text)}</span>`;
 
 export async function auditPage(host) {
-  await loadWords('audit', 'intake');
+  await loadWords('audit', 'intake', 'changes');
   const p = new URLSearchParams((location.hash.split('?')[1]) || '');
   if (!p.get('c')) return clientPicker(host, 'audit');
   const K = await api('/api/clients/settings');
@@ -21,7 +22,8 @@ export async function auditPage(host) {
   host.innerHTML = pageHead(w('title'), esc(w('lede'))) + `<div class="loading">${esc(w('loading'))}</div>`;
   let d = await api(base);
   host.innerHTML = pageHead(`${w('title')} · ${d.client.name}`, esc(w('lede')),
-    `<label class="cl-ay" for="au-ay">${icon('clock', 14)}<span>${esc(w('ay'))}</span>
+    `${historyButton()}<button type="button" class="small ghost" id="au-back">${icon('left', 13)} ${esc(t('intake', 'change'))}</button>
+     <label class="cl-ay" for="au-ay">${icon('clock', 14)}<span>${esc(w('ay'))}</span>
        <select id="au-ay">${K.years.map((y) => `<option ${y === ay ? 'selected' : ''}>${esc(y)}</option>`).join('')}</select></label>`)
     + `<section class="card an-card" id="au-need"></section>
        <section class="card an-card"><h3 class="rc-h">${icon('pulse', 15)} ${esc(w('trend_title'))}</h3><p class="small muted">${esc(w('trend_sub'))}</p>
@@ -36,6 +38,8 @@ export async function auditPage(host) {
            <select id="au-owner"><option value="">${esc(w('nobody'))}</option>${d.people.map((m) => `<option value="${esc(m.id)}">${esc(m.name)}</option>`).join('')}</select>
            <button type="button" class="primary small" id="au-add">${icon('plus', 13)} ${esc(w('point_new'))}</button></div>
          <div id="au-points"></div></section>`;
+  wireHistory(host, { cid, ay, name: d.client.name });
+  host.querySelector('#au-back').onclick = () => { location.hash = '#/audit'; };   // back to the client list
   host.querySelector('#au-ay').onchange = (e) => { location.hash = `#/audit?c=${encodeURIComponent(cid)}&ay=${encodeURIComponent(e.target.value)}`; };
   const send = async (path, method, body) => {
     try { d = await api(`${base}${path}`, { method, body }); toast(w('saved'), 'ok'); draw(); } catch (e) { toast(e.message, 'bad', 8); }
@@ -68,20 +72,20 @@ export async function auditPage(host) {
       : `<div class="an-scroll"><table class="cc-tbl an-tbl"><thead><tr><th>${esc(w('h_line'))}</th><th class="num">${esc(w('h_before'))}</th>
           <th class="num">${esc(w('h_now'))}</th><th class="num">${esc(w('h_change'))}</th><th class="num">${esc(w('h_share'))}</th><th>${esc(w('h_flag'))}</th><th></th></tr></thead><tbody>
         ${rows.map((r) => `<tr><td>${esc(lineName(r))} <span class="small muted">${esc(w(`t_${r.table}`))}</span></td>
-          <td class="num">${tr.source === 'none' ? '-' : money(r.before)}</td><td class="num">${money(r.now)}</td>
-          <td class="num">${r.before ? `${r.pct > 0 ? '+' : ''}${r.pct}%` : '-'}</td><td class="num">${r.table === 'PL' ? `${r.share}%` : '-'}</td>
+          <td class="num">${tr.before_known ? money(r.before) : '-'}</td><td class="num">${money(r.now)}</td>
+          <td class="num">${r.before ? `${r.pct > 0 ? '+' : ''}${r.pct}%` : '-'}</td><td class="num">${P().share_tables.includes(r.table) ? `${r.share}%` : '-'}</td>
           <td>${r.flag ? pill(P().flag_tone[r.flag], w(`flag_${r.flag}`)) : ''}</td>
           <td>${r.flag ? `<button type="button" class="small ghost" data-raise="${esc(r.id)}">${icon('flag', 12)} ${esc(w('raise'))}</button>` : ''}</td></tr>`).join('')}
         </tbody></table></div>`;
     host.querySelectorAll('[data-raise]').forEach((b) => {
       const r = tr.rows.find((x) => x.id === b.dataset.raise);
-      b.onclick = () => send('/points', 'POST', { source: 'trend', ref: `trend:${r.id}`,
-        title: `${lineName(r)}: ${money(r.before)} → ${money(r.now)} (${w(`flag_${r.flag}`)})` });
+      b.onclick = () => send('/points', 'POST', { source: d.trend_source, ref: `trend:${r.id}`,
+        title: w('point_from_trend', { line: lineName(r), before: money(r.before), now: money(r.now), flag: w(`flag_${r.flag}`) }) });
     });
   };
 
   const checks = () => {
-    const n = d.checklist.length, done = d.checklist.filter((c) => ['done', 'na'].includes(c.state)).length;
+    const n = d.checklist.length, done = d.checklist.filter((c) => d.done_states.includes(c.state)).length;
     host.querySelector('#au-done').textContent = `· ${w('checks_done', { done, n })}`;
     host.querySelector('#au-checks').innerHTML = `<div class="au-list">${d.checklist.map((c) => `<div class="au-check" data-check="${esc(c.id)}" style="--c:var(${P().state_tone[c.state]})">
         <span class="au-clause">3CD ${esc(c.clause)}</span>
@@ -96,26 +100,27 @@ export async function auditPage(host) {
   };
 
   const points = () => {
-    const list = [...d.points].sort((a, b) => (a.status === 'open' ? 0 : 1) - (b.status === 'open' ? 0 : 1));
+    const order = P().point_order;
+    const list = [...d.points].sort((a, b) => order.indexOf(a.status) - order.indexOf(b.status));
     host.querySelector('#au-points').innerHTML = !list.length ? `<p class="small muted">${esc(w('points_none'))}</p>`
-      : `<div class="au-list">${list.map((x) => `<div class="au-point ${x.status === 'cleared' ? 'is-done' : ''}" data-point="${esc(x.id)}">
+      : `<div class="au-list">${list.map((x) => `<div class="au-point ${order.indexOf(x.status) > 0 ? 'is-done' : ''}" data-point="${esc(x.id)}">
           <div class="au-main"><b>${esc(x.title)}</b><div class="small muted">${esc(w(`from_${x.source}`))} · ${esc(x.by)} · ${esc(when(x.at))}</div>
             <input class="au-note" data-pnote value="${esc(x.note || '')}" placeholder="${esc(w('note_ph'))}" maxlength="1000"/></div>
           <select data-powner aria-label="${esc(w('point_owner'))}"><option value="">${esc(w('nobody'))}</option>${d.people.map((m) => `<option value="${esc(m.id)}" ${m.id === x.owner ? 'selected' : ''}>${esc(m.name)}</option>`).join('')}</select>
-          ${pill(x.status === 'open' ? '--warn' : '--ok', w(`pt_${x.status}`))}
-          ${d.may_clear ? `<button type="button" class="small ghost" data-flip>${esc(w(x.status === 'open' ? 'clear' : 'reopen'))}</button>` : ''}</div>`).join('')}</div>`;
+          ${pill(P().point_tone[x.status], w(`pt_${x.status}`))}
+          ${d.may_clear ? `<button type="button" class="small ghost" data-flip>${esc(w(P().point_button[x.status]))}</button>` : ''}</div>`).join('')}</div>`;
     host.querySelectorAll('[data-point]').forEach((el) => {
       const id = encodeURIComponent(el.dataset.point);
       const x = d.points.find((y) => y.id === el.dataset.point);
       el.querySelector('[data-pnote]').onchange = (e) => send(`/points/${id}`, 'PUT', { note: e.target.value });
       el.querySelector('[data-powner]').onchange = (e) => send(`/points/${id}`, 'PUT', { owner: e.target.value });
       const f = el.querySelector('[data-flip]');
-      if (f) f.onclick = () => send(`/points/${id}/status`, 'PUT', { status: x.status === 'open' ? 'cleared' : 'open' });
+      if (f) f.onclick = () => send(`/points/${id}/status`, 'PUT', { status: P().point_next[x.status] });
     });
   };
 
   const draw = () => { need(); trend(); checks(); points(); };
-  host.querySelector('#au-flagged').checked = d.trend.source !== 'none';   // nothing to compare: show every line
+  host.querySelector('#au-flagged').checked = d.trend.before_known;   // nothing to compare: show every line
   host.querySelector('#au-q').oninput = trend;
   host.querySelector('#au-flagged').onchange = trend;
   host.querySelector('#au-add').onclick = () => {

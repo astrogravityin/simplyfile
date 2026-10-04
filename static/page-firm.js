@@ -4,6 +4,7 @@
 // are done, who may do what. This page draws it. Every word is chip ui.firm; colours are chip page.firm.
 import { api, BASE, esc, toast, busy, pageHead, confirmDialog, t, loadWords, modal, uploadBox, when, ps, fileSize, listBox } from './app.js';
 import { icon } from './icons.js';
+import { historyButton, wireHistory } from './changes.js';
 
 const w = (k, v) => t('firm', k, v);
 const P = () => ps('firm');
@@ -162,7 +163,7 @@ function addPerson(d, host) {
 }
 
 export async function firmPage(host) {
-  await loadWords('firm');
+  await loadWords('firm', 'changes');
   const d = await api('/api/firm');
   if (!d.firm && d.is_owner && !d.settings.owner_may_start) {
     host.innerHTML = pageHead(w('title'), esc(w('owner_lede')))
@@ -172,7 +173,7 @@ export async function firmPage(host) {
   }
   if (!d.firm) { chooseKind(host, d); return; }
   const f = d.firm;
-  host.innerHTML = pageHead(w('title'), esc(w('lede')))
+  host.innerHTML = pageHead(w('title'), esc(w('lede')), historyButton())
     + `<section class="card fi-hero">${badge(f.state)}<div class="fi-hero-main"><div class="fi-name">${esc(f.name || w('unnamed'))}</div>
         <div class="fi-meta"><span class="${esc(stateOf(d, f.state).tag)}">${esc(stateOf(d, f.state).label)}</span><span>${esc(f.kind_label)}</span>
           ${f.pan ? `<code>${esc(f.pan)}</code>` : ''}<span>${esc(w('you_are', { role: d.role.label }))}</span></div>
@@ -205,6 +206,7 @@ export async function firmPage(host) {
       } catch (err) { toast(err.message, 'bad', 8); }
     }), w('submit'), { tone: 'brand' });
   };
+  wireHistory(host, { firm: true });
   if ($('#fi-add')) $('#fi-add').onclick = () => addPerson(d, host);
   if ($('#fi-team')) listBox($('#fi-team'), { list: 'firm_team', row: teamRow(d),
     wrap: (html) => `<table class="fi-team"><thead><tr><th>${esc(w('t_name'))}</th><th>${esc(w('t_role'))}</th><th></th></tr></thead><tbody>${html}</tbody></table>`,

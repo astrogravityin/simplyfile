@@ -1,0 +1,109 @@
+{
+  "chip_id": "guide.delegate",
+  "kind": "accessor",
+  "set": "guide",
+  "label": "Guide me: Delegations",
+  "aliases": [
+    "guide me: delegations"
+  ],
+  "params": [
+    {
+      "name": "title",
+      "type": "text",
+      "default": "Delegations",
+      "label": "title"
+    },
+    {
+      "name": "lede",
+      "type": "long",
+      "default": "Lend your own powers to a colleague in {product} - for one filing, one client, some or all clients for a year - for set dates.",
+      "label": "lede"
+    },
+    {
+      "name": "icon",
+      "type": "text",
+      "default": "share",
+      "label": "icon"
+    },
+    {
+      "name": "minutes",
+      "type": "number",
+      "default": 2,
+      "label": "minutes"
+    },
+    {
+      "name": "steps",
+      "type": "rows",
+      "default": [
+        {
+          "title": "Delegate",
+          "say": "Pick the person, the scope, the clients - searched by name or PAN - the year, what they may do, the dates and why.",
+          "target": "#dl-new|main"
+        },
+        {
+          "title": "Lent by me",
+          "say": "What you lent, to whom and until when. Everything they do shows as done for you.",
+          "target": "[data-side=given]|main"
+        },
+        {
+          "title": "Lent to me",
+          "say": "What colleagues lent you, for which clients and dates.",
+          "target": "[data-side=received]|main"
+        },
+        {
+          "title": "Take it back",
+          "say": "Take back any delegation at once; what was already done stays, marked as done for the lender.",
+          "target": "[data-side=given]|main"
+        }
+      ],
+      "label": "steps"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "title": "$title",
+      "lede": "$lede",
+      "icon": "$icon",
+      "minutes": "$minutes",
+      "steps": "$steps"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-04: the Delegations walk, up to date with the screen; tours/sf-delegate.json is made from it.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "title": "Delegations",
+        "lede": "Lend your own powers to a colleague in {product} - for one filing, one client, some or all clients for a year - for set dates.",
+        "icon": "share",
+        "minutes": 2,
+        "steps": [
+          {
+            "title": "Delegate",
+            "say": "Pick the person, the scope, the clients - searched by name or PAN - the year, what they may do, the dates and why.",
+            "target": "#dl-new|main"
+          },
+          {
+            "title": "Lent by me",
+            "say": "What you lent, to whom and until when. Everything they do shows as done for you.",
+            "target": "[data-side=given]|main"
+          },
+          {
+            "title": "Lent to me",
+            "say": "What colleagues lent you, for which clients and dates.",
+            "target": "[data-side=received]|main"
+          },
+          {
+            "title": "Take it back",
+            "say": "Take back any delegation at once; what was already done stays, marked as done for the lender.",
+            "target": "[data-side=given]|main"
+          }
+        ]
+      }
+    }
+  ]
+}

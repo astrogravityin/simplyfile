@@ -164,7 +164,8 @@ def add(user: dict, cid: str, ay: str, name: str, data: bytes, replace: str = ""
             old = next((m for m in metas if m["id"] == replace), None)
             if not old:
                 _bad("no_file", 404)
-            (d / f"{old['id']}{old['ext']}").unlink(missing_ok=True)
+            # 2026-10-05 change log: the older download is kept as its version (History offers it), never erased
+            (d / f"{old['id']}{old['ext']}").replace(d / f"{old['id']}.v{old.get('version', 1)}{old['ext']}")
             store.path_of(f"sf_portal/{cid}/{ay}/{old['id']}.entries.json").unlink(missing_ok=True)
             metas = [m for m in metas if m["id"] != replace]
         fid = store.new_id()
@@ -187,7 +188,7 @@ def delete(cid: str, ay: str, fid: str) -> None:
         if not m:
             _bad("no_file", 404)
         store.write(_meta_name(cid, ay), [x for x in metas if x["id"] != fid])
-        (_dir(cid, ay) / f"{fid}{m['ext']}").unlink(missing_ok=True)
+        (_dir(cid, ay) / f"{fid}{m['ext']}").replace(_dir(cid, ay) / f"{fid}.v{m.get('version', 1)}{m['ext']}")   # kept for History
         store.path_of(f"sf_portal/{cid}/{ay}/{fid}.entries.json").unlink(missing_ok=True)
 
 

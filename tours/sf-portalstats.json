@@ -1,0 +1,77 @@
+{
+  "prod_base": "https://sf.valuestream.in",
+  "voice": "en-IN-NeerjaNeural",
+  "rate": "+0%",
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "blur": [
+    "#whoami",
+    "#userpop .head"
+  ],
+  "page_key": "sf-portalstats",
+  "title": "Portal analytics",
+  "start_url": "/#/portalstats",
+  "covers": [
+    "the portal at a glance",
+    "firms that need you",
+    "every firm, busiest first",
+    "people and use"
+  ],
+  "steps": [
+    {
+      "chapter": "Portal analytics",
+      "say": "Every firm on SimplyFile at a glance - who is growing, who is stuck, and what needs you today.",
+      "do": [
+        {
+          "wait": 1
+        }
+      ]
+    },
+    {
+      "chapter": "At a glance",
+      "say": "Firms, people, clients, returns filed, firms waiting for you, and the space their files take.",
+      "do": [
+        {
+          "highlight_target": ".an-kpis|.sf-kpis|main",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Needs you",
+      "say": "Papers to review, firms stuck in draft, approved with no client yet, no one signed in lately. See all opens the full list.",
+      "do": [
+        {
+          "highlight_target": ".ps-flags|main",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Every firm",
+      "say": "Busiest first, a searched page at a time: team, clients, returns, space and last seen.",
+      "do": [
+        {
+          "highlight_target": "#ps-firms|main",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "People and use",
+      "say": "Firms by state and kind, people by role, new firms by month and requests per day.",
+      "do": [
+        {
+          "highlight_target": ".an-grid|main",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    }
+  ]
+}

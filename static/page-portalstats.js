@@ -39,7 +39,7 @@ export async function portalstatsPage(host) {
         ${kpiTile('alert', d.flag_n.review ? '--warn' : '--ok', w('k_review'), String(d.flag_n.review), w('k_review_sub'))}
         ${kpiTile('archive', '--brand', w('k_space'), size(r.bytes), w('k_space_sub'))}</section>
       <section class="an-leads-h"><h3 class="rc-h">${icon('spark', 15)} ${esc(w('need_title'))}</h3><p class="small muted">${esc(w('need_sub'))}</p></section>
-      <section class="an-leads ps-flags">${['review', 'stuck', 'empty', 'dormant'].map(flag).join('')}</section>
+      <section class="an-leads ps-flags">${P().flags.map(flag).join('')}</section>
       <section class="card an-card"><h3 class="rc-h">${icon('shield', 15)} ${esc(w('firms_title'))}</h3><p class="small muted">${esc(w('firms_sub'))}</p>
         <div id="ps-firms"></div></section>
       <div class="an-grid">

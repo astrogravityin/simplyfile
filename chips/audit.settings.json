@@ -75,6 +75,95 @@
         "income_above_exempt"
       ],
       "label": "fact keys"
+    },
+    {
+      "name": "last_year_from",
+      "type": "json",
+      "default": [
+        "statements",
+        "return",
+        "column"
+      ],
+      "label": "last year from"
+    },
+    {
+      "name": "return_only_current",
+      "type": "json",
+      "default": true,
+      "label": "return only current"
+    },
+    {
+      "name": "bs_prefix",
+      "type": "text",
+      "default": "PARTA_BS",
+      "label": "bs prefix"
+    },
+    {
+      "name": "issue_state",
+      "type": "text",
+      "default": "issue",
+      "label": "issue state"
+    },
+    {
+      "name": "done_states",
+      "type": "json",
+      "default": [
+        "done",
+        "na"
+      ],
+      "label": "done states"
+    },
+    {
+      "name": "open_state",
+      "type": "text",
+      "default": "open",
+      "label": "open state"
+    },
+    {
+      "name": "cleared_state",
+      "type": "text",
+      "default": "cleared",
+      "label": "cleared state"
+    },
+    {
+      "name": "point_sources",
+      "type": "json",
+      "default": [
+        "trend",
+        "check",
+        "hand"
+      ],
+      "label": "point sources"
+    },
+    {
+      "name": "hand_source",
+      "type": "text",
+      "default": "hand",
+      "label": "hand source"
+    },
+    {
+      "name": "check_source",
+      "type": "text",
+      "default": "check",
+      "label": "check source"
+    },
+    {
+      "name": "trend_source",
+      "type": "text",
+      "default": "trend",
+      "label": "trend source"
+    },
+    {
+      "name": "title_max",
+      "type": "json",
+      "default": 300,
+      "label": "title max"
+    },
+    {
+      "name": "note_max",
+      "type": "json",
+      "default": 1000,
+      "label": "note max"
     }
   ],
   "expr": {
@@ -87,7 +176,20 @@
       "check_states": "$check_states",
       "point_states": "$point_states",
       "issue_raises_point": "$issue_raises_point",
-      "fact_keys": "$fact_keys"
+      "fact_keys": "$fact_keys",
+      "last_year_from": "$last_year_from",
+      "return_only_current": "$return_only_current",
+      "bs_prefix": "$bs_prefix",
+      "issue_state": "$issue_state",
+      "done_states": "$done_states",
+      "open_state": "$open_state",
+      "cleared_state": "$cleared_state",
+      "point_sources": "$point_sources",
+      "hand_source": "$hand_source",
+      "check_source": "$check_source",
+      "trend_source": "$trend_source",
+      "title_max": "$title_max",
+      "note_max": "$note_max"
     }
   },
   "returns": "record",
@@ -126,7 +228,31 @@
           "cash_ok",
           "presumptive_lower",
           "income_above_exempt"
-        ]
+        ],
+        "last_year_from": [
+          "statements",
+          "return",
+          "column"
+        ],
+        "return_only_current": true,
+        "bs_prefix": "PARTA_BS",
+        "issue_state": "issue",
+        "done_states": [
+          "done",
+          "na"
+        ],
+        "open_state": "open",
+        "cleared_state": "cleared",
+        "point_sources": [
+          "trend",
+          "check",
+          "hand"
+        ],
+        "hand_source": "hand",
+        "check_source": "check",
+        "trend_source": "trend",
+        "title_max": 300,
+        "note_max": 1000
       }
     }
   ]

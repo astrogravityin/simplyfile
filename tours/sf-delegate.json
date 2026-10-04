@@ -1,0 +1,77 @@
+{
+  "prod_base": "https://sf.valuestream.in",
+  "voice": "en-IN-NeerjaNeural",
+  "rate": "+0%",
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "blur": [
+    "#whoami",
+    "#userpop .head"
+  ],
+  "page_key": "sf-delegate",
+  "title": "Delegations",
+  "start_url": "/#/delegate",
+  "covers": [
+    "lending a power",
+    "what it covers",
+    "taking it back",
+    "the firm's delegations"
+  ],
+  "steps": [
+    {
+      "chapter": "Delegations",
+      "say": "Lend your own powers to a colleague in SimplyFile - for one filing, one client, some or all clients for a year - for set dates.",
+      "do": [
+        {
+          "wait": 1
+        }
+      ]
+    },
+    {
+      "chapter": "Delegate",
+      "say": "Pick the person, the scope, the clients - searched by name or PAN - the year, what they may do, the dates and why.",
+      "do": [
+        {
+          "highlight_target": "#dl-new|main",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Lent by me",
+      "say": "What you lent, to whom and until when. Everything they do shows as done for you.",
+      "do": [
+        {
+          "highlight_target": "[data-side=given]|main",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Lent to me",
+      "say": "What colleagues lent you, for which clients and dates.",
+      "do": [
+        {
+          "highlight_target": "[data-side=received]|main",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Take it back",
+      "say": "Take back any delegation at once; what was already done stays, marked as done for the lender.",
+      "do": [
+        {
+          "highlight_target": "[data-side=given]|main",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    }
+  ]
+}

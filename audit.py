@@ -85,7 +85,7 @@ def from_return(cid: str, ay: str) -> dict:
             where = where.replace(a, b)
         v = abs(itr_import._num(itr_import._at(body, where)))  # noqa: SLF001
         if v:
-            out[("BS" if where.startswith("PARTA_BS") else "PL", item)] = v   # trading account lines are P&L too
+            out[("BS" if where.startswith(settings()["bs_prefix"]) else "PL", item)] = v   # trading account lines are P&L too
     return out
 
 
@@ -96,17 +96,19 @@ def trend(cid: str, ay: str) -> dict:
     known = pay in (clients.get(cid).get("years") or {})
     last = figures(cid, pay)[0] if known else {}
     filed = from_return(cid, pay) if known and not last else {}
-    # last year, best first: last year's statements, last year's filed return, this year's previous-year column
-    before, src = next(((f, s) for f, s in ((last, "statements"), (filed, "return"), (column, "column")) if f), ({}, "none"))
+    # last year, best first (chip audit.settings last_year_from): last year's statements, last year's filed return, this year's column
+    have = {"statements": last, "return": filed, "column": column}
+    src = next((s for s in k["last_year_from"] if have.get(s)), "none")
+    before = have.get(src) or {}
     rev = lambda f: sum(v for (t, i), v in f.items() if t == "PL" and i in k["revenue_items"])  # noqa: E731
     r_now, r_before = rev(now), rev(before)
     r = engine.run("audit.trend", {"now": r_now, "before": r_before, "revenue": r_now})
     rows = []
-    for key in sorted(set(now) | (set(before) & set(now) if src == "return" else set(before))):
+    for key in sorted(set(now) | (set(before) & set(now) if src == "return" and k["return_only_current"] else set(before))):
         t = engine.run("audit.trend", {"now": now.get(key, 0.0), "before": before.get(key, 0.0), "revenue": r_now, "rev_pct": r["pct"],
                                        "has_before": bool(before)})
         rows.append({"id": f"{key[0]}:{key[1]}", "table": key[0], "item": key[1], "now": now.get(key, 0.0), "before": before.get(key, 0.0)} | t)
-    return {"rows": rows, "source": src, "prev_ay": pay, "revenue": r_now, "revenue_before": r_before, "revenue_pct": r["pct"]}
+    return {"rows": rows, "source": src, "before_known": bool(before), "prev_ay": pay, "revenue": r_now, "revenue_before": r_before, "revenue_pct": r["pct"]}
 
 
 # --- the checklist -------------------------------------------------------------------------------------------------------
@@ -122,7 +124,7 @@ def facts(c: dict, ay: str, tr: dict) -> set[str]:
         f.add("presumptive")
     prof = any(r["now"] for r in tr["rows"] if r["table"] == "PL" and r["item"] in k["profession_items"])
     other = any(r["now"] for r in tr["rows"] if r["table"] == "PL" and r["item"] in k["revenue_items"] and r["item"] not in k["profession_items"])
-    f.add("business" if other or not prof else "profession")
+    f.add(engine.run("audit.kind", {"profession": prof, "other": other}))
     return f
 
 
@@ -144,15 +146,13 @@ def page(u: dict, cid: str, ay: str) -> dict:
     ans = w.get("facts") or {}
     need = engine.run("audit.applicable", {"business": "business" in have, "turnover": tr["revenue"],
                                            **{f: bool(ans.get(f)) for f in settings()["fact_keys"]}})
-    params = {p["name"]: p["default"] for p in engine.chips()["audit.applicable"]["params"]}   # the limits are the chip's own params
-    limit = params["profession_limit"] if "profession" in have else params["business_limit_cash_ok"] if ans.get("cash_ok") else params["business_limit"]
     y = (c.get("years") or {}).get(ay) or {}
     return {"client": {"id": c["id"], "name": c["name"], "pan": c.get("pan", ""), "status": c.get("status", "")}, "ay": ay,
             "marked": bool(y.get("audit")), "facts": {f: bool(ans.get(f)) for f in settings()["fact_keys"]},
-            "applicable": need | {"turnover": tr["revenue"], "limit": limit}, "trend": tr,
+            "applicable": need["verdict"] | {"turnover": tr["revenue"], "limit": need["limit"]}, "trend": tr,
             "checklist": checklist(have, w.get("checks") or {}), "points": w.get("points") or [],
             "people": [{"id": m["id"], "name": m["name"] or m["email"]} for m in firms.team(u)] if u.get("firm_id") else [],
-            "states": settings()["check_states"], "may_clear": firms.may(u, "audit", "clear", cid=cid, ay=ay)["ok"]}
+            "states": settings()["check_states"], "done_states": settings()["done_states"], "trend_source": settings()["trend_source"], "may_clear": firms.may(u, "audit", "clear", cid=cid, ay=ay)["ok"]}
 
 
 def _save(cid: str, ay: str, change) -> dict:
@@ -171,7 +171,8 @@ def set_facts(u: dict, cid: str, ay: str, body: dict) -> dict:
 
 
 def _point(u: dict, title: str, source: str, ref: str, owner: str = "") -> dict:
-    return {"id": store.new_id(), "title": str(title)[:300], "source": source, "ref": ref, "owner": owner, "status": "open",
+    k = settings()
+    return {"id": store.new_id(), "title": str(title)[: k["title_max"]], "source": source, "ref": ref, "owner": owner, "status": k["open_state"],
             "note": "", "by": delegation.actor(u), "at": store.now()}
 
 
@@ -185,10 +186,10 @@ def set_check(u: dict, cid: str, ay: str, iid: str, body: dict) -> dict:
         raise HTTPException(404, say("saved"))
 
     def change(w: dict) -> None:
-        w.setdefault("checks", {})[iid] = {"state": state, "note": str(body.get("note") or "")[:1000], "by": delegation.actor(u), "at": store.now()}
+        w.setdefault("checks", {})[iid] = {"state": state, "note": str(body.get("note") or "")[: k["note_max"]], "by": delegation.actor(u), "at": store.now()}
         pts = w.setdefault("points", [])
-        if state == "issue" and k["issue_raises_point"] and not any(p["ref"] == f"check:{iid}" and p["status"] == "open" for p in pts):
-            pts.append(_point(u, f"3CD {row['clause']} - {row['title']}", "check", f"check:{iid}"))
+        if state == k["issue_state"] and k["issue_raises_point"] and not any(p["ref"] == f"check:{iid}" and p["status"] == k["open_state"] for p in pts):
+            pts.append(_point(u, say("point_from_check", clause=row["clause"], title=row["title"]), k["check_source"], f"check:{iid}"))
     _save(cid, ay, change)
     return page(u, cid, ay)
 
@@ -197,8 +198,9 @@ def add_point(u: dict, cid: str, ay: str, body: dict) -> dict:
     title = str(body.get("title") or "").strip()
     if not title:
         raise HTTPException(400, say("point_title_ph"))
-    source = str(body.get("source") or "hand")
-    _save(cid, ay, lambda w: w.setdefault("points", []).append(_point(u, title, source if source in ("trend", "check", "hand") else "hand",
+    k = settings()
+    source = str(body.get("source") or "")
+    _save(cid, ay, lambda w: w.setdefault("points", []).append(_point(u, title, source if source in k["point_sources"] else k["hand_source"],
                                                                       str(body.get("ref") or ""), str(body.get("owner") or ""))))
     return page(u, cid, ay)
 
@@ -214,17 +216,17 @@ def set_point(u: dict, cid: str, ay: str, pid: str, body: dict) -> dict:
             raise HTTPException(404, say("points_none"))
         for f in ("owner", "note"):
             if f in body:
-                p[f] = str(body[f] or "")[:1000]
+                p[f] = str(body[f] or "")[: settings()["note_max"]]
         if status is not None:
             p["status"] = status
-            p["closed_by"], p["closed_at"] = (delegation.actor(u), store.now()) if status == "cleared" else ("", "")
+            p["closed_by"], p["closed_at"] = (delegation.actor(u), store.now()) if status == settings()["cleared_state"] else ("", "")
     _save(cid, ay, change)
     return page(u, cid, ay)
 
 
 if __name__ == "__main__":  # ponytail: the three rules on made-up figures - applicability, a flagged line, the chosen clauses
     import store as _s  # noqa: F401 - registers this portal's chips
-    assert engine.run("audit.applicable", {"business": True, "turnover": 25000000})["need"] == "yes"
+    assert engine.run("audit.applicable", {"business": True, "turnover": 25000000})["verdict"]["need"] == "yes"
     assert engine.run("audit.trend", {"now": 900000, "before": 500000, "revenue": 10000000, "rev_pct": 2})["flag"] == "spike"
     rows = checklist({"business", "status_firm", "partners", "has_rent", "has_sales"}, {})
     ids = {r["id"] for r in rows}

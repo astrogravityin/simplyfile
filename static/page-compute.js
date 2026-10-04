@@ -6,6 +6,7 @@ import { api, BASE, esc, toast, busy, pageHead, confirmDialog, t, ps, loadWords,
 import { clientPicker } from './page-intake.js';
 import { hue, initials } from './page-clients.js';
 import { icon } from './icons.js';
+import { historyButton, wireHistory } from './changes.js';
 
 const w = (k, v) => t('compute', k, v);
 const money = (n) => `₹${Math.round(Number(n || 0)).toLocaleString(ps('compute').money_locale)}`;
@@ -60,7 +61,7 @@ const datesRow = (d) => `<div class="cc-dates small"><span>${esc(w('due_on', { d
   <span>${esc(w('revise_by', { date: day(d.dates.revise_by) }))}</span><span>${esc(w('updated_by', { date: day(d.dates.updated_by) }))}</span></div>`;
 
 export async function computePage(host) {
-  await loadWords('compute', 'itrimport');
+  await loadWords('compute', 'itrimport', 'changes');
   const p = new URLSearchParams((location.hash.split('?')[1]) || '');
   if (!p.get('c')) return clientPicker(host, 'compute');
   const K = await api('/api/clients/settings');
@@ -76,7 +77,7 @@ export async function computePage(host) {
     const x = d.tax;
     const line = (label, v, cls = '') => `<tr class="${cls}"><td>${esc(label)}</td><td class="num">${esc(signed(v))}</td></tr>`;
     host.innerHTML = pageHead(`${w('title')} · ${d.client.name}`, esc(w('lede')),
-      `<label class="cl-ay" for="cc-ay">${icon('clock', 14)}<span>${esc(w('ay'))}</span>
+      `${historyButton()}<label class="cl-ay" for="cc-ay">${icon('clock', 14)}<span>${esc(w('ay'))}</span>
          <select id="cc-ay">${K.years.map((y) => `<option ${y === ay ? 'selected' : ''}>${esc(y)}</option>`).join('')}</select></label>`)
       + `<section class="card cc-head">
           <div class="in-who"><span class="cl-av" style="--h:${hue(d.client.name)}" aria-hidden="true">${esc(initials(d.client.name))}</span>
@@ -185,6 +186,7 @@ export async function computePage(host) {
       if (!r.valid) el.insertAdjacentHTML('afterend', `<details class="cc-itr-list small"><summary>${esc(w('itr_show'))}</summary><ul>${r.errors.map((e) =>
         `<li><b>${esc(e.field)}</b> - ${esc(e.what)}</li>`).join('')}</ul><p class="muted">${esc(w('tar_where'))}</p></details>`);
     }).catch((err) => { const el = host.querySelector('#cc-3cd-check'); if (el) el.textContent = err.message; });
+    wireHistory(host, { cid, ay, name: d.client.name });
     host.querySelector('#cc-ay').onchange = (e) => { location.hash = `#/compute?c=${encodeURIComponent(cid)}&ay=${encodeURIComponent(e.target.value)}`; };
     const put = async (body) => { try { draw(await api(base, { method: 'PUT', body })); toast(w('saved'), 'ok'); } catch (err) { toast(err.message, 'bad', 8); } };
     const reg = host.querySelector('#cc-regime');

@@ -4,6 +4,7 @@
 // ui.clients; statuses, forms, years and stages are chip clients.settings.
 import { api, esc, toast, busy, pageHead, confirmDialog, t, loadWords, listBox, modal, may } from './app.js';
 import { icon } from './icons.js';
+import { historyButton, wireHistory } from './changes.js';
 
 const w = (k, v) => t('clients', k, v);
 let K = null;      // chip clients.settings
@@ -60,7 +61,7 @@ function kpis(sum) {
 }
 
 export async function clientsPage(host) {
-  await loadWords('clients');
+  await loadWords('clients', 'changes');
   K = K || await api('/api/clients/settings');
   AY = AY || K.current_ay;
   host.innerHTML = pageHead(w('title'), esc(w('lede')),
@@ -191,13 +192,14 @@ function editor(c, reload) {
     <button type="button" class="small ghost" id="c-add-partner">${icon('plus', 12)} ${esc(w('add_partner'))}</button></div>
     <div class="field" style="margin-top:14px"><label for="c-notes">${esc(w('f_notes'))}</label><textarea id="c-notes" rows="2">${esc(c.notes || '')}</textarea></div>
     ${yearCard}`;
-  const footer = `${!isNew && may('clients', 'archive') ? (c.archived_at
+  const footer = `${isNew ? '' : historyButton()}${!isNew && may('clients', 'archive') ? (c.archived_at
       ? `<button type="button" data-restore>${icon('refresh', 14)} ${esc(w('restore'))}</button>`
       : `<button type="button" data-archive>${icon('archive', 14)} ${esc(w('archive'))}</button>`) : ''}
     <button type="button" class="primary" data-save>${icon('save', 15)} ${esc(w('save'))}</button>`;
   modal(isNew ? w('new') : c.name, body, { wide: true, footer, stay: true, onOpen: (b, close) => {
     const card = b.closest('.modal');
     const $ = (s) => card.querySelector(s);
+    if (!isNew) wireHistory(card, { cid: c.id, name: c.name });
     const wireRm = () => card.querySelectorAll('[data-rm]').forEach((x) => { x.onclick = () => x.parentElement.remove(); });
     const showPartners = () => {
       const st = K.statuses.find((s) => s.id === $('#c-status').value);

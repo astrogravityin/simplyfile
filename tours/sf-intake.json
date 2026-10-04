@@ -57,12 +57,12 @@
       "do": [
         {
           "click_target": ".in-file .primary|.in-file a",
-          "unless": ".mp-group-h|main",
+          "unless": ".mp-group-h",
           "optional": true,
           "timeout": 5
         },
         {
-          "highlight_target": ".mp-group-h|main",
+          "highlight_target": ".mp-group-h",
           "optional": true,
           "timeout": 5
         }
@@ -74,6 +74,17 @@
       "do": [
         {
           "highlight_target": "#in-accept|main",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Find a row",
+      "say": "A long statement? Search by row number, words, heading, SF Ref or amount - any part, any order.",
+      "do": [
+        {
+          "highlight_target": "#in-find|main",
           "optional": true,
           "timeout": 5
         }

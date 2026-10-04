@@ -51,6 +51,50 @@
       "label": "state tone"
     },
     {
+      "name": "point_tone",
+      "type": "json",
+      "default": {
+        "open": "--warn",
+        "cleared": "--ok"
+      },
+      "label": "point tone"
+    },
+    {
+      "name": "point_order",
+      "type": "json",
+      "default": [
+        "open",
+        "cleared"
+      ],
+      "label": "point order"
+    },
+    {
+      "name": "point_next",
+      "type": "json",
+      "default": {
+        "open": "cleared",
+        "cleared": "open"
+      },
+      "label": "point next"
+    },
+    {
+      "name": "point_button",
+      "type": "json",
+      "default": {
+        "open": "clear",
+        "cleared": "reopen"
+      },
+      "label": "point button"
+    },
+    {
+      "name": "share_tables",
+      "type": "json",
+      "default": [
+        "PL"
+      ],
+      "label": "share tables"
+    },
+    {
       "name": "money_locale",
       "type": "text",
       "default": "en-IN",
@@ -127,6 +171,11 @@
       "need_icon": "$need_icon",
       "flag_tone": "$flag_tone",
       "state_tone": "$state_tone",
+      "point_tone": "$point_tone",
+      "point_order": "$point_order",
+      "point_next": "$point_next",
+      "point_button": "$point_button",
+      "share_tables": "$share_tables",
       "money_locale": "$money_locale",
       "items": "$items"
     }
@@ -162,6 +211,25 @@
           "na": "--muted",
           "issue": "--bad"
         },
+        "point_tone": {
+          "open": "--warn",
+          "cleared": "--ok"
+        },
+        "point_order": [
+          "open",
+          "cleared"
+        ],
+        "point_next": {
+          "open": "cleared",
+          "cleared": "open"
+        },
+        "point_button": {
+          "open": "clear",
+          "cleared": "reopen"
+        },
+        "share_tables": [
+          "PL"
+        ],
         "money_locale": "en-IN",
         "items": {
           "acc_depreciation": "Accumulated depreciation",

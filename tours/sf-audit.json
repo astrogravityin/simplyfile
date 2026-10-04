@@ -1,0 +1,105 @@
+{
+  "prod_base": "https://sf.valuestream.in",
+  "voice": "en-IN-NeerjaNeural",
+  "rate": "+0%",
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "blur": [
+    "#whoami",
+    "#userpop .head"
+  ],
+  "page_key": "sf-audit",
+  "title": "Tax audit",
+  "start_url": "/#/audit",
+  "covers": [
+    "is a tax audit needed (44AB)",
+    "this year against last, with flags",
+    "the Form 3CD checklist for this client",
+    "audit points and who clears them"
+  ],
+  "steps": [
+    {
+      "chapter": "Tax audit",
+      "say": "Work through a tax audit in SimplyFile: is one needed, what moved since last year, the Form 3CD clauses that apply, and the points still open.",
+      "do": [
+        {
+          "wait": 1
+        }
+      ]
+    },
+    {
+      "chapter": "Pick the client",
+      "say": "Choose the client; the year is picked at the top.",
+      "do": [
+        {
+          "highlight_target": ".in-pick-row|main",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Is an audit needed?",
+      "say": "From the turnover in the mapped books: above 1 crore for a business, 10 crore when cash is within 5%, 50 lakh for a profession, or presumptive with a lower profit. Tick what the books cannot show.",
+      "do": [
+        {
+          "click_target": ".in-pick-row",
+          "unless": "#au-need",
+          "optional": true,
+          "timeout": 5
+        },
+        {
+          "highlight_target": "#au-need",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "This year against last",
+      "say": "Every mapped P&L and balance-sheet line against last year - from last year's statements, last year's filed return, or this year's previous-year column. New, gone, sharp moves and lines growing faster than turnover are flagged.",
+      "do": [
+        {
+          "highlight_target": "#au-trend",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Raise a point",
+      "say": "One click turns a flagged line into an audit point.",
+      "do": [
+        {
+          "highlight_target": "#au-trend",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Form 3CD checklist",
+      "say": "Only the clauses that apply to this client - partners, TDS, loans, stock and more. Mark each one with a note; an issue opens an audit point.",
+      "do": [
+        {
+          "highlight_target": "#au-checks",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Audit points",
+      "say": "What still needs an answer before the report is signed, each with who answers it. A preparer raises points; a reviewer, auditor, partner or firm admin clears them.",
+      "do": [
+        {
+          "highlight_target": "#au-points",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    }
+  ]
+}

@@ -476,8 +476,10 @@ def delete(cid: str, ay: str, fid: str) -> None:
     m = _meta(cid, ay, fid)
     d = _dir(cid, ay)
     with _LOCK:
+        # 2026-10-05 change log: a deleted statement is kept as its last version (History offers it), never erased
+        (d / f"{fid}{m['ext']}").replace(d / f"{fid}.v{m.get('version', 1)}{m['ext']}")
         store.write(_meta_name(cid, ay), [x for x in store.read(_meta_name(cid, ay), []) if x["id"] != fid])
-        for p in (d / f"{fid}{m['ext']}", store.path_of(f"sf_files/{cid}/{ay}/{fid}.rows.json"), store.path_of(_tags_name(cid, ay, fid))):
+        for p in (store.path_of(f"sf_files/{cid}/{ay}/{fid}.rows.json"), store.path_of(_tags_name(cid, ay, fid))):
             p.unlink(missing_ok=True)
 
 

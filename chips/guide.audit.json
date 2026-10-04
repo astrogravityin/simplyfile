@@ -1,0 +1,131 @@
+{
+  "chip_id": "guide.audit",
+  "kind": "accessor",
+  "set": "guide",
+  "label": "Guide me: Tax audit",
+  "aliases": [
+    "guide me: tax audit"
+  ],
+  "params": [
+    {
+      "name": "title",
+      "type": "text",
+      "default": "Tax audit",
+      "label": "title"
+    },
+    {
+      "name": "lede",
+      "type": "long",
+      "default": "Work through a tax audit in {product}: is one needed, what moved since last year, the Form 3CD clauses that apply, and the points still open.",
+      "label": "lede"
+    },
+    {
+      "name": "icon",
+      "type": "text",
+      "default": "shield",
+      "label": "icon"
+    },
+    {
+      "name": "minutes",
+      "type": "number",
+      "default": 3,
+      "label": "minutes"
+    },
+    {
+      "name": "steps",
+      "type": "rows",
+      "default": [
+        {
+          "title": "Pick the client",
+          "say": "Choose the client; the year is picked at the top.",
+          "target": ".in-pick-row|main"
+        },
+        {
+          "title": "Is an audit needed?",
+          "say": "From the turnover in the mapped books: above 1 crore for a business, 10 crore when cash is within 5%, 50 lakh for a profession, or presumptive with a lower profit. Tick what the books cannot show.",
+          "target": "#au-need",
+          "open": ".in-pick-row"
+        },
+        {
+          "title": "This year against last",
+          "say": "Every mapped P&L and balance-sheet line against last year - from last year's statements, last year's filed return, or this year's previous-year column. New, gone, sharp moves and lines growing faster than turnover are flagged.",
+          "target": "#au-trend"
+        },
+        {
+          "title": "Raise a point",
+          "say": "One click turns a flagged line into an audit point.",
+          "target": "#au-trend"
+        },
+        {
+          "title": "Form 3CD checklist",
+          "say": "Only the clauses that apply to this client - partners, TDS, loans, stock and more. Mark each one with a note; an issue opens an audit point.",
+          "target": "#au-checks"
+        },
+        {
+          "title": "Audit points",
+          "say": "What still needs an answer before the report is signed, each with who answers it. A preparer raises points; a reviewer, auditor, partner or firm admin clears them.",
+          "target": "#au-points"
+        }
+      ],
+      "label": "steps"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "title": "$title",
+      "lede": "$lede",
+      "icon": "$icon",
+      "minutes": "$minutes",
+      "steps": "$steps"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-04: the Tax audit walk, up to date with the screen; tours/sf-audit.json is made from it.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "title": "Tax audit",
+        "lede": "Work through a tax audit in {product}: is one needed, what moved since last year, the Form 3CD clauses that apply, and the points still open.",
+        "icon": "shield",
+        "minutes": 3,
+        "steps": [
+          {
+            "title": "Pick the client",
+            "say": "Choose the client; the year is picked at the top.",
+            "target": ".in-pick-row|main"
+          },
+          {
+            "title": "Is an audit needed?",
+            "say": "From the turnover in the mapped books: above 1 crore for a business, 10 crore when cash is within 5%, 50 lakh for a profession, or presumptive with a lower profit. Tick what the books cannot show.",
+            "target": "#au-need",
+            "open": ".in-pick-row"
+          },
+          {
+            "title": "This year against last",
+            "say": "Every mapped P&L and balance-sheet line against last year - from last year's statements, last year's filed return, or this year's previous-year column. New, gone, sharp moves and lines growing faster than turnover are flagged.",
+            "target": "#au-trend"
+          },
+          {
+            "title": "Raise a point",
+            "say": "One click turns a flagged line into an audit point.",
+            "target": "#au-trend"
+          },
+          {
+            "title": "Form 3CD checklist",
+            "say": "Only the clauses that apply to this client - partners, TDS, loans, stock and more. Mark each one with a note; an issue opens an audit point.",
+            "target": "#au-checks"
+          },
+          {
+            "title": "Audit points",
+            "say": "What still needs an answer before the report is signed, each with who answers it. A preparer raises points; a reviewer, auditor, partner or firm admin clears them.",
+            "target": "#au-points"
+          }
+        ]
+      }
+    }
+  ]
+}

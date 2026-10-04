@@ -1,0 +1,353 @@
+{
+  "chip_id": "changes.fields",
+  "kind": "accessor",
+  "set": "changes",
+  "label": "Change log: field names",
+  "aliases": [
+    "change log: field names"
+  ],
+  "params": [
+    {
+      "name": "labels",
+      "type": "json",
+      "default": {
+        "client": {
+          "name": "Name",
+          "pan": "PAN",
+          "status": "Status",
+          "relation": "Relation",
+          "dob": "Date of birth",
+          "nri": "Non-resident",
+          "father": "Father's name",
+          "signer_pan": "Signatory's PAN",
+          "address": "Address",
+          "email": "Email",
+          "phone": "Phone",
+          "gst": "GSTIN",
+          "notes": "Notes",
+          "archived_at": "Archived",
+          "banks.*.bank": "Bank",
+          "banks.*.branch": "Bank branch",
+          "banks.*.type": "Account type",
+          "banks.*.account": "Bank account",
+          "banks.*.ifsc": "IFSC",
+          "partners.*.name": "Partner",
+          "partners.*.pan": "Partner's PAN",
+          "partners.*.share": "Partner's share",
+          "form": "Return form",
+          "audit": "Tax audit (3CD)",
+          "presumptive": "Presumptive (44AD / 44ADA)",
+          "tp": "Transfer pricing (3CEB)",
+          "assigned": "Assigned to",
+          "stage": "Stage",
+          "ack_no": "Acknowledgement no.",
+          "revising": "Revising",
+          "filings.*.kind": "Return filed - kind",
+          "filings.*.status": "Return filed - status",
+          "filings.*.ack_no": "Return filed - acknowledgement",
+          "filings.*.filed_on": "Return filed - date",
+          "filings.*.note": "Return filed - note"
+        },
+        "computation": {
+          "regime": "Tax regime",
+          "interest_override": "Interest (234A/B/C) typed in",
+          "refund_on": "Refund received on",
+          "signed.on": "Signed off",
+          "signed.by": "Signed off by"
+        },
+        "mapping": {
+          "*": "SF Ref, row {path}"
+        },
+        "statements": {
+          "name": "Statement",
+          "version": "Statement version",
+          "*": "Statement"
+        },
+        "portal_files": {
+          "name": "Portal file",
+          "source": "Portal file type",
+          "*": "Portal file"
+        },
+        "explanations": {
+          "*.text": "Explanation",
+          "*": "Explanation"
+        },
+        "tax_audit": {
+          "facts.cash_ok": "Cash within 5%",
+          "facts.presumptive_lower": "Presumptive, lower profit",
+          "facts.income_above_exempt": "Income above exemption",
+          "checks.*.state": "3CD checklist - state",
+          "checks.*.note": "3CD checklist - note",
+          "points.*.title": "Audit point",
+          "points.*.status": "Audit point - status",
+          "points.*.owner": "Audit point - who answers",
+          "points.*.note": "Audit point - note"
+        },
+        "firm": {
+          "name": "Firm name",
+          "pan": "Firm PAN",
+          "tan": "TAN",
+          "gstin": "GSTIN",
+          "frn": "FRN",
+          "membership_no": "Membership no.",
+          "owner_name": "Owner / partner in charge",
+          "aadhaar_last4": "Aadhaar (last 4)",
+          "phone": "Mobile",
+          "email": "Email",
+          "address": "Address",
+          "state": "Approval state",
+          "docs.*.name": "Firm paper"
+        },
+        "team": {
+          "name": "Person's name",
+          "email": "Person's email",
+          "firm_role": "Role",
+          "disabled": "Disabled"
+        }
+      },
+      "label": "labels"
+    },
+    {
+      "name": "value_names",
+      "type": "json",
+      "default": {
+        "team": {
+          "firm_role": [
+            "firm.roles",
+            "rows",
+            "id",
+            "label"
+          ]
+        },
+        "client": {
+          "stage": [
+            "clients.settings",
+            "stages",
+            "id",
+            "label"
+          ],
+          "status": [
+            "clients.settings",
+            "statuses",
+            "id",
+            "label"
+          ]
+        }
+      },
+      "label": "value names"
+    },
+    {
+      "name": "skip",
+      "type": "json",
+      "default": [
+        "*updated_at",
+        "*updated_by",
+        "*created_at",
+        "*created_by",
+        "*.at",
+        "*.by",
+        "at",
+        "by",
+        "sha256",
+        "*.sha256",
+        "rows",
+        "*.rows",
+        "counts*",
+        "*.counts*",
+        "last_seen",
+        "*closed_at",
+        "*closed_by",
+        "uploaded_at",
+        "uploaded_by",
+        "*.uploaded_at",
+        "*.uploaded_by",
+        "pan_seen",
+        "sheets",
+        "size",
+        "notes",
+        "entries",
+        "figures*",
+        "*.figures*",
+        "imported*",
+        "history*",
+        "submitted_at",
+        "*.id",
+        "id"
+      ],
+      "label": "skip"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "labels": "$labels",
+      "value_names": "$value_names",
+      "skip": "$skip"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-05: the name shown for each logged field (a * stands for any one part; {path} is the field's own place), and the fields never logged - the when / who stamps (each entry has its own), digests and figures the system works out.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "labels": {
+          "client": {
+            "name": "Name",
+            "pan": "PAN",
+            "status": "Status",
+            "relation": "Relation",
+            "dob": "Date of birth",
+            "nri": "Non-resident",
+            "father": "Father's name",
+            "signer_pan": "Signatory's PAN",
+            "address": "Address",
+            "email": "Email",
+            "phone": "Phone",
+            "gst": "GSTIN",
+            "notes": "Notes",
+            "archived_at": "Archived",
+            "banks.*.bank": "Bank",
+            "banks.*.branch": "Bank branch",
+            "banks.*.type": "Account type",
+            "banks.*.account": "Bank account",
+            "banks.*.ifsc": "IFSC",
+            "partners.*.name": "Partner",
+            "partners.*.pan": "Partner's PAN",
+            "partners.*.share": "Partner's share",
+            "form": "Return form",
+            "audit": "Tax audit (3CD)",
+            "presumptive": "Presumptive (44AD / 44ADA)",
+            "tp": "Transfer pricing (3CEB)",
+            "assigned": "Assigned to",
+            "stage": "Stage",
+            "ack_no": "Acknowledgement no.",
+            "revising": "Revising",
+            "filings.*.kind": "Return filed - kind",
+            "filings.*.status": "Return filed - status",
+            "filings.*.ack_no": "Return filed - acknowledgement",
+            "filings.*.filed_on": "Return filed - date",
+            "filings.*.note": "Return filed - note"
+          },
+          "computation": {
+            "regime": "Tax regime",
+            "interest_override": "Interest (234A/B/C) typed in",
+            "refund_on": "Refund received on",
+            "signed.on": "Signed off",
+            "signed.by": "Signed off by"
+          },
+          "mapping": {
+            "*": "SF Ref, row {path}"
+          },
+          "statements": {
+            "name": "Statement",
+            "version": "Statement version",
+            "*": "Statement"
+          },
+          "portal_files": {
+            "name": "Portal file",
+            "source": "Portal file type",
+            "*": "Portal file"
+          },
+          "explanations": {
+            "*.text": "Explanation",
+            "*": "Explanation"
+          },
+          "tax_audit": {
+            "facts.cash_ok": "Cash within 5%",
+            "facts.presumptive_lower": "Presumptive, lower profit",
+            "facts.income_above_exempt": "Income above exemption",
+            "checks.*.state": "3CD checklist - state",
+            "checks.*.note": "3CD checklist - note",
+            "points.*.title": "Audit point",
+            "points.*.status": "Audit point - status",
+            "points.*.owner": "Audit point - who answers",
+            "points.*.note": "Audit point - note"
+          },
+          "firm": {
+            "name": "Firm name",
+            "pan": "Firm PAN",
+            "tan": "TAN",
+            "gstin": "GSTIN",
+            "frn": "FRN",
+            "membership_no": "Membership no.",
+            "owner_name": "Owner / partner in charge",
+            "aadhaar_last4": "Aadhaar (last 4)",
+            "phone": "Mobile",
+            "email": "Email",
+            "address": "Address",
+            "state": "Approval state",
+            "docs.*.name": "Firm paper"
+          },
+          "team": {
+            "name": "Person's name",
+            "email": "Person's email",
+            "firm_role": "Role",
+            "disabled": "Disabled"
+          }
+        },
+        "value_names": {
+          "team": {
+            "firm_role": [
+              "firm.roles",
+              "rows",
+              "id",
+              "label"
+            ]
+          },
+          "client": {
+            "stage": [
+              "clients.settings",
+              "stages",
+              "id",
+              "label"
+            ],
+            "status": [
+              "clients.settings",
+              "statuses",
+              "id",
+              "label"
+            ]
+          }
+        },
+        "skip": [
+          "*updated_at",
+          "*updated_by",
+          "*created_at",
+          "*created_by",
+          "*.at",
+          "*.by",
+          "at",
+          "by",
+          "sha256",
+          "*.sha256",
+          "rows",
+          "*.rows",
+          "counts*",
+          "*.counts*",
+          "last_seen",
+          "*closed_at",
+          "*closed_by",
+          "uploaded_at",
+          "uploaded_by",
+          "*.uploaded_at",
+          "*.uploaded_by",
+          "pan_seen",
+          "sheets",
+          "size",
+          "notes",
+          "entries",
+          "figures*",
+          "*.figures*",
+          "imported*",
+          "history*",
+          "submitted_at",
+          "*.id",
+          "id"
+        ]
+      }
+    }
+  ]
+}

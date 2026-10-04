@@ -21,7 +21,7 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 PY = sys.executable
-MODULES = ["firms", "itr_json", "analytics", "portal_stats", "server", "delegation", "chipchat", "chatfam", "notes", "dock_issues", "itr_import", "clients", "intake", "recon", "compute", "audit", "edition", "tourvideo", "manuals", "projects", "scan", "source", "keyshare",
+MODULES = ["firms", "itr_json", "analytics", "portal_stats", "server", "delegation", "chipchat", "chatfam", "notes", "dock_issues", "itr_import", "clients", "intake", "recon", "compute", "audit", "changelog", "edition", "tourvideo", "manuals", "projects", "scan", "source", "keyshare",
            "keysales", "wallet", "guideme"]
 SCREENS = ["firm", "analytics", "delegate", "clients", "itrimport", "intake", "recon", "compute", "audit", "manuals", "howto", "guideme", "tourvideo", "setup", "keys", "buykey", "keysales", "approvals", "portalstats", "server"]
 
@@ -324,7 +324,7 @@ def chips_first_check() -> None:
     print(f"  chips first: no decision in code ({sum(len(r) for r in LEAKS.values())} shapes watched), {len(REQUIRED_CHIPS)} chips present OK")
 
 
-GUIDED = ["firm", "analytics", "clients", "itrimport", "intake", "recon", "compute", "approvals"]
+GUIDED = ["firm", "analytics", "delegate", "clients", "itrimport", "intake", "recon", "compute", "audit", "approvals", "portalstats", "server"]
 
 
 def guides_tours_check() -> None:

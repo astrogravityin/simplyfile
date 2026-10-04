@@ -1,0 +1,79 @@
+{
+  "chip_id": "changes.settings",
+  "kind": "accessor",
+  "set": "changes",
+  "label": "Change log settings",
+  "aliases": [
+    "change log settings"
+  ],
+  "params": [
+    {
+      "name": "value_max",
+      "type": "json",
+      "default": 200,
+      "label": "value max"
+    },
+    {
+      "name": "keep_max",
+      "type": "json",
+      "default": 20000,
+      "label": "keep max"
+    },
+    {
+      "name": "list_keys",
+      "type": "json",
+      "default": [
+        "id",
+        "n"
+      ],
+      "label": "list keys"
+    },
+    {
+      "name": "system_by",
+      "type": "text",
+      "default": "SimplyFile",
+      "label": "system by"
+    },
+    {
+      "name": "kinds",
+      "type": "json",
+      "default": [
+        "info",
+        "doc"
+      ],
+      "label": "kinds"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "value_max": "$value_max",
+      "keep_max": "$keep_max",
+      "list_keys": "$list_keys",
+      "system_by": "$system_by",
+      "kinds": "$kinds"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-05: how long a value may be in the log, how many entries a client or firm keeps, how lists of records are lined up, and the name for changes no person made.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "value_max": 200,
+        "keep_max": 20000,
+        "list_keys": [
+          "id",
+          "n"
+        ],
+        "system_by": "SimplyFile",
+        "kinds": [
+          "info",
+          "doc"
+        ]
+      }
+    }
+  ]
+}

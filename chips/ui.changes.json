@@ -1,0 +1,283 @@
+{
+  "chip_id": "ui.changes",
+  "kind": "accessor",
+  "set": "ui",
+  "label": "Change log words",
+  "aliases": [
+    "change log words"
+  ],
+  "params": [
+    {
+      "name": "title",
+      "type": "text",
+      "default": "History",
+      "label": "title"
+    },
+    {
+      "name": "title_client",
+      "type": "text",
+      "default": "History · {name}",
+      "label": "title client"
+    },
+    {
+      "name": "title_firm",
+      "type": "text",
+      "default": "History · the firm",
+      "label": "title firm"
+    },
+    {
+      "name": "lede",
+      "type": "text",
+      "default": "Every change, field by field: what it was, what it became, when and who - and every earlier version of a document.",
+      "label": "lede"
+    },
+    {
+      "name": "open",
+      "type": "text",
+      "default": "History",
+      "label": "open"
+    },
+    {
+      "name": "all",
+      "type": "text",
+      "default": "Everything",
+      "label": "all"
+    },
+    {
+      "name": "info",
+      "type": "text",
+      "default": "Information",
+      "label": "info"
+    },
+    {
+      "name": "doc",
+      "type": "text",
+      "default": "Documents",
+      "label": "doc"
+    },
+    {
+      "name": "h_when",
+      "type": "text",
+      "default": "When",
+      "label": "h when"
+    },
+    {
+      "name": "h_who",
+      "type": "text",
+      "default": "Who",
+      "label": "h who"
+    },
+    {
+      "name": "h_area",
+      "type": "text",
+      "default": "Where",
+      "label": "h area"
+    },
+    {
+      "name": "h_field",
+      "type": "text",
+      "default": "Field",
+      "label": "h field"
+    },
+    {
+      "name": "h_old",
+      "type": "text",
+      "default": "Was",
+      "label": "h old"
+    },
+    {
+      "name": "h_new",
+      "type": "text",
+      "default": "Now",
+      "label": "h new"
+    },
+    {
+      "name": "field_of",
+      "type": "text",
+      "default": "{field} · {item}",
+      "label": "field of"
+    },
+    {
+      "name": "none",
+      "type": "text",
+      "default": "No changes yet.",
+      "label": "none"
+    },
+    {
+      "name": "yes",
+      "type": "text",
+      "default": "Yes",
+      "label": "yes"
+    },
+    {
+      "name": "no",
+      "type": "text",
+      "default": "No",
+      "label": "no"
+    },
+    {
+      "name": "added",
+      "type": "text",
+      "default": "Added",
+      "label": "added"
+    },
+    {
+      "name": "removed",
+      "type": "text",
+      "default": "Removed",
+      "label": "removed"
+    },
+    {
+      "name": "empty",
+      "type": "text",
+      "default": "-",
+      "label": "empty"
+    },
+    {
+      "name": "download",
+      "type": "text",
+      "default": "Download this version",
+      "label": "download"
+    },
+    {
+      "name": "all_years",
+      "type": "text",
+      "default": "All years",
+      "label": "all years"
+    },
+    {
+      "name": "a_client",
+      "type": "text",
+      "default": "Client",
+      "label": "a client"
+    },
+    {
+      "name": "a_computation",
+      "type": "text",
+      "default": "Compute & close",
+      "label": "a computation"
+    },
+    {
+      "name": "a_mapping",
+      "type": "text",
+      "default": "Intake & map",
+      "label": "a mapping"
+    },
+    {
+      "name": "a_statements",
+      "type": "text",
+      "default": "Statements",
+      "label": "a statements"
+    },
+    {
+      "name": "a_portal_files",
+      "type": "text",
+      "default": "26AS / AIS / TIS",
+      "label": "a portal files"
+    },
+    {
+      "name": "a_explanations",
+      "type": "text",
+      "default": "Reconcile",
+      "label": "a explanations"
+    },
+    {
+      "name": "a_tax_audit",
+      "type": "text",
+      "default": "Tax audit",
+      "label": "a tax audit"
+    },
+    {
+      "name": "a_firm",
+      "type": "text",
+      "default": "My firm",
+      "label": "a firm"
+    },
+    {
+      "name": "a_team",
+      "type": "text",
+      "default": "Team",
+      "label": "a team"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "title": "$title",
+      "title_client": "$title_client",
+      "title_firm": "$title_firm",
+      "lede": "$lede",
+      "open": "$open",
+      "all": "$all",
+      "info": "$info",
+      "doc": "$doc",
+      "h_when": "$h_when",
+      "h_who": "$h_who",
+      "h_area": "$h_area",
+      "h_field": "$h_field",
+      "h_old": "$h_old",
+      "h_new": "$h_new",
+      "field_of": "$field_of",
+      "none": "$none",
+      "yes": "$yes",
+      "no": "$no",
+      "added": "$added",
+      "removed": "$removed",
+      "empty": "$empty",
+      "download": "$download",
+      "all_years": "$all_years",
+      "a_client": "$a_client",
+      "a_computation": "$a_computation",
+      "a_mapping": "$a_mapping",
+      "a_statements": "$a_statements",
+      "a_portal_files": "$a_portal_files",
+      "a_explanations": "$a_explanations",
+      "a_tax_audit": "$a_tax_audit",
+      "a_firm": "$a_firm",
+      "a_team": "$a_team"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-05: the words of the History (change log).",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "title": "History",
+        "title_client": "History · {name}",
+        "title_firm": "History · the firm",
+        "lede": "Every change, field by field: what it was, what it became, when and who - and every earlier version of a document.",
+        "open": "History",
+        "all": "Everything",
+        "info": "Information",
+        "doc": "Documents",
+        "h_when": "When",
+        "h_who": "Who",
+        "h_area": "Where",
+        "h_field": "Field",
+        "h_old": "Was",
+        "h_new": "Now",
+        "field_of": "{field} · {item}",
+        "none": "No changes yet.",
+        "yes": "Yes",
+        "no": "No",
+        "added": "Added",
+        "removed": "Removed",
+        "empty": "-",
+        "download": "Download this version",
+        "all_years": "All years",
+        "a_client": "Client",
+        "a_computation": "Compute & close",
+        "a_mapping": "Intake & map",
+        "a_statements": "Statements",
+        "a_portal_files": "26AS / AIS / TIS",
+        "a_explanations": "Reconcile",
+        "a_tax_audit": "Tax audit",
+        "a_firm": "My firm",
+        "a_team": "Team"
+      }
+    }
+  ]
+}

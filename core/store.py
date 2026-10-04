@@ -214,12 +214,28 @@ def row(name: str, row_id: str, key: str = "id") -> dict | None:
         return json.loads(texts[rid])
 
 
+# 2026-10-05 SimplyFile change log: a module may watch some stores - it is told the old and the new value of each write
+# (a portal's changelog.py diffs them field by field). Nothing is watched unless a module asks.
+WATCHERS: list = []
+
+
+def watch(pattern: str, fn) -> None:
+    WATCHERS.append((re.compile(pattern), fn))
+
+
 def write(name: str, value) -> None:
+    hits = [fn for pat, fn in WATCHERS if pat.search(name)]
+    old = None
     with _LOCK:
         _VIEW.pop(name, None)                          # the shared copy is never older than the file
         _TEXT.pop(name, None)                          # nor read()'s kept text (a same-size write inside one mtime tick)
         DATA.mkdir(parents=True, exist_ok=True)
         p = path_of(name)
+        if hits and p.exists():
+            try:
+                old = json.loads(p.read_text(encoding="utf-8"))
+            except (OSError, ValueError):
+                old = None
         tmp = p.with_suffix(".tmp")
         tmp.write_text(json.dumps(value, indent=2, ensure_ascii=False), encoding="utf-8")
         tmp.replace(p)
@@ -229,6 +245,11 @@ def write(name: str, value) -> None:
                 os.chmod(p, 0o600)
             except OSError:
                 pass
+    for fn in hits:                                    # after the write and outside the lock: a watcher may write its own store
+        try:
+            fn(name, old, value)
+        except Exception as e:  # noqa: BLE001 - a broken watcher never breaks the save it watches
+            print(f"[store] watcher on {name}: {e}")
 
 
 # --- users and sign-in -------------------------------------------------------------------------

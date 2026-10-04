@@ -1936,3 +1936,23 @@ table.ap-facts{display:table;width:100%;border-collapse:collapse;table-layout:fi
 .au-clause{font:600 12px/1.6 var(--mono,monospace);white-space:nowrap;color:var(--muted)}.au-main{display:grid;gap:4px;min-width:0}
 .au-note{font-size:13px;padding:4px 8px}.au-new{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 12px}.au-new #au-pt{flex:1;min-width:220px}
 @media (max-width:640px){.au-check,.au-point{grid-template-columns:1fr}}
+/* 2026-10-05 owner: Chip Chat in dark mode - the light-tinted chips and the highlighted choice get a dark tint and white text */
+:root[data-theme="dark"] .cx-option:hover,:root[data-theme="dark"] .cx-option:focus-visible{border-color:#6366f1;background:#312e81;color:#fff}
+:root[data-theme="dark"] .cx-ex{border-color:#4338ca;background:#1e1b4b;color:#e0e7ff}:root[data-theme="dark"] .cx-ex:hover{background:#312e81;color:#fff}
+:root[data-theme="dark"] .cx-next-q{border-color:#0f766e;background:#042f2e;color:#ccfbf1}:root[data-theme="dark"] .cx-next-q:hover{background:#115e59;color:#fff}
+:root[data-theme="dark"] .cx-surprise{border-color:#92400e;background:#451a03;color:#fde68a}:root[data-theme="dark"] .cx-surprise:hover{background:#78350f;color:#fff}
+:root[data-theme="dark"] .cx-err,:root[data-theme="dark"] .cx-route.cx-no_match{background:#4c0519;color:#fecdd3}
+:root[data-theme="dark"] .cx-route.cx-answer{background:#022c22;color:#a7f3d0}
+:root[data-theme="dark"] .cx-open{color:#a5b4fc}:root[data-theme="dark"] .cx-hint{color:#fbbf24}
+@media (prefers-color-scheme:dark){
+:root:not([data-theme="light"]) .cx-option:hover,:root:not([data-theme="light"]) .cx-option:focus-visible{border-color:#6366f1;background:#312e81;color:#fff}
+:root:not([data-theme="light"]) .cx-ex{border-color:#4338ca;background:#1e1b4b;color:#e0e7ff}:root:not([data-theme="light"]) .cx-ex:hover{background:#312e81;color:#fff}
+:root:not([data-theme="light"]) .cx-next-q{border-color:#0f766e;background:#042f2e;color:#ccfbf1}:root:not([data-theme="light"]) .cx-next-q:hover{background:#115e59;color:#fff}
+:root:not([data-theme="light"]) .cx-surprise{border-color:#92400e;background:#451a03;color:#fde68a}:root:not([data-theme="light"]) .cx-surprise:hover{background:#78350f;color:#fff}
+:root:not([data-theme="light"]) .cx-err,:root:not([data-theme="light"]) .cx-route.cx-no_match{background:#4c0519;color:#fecdd3}
+:root:not([data-theme="light"]) .cx-route.cx-answer{background:#022c22;color:#a7f3d0}
+:root:not([data-theme="light"]) .cx-open{color:#a5b4fc}:root:not([data-theme="light"]) .cx-hint{color:#fbbf24}
+}
+/* History (change log) */
+.ch-tabs{margin:8px 0;display:inline-flex;width:auto}.ch-tbl td{vertical-align:top}.ch-old{color:var(--bad,#be123c)}.ch-new{color:var(--ok,#047857)}
+.ch-old,.ch-new{max-width:260px;word-break:break-word}.ch-dl{margin-left:6px;display:inline-flex;vertical-align:middle}

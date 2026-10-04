@@ -1,0 +1,76 @@
+{
+  "prod_base": "https://sf.valuestream.in",
+  "voice": "en-IN-NeerjaNeural",
+  "rate": "+0%",
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "blur": [
+    "#whoami",
+    "#userpop .head"
+  ],
+  "page_key": "sf-server",
+  "title": "Server & sites",
+  "start_url": "/#/server",
+  "covers": [
+    "sites up",
+    "backups on time",
+    "what holds the disk"
+  ],
+  "steps": [
+    {
+      "chapter": "Server & sites",
+      "say": "The VPS behind SimplyFile, read-only: every site, its backups and its disk.",
+      "do": [
+        {
+          "wait": 1
+        }
+      ]
+    },
+    {
+      "chapter": "At a glance",
+      "say": "Sites up, disk used, backups on time and disk growth.",
+      "do": [
+        {
+          "highlight_target": ".sf-kpis|main",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Sites",
+      "say": "Each service, whether it answers, the code it runs and when it started.",
+      "do": [
+        {
+          "highlight_target": "#sv-sites|main",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Backups",
+      "say": "When each backup runs, how many copies are kept, and the newest. Late means no new copy for two runs - the backup may have stopped.",
+      "do": [
+        {
+          "highlight_target": "#sv-backups|main",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Disk",
+      "say": "What holds the space; open a folder to see inside it. Restarting a site or deleting files stays in the VPS Console.",
+      "do": [
+        {
+          "highlight_target": "#sv-disk|main",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    }
+  ]
+}

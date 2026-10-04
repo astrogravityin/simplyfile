@@ -1,0 +1,121 @@
+{
+  "chip_id": "clients.in_tab",
+  "kind": "predicate",
+  "set": "clients",
+  "label": "Does this client show in this tab (Active / Archived)",
+  "aliases": [
+    "in tab"
+  ],
+  "params": [
+    {
+      "name": "view",
+      "type": "text",
+      "default": "",
+      "label": "the tab: '' Active, 'archived'"
+    },
+    {
+      "name": "client_archived",
+      "type": "boolean",
+      "default": false,
+      "label": "the client is archived"
+    },
+    {
+      "name": "filing_archived",
+      "type": "boolean",
+      "default": false,
+      "label": "this year's filing is archived on its own"
+    }
+  ],
+  "expr": {
+    "op": "any",
+    "items": [
+      {
+        "op": "all",
+        "items": [
+          {
+            "op": "eq",
+            "left": "$view",
+            "right": "archived"
+          },
+          {
+            "op": "any",
+            "items": [
+              {
+                "op": "eq",
+                "left": "$client_archived",
+                "right": true
+              },
+              {
+                "op": "eq",
+                "left": "$filing_archived",
+                "right": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "op": "all",
+        "items": [
+          {
+            "op": "ne",
+            "left": "$view",
+            "right": "archived"
+          },
+          {
+            "op": "not",
+            "item": {
+              "op": "eq",
+              "left": "$client_archived",
+              "right": true
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "returns": "boolean",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-05 owner: chips and ops for everything - which tab a client shows in was decided in clients.listed. Active = every client not archived (a filing archived alone keeps its client here); Archived = archived clients plus clients whose this-year filing is archived.",
+  "test_cases": [
+    {
+      "args": {
+        "view": "",
+        "client_archived": false,
+        "filing_archived": true
+      },
+      "expect_value": true
+    },
+    {
+      "args": {
+        "view": "",
+        "client_archived": true
+      },
+      "expect_value": false
+    },
+    {
+      "args": {
+        "view": "archived",
+        "client_archived": false,
+        "filing_archived": true
+      },
+      "expect_value": true
+    },
+    {
+      "args": {
+        "view": "archived",
+        "client_archived": false,
+        "filing_archived": false
+      },
+      "expect_value": false
+    },
+    {
+      "args": {
+        "view": "archived",
+        "client_archived": true
+      },
+      "expect_value": true
+    }
+  ]
+}

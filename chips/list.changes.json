@@ -1,0 +1,97 @@
+{
+  "chip_id": "list.changes",
+  "kind": "accessor",
+  "set": "list",
+  "label": "Change log list",
+  "aliases": [
+    "change log list"
+  ],
+  "params": [
+    {
+      "name": "search_keys",
+      "type": "list",
+      "default": [
+        "field",
+        "old",
+        "new",
+        "by",
+        "area_label",
+        "ay"
+      ],
+      "label": "search keys"
+    },
+    {
+      "name": "sort_key",
+      "type": "text",
+      "default": "at",
+      "label": "sort key"
+    },
+    {
+      "name": "sort_desc",
+      "type": "boolean",
+      "default": true,
+      "label": "sort desc"
+    },
+    {
+      "name": "sorts",
+      "type": "list",
+      "default": [
+        "at",
+        "field",
+        "by"
+      ],
+      "label": "sorts"
+    },
+    {
+      "name": "page_size",
+      "type": "number",
+      "default": 25,
+      "label": "page size"
+    },
+    {
+      "name": "max_page_size",
+      "type": "number",
+      "default": 100,
+      "label": "max page size"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "search_keys": "$search_keys",
+      "sort_key": "$sort_key",
+      "sort_desc": "$sort_desc",
+      "sorts": "$sorts",
+      "page_size": "$page_size",
+      "max_page_size": "$max_page_size"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-05: the change log, newest first; search by field, old or new value, who, area or year.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "search_keys": [
+          "field",
+          "old",
+          "new",
+          "by",
+          "area_label",
+          "ay"
+        ],
+        "sort_key": "at",
+        "sort_desc": true,
+        "sorts": [
+          "at",
+          "field",
+          "by"
+        ],
+        "page_size": 25,
+        "max_page_size": 100
+      }
+    }
+  ]
+}

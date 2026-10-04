@@ -5,6 +5,7 @@
 import { api, esc, toast, busy, pageHead, confirmDialog, t, ps, loadWords, uploadBox, modal, when, may } from './app.js';
 import { clientPicker } from './page-intake.js';
 import { icon } from './icons.js';
+import { historyButton, wireHistory } from './changes.js';
 
 const w = (k, v) => t('recon', k, v);
 const P = () => ps('recon');
@@ -70,7 +71,7 @@ const docMark = (label, tone) => `<svg class="rc-doc" width="34" height="40" vie
   <text x="17" y="31.6" text-anchor="middle" class="rc-doc-t">${esc(label)}</text></svg>`;
 
 export async function reconPage(host) {
-  await loadWords('recon', 'intake');
+  await loadWords('recon', 'intake', 'changes');
   const p = new URLSearchParams((location.hash.split('?')[1]) || '');
   if (!p.get('c')) return clientPicker(host, 'recon');
   const K = await api('/api/clients/settings');
@@ -81,12 +82,13 @@ export async function reconPage(host) {
   host.innerHTML = pageHead(`${w('title')} · ${client.name}`, esc(w('lede')),
     `<label class="cl-ay" for="rc-ay">${icon('clock', 14)}<span>${esc(w('ay'))}</span>
        <select id="rc-ay">${K.years.map((y) => `<option ${y === ay ? 'selected' : ''}>${esc(y)}</option>`).join('')}</select></label>
-     <button type="button" class="primary" id="rc-up">${icon('upload', 15)} ${esc(w('upload'))}</button>`)
+     ${historyButton()}<button type="button" class="primary" id="rc-up">${icon('upload', 15)} ${esc(w('upload'))}</button>`)
     + `<section class="card rc-hero" id="rc-hero"></section>
        <section class="card"><h3 class="rc-h">${icon('folder', 15)} ${esc(w('sources'))}</h3><div class="rc-src" id="rc-files"></div></section>
        <section class="card"><div class="rc-find-head"><h3 class="rc-h">${icon('check', 15)} ${esc(w('findings'))}</h3><div class="tabs rc-tabs" role="tablist" id="rc-tabs"></div></div>
          <input type="search" id="rc-q" class="mp-find" placeholder="${esc(w('find_findings'))}" aria-label="${esc(w('find_findings'))}"/>
          <div id="rc-find"></div></section>`;
+  wireHistory(host, { cid, ay, name: client.name });
   host.querySelector('#rc-ay').onchange = (e) => { location.hash = `#/recon?c=${encodeURIComponent(cid)}&ay=${encodeURIComponent(e.target.value)}`; };
 
   const draw = (d) => {

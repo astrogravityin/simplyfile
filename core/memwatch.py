@@ -519,8 +519,8 @@ if __name__ == "__main__":  # ponytail: one runnable self-check (the chips certi
         _PREV.clear()
         tick(100, 0, 0)
         host_sample()
-        _PREV["t"] -= 10                                        # ten seconds later…
         tick(300, 10240, 0)                                     # 200 of 1000 busy ticks
+        _PREV["t"] = time.time() - 10                           # ten seconds later… (after the writes, so slow disks can't stretch dt)
         h = host_sample()
         assert h["cpu"] == 20.0, h
         assert h["mem"] == 3072 and h["mem_app"] == 150, h      # the whole tree: portal + ffmpeg

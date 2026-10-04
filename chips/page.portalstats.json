@@ -34,6 +34,17 @@
       "type": "json",
       "default": 8,
       "label": "flag chips"
+    },
+    {
+      "name": "flags",
+      "type": "json",
+      "default": [
+        "review",
+        "stuck",
+        "empty",
+        "dormant"
+      ],
+      "label": "flags"
     }
   ],
   "expr": {
@@ -41,7 +52,8 @@
     "fields": {
       "flag_icon": "$flag_icon",
       "flag_tone": "$flag_tone",
-      "flag_chips": "$flag_chips"
+      "flag_chips": "$flag_chips",
+      "flags": "$flags"
     }
   },
   "returns": "record",
@@ -64,7 +76,13 @@
           "empty": "--warn",
           "dormant": "--bad"
         },
-        "flag_chips": 8
+        "flag_chips": 8,
+        "flags": [
+          "review",
+          "stuck",
+          "empty",
+          "dormant"
+        ]
       }
     }
   ]

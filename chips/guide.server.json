@@ -1,0 +1,109 @@
+{
+  "chip_id": "guide.server",
+  "kind": "accessor",
+  "set": "guide",
+  "label": "Guide me: Server & sites",
+  "aliases": [
+    "guide me: server & sites"
+  ],
+  "params": [
+    {
+      "name": "title",
+      "type": "text",
+      "default": "Server & sites",
+      "label": "title"
+    },
+    {
+      "name": "lede",
+      "type": "long",
+      "default": "The VPS behind {product}, read-only: every site, its backups and its disk.",
+      "label": "lede"
+    },
+    {
+      "name": "icon",
+      "type": "text",
+      "default": "globe",
+      "label": "icon"
+    },
+    {
+      "name": "minutes",
+      "type": "number",
+      "default": 2,
+      "label": "minutes"
+    },
+    {
+      "name": "steps",
+      "type": "rows",
+      "default": [
+        {
+          "title": "At a glance",
+          "say": "Sites up, disk used, backups on time and disk growth.",
+          "target": ".sf-kpis|main"
+        },
+        {
+          "title": "Sites",
+          "say": "Each service, whether it answers, the code it runs and when it started.",
+          "target": "#sv-sites|main"
+        },
+        {
+          "title": "Backups",
+          "say": "When each backup runs, how many copies are kept, and the newest. Late means no new copy for two runs - the backup may have stopped.",
+          "target": "#sv-backups|main"
+        },
+        {
+          "title": "Disk",
+          "say": "What holds the space; open a folder to see inside it. Restarting a site or deleting files stays in the VPS Console.",
+          "target": "#sv-disk|main"
+        }
+      ],
+      "label": "steps"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "title": "$title",
+      "lede": "$lede",
+      "icon": "$icon",
+      "minutes": "$minutes",
+      "steps": "$steps"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-04: the Server & sites walk, up to date with the screen; tours/sf-server.json is made from it.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "title": "Server & sites",
+        "lede": "The VPS behind {product}, read-only: every site, its backups and its disk.",
+        "icon": "globe",
+        "minutes": 2,
+        "steps": [
+          {
+            "title": "At a glance",
+            "say": "Sites up, disk used, backups on time and disk growth.",
+            "target": ".sf-kpis|main"
+          },
+          {
+            "title": "Sites",
+            "say": "Each service, whether it answers, the code it runs and when it started.",
+            "target": "#sv-sites|main"
+          },
+          {
+            "title": "Backups",
+            "say": "When each backup runs, how many copies are kept, and the newest. Late means no new copy for two runs - the backup may have stopped.",
+            "target": "#sv-backups|main"
+          },
+          {
+            "title": "Disk",
+            "say": "What holds the space; open a folder to see inside it. Restarting a site or deleting files stays in the VPS Console.",
+            "target": "#sv-disk|main"
+          }
+        ]
+      }
+    }
+  ]
+}

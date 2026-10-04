@@ -1,0 +1,189 @@
+{
+  "chip_id": "changes.watch",
+  "kind": "accessor",
+  "set": "changes",
+  "label": "Change log: what is watched",
+  "aliases": [
+    "change log: what is watched"
+  ],
+  "params": [
+    {
+      "name": "rows",
+      "type": "json",
+      "default": [
+        {
+          "id": "client",
+          "pattern": "^sf_clients\\.json$",
+          "scope": "client",
+          "kind": "info",
+          "list_key": "id",
+          "scope_field": "id",
+          "year_path": "^years\\.(?P<ay>\\d{4}-\\d{2})\\.(?P<rest>.+)$"
+        },
+        {
+          "id": "computation",
+          "pattern": "^sf_compute/(?P<cid>[0-9a-f]{6,32})/(?P<ay>\\d{4}-\\d{2})\\.json$",
+          "scope": "client",
+          "kind": "info"
+        },
+        {
+          "id": "mapping",
+          "pattern": "^sf_files/(?P<cid>[0-9a-f]{6,32})/(?P<ay>\\d{4}-\\d{2})/(?P<fid>[0-9a-f]+)\\.tags\\.json$",
+          "scope": "client",
+          "kind": "info"
+        },
+        {
+          "id": "statements",
+          "pattern": "^sf_files/(?P<cid>[0-9a-f]{6,32})/(?P<ay>\\d{4}-\\d{2})/files\\.json$",
+          "scope": "client",
+          "kind": "doc",
+          "list_key": "id",
+          "name_field": "name",
+          "version_field": "version",
+          "kept_in": "sf_files"
+        },
+        {
+          "id": "portal_files",
+          "pattern": "^sf_portal/(?P<cid>[0-9a-f]{6,32})/(?P<ay>\\d{4}-\\d{2})/files\\.json$",
+          "scope": "client",
+          "kind": "doc",
+          "list_key": "id",
+          "name_field": "name",
+          "version_field": "version",
+          "kept_in": "sf_portal"
+        },
+        {
+          "id": "explanations",
+          "pattern": "^sf_portal/(?P<cid>[0-9a-f]{6,32})/(?P<ay>\\d{4}-\\d{2})/notes\\.json$",
+          "scope": "client",
+          "kind": "info"
+        },
+        {
+          "id": "tax_audit",
+          "pattern": "^sf_audit/(?P<cid>[0-9a-f]{6,32})/(?P<ay>\\d{4}-\\d{2})\\.json$",
+          "scope": "client",
+          "kind": "info"
+        },
+        {
+          "id": "firm",
+          "pattern": "^sf_firms$",
+          "scope": "firm",
+          "kind": "info",
+          "list_key": "id",
+          "scope_field": "id"
+        },
+        {
+          "id": "team",
+          "pattern": "^users$",
+          "scope": "firm",
+          "kind": "info",
+          "list_key": "id",
+          "scope_field": "firm_id",
+          "only": [
+            "name",
+            "email",
+            "firm_role",
+            "disabled"
+          ],
+          "item_field": "name"
+        }
+      ],
+      "label": "rows"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "rows": "$rows"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-05: the stores whose every change is logged - field by field, old and new, when and who - and what each holds: the client and each of its years, the computation choices, the SF Refs, the statements and portal files (documents), the explanations, the tax audit work, the firm's profile and its team.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "rows": [
+          {
+            "id": "client",
+            "pattern": "^sf_clients\\.json$",
+            "scope": "client",
+            "kind": "info",
+            "list_key": "id",
+            "scope_field": "id",
+            "year_path": "^years\\.(?P<ay>\\d{4}-\\d{2})\\.(?P<rest>.+)$"
+          },
+          {
+            "id": "computation",
+            "pattern": "^sf_compute/(?P<cid>[0-9a-f]{6,32})/(?P<ay>\\d{4}-\\d{2})\\.json$",
+            "scope": "client",
+            "kind": "info"
+          },
+          {
+            "id": "mapping",
+            "pattern": "^sf_files/(?P<cid>[0-9a-f]{6,32})/(?P<ay>\\d{4}-\\d{2})/(?P<fid>[0-9a-f]+)\\.tags\\.json$",
+            "scope": "client",
+            "kind": "info"
+          },
+          {
+            "id": "statements",
+            "pattern": "^sf_files/(?P<cid>[0-9a-f]{6,32})/(?P<ay>\\d{4}-\\d{2})/files\\.json$",
+            "scope": "client",
+            "kind": "doc",
+            "list_key": "id",
+            "name_field": "name",
+            "version_field": "version",
+            "kept_in": "sf_files"
+          },
+          {
+            "id": "portal_files",
+            "pattern": "^sf_portal/(?P<cid>[0-9a-f]{6,32})/(?P<ay>\\d{4}-\\d{2})/files\\.json$",
+            "scope": "client",
+            "kind": "doc",
+            "list_key": "id",
+            "name_field": "name",
+            "version_field": "version",
+            "kept_in": "sf_portal"
+          },
+          {
+            "id": "explanations",
+            "pattern": "^sf_portal/(?P<cid>[0-9a-f]{6,32})/(?P<ay>\\d{4}-\\d{2})/notes\\.json$",
+            "scope": "client",
+            "kind": "info"
+          },
+          {
+            "id": "tax_audit",
+            "pattern": "^sf_audit/(?P<cid>[0-9a-f]{6,32})/(?P<ay>\\d{4}-\\d{2})\\.json$",
+            "scope": "client",
+            "kind": "info"
+          },
+          {
+            "id": "firm",
+            "pattern": "^sf_firms$",
+            "scope": "firm",
+            "kind": "info",
+            "list_key": "id",
+            "scope_field": "id"
+          },
+          {
+            "id": "team",
+            "pattern": "^users$",
+            "scope": "firm",
+            "kind": "info",
+            "list_key": "id",
+            "scope_field": "firm_id",
+            "only": [
+              "name",
+              "email",
+              "firm_role",
+              "disabled"
+            ],
+            "item_field": "name"
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -4,6 +4,7 @@
 // Every word is chip ui.intake; refs are checked on the server (chip intake.ref).
 import { api, BASE, esc, toast, busy, pageHead, confirmDialog, t, ps, loadWords, listBox, uploadBox, when, may } from './app.js';
 import { icon } from './icons.js';
+import { historyButton, wireHistory } from './changes.js';
 import { hue, initials } from './page-clients.js';
 
 const w = (k, v) => t('intake', k, v);
@@ -13,7 +14,7 @@ const money = (n) => Number(n).toLocaleString(ps('intake').money_locale, { maxim
 const tagOf = (state) => ps('intake').state_tag[state];     // chip page.intake
 
 export async function intakePage(host) {
-  await loadWords('intake');
+  await loadWords('intake', 'changes');
   const p = q();
   if (!p.get('c')) return clientPicker(host, 'intake');
   const K = await api('/api/clients/settings');
@@ -79,7 +80,7 @@ async function filesView(host, cid, ay, K) {
   host.innerHTML = pageHead(w('statements'), esc(w('lede')),
     `<label class="cl-ay" for="in-ay">${icon('clock', 14)}<span>${esc(w('ay'))}</span>
        <select id="in-ay">${K.years.map((y) => `<option ${y === ay ? 'selected' : ''}>${esc(y)}</option>`).join('')}</select></label>
-     <button type="button" class="primary" id="in-up">${icon('upload', 15)} ${esc(w('upload'))}</button>`)
+     ${historyButton()}<button type="button" class="primary" id="in-up">${icon('upload', 15)} ${esc(w('upload'))}</button>`)
     + `<section class="card in-hero">
         <div class="in-who"><span class="cl-av" style="--h:${hue(d.client.name)}" aria-hidden="true">${esc(initials(d.client.name))}</span>
           <div><div class="cl-name">${esc(d.client.name)} <span class="tag brand">${esc(w('form_is', { form: d.form }))}</span></div>
@@ -113,6 +114,7 @@ async function filesView(host, cid, ay, K) {
   const upload = () => uploadBox(w('upload'), d.exts, base, () => filesView(host, cid, ay, K));
   host.querySelector('#in-ay').onchange = (e) => go({ c: cid, ay: e.target.value });
   host.querySelector('#in-change').onclick = () => go({});
+  wireHistory(host, { cid, ay, name: d.client.name });
   host.querySelector('#in-up').onclick = upload;
   if (host.querySelector('#in-up2')) host.querySelector('#in-up2').onclick = upload;
   host.querySelectorAll('[data-f]').forEach((el) => {

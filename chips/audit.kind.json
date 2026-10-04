@@ -1,0 +1,70 @@
+{
+  "chip_id": "audit.kind",
+  "kind": "accessor",
+  "set": "audit",
+  "label": "Business or profession",
+  "aliases": [
+    "business or profession"
+  ],
+  "params": [
+    {
+      "name": "profession",
+      "type": "boolean",
+      "default": false,
+      "label": "has professional receipts"
+    },
+    {
+      "name": "other",
+      "type": "boolean",
+      "default": false,
+      "label": "has sales or service income"
+    }
+  ],
+  "expr": {
+    "vop": "choose",
+    "cases": [
+      {
+        "when": {
+          "op": "all",
+          "items": [
+            {
+              "op": "eq",
+              "left": "$profession",
+              "right": true
+            },
+            {
+              "op": "eq",
+              "left": "$other",
+              "right": false
+            }
+          ]
+        },
+        "then": "profession"
+      }
+    ],
+    "else": "business"
+  },
+  "returns": "text",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-04: only professional receipts = a profession (44AB(b), 50 lakh); any sales or services = a business (44AB(a)).",
+  "test_cases": [
+    {
+      "args": {
+        "profession": true
+      },
+      "expect_value": "profession"
+    },
+    {
+      "args": {
+        "profession": true,
+        "other": true
+      },
+      "expect_value": "business"
+    },
+    {
+      "args": {},
+      "expect_value": "business"
+    }
+  ]
+}

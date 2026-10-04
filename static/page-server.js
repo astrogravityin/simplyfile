@@ -41,13 +41,13 @@ export async function serverPage(host) {
         ${kpiTile('archive', late ? '--bad' : '--ok', w('k_backups'), `${d.backups.length - late} / ${d.backups.length}`, late ? w('k_backups_sub', { late }) : w('k_backups_ok'))}
         ${kpiTile('pulse', h.days_to_full != null && h.days_to_full < 60 ? '--warn' : '--brand', w('k_growth'), h.per_day == null ? '-' : `${size(h.per_day)}/d`,
           !h.series.length ? w('k_growth_na') : h.days_to_full == null ? w('k_growth_none') : w('k_growth_sub', { days: h.days_to_full }))}</section>
-      <section class="card an-card"><h3 class="rc-h">${icon('globe', 15)} ${esc(w('sites_title'))}</h3><p class="small muted">${esc(w('sites_sub'))}</p>
+      <section class="card an-card" id="sv-sites"><h3 class="rc-h">${icon('globe', 15)} ${esc(w('sites_title'))}</h3><p class="small muted">${esc(w('sites_sub'))}</p>
         <div class="an-scroll"><table class="cc-tbl an-tbl"><colgroup><col class="sv-wide"><col><col><col><col class="sv-num"></colgroup><thead><tr><th>${esc(w('h_site'))}</th><th>${esc(w('h_state'))}</th>
           <th>${esc(w('h_commit'))}</th><th>${esc(w('h_since'))}</th><th class="num">${esc(w('h_jobs'))}</th></tr></thead><tbody>
         ${d.sites.map((s) => `<tr><td><b>${esc(s.label)}</b><div class="small muted">${esc(s.host)} · <code>${esc(s.service)}</code></div></td>
           <td>${pill(tone('state_tone', s.state), w(`st_${s.state}`))}</td><td><code>${esc(s.commit || '-')}</code></td><td class="small">${esc(s.since || '-')}</td>
           <td class="num">${s.jobs}</td></tr>`).join('')}</tbody></table></div></section>
-      <section class="card an-card"><h3 class="rc-h">${icon('archive', 15)} ${esc(w('bk_title'))}</h3><p class="small muted">${esc(w('bk_sub'))}</p>
+      <section class="card an-card" id="sv-backups"><h3 class="rc-h">${icon('archive', 15)} ${esc(w('bk_title'))}</h3><p class="small muted">${esc(w('bk_sub'))}</p>
         <div class="an-scroll"><table class="cc-tbl an-tbl"><colgroup><col class="sv-wide"><col><col class="sv-num"><col class="sv-num"><col><col></colgroup><thead><tr><th>${esc(w('h_backup'))}</th><th>${esc(w('h_schedule'))}</th>
           <th class="num">${esc(w('h_copies'))}</th><th class="num">${esc(w('h_space'))}</th><th>${esc(w('h_newest'))}</th><th>${esc(w('h_state'))}</th></tr></thead><tbody>
         ${d.backups.map((b) => `<tr><td><b>${esc(b.label)}</b><div class="small muted"><code>${esc(b.dir)}</code>${b.plan ? ` · ${esc(b.plan)}` : ''}</div></td>
@@ -55,7 +55,7 @@ export async function serverPage(host) {
           <td class="num">${b.copies}</td><td class="num">${esc(size(b.bytes))}</td><td>${esc(ago(b.newest_h))}</td>
           <td>${pill(tone('backup_tone', b.state), w(`bs_${b.state}`))}</td></tr>`).join('')}</tbody></table></div></section>
       <div class="an-grid">
-        <section class="card an-card"><h3 class="rc-h">${icon('folder', 15)} ${esc(w('disk_title'))}</h3><p class="small muted">${esc(w('disk_sub'))}</p>
+        <section class="card an-card" id="sv-disk"><h3 class="rc-h">${icon('folder', 15)} ${esc(w('disk_title'))}</h3><p class="small muted">${esc(w('disk_sub'))}</p>
           <div class="sv-roots">${d.roots.map((r) => `<button class="an-chip" data-du="${esc(r)}">${esc(r)}</button>`).join('')}</div><div id="sv-du"></div></section>
         <section class="card an-card"><h3 class="rc-h">${icon('pulse', 15)} ${esc(w('hist_title'))}</h3><p class="small muted">${esc(w('hist_sub'))}</p>
           ${h.series.length ? `<svg class="ps-use" viewBox="0 0 ${h.series.length * 10} 60" preserveAspectRatio="none" role="img">${h.series.map((x, i) =>
