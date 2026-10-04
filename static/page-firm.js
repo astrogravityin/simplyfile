@@ -172,8 +172,8 @@ export async function firmPage(host) {
         <div class="fi-meta"><span class="${esc(stateOf(d, f.state).tag)}">${esc(stateOf(d, f.state).label)}</span><span>${esc(f.kind_label)}</span>
           ${f.pan ? `<code>${esc(f.pan)}</code>` : ''}<span>${esc(w('you_are', { role: d.role.label }))}</span></div>
         ${road(f.steps, d.settings.steps)}</div></section>`
-    + (f.editable ? readyCard(d, f) : '')
-    + banner(d) + (f.state === d.settings.working_state ? teamCard(d) + details(d) + papers(d) : details(d) + papers(d) + teamCard(d))
+    + banner(d)                                  // what to do next (Send for approval) sits right under the road, above the checklist
+    + (f.editable ? readyCard(d, f) : '') + (f.state === d.settings.working_state ? teamCard(d) + details(d) + papers(d) : details(d) + papers(d) + teamCard(d))
     + `<p class="small muted fi-privacy">${icon('lock', 13)} ${esc(w('privacy'))}</p>`;
   const $ = (s) => host.querySelector(s);
   const values = () => {
@@ -190,8 +190,9 @@ export async function firmPage(host) {
     };
   });
   if ($('#fi-submit')) $('#fi-submit').onclick = (ev) => {
+    const btn = ev.currentTarget;   // read now: once the click is over currentTarget is null, and busy(null) did nothing at all
     if (f.ready.say) { toast(w(f.ready.say, { missing: f.ready.missing.map((x) => docOf(d, x).label).join(', ') }), 'warn', 8); return; }
-    confirmDialog(w('submit_title'), w('submit_body', { hours: d.settings.review_hours }), () => busy(ev.currentTarget, async () => {
+    confirmDialog(w('submit_title'), w('submit_body', { hours: d.settings.review_hours }), () => busy(btn, async () => {
       try {
         await api('/api/firm', { method: 'PUT', body: values() });
         const r = await api(`/api/firm/${f.id}/move`, { method: 'POST', body: { action: 'submit' } });
