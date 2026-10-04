@@ -89,11 +89,15 @@ async function filesView(host, cid, ay, K) {
           <div class="sf-legend">${P.ring.filter((s) => all[s]).map((s) => `<span class="sf-key"><i style="background:var(${P.ring_color[s]})"></i>${esc(w(`c_${s}`, { n: all[s] }))}</span>`).join('')}</div></div></div>` : ''}
         ${d.files.length && may('recon') ? `<a class="in-next" href="#/recon?c=${encodeURIComponent(cid)}&ay=${encodeURIComponent(ay)}">
           <span>${esc(w('next_recon'))}</span><b>${esc(w('reconcile'))} ${icon('right', 14)}</b></a>` : ''}</section>`
+    + `<details class="in-formats"><summary>${icon('info', 14)} ${esc(w('formats_title'))}</summary>
+        <p><b class="in-ok">${icon('check', 13)}</b>${esc(w('formats_ok'))}</p><p><b class="in-part">${icon('alert', 13)}</b>${esc(w('formats_partly'))}</p>
+        <p><b class="in-no">${icon('ban', 13)}</b>${esc(w('formats_no'))}</p></details>`
     + (d.files.length ? `<section class="in-files">${d.files.map((f) => `<article class="in-file" data-f="${esc(f.id)}" data-name="${esc(f.name)}">
         <div class="in-file-top">${sheetMark(f.ext || String(f.name).split('.').pop())}
           <div class="in-file-id"><b title="${esc(f.name)}">${esc(f.name)}</b>
             <span class="small muted">${esc(w('uploaded_at', { when: when(f.uploaded_at) }))} · ${esc(w('c_rows', { n: f.counts.rows }))}</span>
-            ${f.pan_seen ? '' : `<span class="tag warn">${icon('alert', 11)} ${esc(w('pan_missing'))}</span>`}</div>
+            ${f.pan_seen ? '' : `<span class="tag warn">${icon('alert', 11)} ${esc(w('pan_missing'))}</span>`}
+            ${(f.notes || []).map((n) => `<span class="in-note">${icon('info', 12)} ${esc(n)}</span>`).join('')}</div>
           ${may('intake', 'delete') ? `<button type="button" class="small ghost in-del" data-del aria-label="${esc(w('delete'))}">${icon('trash', 13)}</button>` : ''}</div>
         ${stateBar(f.counts)}
         <div class="sf-legend">${P.ring.filter((s) => f.counts[s]).map((s) => `<span class="sf-key"><i style="background:var(${P.ring_color[s]})"></i>${esc(w(`c_${s}`, { n: f.counts[s] }))}</span>`).join('')}</div>
@@ -106,7 +110,7 @@ async function filesView(host, cid, ay, K) {
           <circle cx="92" cy="74" r="15" fill="var(--brand)"/><path d="M92 81V67M86 73l6-6 6 6" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
         <b>${esc(w('drop_title'))}</b><p class="small muted">${esc(w('no_files'))}</p>
         <button type="button" class="primary" id="in-up2">${icon('upload', 15)} ${esc(w('upload'))}</button></section>`);
-  const upload = () => uploadBox(w('upload'), ['.xls', '.xlsx', '.csv'], base, () => filesView(host, cid, ay, K));
+  const upload = () => uploadBox(w('upload'), d.exts, base, () => filesView(host, cid, ay, K));
   host.querySelector('#in-ay').onchange = (e) => go({ c: cid, ay: e.target.value });
   host.querySelector('#in-change').onclick = () => go({});
   host.querySelector('#in-up').onclick = upload;

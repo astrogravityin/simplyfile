@@ -1,0 +1,99 @@
+{
+  "chip_id": "chat.surprise",
+  "kind": "accessor",
+  "set": "chat",
+  "label": "Surprise me",
+  "aliases": [
+    "surprise me"
+  ],
+  "params": [
+    {
+      "name": "weights",
+      "type": "json",
+      "default": {
+        "asked": 3,
+        "curated": 4,
+        "pool": 3
+      },
+      "label": "weights"
+    },
+    {
+      "name": "asked_days",
+      "type": "json",
+      "default": 30,
+      "label": "asked days"
+    },
+    {
+      "name": "asked_top",
+      "type": "json",
+      "default": 25,
+      "label": "asked top"
+    },
+    {
+      "name": "curated",
+      "type": "json",
+      "default": [
+        "How much tax on 75 lakh for an individual under the new regime for AY 2026-27?",
+        "Which clients need advice?",
+        "ITR-U additional tax on extra tax of 3 lakh filed 30 months after the year ended",
+        "Does a 61 year old with business income pay advance tax?",
+        "What is the 234F late fee if total income is 4.5 lakh?",
+        "Due date for ITR-3 with Form 3CEB for AY 2026-27",
+        "244A interest on a refund of 2.4 lakh for 11 months",
+        "Is AAAHG4321K a valid PAN?",
+        "What may I do?",
+        "Which returns are overdue?",
+        "If I file ITR-5 with tax audit on 05/11/2026 what kind of return is it?",
+        "Can an auditor reopen a filed year?",
+        "What is an SF Ref?",
+        "Can I upload the JSON straight to the Income-tax portal?",
+        "How do I delegate work?"
+      ],
+      "label": "curated"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "weights": "$weights",
+      "asked_days": "$asked_days",
+      "asked_top": "$asked_top",
+      "curated": "$curated"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-04: Surprise me - a good question, different for each person, each hour and each press: weighted between the most-asked answered questions of the last asked_days, the curated list, and every question Chip Chat knows.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "weights": {
+          "asked": 3,
+          "curated": 4,
+          "pool": 3
+        },
+        "asked_days": 30,
+        "asked_top": 25,
+        "curated": [
+          "How much tax on 75 lakh for an individual under the new regime for AY 2026-27?",
+          "Which clients need advice?",
+          "ITR-U additional tax on extra tax of 3 lakh filed 30 months after the year ended",
+          "Does a 61 year old with business income pay advance tax?",
+          "What is the 234F late fee if total income is 4.5 lakh?",
+          "Due date for ITR-3 with Form 3CEB for AY 2026-27",
+          "244A interest on a refund of 2.4 lakh for 11 months",
+          "Is AAAHG4321K a valid PAN?",
+          "What may I do?",
+          "Which returns are overdue?",
+          "If I file ITR-5 with tax audit on 05/11/2026 what kind of return is it?",
+          "Can an auditor reopen a filed year?",
+          "What is an SF Ref?",
+          "Can I upload the JSON straight to the Income-tax portal?",
+          "How do I delegate work?"
+        ]
+      }
+    }
+  ]
+}

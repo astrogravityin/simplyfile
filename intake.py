@@ -1,7 +1,7 @@
 """Intake & map - SimplyFile phase 2 (2026-10-03 client: "insert in one column in all excel sheets the table and serial
 number of the relevant statement in 3CD or in ITR 3 or ITR 5").
 
-A client's statements (.xls / .xlsx / .csv - a Tally export saved as Excel is the same thing) are uploaded per client
+A client's statements (.xls / .xlsx / .xlsm / .csv - a Tally export saved as Excel is the same thing; a text PDF best-effort) are uploaded per client
 and assessment year, kept as uploaded and never overwritten. Each file is read into rows: the sheet, the row, the
 cells, the label (first words), the numbers, and the heading the row sits under. Every row that carries a number needs
 an SF Ref - `<form> <table> [#serial]`, several joined with ";" - and gets one from, in this order:
@@ -70,14 +70,52 @@ def _cell(v) -> str | float | None:
     return s or None
 
 
+class Unreadable(ValueError):
+    """Why a file could not be read - the key of its words in chip ui.intake."""
+
+    def __init__(self, key: str):
+        super().__init__(key)
+        self.key = key
+
+
+def text_amount(s: str, k: dict):
+    """An amount written as text -> a number: "1,23,456.00 Dr", "(12,500)", "Rs. 5,000", "5,000 Cr", "₹ 2.5". Anything else
+    stays text, unchanged. The currency marks, Dr / Cr words and their signs are chip intake.settings."""
+    t = s.strip().lower()
+    for c in k["number_currency"]:
+        t = t.replace(c, " ")
+    t, sign = t.strip(), 1
+    for word in sorted(k["number_debit"] + k["number_credit"], key=len, reverse=True):
+        if t.endswith(word) and (len(t) == len(word) or not t[-len(word) - 1].isalpha()):
+            sign, t = (k["debit_sign"] if word in k["number_debit"] else k["credit_sign"]), t[: -len(word)].strip()
+            break
+    t = t.replace(",", "").replace(" ", "")
+    if t.startswith("(") and t.endswith(")"):
+        sign, t = sign * k["bracket_sign"], t[1:-1]
+    return float(t) * sign if re.fullmatch(r"-?\d+(\.\d+)?", t) else s
+
+
 def read_book(data: bytes, ext: str) -> dict[str, list[list]]:
-    """{sheet: [row cells]} with cells as str, float or None. Raises ValueError on a file that cannot be read."""
+    """{sheet: [row cells]} with cells as str, float or None. Raises Unreadable (with the reason) or ValueError."""
+    k = settings()
+    cell = lambda v: (text_amount(c, k) if isinstance(c := _cell(v), str) else c)  # noqa: E731
     if ext == ".csv":
-        text = data.decode("utf-8-sig", errors="replace")
-        return {"CSV": [[_cell(_num(c)) for c in r] for r in csv.reader(io.StringIO(text))]}
+        text = next((t for t in (_decode(data, e) for e in k["csv_encodings"]) if t is not None), data.decode("utf-8", errors="replace"))
+        try:
+            dialect = csv.Sniffer().sniff(text[:20000], delimiters="".join(k["csv_delimiters"]))
+        except csv.Error:
+            dialect = csv.excel
+        return {"CSV": [[cell(c) for c in r] for r in csv.reader(io.StringIO(text), dialect)]}
+    if ext == ".pdf":
+        return _read_pdf(data, k, cell)
+    if data[:8] == b"\xd0\xcf\x11\xe0\xa1\xb1\x1a\xe1" and ext in (".xlsx", ".xlsm"):
+        raise Unreadable("locked")                     # an encrypted .xlsx is an OLE box, not a zip
     if ext == ".xls":
         import xlrd  # noqa: PLC0415
-        b = xlrd.open_workbook(file_contents=data)
+        try:
+            b = xlrd.open_workbook(file_contents=data)
+        except xlrd.biffh.XLRDError as e:
+            raise Unreadable("locked" if "encrypt" in str(e).lower() else "unreadable") from e
         out = {}
         for s in b.sheets():
             rows = []
@@ -87,21 +125,40 @@ def read_book(data: bytes, ext: str) -> dict[str, list[list]]:
                     v = c.value
                     if c.ctype == xlrd.XL_CELL_DATE:
                         v = xlrd.xldate.xldate_as_datetime(v, b.datemode)
-                    cells.append(_cell(v))
+                    cells.append(cell(v))
                 rows.append(cells)
             out[s.name] = rows
         return out
     import openpyxl  # noqa: PLC0415
     wb = openpyxl.load_workbook(io.BytesIO(data), read_only=True, data_only=True)
-    return {ws.title: [[_cell(v) for v in r] for r in ws.iter_rows(values_only=True)] for ws in wb.worksheets}
+    return {ws.title: [[cell(v) for v in r] for r in ws.iter_rows(values_only=True)] for ws in wb.worksheets}
 
 
-def _num(s: str):
-    t = s.replace(",", "").strip()
+def _decode(data: bytes, enc: str) -> str | None:
     try:
-        return float(t) if re.fullmatch(r"-?\d+(\.\d+)?", t) else s
-    except ValueError:
-        return s
+        return data.decode(enc)
+    except UnicodeDecodeError:
+        return None
+
+
+def _read_pdf(data: bytes, k: dict, cell) -> dict[str, list[list]]:
+    """A text PDF, best-effort: each page's lines in reading layout, cut into cells where two or more spaces stand.
+    A PDF with no text (a scan) is said to be one."""
+    from pypdf import PdfReader  # noqa: PLC0415
+    try:
+        pdf = PdfReader(io.BytesIO(data))
+        if pdf.is_encrypted:
+            raise Unreadable("locked")
+        pages = [p.extract_text(extraction_mode="layout") or "" for p in pdf.pages]
+    except Unreadable:
+        raise
+    except Exception as e:  # noqa: BLE001 - a broken PDF is one answer
+        raise Unreadable("unreadable") from e
+    if sum(len(p.strip()) for p in pages) < k["pdf_min_chars"]:
+        raise Unreadable("pdf_scan")
+    gap = re.compile(r"\s{%d,}" % int(k["pdf_gap_spaces"]))
+    return {f"Page {i}": [[cell(c) for c in gap.split(line.strip())] for line in p.splitlines() if line.strip()]
+            for i, p in enumerate(pages, 1)}
 
 
 def ref_column(rows: list[list], k: dict) -> tuple[int, int] | None:
@@ -119,41 +176,70 @@ def parse(book: dict[str, list[list]]) -> list[dict]:
     k = settings()
     head_re = re.compile(k["heading_words"], re.I)
     out = []
-    for sheet, rows in book.items():
-        rc = ref_column(rows, k)
-        heading, colhead = "", {}
-        for r, cells in enumerate(rows):
-            if rc and r == rc[0]:                                 # the SF Ref title row may carry the heading too
-                words = next((v for i, v in enumerate(cells) if isinstance(v, str) and i != rc[1]), "")   # its first words, not "Amount (Rs)"
-                heading = words[: k["max_len"]["heading"]] if head_re.search(words) else heading
-                continue
-            own = cells[rc[1]] if rc and rc[1] < len(cells) else None
-            body = [v for i, v in enumerate(cells) if not (rc and i == rc[1])]
-            first = next((i for i, v in enumerate(body) if v is not None), None)
-            if first is None:
-                continue
-            serial = body[first] if isinstance(body[first], float) and body[first] == int(body[first]) \
-                and body[first] < k["serial_below"] and first < 2 else None
-            nums = [v for i, v in enumerate(body) if isinstance(v, float) and not (serial is not None and i == first)]
-            words = [v for v in body if isinstance(v, str)]
-            label = words[0] if words else ""
-            text = " ".join(words)
-            if not nums:
-                if head_re.search(text):
-                    heading, colhead = text[: k["max_len"]["heading"]], {}
-                else:                                             # words under a heading = column titles ("Amount" / "repaid")
-                    for i, v in enumerate(body):
-                        if isinstance(v, str) and i != first:
-                            colhead[i] = (colhead.get(i, "") + " " + v).strip()[: k["max_len"]["column_title"]]
-                continue
-            titles = [colhead.get(i, "") for i, v in enumerate(body) if isinstance(v, float) and not (serial is not None and i == first)]
-            out.append({"key": f"{sheet}!{r + 1}", "sheet": sheet, "row": r + 1, "serial": int(serial) if serial is not None else None,
-                        "amount": nums[int(engine.run("intake.amount_col", {"titles": titles}))] if nums else 0.0,
-                        "label": label[: k["max_len"]["label"]], "text": text[: k["max_len"]["text"]], "numbers": nums, "heading": heading,
-                        "own": str(own).strip() if isinstance(own, str) and own.strip() else "",
-                        "by_col": [[colhead.get(i, ""), v] for i, v in enumerate(body) if isinstance(v, float) and v
-                                   and not (serial is not None and i == first)]})
+    for sheet, whole in book.items():
+        at = two_sided_at(whole, k)
+        parts = [("", whole)] if at is None else [("", [c[:at] for c in whole]), (k["right_suffix"], [c[at:] for c in whole])]
+        for suffix, rows in parts:                               # a two-sided statement: its left side, then its right side
+            _parse_part(sheet, rows, suffix, k, head_re, out)
     return out
+
+
+def two_sided_at(rows: list[list], k: dict) -> int | None:
+    """The column where the right side of a two-sided statement starts (liabilities | assets, expenditure | income), or None.
+    A header row must name a left side and, at least two_sided_min_gap columns further right, a right side (chip words) - and
+    at least two_sided_min_rows rows below must carry words and an amount on BOTH sides; a ledger with Dr and Cr columns is
+    not two-sided."""
+    word = lambda v: set(re.findall(r"[a-z]+", v.lower())) if isinstance(v, str) else set()  # noqa: E731
+    left, right = set(k["two_sided_left"]), set(k["two_sided_right"])
+    for r, cells in enumerate(rows[: k["header_scan_rows"]]):
+        i = next((n for n, v in enumerate(cells) if word(v) & left), None)
+        if i is None:
+            continue
+        j = next((n for n, v in enumerate(cells) if n >= i + k["two_sided_min_gap"] and word(v) & right), None)
+        if j is None:
+            continue
+        both = lambda c: any(isinstance(v, str) for v in c) and any(isinstance(v, float) for v in c)  # noqa: E731
+        if sum(1 for c in rows[r + 1:] if both(c[:j]) and both(c[j:])) >= k["two_sided_min_rows"]:
+            return j
+    return None
+
+
+def _parse_part(sheet: str, rows: list[list], suffix: str, k: dict, head_re, out: list) -> None:
+    """One sheet (or one side of a two-sided sheet): every row with words or numbers."""
+    rc = ref_column(rows, k)
+    heading, colhead = "", {}
+    for r, cells in enumerate(rows):
+        if rc and r == rc[0]:                                 # the SF Ref title row may carry the heading too
+            words = next((v for i, v in enumerate(cells) if isinstance(v, str) and i != rc[1]), "")   # its first words, not "Amount (Rs)"
+            heading = words[: k["max_len"]["heading"]] if head_re.search(words) else heading
+            continue
+        own = cells[rc[1]] if rc and rc[1] < len(cells) else None
+        body = [v for i, v in enumerate(cells) if not (rc and i == rc[1])]
+        first = next((i for i, v in enumerate(body) if v is not None), None)
+        if first is None:
+            continue
+        serial = body[first] if isinstance(body[first], float) and body[first] == int(body[first]) \
+            and body[first] < k["serial_below"] and first < 2 else None
+        nums = [v for i, v in enumerate(body) if isinstance(v, float) and not (serial is not None and i == first)]
+        words = [v for v in body if isinstance(v, str)]
+        label = words[0] if words else ""
+        text = " ".join(words)
+        if not nums:
+            if head_re.search(text):
+                heading, colhead = text[: k["max_len"]["heading"]], {}
+            else:                                             # words under a heading = column titles ("Amount" / "repaid")
+                for i, v in enumerate(body):
+                    if isinstance(v, str) and i != first:
+                        colhead[i] = (colhead.get(i, "") + " " + v).strip()[: k["max_len"]["column_title"]]
+            continue
+        titles = [colhead.get(i, "") for i, v in enumerate(body) if isinstance(v, float) and not (serial is not None and i == first)]
+        out.append({"key": f"{sheet}!{r + 1}{suffix}", "sheet": sheet, "row": r + 1, "side": "right" if suffix else "",
+                    "serial": int(serial) if serial is not None else None,
+                    "amount": nums[int(engine.run("intake.amount_col", {"titles": titles}))] if nums else 0.0,
+                    "label": label[: k["max_len"]["label"]], "text": text[: k["max_len"]["text"]], "numbers": nums, "heading": heading,
+                    "own": str(own).strip() if isinstance(own, str) and own.strip() else "",
+                    "by_col": [[colhead.get(i, ""), v] for i, v in enumerate(body) if isinstance(v, float) and v
+                               and not (serial is not None and i == first)]})
 
 
 # --- SF Ref -----------------------------------------------------------------------------------------------------------
@@ -223,7 +309,7 @@ def files(cid: str, ay: str) -> dict:
     c = clients.get(cid)
     y = (c.get("years") or {}).get(ay) or clients.year_defaults(c)
     metas = store.read(_meta_name(cid, ay), [])
-    return {"client": clients.row(c, ay), "form": y["form"], "audit": bool(y.get("audit")),
+    return {"client": clients.row(c, ay), "form": y["form"], "audit": bool(y.get("audit")), "exts": settings()["exts"],
             "files": [m | counts(cid, ay, m["id"]) for m in metas]}
 
 
@@ -231,14 +317,16 @@ def add(user: dict, cid: str, ay: str, name: str, data: bytes, replace: str = ""
     clients.guard_open(cid, ay)                                  # a closed (filed) year changes no more
     k = settings()
     ext = Path(name).suffix.lower()
-    if ext not in k["exts"]:
-        _bad("bad_type", exts=" ".join(k["exts"]))
+    if ext not in k["exts"]:                                     # said plainly: why not, and what to do instead
+        _bad("bad_type", why=say(f"cant_{k['cant_exts'].get(ext, 'other')}"))
     if len(data) > k["max_mb"] * 1024 * 1024:
         _bad("too_big", mb=k["max_mb"])
     d = _dir(cid, ay)
     try:
         book = read_book(data, ext)
-    except Exception:                                             # noqa: BLE001 - any unreadable workbook is one answer
+    except Unreadable as e:                                      # a scan, a password, a broken file - each its own words
+        _bad(e.key, name=name)
+    except Exception:                                             # noqa: BLE001 - any other unreadable workbook is one answer
         _bad("unreadable", name=name)
     rows = parse(book)
     if len(rows) > k["max_rows"]:
@@ -269,6 +357,7 @@ def add(user: dict, cid: str, ay: str, name: str, data: bytes, replace: str = ""
         pan_seen = c["pan"] in re.sub(r"\s+", "", " ".join(str(v) for s in book.values() for r in s for v in r if v)).upper()
         meta = {"id": fid, "name": Path(name).name[: k["max_len"]["file_name"]], "ext": ext, "size": len(data), "sha256": sha,
                 "sheets": list(book), "pan_seen": pan_seen, "uploaded_at": store.now(), "uploaded_by": user["id"],
+                "notes": ([say("pdf_warn")] if ext in k["best_effort_exts"] else []) + ([say("two_sided_note")] if any(x.get("side") for x in rows) else []),
                 "version": (old or {}).get("version", 0) + 1}
         store.write(_meta_name(cid, ay), metas + [meta])
         return meta | counts(cid, ay, fid)
@@ -312,7 +401,7 @@ def _rows(cid: str, ay: str, m: dict) -> list[dict]:
         try:
             rows = parse(read_book((_dir(cid, ay) / f"{m['id']}{m['ext']}").read_bytes(), m["ext"]))
             store.write(name, rows)
-        except (OSError, ValueError):
+        except (OSError, ValueError):                             # Unreadable is a ValueError too
             pass
     return rows
 
@@ -396,8 +485,8 @@ def tagged_book(cid: str, ay: str, fid: str) -> tuple[str, bytes]:
     raw = (_dir(cid, ay) / f"{fid}{m['ext']}").read_bytes()
     refs = {x["key"]: x["ref"] for x in view(cid, ay, fid)["rows"] if x["ref"]}
     header = settings()["ref_headers"][0]
-    if m["ext"] == ".xlsx":
-        wb = openpyxl.load_workbook(io.BytesIO(raw))
+    if m["ext"] in (".xlsx", ".xlsm"):
+        wb = openpyxl.load_workbook(io.BytesIO(raw))   # an .xlsm comes back as .xlsx: the refs, not the macros
     else:
         wb = openpyxl.Workbook()
         wb.remove(wb.active)
@@ -412,9 +501,17 @@ def tagged_book(cid: str, ay: str, fid: str) -> tuple[str, bytes]:
         col = rc[1] + 1 if rc else ws.max_column + 1
         if not rc:
             ws.cell(row=1, column=col, value=header)
+        right = None
         for key, ref in refs.items():
             sheet, r = key.rsplit("!", 1)
-            if sheet == ws.title:
+            if sheet != ws.title:
+                continue
+            if r.endswith(k["right_suffix"]):                     # a two-sided statement's right side: its own SF Ref column
+                if right is None:
+                    right = ws.max_column + 1
+                    ws.cell(row=1, column=right, value=k["right_header"])
+                ws.cell(row=int(r[: -len(k["right_suffix"])]), column=right, value=ref)
+            else:
                 ws.cell(row=int(r), column=col, value=ref)
     buf = io.BytesIO()
     wb.save(buf)
@@ -458,4 +555,51 @@ if __name__ == "__main__":  # ponytail: one runnable self-check - the client's o
     assert s[by[("Loans", "Lender C")]] == "3CD 31(b) #2", "repaid only = 31(b)"
     assert s[by[("Dep", "Computers")]] == "3CD 18 #2; ITR3 DPM"
     assert suggest(rows, "ITR-5")[by[("Income", "Interest on SB a/c")]] == "ITR5 OS"
+    # 2026-10-04: more formats, and plain reasons for what cannot be read
+    k = settings()
+    assert text_amount("1,23,456.00 Dr", k) == 123456 and text_amount("(12,500)", k) == -12500 and text_amount("Rs. 5,000", k) == 5000
+    assert text_amount("Others", k) == "Others" and text_amount("To Rent", k) == "To Rent"
+    semi = 'Particulars;Amount\nRent received;"1,20,000.00 Cr"\nCaf\xe9 bills;(2,500)\n'.encode("cp1252")
+    assert read_book(semi, ".csv")["CSV"][1] == ["Rent received", 120000.0] and read_book(semi, ".csv")["CSV"][2] == ["Caf\xe9 bills", -2500.0]
+    wb2 = openpyxl.Workbook()
+    for r in [["BALANCE SHEET AS AT 31.03.2026"], ["Liabilities", "Amount", "Assets", "Amount"], ["Capital", 500000, "Fixed assets", 300000],
+              ["Loans", 200000, "Debtors", "1,50,000"], ["Creditors", 100000, "Cash", 350000]]:
+        wb2.active.append(r)
+    b2 = io.BytesIO()
+    wb2.save(b2)
+    two = parse(read_book(b2.getvalue(), ".xlsm"))
+    assert [(x["label"], x["amount"], x["side"]) for x in two] == [("Capital", 500000, ""), ("Loans", 200000, ""), ("Creditors", 100000, ""),
+                                                                   ("Fixed assets", 300000, "right"), ("Debtors", 150000, "right"), ("Cash", 350000, "right")], two
+    led = openpyxl.Workbook()
+    for r in [["Date", "Particulars", "Dr", "Cr"], ["01.04.25", "Opening", 1000, None], ["02.04.25", "Rent", None, 500], ["03.04.25", "Bank", 200, None]]:
+        led.active.append(r)
+    b3 = io.BytesIO()
+    led.save(b3)
+    assert not any(x.get("side") for x in parse(read_book(b3.getvalue(), ".xlsx"))), "a ledger with Dr / Cr columns is not two-sided"
+
+    def pdf(lines):   # a one-page text PDF, written by hand (no PDF library needed to make it)
+        text = "BT /F1 10 Tf 40 800 Td 14 TL " + " ".join(f"({x}) Tj T*" for x in lines) + " ET"
+        objs = ["<</Type/Catalog/Pages 2 0 R>>", "<</Type/Pages/Kids[3 0 R]/Count 1>>",
+                "<</Type/Page/Parent 2 0 R/MediaBox[0 0 595 842]/Contents 4 0 R/Resources<</Font<</F1 5 0 R>>>>>>",
+                f"<</Length {len(text)}>>stream\n{text}\nendstream", "<</Type/Font/Subtype/Type1/BaseFont/Courier>>"]
+        out, offs = b"%PDF-1.4\n", []
+        for i, o in enumerate(objs, 1):
+            offs.append(len(out))
+            out += f"{i} 0 obj{o}endobj\n".encode()
+        x = len(out)
+        out += f"xref\n0 {len(objs) + 1}\n0000000000 65535 f \n".encode() + b"".join(f"{o:010d} 00000 n \n".encode() for o in offs)
+        return out + f"trailer<</Size {len(objs) + 1}/Root 1 0 R>>\nstartxref\n{x}\n%%EOF".encode()
+    got = parse(read_book(pdf(["STATEMENT OF INCOME FOR THE YEAR", "Rent received          1,20,000.00", "Interest on FD          45,000.00"]), ".pdf"))
+    assert [(x["label"], x["amount"]) for x in got] == [("Rent received", 120000.0), ("Interest on FD", 45000.0)], got
+    try:
+        read_book(pdf([]), ".pdf")
+        raise AssertionError("a PDF with no text is a scan")
+    except Unreadable as e:
+        assert e.key == "pdf_scan"
+    try:
+        read_book(b"\xd0\xcf\x11\xe0\xa1\xb1\x1a\xe1" + b"0" * 64, ".xlsx")
+        raise AssertionError("an encrypted workbook is said to be one")
+    except Unreadable as e:
+        assert e.key == "locked"
+    assert "save it as .xlsx" in say("bad_type", why=say(f"cant_{k['cant_exts']['.xlsb']}"))
     print("intake self-check OK")

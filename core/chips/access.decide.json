@@ -42,6 +42,12 @@
       "label": "none, yes or no"
     },
     {
+      "name": "lent",
+      "type": "text",
+      "default": "",
+      "label": "yes = the owner lent this admin screen to this person today (delegation)"
+    },
+    {
       "name": "screen",
       "type": "text",
       "default": ""
@@ -116,6 +122,12 @@
       "type": "text",
       "default": "{label} is not open yet - there is nothing on it for you.",
       "label": "msg_unavailable"
+    },
+    {
+      "name": "msg_lent",
+      "type": "text",
+      "default": "The portal owner lent you {label}.",
+      "label": "msg lent"
     }
   ],
   "expr": {
@@ -212,6 +224,42 @@
             "why": {
               "vop": "template",
               "text": "$msg_owner",
+              "values": {
+                "screen": "$screen",
+                "label": "$label",
+                "role": "$role",
+                "deny_by": "$deny_by",
+                "deny_on": "$deny_on",
+                "allow_by": "$allow_by",
+                "allow_on": "$allow_on"
+              }
+            }
+          }
+        }
+      },
+      {
+        "when": {
+          "op": "all",
+          "items": [
+            {
+              "op": "eq",
+              "left": "$admin",
+              "right": true
+            },
+            {
+              "op": "eq",
+              "left": "$lent",
+              "right": "yes"
+            }
+          ]
+        },
+        "then": {
+          "vop": "record",
+          "fields": {
+            "allowed": true,
+            "why": {
+              "vop": "template",
+              "text": "$msg_lent",
               "values": {
                 "screen": "$screen",
                 "label": "$label",
@@ -353,7 +401,7 @@
   "returns": "record",
   "version": 2,
   "status": "published",
-  "description_nl": "The one resolver behind the menu, every API guard and 'Check a person'. Order: signed out → no; owner → always (the way back in can never be locked); unknown screen → no; admin screen → owner only; a role gate chip says no → no; ANY deny for the person or a group they are in → no (deny wins); any allow → yes; nothing said → open. A screen this portal does not have is closed to everyone, the owner included (2026-09-18: the tv edition served SteadyMove's YouTube API to its owner). available: a screen the host portal registered a test for (access.register_available) answers 'no' when this person has nothing on it at all - it is refused before every other rule, the owner included, and a catalog entry marked hide_when_denied then leaves the menu altogether.",
+  "description_nl": "The one resolver behind the menu, every API guard and 'Check a person'. Order: signed out → no; owner → always (the way back in can never be locked); unknown screen → no; admin screen → owner only; a role gate chip says no → no; ANY deny for the person or a group they are in → no (deny wins); any allow → yes; nothing said → open. A screen this portal does not have is closed to everyone, the owner included (2026-09-18: the tv edition served SteadyMove's YouTube API to its owner). available: a screen the host portal registered a test for (access.register_available) answers 'no' when this person has nothing on it at all - it is refused before every other rule, the owner included, and a catalog entry marked hide_when_denied then leaves the menu altogether. 2026-10-04 owner: an Admin screen the owner LENT to this person today (delegation, fact `lent`) opens for them.",
   "test_cases": [
     {
       "args": {
@@ -456,6 +504,34 @@
       "expect_value": {
         "allowed": false,
         "why": "Buy a key is not open yet - there is nothing on it for you."
+      }
+    },
+    {
+      "args": {
+        "signed_in": true,
+        "known": true,
+        "role": "member",
+        "admin": true,
+        "lent": "yes",
+        "label": "Firm approvals"
+      },
+      "expect_value": {
+        "allowed": true,
+        "why": "The portal owner lent you Firm approvals."
+      }
+    },
+    {
+      "args": {
+        "signed_in": true,
+        "known": true,
+        "role": "member",
+        "admin": true,
+        "lent": "",
+        "label": "Firm approvals"
+      },
+      "expect_value": {
+        "allowed": false,
+        "why": "Only the portal owner can open this."
       }
     }
   ],

@@ -127,6 +127,15 @@ def subject_label(subject: str, d: dict, users: list[dict]) -> str:
 _AVAILABLE: dict = {}
 
 
+_LENDER: list = []
+
+
+def register_lender(test) -> None:
+    """`test(user, screen_id) -> bool`: did the owner lend this Admin screen to this person, today? (The host portal's
+    delegations, 2026-10-04.) The chip access.decide opens a lent Admin screen; nothing else can."""
+    _LENDER[:] = [test]
+
+
 def register_available(screen_id: str, test, functions: bool = False) -> None:
     """`test(user) -> bool`: has this person anything at all on that screen right now? With functions=True the test is
     `test(user, function_id)` and answers per button too (a tenant's role: a preparer sees no Sign off)."""
@@ -141,6 +150,8 @@ def decide(user: dict | None, screen_id: str, function_id: str = "", d: dict | N
     screen = _BY_ID.get(screen_id) or {}
     facts = {"signed_in": bool(user), "role": (user or {}).get("role", "member"), "known": bool(screen),
              "admin": bool(screen.get("admin")), "screen": screen_id, "label": screen.get("label", screen_id)}
+    if user and screen.get("admin") and user.get("role") != "owner" and _LENDER and _LENDER[0](user, screen_id):
+        facts["lent"] = "yes"
     if user and screen and _AVAILABLE.get(screen_id) is not None:
         facts["available"] = "yes" if _AVAILABLE[screen_id](user, function_id) else "no"
     if user and screen and user.get("role") != "owner" and not screen.get("admin"):

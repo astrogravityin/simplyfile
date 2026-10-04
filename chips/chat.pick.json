@@ -1,0 +1,100 @@
+{
+  "chip_id": "chat.pick",
+  "kind": "accessor",
+  "set": "chat",
+  "label": "Family, ask for a blank, or the prepared answers",
+  "aliases": [
+    "family, ask for a blank, or the prepared"
+  ],
+  "params": [
+    {
+      "name": "fam_ready",
+      "type": "boolean",
+      "default": false,
+      "label": "a family's words and all its blanks are in the question"
+    },
+    {
+      "name": "fam_hits",
+      "type": "number",
+      "default": 0,
+      "label": "family words found"
+    },
+    {
+      "name": "faq",
+      "type": "text",
+      "default": "",
+      "label": "what chat.route said for the prepared answers"
+    },
+    {
+      "name": "ask_hits",
+      "type": "number",
+      "default": 2,
+      "label": ""
+    }
+  ],
+  "expr": {
+    "vop": "choose",
+    "cases": [
+      {
+        "when": {
+          "op": "eq",
+          "left": "$fam_ready",
+          "right": true
+        },
+        "then": "family"
+      },
+      {
+        "when": {
+          "op": "all",
+          "items": [
+            {
+              "op": "ge",
+              "left": "$fam_hits",
+              "right": "$ask_hits"
+            },
+            {
+              "op": "eq",
+              "left": "$faq",
+              "right": "no_match"
+            }
+          ]
+        },
+        "then": "ask"
+      }
+    ],
+    "else": "$faq"
+  },
+  "returns": "text",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-04: a question whose family words and blanks are all there is worked out; one that names a family but misses a blank, and matches nothing prepared, is asked for the blank; otherwise the prepared answers decide.",
+  "test_cases": [
+    {
+      "args": {
+        "fam_ready": true,
+        "fam_hits": 1,
+        "faq": "answer",
+        "ask_hits": 2
+      },
+      "expect_value": "family"
+    },
+    {
+      "args": {
+        "fam_ready": false,
+        "fam_hits": 3,
+        "faq": "no_match",
+        "ask_hits": 2
+      },
+      "expect_value": "ask"
+    },
+    {
+      "args": {
+        "fam_ready": false,
+        "fam_hits": 3,
+        "faq": "answer",
+        "ask_hits": 2
+      },
+      "expect_value": "answer"
+    }
+  ]
+}

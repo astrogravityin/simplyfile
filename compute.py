@@ -24,6 +24,7 @@ import zipfile
 from fastapi import HTTPException
 
 import clients
+import delegation
 import recon
 from core import engine, store
 from core.ops import template
@@ -244,7 +245,7 @@ def sign_off(user: dict, cid: str, ay: str, on: bool = True) -> dict:
     with _LOCK:
         st = store.read(_state_name(cid, ay), {})
         if on:
-            st["signoff"] = {"by": user.get("email") or user["id"], "at": store.now(), "figures": d["figures"]}
+            st["signoff"] = {"by": delegation.actor(user), "at": store.now(), "figures": d["figures"]}
         else:
             st.pop("signoff", None)
         store.write(_state_name(cid, ay), st)
@@ -324,7 +325,7 @@ def act(user: dict, cid: str, ay: str, action: str, body: dict) -> dict:
     verdict = engine.run("close.move", {"facts": facts})
     if not verdict.get("ok"):
         _bad(verdict["say"], 409)
-    who, now = user.get("email") or user["id"], store.now()
+    who, now = delegation.actor(user), store.now()
 
     def change(yy: dict) -> None:
         fl = yy.setdefault("filings", [])

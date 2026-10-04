@@ -1,0 +1,816 @@
+{
+  "chip_id": "delegation.check",
+  "kind": "accessor",
+  "set": "delegation",
+  "label": "May this delegation be made?",
+  "aliases": [
+    "may this delegation be made?"
+  ],
+  "params": [
+    {
+      "name": "kind",
+      "type": "text",
+      "default": "",
+      "label": "filing / client / year_some / year_all / portal"
+    },
+    {
+      "name": "kinds",
+      "type": "json",
+      "default": [],
+      "label": "known kind ids"
+    },
+    {
+      "name": "from_owner",
+      "type": "boolean",
+      "default": false,
+      "label": "the lender is the portal owner"
+    },
+    {
+      "name": "self",
+      "type": "boolean",
+      "default": false,
+      "label": "lending to yourself"
+    },
+    {
+      "name": "to_ok",
+      "type": "boolean",
+      "default": false,
+      "label": "the delegate is a person of the same firm (or, for portal work, any account outside a firm)"
+    },
+    {
+      "name": "to_in_firm",
+      "type": "boolean",
+      "default": false,
+      "label": "the delegate belongs to a firm"
+    },
+    {
+      "name": "grants",
+      "type": "json",
+      "default": [],
+      "label": "what is asked to be lent"
+    },
+    {
+      "name": "mine",
+      "type": "json",
+      "default": [],
+      "label": "what the lender may lend"
+    },
+    {
+      "name": "n_clients",
+      "type": "number",
+      "default": 0,
+      "label": "clients picked"
+    },
+    {
+      "name": "has_ay",
+      "type": "boolean",
+      "default": false,
+      "label": "an assessment year is given"
+    },
+    {
+      "name": "days",
+      "type": "number",
+      "default": 0,
+      "label": "days from start to end"
+    },
+    {
+      "name": "max_days",
+      "type": "number",
+      "default": 366,
+      "label": ""
+    }
+  ],
+  "expr": {
+    "vop": "choose",
+    "cases": [
+      {
+        "when": {
+          "op": "eq",
+          "left": "$self",
+          "right": true
+        },
+        "then": {
+          "ok": false,
+          "say": "d_self"
+        }
+      },
+      {
+        "when": {
+          "op": "not",
+          "item": {
+            "op": "in_set",
+            "value": "$kind",
+            "set": "$kinds"
+          }
+        },
+        "then": {
+          "ok": false,
+          "say": "d_kind"
+        }
+      },
+      {
+        "when": {
+          "op": "all",
+          "items": [
+            {
+              "op": "eq",
+              "left": "$kind",
+              "right": "portal"
+            },
+            {
+              "op": "not",
+              "item": {
+                "op": "eq",
+                "left": "$from_owner",
+                "right": true
+              }
+            }
+          ]
+        },
+        "then": {
+          "ok": false,
+          "say": "d_portal_owner"
+        }
+      },
+      {
+        "when": {
+          "op": "all",
+          "items": [
+            {
+              "op": "ne",
+              "left": "$kind",
+              "right": "portal"
+            },
+            {
+              "op": "eq",
+              "left": "$from_owner",
+              "right": true
+            }
+          ]
+        },
+        "then": {
+          "ok": false,
+          "say": "d_firm_only"
+        }
+      },
+      {
+        "when": {
+          "op": "all",
+          "items": [
+            {
+              "op": "eq",
+              "left": "$kind",
+              "right": "portal"
+            },
+            {
+              "op": "eq",
+              "left": "$to_in_firm",
+              "right": true
+            }
+          ]
+        },
+        "then": {
+          "ok": false,
+          "say": "d_portal_firm"
+        }
+      },
+      {
+        "when": {
+          "op": "not",
+          "item": {
+            "op": "eq",
+            "left": "$to_ok",
+            "right": true
+          }
+        },
+        "then": {
+          "ok": false,
+          "say": "d_to"
+        }
+      },
+      {
+        "when": {
+          "op": "eq",
+          "left": {
+            "vop": "count",
+            "items": "$grants"
+          },
+          "right": 0
+        },
+        "then": {
+          "ok": false,
+          "say": "d_none"
+        }
+      },
+      {
+        "when": {
+          "op": "gt",
+          "left": {
+            "vop": "count",
+            "items": {
+              "vop": "missing",
+              "want": "$grants",
+              "have": "$mine"
+            }
+          },
+          "right": 0
+        },
+        "then": {
+          "ok": false,
+          "say": "d_not_yours"
+        }
+      },
+      {
+        "when": {
+          "op": "all",
+          "items": [
+            {
+              "op": "in_set",
+              "value": "$kind",
+              "set": [
+                "filing",
+                "client"
+              ]
+            },
+            {
+              "op": "ne",
+              "left": "$n_clients",
+              "right": 1
+            }
+          ]
+        },
+        "then": {
+          "ok": false,
+          "say": "d_one_client"
+        }
+      },
+      {
+        "when": {
+          "op": "all",
+          "items": [
+            {
+              "op": "eq",
+              "left": "$kind",
+              "right": "year_some"
+            },
+            {
+              "op": "lt",
+              "left": "$n_clients",
+              "right": 1
+            }
+          ]
+        },
+        "then": {
+          "ok": false,
+          "say": "d_some_clients"
+        }
+      },
+      {
+        "when": {
+          "op": "all",
+          "items": [
+            {
+              "op": "in_set",
+              "value": "$kind",
+              "set": [
+                "filing",
+                "year_some",
+                "year_all"
+              ]
+            },
+            {
+              "op": "not",
+              "item": {
+                "op": "eq",
+                "left": "$has_ay",
+                "right": true
+              }
+            }
+          ]
+        },
+        "then": {
+          "ok": false,
+          "say": "d_ay"
+        }
+      },
+      {
+        "when": {
+          "op": "lt",
+          "left": "$days",
+          "right": 0
+        },
+        "then": {
+          "ok": false,
+          "say": "d_dates"
+        }
+      },
+      {
+        "when": {
+          "op": "gt",
+          "left": "$days",
+          "right": "$max_days"
+        },
+        "then": {
+          "ok": false,
+          "say": "d_too_long"
+        }
+      }
+    ],
+    "else": {
+      "ok": true,
+      "say": "d_made"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-04: a delegation is refused when it lends to yourself, lends what the lender does not have, has the wrong number of clients or no year for its scope, runs backwards or longer than max_days; portal work only from the owner, only to someone outside a firm.",
+  "test_cases": [
+    {
+      "args": {
+        "kind": "filing",
+        "kinds": [
+          "filing",
+          "client",
+          "year_some",
+          "year_all",
+          "portal"
+        ],
+        "from_owner": false,
+        "self": false,
+        "to_ok": true,
+        "to_in_firm": true,
+        "grants": [
+          "compute.signoff"
+        ],
+        "mine": [
+          "clients",
+          "clients.create",
+          "clients.archive",
+          "intake",
+          "intake.delete",
+          "recon",
+          "recon.delete",
+          "compute",
+          "compute.signoff",
+          "compute.file",
+          "compute.reopen",
+          "itrimport"
+        ],
+        "n_clients": 1,
+        "has_ay": true,
+        "days": 30,
+        "max_days": 366
+      },
+      "expect_value": {
+        "ok": true,
+        "say": "d_made"
+      }
+    },
+    {
+      "args": {
+        "kind": "filing",
+        "kinds": [
+          "filing",
+          "client",
+          "year_some",
+          "year_all",
+          "portal"
+        ],
+        "from_owner": false,
+        "self": true,
+        "to_ok": true,
+        "to_in_firm": true,
+        "grants": [
+          "compute.signoff"
+        ],
+        "mine": [
+          "clients",
+          "clients.create",
+          "clients.archive",
+          "intake",
+          "intake.delete",
+          "recon",
+          "recon.delete",
+          "compute",
+          "compute.signoff",
+          "compute.file",
+          "compute.reopen",
+          "itrimport"
+        ],
+        "n_clients": 1,
+        "has_ay": true,
+        "days": 30,
+        "max_days": 366
+      },
+      "expect_value": {
+        "ok": false,
+        "say": "d_self"
+      }
+    },
+    {
+      "args": {
+        "kind": "filing",
+        "kinds": [
+          "filing",
+          "client",
+          "year_some",
+          "year_all",
+          "portal"
+        ],
+        "from_owner": false,
+        "self": false,
+        "to_ok": true,
+        "to_in_firm": true,
+        "grants": [
+          "compute.signoff",
+          "team"
+        ],
+        "mine": [
+          "clients",
+          "clients.create",
+          "clients.archive",
+          "intake",
+          "intake.delete",
+          "recon",
+          "recon.delete",
+          "compute",
+          "compute.signoff",
+          "compute.file",
+          "compute.reopen",
+          "itrimport"
+        ],
+        "n_clients": 1,
+        "has_ay": true,
+        "days": 30,
+        "max_days": 366
+      },
+      "expect_value": {
+        "ok": false,
+        "say": "d_not_yours"
+      }
+    },
+    {
+      "args": {
+        "kind": "client",
+        "kinds": [
+          "filing",
+          "client",
+          "year_some",
+          "year_all",
+          "portal"
+        ],
+        "from_owner": false,
+        "self": false,
+        "to_ok": true,
+        "to_in_firm": true,
+        "grants": [
+          "compute.signoff"
+        ],
+        "mine": [
+          "clients",
+          "clients.create",
+          "clients.archive",
+          "intake",
+          "intake.delete",
+          "recon",
+          "recon.delete",
+          "compute",
+          "compute.signoff",
+          "compute.file",
+          "compute.reopen",
+          "itrimport"
+        ],
+        "n_clients": 2,
+        "has_ay": true,
+        "days": 30,
+        "max_days": 366
+      },
+      "expect_value": {
+        "ok": false,
+        "say": "d_one_client"
+      }
+    },
+    {
+      "args": {
+        "kind": "year_some",
+        "kinds": [
+          "filing",
+          "client",
+          "year_some",
+          "year_all",
+          "portal"
+        ],
+        "from_owner": false,
+        "self": false,
+        "to_ok": true,
+        "to_in_firm": true,
+        "grants": [
+          "compute.signoff"
+        ],
+        "mine": [
+          "clients",
+          "clients.create",
+          "clients.archive",
+          "intake",
+          "intake.delete",
+          "recon",
+          "recon.delete",
+          "compute",
+          "compute.signoff",
+          "compute.file",
+          "compute.reopen",
+          "itrimport"
+        ],
+        "n_clients": 0,
+        "has_ay": true,
+        "days": 30,
+        "max_days": 366
+      },
+      "expect_value": {
+        "ok": false,
+        "say": "d_some_clients"
+      }
+    },
+    {
+      "args": {
+        "kind": "year_all",
+        "kinds": [
+          "filing",
+          "client",
+          "year_some",
+          "year_all",
+          "portal"
+        ],
+        "from_owner": false,
+        "self": false,
+        "to_ok": true,
+        "to_in_firm": true,
+        "grants": [
+          "compute.signoff"
+        ],
+        "mine": [
+          "clients",
+          "clients.create",
+          "clients.archive",
+          "intake",
+          "intake.delete",
+          "recon",
+          "recon.delete",
+          "compute",
+          "compute.signoff",
+          "compute.file",
+          "compute.reopen",
+          "itrimport"
+        ],
+        "n_clients": 0,
+        "has_ay": false,
+        "days": 30,
+        "max_days": 366
+      },
+      "expect_value": {
+        "ok": false,
+        "say": "d_ay"
+      }
+    },
+    {
+      "args": {
+        "kind": "client",
+        "kinds": [
+          "filing",
+          "client",
+          "year_some",
+          "year_all",
+          "portal"
+        ],
+        "from_owner": false,
+        "self": false,
+        "to_ok": true,
+        "to_in_firm": true,
+        "grants": [
+          "compute.signoff"
+        ],
+        "mine": [
+          "clients",
+          "clients.create",
+          "clients.archive",
+          "intake",
+          "intake.delete",
+          "recon",
+          "recon.delete",
+          "compute",
+          "compute.signoff",
+          "compute.file",
+          "compute.reopen",
+          "itrimport"
+        ],
+        "n_clients": 1,
+        "has_ay": false,
+        "days": 30,
+        "max_days": 366
+      },
+      "expect_value": {
+        "ok": true,
+        "say": "d_made"
+      }
+    },
+    {
+      "args": {
+        "kind": "filing",
+        "kinds": [
+          "filing",
+          "client",
+          "year_some",
+          "year_all",
+          "portal"
+        ],
+        "from_owner": false,
+        "self": false,
+        "to_ok": true,
+        "to_in_firm": true,
+        "grants": [
+          "compute.signoff"
+        ],
+        "mine": [
+          "clients",
+          "clients.create",
+          "clients.archive",
+          "intake",
+          "intake.delete",
+          "recon",
+          "recon.delete",
+          "compute",
+          "compute.signoff",
+          "compute.file",
+          "compute.reopen",
+          "itrimport"
+        ],
+        "n_clients": 1,
+        "has_ay": true,
+        "days": 400,
+        "max_days": 366
+      },
+      "expect_value": {
+        "ok": false,
+        "say": "d_too_long"
+      }
+    },
+    {
+      "args": {
+        "kind": "portal",
+        "kinds": [
+          "filing",
+          "client",
+          "year_some",
+          "year_all",
+          "portal"
+        ],
+        "from_owner": false,
+        "self": false,
+        "to_ok": true,
+        "to_in_firm": true,
+        "grants": [
+          "compute.signoff"
+        ],
+        "mine": [
+          "clients",
+          "clients.create",
+          "clients.archive",
+          "intake",
+          "intake.delete",
+          "recon",
+          "recon.delete",
+          "compute",
+          "compute.signoff",
+          "compute.file",
+          "compute.reopen",
+          "itrimport"
+        ],
+        "n_clients": 1,
+        "has_ay": true,
+        "days": 30,
+        "max_days": 366
+      },
+      "expect_value": {
+        "ok": false,
+        "say": "d_portal_owner"
+      }
+    },
+    {
+      "args": {
+        "kind": "portal",
+        "kinds": [
+          "filing",
+          "client",
+          "year_some",
+          "year_all",
+          "portal"
+        ],
+        "from_owner": true,
+        "self": false,
+        "to_ok": true,
+        "to_in_firm": true,
+        "grants": [
+          "compute.signoff"
+        ],
+        "mine": [
+          "clients",
+          "clients.create",
+          "clients.archive",
+          "intake",
+          "intake.delete",
+          "recon",
+          "recon.delete",
+          "compute",
+          "compute.signoff",
+          "compute.file",
+          "compute.reopen",
+          "itrimport"
+        ],
+        "n_clients": 1,
+        "has_ay": true,
+        "days": 30,
+        "max_days": 366
+      },
+      "expect_value": {
+        "ok": false,
+        "say": "d_portal_firm"
+      }
+    },
+    {
+      "args": {
+        "kind": "portal",
+        "kinds": [
+          "filing",
+          "client",
+          "year_some",
+          "year_all",
+          "portal"
+        ],
+        "from_owner": true,
+        "self": false,
+        "to_ok": true,
+        "to_in_firm": false,
+        "grants": [
+          "approvals"
+        ],
+        "mine": [
+          "approvals",
+          "portalstats",
+          "server",
+          "keysales",
+          "issues"
+        ],
+        "n_clients": 0,
+        "has_ay": false,
+        "days": 30,
+        "max_days": 366
+      },
+      "expect_value": {
+        "ok": true,
+        "say": "d_made"
+      }
+    },
+    {
+      "args": {
+        "kind": "filing",
+        "kinds": [
+          "filing",
+          "client",
+          "year_some",
+          "year_all",
+          "portal"
+        ],
+        "from_owner": true,
+        "self": false,
+        "to_ok": true,
+        "to_in_firm": true,
+        "grants": [
+          "compute.signoff"
+        ],
+        "mine": [
+          "clients",
+          "clients.create",
+          "clients.archive",
+          "intake",
+          "intake.delete",
+          "recon",
+          "recon.delete",
+          "compute",
+          "compute.signoff",
+          "compute.file",
+          "compute.reopen",
+          "itrimport"
+        ],
+        "n_clients": 1,
+        "has_ay": true,
+        "days": 30,
+        "max_days": 366
+      },
+      "expect_value": {
+        "ok": false,
+        "say": "d_firm_only"
+      }
+    }
+  ]
+}

@@ -108,6 +108,30 @@
         "seen_answerer": true
       },
       "label": "marks after an answer"
+    },
+    {
+      "name": "files_max",
+      "type": "number",
+      "default": 10,
+      "label": "pictures and voice notes one note may carry (2026-10-04, the bottom bar's Issues)"
+    },
+    {
+      "name": "voice_max_mb",
+      "type": "number",
+      "default": 8,
+      "label": "one voice note's size"
+    },
+    {
+      "name": "voice_types",
+      "type": "json",
+      "default": [
+        "webm",
+        "ogg",
+        "mp4",
+        "mpeg",
+        "wav"
+      ],
+      "label": "recordings accepted"
     }
   ],
   "expr": {
@@ -125,7 +149,10 @@
       "needs_title": "$needs_title",
       "rate": "$rate",
       "new_row": "$new_row",
-      "answered_marks": "$answered_marks"
+      "answered_marks": "$answered_marks",
+      "files_max": "$files_max",
+      "voice_max_mb": "$voice_max_mb",
+      "voice_types": "$voice_types"
     }
   },
   "returns": "record",
@@ -172,7 +199,16 @@
         "answered_marks": {
           "seen_giver": false,
           "seen_answerer": true
-        }
+        },
+        "files_max": 10,
+        "voice_max_mb": 8,
+        "voice_types": [
+          "webm",
+          "ogg",
+          "mp4",
+          "mpeg",
+          "wav"
+        ]
       }
     }
   ]

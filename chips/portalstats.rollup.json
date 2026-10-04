@@ -1,0 +1,312 @@
+{
+  "chip_id": "portalstats.rollup",
+  "kind": "accessor",
+  "set": "portalstats",
+  "label": "Portal analytics roll-up",
+  "aliases": [
+    "portal analytics roll-up"
+  ],
+  "params": [
+    {
+      "name": "firms",
+      "type": "json",
+      "default": [],
+      "label": "one row per firm"
+    },
+    {
+      "name": "users",
+      "type": "json",
+      "default": [],
+      "label": "one row per account"
+    },
+    {
+      "name": "days",
+      "type": "json",
+      "default": [],
+      "label": "requests per day"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "firms": {
+        "vop": "count",
+        "items": "$firms"
+      },
+      "approved": {
+        "vop": "rows_aggregate",
+        "rows": "$firms",
+        "agg": "count",
+        "where": {
+          "state": "approved"
+        }
+      },
+      "clients": {
+        "vop": "rows_aggregate",
+        "rows": "$firms",
+        "agg": "sum",
+        "key": "clients"
+      },
+      "years": {
+        "vop": "rows_aggregate",
+        "rows": "$firms",
+        "agg": "sum",
+        "key": "years"
+      },
+      "filed": {
+        "vop": "rows_aggregate",
+        "rows": "$firms",
+        "agg": "sum",
+        "key": "filed"
+      },
+      "returns": {
+        "vop": "rows_aggregate",
+        "rows": "$firms",
+        "agg": "sum",
+        "key": "returns"
+      },
+      "bytes": {
+        "vop": "rows_aggregate",
+        "rows": "$firms",
+        "agg": "sum",
+        "key": "bytes"
+      },
+      "people": {
+        "vop": "count",
+        "items": "$users"
+      },
+      "active7": {
+        "vop": "rows_aggregate",
+        "rows": "$users",
+        "agg": "count",
+        "where": {
+          "seen7": true
+        }
+      },
+      "active30": {
+        "vop": "rows_aggregate",
+        "rows": "$users",
+        "agg": "count",
+        "where": {
+          "seen30": true
+        }
+      },
+      "by_state": {
+        "vop": "group_rows",
+        "rows": "$firms",
+        "key": "state",
+        "measures": {
+          "n": [
+            "count"
+          ]
+        }
+      },
+      "by_kind": {
+        "vop": "group_rows",
+        "rows": "$firms",
+        "key": "kind",
+        "measures": {
+          "n": [
+            "count"
+          ]
+        }
+      },
+      "by_month": {
+        "vop": "group_rows",
+        "rows": "$firms",
+        "key": "month",
+        "measures": {
+          "n": [
+            "count"
+          ]
+        }
+      },
+      "by_role": {
+        "vop": "group_rows",
+        "rows": "$users",
+        "key": "role",
+        "measures": {
+          "n": [
+            "count"
+          ]
+        }
+      },
+      "review": {
+        "vop": "pluck",
+        "rows": {
+          "vop": "filter_rows",
+          "rows": "$firms",
+          "field": "review",
+          "cmp": "eq",
+          "value": true
+        },
+        "key": "name"
+      },
+      "stuck": {
+        "vop": "pluck",
+        "rows": {
+          "vop": "filter_rows",
+          "rows": "$firms",
+          "field": "stuck",
+          "cmp": "eq",
+          "value": true
+        },
+        "key": "name"
+      },
+      "empty": {
+        "vop": "pluck",
+        "rows": {
+          "vop": "filter_rows",
+          "rows": "$firms",
+          "field": "empty",
+          "cmp": "eq",
+          "value": true
+        },
+        "key": "name"
+      },
+      "dormant": {
+        "vop": "pluck",
+        "rows": {
+          "vop": "filter_rows",
+          "rows": "$firms",
+          "field": "dormant",
+          "cmp": "eq",
+          "value": true
+        },
+        "key": "name"
+      },
+      "requests": {
+        "vop": "rows_aggregate",
+        "rows": "$days",
+        "agg": "sum",
+        "key": "n"
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-04: the portal's numbers - firms, clients, returns, people active, firms by state / kind / month, and the firms that need the admin.",
+  "test_cases": [
+    {
+      "args": {
+        "firms": [
+          {
+            "name": "A",
+            "state": "approved",
+            "kind": "ca_firm",
+            "month": "2026-10",
+            "clients": 3,
+            "years": 3,
+            "filed": 2,
+            "returns": 5,
+            "bytes": 10,
+            "review": false,
+            "stuck": false,
+            "empty": false,
+            "dormant": false
+          },
+          {
+            "name": "B",
+            "state": "submitted",
+            "kind": "self",
+            "month": "2026-10",
+            "clients": 0,
+            "years": 0,
+            "filed": 0,
+            "returns": 0,
+            "bytes": 1,
+            "review": true,
+            "stuck": false,
+            "empty": false,
+            "dormant": false
+          }
+        ],
+        "users": [
+          {
+            "role": "firm_admin",
+            "seen7": true,
+            "seen30": true
+          },
+          {
+            "role": "preparer",
+            "seen7": false,
+            "seen30": true
+          }
+        ],
+        "days": [
+          {
+            "day": "2026-10-03",
+            "n": 4
+          },
+          {
+            "day": "2026-10-04",
+            "n": 6
+          }
+        ]
+      },
+      "expect_value": {
+        "firms": 2,
+        "approved": 1,
+        "clients": 3,
+        "years": 3,
+        "filed": 2,
+        "returns": 5,
+        "bytes": 11,
+        "people": 2,
+        "active7": 1,
+        "active30": 2,
+        "by_state": [
+          {
+            "key": "approved",
+            "state": "approved",
+            "n": 1
+          },
+          {
+            "key": "submitted",
+            "state": "submitted",
+            "n": 1
+          }
+        ],
+        "by_kind": [
+          {
+            "key": "ca_firm",
+            "kind": "ca_firm",
+            "n": 1
+          },
+          {
+            "key": "self",
+            "kind": "self",
+            "n": 1
+          }
+        ],
+        "by_month": [
+          {
+            "key": "2026-10",
+            "month": "2026-10",
+            "n": 2
+          }
+        ],
+        "by_role": [
+          {
+            "key": "firm_admin",
+            "role": "firm_admin",
+            "n": 1
+          },
+          {
+            "key": "preparer",
+            "role": "preparer",
+            "n": 1
+          }
+        ],
+        "review": [
+          "B"
+        ],
+        "stuck": [],
+        "empty": [],
+        "dormant": [],
+        "requests": 10
+      }
+    }
+  ]
+}

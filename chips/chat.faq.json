@@ -1,0 +1,2131 @@
+{
+  "chip_id": "chat.faq",
+  "kind": "accessor",
+  "set": "chat",
+  "label": "Chip Chat questions and answers",
+  "aliases": [
+    "chip chat questions and answers"
+  ],
+  "params": [
+    {
+      "name": "rows",
+      "type": "json",
+      "default": [
+        {
+          "id": "my_pending",
+          "q": "What is pending for me?",
+          "words": "my work pending todo to do assigned to me my clients open tasks what should I do today next",
+          "a": "",
+          "roles": [
+            "firm_admin",
+            "partner",
+            "reviewer",
+            "auditor",
+            "preparer",
+            "self"
+          ],
+          "go": "#/analytics",
+          "live": "pending_me"
+        },
+        {
+          "id": "overdue",
+          "q": "Which returns are overdue?",
+          "words": "overdue late past due date missed deadline not filed yet behind",
+          "a": "",
+          "roles": [
+            "firm_admin",
+            "partner",
+            "reviewer",
+            "auditor",
+            "preparer",
+            "self"
+          ],
+          "go": "#/analytics",
+          "live": "overdue"
+        },
+        {
+          "id": "due_soon",
+          "q": "What is due this week?",
+          "words": "due soon this week next 7 days days left deadline coming upcoming due dates radar",
+          "a": "",
+          "roles": [
+            "firm_admin",
+            "partner",
+            "reviewer",
+            "auditor",
+            "preparer",
+            "self"
+          ],
+          "go": "#/analytics",
+          "live": "due_soon"
+        },
+        {
+          "id": "client_status",
+          "q": "Where does a client stand?",
+          "words": "status of client stage where is how far progress client name",
+          "a": "",
+          "roles": [
+            "firm_admin",
+            "partner",
+            "reviewer",
+            "auditor",
+            "preparer",
+            "self"
+          ],
+          "go": "#/clients",
+          "live": "client"
+        },
+        {
+          "id": "my_access",
+          "q": "What may I do?",
+          "words": "my role my permissions what can I do access rights allowed why can't I cannot button missing greyed",
+          "a": "",
+          "roles": [],
+          "go": "",
+          "live": "my_access"
+        },
+        {
+          "id": "lent_to_me",
+          "q": "What has been delegated to me?",
+          "words": "delegated to me lent to me on behalf powers given to me",
+          "a": "",
+          "roles": [],
+          "go": "#/delegate",
+          "live": "lent_me"
+        },
+        {
+          "id": "team",
+          "q": "Who is in my firm?",
+          "words": "team members staff colleagues people in my firm who works roles",
+          "a": "",
+          "roles": [
+            "firm_admin",
+            "partner",
+            "reviewer",
+            "auditor",
+            "preparer",
+            "self"
+          ],
+          "go": "#/firm",
+          "live": "team"
+        },
+        {
+          "id": "firm_ready",
+          "q": "What is still pending for my firm to be approved?",
+          "words": "firm approval pending documents missing papers draft why not approved still waiting setup incomplete",
+          "a": "",
+          "roles": [
+            "firm_admin",
+            "self"
+          ],
+          "go": "#/firm",
+          "live": "firm_ready"
+        },
+        {
+          "id": "leads",
+          "q": "Which clients need advice?",
+          "words": "leads opportunities advisory advance tax refund TDS growing shrinking lapsed not renewed upsell",
+          "a": "",
+          "roles": [
+            "firm_admin",
+            "partner"
+          ],
+          "go": "#/analytics",
+          "live": "leads"
+        },
+        {
+          "id": "owner_queue",
+          "q": "Which firms are waiting for me?",
+          "words": "firms waiting approval review papers pending firms submitted queue",
+          "a": "",
+          "roles": [
+            "owner"
+          ],
+          "go": "#/approvals",
+          "live": "owner_queue"
+        },
+        {
+          "id": "owner_health",
+          "q": "Is the server healthy?",
+          "words": "server disk backups sites up down health space full late backup",
+          "a": "",
+          "roles": [
+            "owner"
+          ],
+          "go": "#/server",
+          "live": ""
+        },
+        {
+          "id": "what_is",
+          "q": "What is SimplyFile?",
+          "words": "about this portal what does it do purpose overview",
+          "a": "SimplyFile takes a client's statements (Excel or CSV), gives every row its SF Ref - the ITR schedule or 3CD clause it belongs to - checks them against 26AS, AIS and TIS, works out the tax, interest and refund, and writes the return in the Income-tax Department's own JSON (ITR-3, ITR-5, and the 3CB-3CD for an audit). Many CA firms work on it, each seeing only its own clients.",
+          "roles": [],
+          "go": "",
+          "live": ""
+        },
+        {
+          "id": "start_steps",
+          "q": "How do I get started?",
+          "words": "first steps begin new start how to use getting started onboarding",
+          "a": "1. My firm: give the firm's details and papers and send them for approval. 2. Once approved, add your team. 3. Clients & years: add a client and start this assessment year. 4. Intake & map: upload the statements. 5. Reconcile against 26AS / AIS / TIS. 6. Compute & close: check, sign off, download the JSON and file it.",
+          "roles": [],
+          "go": "#/firm",
+          "live": ""
+        },
+        {
+          "id": "guide_me",
+          "q": "Is there a guided tour of a screen?",
+          "words": "guide me tour walkthrough help on this screen how to use this page",
+          "a": "Yes - press Guide me at the top of any screen. It walks you through that screen step by step.",
+          "roles": [],
+          "go": "",
+          "live": ""
+        },
+        {
+          "id": "search",
+          "q": "How do I find a screen or an action quickly?",
+          "words": "search find ctrl k jump to go to",
+          "a": "Press Ctrl K (or the search box at the top) and type what you want - a screen, an action or a question.",
+          "roles": [],
+          "go": "",
+          "live": ""
+        },
+        {
+          "id": "firm_docs",
+          "q": "Which documents does a firm need?",
+          "words": "documents papers required needed keep ready list upload firm registration proof",
+          "a": "Keep these ready: the owner's masked Aadhaar, the firm's PAN card, the TAN allotment letter, the GST certificate (if registered) and the ICAI firm registration or membership certificate - plus the firm's PAN, TAN, GSTIN, FRN, membership number, the owner's name, the last 4 Aadhaar digits, a phone linked to the tax papers and the address. My firm shows them as a ticked list.",
+          "roles": [
+            "firm_admin",
+            "self",
+            "none"
+          ],
+          "go": "#/firm",
+          "live": ""
+        },
+        {
+          "id": "firm_draft",
+          "q": "Why does my firm still show Draft?",
+          "words": "draft status not sent submitted still draft send for approval button",
+          "a": "A firm stays in Draft until you press Send for approval on My firm, after every item on the Keep these ready list is ticked. Then it shows Waiting for approval until the portal admin approves it or returns it with a note.",
+          "roles": [
+            "firm_admin",
+            "self"
+          ],
+          "go": "#/firm",
+          "live": ""
+        },
+        {
+          "id": "firm_returned",
+          "q": "My firm was returned - what now?",
+          "words": "returned rejected fix resubmit note from admin",
+          "a": "Read the portal admin's note on My firm, fix what it asks, and press Send for approval again.",
+          "roles": [
+            "firm_admin",
+            "self"
+          ],
+          "go": "#/firm",
+          "live": ""
+        },
+        {
+          "id": "firm_time",
+          "q": "How long does approval take?",
+          "words": "approval time how long wait days",
+          "a": "The portal admin reviews a firm within the review time shown on My firm (normally a working day). You get an email when it is decided.",
+          "roles": [
+            "firm_admin",
+            "self",
+            "none"
+          ],
+          "go": "#/firm",
+          "live": ""
+        },
+        {
+          "id": "filing_locked",
+          "q": "Why can't I open Clients or Compute?",
+          "words": "filing screens locked closed not open greyed can't open clients intake",
+          "a": "The Filing screens open only after your firm is approved. Check My firm for its state.",
+          "roles": [
+            "firm_admin",
+            "partner",
+            "reviewer",
+            "auditor",
+            "preparer",
+            "self",
+            "none"
+          ],
+          "go": "#/firm",
+          "live": ""
+        },
+        {
+          "id": "add_member",
+          "q": "How do I add a team member?",
+          "words": "add user staff employee colleague invite create login team member",
+          "a": "My firm - Team - Add a person: their name, their own email and a role. Each person signs in with their own email and password - never share one login.",
+          "roles": [
+            "firm_admin"
+          ],
+          "go": "#/firm",
+          "live": ""
+        },
+        {
+          "id": "roles",
+          "q": "What does each role do?",
+          "words": "roles difference partner reviewer auditor preparer firm admin permissions who can do",
+          "a": "Firm admin: everything, the firm's profile and its team. Partner: all client work, sign-off, filing and reopening, and analytics. Reviewer and Auditor: open everything and sign off. Tax preparer: add clients, upload, map and reconcile - no sign-off or filing.",
+          "roles": [
+            "firm_admin",
+            "partner",
+            "reviewer",
+            "auditor",
+            "preparer",
+            "self"
+          ],
+          "go": "#/firm",
+          "live": ""
+        },
+        {
+          "id": "two_admins",
+          "q": "Can a firm have more than one firm admin?",
+          "words": "second admin another admin two admins same authority",
+          "a": "Yes. Add the person on My firm with the role Firm admin. Each uses their own email, so you always know who did what. The last firm admin can never be removed.",
+          "roles": [
+            "firm_admin"
+          ],
+          "go": "#/firm",
+          "live": ""
+        },
+        {
+          "id": "change_role",
+          "q": "How do I change someone's role or remove them?",
+          "words": "change role remove member delete staff leaving left firm",
+          "a": "My firm - Team: pick the new role on their row, or remove them. Their past work keeps their name.",
+          "roles": [
+            "firm_admin"
+          ],
+          "go": "#/firm",
+          "live": ""
+        },
+        {
+          "id": "own_return",
+          "q": "Can I prepare my own return in SimplyFile?",
+          "words": "my own return myself self file own filing personal return partner own itr",
+          "a": "Yes. In a firm, add yourself as a client (Clients & years - New client, with your own PAN) and work your return like any other: statements, reconcile, compute, sign off, the JSON. Without a firm, sign up as Individual / HUF - SimplyFile then makes you its one client. It prepares ITR-3 (business or profession) and ITR-5; salary (Schedule S) and capital gains at special rates are not worked out yet - add those in the department's utility.",
+          "roles": [],
+          "go": "#/clients",
+          "live": ""
+        },
+        {
+          "id": "add_client",
+          "q": "How do I add a client?",
+          "words": "new client create client add assessee",
+          "a": "Clients & years - New client: name, PAN, status (Individual, HUF, Firm, LLP...), contact and banks. Pick the assessment year to start them in.",
+          "roles": [
+            "firm_admin",
+            "partner",
+            "preparer",
+            "self"
+          ],
+          "go": "#/clients",
+          "live": ""
+        },
+        {
+          "id": "pan_format",
+          "q": "What PAN format is accepted?",
+          "words": "PAN invalid format wrong pan error 10 characters",
+          "a": "A PAN is 10 characters: 5 letters, 4 digits, 1 letter (e.g. ABCDE1234F). The 4th letter tells the status - P person, H HUF, F firm, C company...",
+          "roles": [
+            "firm_admin",
+            "partner",
+            "reviewer",
+            "auditor",
+            "preparer",
+            "self"
+          ],
+          "go": "",
+          "live": ""
+        },
+        {
+          "id": "start_year",
+          "q": "How do I start a new assessment year for a client?",
+          "words": "new year next year carry forward start ay add year",
+          "a": "Open the client on Clients & years and add the year. The client's details carry over; the year starts in Collecting.",
+          "roles": [
+            "firm_admin",
+            "partner",
+            "reviewer",
+            "auditor",
+            "preparer",
+            "self"
+          ],
+          "go": "#/clients",
+          "live": ""
+        },
+        {
+          "id": "archive_client",
+          "q": "How do I archive a client?",
+          "words": "archive client remove client delete client inactive restore",
+          "a": "Clients & years - the client's row - Archive. Nothing is deleted; Archived shows them and Restore brings them back.",
+          "roles": [
+            "firm_admin",
+            "partner"
+          ],
+          "go": "#/clients",
+          "live": ""
+        },
+        {
+          "id": "stages",
+          "q": "What do the stages mean?",
+          "words": "stages collecting mapping reconciling review signed off filed meaning pipeline",
+          "a": "Stages move by themselves: Collecting (statements coming in), Mapping (every row given its SF Ref), Reconciling (books against 26AS/AIS/TIS), Review (ready for sign-off), Signed off, Filed.",
+          "roles": [
+            "firm_admin",
+            "partner",
+            "reviewer",
+            "auditor",
+            "preparer",
+            "self"
+          ],
+          "go": "",
+          "live": ""
+        },
+        {
+          "id": "assign",
+          "q": "How do I assign a client to someone?",
+          "words": "assign client allocate staff assigned to who works on",
+          "a": "On the client's year (Clients & years or Compute & close), pick the person under Assigned. Firm analytics then shows each person's workload.",
+          "roles": [
+            "firm_admin",
+            "partner",
+            "reviewer",
+            "auditor",
+            "preparer",
+            "self"
+          ],
+          "go": "",
+          "live": ""
+        },
+        {
+          "id": "nri",
+          "q": "Can I file for a non-resident (NRI)?",
+          "words": "nri non resident abroad foreign",
+          "a": "Yes - tick Non-resident on the client. SimplyFile then gives no 87A rebate. Salary and capital gains at special rates are not worked out yet - add those in the department's utility.",
+          "roles": [
+            "firm_admin",
+            "partner",
+            "reviewer",
+            "auditor",
+            "preparer",
+            "self"
+          ],
+          "go": "",
+          "live": ""
+        },
+        {
+          "id": "file_formats",
+          "q": "Which files can I upload?",
+          "words": "file format excel csv xls xlsx xlsm upload type input file tally export supported accepted pdf",
+          "a": "Statements: Excel (.xlsx, .xls, .xlsm) or CSV (comma, semicolon or tab), up to 20 MB - any layout, every sheet; amounts as numbers or as text (1,23,456 Dr, (12,500), Rs 5,000); two-sided statements (liabilities | assets) are split into rows. Text PDFs: best-effort - check every row. Not read: scans and photos, password-protected files, .xlsb / .ods (save as .xlsx), Tally XML (export to Excel). 26AS: the TRACES text export. AIS / TIS: CSV or Excel. Old returns: the ITR JSON as filed.",
+          "roles": [
+            "firm_admin",
+            "partner",
+            "reviewer",
+            "auditor",
+            "preparer",
+            "self"
+          ],
+          "go": "#/intake",
+          "live": ""
+        },
+        {
+          "id": "pdf_scan",
+          "q": "Can SimplyFile read a PDF or a scanned statement?",
+          "words": "pdf scanned scan photo picture image ocr bank statement pdf read",
+          "a": "A PDF with text in it is read best-effort - columns can shift, so check every row before mapping. A scanned PDF or a photo cannot be read: SimplyFile has no text recognition (OCR). Ask the client for the Excel, or a PDF exported with text.",
+          "roles": [
+            "firm_admin",
+            "partner",
+            "reviewer",
+            "auditor",
+            "preparer",
+            "self"
+          ],
+          "go": "#/intake",
+          "live": ""
+        },
+        {
+          "id": "locked_file",
+          "q": "My Excel file will not upload",
+          "words": "password protected locked encrypted xlsb ods numbers cannot read unreadable error upload failed",
+          "a": "A password-protected workbook cannot be read: open it in Excel, remove the password (File - Info - Protect Workbook) and save. .xlsb, .ods and Numbers files: save as .xlsx. Tally XML or JSON: export the report to Excel instead. The upload says which it is.",
+          "roles": [
+            "firm_admin",
+            "partner",
+            "reviewer",
+            "auditor",
+            "preparer",
+            "self"
+          ],
+          "go": "#/intake",
+          "live": ""
+        },
+        {
+          "id": "two_sided",
+          "q": "Can it read a two-sided balance sheet?",
+          "words": "two sided horizontal balance sheet liabilities assets side by side dr cr trading account",
+          "a": "Yes - a statement with liabilities on the left and assets on the right (or expenditure | income) is split: each side's lines become their own rows, and the download writes the right side's SF Refs in their own column. A ledger with Dr and Cr columns stays one-sided.",
+          "roles": [
+            "firm_admin",
+            "partner",
+            "reviewer",
+            "auditor",
+            "preparer",
+            "self"
+          ],
+          "go": "#/intake",
+          "live": ""
+        },
+        {
+          "id": "sf_ref",
+          "q": "What is an SF Ref?",
+          "words": "sf ref meaning reference tag code schedule clause mapping",
+          "a": "The SF Ref says where a row belongs: the ITR schedule or the 3CD clause, e.g. ITR3 HP or 3CD 31(a) #2. SimplyFile suggests one for every row; you accept or change it. Put the SF Ref in a column of the client's own sheet and next year's file maps itself.",
+          "roles": [
+            "firm_admin",
+            "partner",
+            "reviewer",
+            "auditor",
+            "preparer",
+            "self"
+          ],
+          "go": "#/intake",
+          "live": ""
+        },
+        {
+          "id": "map_rows",
+          "q": "How do I map the rows?",
+          "words": "map rows accept suggestion change sf ref tag rows unmapped",
+          "a": "Intake & map - open the file - each row shows the suggested SF Ref. Accept them all, or change a row's SF Ref by hand.",
+          "roles": [
+            "firm_admin",
+            "partner",
+            "reviewer",
+            "auditor",
+            "preparer",
+            "self"
+          ],
+          "go": "#/intake",
+          "live": ""
+        },
+        {
+          "id": "bad_ref",
+          "q": "It says my SF Ref is not valid",
+          "words": "not an sf ref invalid ref error format",
+          "a": "Write <form> <table> [#serial], e.g. 3CD 31(a) #2 or ITR3 HP.",
+          "roles": [
+            "firm_admin",
+            "partner",
+            "reviewer",
+            "auditor",
+            "preparer",
+            "self"
+          ],
+          "go": "#/intake",
+          "live": ""
+        },
+        {
+          "id": "delete_upload",
+          "q": "How do I delete an uploaded file?",
+          "words": "delete file remove upload wrong file",
+          "a": "Intake & map - the file - Delete. The file and the SF Refs saved for its rows are removed.",
+          "roles": [
+            "firm_admin",
+            "partner",
+            "preparer",
+            "self"
+          ],
+          "go": "#/intake",
+          "live": ""
+        },
+        {
+          "id": "download_tagged",
+          "q": "Can I download the statement with the SF Refs?",
+          "words": "download excel with sf ref tagged export",
+          "a": "Yes - Intake & map - Excel with SF Ref writes the client's workbook back with the SF Ref column filled.",
+          "roles": [
+            "firm_admin",
+            "partner",
+            "reviewer",
+            "auditor",
+            "preparer",
+            "self"
+          ],
+          "go": "#/intake",
+          "live": ""
+        },
+        {
+          "id": "recon_what",
+          "q": "What does Reconcile do?",
+          "words": "reconcile 26as ais tis compare match mismatch",
+          "a": "It compares the books with the Income-tax portal: 26AS, AIS and TIS. TDS, TCS and challans are matched by party and date; anything that does not match shows red with what to check.",
+          "roles": [
+            "firm_admin",
+            "partner",
+            "reviewer",
+            "auditor",
+            "preparer",
+            "self"
+          ],
+          "go": "#/recon",
+          "live": ""
+        },
+        {
+          "id": "recon_red",
+          "q": "What does a red line on Reconcile mean?",
+          "words": "red mismatch difference finding not matching unexplained",
+          "a": "A red line is a difference between the books and the portal - TDS claimed but not in 26AS, or in 26AS but not in the books. Fix the books, or write a note on its row - why it is fine, or what was done.",
+          "roles": [
+            "firm_admin",
+            "partner",
+            "reviewer",
+            "auditor",
+            "preparer",
+            "self"
+          ],
+          "go": "#/recon",
+          "live": ""
+        },
+        {
+          "id": "get_26as",
+          "q": "Where do I get 26AS, AIS and TIS?",
+          "words": "download 26as traces ais tis portal",
+          "a": "26AS: from TRACES (via the e-filing portal - View Form 26AS), export as text. AIS and TIS: e-filing portal - AIS - download as CSV or Excel. Upload them on Reconcile.",
+          "roles": [
+            "firm_admin",
+            "partner",
+            "reviewer",
+            "auditor",
+            "preparer",
+            "self"
+          ],
+          "go": "#/recon",
+          "live": ""
+        },
+        {
+          "id": "regime",
+          "q": "New regime or old regime?",
+          "words": "regime new old which is better compare",
+          "a": "Pick it under Tax regime on Compute & close; the computation follows your choice. The new regime (115BAC) is the default; with business income, the old regime needs Form 10-IEA filed by the due date. A firm or LLP pays the firm rate.",
+          "roles": [
+            "firm_admin",
+            "partner",
+            "reviewer",
+            "auditor",
+            "preparer",
+            "self"
+          ],
+          "go": "#/compute",
+          "live": ""
+        },
+        {
+          "id": "rebate_87a",
+          "q": "Why is there no 87A rebate?",
+          "words": "87a rebate missing not given",
+          "a": "87A goes only to a resident individual whose total income is within the limit for that year and regime. A non-resident, an HUF or a firm never gets it.",
+          "roles": [
+            "firm_admin",
+            "partner",
+            "reviewer",
+            "auditor",
+            "preparer",
+            "self"
+          ],
+          "go": "#/compute",
+          "live": ""
+        },
+        {
+          "id": "interest_234",
+          "q": "How is interest under 234A, 234B and 234C worked out?",
+          "words": "234a 234b 234c interest late advance tax",
+          "a": "From the 26AS challans by date: which are advance tax and which self-assessment, what was paid by each instalment date, and the months to the day of filing. 234A is for filing late, 234B for paying less than 90% as advance tax, 234C for short instalments. A resident senior citizen with no business income pays no advance tax, so no 234B or C.",
+          "roles": [
+            "firm_admin",
+            "partner",
+            "reviewer",
+            "auditor",
+            "preparer",
+            "self"
+          ],
+          "go": "#/compute",
+          "live": ""
+        },
+        {
+          "id": "interest_244a",
+          "q": "How is refund interest (244A) worked out?",
+          "words": "244a refund interest",
+          "a": "Half a percent a month on the refund, from 1 April of the assessment year (or the date of filing, if late) to the date of refund.",
+          "roles": [
+            "firm_admin",
+            "partner",
+            "reviewer",
+            "auditor",
+            "preparer",
+            "self"
+          ],
+          "go": "#/compute",
+          "live": ""
+        },
+        {
+          "id": "audit_3cd",
+          "q": "Does SimplyFile do the tax audit report?",
+          "words": "tax audit 3cd 3cb 3ca 44ab audit report",
+          "a": "Yes - for an audit year it writes the Form 3CB-3CD (or 3CA-3CD) JSON from the SF Refs, checked against the CBDT schema, next to the ITR.",
+          "roles": [
+            "firm_admin",
+            "partner",
+            "reviewer",
+            "auditor",
+            "preparer",
+            "self"
+          ],
+          "go": "#/compute",
+          "live": ""
+        },
+        {
+          "id": "presumptive",
+          "q": "Can I use presumptive income (44AD / 44ADA)?",
+          "words": "presumptive 44ad 44ada 44ae",
+          "a": "Tick Presumptive on the client's year; Compute & close then works the income out at the presumptive rate.",
+          "roles": [
+            "firm_admin",
+            "partner",
+            "reviewer",
+            "auditor",
+            "preparer",
+            "self"
+          ],
+          "go": "#/compute",
+          "live": ""
+        },
+        {
+          "id": "not_supported",
+          "q": "What does SimplyFile not do yet?",
+          "words": "not supported limitations missing salary capital gains marginal relief",
+          "a": "Not yet: salary (Schedule S), capital gains at special rates, and 87A marginal relief. Complete those in the department's offline utility after importing the JSON.",
+          "roles": [],
+          "go": "",
+          "live": ""
+        },
+        {
+          "id": "signoff",
+          "q": "How do I sign off a computation?",
+          "words": "sign off approve review computation signoff who can sign",
+          "a": "Compute & close - Sign off. Only a firm admin, partner, reviewer or auditor can (or someone they delegated it to).",
+          "roles": [
+            "firm_admin",
+            "partner",
+            "reviewer",
+            "auditor",
+            "self"
+          ],
+          "go": "#/compute",
+          "live": ""
+        },
+        {
+          "id": "why_no_signoff",
+          "q": "Why can't I sign off?",
+          "words": "cannot sign off no sign off button preparer",
+          "a": "A tax preparer cannot sign off. Ask a partner or reviewer - or ask them to delegate the sign-off for this client to you (Delegations).",
+          "roles": [
+            "preparer"
+          ],
+          "go": "#/delegate",
+          "live": ""
+        },
+        {
+          "id": "mark_filed",
+          "q": "How do I mark a return as filed?",
+          "words": "mark filed acknowledgement ack number file return done who can file filing",
+          "a": "Compute & close - Mark filed & close the year: the 15-digit acknowledgement number from the ITR-V and the date filed. The date decides whether it is original, belated, revised or updated. The year then closes.",
+          "roles": [
+            "firm_admin",
+            "partner",
+            "self"
+          ],
+          "go": "#/compute",
+          "live": ""
+        },
+        {
+          "id": "due_dates",
+          "q": "What are the due dates?",
+          "words": "due date last date deadline 139 july october november",
+          "a": "Original under 139(1): 31 July; 31 August for business returns without audit from this year; 31 October with a tax audit; 30 November with Form 3CEB. Belated (139(4)) and revised (139(5)) returns: up to 31 December. After that only an updated return (ITR-U, 139(8A)).",
+          "roles": [],
+          "go": "",
+          "live": ""
+        },
+        {
+          "id": "late_fee",
+          "q": "What is the late fee for filing after the due date?",
+          "words": "late fee 234f penalty filing late belated fee",
+          "a": "Filing after the due date costs a late fee under 234F: Rs 5,000, or Rs 1,000 when total income is up to Rs 5 lakh - plus interest under 234A for the months late. SimplyFile works out 234A; add the 234F fee in the department's utility if it applies.",
+          "roles": [],
+          "go": "",
+          "live": ""
+        },
+        {
+          "id": "revise",
+          "q": "How do I file a revised return?",
+          "words": "revise revised return correction mistake 139(5)",
+          "a": "Compute & close - Start a revised return. The year opens again and the sign-off is cleared; fix it, sign off and mark it filed. The revised return takes the place of the original, which stays on record. Up to 31 December.",
+          "roles": [
+            "firm_admin",
+            "partner",
+            "self"
+          ],
+          "go": "#/compute",
+          "live": ""
+        },
+        {
+          "id": "itr_u",
+          "q": "What is ITR-U and the 140B tax?",
+          "words": "itr-u updated return 139(8a) 140b additional tax penalty after december",
+          "a": "After 31 December only an updated return (ITR-U) is possible. It carries additional tax under 140B: 25%, 50%, 60% or 70% of the tax and interest, by how late. An ITR-U that would lower tax is refused.",
+          "roles": [
+            "firm_admin",
+            "partner",
+            "reviewer",
+            "auditor",
+            "preparer",
+            "self"
+          ],
+          "go": "",
+          "live": ""
+        },
+        {
+          "id": "undo_filing",
+          "q": "I marked a return filed by mistake",
+          "words": "undo filing wrong filed mistake reopen",
+          "a": "Compute & close - Reopen the year (needs the reopen right: firm admin or partner). It goes back to Review; nothing filed is ever deleted - the history keeps it.",
+          "roles": [
+            "firm_admin",
+            "partner",
+            "self"
+          ],
+          "go": "#/compute",
+          "live": ""
+        },
+        {
+          "id": "gst_tds",
+          "q": "Does SimplyFile file GST or TDS returns?",
+          "words": "gst return gstr tds return 24q 26q 27q tcs return",
+          "a": "No - SimplyFile prepares income-tax returns (ITR-3, ITR-5) and the tax audit report. GST and TDS returns are filed elsewhere; their figures still show here through AIS, TIS and 26AS.",
+          "roles": [],
+          "go": "",
+          "live": ""
+        },
+        {
+          "id": "other_forms",
+          "q": "Which ITR forms are supported?",
+          "words": "itr-1 itr-2 itr-4 itr-6 itr-7 company trust sahaj sugam forms supported",
+          "a": "ITR-3 (individuals and HUFs with business income) and ITR-5 (firms, LLPs, AOPs), plus Form 3CA/3CB-3CD for a tax audit. ITR-1, 2, 4, 6 and 7 are not prepared here.",
+          "roles": [],
+          "go": "",
+          "live": ""
+        },
+        {
+          "id": "json_download",
+          "q": "How do I get the return JSON?",
+          "words": "download json itr json file output export",
+          "a": "Compute & close - ITR JSON. It is the department's own format (ITR-3 or ITR-5, CBDT schema AY 2026-27), checked against the schema before you download it; anything missing is listed with where it goes.",
+          "roles": [
+            "firm_admin",
+            "partner",
+            "reviewer",
+            "auditor",
+            "preparer",
+            "self"
+          ],
+          "go": "#/compute",
+          "live": ""
+        },
+        {
+          "id": "json_upload",
+          "q": "Can I upload the JSON straight to the Income-tax portal?",
+          "words": "upload json portal direct e-filing import utility",
+          "a": "Open it in the department's offline utility, complete any remaining schedules, validate, and upload from there. A direct upload needs a CBDT software ID, which SimplyFile does not have yet.",
+          "roles": [
+            "firm_admin",
+            "partner",
+            "reviewer",
+            "auditor",
+            "preparer",
+            "self"
+          ],
+          "go": "",
+          "live": ""
+        },
+        {
+          "id": "json_errors",
+          "q": "The JSON check shows problems",
+          "words": "schema errors json invalid missing fields check",
+          "a": "Each problem names the field and where it goes. Most come from missing client details (address, bank, PAN of the signer) or rows without an SF Ref - fix them and download again.",
+          "roles": [
+            "firm_admin",
+            "partner",
+            "reviewer",
+            "auditor",
+            "preparer",
+            "self"
+          ],
+          "go": "#/compute",
+          "live": ""
+        },
+        {
+          "id": "import_how",
+          "q": "How do I import last year's return?",
+          "words": "import old return previous year itr json history",
+          "a": "Import old returns: 1. upload the ITR JSON as filed, 2. pick whose return it is (the client with the same PAN is picked for you, or create a new client from it), 3. the acknowledgement number and date filed, 4. download the statement as filed and next year's statement ready to fill.",
+          "roles": [
+            "firm_admin",
+            "partner",
+            "preparer",
+            "self"
+          ],
+          "go": "#/itrimport",
+          "live": ""
+        },
+        {
+          "id": "import_refused",
+          "q": "Why was my import refused?",
+          "words": "import refused already imported wrong client pan mismatch",
+          "a": "The same return cannot be imported twice, and a return cannot go on a client with a different PAN.",
+          "roles": [
+            "firm_admin",
+            "partner",
+            "reviewer",
+            "auditor",
+            "preparer",
+            "self"
+          ],
+          "go": "#/itrimport",
+          "live": ""
+        },
+        {
+          "id": "analytics_what",
+          "q": "What does Firm analytics show?",
+          "words": "analytics dashboard reports kpi practice",
+          "a": "The year at a glance: clients, returns filed and on time, tax handled, refunds, interest clients paid; a deadline radar; the pipeline; the practice mix; each person's workload; who signed off and filed; growth opportunities; and year on year.",
+          "roles": [
+            "firm_admin",
+            "partner",
+            "firm_admin"
+          ],
+          "go": "#/analytics",
+          "live": ""
+        },
+        {
+          "id": "lead_meanings",
+          "q": "What do the growth opportunities mean?",
+          "words": "opportunities advance tax planning tds refund lapsed growing shrinking",
+          "a": "Advance-tax planning: paid 234B/C. Too much TDS: a big refund. Late filers, revised returns, open mismatches. Not carried into this year, lapsed clients, and clients whose income grew or fell by a quarter.",
+          "roles": [
+            "firm_admin",
+            "partner"
+          ],
+          "go": "#/analytics",
+          "live": ""
+        },
+        {
+          "id": "delegate_how",
+          "q": "How do I delegate work?",
+          "words": "delegate lend powers leave vacation someone else sign on my behalf",
+          "a": "Delegations - Delegate: pick the person, the scope (one filing, one client, some or all clients for a year), what they may do, and the dates. They can then do exactly that, recorded as done for you. You can lend only what you may do yourself.",
+          "roles": [
+            "firm_admin",
+            "partner",
+            "reviewer",
+            "auditor",
+            "preparer",
+            "self"
+          ],
+          "go": "#/delegate",
+          "live": ""
+        },
+        {
+          "id": "delegate_back",
+          "q": "How do I take a delegation back?",
+          "words": "revoke delegation take back cancel",
+          "a": "Delegations - Lent by me - Take back. It stops at once; what they already did stays, marked as done for you.",
+          "roles": [
+            "firm_admin",
+            "partner",
+            "reviewer",
+            "auditor",
+            "preparer",
+            "self"
+          ],
+          "go": "#/delegate",
+          "live": ""
+        },
+        {
+          "id": "delegate_portal",
+          "q": "Can I hand over portal admin work?",
+          "words": "delegate portal admin approvals deputy",
+          "a": "Yes - Delegations - Portal admin work: Firm approvals, Portal analytics, Server & sites, Keys for sale and Reported issues, for set dates, to someone outside a firm. People & access, the builders and Setup stay yours.",
+          "roles": [
+            "owner"
+          ],
+          "go": "#/delegate",
+          "live": ""
+        },
+        {
+          "id": "dock",
+          "q": "What are the buttons at the bottom right?",
+          "words": "dock tools bottom bar capture record voice notes",
+          "a": "Chip Chat (this), Screen capture, Screen recording, Voice typing (speak into the box you are in), Notes (private, with formatting, pictures and voice notes) and Issues (report a problem and follow its reply). The arrow folds the bar sideways or upwards.",
+          "roles": [],
+          "go": "",
+          "live": ""
+        },
+        {
+          "id": "voice",
+          "q": "Can I type by speaking?",
+          "words": "voice typing dictation speak microphone",
+          "a": "Click into a box, press the microphone at the bottom right and speak; press it again to stop. Works in Chrome and Edge.",
+          "roles": [],
+          "go": "",
+          "live": ""
+        },
+        {
+          "id": "report",
+          "q": "How do I report a problem?",
+          "words": "bug problem error issue report complaint feedback",
+          "a": "Press Issues (the flag) at the bottom right: a header, the details, pictures and voice notes. Or capture the screen first and choose Report as an issue. Its status and the portal admin's reply show in Issues; the flag shows a badge when a reply is waiting.",
+          "roles": [],
+          "go": "",
+          "live": ""
+        },
+        {
+          "id": "password",
+          "q": "How do I change my password?",
+          "words": "password change reset forgot",
+          "a": "Account menu (your name, top right) - Change password. Forgot it? Use Forgot password on the sign-in page.",
+          "roles": [],
+          "go": "",
+          "live": ""
+        },
+        {
+          "id": "ai_key",
+          "q": "Do I need an AI key?",
+          "words": "ai key gemini api key needed",
+          "a": "No - SimplyFile's computations, checks and Chip Chat work without one. A key only lets Chip Chat ask an AI which answer fits when it is unsure.",
+          "roles": [],
+          "go": "#/keys",
+          "live": ""
+        },
+        {
+          "id": "approve_firm",
+          "q": "How do I approve a firm?",
+          "words": "approve firm review papers approvals return reject",
+          "a": "Firm approvals - open the firm - check the details and papers - Approve, or Return with a note for what to fix.",
+          "roles": [
+            "owner"
+          ],
+          "go": "#/approvals",
+          "live": ""
+        },
+        {
+          "id": "backups",
+          "q": "How are the backups kept?",
+          "words": "backup policy retention offsite restore",
+          "a": "SimplyFile's data is copied every hour (24 kept), daily (7) and weekly (5); the daily and weekly copies also go off-site, encrypted. Server & sites shows each backup's newest copy and flags a late one.",
+          "roles": [
+            "owner"
+          ],
+          "go": "#/server",
+          "live": ""
+        },
+        {
+          "id": "portal_numbers",
+          "q": "How is the portal doing?",
+          "words": "portal analytics firms people usage growth",
+          "a": "Portal analytics: firms, people active, clients, returns filed, files, firms needing you, and use per day.",
+          "roles": [
+            "owner"
+          ],
+          "go": "#/portalstats",
+          "live": ""
+        }
+      ],
+      "label": "rows"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "rows": "$rows"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-04: every question Chip Chat knows, the answer, who sees it (roles), the screen to open, and live answers worked out from the person's own work. A firm adds its own on top (chipchat.py, Teach).",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "rows": [
+          {
+            "id": "my_pending",
+            "q": "What is pending for me?",
+            "words": "my work pending todo to do assigned to me my clients open tasks what should I do today next",
+            "a": "",
+            "roles": [
+              "firm_admin",
+              "partner",
+              "reviewer",
+              "auditor",
+              "preparer",
+              "self"
+            ],
+            "go": "#/analytics",
+            "live": "pending_me"
+          },
+          {
+            "id": "overdue",
+            "q": "Which returns are overdue?",
+            "words": "overdue late past due date missed deadline not filed yet behind",
+            "a": "",
+            "roles": [
+              "firm_admin",
+              "partner",
+              "reviewer",
+              "auditor",
+              "preparer",
+              "self"
+            ],
+            "go": "#/analytics",
+            "live": "overdue"
+          },
+          {
+            "id": "due_soon",
+            "q": "What is due this week?",
+            "words": "due soon this week next 7 days days left deadline coming upcoming due dates radar",
+            "a": "",
+            "roles": [
+              "firm_admin",
+              "partner",
+              "reviewer",
+              "auditor",
+              "preparer",
+              "self"
+            ],
+            "go": "#/analytics",
+            "live": "due_soon"
+          },
+          {
+            "id": "client_status",
+            "q": "Where does a client stand?",
+            "words": "status of client stage where is how far progress client name",
+            "a": "",
+            "roles": [
+              "firm_admin",
+              "partner",
+              "reviewer",
+              "auditor",
+              "preparer",
+              "self"
+            ],
+            "go": "#/clients",
+            "live": "client"
+          },
+          {
+            "id": "my_access",
+            "q": "What may I do?",
+            "words": "my role my permissions what can I do access rights allowed why can't I cannot button missing greyed",
+            "a": "",
+            "roles": [],
+            "go": "",
+            "live": "my_access"
+          },
+          {
+            "id": "lent_to_me",
+            "q": "What has been delegated to me?",
+            "words": "delegated to me lent to me on behalf powers given to me",
+            "a": "",
+            "roles": [],
+            "go": "#/delegate",
+            "live": "lent_me"
+          },
+          {
+            "id": "team",
+            "q": "Who is in my firm?",
+            "words": "team members staff colleagues people in my firm who works roles",
+            "a": "",
+            "roles": [
+              "firm_admin",
+              "partner",
+              "reviewer",
+              "auditor",
+              "preparer",
+              "self"
+            ],
+            "go": "#/firm",
+            "live": "team"
+          },
+          {
+            "id": "firm_ready",
+            "q": "What is still pending for my firm to be approved?",
+            "words": "firm approval pending documents missing papers draft why not approved still waiting setup incomplete",
+            "a": "",
+            "roles": [
+              "firm_admin",
+              "self"
+            ],
+            "go": "#/firm",
+            "live": "firm_ready"
+          },
+          {
+            "id": "leads",
+            "q": "Which clients need advice?",
+            "words": "leads opportunities advisory advance tax refund TDS growing shrinking lapsed not renewed upsell",
+            "a": "",
+            "roles": [
+              "firm_admin",
+              "partner"
+            ],
+            "go": "#/analytics",
+            "live": "leads"
+          },
+          {
+            "id": "owner_queue",
+            "q": "Which firms are waiting for me?",
+            "words": "firms waiting approval review papers pending firms submitted queue",
+            "a": "",
+            "roles": [
+              "owner"
+            ],
+            "go": "#/approvals",
+            "live": "owner_queue"
+          },
+          {
+            "id": "owner_health",
+            "q": "Is the server healthy?",
+            "words": "server disk backups sites up down health space full late backup",
+            "a": "",
+            "roles": [
+              "owner"
+            ],
+            "go": "#/server",
+            "live": ""
+          },
+          {
+            "id": "what_is",
+            "q": "What is SimplyFile?",
+            "words": "about this portal what does it do purpose overview",
+            "a": "SimplyFile takes a client's statements (Excel or CSV), gives every row its SF Ref - the ITR schedule or 3CD clause it belongs to - checks them against 26AS, AIS and TIS, works out the tax, interest and refund, and writes the return in the Income-tax Department's own JSON (ITR-3, ITR-5, and the 3CB-3CD for an audit). Many CA firms work on it, each seeing only its own clients.",
+            "roles": [],
+            "go": "",
+            "live": ""
+          },
+          {
+            "id": "start_steps",
+            "q": "How do I get started?",
+            "words": "first steps begin new start how to use getting started onboarding",
+            "a": "1. My firm: give the firm's details and papers and send them for approval. 2. Once approved, add your team. 3. Clients & years: add a client and start this assessment year. 4. Intake & map: upload the statements. 5. Reconcile against 26AS / AIS / TIS. 6. Compute & close: check, sign off, download the JSON and file it.",
+            "roles": [],
+            "go": "#/firm",
+            "live": ""
+          },
+          {
+            "id": "guide_me",
+            "q": "Is there a guided tour of a screen?",
+            "words": "guide me tour walkthrough help on this screen how to use this page",
+            "a": "Yes - press Guide me at the top of any screen. It walks you through that screen step by step.",
+            "roles": [],
+            "go": "",
+            "live": ""
+          },
+          {
+            "id": "search",
+            "q": "How do I find a screen or an action quickly?",
+            "words": "search find ctrl k jump to go to",
+            "a": "Press Ctrl K (or the search box at the top) and type what you want - a screen, an action or a question.",
+            "roles": [],
+            "go": "",
+            "live": ""
+          },
+          {
+            "id": "firm_docs",
+            "q": "Which documents does a firm need?",
+            "words": "documents papers required needed keep ready list upload firm registration proof",
+            "a": "Keep these ready: the owner's masked Aadhaar, the firm's PAN card, the TAN allotment letter, the GST certificate (if registered) and the ICAI firm registration or membership certificate - plus the firm's PAN, TAN, GSTIN, FRN, membership number, the owner's name, the last 4 Aadhaar digits, a phone linked to the tax papers and the address. My firm shows them as a ticked list.",
+            "roles": [
+              "firm_admin",
+              "self",
+              "none"
+            ],
+            "go": "#/firm",
+            "live": ""
+          },
+          {
+            "id": "firm_draft",
+            "q": "Why does my firm still show Draft?",
+            "words": "draft status not sent submitted still draft send for approval button",
+            "a": "A firm stays in Draft until you press Send for approval on My firm, after every item on the Keep these ready list is ticked. Then it shows Waiting for approval until the portal admin approves it or returns it with a note.",
+            "roles": [
+              "firm_admin",
+              "self"
+            ],
+            "go": "#/firm",
+            "live": ""
+          },
+          {
+            "id": "firm_returned",
+            "q": "My firm was returned - what now?",
+            "words": "returned rejected fix resubmit note from admin",
+            "a": "Read the portal admin's note on My firm, fix what it asks, and press Send for approval again.",
+            "roles": [
+              "firm_admin",
+              "self"
+            ],
+            "go": "#/firm",
+            "live": ""
+          },
+          {
+            "id": "firm_time",
+            "q": "How long does approval take?",
+            "words": "approval time how long wait days",
+            "a": "The portal admin reviews a firm within the review time shown on My firm (normally a working day). You get an email when it is decided.",
+            "roles": [
+              "firm_admin",
+              "self",
+              "none"
+            ],
+            "go": "#/firm",
+            "live": ""
+          },
+          {
+            "id": "filing_locked",
+            "q": "Why can't I open Clients or Compute?",
+            "words": "filing screens locked closed not open greyed can't open clients intake",
+            "a": "The Filing screens open only after your firm is approved. Check My firm for its state.",
+            "roles": [
+              "firm_admin",
+              "partner",
+              "reviewer",
+              "auditor",
+              "preparer",
+              "self",
+              "none"
+            ],
+            "go": "#/firm",
+            "live": ""
+          },
+          {
+            "id": "add_member",
+            "q": "How do I add a team member?",
+            "words": "add user staff employee colleague invite create login team member",
+            "a": "My firm - Team - Add a person: their name, their own email and a role. Each person signs in with their own email and password - never share one login.",
+            "roles": [
+              "firm_admin"
+            ],
+            "go": "#/firm",
+            "live": ""
+          },
+          {
+            "id": "roles",
+            "q": "What does each role do?",
+            "words": "roles difference partner reviewer auditor preparer firm admin permissions who can do",
+            "a": "Firm admin: everything, the firm's profile and its team. Partner: all client work, sign-off, filing and reopening, and analytics. Reviewer and Auditor: open everything and sign off. Tax preparer: add clients, upload, map and reconcile - no sign-off or filing.",
+            "roles": [
+              "firm_admin",
+              "partner",
+              "reviewer",
+              "auditor",
+              "preparer",
+              "self"
+            ],
+            "go": "#/firm",
+            "live": ""
+          },
+          {
+            "id": "two_admins",
+            "q": "Can a firm have more than one firm admin?",
+            "words": "second admin another admin two admins same authority",
+            "a": "Yes. Add the person on My firm with the role Firm admin. Each uses their own email, so you always know who did what. The last firm admin can never be removed.",
+            "roles": [
+              "firm_admin"
+            ],
+            "go": "#/firm",
+            "live": ""
+          },
+          {
+            "id": "change_role",
+            "q": "How do I change someone's role or remove them?",
+            "words": "change role remove member delete staff leaving left firm",
+            "a": "My firm - Team: pick the new role on their row, or remove them. Their past work keeps their name.",
+            "roles": [
+              "firm_admin"
+            ],
+            "go": "#/firm",
+            "live": ""
+          },
+          {
+            "id": "own_return",
+            "q": "Can I prepare my own return in SimplyFile?",
+            "words": "my own return myself self file own filing personal return partner own itr",
+            "a": "Yes. In a firm, add yourself as a client (Clients & years - New client, with your own PAN) and work your return like any other: statements, reconcile, compute, sign off, the JSON. Without a firm, sign up as Individual / HUF - SimplyFile then makes you its one client. It prepares ITR-3 (business or profession) and ITR-5; salary (Schedule S) and capital gains at special rates are not worked out yet - add those in the department's utility.",
+            "roles": [],
+            "go": "#/clients",
+            "live": ""
+          },
+          {
+            "id": "add_client",
+            "q": "How do I add a client?",
+            "words": "new client create client add assessee",
+            "a": "Clients & years - New client: name, PAN, status (Individual, HUF, Firm, LLP...), contact and banks. Pick the assessment year to start them in.",
+            "roles": [
+              "firm_admin",
+              "partner",
+              "preparer",
+              "self"
+            ],
+            "go": "#/clients",
+            "live": ""
+          },
+          {
+            "id": "pan_format",
+            "q": "What PAN format is accepted?",
+            "words": "PAN invalid format wrong pan error 10 characters",
+            "a": "A PAN is 10 characters: 5 letters, 4 digits, 1 letter (e.g. ABCDE1234F). The 4th letter tells the status - P person, H HUF, F firm, C company...",
+            "roles": [
+              "firm_admin",
+              "partner",
+              "reviewer",
+              "auditor",
+              "preparer",
+              "self"
+            ],
+            "go": "",
+            "live": ""
+          },
+          {
+            "id": "start_year",
+            "q": "How do I start a new assessment year for a client?",
+            "words": "new year next year carry forward start ay add year",
+            "a": "Open the client on Clients & years and add the year. The client's details carry over; the year starts in Collecting.",
+            "roles": [
+              "firm_admin",
+              "partner",
+              "reviewer",
+              "auditor",
+              "preparer",
+              "self"
+            ],
+            "go": "#/clients",
+            "live": ""
+          },
+          {
+            "id": "archive_client",
+            "q": "How do I archive a client?",
+            "words": "archive client remove client delete client inactive restore",
+            "a": "Clients & years - the client's row - Archive. Nothing is deleted; Archived shows them and Restore brings them back.",
+            "roles": [
+              "firm_admin",
+              "partner"
+            ],
+            "go": "#/clients",
+            "live": ""
+          },
+          {
+            "id": "stages",
+            "q": "What do the stages mean?",
+            "words": "stages collecting mapping reconciling review signed off filed meaning pipeline",
+            "a": "Stages move by themselves: Collecting (statements coming in), Mapping (every row given its SF Ref), Reconciling (books against 26AS/AIS/TIS), Review (ready for sign-off), Signed off, Filed.",
+            "roles": [
+              "firm_admin",
+              "partner",
+              "reviewer",
+              "auditor",
+              "preparer",
+              "self"
+            ],
+            "go": "",
+            "live": ""
+          },
+          {
+            "id": "assign",
+            "q": "How do I assign a client to someone?",
+            "words": "assign client allocate staff assigned to who works on",
+            "a": "On the client's year (Clients & years or Compute & close), pick the person under Assigned. Firm analytics then shows each person's workload.",
+            "roles": [
+              "firm_admin",
+              "partner",
+              "reviewer",
+              "auditor",
+              "preparer",
+              "self"
+            ],
+            "go": "",
+            "live": ""
+          },
+          {
+            "id": "nri",
+            "q": "Can I file for a non-resident (NRI)?",
+            "words": "nri non resident abroad foreign",
+            "a": "Yes - tick Non-resident on the client. SimplyFile then gives no 87A rebate. Salary and capital gains at special rates are not worked out yet - add those in the department's utility.",
+            "roles": [
+              "firm_admin",
+              "partner",
+              "reviewer",
+              "auditor",
+              "preparer",
+              "self"
+            ],
+            "go": "",
+            "live": ""
+          },
+          {
+            "id": "file_formats",
+            "q": "Which files can I upload?",
+            "words": "file format excel csv xls xlsx xlsm upload type input file tally export supported accepted pdf",
+            "a": "Statements: Excel (.xlsx, .xls, .xlsm) or CSV (comma, semicolon or tab), up to 20 MB - any layout, every sheet; amounts as numbers or as text (1,23,456 Dr, (12,500), Rs 5,000); two-sided statements (liabilities | assets) are split into rows. Text PDFs: best-effort - check every row. Not read: scans and photos, password-protected files, .xlsb / .ods (save as .xlsx), Tally XML (export to Excel). 26AS: the TRACES text export. AIS / TIS: CSV or Excel. Old returns: the ITR JSON as filed.",
+            "roles": [
+              "firm_admin",
+              "partner",
+              "reviewer",
+              "auditor",
+              "preparer",
+              "self"
+            ],
+            "go": "#/intake",
+            "live": ""
+          },
+          {
+            "id": "pdf_scan",
+            "q": "Can SimplyFile read a PDF or a scanned statement?",
+            "words": "pdf scanned scan photo picture image ocr bank statement pdf read",
+            "a": "A PDF with text in it is read best-effort - columns can shift, so check every row before mapping. A scanned PDF or a photo cannot be read: SimplyFile has no text recognition (OCR). Ask the client for the Excel, or a PDF exported with text.",
+            "roles": [
+              "firm_admin",
+              "partner",
+              "reviewer",
+              "auditor",
+              "preparer",
+              "self"
+            ],
+            "go": "#/intake",
+            "live": ""
+          },
+          {
+            "id": "locked_file",
+            "q": "My Excel file will not upload",
+            "words": "password protected locked encrypted xlsb ods numbers cannot read unreadable error upload failed",
+            "a": "A password-protected workbook cannot be read: open it in Excel, remove the password (File - Info - Protect Workbook) and save. .xlsb, .ods and Numbers files: save as .xlsx. Tally XML or JSON: export the report to Excel instead. The upload says which it is.",
+            "roles": [
+              "firm_admin",
+              "partner",
+              "reviewer",
+              "auditor",
+              "preparer",
+              "self"
+            ],
+            "go": "#/intake",
+            "live": ""
+          },
+          {
+            "id": "two_sided",
+            "q": "Can it read a two-sided balance sheet?",
+            "words": "two sided horizontal balance sheet liabilities assets side by side dr cr trading account",
+            "a": "Yes - a statement with liabilities on the left and assets on the right (or expenditure | income) is split: each side's lines become their own rows, and the download writes the right side's SF Refs in their own column. A ledger with Dr and Cr columns stays one-sided.",
+            "roles": [
+              "firm_admin",
+              "partner",
+              "reviewer",
+              "auditor",
+              "preparer",
+              "self"
+            ],
+            "go": "#/intake",
+            "live": ""
+          },
+          {
+            "id": "sf_ref",
+            "q": "What is an SF Ref?",
+            "words": "sf ref meaning reference tag code schedule clause mapping",
+            "a": "The SF Ref says where a row belongs: the ITR schedule or the 3CD clause, e.g. ITR3 HP or 3CD 31(a) #2. SimplyFile suggests one for every row; you accept or change it. Put the SF Ref in a column of the client's own sheet and next year's file maps itself.",
+            "roles": [
+              "firm_admin",
+              "partner",
+              "reviewer",
+              "auditor",
+              "preparer",
+              "self"
+            ],
+            "go": "#/intake",
+            "live": ""
+          },
+          {
+            "id": "map_rows",
+            "q": "How do I map the rows?",
+            "words": "map rows accept suggestion change sf ref tag rows unmapped",
+            "a": "Intake & map - open the file - each row shows the suggested SF Ref. Accept them all, or change a row's SF Ref by hand.",
+            "roles": [
+              "firm_admin",
+              "partner",
+              "reviewer",
+              "auditor",
+              "preparer",
+              "self"
+            ],
+            "go": "#/intake",
+            "live": ""
+          },
+          {
+            "id": "bad_ref",
+            "q": "It says my SF Ref is not valid",
+            "words": "not an sf ref invalid ref error format",
+            "a": "Write <form> <table> [#serial], e.g. 3CD 31(a) #2 or ITR3 HP.",
+            "roles": [
+              "firm_admin",
+              "partner",
+              "reviewer",
+              "auditor",
+              "preparer",
+              "self"
+            ],
+            "go": "#/intake",
+            "live": ""
+          },
+          {
+            "id": "delete_upload",
+            "q": "How do I delete an uploaded file?",
+            "words": "delete file remove upload wrong file",
+            "a": "Intake & map - the file - Delete. The file and the SF Refs saved for its rows are removed.",
+            "roles": [
+              "firm_admin",
+              "partner",
+              "preparer",
+              "self"
+            ],
+            "go": "#/intake",
+            "live": ""
+          },
+          {
+            "id": "download_tagged",
+            "q": "Can I download the statement with the SF Refs?",
+            "words": "download excel with sf ref tagged export",
+            "a": "Yes - Intake & map - Excel with SF Ref writes the client's workbook back with the SF Ref column filled.",
+            "roles": [
+              "firm_admin",
+              "partner",
+              "reviewer",
+              "auditor",
+              "preparer",
+              "self"
+            ],
+            "go": "#/intake",
+            "live": ""
+          },
+          {
+            "id": "recon_what",
+            "q": "What does Reconcile do?",
+            "words": "reconcile 26as ais tis compare match mismatch",
+            "a": "It compares the books with the Income-tax portal: 26AS, AIS and TIS. TDS, TCS and challans are matched by party and date; anything that does not match shows red with what to check.",
+            "roles": [
+              "firm_admin",
+              "partner",
+              "reviewer",
+              "auditor",
+              "preparer",
+              "self"
+            ],
+            "go": "#/recon",
+            "live": ""
+          },
+          {
+            "id": "recon_red",
+            "q": "What does a red line on Reconcile mean?",
+            "words": "red mismatch difference finding not matching unexplained",
+            "a": "A red line is a difference between the books and the portal - TDS claimed but not in 26AS, or in 26AS but not in the books. Fix the books, or write a note on its row - why it is fine, or what was done.",
+            "roles": [
+              "firm_admin",
+              "partner",
+              "reviewer",
+              "auditor",
+              "preparer",
+              "self"
+            ],
+            "go": "#/recon",
+            "live": ""
+          },
+          {
+            "id": "get_26as",
+            "q": "Where do I get 26AS, AIS and TIS?",
+            "words": "download 26as traces ais tis portal",
+            "a": "26AS: from TRACES (via the e-filing portal - View Form 26AS), export as text. AIS and TIS: e-filing portal - AIS - download as CSV or Excel. Upload them on Reconcile.",
+            "roles": [
+              "firm_admin",
+              "partner",
+              "reviewer",
+              "auditor",
+              "preparer",
+              "self"
+            ],
+            "go": "#/recon",
+            "live": ""
+          },
+          {
+            "id": "regime",
+            "q": "New regime or old regime?",
+            "words": "regime new old which is better compare",
+            "a": "Pick it under Tax regime on Compute & close; the computation follows your choice. The new regime (115BAC) is the default; with business income, the old regime needs Form 10-IEA filed by the due date. A firm or LLP pays the firm rate.",
+            "roles": [
+              "firm_admin",
+              "partner",
+              "reviewer",
+              "auditor",
+              "preparer",
+              "self"
+            ],
+            "go": "#/compute",
+            "live": ""
+          },
+          {
+            "id": "rebate_87a",
+            "q": "Why is there no 87A rebate?",
+            "words": "87a rebate missing not given",
+            "a": "87A goes only to a resident individual whose total income is within the limit for that year and regime. A non-resident, an HUF or a firm never gets it.",
+            "roles": [
+              "firm_admin",
+              "partner",
+              "reviewer",
+              "auditor",
+              "preparer",
+              "self"
+            ],
+            "go": "#/compute",
+            "live": ""
+          },
+          {
+            "id": "interest_234",
+            "q": "How is interest under 234A, 234B and 234C worked out?",
+            "words": "234a 234b 234c interest late advance tax",
+            "a": "From the 26AS challans by date: which are advance tax and which self-assessment, what was paid by each instalment date, and the months to the day of filing. 234A is for filing late, 234B for paying less than 90% as advance tax, 234C for short instalments. A resident senior citizen with no business income pays no advance tax, so no 234B or C.",
+            "roles": [
+              "firm_admin",
+              "partner",
+              "reviewer",
+              "auditor",
+              "preparer",
+              "self"
+            ],
+            "go": "#/compute",
+            "live": ""
+          },
+          {
+            "id": "interest_244a",
+            "q": "How is refund interest (244A) worked out?",
+            "words": "244a refund interest",
+            "a": "Half a percent a month on the refund, from 1 April of the assessment year (or the date of filing, if late) to the date of refund.",
+            "roles": [
+              "firm_admin",
+              "partner",
+              "reviewer",
+              "auditor",
+              "preparer",
+              "self"
+            ],
+            "go": "#/compute",
+            "live": ""
+          },
+          {
+            "id": "audit_3cd",
+            "q": "Does SimplyFile do the tax audit report?",
+            "words": "tax audit 3cd 3cb 3ca 44ab audit report",
+            "a": "Yes - for an audit year it writes the Form 3CB-3CD (or 3CA-3CD) JSON from the SF Refs, checked against the CBDT schema, next to the ITR.",
+            "roles": [
+              "firm_admin",
+              "partner",
+              "reviewer",
+              "auditor",
+              "preparer",
+              "self"
+            ],
+            "go": "#/compute",
+            "live": ""
+          },
+          {
+            "id": "presumptive",
+            "q": "Can I use presumptive income (44AD / 44ADA)?",
+            "words": "presumptive 44ad 44ada 44ae",
+            "a": "Tick Presumptive on the client's year; Compute & close then works the income out at the presumptive rate.",
+            "roles": [
+              "firm_admin",
+              "partner",
+              "reviewer",
+              "auditor",
+              "preparer",
+              "self"
+            ],
+            "go": "#/compute",
+            "live": ""
+          },
+          {
+            "id": "not_supported",
+            "q": "What does SimplyFile not do yet?",
+            "words": "not supported limitations missing salary capital gains marginal relief",
+            "a": "Not yet: salary (Schedule S), capital gains at special rates, and 87A marginal relief. Complete those in the department's offline utility after importing the JSON.",
+            "roles": [],
+            "go": "",
+            "live": ""
+          },
+          {
+            "id": "signoff",
+            "q": "How do I sign off a computation?",
+            "words": "sign off approve review computation signoff who can sign",
+            "a": "Compute & close - Sign off. Only a firm admin, partner, reviewer or auditor can (or someone they delegated it to).",
+            "roles": [
+              "firm_admin",
+              "partner",
+              "reviewer",
+              "auditor",
+              "self"
+            ],
+            "go": "#/compute",
+            "live": ""
+          },
+          {
+            "id": "why_no_signoff",
+            "q": "Why can't I sign off?",
+            "words": "cannot sign off no sign off button preparer",
+            "a": "A tax preparer cannot sign off. Ask a partner or reviewer - or ask them to delegate the sign-off for this client to you (Delegations).",
+            "roles": [
+              "preparer"
+            ],
+            "go": "#/delegate",
+            "live": ""
+          },
+          {
+            "id": "mark_filed",
+            "q": "How do I mark a return as filed?",
+            "words": "mark filed acknowledgement ack number file return done who can file filing",
+            "a": "Compute & close - Mark filed & close the year: the 15-digit acknowledgement number from the ITR-V and the date filed. The date decides whether it is original, belated, revised or updated. The year then closes.",
+            "roles": [
+              "firm_admin",
+              "partner",
+              "self"
+            ],
+            "go": "#/compute",
+            "live": ""
+          },
+          {
+            "id": "due_dates",
+            "q": "What are the due dates?",
+            "words": "due date last date deadline 139 july october november",
+            "a": "Original under 139(1): 31 July; 31 August for business returns without audit from this year; 31 October with a tax audit; 30 November with Form 3CEB. Belated (139(4)) and revised (139(5)) returns: up to 31 December. After that only an updated return (ITR-U, 139(8A)).",
+            "roles": [],
+            "go": "",
+            "live": ""
+          },
+          {
+            "id": "late_fee",
+            "q": "What is the late fee for filing after the due date?",
+            "words": "late fee 234f penalty filing late belated fee",
+            "a": "Filing after the due date costs a late fee under 234F: Rs 5,000, or Rs 1,000 when total income is up to Rs 5 lakh - plus interest under 234A for the months late. SimplyFile works out 234A; add the 234F fee in the department's utility if it applies.",
+            "roles": [],
+            "go": "",
+            "live": ""
+          },
+          {
+            "id": "revise",
+            "q": "How do I file a revised return?",
+            "words": "revise revised return correction mistake 139(5)",
+            "a": "Compute & close - Start a revised return. The year opens again and the sign-off is cleared; fix it, sign off and mark it filed. The revised return takes the place of the original, which stays on record. Up to 31 December.",
+            "roles": [
+              "firm_admin",
+              "partner",
+              "self"
+            ],
+            "go": "#/compute",
+            "live": ""
+          },
+          {
+            "id": "itr_u",
+            "q": "What is ITR-U and the 140B tax?",
+            "words": "itr-u updated return 139(8a) 140b additional tax penalty after december",
+            "a": "After 31 December only an updated return (ITR-U) is possible. It carries additional tax under 140B: 25%, 50%, 60% or 70% of the tax and interest, by how late. An ITR-U that would lower tax is refused.",
+            "roles": [
+              "firm_admin",
+              "partner",
+              "reviewer",
+              "auditor",
+              "preparer",
+              "self"
+            ],
+            "go": "",
+            "live": ""
+          },
+          {
+            "id": "undo_filing",
+            "q": "I marked a return filed by mistake",
+            "words": "undo filing wrong filed mistake reopen",
+            "a": "Compute & close - Reopen the year (needs the reopen right: firm admin or partner). It goes back to Review; nothing filed is ever deleted - the history keeps it.",
+            "roles": [
+              "firm_admin",
+              "partner",
+              "self"
+            ],
+            "go": "#/compute",
+            "live": ""
+          },
+          {
+            "id": "gst_tds",
+            "q": "Does SimplyFile file GST or TDS returns?",
+            "words": "gst return gstr tds return 24q 26q 27q tcs return",
+            "a": "No - SimplyFile prepares income-tax returns (ITR-3, ITR-5) and the tax audit report. GST and TDS returns are filed elsewhere; their figures still show here through AIS, TIS and 26AS.",
+            "roles": [],
+            "go": "",
+            "live": ""
+          },
+          {
+            "id": "other_forms",
+            "q": "Which ITR forms are supported?",
+            "words": "itr-1 itr-2 itr-4 itr-6 itr-7 company trust sahaj sugam forms supported",
+            "a": "ITR-3 (individuals and HUFs with business income) and ITR-5 (firms, LLPs, AOPs), plus Form 3CA/3CB-3CD for a tax audit. ITR-1, 2, 4, 6 and 7 are not prepared here.",
+            "roles": [],
+            "go": "",
+            "live": ""
+          },
+          {
+            "id": "json_download",
+            "q": "How do I get the return JSON?",
+            "words": "download json itr json file output export",
+            "a": "Compute & close - ITR JSON. It is the department's own format (ITR-3 or ITR-5, CBDT schema AY 2026-27), checked against the schema before you download it; anything missing is listed with where it goes.",
+            "roles": [
+              "firm_admin",
+              "partner",
+              "reviewer",
+              "auditor",
+              "preparer",
+              "self"
+            ],
+            "go": "#/compute",
+            "live": ""
+          },
+          {
+            "id": "json_upload",
+            "q": "Can I upload the JSON straight to the Income-tax portal?",
+            "words": "upload json portal direct e-filing import utility",
+            "a": "Open it in the department's offline utility, complete any remaining schedules, validate, and upload from there. A direct upload needs a CBDT software ID, which SimplyFile does not have yet.",
+            "roles": [
+              "firm_admin",
+              "partner",
+              "reviewer",
+              "auditor",
+              "preparer",
+              "self"
+            ],
+            "go": "",
+            "live": ""
+          },
+          {
+            "id": "json_errors",
+            "q": "The JSON check shows problems",
+            "words": "schema errors json invalid missing fields check",
+            "a": "Each problem names the field and where it goes. Most come from missing client details (address, bank, PAN of the signer) or rows without an SF Ref - fix them and download again.",
+            "roles": [
+              "firm_admin",
+              "partner",
+              "reviewer",
+              "auditor",
+              "preparer",
+              "self"
+            ],
+            "go": "#/compute",
+            "live": ""
+          },
+          {
+            "id": "import_how",
+            "q": "How do I import last year's return?",
+            "words": "import old return previous year itr json history",
+            "a": "Import old returns: 1. upload the ITR JSON as filed, 2. pick whose return it is (the client with the same PAN is picked for you, or create a new client from it), 3. the acknowledgement number and date filed, 4. download the statement as filed and next year's statement ready to fill.",
+            "roles": [
+              "firm_admin",
+              "partner",
+              "preparer",
+              "self"
+            ],
+            "go": "#/itrimport",
+            "live": ""
+          },
+          {
+            "id": "import_refused",
+            "q": "Why was my import refused?",
+            "words": "import refused already imported wrong client pan mismatch",
+            "a": "The same return cannot be imported twice, and a return cannot go on a client with a different PAN.",
+            "roles": [
+              "firm_admin",
+              "partner",
+              "reviewer",
+              "auditor",
+              "preparer",
+              "self"
+            ],
+            "go": "#/itrimport",
+            "live": ""
+          },
+          {
+            "id": "analytics_what",
+            "q": "What does Firm analytics show?",
+            "words": "analytics dashboard reports kpi practice",
+            "a": "The year at a glance: clients, returns filed and on time, tax handled, refunds, interest clients paid; a deadline radar; the pipeline; the practice mix; each person's workload; who signed off and filed; growth opportunities; and year on year.",
+            "roles": [
+              "firm_admin",
+              "partner",
+              "firm_admin"
+            ],
+            "go": "#/analytics",
+            "live": ""
+          },
+          {
+            "id": "lead_meanings",
+            "q": "What do the growth opportunities mean?",
+            "words": "opportunities advance tax planning tds refund lapsed growing shrinking",
+            "a": "Advance-tax planning: paid 234B/C. Too much TDS: a big refund. Late filers, revised returns, open mismatches. Not carried into this year, lapsed clients, and clients whose income grew or fell by a quarter.",
+            "roles": [
+              "firm_admin",
+              "partner"
+            ],
+            "go": "#/analytics",
+            "live": ""
+          },
+          {
+            "id": "delegate_how",
+            "q": "How do I delegate work?",
+            "words": "delegate lend powers leave vacation someone else sign on my behalf",
+            "a": "Delegations - Delegate: pick the person, the scope (one filing, one client, some or all clients for a year), what they may do, and the dates. They can then do exactly that, recorded as done for you. You can lend only what you may do yourself.",
+            "roles": [
+              "firm_admin",
+              "partner",
+              "reviewer",
+              "auditor",
+              "preparer",
+              "self"
+            ],
+            "go": "#/delegate",
+            "live": ""
+          },
+          {
+            "id": "delegate_back",
+            "q": "How do I take a delegation back?",
+            "words": "revoke delegation take back cancel",
+            "a": "Delegations - Lent by me - Take back. It stops at once; what they already did stays, marked as done for you.",
+            "roles": [
+              "firm_admin",
+              "partner",
+              "reviewer",
+              "auditor",
+              "preparer",
+              "self"
+            ],
+            "go": "#/delegate",
+            "live": ""
+          },
+          {
+            "id": "delegate_portal",
+            "q": "Can I hand over portal admin work?",
+            "words": "delegate portal admin approvals deputy",
+            "a": "Yes - Delegations - Portal admin work: Firm approvals, Portal analytics, Server & sites, Keys for sale and Reported issues, for set dates, to someone outside a firm. People & access, the builders and Setup stay yours.",
+            "roles": [
+              "owner"
+            ],
+            "go": "#/delegate",
+            "live": ""
+          },
+          {
+            "id": "dock",
+            "q": "What are the buttons at the bottom right?",
+            "words": "dock tools bottom bar capture record voice notes",
+            "a": "Chip Chat (this), Screen capture, Screen recording, Voice typing (speak into the box you are in), Notes (private, with formatting, pictures and voice notes) and Issues (report a problem and follow its reply). The arrow folds the bar sideways or upwards.",
+            "roles": [],
+            "go": "",
+            "live": ""
+          },
+          {
+            "id": "voice",
+            "q": "Can I type by speaking?",
+            "words": "voice typing dictation speak microphone",
+            "a": "Click into a box, press the microphone at the bottom right and speak; press it again to stop. Works in Chrome and Edge.",
+            "roles": [],
+            "go": "",
+            "live": ""
+          },
+          {
+            "id": "report",
+            "q": "How do I report a problem?",
+            "words": "bug problem error issue report complaint feedback",
+            "a": "Press Issues (the flag) at the bottom right: a header, the details, pictures and voice notes. Or capture the screen first and choose Report as an issue. Its status and the portal admin's reply show in Issues; the flag shows a badge when a reply is waiting.",
+            "roles": [],
+            "go": "",
+            "live": ""
+          },
+          {
+            "id": "password",
+            "q": "How do I change my password?",
+            "words": "password change reset forgot",
+            "a": "Account menu (your name, top right) - Change password. Forgot it? Use Forgot password on the sign-in page.",
+            "roles": [],
+            "go": "",
+            "live": ""
+          },
+          {
+            "id": "ai_key",
+            "q": "Do I need an AI key?",
+            "words": "ai key gemini api key needed",
+            "a": "No - SimplyFile's computations, checks and Chip Chat work without one. A key only lets Chip Chat ask an AI which answer fits when it is unsure.",
+            "roles": [],
+            "go": "#/keys",
+            "live": ""
+          },
+          {
+            "id": "approve_firm",
+            "q": "How do I approve a firm?",
+            "words": "approve firm review papers approvals return reject",
+            "a": "Firm approvals - open the firm - check the details and papers - Approve, or Return with a note for what to fix.",
+            "roles": [
+              "owner"
+            ],
+            "go": "#/approvals",
+            "live": ""
+          },
+          {
+            "id": "backups",
+            "q": "How are the backups kept?",
+            "words": "backup policy retention offsite restore",
+            "a": "SimplyFile's data is copied every hour (24 kept), daily (7) and weekly (5); the daily and weekly copies also go off-site, encrypted. Server & sites shows each backup's newest copy and flags a late one.",
+            "roles": [
+              "owner"
+            ],
+            "go": "#/server",
+            "live": ""
+          },
+          {
+            "id": "portal_numbers",
+            "q": "How is the portal doing?",
+            "words": "portal analytics firms people usage growth",
+            "a": "Portal analytics: firms, people active, clients, returns filed, files, firms needing you, and use per day.",
+            "roles": [
+              "owner"
+            ],
+            "go": "#/portalstats",
+            "live": ""
+          }
+        ]
+      }
+    }
+  ]
+}

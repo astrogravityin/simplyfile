@@ -1,0 +1,110 @@
+{
+  "chip_id": "server.site",
+  "kind": "accessor",
+  "set": "server",
+  "label": "One site's state",
+  "aliases": [
+    "one site's state"
+  ],
+  "params": [
+    {
+      "name": "active",
+      "type": "text",
+      "default": "",
+      "label": "systemctl is-active"
+    },
+    {
+      "name": "healthy",
+      "type": "boolean",
+      "default": false,
+      "label": "its health URL answered"
+    },
+    {
+      "name": "jobs",
+      "type": "number",
+      "default": 0,
+      "label": "jobs mid-way"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "state": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "eq",
+                  "left": "$active",
+                  "right": "active"
+                },
+                {
+                  "op": "eq",
+                  "left": "$healthy",
+                  "right": true
+                }
+              ]
+            },
+            "then": "up"
+          },
+          {
+            "when": {
+              "op": "eq",
+              "left": "$active",
+              "right": "active"
+            },
+            "then": "sick"
+          }
+        ],
+        "else": "down"
+      },
+      "busy": {
+        "op": "gt",
+        "left": "$jobs",
+        "right": 0
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-04: up = the service runs and its health answers; sick = runs but does not answer; down = not running. busy = jobs mid-way.",
+  "test_cases": [
+    {
+      "args": {
+        "active": "active",
+        "healthy": true,
+        "jobs": 0
+      },
+      "expect_value": {
+        "state": "up",
+        "busy": false
+      }
+    },
+    {
+      "args": {
+        "active": "active",
+        "healthy": false,
+        "jobs": 0
+      },
+      "expect_value": {
+        "state": "sick",
+        "busy": false
+      }
+    },
+    {
+      "args": {
+        "active": "failed",
+        "healthy": false,
+        "jobs": 2
+      },
+      "expect_value": {
+        "state": "down",
+        "busy": true
+      }
+    }
+  ]
+}

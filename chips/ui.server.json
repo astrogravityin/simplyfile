@@ -1,0 +1,523 @@
+{
+  "chip_id": "ui.server",
+  "kind": "accessor",
+  "set": "ui",
+  "label": "Server & sites words",
+  "aliases": [
+    "server & sites words"
+  ],
+  "params": [
+    {
+      "name": "title",
+      "type": "text",
+      "default": "Server & sites",
+      "label": "title"
+    },
+    {
+      "name": "lede",
+      "type": "text",
+      "default": "Every site on the VPS, its backups and its disk - what runs, what is safe, what needs you.",
+      "label": "lede"
+    },
+    {
+      "name": "not_here",
+      "type": "text",
+      "default": "This runs on the VPS only. Open it on sf.valuestream.in.",
+      "label": "not here"
+    },
+    {
+      "name": "loading",
+      "type": "text",
+      "default": "Reading the server...",
+      "label": "loading"
+    },
+    {
+      "name": "refresh",
+      "type": "text",
+      "default": "Read again",
+      "label": "refresh"
+    },
+    {
+      "name": "k_sites",
+      "type": "text",
+      "default": "Sites up",
+      "label": "k sites"
+    },
+    {
+      "name": "k_sites_sub",
+      "type": "text",
+      "default": "{down} need attention",
+      "label": "k sites sub"
+    },
+    {
+      "name": "k_sites_ok",
+      "type": "text",
+      "default": "all answering",
+      "label": "k sites ok"
+    },
+    {
+      "name": "k_disk",
+      "type": "text",
+      "default": "Disk used",
+      "label": "k disk"
+    },
+    {
+      "name": "k_disk_sub",
+      "type": "text",
+      "default": "{free} free of {total}",
+      "label": "k disk sub"
+    },
+    {
+      "name": "k_backups",
+      "type": "text",
+      "default": "Backups on time",
+      "label": "k backups"
+    },
+    {
+      "name": "k_backups_sub",
+      "type": "text",
+      "default": "{late} late or missing",
+      "label": "k backups sub"
+    },
+    {
+      "name": "k_backups_ok",
+      "type": "text",
+      "default": "every backup is fresh",
+      "label": "k backups ok"
+    },
+    {
+      "name": "k_growth",
+      "type": "text",
+      "default": "Disk growth",
+      "label": "k growth"
+    },
+    {
+      "name": "k_growth_sub",
+      "type": "text",
+      "default": "about {days} days until full",
+      "label": "k growth sub"
+    },
+    {
+      "name": "k_growth_none",
+      "type": "text",
+      "default": "not growing",
+      "label": "k growth none"
+    },
+    {
+      "name": "k_growth_na",
+      "type": "text",
+      "default": "no readings yet",
+      "label": "k growth na"
+    },
+    {
+      "name": "sites_title",
+      "type": "text",
+      "default": "Sites",
+      "label": "sites title"
+    },
+    {
+      "name": "sites_sub",
+      "type": "text",
+      "default": "Each service on the box and whether its health check answers.",
+      "label": "sites sub"
+    },
+    {
+      "name": "h_site",
+      "type": "text",
+      "default": "Site",
+      "label": "h site"
+    },
+    {
+      "name": "h_service",
+      "type": "text",
+      "default": "Service",
+      "label": "h service"
+    },
+    {
+      "name": "h_state",
+      "type": "text",
+      "default": "State",
+      "label": "h state"
+    },
+    {
+      "name": "h_commit",
+      "type": "text",
+      "default": "Code",
+      "label": "h commit"
+    },
+    {
+      "name": "h_since",
+      "type": "text",
+      "default": "Started",
+      "label": "h since"
+    },
+    {
+      "name": "h_jobs",
+      "type": "text",
+      "default": "Jobs",
+      "label": "h jobs"
+    },
+    {
+      "name": "st_up",
+      "type": "text",
+      "default": "Up",
+      "label": "st up"
+    },
+    {
+      "name": "st_sick",
+      "type": "text",
+      "default": "Running, not answering",
+      "label": "st sick"
+    },
+    {
+      "name": "st_down",
+      "type": "text",
+      "default": "Down",
+      "label": "st down"
+    },
+    {
+      "name": "disk_title",
+      "type": "text",
+      "default": "Disk",
+      "label": "disk title"
+    },
+    {
+      "name": "disk_sub",
+      "type": "text",
+      "default": "What holds the space. Open a folder to see inside it.",
+      "label": "disk sub"
+    },
+    {
+      "name": "lv_ok",
+      "type": "text",
+      "default": "Healthy",
+      "label": "lv ok"
+    },
+    {
+      "name": "lv_watch",
+      "type": "text",
+      "default": "Filling up",
+      "label": "lv watch"
+    },
+    {
+      "name": "lv_warn",
+      "type": "text",
+      "default": "Running low",
+      "label": "lv warn"
+    },
+    {
+      "name": "lv_critical",
+      "type": "text",
+      "default": "Almost full",
+      "label": "lv critical"
+    },
+    {
+      "name": "h_folder",
+      "type": "text",
+      "default": "Folder",
+      "label": "h folder"
+    },
+    {
+      "name": "h_size",
+      "type": "text",
+      "default": "Size",
+      "label": "h size"
+    },
+    {
+      "name": "h_share",
+      "type": "text",
+      "default": "Share",
+      "label": "h share"
+    },
+    {
+      "name": "up",
+      "type": "text",
+      "default": "Up one level",
+      "label": "up"
+    },
+    {
+      "name": "bk_title",
+      "type": "text",
+      "default": "Backups",
+      "label": "bk title"
+    },
+    {
+      "name": "bk_sub",
+      "type": "text",
+      "default": "Each backup: when it runs, how many copies are kept, and the newest one. Late = no new copy for two runs - the backup may have stopped.",
+      "label": "bk sub"
+    },
+    {
+      "name": "keep_h",
+      "type": "text",
+      "default": "kept {n} h",
+      "label": "keep h"
+    },
+    {
+      "name": "h_backup",
+      "type": "text",
+      "default": "Backup",
+      "label": "h backup"
+    },
+    {
+      "name": "h_schedule",
+      "type": "text",
+      "default": "Runs",
+      "label": "h schedule"
+    },
+    {
+      "name": "h_copies",
+      "type": "text",
+      "default": "Copies",
+      "label": "h copies"
+    },
+    {
+      "name": "h_space",
+      "type": "text",
+      "default": "Space",
+      "label": "h space"
+    },
+    {
+      "name": "h_newest",
+      "type": "text",
+      "default": "Newest",
+      "label": "h newest"
+    },
+    {
+      "name": "bs_ok",
+      "type": "text",
+      "default": "On time",
+      "label": "bs ok"
+    },
+    {
+      "name": "bs_late",
+      "type": "text",
+      "default": "Late",
+      "label": "bs late"
+    },
+    {
+      "name": "bs_none",
+      "type": "text",
+      "default": "No copies found",
+      "label": "bs none"
+    },
+    {
+      "name": "bs_unscheduled",
+      "type": "text",
+      "default": "Not scheduled",
+      "label": "bs unscheduled"
+    },
+    {
+      "name": "ago_h",
+      "type": "text",
+      "default": "{n} h ago",
+      "label": "ago h"
+    },
+    {
+      "name": "ago_m",
+      "type": "text",
+      "default": "{n} min ago",
+      "label": "ago m"
+    },
+    {
+      "name": "every_h",
+      "type": "text",
+      "default": "every {n} h",
+      "label": "every h"
+    },
+    {
+      "name": "every_1",
+      "type": "text",
+      "default": "every hour",
+      "label": "every 1"
+    },
+    {
+      "name": "daily",
+      "type": "text",
+      "default": "daily",
+      "label": "daily"
+    },
+    {
+      "name": "hist_title",
+      "type": "text",
+      "default": "Disk over time",
+      "label": "hist title"
+    },
+    {
+      "name": "hist_sub",
+      "type": "text",
+      "default": "Used space, one reading a day, from the hourly disk log.",
+      "label": "hist sub"
+    },
+    {
+      "name": "hist_none",
+      "type": "text",
+      "default": "No disk log on this server yet.",
+      "label": "hist none"
+    },
+    {
+      "name": "grow_title",
+      "type": "text",
+      "default": "What grew",
+      "label": "grow title"
+    },
+    {
+      "name": "grow_sub",
+      "type": "text",
+      "default": "Folders that grew most over the same days.",
+      "label": "grow sub"
+    },
+    {
+      "name": "h_change",
+      "type": "text",
+      "default": "Change",
+      "label": "h change"
+    },
+    {
+      "name": "control",
+      "type": "text",
+      "default": "This page only reads the server. Restarting a site, changing a backup schedule, deleting files, the terminal and deploys stay in AstroStage's VPS Console on your own machine.",
+      "label": "control"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "title": "$title",
+      "lede": "$lede",
+      "not_here": "$not_here",
+      "loading": "$loading",
+      "refresh": "$refresh",
+      "k_sites": "$k_sites",
+      "k_sites_sub": "$k_sites_sub",
+      "k_sites_ok": "$k_sites_ok",
+      "k_disk": "$k_disk",
+      "k_disk_sub": "$k_disk_sub",
+      "k_backups": "$k_backups",
+      "k_backups_sub": "$k_backups_sub",
+      "k_backups_ok": "$k_backups_ok",
+      "k_growth": "$k_growth",
+      "k_growth_sub": "$k_growth_sub",
+      "k_growth_none": "$k_growth_none",
+      "k_growth_na": "$k_growth_na",
+      "sites_title": "$sites_title",
+      "sites_sub": "$sites_sub",
+      "h_site": "$h_site",
+      "h_service": "$h_service",
+      "h_state": "$h_state",
+      "h_commit": "$h_commit",
+      "h_since": "$h_since",
+      "h_jobs": "$h_jobs",
+      "st_up": "$st_up",
+      "st_sick": "$st_sick",
+      "st_down": "$st_down",
+      "disk_title": "$disk_title",
+      "disk_sub": "$disk_sub",
+      "lv_ok": "$lv_ok",
+      "lv_watch": "$lv_watch",
+      "lv_warn": "$lv_warn",
+      "lv_critical": "$lv_critical",
+      "h_folder": "$h_folder",
+      "h_size": "$h_size",
+      "h_share": "$h_share",
+      "up": "$up",
+      "bk_title": "$bk_title",
+      "bk_sub": "$bk_sub",
+      "keep_h": "$keep_h",
+      "h_backup": "$h_backup",
+      "h_schedule": "$h_schedule",
+      "h_copies": "$h_copies",
+      "h_space": "$h_space",
+      "h_newest": "$h_newest",
+      "bs_ok": "$bs_ok",
+      "bs_late": "$bs_late",
+      "bs_none": "$bs_none",
+      "bs_unscheduled": "$bs_unscheduled",
+      "ago_h": "$ago_h",
+      "ago_m": "$ago_m",
+      "every_h": "$every_h",
+      "every_1": "$every_1",
+      "daily": "$daily",
+      "hist_title": "$hist_title",
+      "hist_sub": "$hist_sub",
+      "hist_none": "$hist_none",
+      "grow_title": "$grow_title",
+      "grow_sub": "$grow_sub",
+      "h_change": "$h_change",
+      "control": "$control"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-04: every word on Server & sites.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "title": "Server & sites",
+        "lede": "Every site on the VPS, its backups and its disk - what runs, what is safe, what needs you.",
+        "not_here": "This runs on the VPS only. Open it on sf.valuestream.in.",
+        "loading": "Reading the server...",
+        "refresh": "Read again",
+        "k_sites": "Sites up",
+        "k_sites_sub": "{down} need attention",
+        "k_sites_ok": "all answering",
+        "k_disk": "Disk used",
+        "k_disk_sub": "{free} free of {total}",
+        "k_backups": "Backups on time",
+        "k_backups_sub": "{late} late or missing",
+        "k_backups_ok": "every backup is fresh",
+        "k_growth": "Disk growth",
+        "k_growth_sub": "about {days} days until full",
+        "k_growth_none": "not growing",
+        "k_growth_na": "no readings yet",
+        "sites_title": "Sites",
+        "sites_sub": "Each service on the box and whether its health check answers.",
+        "h_site": "Site",
+        "h_service": "Service",
+        "h_state": "State",
+        "h_commit": "Code",
+        "h_since": "Started",
+        "h_jobs": "Jobs",
+        "st_up": "Up",
+        "st_sick": "Running, not answering",
+        "st_down": "Down",
+        "disk_title": "Disk",
+        "disk_sub": "What holds the space. Open a folder to see inside it.",
+        "lv_ok": "Healthy",
+        "lv_watch": "Filling up",
+        "lv_warn": "Running low",
+        "lv_critical": "Almost full",
+        "h_folder": "Folder",
+        "h_size": "Size",
+        "h_share": "Share",
+        "up": "Up one level",
+        "bk_title": "Backups",
+        "bk_sub": "Each backup: when it runs, how many copies are kept, and the newest one. Late = no new copy for two runs - the backup may have stopped.",
+        "keep_h": "kept {n} h",
+        "h_backup": "Backup",
+        "h_schedule": "Runs",
+        "h_copies": "Copies",
+        "h_space": "Space",
+        "h_newest": "Newest",
+        "bs_ok": "On time",
+        "bs_late": "Late",
+        "bs_none": "No copies found",
+        "bs_unscheduled": "Not scheduled",
+        "ago_h": "{n} h ago",
+        "ago_m": "{n} min ago",
+        "every_h": "every {n} h",
+        "every_1": "every hour",
+        "daily": "daily",
+        "hist_title": "Disk over time",
+        "hist_sub": "Used space, one reading a day, from the hourly disk log.",
+        "hist_none": "No disk log on this server yet.",
+        "grow_title": "What grew",
+        "grow_sub": "Folders that grew most over the same days.",
+        "h_change": "Change",
+        "control": "This page only reads the server. Restarting a site, changing a backup schedule, deleting files, the terminal and deploys stay in AstroStage's VPS Console on your own machine."
+      }
+    }
+  ]
+}

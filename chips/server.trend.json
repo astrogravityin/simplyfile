@@ -1,0 +1,139 @@
+{
+  "chip_id": "server.trend",
+  "kind": "accessor",
+  "set": "server",
+  "label": "Disk growth over the readings",
+  "aliases": [
+    "disk growth over the readings"
+  ],
+  "params": [
+    {
+      "name": "first",
+      "type": "number",
+      "default": 0,
+      "label": "bytes used at the first reading"
+    },
+    {
+      "name": "last",
+      "type": "number",
+      "default": 0,
+      "label": "bytes used at the last"
+    },
+    {
+      "name": "days",
+      "type": "number",
+      "default": 0,
+      "label": "days between them"
+    },
+    {
+      "name": "total",
+      "type": "number",
+      "default": 0,
+      "label": "disk size"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "change": {
+        "vop": "sub",
+        "a": "$last",
+        "b": "$first"
+      },
+      "per_day": {
+        "vop": "div",
+        "a": {
+          "vop": "sub",
+          "a": "$last",
+          "b": "$first"
+        },
+        "b": "$days",
+        "digits": 0
+      },
+      "days_to_full": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "gt",
+              "left": {
+                "vop": "div",
+                "a": {
+                  "vop": "sub",
+                  "a": "$last",
+                  "b": "$first"
+                },
+                "b": "$days"
+              },
+              "right": 0
+            },
+            "then": {
+              "vop": "div",
+              "a": {
+                "vop": "sub",
+                "a": "$total",
+                "b": "$last"
+              },
+              "b": {
+                "vop": "div",
+                "a": {
+                  "vop": "sub",
+                  "a": "$last",
+                  "b": "$first"
+                },
+                "b": "$days"
+              },
+              "digits": 0
+            }
+          }
+        ],
+        "else": null
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-04: how much the disk grew between the first and last reading, per day, and - when it grows - days until it is full.",
+  "test_cases": [
+    {
+      "args": {
+        "first": 100,
+        "last": 130,
+        "days": 30,
+        "total": 230
+      },
+      "expect_value": {
+        "change": 30,
+        "per_day": 1,
+        "days_to_full": 100
+      }
+    },
+    {
+      "args": {
+        "first": 130,
+        "last": 100,
+        "days": 30,
+        "total": 230
+      },
+      "expect_value": {
+        "change": -30,
+        "per_day": -1,
+        "days_to_full": null
+      }
+    },
+    {
+      "args": {
+        "first": 100,
+        "last": 100,
+        "days": 0,
+        "total": 230
+      },
+      "expect_value": {
+        "change": 0,
+        "per_day": null,
+        "days_to_full": null
+      }
+    }
+  ]
+}

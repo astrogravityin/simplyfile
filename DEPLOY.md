@@ -65,12 +65,54 @@ nginx -t && systemctl reload nginx
 # 5. TLS
 certbot --nginx -d sf.valuestream.in --redirect
 
-# 6. backups - the data folder is the portal's whole memory
-echo '23 * * * * root tar czf /var/backups/sf-data-$(date +\%H).tar.gz -C /opt/simplyfile data' >/etc/cron.d/simplyfile-backup
+# 6. backups - tools/backup.sh, every hour (see "Backups" below)
+printf 'SF_OFFSITE=sfcrypt:
+23 * * * * root bash /opt/simplyfile/tools/backup.sh
+' >/etc/cron.d/simplyfile-backup
+rm -f /var/backups/sf-data-*.tar.gz   # the old one-file-per-hour copies, if this VPS had them
 ```
 
 Then open https://sf.valuestream.in, create the owner (the first account; `TV_OWNER_EMAIL` reserves the seat for that
 address), and set **Email (SMTP)** as in `README.md`.
+
+## Backups
+
+`tools/backup.sh` runs every hour from cron. Each copy is the `data` folder without `data/geo` (the place database,
+downloaded again by itself), so a copy is about the size of the firms' uploaded papers and statements - a few MB today.
+
+| Where | Kept | How |
+|---|---|---|
+| `/var/backups/sf/hour-HH.tar.gz` | last 24 hours | every hour; each hour overwrites yesterday's |
+| `/var/backups/sf/day-Mon.tar.gz` | last 7 days | the 02:23 copy |
+| `/var/backups/sf/week-N.tar.gz` | last 5 Sundays | the Sunday 02:23 copy |
+| `$SF_OFFSITE` (off the VPS) | 7 days + 5 weeks | the daily and weekly copies, sent by `rclone` |
+
+Disk use is bounded: 36 slots, each overwritten, never more. Check it with `du -sh /var/backups/sf`.
+
+Off-site, once (the copies hold client PANs and returns, so they are encrypted before they leave the VPS):
+
+```bash
+apt-get install -y rclone
+rclone config    # 1) a remote for the storage you choose (Backblaze B2, S3, Google Drive...), e.g. "b2"
+                 # 2) a "crypt" remote over it, e.g. "sfcrypt" -> b2:my-bucket/simplyfile, with a long password
+bash /opt/simplyfile/tools/backup.sh && rclone ls sfcrypt:    # try it
+```
+
+Keep the crypt password somewhere other than the VPS - without it the off-site copies cannot be opened.
+`SF_OFFSITE=` in `/etc/cron.d/simplyfile-backup` names the remote; empty = local copies only.
+
+Restore (stops the portal for a moment):
+
+```bash
+systemctl stop simplyfile
+mv /opt/simplyfile/data /opt/simplyfile/data.before-restore
+tar xzf /var/backups/sf/hour-09.tar.gz -C /opt/simplyfile      # or: rclone copy sfcrypt:day-Mon.tar.gz /tmp/ first
+systemctl start simplyfile
+```
+
+For the big sites on the same VPS the same idea saves most of the space: an hourly `tar` of 3.1 GB that barely changes
+stores 3.1 GB every hour. `restic` keeps only what changed between copies (and encrypts), so 24 hourly copies of a
+3.1 GB site cost about 3.1 GB plus the day's changes.
 
 ## Every update
 

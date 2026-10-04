@@ -1,0 +1,203 @@
+{
+  "chip_id": "delegation.settings",
+  "kind": "accessor",
+  "set": "delegation",
+  "label": "Delegation settings",
+  "aliases": [
+    "delegation settings"
+  ],
+  "params": [
+    {
+      "name": "kinds",
+      "type": "json",
+      "default": [
+        {
+          "id": "filing",
+          "label": "One filing",
+          "sub": "One client, one assessment year.",
+          "clients": "one",
+          "ay": true,
+          "portal": false
+        },
+        {
+          "id": "client",
+          "label": "One client, every year",
+          "sub": "Everything for one client, whatever the year.",
+          "clients": "one",
+          "ay": false,
+          "portal": false
+        },
+        {
+          "id": "year_some",
+          "label": "Some clients for a year",
+          "sub": "The clients you pick, for one assessment year.",
+          "clients": "some",
+          "ay": true,
+          "portal": false
+        },
+        {
+          "id": "year_all",
+          "label": "All clients for a year",
+          "sub": "Every client of the firm, for one assessment year.",
+          "clients": "none",
+          "ay": true,
+          "portal": false
+        },
+        {
+          "id": "portal",
+          "label": "Portal admin work",
+          "sub": "Day-to-day portal screens, lent by the portal owner.",
+          "clients": "none",
+          "ay": false,
+          "portal": true
+        }
+      ],
+      "label": "kinds"
+    },
+    {
+      "name": "lendable",
+      "type": "json",
+      "default": [
+        "clients",
+        "clients.create",
+        "clients.archive",
+        "intake",
+        "intake.delete",
+        "recon",
+        "recon.delete",
+        "compute",
+        "compute.signoff",
+        "compute.file",
+        "compute.reopen",
+        "itrimport"
+      ],
+      "label": "lendable"
+    },
+    {
+      "name": "portal_screens",
+      "type": "json",
+      "default": [
+        "approvals",
+        "portalstats",
+        "server",
+        "keysales",
+        "issues"
+      ],
+      "label": "portal screens"
+    },
+    {
+      "name": "default_days",
+      "type": "json",
+      "default": 30,
+      "label": "default days"
+    },
+    {
+      "name": "max_days",
+      "type": "json",
+      "default": 366,
+      "label": "max days"
+    },
+    {
+      "name": "head_grant",
+      "type": "text",
+      "default": "team",
+      "label": "head grant"
+    },
+    {
+      "name": "with_screen",
+      "type": "json",
+      "default": true,
+      "label": "with screen"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "kinds": "$kinds",
+      "lendable": "$lendable",
+      "portal_screens": "$portal_screens",
+      "default_days": "$default_days",
+      "max_days": "$max_days",
+      "head_grant": "$head_grant",
+      "with_screen": "$with_screen"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-04: the five scopes a delegation can have, what may be lent inside a firm (client work), which portal screens the owner may lend (day-to-day only), and how long a delegation may run.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "kinds": [
+          {
+            "id": "filing",
+            "label": "One filing",
+            "sub": "One client, one assessment year.",
+            "clients": "one",
+            "ay": true,
+            "portal": false
+          },
+          {
+            "id": "client",
+            "label": "One client, every year",
+            "sub": "Everything for one client, whatever the year.",
+            "clients": "one",
+            "ay": false,
+            "portal": false
+          },
+          {
+            "id": "year_some",
+            "label": "Some clients for a year",
+            "sub": "The clients you pick, for one assessment year.",
+            "clients": "some",
+            "ay": true,
+            "portal": false
+          },
+          {
+            "id": "year_all",
+            "label": "All clients for a year",
+            "sub": "Every client of the firm, for one assessment year.",
+            "clients": "none",
+            "ay": true,
+            "portal": false
+          },
+          {
+            "id": "portal",
+            "label": "Portal admin work",
+            "sub": "Day-to-day portal screens, lent by the portal owner.",
+            "clients": "none",
+            "ay": false,
+            "portal": true
+          }
+        ],
+        "lendable": [
+          "clients",
+          "clients.create",
+          "clients.archive",
+          "intake",
+          "intake.delete",
+          "recon",
+          "recon.delete",
+          "compute",
+          "compute.signoff",
+          "compute.file",
+          "compute.reopen",
+          "itrimport"
+        ],
+        "portal_screens": [
+          "approvals",
+          "portalstats",
+          "server",
+          "keysales",
+          "issues"
+        ],
+        "default_days": 30,
+        "max_days": 366,
+        "head_grant": "team",
+        "with_screen": true
+      }
+    }
+  ]
+}

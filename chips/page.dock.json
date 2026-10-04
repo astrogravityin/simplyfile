@@ -1,0 +1,209 @@
+{
+  "chip_id": "page.dock",
+  "kind": "accessor",
+  "set": "page",
+  "label": "Bottom bar settings",
+  "aliases": [
+    "bottom bar settings"
+  ],
+  "params": [
+    {
+      "name": "tools",
+      "type": "json",
+      "default": [
+        "capture",
+        "record",
+        "voice",
+        "notes",
+        "issue"
+      ],
+      "label": "tools"
+    },
+    {
+      "name": "speech_lang",
+      "type": "text",
+      "default": "en-IN",
+      "label": "speech lang"
+    },
+    {
+      "name": "highlight_colors",
+      "type": "json",
+      "default": [
+        "#fef08a",
+        "#bbf7d0",
+        "#bae6fd",
+        "#fbcfe8",
+        "#fed7aa",
+        "#ddd6fe"
+      ],
+      "label": "highlight colors"
+    },
+    {
+      "name": "text_colors",
+      "type": "json",
+      "default": [
+        "#0f172a",
+        "#dc2626",
+        "#ea580c",
+        "#16a34a",
+        "#2563eb",
+        "#7c3aed"
+      ],
+      "label": "text colors"
+    },
+    {
+      "name": "image_max_px",
+      "type": "json",
+      "default": 1600,
+      "label": "image max px"
+    },
+    {
+      "name": "image_quality",
+      "type": "json",
+      "default": 0.85,
+      "label": "image quality"
+    },
+    {
+      "name": "issue_statuses",
+      "type": "json",
+      "default": {
+        "open": {
+          "label": "Open",
+          "tone": "amber"
+        },
+        "resolved": {
+          "label": "Closed",
+          "tone": "emerald"
+        }
+      },
+      "label": "issue statuses"
+    },
+    {
+      "name": "voice_max_seconds",
+      "type": "json",
+      "default": 300,
+      "label": "voice max seconds"
+    },
+    {
+      "name": "record_max_minutes",
+      "type": "json",
+      "default": 30,
+      "label": "record max minutes"
+    },
+    {
+      "name": "note_max_kb",
+      "type": "json",
+      "default": 4000,
+      "label": "note max kb"
+    },
+    {
+      "name": "notes_max",
+      "type": "json",
+      "default": 500,
+      "label": "notes max"
+    },
+    {
+      "name": "voices_per_note",
+      "type": "json",
+      "default": 10,
+      "label": "voices per note"
+    },
+    {
+      "name": "voice_max_kb",
+      "type": "json",
+      "default": 8000,
+      "label": "voice max kb"
+    },
+    {
+      "name": "tones",
+      "type": "json",
+      "default": {
+        "amber": "--warn",
+        "emerald": "--ok",
+        "rose": "--bad",
+        "sky": "--brand",
+        "slate": "--muted"
+      },
+      "label": "tones"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "tools": "$tools",
+      "speech_lang": "$speech_lang",
+      "highlight_colors": "$highlight_colors",
+      "text_colors": "$text_colors",
+      "image_max_px": "$image_max_px",
+      "image_quality": "$image_quality",
+      "issue_statuses": "$issue_statuses",
+      "voice_max_seconds": "$voice_max_seconds",
+      "record_max_minutes": "$record_max_minutes",
+      "note_max_kb": "$note_max_kb",
+      "notes_max": "$notes_max",
+      "voices_per_note": "$voices_per_note",
+      "voice_max_kb": "$voice_max_kb",
+      "tones": "$tones"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-04: AstroStage's bottom bar settings (chip ui.dock_tools) - tools, speech language, highlight and text colours, picture size, voice note length - and the limits of a note.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "tools": [
+          "capture",
+          "record",
+          "voice",
+          "notes",
+          "issue"
+        ],
+        "speech_lang": "en-IN",
+        "highlight_colors": [
+          "#fef08a",
+          "#bbf7d0",
+          "#bae6fd",
+          "#fbcfe8",
+          "#fed7aa",
+          "#ddd6fe"
+        ],
+        "text_colors": [
+          "#0f172a",
+          "#dc2626",
+          "#ea580c",
+          "#16a34a",
+          "#2563eb",
+          "#7c3aed"
+        ],
+        "image_max_px": 1600,
+        "image_quality": 0.85,
+        "issue_statuses": {
+          "open": {
+            "label": "Open",
+            "tone": "amber"
+          },
+          "resolved": {
+            "label": "Closed",
+            "tone": "emerald"
+          }
+        },
+        "voice_max_seconds": 300,
+        "record_max_minutes": 30,
+        "note_max_kb": 4000,
+        "notes_max": 500,
+        "voices_per_note": 10,
+        "voice_max_kb": 8000,
+        "tones": {
+          "amber": "--warn",
+          "emerald": "--ok",
+          "rose": "--bad",
+          "sky": "--brand",
+          "slate": "--muted"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,81 @@
+{
+  "chip_id": "chat.pan_kind",
+  "kind": "accessor",
+  "set": "chat",
+  "label": "Who a PAN belongs to",
+  "aliases": [
+    "who a pan belongs to"
+  ],
+  "params": [
+    {
+      "name": "letter",
+      "type": "text",
+      "default": "",
+      "label": "the PAN's 4th letter"
+    },
+    {
+      "name": "kinds",
+      "type": "json",
+      "default": {
+        "P": "an individual",
+        "H": "a Hindu Undivided Family",
+        "F": "a firm or LLP",
+        "C": "a company",
+        "A": "an association of persons",
+        "B": "a body of individuals",
+        "T": "a trust",
+        "L": "a local authority",
+        "J": "an artificial juridical person",
+        "G": "a government body"
+      },
+      "label": ""
+    }
+  ],
+  "expr": {
+    "vop": "get",
+    "value": "$kinds",
+    "path": "$letter"
+  },
+  "returns": "text",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-04: the 4th letter of a PAN says whose it is - P person, H HUF, F firm/LLP, C company...",
+  "test_cases": [
+    {
+      "args": {
+        "letter": "P",
+        "kinds": {
+          "P": "an individual",
+          "H": "a Hindu Undivided Family",
+          "F": "a firm or LLP",
+          "C": "a company",
+          "A": "an association of persons",
+          "B": "a body of individuals",
+          "T": "a trust",
+          "L": "a local authority",
+          "J": "an artificial juridical person",
+          "G": "a government body"
+        }
+      },
+      "expect_value": "an individual"
+    },
+    {
+      "args": {
+        "letter": "H",
+        "kinds": {
+          "P": "an individual",
+          "H": "a Hindu Undivided Family",
+          "F": "a firm or LLP",
+          "C": "a company",
+          "A": "an association of persons",
+          "B": "a body of individuals",
+          "T": "a trust",
+          "L": "a local authority",
+          "J": "an artificial juridical person",
+          "G": "a government body"
+        }
+      },
+      "expect_value": "a Hindu Undivided Family"
+    }
+  ]
+}

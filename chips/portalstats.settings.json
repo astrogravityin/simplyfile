@@ -1,0 +1,83 @@
+{
+  "chip_id": "portalstats.settings",
+  "kind": "accessor",
+  "set": "portalstats",
+  "label": "Portal analytics settings",
+  "aliases": [
+    "portal analytics settings"
+  ],
+  "params": [
+    {
+      "name": "dormant_days",
+      "type": "json",
+      "default": 30,
+      "label": "dormant days"
+    },
+    {
+      "name": "stuck_days",
+      "type": "json",
+      "default": 7,
+      "label": "stuck days"
+    },
+    {
+      "name": "top_n",
+      "type": "json",
+      "default": 10,
+      "label": "top n"
+    },
+    {
+      "name": "active_days",
+      "type": "json",
+      "default": [
+        7,
+        30
+      ],
+      "label": "active days"
+    },
+    {
+      "name": "flags",
+      "type": "json",
+      "default": [
+        "review",
+        "stuck",
+        "empty",
+        "dormant"
+      ],
+      "label": "flags"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "dormant_days": "$dormant_days",
+      "stuck_days": "$stuck_days",
+      "top_n": "$top_n",
+      "active_days": "$active_days",
+      "flags": "$flags"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-04: when an approved firm is dormant (no one signed in for dormant_days), when a draft is stuck (stuck_days), how many firms the top list shows.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "dormant_days": 30,
+        "stuck_days": 7,
+        "top_n": 10,
+        "active_days": [
+          7,
+          30
+        ],
+        "flags": [
+          "review",
+          "stuck",
+          "empty",
+          "dormant"
+        ]
+      }
+    }
+  ]
+}

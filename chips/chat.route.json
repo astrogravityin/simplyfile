@@ -1,0 +1,94 @@
+{
+  "chip_id": "chat.route",
+  "kind": "accessor",
+  "set": "chat",
+  "label": "Answer, offer choices, or say it does not know",
+  "aliases": [
+    "answer, offer choices, or say it does no"
+  ],
+  "params": [
+    {
+      "name": "top",
+      "type": "number",
+      "default": 0,
+      "label": "best match score"
+    },
+    {
+      "name": "second",
+      "type": "number",
+      "default": 0,
+      "label": "next best"
+    },
+    {
+      "name": "min_score",
+      "type": "number",
+      "default": 0.34,
+      "label": ""
+    },
+    {
+      "name": "gap_min",
+      "type": "number",
+      "default": 0.12,
+      "label": ""
+    }
+  ],
+  "expr": {
+    "vop": "choose",
+    "cases": [
+      {
+        "when": {
+          "op": "lt",
+          "left": "$top",
+          "right": "$min_score"
+        },
+        "then": "no_match"
+      },
+      {
+        "when": {
+          "op": "ge",
+          "left": {
+            "vop": "sub",
+            "a": "$top",
+            "b": "$second"
+          },
+          "right": "$gap_min"
+        },
+        "then": "answer"
+      }
+    ],
+    "else": "pick_one"
+  },
+  "returns": "text",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-04: below min_score = it does not know (the question is logged for teaching); clearly ahead = the answer; close = offer the top few.",
+  "test_cases": [
+    {
+      "args": {
+        "top": 0.8,
+        "second": 0.2,
+        "min_score": 0.34,
+        "gap_min": 0.12
+      },
+      "expect_value": "answer"
+    },
+    {
+      "args": {
+        "top": 0.6,
+        "second": 0.55,
+        "min_score": 0.34,
+        "gap_min": 0.12
+      },
+      "expect_value": "pick_one"
+    },
+    {
+      "args": {
+        "top": 0.2,
+        "second": 0.1,
+        "min_score": 0.34,
+        "gap_min": 0.12
+      },
+      "expect_value": "no_match"
+    }
+  ]
+}

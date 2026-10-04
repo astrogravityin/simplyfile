@@ -1,0 +1,221 @@
+{
+  "chip_id": "chat.settings",
+  "kind": "accessor",
+  "set": "chat",
+  "label": "Chip Chat settings",
+  "aliases": [
+    "chip chat settings"
+  ],
+  "params": [
+    {
+      "name": "min_score",
+      "type": "json",
+      "default": 0.34,
+      "label": "min score"
+    },
+    {
+      "name": "gap_min",
+      "type": "json",
+      "default": 0.09,
+      "label": "gap min"
+    },
+    {
+      "name": "pick_n",
+      "type": "json",
+      "default": 3,
+      "label": "pick n"
+    },
+    {
+      "name": "examples_n",
+      "type": "json",
+      "default": 6,
+      "label": "examples n"
+    },
+    {
+      "name": "rows_n",
+      "type": "json",
+      "default": 8,
+      "label": "rows n"
+    },
+    {
+      "name": "stop",
+      "type": "json",
+      "default": [
+        "a",
+        "an",
+        "the",
+        "is",
+        "are",
+        "do",
+        "does",
+        "i",
+        "me",
+        "my",
+        "we",
+        "our",
+        "to",
+        "of",
+        "for",
+        "in",
+        "on",
+        "and",
+        "or",
+        "what",
+        "how",
+        "which",
+        "why",
+        "where",
+        "when",
+        "can",
+        "could",
+        "should",
+        "it",
+        "this",
+        "that",
+        "please",
+        "there",
+        "be",
+        "with",
+        "any",
+        "get",
+        "show",
+        "tell",
+        "about",
+        "you",
+        "your",
+        "much",
+        "many"
+      ],
+      "label": "stop"
+    },
+    {
+      "name": "stem",
+      "type": "json",
+      "default": 5,
+      "label": "stem"
+    },
+    {
+      "name": "w_words",
+      "type": "json",
+      "default": 0.85,
+      "label": "w words"
+    },
+    {
+      "name": "w_question",
+      "type": "json",
+      "default": 0.15,
+      "label": "w question"
+    },
+    {
+      "name": "name_base",
+      "type": "json",
+      "default": 0.5,
+      "label": "name base"
+    },
+    {
+      "name": "name_weight",
+      "type": "json",
+      "default": 0.4,
+      "label": "name weight"
+    },
+    {
+      "name": "soon_days",
+      "type": "json",
+      "default": 7,
+      "label": "soon days"
+    },
+    {
+      "name": "teach_grant",
+      "type": "text",
+      "default": "team",
+      "label": "teach grant"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "min_score": "$min_score",
+      "gap_min": "$gap_min",
+      "pick_n": "$pick_n",
+      "examples_n": "$examples_n",
+      "rows_n": "$rows_n",
+      "stop": "$stop",
+      "stem": "$stem",
+      "w_words": "$w_words",
+      "w_question": "$w_question",
+      "name_base": "$name_base",
+      "name_weight": "$name_weight",
+      "soon_days": "$soon_days",
+      "teach_grant": "$teach_grant"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-04: how sure a match must be to answer (min_score), how far ahead of the next one (gap_min), how many to offer when unsure, words that carry no meaning, and how many letters of a word count.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "min_score": 0.34,
+        "gap_min": 0.09,
+        "pick_n": 3,
+        "examples_n": 6,
+        "rows_n": 8,
+        "stop": [
+          "a",
+          "an",
+          "the",
+          "is",
+          "are",
+          "do",
+          "does",
+          "i",
+          "me",
+          "my",
+          "we",
+          "our",
+          "to",
+          "of",
+          "for",
+          "in",
+          "on",
+          "and",
+          "or",
+          "what",
+          "how",
+          "which",
+          "why",
+          "where",
+          "when",
+          "can",
+          "could",
+          "should",
+          "it",
+          "this",
+          "that",
+          "please",
+          "there",
+          "be",
+          "with",
+          "any",
+          "get",
+          "show",
+          "tell",
+          "about",
+          "you",
+          "your",
+          "much",
+          "many"
+        ],
+        "stem": 5,
+        "w_words": 0.85,
+        "w_question": 0.15,
+        "name_base": 0.5,
+        "name_weight": 0.4,
+        "soon_days": 7,
+        "teach_grant": "team"
+      }
+    }
+  ]
+}

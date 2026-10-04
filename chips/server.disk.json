@@ -1,0 +1,174 @@
+{
+  "chip_id": "server.disk",
+  "kind": "accessor",
+  "set": "server",
+  "label": "A disk reading",
+  "aliases": [
+    "a disk reading"
+  ],
+  "params": [
+    {
+      "name": "used",
+      "type": "number",
+      "default": 0,
+      "label": "bytes used"
+    },
+    {
+      "name": "total",
+      "type": "number",
+      "default": 0,
+      "label": "bytes in all"
+    },
+    {
+      "name": "bands",
+      "type": "json",
+      "default": [
+        {
+          "level": "ok",
+          "min": 0
+        },
+        {
+          "level": "watch",
+          "min": 75
+        },
+        {
+          "level": "warn",
+          "min": 85
+        },
+        {
+          "level": "critical",
+          "min": 92
+        }
+      ],
+      "label": ""
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "pct": {
+        "vop": "pct",
+        "part": "$used",
+        "whole": "$total",
+        "digits": 1
+      },
+      "free": {
+        "vop": "sub",
+        "a": "$total",
+        "b": "$used"
+      },
+      "level": {
+        "vop": "get",
+        "value": {
+          "vop": "last",
+          "items": {
+            "vop": "filter_rows",
+            "rows": "$bands",
+            "field": "min",
+            "cmp": "le",
+            "value": {
+              "vop": "pct",
+              "part": "$used",
+              "whole": "$total",
+              "digits": 1
+            }
+          }
+        },
+        "path": "level"
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-04: share of the disk used, bytes free, and its band (ok / watch / warn / critical) - the last band whose min it reaches.",
+  "test_cases": [
+    {
+      "args": {
+        "used": 50,
+        "total": 100,
+        "bands": [
+          {
+            "level": "ok",
+            "min": 0
+          },
+          {
+            "level": "watch",
+            "min": 75
+          },
+          {
+            "level": "warn",
+            "min": 85
+          },
+          {
+            "level": "critical",
+            "min": 92
+          }
+        ]
+      },
+      "expect_value": {
+        "pct": 50.0,
+        "free": 50,
+        "level": "ok"
+      }
+    },
+    {
+      "args": {
+        "used": 80,
+        "total": 100,
+        "bands": [
+          {
+            "level": "ok",
+            "min": 0
+          },
+          {
+            "level": "watch",
+            "min": 75
+          },
+          {
+            "level": "warn",
+            "min": 85
+          },
+          {
+            "level": "critical",
+            "min": 92
+          }
+        ]
+      },
+      "expect_value": {
+        "pct": 80.0,
+        "free": 20,
+        "level": "watch"
+      }
+    },
+    {
+      "args": {
+        "used": 93,
+        "total": 100,
+        "bands": [
+          {
+            "level": "ok",
+            "min": 0
+          },
+          {
+            "level": "watch",
+            "min": 75
+          },
+          {
+            "level": "warn",
+            "min": 85
+          },
+          {
+            "level": "critical",
+            "min": 92
+          }
+        ]
+      },
+      "expect_value": {
+        "pct": 93.0,
+        "free": 7,
+        "level": "critical"
+      }
+    }
+  ]
+}

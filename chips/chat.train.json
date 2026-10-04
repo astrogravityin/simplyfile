@@ -1,0 +1,141 @@
+{
+  "chip_id": "chat.train",
+  "kind": "accessor",
+  "set": "chat",
+  "label": "Chip Chat training",
+  "aliases": [
+    "chip chat training"
+  ],
+  "params": [
+    {
+      "name": "filters",
+      "type": "json",
+      "default": [
+        "open",
+        "unanswered",
+        "taught",
+        "skipped",
+        "all"
+      ],
+      "label": "filters"
+    },
+    {
+      "name": "page",
+      "type": "json",
+      "default": 200,
+      "label": "page"
+    },
+    {
+      "name": "unanswered_days",
+      "type": "json",
+      "default": 90,
+      "label": "unanswered days"
+    },
+    {
+      "name": "keep_turns",
+      "type": "json",
+      "default": 20000,
+      "label": "keep turns"
+    },
+    {
+      "name": "filter_rules",
+      "type": "json",
+      "default": {
+        "open": {
+          "is": {
+            "review": ""
+          },
+          "not": {
+            "route": "answer"
+          }
+        },
+        "unanswered": {
+          "is": {
+            "route": "no_match"
+          },
+          "not": {}
+        },
+        "taught": {
+          "is": {
+            "review": "taught"
+          },
+          "not": {}
+        },
+        "skipped": {
+          "is": {
+            "review": "skipped"
+          },
+          "not": {}
+        },
+        "all": {
+          "is": {},
+          "not": {}
+        }
+      },
+      "label": "filter rules"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "filters": "$filters",
+      "page": "$page",
+      "unanswered_days": "$unanswered_days",
+      "keep_turns": "$keep_turns",
+      "filter_rules": "$filter_rules"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-04: the Train tab's filters (to review, could not answer, taught, skipped, all), how many turns show, the window of the unanswered report, and how many turns are kept.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "filters": [
+          "open",
+          "unanswered",
+          "taught",
+          "skipped",
+          "all"
+        ],
+        "page": 200,
+        "unanswered_days": 90,
+        "keep_turns": 20000,
+        "filter_rules": {
+          "open": {
+            "is": {
+              "review": ""
+            },
+            "not": {
+              "route": "answer"
+            }
+          },
+          "unanswered": {
+            "is": {
+              "route": "no_match"
+            },
+            "not": {}
+          },
+          "taught": {
+            "is": {
+              "review": "taught"
+            },
+            "not": {}
+          },
+          "skipped": {
+            "is": {
+              "review": "skipped"
+            },
+            "not": {}
+          },
+          "all": {
+            "is": {},
+            "not": {}
+          }
+        }
+      }
+    }
+  ]
+}

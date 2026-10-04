@@ -1,0 +1,227 @@
+{
+  "chip_id": "chat.next",
+  "kind": "accessor",
+  "set": "chat",
+  "label": "Ask next",
+  "aliases": [
+    "ask next"
+  ],
+  "params": [
+    {
+      "name": "after",
+      "type": "json",
+      "default": {
+        "tax": [
+          "Due date for ITR-3 for AY 2026-27",
+          "What is the 234F late fee if total income is 6 lakh?",
+          "Does a 65 year old pay advance tax?"
+        ],
+        "fee": [
+          "What are the due dates?",
+          "How is interest under 234A, 234B and 234C worked out?"
+        ],
+        "itr_u": [
+          "What is ITR-U and the 140B tax?",
+          "How do I file a revised return?"
+        ],
+        "refund": [
+          "Which clients need advice?",
+          "How is refund interest (244A) worked out?"
+        ],
+        "kind_on": [
+          "What is the late fee for filing after the due date?",
+          "How do I file a revised return?",
+          "What is ITR-U and the 140B tax?"
+        ],
+        "due": [
+          "If I file ITR-3 on 15/11/2026 what kind of return is it?",
+          "Which returns are overdue?",
+          "What is due this week?"
+        ],
+        "advance": [
+          "How is interest under 234A, 234B and 234C worked out?",
+          "tax on 12 lakh"
+        ],
+        "role_can": [
+          "What does each role do?",
+          "How do I delegate work?",
+          "What may I do?"
+        ],
+        "pan": [
+          "How do I add a client?",
+          "What PAN format is accepted?"
+        ],
+        "my_pending": [
+          "Which returns are overdue?",
+          "What is due this week?",
+          "Which clients need advice?"
+        ],
+        "overdue": [
+          "What is the late fee for filing after the due date?",
+          "What is due this week?",
+          "How do I delegate work?"
+        ],
+        "due_soon": [
+          "Which returns are overdue?",
+          "What is pending for me?"
+        ],
+        "client_status": [
+          "What is pending for me?",
+          "Which returns are overdue?"
+        ],
+        "my_access": [
+          "What has been delegated to me?",
+          "How do I delegate work?"
+        ],
+        "file_formats": [
+          "What is an SF Ref?",
+          "How do I map the rows?",
+          "Where do I get 26AS, AIS and TIS?"
+        ],
+        "sf_ref": [
+          "How do I map the rows?",
+          "Can I download the statement with the SF Refs?"
+        ],
+        "json_download": [
+          "Can I upload the JSON straight to the Income-tax portal?",
+          "The JSON check shows problems"
+        ],
+        "delegate_how": [
+          "How do I take a delegation back?",
+          "What has been delegated to me?"
+        ],
+        "signoff": [
+          "How do I mark a return as filed?",
+          "Why can't I sign off?"
+        ],
+        "mark_filed": [
+          "How do I file a revised return?",
+          "I marked a return filed by mistake"
+        ],
+        "regime": [
+          "Why is there no 87A rebate?",
+          "tax on 12 lakh"
+        ]
+      },
+      "label": "after"
+    },
+    {
+      "name": "n",
+      "type": "json",
+      "default": 3,
+      "label": "n"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "after": "$after",
+      "n": "$n"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-04: after an answer, the questions worth asking next - by the answer (a prepared question's id or a question family).",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "after": {
+          "tax": [
+            "Due date for ITR-3 for AY 2026-27",
+            "What is the 234F late fee if total income is 6 lakh?",
+            "Does a 65 year old pay advance tax?"
+          ],
+          "fee": [
+            "What are the due dates?",
+            "How is interest under 234A, 234B and 234C worked out?"
+          ],
+          "itr_u": [
+            "What is ITR-U and the 140B tax?",
+            "How do I file a revised return?"
+          ],
+          "refund": [
+            "Which clients need advice?",
+            "How is refund interest (244A) worked out?"
+          ],
+          "kind_on": [
+            "What is the late fee for filing after the due date?",
+            "How do I file a revised return?",
+            "What is ITR-U and the 140B tax?"
+          ],
+          "due": [
+            "If I file ITR-3 on 15/11/2026 what kind of return is it?",
+            "Which returns are overdue?",
+            "What is due this week?"
+          ],
+          "advance": [
+            "How is interest under 234A, 234B and 234C worked out?",
+            "tax on 12 lakh"
+          ],
+          "role_can": [
+            "What does each role do?",
+            "How do I delegate work?",
+            "What may I do?"
+          ],
+          "pan": [
+            "How do I add a client?",
+            "What PAN format is accepted?"
+          ],
+          "my_pending": [
+            "Which returns are overdue?",
+            "What is due this week?",
+            "Which clients need advice?"
+          ],
+          "overdue": [
+            "What is the late fee for filing after the due date?",
+            "What is due this week?",
+            "How do I delegate work?"
+          ],
+          "due_soon": [
+            "Which returns are overdue?",
+            "What is pending for me?"
+          ],
+          "client_status": [
+            "What is pending for me?",
+            "Which returns are overdue?"
+          ],
+          "my_access": [
+            "What has been delegated to me?",
+            "How do I delegate work?"
+          ],
+          "file_formats": [
+            "What is an SF Ref?",
+            "How do I map the rows?",
+            "Where do I get 26AS, AIS and TIS?"
+          ],
+          "sf_ref": [
+            "How do I map the rows?",
+            "Can I download the statement with the SF Refs?"
+          ],
+          "json_download": [
+            "Can I upload the JSON straight to the Income-tax portal?",
+            "The JSON check shows problems"
+          ],
+          "delegate_how": [
+            "How do I take a delegation back?",
+            "What has been delegated to me?"
+          ],
+          "signoff": [
+            "How do I mark a return as filed?",
+            "Why can't I sign off?"
+          ],
+          "mark_filed": [
+            "How do I file a revised return?",
+            "I marked a return filed by mistake"
+          ],
+          "regime": [
+            "Why is there no 87A rebate?",
+            "tax on 12 lakh"
+          ]
+        },
+        "n": 3
+      }
+    }
+  ]
+}

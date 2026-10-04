@@ -1135,12 +1135,12 @@ document.addEventListener('click', (e) => {
  *  form (AstroStage.in's ReportIssue.tsx): header, what is wrong, an optional screenshot; the signed-in account rides
  *  along. `surface`/`context` say where it came from; `url` + `extra` let a screen add its own tick (Katha's
  *  "copies my work"); `extraBody(root)` reads it. Lands in core Reported issues (core/issues.py). */
-export function reportIssue({ surface = '', context = '', url = '/api/core/issues', extra = '', extraBody = () => ({}), onSent = () => {} } = {}) {
-  let shot = '';
+export function reportIssue({ surface = '', context = '', url = '/api/core/issues', extra = '', extraBody = () => ({}), onSent = () => {}, shot: preShot = '' } = {}) {
+  let shot = preShot;   // 2026-10-04: the dock's Screen capture hands its picture over
   modal(sw('report_title'), `<p class="small muted">${esc(sw('report_lede'))}</p>
     <div class="field"><label for="ri-title">${esc(sw('report_header'))}</label><input id="ri-title" maxlength="200"/></div>
     <div class="field"><label for="ri-body">${esc(sw('report_body'))}</label><textarea id="ri-body" rows="5"></textarea></div>
-    <div class="field"><label>${esc(sw('report_shot'))}</label>${dropZone('ri-shot', { accept: 'image/*' })}</div>
+    <div class="field"><label>${esc(sw('report_shot'))}</label>${preShot ? `<img class="dk-shot" src="${preShot}" alt=""/>` : dropZone('ri-shot', { accept: 'image/*' })}</div>
     ${extra}<div id="ri-msg"></div>`, {
     footer: `<button type="button" data-cancel>${esc(sw('cancel_report'))}</button><button type="button" class="primary" id="ri-go">${esc(sw('report_go'))}</button>`,
     onOpen: (body, close) => {

@@ -1,0 +1,257 @@
+{
+  "chip_id": "server.settings",
+  "kind": "accessor",
+  "set": "server",
+  "label": "Server & sites settings",
+  "aliases": [
+    "server & sites settings"
+  ],
+  "params": [
+    {
+      "name": "sites",
+      "type": "json",
+      "default": [
+        {
+          "id": "sf",
+          "label": "SimplyFile",
+          "host": "sf.valuestream.in",
+          "service": "simplyfile",
+          "health": "http://127.0.0.1:8830/health/run"
+        },
+        {
+          "id": "astrostage",
+          "label": "AstroStage",
+          "host": "astrostage.in",
+          "service": "astrostage-backend",
+          "health": "http://127.0.0.1:8001/health"
+        },
+        {
+          "id": "tv",
+          "label": "Training & Video",
+          "host": "tv.valuestream.in",
+          "service": "tv-portal",
+          "health": "http://127.0.0.1:8810/health/run"
+        },
+        {
+          "id": "sm",
+          "label": "SteadyMove",
+          "host": "sm + katha.valuestream.in",
+          "service": "steadymove",
+          "health": "http://127.0.0.1:8820/health/run"
+        }
+      ],
+      "label": "sites"
+    },
+    {
+      "name": "backups",
+      "type": "json",
+      "default": [
+        {
+          "id": "sf",
+          "label": "SimplyFile data",
+          "cron": "/etc/cron.d/simplyfile-backup",
+          "dir": "/var/backups/sf",
+          "pattern": "*.tar.gz",
+          "plan": "24 hourly + 7 daily + 5 weekly; daily and weekly also off-site"
+        },
+        {
+          "id": "sm",
+          "label": "SteadyMove data",
+          "cron": "/etc/cron.d/steadymove-backup",
+          "dir": "/var/backups",
+          "pattern": "sm-data-*.tar.gz",
+          "plan": ""
+        },
+        {
+          "id": "astrostage",
+          "label": "AstroStage database",
+          "cron": "/etc/cron.d/astrostage-backup",
+          "dir": "/root/backups",
+          "pattern": "astrostage-*.dump",
+          "plan": ""
+        }
+      ],
+      "label": "backups"
+    },
+    {
+      "name": "history_file",
+      "type": "text",
+      "default": "/var/log/astrostage-disk.csv",
+      "label": "history file"
+    },
+    {
+      "name": "history_folders",
+      "type": "text",
+      "default": "/var/log/astrostage-disk-folders.csv",
+      "label": "history folders"
+    },
+    {
+      "name": "history_days",
+      "type": "json",
+      "default": 30,
+      "label": "history days"
+    },
+    {
+      "name": "stale_factor",
+      "type": "json",
+      "default": 2,
+      "label": "stale factor"
+    },
+    {
+      "name": "du_top",
+      "type": "json",
+      "default": 12,
+      "label": "du top"
+    },
+    {
+      "name": "du_roots",
+      "type": "json",
+      "default": [
+        "/",
+        "/opt",
+        "/var",
+        "/root",
+        "/var/backups",
+        "/var/log",
+        "/home"
+      ],
+      "label": "du roots"
+    },
+    {
+      "name": "bands",
+      "type": "json",
+      "default": [
+        {
+          "level": "ok",
+          "min": 0
+        },
+        {
+          "level": "watch",
+          "min": 75
+        },
+        {
+          "level": "warn",
+          "min": 85
+        },
+        {
+          "level": "critical",
+          "min": 92
+        }
+      ],
+      "label": "bands"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "sites": "$sites",
+      "backups": "$backups",
+      "history_file": "$history_file",
+      "history_folders": "$history_folders",
+      "history_days": "$history_days",
+      "stale_factor": "$stale_factor",
+      "du_top": "$du_top",
+      "du_roots": "$du_roots",
+      "bands": "$bands"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-04: the sites on the VPS (service, health URL), the backups (cron file, folder, file pattern), the disk-history logs AstroStage's VPS Console writes, disk bands, when a backup counts as late.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "sites": [
+          {
+            "id": "sf",
+            "label": "SimplyFile",
+            "host": "sf.valuestream.in",
+            "service": "simplyfile",
+            "health": "http://127.0.0.1:8830/health/run"
+          },
+          {
+            "id": "astrostage",
+            "label": "AstroStage",
+            "host": "astrostage.in",
+            "service": "astrostage-backend",
+            "health": "http://127.0.0.1:8001/health"
+          },
+          {
+            "id": "tv",
+            "label": "Training & Video",
+            "host": "tv.valuestream.in",
+            "service": "tv-portal",
+            "health": "http://127.0.0.1:8810/health/run"
+          },
+          {
+            "id": "sm",
+            "label": "SteadyMove",
+            "host": "sm + katha.valuestream.in",
+            "service": "steadymove",
+            "health": "http://127.0.0.1:8820/health/run"
+          }
+        ],
+        "backups": [
+          {
+            "id": "sf",
+            "label": "SimplyFile data",
+            "cron": "/etc/cron.d/simplyfile-backup",
+            "dir": "/var/backups/sf",
+            "pattern": "*.tar.gz",
+            "plan": "24 hourly + 7 daily + 5 weekly; daily and weekly also off-site"
+          },
+          {
+            "id": "sm",
+            "label": "SteadyMove data",
+            "cron": "/etc/cron.d/steadymove-backup",
+            "dir": "/var/backups",
+            "pattern": "sm-data-*.tar.gz",
+            "plan": ""
+          },
+          {
+            "id": "astrostage",
+            "label": "AstroStage database",
+            "cron": "/etc/cron.d/astrostage-backup",
+            "dir": "/root/backups",
+            "pattern": "astrostage-*.dump",
+            "plan": ""
+          }
+        ],
+        "history_file": "/var/log/astrostage-disk.csv",
+        "history_folders": "/var/log/astrostage-disk-folders.csv",
+        "history_days": 30,
+        "stale_factor": 2,
+        "du_top": 12,
+        "du_roots": [
+          "/",
+          "/opt",
+          "/var",
+          "/root",
+          "/var/backups",
+          "/var/log",
+          "/home"
+        ],
+        "bands": [
+          {
+            "level": "ok",
+            "min": 0
+          },
+          {
+            "level": "watch",
+            "min": 75
+          },
+          {
+            "level": "warn",
+            "min": 85
+          },
+          {
+            "level": "critical",
+            "min": 92
+          }
+        ]
+      }
+    }
+  ]
+}

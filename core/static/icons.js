@@ -62,6 +62,26 @@ const PATHS = {
   globe:     'M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20Z|M2 12h20|M12 2a15 15 0 0 1 0 20|M12 2a15 15 0 0 0 0 20',
   ban:       'M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20Z|M5 5l14 14',
   archive:   'M3 4h18v4H3z|M5 8v11a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8|M10 12h4',
+  // 2026-10-04: AstroStage's bottom bar and Notes / Issues / Chip Chat (the same Lucide shapes AstroStage draws)
+  crop:      'M6 2v14a2 2 0 0 0 2 2h14|M18 22V8a2 2 0 0 0-2-2H2',
+  video:     'm16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5|M4 6h10a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2Z',
+  notebook:  'M13.4 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7.4|M2 6h4|M2 10h4|M2 14h4|M2 18h4|M21.378 5.626a1 1 0 1 0-3.004-3.004l-5.01 5.012a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506z',
+  flag:      'M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z|M4 22v-7',
+  copy:      'M10 8h10a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H10a2 2 0 0 1-2-2V10a2 2 0 0 1 2-2Z|M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2',
+  square:    'M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z',
+  bold:      'M6 12h9a4 4 0 0 1 0 8H7a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h7a4 4 0 0 1 0 8',
+  italic:    'M19 4h-9|M14 20H5|M15 4 9 20',
+  underline: 'M6 4v6a6 6 0 0 0 12 0V4|M4 20h16',
+  list:      'M3 12h.01|M3 18h.01|M3 6h.01|M8 12h13|M8 18h13|M8 6h13',
+  olist:     'M10 12h11|M10 18h11|M10 6h11|M4 10h2|M4 6h1v4|M6 18H4c0-1 2-2 2-3s-1-1.5-2-1',
+  eraser:    'm7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21|M22 21H7|m5 11 9 9',
+  sparkles:  'M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z|M20 3v4|M22 5h-4|M4 17v2|M5 18H3',
+  clip:      'm21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48',
+  rotccw:    'M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8|M3 3v5h5',
+  rotcw:     'M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8|M21 3v5h-5',
+  cap:       'M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z|M22 10v6|M6 12.5V16a6 3 0 0 0 12 0v-3.5',
+  skip:      'M5 4l10 8-10 8V4z|M19 5v14',
+  okcircle:  'M22 11.08V12a10 10 0 1 1-5.93-9.14|M22 4 12 14.01l-3-3',
   // chevrons
   right:     'M9 18l6-6-6-6',
   dleft:     'M11.5 17l-5-5 5-5|M18 17l-5-5 5-5',
@@ -86,6 +106,20 @@ export function icon(name, size = 16) {
   return `<svg class="ico" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none"
     stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"
     aria-hidden="true" focusable="false">${paths}</svg>`;
+}
+
+/** 2026-10-04: the Chip Chat mark, as AstroStage draws it - a speech bubble holding a chip (the question goes in, a chip
+ *  answers), indigo to teal, with a spark. Its own gradient id per size so two on a page never clash. */
+let ccg = 0;
+export function chipChatGlyph(size = 24) {
+  const id = `ccg${ccg += 1}`;
+  return `<svg viewBox="0 0 32 32" width="${size}" height="${size}" aria-hidden="true" data-chip-chat-glyph>
+    <defs><linearGradient id="${id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4f46e5"/><stop offset="1" stop-color="#0f8b7d"/></linearGradient></defs>
+    <path d="M6 4h20a4 4 0 0 1 4 4v12a4 4 0 0 1-4 4H14l-6 5v-5H6a4 4 0 0 1-4-4V8a4 4 0 0 1 4-4z" fill="url(#${id})"/>
+    <rect x="11" y="9" width="10" height="10" rx="2" fill="#fff"/><rect x="13.5" y="11.5" width="5" height="5" rx="1" fill="url(#${id})"/>
+    <g stroke="#fff" stroke-width="1.4" stroke-linecap="round"><path d="M13.5 7.2v1.3M16 7.2v1.3M18.5 7.2v1.3M13.5 19.5v1.3M16 19.5v1.3M18.5 19.5v1.3"/>
+      <path d="M9.2 11.5h1.3M9.2 14h1.3M9.2 16.5h1.3M21.5 11.5h1.3M21.5 14h1.3M21.5 16.5h1.3"/></g>
+    <circle cx="26.5" cy="7.5" r="1.6" fill="#fde68a"/></svg>`;
 }
 
 /** The portal's mark: a play triangle sitting on two lines of text. Documentation that moves.

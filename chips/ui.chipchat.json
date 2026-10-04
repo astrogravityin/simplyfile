@@ -1,0 +1,915 @@
+{
+  "chip_id": "ui.chipchat",
+  "kind": "accessor",
+  "set": "ui",
+  "label": "Chip Chat words",
+  "aliases": [
+    "chip chat words"
+  ],
+  "params": [
+    {
+      "name": "title",
+      "type": "text",
+      "default": "Chip Chat",
+      "label": "title"
+    },
+    {
+      "name": "lede",
+      "type": "text",
+      "default": "Ask about SimplyFile, your clients and your work. Answers come from the portal's own rules and your data.",
+      "label": "lede"
+    },
+    {
+      "name": "ask_ph",
+      "type": "text",
+      "default": "Ask a question - e.g. What is pending for me?",
+      "label": "ask ph"
+    },
+    {
+      "name": "ask",
+      "type": "text",
+      "default": "Ask",
+      "label": "ask"
+    },
+    {
+      "name": "try",
+      "type": "text",
+      "default": "Try",
+      "label": "try"
+    },
+    {
+      "name": "new",
+      "type": "text",
+      "default": "New chat",
+      "label": "new"
+    },
+    {
+      "name": "open",
+      "type": "text",
+      "default": "Open",
+      "label": "open"
+    },
+    {
+      "name": "pick",
+      "type": "text",
+      "default": "Did you mean:",
+      "label": "pick"
+    },
+    {
+      "name": "no_match",
+      "type": "text",
+      "default": "I don't know that one yet - I have noted it so it can be taught. Try other words, or one of the questions below.",
+      "label": "no match"
+    },
+    {
+      "name": "teach_tab",
+      "type": "text",
+      "default": "Teach",
+      "label": "teach tab"
+    },
+    {
+      "name": "chat_tab",
+      "type": "text",
+      "default": "Chat",
+      "label": "chat tab"
+    },
+    {
+      "name": "teach_lede",
+      "type": "text",
+      "default": "Questions people asked that Chip Chat could not answer. Point one at the right answer, or write your firm's own.",
+      "label": "teach lede"
+    },
+    {
+      "name": "teach_none",
+      "type": "text",
+      "default": "Nothing waiting - every question was answered.",
+      "label": "teach none"
+    },
+    {
+      "name": "teach_pick",
+      "type": "text",
+      "default": "Answer with",
+      "label": "teach pick"
+    },
+    {
+      "name": "teach_own",
+      "type": "text",
+      "default": "Or write the answer",
+      "label": "teach own"
+    },
+    {
+      "name": "teach_save",
+      "type": "text",
+      "default": "Teach",
+      "label": "teach save"
+    },
+    {
+      "name": "teach_skip",
+      "type": "text",
+      "default": "Skip",
+      "label": "teach skip"
+    },
+    {
+      "name": "taught",
+      "type": "text",
+      "default": "Taught - the next time it is asked, this answer comes.",
+      "label": "taught"
+    },
+    {
+      "name": "own_title",
+      "type": "text",
+      "default": "Your firm's own answers",
+      "label": "own title"
+    },
+    {
+      "name": "own_q",
+      "type": "text",
+      "default": "Question",
+      "label": "own q"
+    },
+    {
+      "name": "own_a",
+      "type": "text",
+      "default": "Answer",
+      "label": "own a"
+    },
+    {
+      "name": "own_none",
+      "type": "text",
+      "default": "None yet.",
+      "label": "own none"
+    },
+    {
+      "name": "own_add",
+      "type": "text",
+      "default": "Add",
+      "label": "own add"
+    },
+    {
+      "name": "own_scope_firm",
+      "type": "text",
+      "default": "Everyone in my firm",
+      "label": "own scope firm"
+    },
+    {
+      "name": "own_scope_all",
+      "type": "text",
+      "default": "Every firm (portal-wide)",
+      "label": "own scope all"
+    },
+    {
+      "name": "delete",
+      "type": "text",
+      "default": "Delete",
+      "label": "delete"
+    },
+    {
+      "name": "asked_by",
+      "type": "text",
+      "default": "asked {n} time(s)",
+      "label": "asked by"
+    },
+    {
+      "name": "head_title",
+      "type": "text",
+      "default": "Chip Chat - ask the chips",
+      "label": "head title"
+    },
+    {
+      "name": "head_sub",
+      "type": "text",
+      "default": "Ask in plain words. SimplyFile's own rules and your firm's data answer; an unclear question gets a question back instead of a guess.",
+      "label": "head sub"
+    },
+    {
+      "name": "new_chat",
+      "type": "text",
+      "default": "New chat",
+      "label": "new chat"
+    },
+    {
+      "name": "new_chat_q",
+      "type": "text",
+      "default": "Start a new chat?",
+      "label": "new chat q"
+    },
+    {
+      "name": "new_chat_body",
+      "type": "text",
+      "default": "This clears the conversation on screen. Your questions stay on the Train tab.",
+      "label": "new chat body"
+    },
+    {
+      "name": "already_empty",
+      "type": "text",
+      "default": "The chat is already empty.",
+      "label": "already empty"
+    },
+    {
+      "name": "asking",
+      "type": "text",
+      "default": "Asking the chips...",
+      "label": "asking"
+    },
+    {
+      "name": "ask_own",
+      "type": "text",
+      "default": "Ask in your own words",
+      "label": "ask own"
+    },
+    {
+      "name": "type_first",
+      "type": "text",
+      "default": "Type a question first - for example one of these.",
+      "label": "type first"
+    },
+    {
+      "name": "surprise",
+      "type": "text",
+      "default": "Surprise me",
+      "label": "surprise"
+    },
+    {
+      "name": "surprise_tip",
+      "type": "text",
+      "default": "Surprise me: a good question, different each time",
+      "label": "surprise tip"
+    },
+    {
+      "name": "surprise_none",
+      "type": "text",
+      "default": "No surprise right now - type a question or pick one below.",
+      "label": "surprise none"
+    },
+    {
+      "name": "ask_next",
+      "type": "text",
+      "default": "Ask next",
+      "label": "ask next"
+    },
+    {
+      "name": "reuse",
+      "type": "text",
+      "default": "Ask this again",
+      "label": "reuse"
+    },
+    {
+      "name": "train_tab",
+      "type": "text",
+      "default": "Train",
+      "label": "train tab"
+    },
+    {
+      "name": "train_none",
+      "type": "text",
+      "default": "Only the firm admin or the portal owner trains Chip Chat.",
+      "label": "train none"
+    },
+    {
+      "name": "stats",
+      "type": "text",
+      "default": "{total} questions - {answered} answered - {taught} taught phrases",
+      "label": "stats"
+    },
+    {
+      "name": "f_open",
+      "type": "text",
+      "default": "To review",
+      "label": "f open"
+    },
+    {
+      "name": "f_unanswered",
+      "type": "text",
+      "default": "Could not answer",
+      "label": "f unanswered"
+    },
+    {
+      "name": "f_taught",
+      "type": "text",
+      "default": "Taught",
+      "label": "f taught"
+    },
+    {
+      "name": "f_skipped",
+      "type": "text",
+      "default": "Skipped",
+      "label": "f skipped"
+    },
+    {
+      "name": "f_all",
+      "type": "text",
+      "default": "All",
+      "label": "f all"
+    },
+    {
+      "name": "refresh",
+      "type": "text",
+      "default": "Refresh",
+      "label": "refresh"
+    },
+    {
+      "name": "export_jsonl",
+      "type": "text",
+      "default": "Export JSONL",
+      "label": "export jsonl"
+    },
+    {
+      "name": "unanswered_csv",
+      "type": "text",
+      "default": "Unanswered report (CSV)",
+      "label": "unanswered csv"
+    },
+    {
+      "name": "unanswered_tip",
+      "type": "text",
+      "default": "Questions Chip Chat could not answer, most asked first",
+      "label": "unanswered tip"
+    },
+    {
+      "name": "h_question",
+      "type": "text",
+      "default": "Question",
+      "label": "h question"
+    },
+    {
+      "name": "h_said",
+      "type": "text",
+      "default": "Chat said",
+      "label": "h said"
+    },
+    {
+      "name": "h_answer",
+      "type": "text",
+      "default": "Answered with",
+      "label": "h answer"
+    },
+    {
+      "name": "h_teach",
+      "type": "text",
+      "default": "Teach",
+      "label": "h teach"
+    },
+    {
+      "name": "h_when",
+      "type": "text",
+      "default": "Asked",
+      "label": "h when"
+    },
+    {
+      "name": "h_who",
+      "type": "text",
+      "default": "Role",
+      "label": "h who"
+    },
+    {
+      "name": "h_asked",
+      "type": "text",
+      "default": "Times asked",
+      "label": "h asked"
+    },
+    {
+      "name": "h_firms",
+      "type": "text",
+      "default": "Firms",
+      "label": "h firms"
+    },
+    {
+      "name": "h_last",
+      "type": "text",
+      "default": "Last asked",
+      "label": "h last"
+    },
+    {
+      "name": "right_answer",
+      "type": "text",
+      "default": "Right answer",
+      "label": "right answer"
+    },
+    {
+      "name": "or_answer_ph",
+      "type": "text",
+      "default": "or pick the right answer",
+      "label": "or answer ph"
+    },
+    {
+      "name": "teach_btn",
+      "type": "text",
+      "default": "Teach",
+      "label": "teach btn"
+    },
+    {
+      "name": "skip_tip",
+      "type": "text",
+      "default": "Not worth teaching",
+      "label": "skip tip"
+    },
+    {
+      "name": "own_answer_ph",
+      "type": "text",
+      "default": "or write the answer",
+      "label": "own answer ph"
+    },
+    {
+      "name": "nothing_to_review",
+      "type": "text",
+      "default": "Nothing to review. Questions asked on the Chat tab show here.",
+      "label": "nothing to review"
+    },
+    {
+      "name": "taught_title",
+      "type": "text",
+      "default": "Taught phrases ({n})",
+      "label": "taught title"
+    },
+    {
+      "name": "taught_lede",
+      "type": "text",
+      "default": "Checked first: a taught phrase always gets its answer.",
+      "label": "taught lede"
+    },
+    {
+      "name": "delete_taught_q",
+      "type": "text",
+      "default": "Delete this taught phrase?",
+      "label": "delete taught q"
+    },
+    {
+      "name": "delete_taught_body",
+      "type": "text",
+      "default": "\"{phrase}\" will no longer be answered with it.",
+      "label": "delete taught body"
+    },
+    {
+      "name": "r_answer",
+      "type": "text",
+      "default": "answered",
+      "label": "r answer"
+    },
+    {
+      "name": "r_pick_one",
+      "type": "text",
+      "default": "offered choices",
+      "label": "r pick one"
+    },
+    {
+      "name": "r_no_match",
+      "type": "text",
+      "default": "could not answer",
+      "label": "r no match"
+    },
+    {
+      "name": "r_ask_blank",
+      "type": "text",
+      "default": "asked for a detail",
+      "label": "r ask blank"
+    },
+    {
+      "name": "m_prepared",
+      "type": "text",
+      "default": "prepared",
+      "label": "m prepared"
+    },
+    {
+      "name": "m_family",
+      "type": "text",
+      "default": "worked out",
+      "label": "m family"
+    },
+    {
+      "name": "m_taught",
+      "type": "text",
+      "default": "taught",
+      "label": "m taught"
+    },
+    {
+      "name": "m_own",
+      "type": "text",
+      "default": "firm's own",
+      "label": "m own"
+    },
+    {
+      "name": "role_owner",
+      "type": "text",
+      "default": "Portal owner",
+      "label": "role owner"
+    },
+    {
+      "name": "role_none",
+      "type": "text",
+      "default": "No firm",
+      "label": "role none"
+    },
+    {
+      "name": "pending_none",
+      "type": "text",
+      "default": "Nothing is pending for you - every client-year assigned to you is filed.",
+      "label": "pending none"
+    },
+    {
+      "name": "pending_head",
+      "type": "text",
+      "default": "{n} client-year(s) assigned to you are open:",
+      "label": "pending head"
+    },
+    {
+      "name": "overdue_none",
+      "type": "text",
+      "default": "Nothing is overdue.",
+      "label": "overdue none"
+    },
+    {
+      "name": "overdue_head",
+      "type": "text",
+      "default": "{n} client-year(s) are past their due date:",
+      "label": "overdue head"
+    },
+    {
+      "name": "soon_none",
+      "type": "text",
+      "default": "Nothing is due in the next 7 days.",
+      "label": "soon none"
+    },
+    {
+      "name": "soon_head",
+      "type": "text",
+      "default": "{n} due in the next 7 days:",
+      "label": "soon head"
+    },
+    {
+      "name": "row_due",
+      "type": "text",
+      "default": "{name} - {form}, {stage}, due {due} ({days})",
+      "label": "row due"
+    },
+    {
+      "name": "days_late",
+      "type": "text",
+      "default": "{n} days late",
+      "label": "days late"
+    },
+    {
+      "name": "days_left",
+      "type": "text",
+      "default": "{n} days left",
+      "label": "days left"
+    },
+    {
+      "name": "client_ask",
+      "type": "text",
+      "default": "Which client? Type part of the name - e.g. Where does Agarwal stand?",
+      "label": "client ask"
+    },
+    {
+      "name": "client_none",
+      "type": "text",
+      "default": "No client of yours matches that name.",
+      "label": "client none"
+    },
+    {
+      "name": "client_row",
+      "type": "text",
+      "default": "{name} ({pan}) - {ay}: {stage}, {form}{filed}{who}",
+      "label": "client row"
+    },
+    {
+      "name": "client_filed",
+      "type": "text",
+      "default": ", filed {kind} on {on}",
+      "label": "client filed"
+    },
+    {
+      "name": "client_who",
+      "type": "text",
+      "default": ", assigned to {who}",
+      "label": "client who"
+    },
+    {
+      "name": "access_head",
+      "type": "text",
+      "default": "You are {role}. You may:",
+      "label": "access head"
+    },
+    {
+      "name": "access_owner",
+      "type": "text",
+      "default": "You are the portal owner - you may open everything.",
+      "label": "access owner"
+    },
+    {
+      "name": "access_none",
+      "type": "text",
+      "default": "You are not in a firm yet. My firm lets you start one.",
+      "label": "access none"
+    },
+    {
+      "name": "lent_none",
+      "type": "text",
+      "default": "Nothing is delegated to you.",
+      "label": "lent none"
+    },
+    {
+      "name": "lent_head",
+      "type": "text",
+      "default": "Delegated to you:",
+      "label": "lent head"
+    },
+    {
+      "name": "lent_row",
+      "type": "text",
+      "default": "{what} - {scope}, from {lender} until {until}",
+      "label": "lent row"
+    },
+    {
+      "name": "team_head",
+      "type": "text",
+      "default": "{n} people in {firm}:",
+      "label": "team head"
+    },
+    {
+      "name": "team_row",
+      "type": "text",
+      "default": "{name} - {role}",
+      "label": "team row"
+    },
+    {
+      "name": "ready_ok",
+      "type": "text",
+      "default": "Your firm is {state}.",
+      "label": "ready ok"
+    },
+    {
+      "name": "ready_head",
+      "type": "text",
+      "default": "Your firm is {state}. Still to give:",
+      "label": "ready head"
+    },
+    {
+      "name": "leads_head",
+      "type": "text",
+      "default": "Clients worth a conversation:",
+      "label": "leads head"
+    },
+    {
+      "name": "leads_none",
+      "type": "text",
+      "default": "No opportunities flagged this year yet.",
+      "label": "leads none"
+    },
+    {
+      "name": "lead_row",
+      "type": "text",
+      "default": "{what}: {names}",
+      "label": "lead row"
+    },
+    {
+      "name": "owner_none",
+      "type": "text",
+      "default": "No firm is waiting for you.",
+      "label": "owner none"
+    },
+    {
+      "name": "owner_head",
+      "type": "text",
+      "default": "{n} firm(s) waiting for approval:",
+      "label": "owner head"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "title": "$title",
+      "lede": "$lede",
+      "ask_ph": "$ask_ph",
+      "ask": "$ask",
+      "try": "$try",
+      "new": "$new",
+      "open": "$open",
+      "pick": "$pick",
+      "no_match": "$no_match",
+      "teach_tab": "$teach_tab",
+      "chat_tab": "$chat_tab",
+      "teach_lede": "$teach_lede",
+      "teach_none": "$teach_none",
+      "teach_pick": "$teach_pick",
+      "teach_own": "$teach_own",
+      "teach_save": "$teach_save",
+      "teach_skip": "$teach_skip",
+      "taught": "$taught",
+      "own_title": "$own_title",
+      "own_q": "$own_q",
+      "own_a": "$own_a",
+      "own_none": "$own_none",
+      "own_add": "$own_add",
+      "own_scope_firm": "$own_scope_firm",
+      "own_scope_all": "$own_scope_all",
+      "delete": "$delete",
+      "asked_by": "$asked_by",
+      "head_title": "$head_title",
+      "head_sub": "$head_sub",
+      "new_chat": "$new_chat",
+      "new_chat_q": "$new_chat_q",
+      "new_chat_body": "$new_chat_body",
+      "already_empty": "$already_empty",
+      "asking": "$asking",
+      "ask_own": "$ask_own",
+      "type_first": "$type_first",
+      "surprise": "$surprise",
+      "surprise_tip": "$surprise_tip",
+      "surprise_none": "$surprise_none",
+      "ask_next": "$ask_next",
+      "reuse": "$reuse",
+      "train_tab": "$train_tab",
+      "train_none": "$train_none",
+      "stats": "$stats",
+      "f_open": "$f_open",
+      "f_unanswered": "$f_unanswered",
+      "f_taught": "$f_taught",
+      "f_skipped": "$f_skipped",
+      "f_all": "$f_all",
+      "refresh": "$refresh",
+      "export_jsonl": "$export_jsonl",
+      "unanswered_csv": "$unanswered_csv",
+      "unanswered_tip": "$unanswered_tip",
+      "h_question": "$h_question",
+      "h_said": "$h_said",
+      "h_answer": "$h_answer",
+      "h_teach": "$h_teach",
+      "h_when": "$h_when",
+      "h_who": "$h_who",
+      "h_asked": "$h_asked",
+      "h_firms": "$h_firms",
+      "h_last": "$h_last",
+      "right_answer": "$right_answer",
+      "or_answer_ph": "$or_answer_ph",
+      "teach_btn": "$teach_btn",
+      "skip_tip": "$skip_tip",
+      "own_answer_ph": "$own_answer_ph",
+      "nothing_to_review": "$nothing_to_review",
+      "taught_title": "$taught_title",
+      "taught_lede": "$taught_lede",
+      "delete_taught_q": "$delete_taught_q",
+      "delete_taught_body": "$delete_taught_body",
+      "r_answer": "$r_answer",
+      "r_pick_one": "$r_pick_one",
+      "r_no_match": "$r_no_match",
+      "r_ask_blank": "$r_ask_blank",
+      "m_prepared": "$m_prepared",
+      "m_family": "$m_family",
+      "m_taught": "$m_taught",
+      "m_own": "$m_own",
+      "role_owner": "$role_owner",
+      "role_none": "$role_none",
+      "pending_none": "$pending_none",
+      "pending_head": "$pending_head",
+      "overdue_none": "$overdue_none",
+      "overdue_head": "$overdue_head",
+      "soon_none": "$soon_none",
+      "soon_head": "$soon_head",
+      "row_due": "$row_due",
+      "days_late": "$days_late",
+      "days_left": "$days_left",
+      "client_ask": "$client_ask",
+      "client_none": "$client_none",
+      "client_row": "$client_row",
+      "client_filed": "$client_filed",
+      "client_who": "$client_who",
+      "access_head": "$access_head",
+      "access_owner": "$access_owner",
+      "access_none": "$access_none",
+      "lent_none": "$lent_none",
+      "lent_head": "$lent_head",
+      "lent_row": "$lent_row",
+      "team_head": "$team_head",
+      "team_row": "$team_row",
+      "ready_ok": "$ready_ok",
+      "ready_head": "$ready_head",
+      "leads_head": "$leads_head",
+      "leads_none": "$leads_none",
+      "lead_row": "$lead_row",
+      "owner_none": "$owner_none",
+      "owner_head": "$owner_head"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-04: every word of Chip Chat, including how live answers are worded.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "title": "Chip Chat",
+        "lede": "Ask about SimplyFile, your clients and your work. Answers come from the portal's own rules and your data.",
+        "ask_ph": "Ask a question - e.g. What is pending for me?",
+        "ask": "Ask",
+        "try": "Try",
+        "new": "New chat",
+        "open": "Open",
+        "pick": "Did you mean:",
+        "no_match": "I don't know that one yet - I have noted it so it can be taught. Try other words, or one of the questions below.",
+        "teach_tab": "Teach",
+        "chat_tab": "Chat",
+        "teach_lede": "Questions people asked that Chip Chat could not answer. Point one at the right answer, or write your firm's own.",
+        "teach_none": "Nothing waiting - every question was answered.",
+        "teach_pick": "Answer with",
+        "teach_own": "Or write the answer",
+        "teach_save": "Teach",
+        "teach_skip": "Skip",
+        "taught": "Taught - the next time it is asked, this answer comes.",
+        "own_title": "Your firm's own answers",
+        "own_q": "Question",
+        "own_a": "Answer",
+        "own_none": "None yet.",
+        "own_add": "Add",
+        "own_scope_firm": "Everyone in my firm",
+        "own_scope_all": "Every firm (portal-wide)",
+        "delete": "Delete",
+        "asked_by": "asked {n} time(s)",
+        "head_title": "Chip Chat - ask the chips",
+        "head_sub": "Ask in plain words. SimplyFile's own rules and your firm's data answer; an unclear question gets a question back instead of a guess.",
+        "new_chat": "New chat",
+        "new_chat_q": "Start a new chat?",
+        "new_chat_body": "This clears the conversation on screen. Your questions stay on the Train tab.",
+        "already_empty": "The chat is already empty.",
+        "asking": "Asking the chips...",
+        "ask_own": "Ask in your own words",
+        "type_first": "Type a question first - for example one of these.",
+        "surprise": "Surprise me",
+        "surprise_tip": "Surprise me: a good question, different each time",
+        "surprise_none": "No surprise right now - type a question or pick one below.",
+        "ask_next": "Ask next",
+        "reuse": "Ask this again",
+        "train_tab": "Train",
+        "train_none": "Only the firm admin or the portal owner trains Chip Chat.",
+        "stats": "{total} questions - {answered} answered - {taught} taught phrases",
+        "f_open": "To review",
+        "f_unanswered": "Could not answer",
+        "f_taught": "Taught",
+        "f_skipped": "Skipped",
+        "f_all": "All",
+        "refresh": "Refresh",
+        "export_jsonl": "Export JSONL",
+        "unanswered_csv": "Unanswered report (CSV)",
+        "unanswered_tip": "Questions Chip Chat could not answer, most asked first",
+        "h_question": "Question",
+        "h_said": "Chat said",
+        "h_answer": "Answered with",
+        "h_teach": "Teach",
+        "h_when": "Asked",
+        "h_who": "Role",
+        "h_asked": "Times asked",
+        "h_firms": "Firms",
+        "h_last": "Last asked",
+        "right_answer": "Right answer",
+        "or_answer_ph": "or pick the right answer",
+        "teach_btn": "Teach",
+        "skip_tip": "Not worth teaching",
+        "own_answer_ph": "or write the answer",
+        "nothing_to_review": "Nothing to review. Questions asked on the Chat tab show here.",
+        "taught_title": "Taught phrases ({n})",
+        "taught_lede": "Checked first: a taught phrase always gets its answer.",
+        "delete_taught_q": "Delete this taught phrase?",
+        "delete_taught_body": "\"{phrase}\" will no longer be answered with it.",
+        "r_answer": "answered",
+        "r_pick_one": "offered choices",
+        "r_no_match": "could not answer",
+        "r_ask_blank": "asked for a detail",
+        "m_prepared": "prepared",
+        "m_family": "worked out",
+        "m_taught": "taught",
+        "m_own": "firm's own",
+        "role_owner": "Portal owner",
+        "role_none": "No firm",
+        "pending_none": "Nothing is pending for you - every client-year assigned to you is filed.",
+        "pending_head": "{n} client-year(s) assigned to you are open:",
+        "overdue_none": "Nothing is overdue.",
+        "overdue_head": "{n} client-year(s) are past their due date:",
+        "soon_none": "Nothing is due in the next 7 days.",
+        "soon_head": "{n} due in the next 7 days:",
+        "row_due": "{name} - {form}, {stage}, due {due} ({days})",
+        "days_late": "{n} days late",
+        "days_left": "{n} days left",
+        "client_ask": "Which client? Type part of the name - e.g. Where does Agarwal stand?",
+        "client_none": "No client of yours matches that name.",
+        "client_row": "{name} ({pan}) - {ay}: {stage}, {form}{filed}{who}",
+        "client_filed": ", filed {kind} on {on}",
+        "client_who": ", assigned to {who}",
+        "access_head": "You are {role}. You may:",
+        "access_owner": "You are the portal owner - you may open everything.",
+        "access_none": "You are not in a firm yet. My firm lets you start one.",
+        "lent_none": "Nothing is delegated to you.",
+        "lent_head": "Delegated to you:",
+        "lent_row": "{what} - {scope}, from {lender} until {until}",
+        "team_head": "{n} people in {firm}:",
+        "team_row": "{name} - {role}",
+        "ready_ok": "Your firm is {state}.",
+        "ready_head": "Your firm is {state}. Still to give:",
+        "leads_head": "Clients worth a conversation:",
+        "leads_none": "No opportunities flagged this year yet.",
+        "lead_row": "{what}: {names}",
+        "owner_none": "No firm is waiting for you.",
+        "owner_head": "{n} firm(s) waiting for approval:"
+      }
+    }
+  ]
+}

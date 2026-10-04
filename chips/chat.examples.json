@@ -1,0 +1,65 @@
+{
+  "chip_id": "chat.examples",
+  "kind": "accessor",
+  "set": "chat",
+  "label": "Chip Chat example questions",
+  "aliases": [
+    "chip chat example questions"
+  ],
+  "params": [
+    {
+      "name": "n",
+      "type": "json",
+      "default": 8,
+      "label": "n"
+    },
+    {
+      "name": "live_share",
+      "type": "json",
+      "default": 3,
+      "label": "live share"
+    },
+    {
+      "name": "placeholders",
+      "type": "json",
+      "default": [
+        "How much tax on 18.5 lakh for an HUF under the old regime?",
+        "Which returns are overdue?",
+        "Can a tax preparer sign off?",
+        "If I file ITR-3 on 15/11/2026 what kind of return is it?",
+        "Where does Agarwal stand?",
+        "What is the 234F late fee on 4 lakh?"
+      ],
+      "label": "placeholders"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "n": "$n",
+      "live_share": "$live_share",
+      "placeholders": "$placeholders"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-04: how many example questions show under the ask box, how many from the person's own work, and the ask box's rotating hint.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "n": 8,
+        "live_share": 3,
+        "placeholders": [
+          "How much tax on 18.5 lakh for an HUF under the old regime?",
+          "Which returns are overdue?",
+          "Can a tax preparer sign off?",
+          "If I file ITR-3 on 15/11/2026 what kind of return is it?",
+          "Where does Agarwal stand?",
+          "What is the 234F late fee on 4 lakh?"
+        ]
+      }
+    }
+  ]
+}

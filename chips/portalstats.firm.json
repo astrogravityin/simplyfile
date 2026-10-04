@@ -1,0 +1,185 @@
+{
+  "chip_id": "portalstats.firm",
+  "kind": "accessor",
+  "set": "portalstats",
+  "label": "One firm on the portal",
+  "aliases": [
+    "one firm on the portal"
+  ],
+  "params": [
+    {
+      "name": "state",
+      "type": "text",
+      "default": "",
+      "label": "draft / submitted / returned / approved / ..."
+    },
+    {
+      "name": "age_days",
+      "type": "number",
+      "default": 0,
+      "label": "days since the firm started"
+    },
+    {
+      "name": "idle_days",
+      "type": "number",
+      "default": 0,
+      "label": "days since anyone in the firm was seen (-1 = never)"
+    },
+    {
+      "name": "clients",
+      "type": "number",
+      "default": 0,
+      "label": "clients"
+    },
+    {
+      "name": "dormant_days",
+      "type": "number",
+      "default": 30,
+      "label": ""
+    },
+    {
+      "name": "stuck_days",
+      "type": "number",
+      "default": 7,
+      "label": ""
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "review": {
+        "op": "eq",
+        "left": "$state",
+        "right": "submitted"
+      },
+      "stuck": {
+        "op": "all",
+        "items": [
+          {
+            "op": "in_set",
+            "value": "$state",
+            "set": [
+              "draft",
+              "returned"
+            ]
+          },
+          {
+            "op": "ge",
+            "left": "$age_days",
+            "right": "$stuck_days"
+          }
+        ]
+      },
+      "empty": {
+        "op": "all",
+        "items": [
+          {
+            "op": "eq",
+            "left": "$state",
+            "right": "approved"
+          },
+          {
+            "op": "eq",
+            "left": "$clients",
+            "right": 0
+          }
+        ]
+      },
+      "dormant": {
+        "op": "all",
+        "items": [
+          {
+            "op": "eq",
+            "left": "$state",
+            "right": "approved"
+          },
+          {
+            "op": "any",
+            "items": [
+              {
+                "op": "ge",
+                "left": "$idle_days",
+                "right": "$dormant_days"
+              },
+              {
+                "op": "lt",
+                "left": "$idle_days",
+                "right": 0
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-04: what a firm needs from the portal admin - papers to review, a draft stuck for stuck_days, approved with no client, or no one signed in for dormant_days.",
+  "test_cases": [
+    {
+      "args": {
+        "state": "submitted",
+        "age_days": 1,
+        "idle_days": 0,
+        "clients": 0,
+        "dormant_days": 30,
+        "stuck_days": 7
+      },
+      "expect_value": {
+        "review": true,
+        "stuck": false,
+        "empty": false,
+        "dormant": false
+      }
+    },
+    {
+      "args": {
+        "state": "draft",
+        "age_days": 9,
+        "idle_days": 9,
+        "clients": 0,
+        "dormant_days": 30,
+        "stuck_days": 7
+      },
+      "expect_value": {
+        "review": false,
+        "stuck": true,
+        "empty": false,
+        "dormant": false
+      }
+    },
+    {
+      "args": {
+        "state": "approved",
+        "age_days": 60,
+        "idle_days": 45,
+        "clients": 0,
+        "dormant_days": 30,
+        "stuck_days": 7
+      },
+      "expect_value": {
+        "review": false,
+        "stuck": false,
+        "empty": true,
+        "dormant": true
+      }
+    },
+    {
+      "args": {
+        "state": "approved",
+        "age_days": 60,
+        "idle_days": 2,
+        "clients": 12,
+        "dormant_days": 30,
+        "stuck_days": 7
+      },
+      "expect_value": {
+        "review": false,
+        "stuck": false,
+        "empty": false,
+        "dormant": false
+      }
+    }
+  ]
+}

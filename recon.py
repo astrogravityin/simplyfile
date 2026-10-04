@@ -26,6 +26,7 @@ from pathlib import Path
 from fastapi import HTTPException
 
 import clients
+import delegation
 import intake
 from core import engine, store
 
@@ -328,7 +329,7 @@ def explain(user: dict, cid: str, ay: str, fid: str, note: str) -> dict:
     with _LOCK:
         notes = store.read(_notes_name(cid, ay), {})
         if note:
-            notes[fid] = {"text": note, "by": user.get("name") or user["email"], "at": store.now()}
+            notes[fid] = {"text": note, "by": delegation.actor(user), "at": store.now()}
         else:
             notes.pop(fid, None)
         store.write(_notes_name(cid, ay), notes)

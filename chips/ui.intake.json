@@ -238,7 +238,7 @@
     {
       "name": "bad_type",
       "type": "text",
-      "default": "Upload one of {exts}.",
+      "default": "SimplyFile reads .xlsx, .xls, .xlsm, .csv - and text PDFs best-effort. {why}",
       "label": "bad type"
     },
     {
@@ -250,7 +250,7 @@
     {
       "name": "unreadable",
       "type": "text",
-      "default": "{name} could not be read as a workbook.",
+      "default": "{name} could not be read. If it opens in Excel, save it again as .xlsx and upload that.",
       "label": "unreadable"
     },
     {
@@ -468,6 +468,84 @@
       "type": "text",
       "default": "Replace",
       "label": "replace_yes"
+    },
+    {
+      "name": "cant_save_as",
+      "type": "text",
+      "default": "Open it in Excel and save it as .xlsx (Excel Workbook), then upload that.",
+      "label": "cant save as"
+    },
+    {
+      "name": "cant_tally_xml",
+      "type": "text",
+      "default": "Tally's XML or JSON export is not read. In Tally, export the report to Excel (.xlsx) instead.",
+      "label": "cant tally xml"
+    },
+    {
+      "name": "cant_picture",
+      "type": "text",
+      "default": "A photo or scan cannot be read - SimplyFile has no text recognition. Ask for the Excel, or a PDF with text in it.",
+      "label": "cant picture"
+    },
+    {
+      "name": "cant_word",
+      "type": "text",
+      "default": "A Word document is not read. Copy the table into Excel and save it as .xlsx.",
+      "label": "cant word"
+    },
+    {
+      "name": "cant_other",
+      "type": "text",
+      "default": "Save it as .xlsx from Excel and upload that.",
+      "label": "cant other"
+    },
+    {
+      "name": "locked",
+      "type": "text",
+      "default": "{name} is password-protected. Open it in Excel, remove the password (File - Info - Protect Workbook), save, and upload again.",
+      "label": "locked"
+    },
+    {
+      "name": "pdf_scan",
+      "type": "text",
+      "default": "{name} is a scanned PDF (pictures of pages, no text). SimplyFile cannot read scans. Ask for the Excel, or a PDF with text.",
+      "label": "pdf scan"
+    },
+    {
+      "name": "pdf_warn",
+      "type": "text",
+      "default": "Read from a PDF: columns can shift when a PDF is read. Check every row and its amount before mapping.",
+      "label": "pdf warn"
+    },
+    {
+      "name": "two_sided_note",
+      "type": "text",
+      "default": "Two-sided statement: the left and right sides were read as separate rows.",
+      "label": "two sided note"
+    },
+    {
+      "name": "formats_title",
+      "type": "text",
+      "default": "What SimplyFile can read",
+      "label": "formats title"
+    },
+    {
+      "name": "formats_ok",
+      "type": "text",
+      "default": "Excel (.xlsx, .xls, .xlsm) and CSV (comma, semicolon or tab; UTF-8 or Windows) - every sheet, in the usual statement layouts (headings, a label, amounts); amounts as numbers or as text (1,23,456 Dr, (12,500), Rs 5,000); two-sided statements (liabilities | assets). SimplyFile suggests an SF Ref where it recognises a row; a person accepts or changes it.",
+      "label": "formats ok"
+    },
+    {
+      "name": "formats_partly",
+      "type": "text",
+      "default": "Text PDFs - best-effort: check every row.",
+      "label": "formats partly"
+    },
+    {
+      "name": "formats_no",
+      "type": "text",
+      "default": "Not read: scanned PDFs and photos (no text recognition), password-protected files, .xlsb / .ods / Numbers (save as .xlsx), Tally XML / JSON (export to Excel), Word.",
+      "label": "formats no"
     }
   ],
   "expr": {
@@ -549,13 +627,26 @@
       "group_differs": "$group_differs",
       "group_differs_short": "$group_differs_short",
       "replace_ask": "$replace_ask",
-      "replace_yes": "$replace_yes"
+      "replace_yes": "$replace_yes",
+      "cant_save_as": "$cant_save_as",
+      "cant_tally_xml": "$cant_tally_xml",
+      "cant_picture": "$cant_picture",
+      "cant_word": "$cant_word",
+      "cant_other": "$cant_other",
+      "locked": "$locked",
+      "pdf_scan": "$pdf_scan",
+      "pdf_warn": "$pdf_warn",
+      "two_sided_note": "$two_sided_note",
+      "formats_title": "$formats_title",
+      "formats_ok": "$formats_ok",
+      "formats_partly": "$formats_partly",
+      "formats_no": "$formats_no"
     }
   },
   "returns": "record",
   "version": 1,
   "status": "published",
-  "description_nl": "The words of the Intake & map screen and its error sentences.",
+  "description_nl": "The words of the Intake & map screen and its error sentences. 2026-10-04: what Intake can and cannot read, said plainly at upload.",
   "test_cases": [
     {
       "args": {},
@@ -598,9 +689,9 @@
         "back": "Back to files",
         "form_is": "Files {form}",
         "bad_ay": "{ay} is not an assessment year this portal offers.",
-        "bad_type": "Upload one of {exts}.",
+        "bad_type": "SimplyFile reads .xlsx, .xls, .xlsm, .csv - and text PDFs best-effort. {why}",
         "too_big": "That file is larger than {mb} MB.",
-        "unreadable": "{name} could not be read as a workbook.",
+        "unreadable": "{name} could not be read. If it opens in Excel, save it again as .xlsx and upload that.",
         "too_many_rows": "{n} rows is more than the {most} a file may have.",
         "same_file": "{name} is already uploaded for this year.",
         "no_file": "That file is not here.",
@@ -636,7 +727,20 @@
         "group_differs": "Does not add up: the statement says {stated}.",
         "group_differs_short": "≠ {stated}",
         "replace_ask": "{name} is already here. Replace it with this one? Refs stay on rows whose place and words did not change; the old version is kept.",
-        "replace_yes": "Replace"
+        "replace_yes": "Replace",
+        "cant_save_as": "Open it in Excel and save it as .xlsx (Excel Workbook), then upload that.",
+        "cant_tally_xml": "Tally's XML or JSON export is not read. In Tally, export the report to Excel (.xlsx) instead.",
+        "cant_picture": "A photo or scan cannot be read - SimplyFile has no text recognition. Ask for the Excel, or a PDF with text in it.",
+        "cant_word": "A Word document is not read. Copy the table into Excel and save it as .xlsx.",
+        "cant_other": "Save it as .xlsx from Excel and upload that.",
+        "locked": "{name} is password-protected. Open it in Excel, remove the password (File - Info - Protect Workbook), save, and upload again.",
+        "pdf_scan": "{name} is a scanned PDF (pictures of pages, no text). SimplyFile cannot read scans. Ask for the Excel, or a PDF with text.",
+        "pdf_warn": "Read from a PDF: columns can shift when a PDF is read. Check every row and its amount before mapping.",
+        "two_sided_note": "Two-sided statement: the left and right sides were read as separate rows.",
+        "formats_title": "What SimplyFile can read",
+        "formats_ok": "Excel (.xlsx, .xls, .xlsm) and CSV (comma, semicolon or tab; UTF-8 or Windows) - every sheet, in the usual statement layouts (headings, a label, amounts); amounts as numbers or as text (1,23,456 Dr, (12,500), Rs 5,000); two-sided statements (liabilities | assets). SimplyFile suggests an SF Ref where it recognises a row; a person accepts or changes it.",
+        "formats_partly": "Text PDFs - best-effort: check every row.",
+        "formats_no": "Not read: scanned PDFs and photos (no text recognition), password-protected files, .xlsb / .ods / Numbers (save as .xlsx), Tally XML / JSON (export to Excel), Word."
       }
     }
   ]

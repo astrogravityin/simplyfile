@@ -1,0 +1,595 @@
+{
+  "chip_id": "chat.families",
+  "kind": "accessor",
+  "set": "chat",
+  "label": "Chip Chat question families",
+  "aliases": [
+    "chip chat question families"
+  ],
+  "params": [
+    {
+      "name": "rows",
+      "type": "json",
+      "default": [
+        {
+          "id": "tax",
+          "words": "tax on income how much tax payable liability calculate compute slab owe",
+          "need": [
+            "amount"
+          ],
+          "need_any": []
+        },
+        {
+          "id": "fee",
+          "words": "late fee 234f penalty filing late fee",
+          "need": [
+            "amount"
+          ],
+          "need_any": []
+        },
+        {
+          "id": "itr_u",
+          "words": "itr-u itru updated return 140b additional tax extra",
+          "need": [
+            "amount",
+            "months"
+          ],
+          "need_any": []
+        },
+        {
+          "id": "refund",
+          "words": "244a refund interest on refund",
+          "need": [
+            "amount",
+            "months"
+          ],
+          "need_any": []
+        },
+        {
+          "id": "kind_on",
+          "words": "filed on file on if i file belated revised original counts what kind of return late",
+          "need": [
+            "date"
+          ],
+          "need_any": []
+        },
+        {
+          "id": "due",
+          "words": "due date last date deadline when to file by when",
+          "need": [],
+          "need_any": [
+            "ay",
+            "form",
+            "audit",
+            "tp"
+          ]
+        },
+        {
+          "id": "advance",
+          "words": "advance tax senior citizen exempt pay advance tax age",
+          "need": [
+            "age"
+          ],
+          "need_any": []
+        },
+        {
+          "id": "role_can",
+          "words": "can may allowed permission role able to",
+          "need": [
+            "role",
+            "action"
+          ],
+          "need_any": []
+        },
+        {
+          "id": "pan",
+          "words": "pan status valid check what kind of pan whose pan",
+          "need": [
+            "pan"
+          ],
+          "need_any": []
+        }
+      ],
+      "label": "rows"
+    },
+    {
+      "name": "defaults",
+      "type": "json",
+      "default": {
+        "status": "individual",
+        "form": "ITR-3"
+      },
+      "label": "defaults"
+    },
+    {
+      "name": "status_words",
+      "type": "json",
+      "default": {
+        "individual": [
+          "individual",
+          "person",
+          "salaried",
+          "proprietor"
+        ],
+        "huf": [
+          "huf",
+          "hindu undivided"
+        ],
+        "firm": [
+          "firm",
+          "partnership"
+        ],
+        "llp": [
+          "llp"
+        ],
+        "aop": [
+          "aop",
+          "association of persons"
+        ],
+        "boi": [
+          "boi",
+          "body of individuals"
+        ]
+      },
+      "label": "status words"
+    },
+    {
+      "name": "role_words",
+      "type": "json",
+      "default": {
+        "firm_admin": [
+          "firm admin"
+        ],
+        "partner": [
+          "partner"
+        ],
+        "reviewer": [
+          "reviewer"
+        ],
+        "auditor": [
+          "auditor"
+        ],
+        "preparer": [
+          "tax preparer",
+          "preparer",
+          "article assistant",
+          "article",
+          "junior",
+          "staff"
+        ]
+      },
+      "label": "role words"
+    },
+    {
+      "name": "action_words",
+      "type": "json",
+      "default": {
+        "compute.signoff": [
+          "sign off",
+          "signoff",
+          "sign-off",
+          "approve the computation"
+        ],
+        "compute.reopen": [
+          "reopen",
+          "undo a filing",
+          "undo filing",
+          "revise a return",
+          "start a revised return"
+        ],
+        "compute.file": [
+          "mark a return filed",
+          "mark filed",
+          "file the return",
+          "file a return",
+          "file returns"
+        ],
+        "clients.create": [
+          "add a client",
+          "add clients",
+          "create a client",
+          "add a new client"
+        ],
+        "clients.archive": [
+          "archive a client",
+          "archive clients",
+          "restore a client"
+        ],
+        "intake.delete": [
+          "delete an uploaded file",
+          "delete uploads",
+          "delete a statement"
+        ],
+        "recon.delete": [
+          "delete a portal file"
+        ],
+        "intake": [
+          "upload statements",
+          "upload files",
+          "map rows"
+        ],
+        "recon": [
+          "reconcile",
+          "check 26as"
+        ],
+        "itrimport": [
+          "import old returns",
+          "import a return"
+        ],
+        "analytics": [
+          "see firm analytics",
+          "see analytics",
+          "open analytics"
+        ],
+        "team": [
+          "add a team member",
+          "add staff",
+          "manage the team",
+          "add users"
+        ],
+        "firm": [
+          "edit the firm profile",
+          "change firm details"
+        ]
+      },
+      "label": "action words"
+    },
+    {
+      "name": "ages",
+      "type": "json",
+      "default": [
+        60,
+        80
+      ],
+      "label": "ages"
+    },
+    {
+      "name": "flags",
+      "type": "json",
+      "default": {
+        "nri": "\\bnri\\b|non[- ]?resident",
+        "audit": "\\baudit(?:ed)?\\b|\\b3cd\\b|44ab",
+        "tp": "3ceb|transfer pricing|international transaction",
+        "business": "\\bbusiness|profession|\\bshop\\b|trading"
+      },
+      "label": "flags"
+    },
+    {
+      "name": "regimes",
+      "type": "json",
+      "default": {
+        "old": "\\bold\\s+(?:tax\\s+)?regime|\\bunder the old\\b",
+        "new": "\\bnew\\s+(?:tax\\s+)?regime|115bac"
+      },
+      "label": "regimes"
+    },
+    {
+      "name": "senior",
+      "type": "text",
+      "default": "\\bsenior\\b",
+      "label": "senior"
+    },
+    {
+      "name": "super_senior",
+      "type": "text",
+      "default": "super\\s*senior|very senior",
+      "label": "super senior"
+    },
+    {
+      "name": "units",
+      "type": "json",
+      "default": {
+        "lakh": 100000,
+        "lakhs": 100000,
+        "lac": 100000,
+        "lacs": 100000,
+        "l": 100000,
+        "crore": 10000000,
+        "crores": 10000000,
+        "cr": 10000000,
+        "k": 1000,
+        "thousand": 1000
+      },
+      "label": "units"
+    },
+    {
+      "name": "months",
+      "type": "json",
+      "default": [
+        "jan",
+        "feb",
+        "mar",
+        "apr",
+        "may",
+        "jun",
+        "jul",
+        "aug",
+        "sep",
+        "oct",
+        "nov",
+        "dec"
+      ],
+      "label": "months"
+    },
+    {
+      "name": "min_amount",
+      "type": "json",
+      "default": 1000,
+      "label": "min amount"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "rows": "$rows",
+      "defaults": "$defaults",
+      "status_words": "$status_words",
+      "role_words": "$role_words",
+      "action_words": "$action_words",
+      "ages": "$ages",
+      "flags": "$flags",
+      "regimes": "$regimes",
+      "senior": "$senior",
+      "super_senior": "$super_senior",
+      "units": "$units",
+      "months": "$months",
+      "min_amount": "$min_amount"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-04: questions with blanks - the words that name each family, the blanks it needs, defaults for a blank not given, and the words for statuses, roles and actions. Each family is answered by the portal's own rule chip.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "rows": [
+          {
+            "id": "tax",
+            "words": "tax on income how much tax payable liability calculate compute slab owe",
+            "need": [
+              "amount"
+            ],
+            "need_any": []
+          },
+          {
+            "id": "fee",
+            "words": "late fee 234f penalty filing late fee",
+            "need": [
+              "amount"
+            ],
+            "need_any": []
+          },
+          {
+            "id": "itr_u",
+            "words": "itr-u itru updated return 140b additional tax extra",
+            "need": [
+              "amount",
+              "months"
+            ],
+            "need_any": []
+          },
+          {
+            "id": "refund",
+            "words": "244a refund interest on refund",
+            "need": [
+              "amount",
+              "months"
+            ],
+            "need_any": []
+          },
+          {
+            "id": "kind_on",
+            "words": "filed on file on if i file belated revised original counts what kind of return late",
+            "need": [
+              "date"
+            ],
+            "need_any": []
+          },
+          {
+            "id": "due",
+            "words": "due date last date deadline when to file by when",
+            "need": [],
+            "need_any": [
+              "ay",
+              "form",
+              "audit",
+              "tp"
+            ]
+          },
+          {
+            "id": "advance",
+            "words": "advance tax senior citizen exempt pay advance tax age",
+            "need": [
+              "age"
+            ],
+            "need_any": []
+          },
+          {
+            "id": "role_can",
+            "words": "can may allowed permission role able to",
+            "need": [
+              "role",
+              "action"
+            ],
+            "need_any": []
+          },
+          {
+            "id": "pan",
+            "words": "pan status valid check what kind of pan whose pan",
+            "need": [
+              "pan"
+            ],
+            "need_any": []
+          }
+        ],
+        "defaults": {
+          "status": "individual",
+          "form": "ITR-3"
+        },
+        "status_words": {
+          "individual": [
+            "individual",
+            "person",
+            "salaried",
+            "proprietor"
+          ],
+          "huf": [
+            "huf",
+            "hindu undivided"
+          ],
+          "firm": [
+            "firm",
+            "partnership"
+          ],
+          "llp": [
+            "llp"
+          ],
+          "aop": [
+            "aop",
+            "association of persons"
+          ],
+          "boi": [
+            "boi",
+            "body of individuals"
+          ]
+        },
+        "role_words": {
+          "firm_admin": [
+            "firm admin"
+          ],
+          "partner": [
+            "partner"
+          ],
+          "reviewer": [
+            "reviewer"
+          ],
+          "auditor": [
+            "auditor"
+          ],
+          "preparer": [
+            "tax preparer",
+            "preparer",
+            "article assistant",
+            "article",
+            "junior",
+            "staff"
+          ]
+        },
+        "action_words": {
+          "compute.signoff": [
+            "sign off",
+            "signoff",
+            "sign-off",
+            "approve the computation"
+          ],
+          "compute.reopen": [
+            "reopen",
+            "undo a filing",
+            "undo filing",
+            "revise a return",
+            "start a revised return"
+          ],
+          "compute.file": [
+            "mark a return filed",
+            "mark filed",
+            "file the return",
+            "file a return",
+            "file returns"
+          ],
+          "clients.create": [
+            "add a client",
+            "add clients",
+            "create a client",
+            "add a new client"
+          ],
+          "clients.archive": [
+            "archive a client",
+            "archive clients",
+            "restore a client"
+          ],
+          "intake.delete": [
+            "delete an uploaded file",
+            "delete uploads",
+            "delete a statement"
+          ],
+          "recon.delete": [
+            "delete a portal file"
+          ],
+          "intake": [
+            "upload statements",
+            "upload files",
+            "map rows"
+          ],
+          "recon": [
+            "reconcile",
+            "check 26as"
+          ],
+          "itrimport": [
+            "import old returns",
+            "import a return"
+          ],
+          "analytics": [
+            "see firm analytics",
+            "see analytics",
+            "open analytics"
+          ],
+          "team": [
+            "add a team member",
+            "add staff",
+            "manage the team",
+            "add users"
+          ],
+          "firm": [
+            "edit the firm profile",
+            "change firm details"
+          ]
+        },
+        "ages": [
+          60,
+          80
+        ],
+        "flags": {
+          "nri": "\\bnri\\b|non[- ]?resident",
+          "audit": "\\baudit(?:ed)?\\b|\\b3cd\\b|44ab",
+          "tp": "3ceb|transfer pricing|international transaction",
+          "business": "\\bbusiness|profession|\\bshop\\b|trading"
+        },
+        "regimes": {
+          "old": "\\bold\\s+(?:tax\\s+)?regime|\\bunder the old\\b",
+          "new": "\\bnew\\s+(?:tax\\s+)?regime|115bac"
+        },
+        "senior": "\\bsenior\\b",
+        "super_senior": "super\\s*senior|very senior",
+        "units": {
+          "lakh": 100000,
+          "lakhs": 100000,
+          "lac": 100000,
+          "lacs": 100000,
+          "l": 100000,
+          "crore": 10000000,
+          "crores": 10000000,
+          "cr": 10000000,
+          "k": 1000,
+          "thousand": 1000
+        },
+        "months": [
+          "jan",
+          "feb",
+          "mar",
+          "apr",
+          "may",
+          "jun",
+          "jul",
+          "aug",
+          "sep",
+          "oct",
+          "nov",
+          "dec"
+        ],
+        "min_amount": 1000
+      }
+    }
+  ]
+}

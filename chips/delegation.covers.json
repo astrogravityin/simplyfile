@@ -1,0 +1,442 @@
+{
+  "chip_id": "delegation.covers",
+  "kind": "accessor",
+  "set": "delegation",
+  "label": "Does a delegation cover this action today?",
+  "aliases": [
+    "does a delegation cover this action toda"
+  ],
+  "params": [
+    {
+      "name": "kind",
+      "type": "text",
+      "default": "",
+      "label": ""
+    },
+    {
+      "name": "clients",
+      "type": "json",
+      "default": [],
+      "label": "the delegation's clients"
+    },
+    {
+      "name": "d_ay",
+      "type": "text",
+      "default": "",
+      "label": "the delegation's year"
+    },
+    {
+      "name": "grants",
+      "type": "json",
+      "default": [],
+      "label": "what it lends"
+    },
+    {
+      "name": "revoked",
+      "type": "boolean",
+      "default": false,
+      "label": ""
+    },
+    {
+      "name": "starts",
+      "type": "number",
+      "default": 0,
+      "label": "yyyymmdd"
+    },
+    {
+      "name": "ends",
+      "type": "number",
+      "default": 0,
+      "label": "yyyymmdd"
+    },
+    {
+      "name": "today",
+      "type": "number",
+      "default": 0,
+      "label": "yyyymmdd"
+    },
+    {
+      "name": "want",
+      "type": "text",
+      "default": "",
+      "label": "the screen or function asked for"
+    },
+    {
+      "name": "cid",
+      "type": "text",
+      "default": "",
+      "label": "the client of the action, '' = none"
+    },
+    {
+      "name": "ay",
+      "type": "text",
+      "default": "",
+      "label": "the year of the action, '' = none"
+    },
+    {
+      "name": "anywhere",
+      "type": "boolean",
+      "default": false,
+      "label": "a menu check: any client, any year"
+    }
+  ],
+  "expr": {
+    "op": "all",
+    "items": [
+      {
+        "op": "not",
+        "item": {
+          "op": "eq",
+          "left": "$revoked",
+          "right": true
+        }
+      },
+      {
+        "op": "le",
+        "left": "$starts",
+        "right": "$today"
+      },
+      {
+        "op": "le",
+        "left": "$today",
+        "right": "$ends"
+      },
+      {
+        "op": "in_set",
+        "value": "$want",
+        "set": "$grants"
+      },
+      {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "eq",
+              "left": "$anywhere",
+              "right": true
+            },
+            "then": true
+          },
+          {
+            "when": {
+              "op": "in_set",
+              "value": "$kind",
+              "set": [
+                "filing",
+                "year_some"
+              ]
+            },
+            "then": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "in_set",
+                  "value": "$cid",
+                  "set": "$clients"
+                },
+                {
+                  "op": "eq",
+                  "left": "$ay",
+                  "right": "$d_ay"
+                }
+              ]
+            }
+          },
+          {
+            "when": {
+              "op": "eq",
+              "left": "$kind",
+              "right": "client"
+            },
+            "then": {
+              "op": "in_set",
+              "value": "$cid",
+              "set": "$clients"
+            }
+          },
+          {
+            "when": {
+              "op": "eq",
+              "left": "$kind",
+              "right": "year_all"
+            },
+            "then": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "gt",
+                  "left": {
+                    "vop": "text_length",
+                    "text": "$cid"
+                  },
+                  "right": 0
+                },
+                {
+                  "op": "eq",
+                  "left": "$ay",
+                  "right": "$d_ay"
+                }
+              ]
+            }
+          },
+          {
+            "when": {
+              "op": "eq",
+              "left": "$kind",
+              "right": "portal"
+            },
+            "then": true
+          }
+        ],
+        "else": false
+      }
+    ]
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-04: a delegation covers an action when it is not revoked, today is inside its dates, it lends that screen or function, and the action's client and year are inside its scope (a menu check asks 'anywhere').",
+  "test_cases": [
+    {
+      "args": {
+        "kind": "filing",
+        "clients": [
+          "c1"
+        ],
+        "d_ay": "2026-27",
+        "grants": [
+          "compute",
+          "compute.signoff"
+        ],
+        "revoked": false,
+        "starts": 20261001,
+        "ends": 20261031,
+        "today": 20261004,
+        "want": "compute.signoff",
+        "cid": "c1",
+        "ay": "2026-27",
+        "anywhere": false
+      },
+      "expect_value": true
+    },
+    {
+      "args": {
+        "kind": "filing",
+        "clients": [
+          "c1"
+        ],
+        "d_ay": "2026-27",
+        "grants": [
+          "compute",
+          "compute.signoff"
+        ],
+        "revoked": false,
+        "starts": 20261001,
+        "ends": 20261031,
+        "today": 20261004,
+        "want": "compute.signoff",
+        "cid": "c1",
+        "ay": "2025-26",
+        "anywhere": false
+      },
+      "expect_value": false
+    },
+    {
+      "args": {
+        "kind": "filing",
+        "clients": [
+          "c1"
+        ],
+        "d_ay": "2026-27",
+        "grants": [
+          "compute",
+          "compute.signoff"
+        ],
+        "revoked": false,
+        "starts": 20261001,
+        "ends": 20261031,
+        "today": 20261004,
+        "want": "compute.signoff",
+        "cid": "c2",
+        "ay": "2026-27",
+        "anywhere": false
+      },
+      "expect_value": false
+    },
+    {
+      "args": {
+        "kind": "filing",
+        "clients": [
+          "c1"
+        ],
+        "d_ay": "2026-27",
+        "grants": [
+          "compute",
+          "compute.signoff"
+        ],
+        "revoked": false,
+        "starts": 20261001,
+        "ends": 20261031,
+        "today": 20261101,
+        "want": "compute.signoff",
+        "cid": "c1",
+        "ay": "2026-27",
+        "anywhere": false
+      },
+      "expect_value": false
+    },
+    {
+      "args": {
+        "kind": "filing",
+        "clients": [
+          "c1"
+        ],
+        "d_ay": "2026-27",
+        "grants": [
+          "compute",
+          "compute.signoff"
+        ],
+        "revoked": true,
+        "starts": 20261001,
+        "ends": 20261031,
+        "today": 20261004,
+        "want": "compute.signoff",
+        "cid": "c1",
+        "ay": "2026-27",
+        "anywhere": false
+      },
+      "expect_value": false
+    },
+    {
+      "args": {
+        "kind": "filing",
+        "clients": [
+          "c1"
+        ],
+        "d_ay": "2026-27",
+        "grants": [
+          "compute",
+          "compute.signoff"
+        ],
+        "revoked": false,
+        "starts": 20261001,
+        "ends": 20261031,
+        "today": 20261004,
+        "want": "compute.file",
+        "cid": "c1",
+        "ay": "2026-27",
+        "anywhere": false
+      },
+      "expect_value": false
+    },
+    {
+      "args": {
+        "kind": "client",
+        "clients": [
+          "c1"
+        ],
+        "d_ay": "2026-27",
+        "grants": [
+          "compute",
+          "compute.signoff"
+        ],
+        "revoked": false,
+        "starts": 20261001,
+        "ends": 20261031,
+        "today": 20261004,
+        "want": "compute.signoff",
+        "cid": "c1",
+        "ay": "2024-25",
+        "anywhere": false
+      },
+      "expect_value": true
+    },
+    {
+      "args": {
+        "kind": "year_all",
+        "clients": [
+          "c1"
+        ],
+        "d_ay": "2026-27",
+        "grants": [
+          "compute",
+          "compute.signoff"
+        ],
+        "revoked": false,
+        "starts": 20261001,
+        "ends": 20261031,
+        "today": 20261004,
+        "want": "compute.signoff",
+        "cid": "c9",
+        "ay": "2026-27",
+        "anywhere": false
+      },
+      "expect_value": true
+    },
+    {
+      "args": {
+        "kind": "year_all",
+        "clients": [
+          "c1"
+        ],
+        "d_ay": "2026-27",
+        "grants": [
+          "compute",
+          "compute.signoff"
+        ],
+        "revoked": false,
+        "starts": 20261001,
+        "ends": 20261031,
+        "today": 20261004,
+        "want": "compute.signoff",
+        "cid": "",
+        "ay": "2026-27",
+        "anywhere": false
+      },
+      "expect_value": false
+    },
+    {
+      "args": {
+        "kind": "filing",
+        "clients": [
+          "c1"
+        ],
+        "d_ay": "2026-27",
+        "grants": [
+          "compute",
+          "compute.signoff"
+        ],
+        "revoked": false,
+        "starts": 20261001,
+        "ends": 20261031,
+        "today": 20261004,
+        "want": "compute.signoff",
+        "cid": "",
+        "ay": "",
+        "anywhere": true
+      },
+      "expect_value": true
+    },
+    {
+      "args": {
+        "kind": "portal",
+        "clients": [
+          "c1"
+        ],
+        "d_ay": "2026-27",
+        "grants": [
+          "approvals"
+        ],
+        "revoked": false,
+        "starts": 20261001,
+        "ends": 20261031,
+        "today": 20261004,
+        "want": "approvals",
+        "cid": "",
+        "ay": "",
+        "anywhere": false
+      },
+      "expect_value": true
+    }
+  ]
+}

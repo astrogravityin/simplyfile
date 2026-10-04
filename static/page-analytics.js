@@ -23,7 +23,7 @@ function stackBar(groups, order, colorOf, labelOf) {
 }
 
 // Labelled bars, longest first: the practice mix, the year on year.
-function bars(groups, field = 'n', keep = false) {
+export function bars(groups, field = 'n', keep = false) {
   const top = Math.max(1, ...groups.map((g) => g[field] || 0));
   return `<div class="an-bars">${(keep ? groups : groups.slice().sort((a, b) => (b[field] || 0) - (a[field] || 0))).map((g) => `<div class="an-brow"><span>${esc(g.key || '-')}</span>
     <svg width="100%" height="10"><rect width="100%" height="10" rx="5" fill="var(--panel-2)"/><rect width="${Math.max(2, ((g[field] || 0) / top) * 100)}%" height="10" rx="5" fill="var(--brand)"/></svg><b>${g[field] || 0}</b></div>`).join('')}</div>`;

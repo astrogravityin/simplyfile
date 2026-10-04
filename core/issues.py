@@ -126,6 +126,7 @@ def _public(user: dict | None, kind: str, ref: str, a: dict, r: dict) -> dict:
     out = {x: r.get(x, "") for x in frame()["public_fields"]}
     out |= {"about": r.get("about") or a["title"], "link": r.get("link") or a["link"]}   # notes from before 2026-10-03 kept neither
     return out | {"kind": kind, "ref": ref, "place": r.get("place") or {}, "shot": bool(r.get("shot")),
+                  "files": [{x: f.get(x, "") for x in ("n", "kind", "name", "transcript")} for f in r.get("files") or []],
                   "mine": bool(user) and r["by"] == user["id"], "may_answer": may_answer, "may_remove": _may("remove", user, kind, a, r),
                   "statuses": [st | {"label": _word(kind, st["word"])} for st in s["statuses"]],
                   "status_label": next((_word(kind, st["word"]) for st in s["statuses"] if st["id"] == r.get("status")), r.get("status", "")),
@@ -149,6 +150,30 @@ def _picture(data: str, s: dict, kind: str) -> tuple[bytes, str]:
     if not limits.one_of(ext, s["shot_types"]):
         raise HTTPException(400, say("shot_not_image", kind))
     return raw, ext
+
+
+def _attachment(f: dict, s: dict, kind: str) -> tuple[str, str, bytes, str, str]:
+    """One picture or voice note of a note: (kind, extension, bytes, name, the words written down while it was spoken)."""
+    data = str(f.get("data") or "")
+    if data.startswith("data:image/"):
+        raw, ext = _picture(data, s, kind)
+        return "image", ext, raw, limits.clip(f.get("name"), s["place_max"]), ""
+    m = re.match(r"^data:audio/([a-z0-9]+)[^,]*;base64,(.+)$", data, re.S)
+    if not m or not limits.one_of(m.group(1), s.get("voice_types", [])):
+        raise HTTPException(400, say("shot_not_image", kind))
+    raw = base64.b64decode(m.group(2), validate=False)
+    if limits.too_big(len(raw), s.get("voice_max_mb", 0)):
+        raise HTTPException(400, say("shot_too_big", kind, mb=s.get("voice_max_mb", 0)))
+    return "audio", m.group(1), raw, limits.clip(f.get("name"), s["place_max"]), limits.clip(f.get("transcript"), s["text_max"])
+
+
+def attachment(user: dict, iid: str, n: int, kind: str = "", ref: str = ""):
+    a = _about(user, kind, ref)
+    r = _find(_rows(kind, ref), iid, kind)
+    f = next((x for x in r.get("files") or [] if x["n"] == n), None)
+    if not f or not _may("see", user, kind, a, r):
+        raise HTTPException(404, say("no_issue", kind))
+    return _shots(kind, ref) / f["file"]
 
 
 def _index(uid: str, key: str, at: str | None) -> None:
@@ -178,6 +203,7 @@ def file(user: dict, body: dict) -> dict:
         raise HTTPException(429, say("too_many", kind))
     shot = str(body.get("screenshot") or "").strip()
     raw, ext = _picture(shot, s, kind) if shot else (b"", "")
+    files = [_attachment(f, s, kind) for f in (body.get("attachments") or [])[: int(s.get("files_max", 0))] if isinstance(f, dict) and f.get("data")]
     with store._LOCK:                                    # noqa: SLF001
         rows = _rows(kind, ref)
         mine = [r["at"] for r in rows if r["by"] == user["id"]]
@@ -192,6 +218,12 @@ def file(user: dict, body: dict) -> dict:
             r["shot"] = f"{r['id']}.{ext}"
             _shots(kind, ref).mkdir(parents=True, exist_ok=True)
             (_shots(kind, ref) / r["shot"]).write_bytes(raw)
+        if files:   # 2026-10-04 the bottom bar's Issues: several pictures and voice notes, each with the words written down
+            _shots(kind, ref).mkdir(parents=True, exist_ok=True)
+            r["files"] = []
+            for n, (fk, fext, fraw, fname, words) in enumerate(files, 1):
+                (_shots(kind, ref) / f"{r['id']}-{n}.{fext}").write_bytes(fraw)
+                r["files"].append({"n": n, "kind": fk, "file": f"{r['id']}-{n}.{fext}", "name": fname, "transcript": words})
         store.write(_name(kind, ref), [*rows, r])
     _index(user["id"], f"{kind}|{ref}", r["at"])
     if k["tell_answerer"] == "bell" and a["owner_id"]:
@@ -400,6 +432,12 @@ def api_remove(request: Request, iid: str, u: dict = Depends(auth.signed_in)):
 def api_shot(request: Request, iid: str, u: dict = Depends(auth.signed_in)):
     kind, ref = _where(request)
     return FileResponse(str(shot(u, iid, kind, ref)), headers={"Cache-Control": frame()["shot_cache"]})
+
+
+@router.get("/api/core/issues/{iid}/files/{n}")
+def api_file_part(request: Request, iid: str, n: int, u: dict = Depends(auth.signed_in)):
+    """A picture or voice note of a note - to whoever may see the note."""
+    return FileResponse(attachment(u, iid, n, *_where(request)), headers={"Cache-Control": frame()["shot_cache"]})
 
 
 @router.post("/api/core/issues/{iid}/seen")

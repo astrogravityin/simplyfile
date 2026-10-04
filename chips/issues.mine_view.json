@@ -1,0 +1,134 @@
+{
+  "chip_id": "issues.mine_view",
+  "kind": "accessor",
+  "set": "issues",
+  "label": "A person's issues, searched and filtered",
+  "aliases": [
+    "a person's issues, searched and filtered"
+  ],
+  "params": [
+    {
+      "name": "rows",
+      "type": "json",
+      "default": [],
+      "label": "{id, title, text, status, at}"
+    },
+    {
+      "name": "query",
+      "type": "text",
+      "default": "",
+      "label": ""
+    },
+    {
+      "name": "status",
+      "type": "text",
+      "default": "",
+      "label": ""
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "reports": {
+        "vop": "get",
+        "value": {
+          "vop": "rows_view",
+          "rows": {
+            "vop": "choose",
+            "cases": [
+              {
+                "when": {
+                  "op": "gt",
+                  "left": {
+                    "vop": "text_length",
+                    "text": "$status"
+                  },
+                  "right": 0
+                },
+                "then": {
+                  "vop": "filter_rows",
+                  "rows": "$rows",
+                  "field": "status",
+                  "cmp": "eq",
+                  "value": "$status"
+                }
+              }
+            ],
+            "else": "$rows"
+          },
+          "query": "$query",
+          "search_keys": [
+            "title",
+            "text"
+          ],
+          "sort_key": "at",
+          "sort_desc": true,
+          "page_size": 300,
+          "max_page_size": 300
+        },
+        "path": "rows"
+      },
+      "counts": {
+        "vop": "group_rows",
+        "rows": "$rows",
+        "key": "status",
+        "measures": {
+          "n": [
+            "count"
+          ]
+        }
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-04: the bottom bar's Issues list - a person's own issues, by status, whose header or text has every word asked, newest first; and how many per status.",
+  "test_cases": [
+    {
+      "args": {
+        "rows": [
+          {
+            "id": "1",
+            "title": "26AS button",
+            "text": "add it",
+            "status": "open",
+            "at": "2"
+          },
+          {
+            "id": "2",
+            "title": "typo",
+            "text": "x",
+            "status": "resolved",
+            "at": "1"
+          }
+        ],
+        "query": "",
+        "status": "open"
+      },
+      "expect_value": {
+        "reports": [
+          {
+            "id": "1",
+            "title": "26AS button",
+            "text": "add it",
+            "status": "open",
+            "at": "2"
+          }
+        ],
+        "counts": [
+          {
+            "key": "open",
+            "status": "open",
+            "n": 1
+          },
+          {
+            "key": "resolved",
+            "status": "resolved",
+            "n": 1
+          }
+        ]
+      }
+    }
+  ]
+}

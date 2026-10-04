@@ -1,0 +1,101 @@
+{
+  "chip_id": "notes.settings",
+  "kind": "accessor",
+  "set": "notes",
+  "label": "Notes settings",
+  "aliases": [
+    "notes settings"
+  ],
+  "params": [
+    {
+      "name": "tags",
+      "type": "json",
+      "default": [
+        "b",
+        "strong",
+        "i",
+        "em",
+        "u",
+        "ol",
+        "ul",
+        "li",
+        "br",
+        "p",
+        "div",
+        "span",
+        "font",
+        "img"
+      ],
+      "label": "tags"
+    },
+    {
+      "name": "styles",
+      "type": "json",
+      "default": [
+        "color",
+        "background-color",
+        "font-weight",
+        "font-style",
+        "text-decoration"
+      ],
+      "label": "styles"
+    },
+    {
+      "name": "preview_chars",
+      "type": "json",
+      "default": 90,
+      "label": "preview chars"
+    },
+    {
+      "name": "name_chars",
+      "type": "json",
+      "default": 120,
+      "label": "name chars"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "tags": "$tags",
+      "styles": "$styles",
+      "preview_chars": "$preview_chars",
+      "name_chars": "$name_chars"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-04: the tags and styles a note keeps (everything else is dropped on save), and how long a list preview and a name are.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "tags": [
+          "b",
+          "strong",
+          "i",
+          "em",
+          "u",
+          "ol",
+          "ul",
+          "li",
+          "br",
+          "p",
+          "div",
+          "span",
+          "font",
+          "img"
+        ],
+        "styles": [
+          "color",
+          "background-color",
+          "font-weight",
+          "font-style",
+          "text-decoration"
+        ],
+        "preview_chars": 90,
+        "name_chars": 120
+      }
+    }
+  ]
+}

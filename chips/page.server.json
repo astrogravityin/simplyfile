@@ -1,0 +1,79 @@
+{
+  "chip_id": "page.server",
+  "kind": "accessor",
+  "set": "page",
+  "label": "Server & sites look",
+  "aliases": [
+    "server & sites look"
+  ],
+  "params": [
+    {
+      "name": "state_tone",
+      "type": "json",
+      "default": {
+        "up": "--ok",
+        "sick": "--warn",
+        "down": "--bad"
+      },
+      "label": "state tone"
+    },
+    {
+      "name": "level_tone",
+      "type": "json",
+      "default": {
+        "ok": "--ok",
+        "watch": "--brand",
+        "warn": "--warn",
+        "critical": "--bad"
+      },
+      "label": "level tone"
+    },
+    {
+      "name": "backup_tone",
+      "type": "json",
+      "default": {
+        "ok": "--ok",
+        "late": "--bad",
+        "none": "--bad",
+        "unscheduled": "--warn"
+      },
+      "label": "backup tone"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "state_tone": "$state_tone",
+      "level_tone": "$level_tone",
+      "backup_tone": "$backup_tone"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-04: colours for site states, disk levels and backup states.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "state_tone": {
+          "up": "--ok",
+          "sick": "--warn",
+          "down": "--bad"
+        },
+        "level_tone": {
+          "ok": "--ok",
+          "watch": "--brand",
+          "warn": "--warn",
+          "critical": "--bad"
+        },
+        "backup_tone": {
+          "ok": "--ok",
+          "late": "--bad",
+          "none": "--bad",
+          "unscheduled": "--warn"
+        }
+      }
+    }
+  ]
+}

@@ -62,6 +62,12 @@ import recon
 import compute
 import itr_json
 import analytics
+import chipchat
+import delegation
+import dock_issues
+import notes
+import portal_stats
+import server
 import itr_import
 import providers
 import keyshare
@@ -888,6 +894,154 @@ def api_itrimport_statement(cid: str, ay: str, which: str = "filed", _: dict = D
 def api_analytics(ay: str = "", u: dict = Depends(firms.gate("analytics"))):
     """Firm analytics for one assessment year: deadlines, workload, money handled, advisory leads (chips analytics.*)."""
     return analytics.report(u, ay)
+
+
+# --- Chip Chat (2026-10-04 owner, as AstroStage): questions answered from chips and the person's own work, by firm and
+# role; rotating examples, Surprise me, Ask next; the Train tab for the firm admin and the portal owner (chipchat.py) -------
+@app.get("/api/chat/examples")
+def api_chat_examples(screen: str = "", u: dict = Depends(signed_in)):
+    return chipchat.examples(u, screen)
+
+
+@app.get("/api/chat/surprise")
+def api_chat_surprise(n: int = 0, u: dict = Depends(signed_in)):
+    return chipchat.surprise(u, n)
+
+
+@app.post("/api/chat/ask")
+def api_chat_ask(body: dict = Body(...), u: dict = Depends(signed_in)):
+    return chipchat.ask(u, str((body or {}).get("q") or ""))
+
+
+@app.get("/api/chat/answer/{eid}")
+def api_chat_answer(eid: str, u: dict = Depends(signed_in)):
+    return chipchat.answer_id(u, eid)
+
+
+@app.get("/api/chat/train")
+def api_chat_train(review: str = "open", u: dict = Depends(signed_in)):
+    return chipchat.train(u, review)
+
+
+@app.post("/api/chat/train/{tid}/teach")
+def api_chat_teach(tid: str, body: dict = Body(...), u: dict = Depends(signed_in)):
+    return chipchat.teach(u, tid, body or {})
+
+
+@app.post("/api/chat/train/{tid}/skip")
+def api_chat_skip(tid: str, u: dict = Depends(signed_in)):
+    return chipchat.skip(u, tid)
+
+
+@app.delete("/api/chat/taught/{aid}")
+def api_chat_taught_delete(aid: str, u: dict = Depends(signed_in)):
+    return chipchat.drop_taught(u, aid)
+
+
+@app.get("/api/chat/export", response_class=PlainTextResponse)
+def api_chat_export(u: dict = Depends(signed_in)):
+    return chipchat.export_jsonl(u)
+
+
+@app.get("/api/chat/unanswered.csv", response_class=PlainTextResponse)
+def api_chat_unanswered(u: dict = Depends(signed_in)):
+    return chipchat.unanswered_csv(u)
+
+
+@app.post("/api/chat/custom")
+def api_chat_custom(body: dict = Body(...), u: dict = Depends(signed_in)):
+    return chipchat.add_custom(u, body or {})
+
+
+@app.delete("/api/chat/custom/{cid}")
+def api_chat_custom_delete(cid: str, u: dict = Depends(signed_in)):
+    return chipchat.delete_custom(u, cid)
+
+
+# --- Notes - the bottom bar's notebook, as AstroStage has it (2026-10-04 owner), private to each person (notes.py) --------
+@app.get("/api/notes")
+def api_notes(q: str = "", u: dict = Depends(signed_in)):
+    return {"notes": notes.listed(u, q)}
+
+
+@app.get("/api/notes/{nid}")
+def api_note(nid: str, u: dict = Depends(signed_in)):
+    return notes.one(u, nid)
+
+
+@app.post("/api/notes")
+def api_notes_new(body: dict = Body(...), u: dict = Depends(signed_in)):
+    return notes.save(u, body or {})
+
+
+@app.put("/api/notes/{nid}")
+def api_notes_put(nid: str, body: dict = Body(...), u: dict = Depends(signed_in)):
+    return notes.save(u, body or {}, nid)
+
+
+@app.delete("/api/notes/{nid}")
+def api_notes_delete(nid: str, u: dict = Depends(signed_in)):
+    return notes.delete(u, nid)
+
+
+@app.post("/api/notes/{nid}/voice")
+def api_notes_voice(nid: str, body: dict = Body(...), u: dict = Depends(signed_in)):
+    return notes.add_voice(u, nid, body or {})
+
+
+@app.delete("/api/notes/{nid}/files/{fid}")
+def api_notes_drop(nid: str, fid: int, u: dict = Depends(signed_in)):
+    return notes.drop_file(u, nid, fid)
+
+
+# --- Issues on the bottom bar (2026-10-04 owner, as AstroStage): own issues, one issue, the unread-reply badge ----------
+@app.get("/api/dock/issues")
+def api_dock_issues(q: str = "", status: str = "", u: dict = Depends(signed_in)):
+    return dock_issues.listed(u, q, status)
+
+
+@app.get("/api/dock/issues/unseen")
+def api_dock_issues_unseen(u: dict = Depends(signed_in)):
+    return {"n": dock_issues.unseen(u)}
+
+
+@app.get("/api/dock/issues/{iid}")
+def api_dock_issue(iid: str, u: dict = Depends(signed_in)):
+    return dock_issues.one(u, iid)
+
+
+# --- Delegations (2026-10-04 owner): lend your own powers to a colleague, for a scope and dates (delegation.py) ---------
+@app.get("/api/delegate")
+def api_delegate(u: dict = Depends(screen("delegate"))):
+    return delegation.page(u)
+
+
+@app.post("/api/delegate")
+def api_delegate_create(body: dict = Body(...), u: dict = Depends(screen("delegate"))):
+    return delegation.create(u, body or {})
+
+
+@app.post("/api/delegate/{did}/revoke")
+def api_delegate_revoke(did: str, u: dict = Depends(screen("delegate"))):
+    return delegation.revoke(u, did)
+
+
+@app.get("/api/portalstats")
+def api_portalstats(ay: str = "", _: dict = Depends(screen("portalstats"))):
+    """Portal analytics (2026-10-04 owner): firms, people, returns, files, and the firms that need the admin (chips portalstats.*)."""
+    return portal_stats.report(ay)
+
+
+@app.get("/api/server")
+def api_server(_: dict = Depends(screen("server"))):
+    """Server & sites (2026-10-04 owner, read-only): each site's state, the disk, the backups, disk over time (chips server.*)."""
+    return server.report()
+
+
+@app.get("/api/server/du")
+def api_server_du(path: str = "/", _: dict = Depends(screen("server"))):
+    """One folder's children by size - read-only."""
+    return server.du(path)
 
 
 @app.get("/api/approvals")

@@ -1,0 +1,75 @@
+{
+  "chip_id": "notes.list_view",
+  "kind": "accessor",
+  "set": "notes",
+  "label": "A person's notes, searched",
+  "aliases": [
+    "a person's notes, searched"
+  ],
+  "params": [
+    {
+      "name": "rows",
+      "type": "json",
+      "default": [],
+      "label": "{id, name, text, updated_at}"
+    },
+    {
+      "name": "query",
+      "type": "text",
+      "default": "",
+      "label": ""
+    }
+  ],
+  "expr": {
+    "vop": "rows_view",
+    "rows": "$rows",
+    "query": "$query",
+    "search_keys": [
+      "name",
+      "text"
+    ],
+    "sort_key": "updated_at",
+    "sort_desc": true,
+    "page_size": 300,
+    "max_page_size": 300
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-04: notes whose name or text has every word asked, newest first.",
+  "test_cases": [
+    {
+      "args": {
+        "rows": [
+          {
+            "id": "a",
+            "name": "Agarwal",
+            "text": "ask for FD",
+            "updated_at": "2"
+          },
+          {
+            "id": "b",
+            "name": "Ramesh",
+            "text": "rent",
+            "updated_at": "1"
+          }
+        ],
+        "query": "fd"
+      },
+      "expect_value": {
+        "rows": [
+          {
+            "id": "a",
+            "name": "Agarwal",
+            "text": "ask for FD",
+            "updated_at": "2"
+          }
+        ],
+        "total": 1,
+        "page": 1,
+        "pages": 1,
+        "page_size": 300
+      }
+    }
+  ]
+}

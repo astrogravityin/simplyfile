@@ -1,0 +1,45 @@
+{
+  "chip_id": "page.delegate",
+  "kind": "accessor",
+  "set": "page",
+  "label": "Delegations look",
+  "aliases": [
+    "delegations look"
+  ],
+  "params": [
+    {
+      "name": "state_tone",
+      "type": "json",
+      "default": {
+        "active": "--ok",
+        "future": "--brand",
+        "ended": "--muted",
+        "revoked": "--bad"
+      },
+      "label": "state tone"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "state_tone": "$state_tone"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-04: the colour of each delegation state.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "state_tone": {
+          "active": "--ok",
+          "future": "--brand",
+          "ended": "--muted",
+          "revoked": "--bad"
+        }
+      }
+    }
+  ]
+}

@@ -16,7 +16,7 @@ export async function itrImportPage(host) {
     <span>${i + 1 < S.step ? icon('check', 12) : i + 1}</span>${esc(w(s))}</li>`).join('')}</ol>`;
   const summary = (f) => `<div class="card ii-sum"><div class="ii-sum-h">${icon('folder', 18)}<div><b>${esc(w('found', { form: f.form, ay: f.ay, kind: kindWord(f.kind) }))}</b>
       <div class="small muted">${esc(f.name)} · <code>${esc(f.pan)}</code></div></div></div>
-    <table class="cc-tbl ii-tbl"><tbody>
+    <table class="cc-tbl ii-tbl"><colgroup><col><col class="cc-numcol"></colgroup><tbody>
       ${[['HP', f.hp], ['BP', f.bp], ['CG', f.cg], ['OS', f.os], ['SAL', f.sal]].filter((x) => x[1]).map(([h, v]) => `<tr><td>${esc(w(`h_${h}`))}</td><td class="num">${money(v)}</td></tr>`).join('')}
       <tr class="cc-key"><td>${esc(w('f_income'))}</td><td class="num">${money(f.income)}</td></tr>
       <tr><td>${esc(w('f_tax'))}</td><td class="num">${money(f.tax_net)}</td></tr>

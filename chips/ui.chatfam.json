@@ -1,0 +1,379 @@
+{
+  "chip_id": "ui.chatfam",
+  "kind": "accessor",
+  "set": "ui",
+  "label": "Chip Chat family answers",
+  "aliases": [
+    "chip chat family answers"
+  ],
+  "params": [
+    {
+      "name": "q_tax",
+      "type": "text",
+      "default": "Tax on {amount} - {status}{nri}, AY {ay}",
+      "label": "q tax"
+    },
+    {
+      "name": "a_tax",
+      "type": "text",
+      "default": "{regime}: tax {tax}{rebate}{surcharge}, cess {cess} - total {total}. This is slab tax on total income after deductions (not salary or special-rate capital gains).",
+      "label": "a tax"
+    },
+    {
+      "name": "a_tax_rebate",
+      "type": "text",
+      "default": ", less 87A rebate {rebate}",
+      "label": "a tax rebate"
+    },
+    {
+      "name": "a_tax_sur",
+      "type": "text",
+      "default": ", surcharge {surcharge}",
+      "label": "a tax sur"
+    },
+    {
+      "name": "q_fee",
+      "type": "text",
+      "default": "Late fee under 234F on income {amount}",
+      "label": "q fee"
+    },
+    {
+      "name": "a_fee",
+      "type": "text",
+      "default": "{fee} under 234F if filed after the due date - plus 234A interest.",
+      "label": "a fee"
+    },
+    {
+      "name": "q_itr_u",
+      "type": "text",
+      "default": "ITR-U: extra tax {amount}, {months} months after the assessment year ended",
+      "label": "q itr u"
+    },
+    {
+      "name": "a_itr_u",
+      "type": "text",
+      "default": "140B additional tax: {pct}% of {amount} = {additional}.",
+      "label": "a itr u"
+    },
+    {
+      "name": "a_itr_u_no",
+      "type": "text",
+      "default": "An ITR-U is not possible here.",
+      "label": "a itr u no"
+    },
+    {
+      "name": "q_refund",
+      "type": "text",
+      "default": "244A on a refund of {amount} for {months} months",
+      "label": "q refund"
+    },
+    {
+      "name": "a_refund",
+      "type": "text",
+      "default": "Refund interest: {interest} (half a percent a month).",
+      "label": "a refund"
+    },
+    {
+      "name": "a_refund_no",
+      "type": "text",
+      "default": "No 244A interest: the refund is under 10% of the tax determined.",
+      "label": "a refund no"
+    },
+    {
+      "name": "q_kind_on",
+      "type": "text",
+      "default": "Filed on {date} - {form}{audit}, AY {ay}",
+      "label": "q kind on"
+    },
+    {
+      "name": "a_kind_on",
+      "type": "text",
+      "default": "That return would be {kind}. Due date {due}; revised or belated by {revise_by}; ITR-U by {updated_by}.",
+      "label": "a kind on"
+    },
+    {
+      "name": "q_due",
+      "type": "text",
+      "default": "Due date - {form}{audit}, AY {ay}",
+      "label": "q due"
+    },
+    {
+      "name": "a_due",
+      "type": "text",
+      "default": "Due {due}. Belated or revised by {revise_by}. Updated return (ITR-U) by {updated_by}.",
+      "label": "a due"
+    },
+    {
+      "name": "with_audit",
+      "type": "text",
+      "default": " with tax audit",
+      "label": "with audit"
+    },
+    {
+      "name": "with_tp",
+      "type": "text",
+      "default": " with Form 3CEB",
+      "label": "with tp"
+    },
+    {
+      "name": "kind_original",
+      "type": "text",
+      "default": "an original return (139(1))",
+      "label": "kind original"
+    },
+    {
+      "name": "kind_belated",
+      "type": "text",
+      "default": "a belated return (139(4))",
+      "label": "kind belated"
+    },
+    {
+      "name": "kind_revised",
+      "type": "text",
+      "default": "a revised return (139(5))",
+      "label": "kind revised"
+    },
+    {
+      "name": "kind_updated",
+      "type": "text",
+      "default": "an updated return - ITR-U (139(8A))",
+      "label": "kind updated"
+    },
+    {
+      "name": "kind_late",
+      "type": "text",
+      "default": "too late for any return",
+      "label": "kind late"
+    },
+    {
+      "name": "q_advance",
+      "type": "text",
+      "default": "Advance tax at age {age}{nri}{business}",
+      "label": "q advance"
+    },
+    {
+      "name": "a_advance_no",
+      "type": "text",
+      "default": "No advance tax: a resident aged 60 or more with no business income is exempt (s.207) - so no 234B or 234C.",
+      "label": "a advance no"
+    },
+    {
+      "name": "a_advance_yes",
+      "type": "text",
+      "default": "Advance tax applies - 234B and 234C follow if it is short or late.",
+      "label": "a advance yes"
+    },
+    {
+      "name": "nri_word",
+      "type": "text",
+      "default": ", non-resident",
+      "label": "nri word"
+    },
+    {
+      "name": "biz_word",
+      "type": "text",
+      "default": ", with business income",
+      "label": "biz word"
+    },
+    {
+      "name": "q_role_can",
+      "type": "text",
+      "default": "Can a {role} {action}?",
+      "label": "q role can"
+    },
+    {
+      "name": "a_role_yes",
+      "type": "text",
+      "default": "Yes - a {role} may: {action}.",
+      "label": "a role yes"
+    },
+    {
+      "name": "a_role_no",
+      "type": "text",
+      "default": "No - a {role} may not: {action}. Someone who may can lend it to them for a client or a year (Delegations).",
+      "label": "a role no"
+    },
+    {
+      "name": "q_pan",
+      "type": "text",
+      "default": "PAN {pan}",
+      "label": "q pan"
+    },
+    {
+      "name": "a_pan",
+      "type": "text",
+      "default": "{pan} is shaped like a valid PAN of {kind}.",
+      "label": "a pan"
+    },
+    {
+      "name": "a_pan_bad",
+      "type": "text",
+      "default": "{pan} is not a valid PAN: 5 letters, 4 digits, 1 letter.",
+      "label": "a pan bad"
+    },
+    {
+      "name": "ask_amount",
+      "type": "text",
+      "default": "Which amount? e.g. tax on 12 lakh",
+      "label": "ask amount"
+    },
+    {
+      "name": "ask_date",
+      "type": "text",
+      "default": "Which date? e.g. if I file on 15/11/2026",
+      "label": "ask date"
+    },
+    {
+      "name": "ask_months",
+      "type": "text",
+      "default": "How many months after the assessment year ended? e.g. 10 months",
+      "label": "ask months"
+    },
+    {
+      "name": "ask_age",
+      "type": "text",
+      "default": "What age? e.g. a 65 year old",
+      "label": "ask age"
+    },
+    {
+      "name": "ask_role",
+      "type": "text",
+      "default": "Which role? firm admin, partner, reviewer, auditor or tax preparer",
+      "label": "ask role"
+    },
+    {
+      "name": "ask_action",
+      "type": "text",
+      "default": "To do what? e.g. sign off, mark filed, add a client",
+      "label": "ask action"
+    },
+    {
+      "name": "ask_pan",
+      "type": "text",
+      "default": "Which PAN? e.g. ABCPA1234D",
+      "label": "ask pan"
+    },
+    {
+      "name": "regime_new",
+      "type": "text",
+      "default": "New regime",
+      "label": "regime new"
+    },
+    {
+      "name": "regime_old",
+      "type": "text",
+      "default": "Old regime",
+      "label": "regime old"
+    },
+    {
+      "name": "regime_firm",
+      "type": "text",
+      "default": "Firm rate",
+      "label": "regime firm"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "q_tax": "$q_tax",
+      "a_tax": "$a_tax",
+      "a_tax_rebate": "$a_tax_rebate",
+      "a_tax_sur": "$a_tax_sur",
+      "q_fee": "$q_fee",
+      "a_fee": "$a_fee",
+      "q_itr_u": "$q_itr_u",
+      "a_itr_u": "$a_itr_u",
+      "a_itr_u_no": "$a_itr_u_no",
+      "q_refund": "$q_refund",
+      "a_refund": "$a_refund",
+      "a_refund_no": "$a_refund_no",
+      "q_kind_on": "$q_kind_on",
+      "a_kind_on": "$a_kind_on",
+      "q_due": "$q_due",
+      "a_due": "$a_due",
+      "with_audit": "$with_audit",
+      "with_tp": "$with_tp",
+      "kind_original": "$kind_original",
+      "kind_belated": "$kind_belated",
+      "kind_revised": "$kind_revised",
+      "kind_updated": "$kind_updated",
+      "kind_late": "$kind_late",
+      "q_advance": "$q_advance",
+      "a_advance_no": "$a_advance_no",
+      "a_advance_yes": "$a_advance_yes",
+      "nri_word": "$nri_word",
+      "biz_word": "$biz_word",
+      "q_role_can": "$q_role_can",
+      "a_role_yes": "$a_role_yes",
+      "a_role_no": "$a_role_no",
+      "q_pan": "$q_pan",
+      "a_pan": "$a_pan",
+      "a_pan_bad": "$a_pan_bad",
+      "ask_amount": "$ask_amount",
+      "ask_date": "$ask_date",
+      "ask_months": "$ask_months",
+      "ask_age": "$ask_age",
+      "ask_role": "$ask_role",
+      "ask_action": "$ask_action",
+      "ask_pan": "$ask_pan",
+      "regime_new": "$regime_new",
+      "regime_old": "$regime_old",
+      "regime_firm": "$regime_firm"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-04: how each question family's answer is worded.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "q_tax": "Tax on {amount} - {status}{nri}, AY {ay}",
+        "a_tax": "{regime}: tax {tax}{rebate}{surcharge}, cess {cess} - total {total}. This is slab tax on total income after deductions (not salary or special-rate capital gains).",
+        "a_tax_rebate": ", less 87A rebate {rebate}",
+        "a_tax_sur": ", surcharge {surcharge}",
+        "q_fee": "Late fee under 234F on income {amount}",
+        "a_fee": "{fee} under 234F if filed after the due date - plus 234A interest.",
+        "q_itr_u": "ITR-U: extra tax {amount}, {months} months after the assessment year ended",
+        "a_itr_u": "140B additional tax: {pct}% of {amount} = {additional}.",
+        "a_itr_u_no": "An ITR-U is not possible here.",
+        "q_refund": "244A on a refund of {amount} for {months} months",
+        "a_refund": "Refund interest: {interest} (half a percent a month).",
+        "a_refund_no": "No 244A interest: the refund is under 10% of the tax determined.",
+        "q_kind_on": "Filed on {date} - {form}{audit}, AY {ay}",
+        "a_kind_on": "That return would be {kind}. Due date {due}; revised or belated by {revise_by}; ITR-U by {updated_by}.",
+        "q_due": "Due date - {form}{audit}, AY {ay}",
+        "a_due": "Due {due}. Belated or revised by {revise_by}. Updated return (ITR-U) by {updated_by}.",
+        "with_audit": " with tax audit",
+        "with_tp": " with Form 3CEB",
+        "kind_original": "an original return (139(1))",
+        "kind_belated": "a belated return (139(4))",
+        "kind_revised": "a revised return (139(5))",
+        "kind_updated": "an updated return - ITR-U (139(8A))",
+        "kind_late": "too late for any return",
+        "q_advance": "Advance tax at age {age}{nri}{business}",
+        "a_advance_no": "No advance tax: a resident aged 60 or more with no business income is exempt (s.207) - so no 234B or 234C.",
+        "a_advance_yes": "Advance tax applies - 234B and 234C follow if it is short or late.",
+        "nri_word": ", non-resident",
+        "biz_word": ", with business income",
+        "q_role_can": "Can a {role} {action}?",
+        "a_role_yes": "Yes - a {role} may: {action}.",
+        "a_role_no": "No - a {role} may not: {action}. Someone who may can lend it to them for a client or a year (Delegations).",
+        "q_pan": "PAN {pan}",
+        "a_pan": "{pan} is shaped like a valid PAN of {kind}.",
+        "a_pan_bad": "{pan} is not a valid PAN: 5 letters, 4 digits, 1 letter.",
+        "ask_amount": "Which amount? e.g. tax on 12 lakh",
+        "ask_date": "Which date? e.g. if I file on 15/11/2026",
+        "ask_months": "How many months after the assessment year ended? e.g. 10 months",
+        "ask_age": "What age? e.g. a 65 year old",
+        "ask_role": "Which role? firm admin, partner, reviewer, auditor or tax preparer",
+        "ask_action": "To do what? e.g. sign off, mark filed, add a client",
+        "ask_pan": "Which PAN? e.g. ABCPA1234D",
+        "regime_new": "New regime",
+        "regime_old": "Old regime",
+        "regime_firm": "Firm rate"
+      }
+    }
+  ]
+}

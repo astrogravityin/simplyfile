@@ -21,6 +21,10 @@ import { computePage } from './page-compute.js';
 import { firmPage } from './page-firm.js';
 import { approvalsPage } from './page-approvals.js';
 import { analyticsPage } from './page-analytics.js';
+import { portalstatsPage } from './page-portalstats.js';
+import { serverPage } from './page-server.js';
+import { delegatePage } from './page-delegate.js';
+import { syncDock } from './dock.js';
 import { itrImportPage } from './page-itrimport.js';
 import { api, BASE, esc, t, ps, loadWords, keep, kept, uploadBox, confirmDialog, setCurrency, shownMoney } from '../core-static/ui.js';
 import { icon, logo } from './icons.js';
@@ -152,7 +156,7 @@ const NEEDS_PROJECT = new Set(['manuals', 'howto']);
 const keyScreen = () => ps('shell').key_screen;          // the Account & key screen (chip page.shell key_screen)
 
 startPortal({
-  views: { firm: firmPage, analytics: analyticsPage, itrimport: itrImportPage, approvals: approvalsPage, clients: clientsPage, intake: intakePage, recon: reconPage, compute: computePage, manuals: manualPage, howto: howtoPage, guideme: guidemePage, setup: setupPage, keys: keysPage, buykey: buyKeyPage, keysales: keySalesPage, tourvideo: tourVideoPage },
+  views: { firm: firmPage, analytics: analyticsPage, portalstats: portalstatsPage, server: serverPage, delegate: delegatePage, itrimport: itrImportPage, approvals: approvalsPage, clients: clientsPage, intake: intakePage, recon: reconPage, compute: computePage, manuals: manualPage, howto: howtoPage, guideme: guidemePage, setup: setupPage, keys: keysPage, buykey: buyKeyPage, keysales: keySalesPage, tourvideo: tourVideoPage },
   // The edition (tv or SteadyMove, chip edition.settings) names the line under the logo.
   pitch, logo, brandSub: () => (state.edition && state.edition.brand_sub) || '',
   landing: () => (state.edition && state.edition.landing) || '#/video',   // a door (chip edition.settings doors) has its own first screen
@@ -185,6 +189,7 @@ startPortal({
   topbarEnd: () => (state.edition && state.edition.launch ? `<a class="chipbtn" href="${esc(state.edition.launch)}" target="_blank" rel="noopener">
       ${icon('wand', 14)} ${w('launch_studio')}</a>` : ''),
   wireTopbar: (root) => {
+    syncDock(state.user);                               // 2026-10-04: the dock, bottom-right, signed in only
     const picker = root.querySelector('#proj');
     if (picker) picker.onchange = () => {
       state.projectId = picker.value;

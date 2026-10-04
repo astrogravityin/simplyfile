@@ -1,0 +1,63 @@
+{
+  "chip_id": "page.portalstats",
+  "kind": "accessor",
+  "set": "page",
+  "label": "Portal analytics look",
+  "aliases": [
+    "portal analytics look"
+  ],
+  "params": [
+    {
+      "name": "flag_icon",
+      "type": "json",
+      "default": {
+        "review": "shield",
+        "stuck": "clock",
+        "empty": "users",
+        "dormant": "alert"
+      },
+      "label": "flag icon"
+    },
+    {
+      "name": "flag_tone",
+      "type": "json",
+      "default": {
+        "review": "--brand",
+        "stuck": "--warn",
+        "empty": "--warn",
+        "dormant": "--bad"
+      },
+      "label": "flag tone"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "flag_icon": "$flag_icon",
+      "flag_tone": "$flag_tone"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-04: the icon and colour of each 'Needs you' card.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "flag_icon": {
+          "review": "shield",
+          "stuck": "clock",
+          "empty": "users",
+          "dormant": "alert"
+        },
+        "flag_tone": {
+          "review": "--brand",
+          "stuck": "--warn",
+          "empty": "--warn",
+          "dormant": "--bad"
+        }
+      }
+    }
+  ]
+}

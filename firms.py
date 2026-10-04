@@ -19,6 +19,7 @@ from pathlib import Path
 
 from fastapi import HTTPException, Request
 
+import delegation
 from core import access, auth, engine, mailer, ops, store
 
 FILE = "sf_firms"
@@ -59,6 +60,11 @@ def is_owner(u: dict | None) -> bool:
     return engine.run("people.is_owner", {"role": (u or {}).get("role") or ""}) is True
 
 
+def acts_as_admin(u: dict | None) -> bool:
+    """The portal owner, or someone the owner lent Firm approvals to (delegation.py) - never from inside a firm."""
+    return is_owner(u) or (not (u or {}).get("firm_id") and delegation.lent_screen(u, "approvals"))
+
+
 def tenant(u: dict | None) -> str:
     """Whose register this person works in: their firm's, or "" (the portal admin's own house register)."""
     return (u or {}).get("firm_id") or ""
@@ -66,13 +72,24 @@ def tenant(u: dict | None) -> str:
 
 # --- the one question: may this person do this, here? ------------------------------------------------------------------
 
-def may(u: dict | None, want: str, fn: str = "", client_firm: str | None = None) -> dict:
+def may(u: dict | None, want: str, fn: str = "", client_firm: str | None = None, cid: str = "", ay: str = "",
+        anywhere: bool = False) -> dict:
+    """Chip firm.may over the person's role grants plus what colleagues lent them for this client and year (delegation.py).
+    `on_behalf` names the lenders when only a lent power let this through - the action is then recorded as done for them."""
     f = firm_of(u)
-    return engine.run("firm.may", {
-        "is_owner": is_owner(u), "has_firm": bool(f), "state": (f or {}).get("state", ""),
-        "working_state": settings()["working_state"], "grants": role_of((u or {}).get("firm_role", ""))["grants"],
-        "want": want, "want_fn": f"{want}.{fn}" if fn else "",
-        "same_firm": client_firm is None or client_firm == tenant(u)})
+    own = role_of((u or {}).get("firm_role", ""))["grants"]
+    facts = {"is_owner": is_owner(u), "has_firm": bool(f), "state": (f or {}).get("state", ""),
+             "working_state": settings()["working_state"], "grants": own,
+             "want": want, "want_fn": f"{want}.{fn}" if fn else "",
+             "same_firm": client_firm is None or client_firm == tenant(u)}
+    v = engine.run("firm.may", facts)
+    if v["ok"] or not f:
+        return v | {"on_behalf": []}
+    extra, lenders = delegation.lent(u, [want, facts["want_fn"]], cid, ay, anywhere)
+    if not extra:
+        return v | {"on_behalf": []}
+    v2 = engine.run("firm.may", facts | {"grants": own + extra})
+    return v2 | {"on_behalf": lenders if v2["ok"] else []}
 
 
 def refuse(verdict: dict, u: dict | None = None):
@@ -93,18 +110,20 @@ def gate(screen_id: str, fn: str = ""):
         if cid:
             import clients  # noqa: PLC0415 - clients imports nothing of ours; this keeps it that way
             client_firm = clients.get(cid).get("firm_id", "")
-        v = may(u, screen_id, fn, client_firm)
+        v = may(u, screen_id, fn, client_firm, cid or "", request.path_params.get("ay", ""))
         if not v["ok"]:
             raise refuse(v, u)
-        return u
+        return u | {"on_behalf": v["on_behalf"]} if v["on_behalf"] else u
     guard.screen_id, guard.function_id = screen_id, fn          # the selfcheck ratchet looks for these
     return guard
 
 
 def install() -> None:
     """The Filing menu stays shut until the firm is approved (access.decide's `available` fact)."""
+    access.register_lender(delegation.lent_screen)
+    access.register_available("delegate", delegation.has_any)
     for s in FILING:
-        access.register_available(s, lambda u, fn, s=s: may(u, s, fn)["ok"], functions=True)
+        access.register_available(s, lambda u, fn, s=s: may(u, s, fn, anywhere=True)["ok"], functions=True)
 
 
 # --- the application ---------------------------------------------------------------------------------------------------
@@ -238,7 +257,7 @@ def add_doc(u: dict, kind: str, name: str, data: bytes) -> dict:
 def doc_path(u: dict, fid: str, did: str) -> tuple[Path, str]:
     """A paper is seen by the portal admin and by the firm's own profile keepers - nobody else."""
     f = next((x for x in _all() if x["id"] == fid), None)
-    if not f or not (is_owner(u) or (tenant(u) == fid and "firm" in role_of(u.get("firm_role", ""))["grants"])):
+    if not f or not (acts_as_admin(u) or (tenant(u) == fid and "firm" in role_of(u.get("firm_role", ""))["grants"])):
         raise HTTPException(404, say("no_doc"))
     d = next((d for d in f["docs"] if d["id"] == did), None)
     if not d:
@@ -261,9 +280,10 @@ def move(u: dict, fid: str, action: str, note: str = "") -> dict:
     with _LOCK:
         rows = _all()
         f = next((x for x in rows if x["id"] == fid), None)
-        if not f or not (is_owner(u) or tenant(u) == fid):
+        admin = acts_as_admin(u)
+        if not f or not (admin or tenant(u) == fid):
             raise HTTPException(404, say("no_firm"))
-        by = "admin" if is_owner(u) and tenant(u) != fid else u.get("firm_role", "")
+        by = "admin" if admin and tenant(u) != fid else u.get("firm_role", "")
         if action == "submit":
             r = ready(f)
             if r["say"]:

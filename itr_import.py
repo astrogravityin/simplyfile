@@ -21,6 +21,7 @@ from openpyxl.styles import Font
 
 import clients
 import compute
+import delegation
 import store
 from core import engine
 
@@ -126,7 +127,7 @@ def commit(user: dict, data: bytes, body: dict) -> dict:
                                   "signer_pan": f.get("signer_pan") or "",
                                   "banks": banks, "partners": [], "ay": f["ay"]})["id"]
     v = _check(cid, f)
-    who, now = user.get("email") or user["id"], store.now()
+    who, now = delegation.actor(user), store.now()
     figures = {x: f.get(x) for x in ("hp", "bp", "cg", "os", "sal", "gti", "deductions", "income", "tax_net", "tds", "advance", "sat",
                                      "paid", "refund", "payable", "interest", "i234a", "i234b", "i234c")}
 

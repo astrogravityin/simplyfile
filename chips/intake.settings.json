@@ -11,9 +11,11 @@
       "name": "exts",
       "type": "list",
       "default": [
-        ".xls",
         ".xlsx",
-        ".csv"
+        ".xls",
+        ".xlsm",
+        ".csv",
+        ".pdf"
       ],
       "label": "exts"
     },
@@ -70,6 +72,164 @@
         "column_title": 120
       },
       "label": "max len"
+    },
+    {
+      "name": "best_effort_exts",
+      "type": "json",
+      "default": [
+        ".pdf"
+      ],
+      "label": "best effort exts"
+    },
+    {
+      "name": "cant_exts",
+      "type": "json",
+      "default": {
+        ".xlsb": "save_as",
+        ".ods": "save_as",
+        ".numbers": "save_as",
+        ".xml": "tally_xml",
+        ".json": "tally_xml",
+        ".jpg": "picture",
+        ".jpeg": "picture",
+        ".png": "picture",
+        ".heic": "picture",
+        ".doc": "word",
+        ".docx": "word"
+      },
+      "label": "cant exts"
+    },
+    {
+      "name": "csv_delimiters",
+      "type": "json",
+      "default": [
+        ",",
+        ";",
+        "\t",
+        "|"
+      ],
+      "label": "csv delimiters"
+    },
+    {
+      "name": "csv_encodings",
+      "type": "json",
+      "default": [
+        "utf-8-sig",
+        "cp1252"
+      ],
+      "label": "csv encodings"
+    },
+    {
+      "name": "number_currency",
+      "type": "json",
+      "default": [
+        "₹",
+        "rs.",
+        "rs",
+        "inr"
+      ],
+      "label": "number currency"
+    },
+    {
+      "name": "number_debit",
+      "type": "json",
+      "default": [
+        "dr",
+        "dr."
+      ],
+      "label": "number debit"
+    },
+    {
+      "name": "number_credit",
+      "type": "json",
+      "default": [
+        "cr",
+        "cr."
+      ],
+      "label": "number credit"
+    },
+    {
+      "name": "debit_sign",
+      "type": "number",
+      "default": 1,
+      "label": "debit sign"
+    },
+    {
+      "name": "credit_sign",
+      "type": "number",
+      "default": 1,
+      "label": "credit sign"
+    },
+    {
+      "name": "bracket_sign",
+      "type": "number",
+      "default": -1,
+      "label": "bracket sign"
+    },
+    {
+      "name": "two_sided_left",
+      "type": "json",
+      "default": [
+        "liabilities",
+        "expenditure",
+        "expenses",
+        "debit",
+        "dr",
+        "to",
+        "particulars",
+        "payments"
+      ],
+      "label": "two sided left"
+    },
+    {
+      "name": "two_sided_right",
+      "type": "json",
+      "default": [
+        "assets",
+        "income",
+        "credit",
+        "cr",
+        "by",
+        "particulars",
+        "receipts"
+      ],
+      "label": "two sided right"
+    },
+    {
+      "name": "two_sided_min_gap",
+      "type": "number",
+      "default": 2,
+      "label": "two sided min gap"
+    },
+    {
+      "name": "right_suffix",
+      "type": "text",
+      "default": "R",
+      "label": "right suffix"
+    },
+    {
+      "name": "right_header",
+      "type": "text",
+      "default": "SF Ref (right side)",
+      "label": "right header"
+    },
+    {
+      "name": "pdf_min_chars",
+      "type": "number",
+      "default": 40,
+      "label": "pdf min chars"
+    },
+    {
+      "name": "pdf_gap_spaces",
+      "type": "number",
+      "default": 2,
+      "label": "pdf gap spaces"
+    },
+    {
+      "name": "two_sided_min_rows",
+      "type": "number",
+      "default": 3,
+      "label": "two sided min rows"
     }
   ],
   "expr": {
@@ -82,21 +242,41 @@
       "header_scan_rows": "$header_scan_rows",
       "heading_words": "$heading_words",
       "serial_below": "$serial_below",
-      "max_len": "$max_len"
+      "max_len": "$max_len",
+      "best_effort_exts": "$best_effort_exts",
+      "cant_exts": "$cant_exts",
+      "csv_delimiters": "$csv_delimiters",
+      "csv_encodings": "$csv_encodings",
+      "number_currency": "$number_currency",
+      "number_debit": "$number_debit",
+      "number_credit": "$number_credit",
+      "debit_sign": "$debit_sign",
+      "credit_sign": "$credit_sign",
+      "bracket_sign": "$bracket_sign",
+      "two_sided_left": "$two_sided_left",
+      "two_sided_right": "$two_sided_right",
+      "two_sided_min_gap": "$two_sided_min_gap",
+      "right_suffix": "$right_suffix",
+      "right_header": "$right_header",
+      "pdf_min_chars": "$pdf_min_chars",
+      "pdf_gap_spaces": "$pdf_gap_spaces",
+      "two_sided_min_rows": "$two_sided_min_rows"
     }
   },
   "returns": "record",
   "version": 1,
   "status": "published",
-  "description_nl": "Which files intake takes and how large, the names an SF Ref column may carry, how many top rows are searched for it, which words make a words-only row a heading, the serial-number column, and what a date in a label looks like.",
+  "description_nl": "Which files intake takes and how large, the names an SF Ref column may carry, how many top rows are searched for it, which words make a words-only row a heading, the serial-number column, and what a date in a label looks like. 2026-10-04: .xlsm and best-effort .pdf; formats it cannot read and why (cant_exts); CSV separators and encodings; amounts written as text (Dr/Cr words and signs, brackets negative); two-sided statements split where the right side's header starts.",
   "test_cases": [
     {
       "args": {},
       "expect_value": {
         "exts": [
-          ".xls",
           ".xlsx",
-          ".csv"
+          ".xls",
+          ".xlsm",
+          ".csv",
+          ".pdf"
         ],
         "max_mb": 20,
         "max_rows": 20000,
@@ -116,7 +296,75 @@
           "file_name": 160,
           "ref_echo": 60,
           "column_title": 120
-        }
+        },
+        "best_effort_exts": [
+          ".pdf"
+        ],
+        "cant_exts": {
+          ".xlsb": "save_as",
+          ".ods": "save_as",
+          ".numbers": "save_as",
+          ".xml": "tally_xml",
+          ".json": "tally_xml",
+          ".jpg": "picture",
+          ".jpeg": "picture",
+          ".png": "picture",
+          ".heic": "picture",
+          ".doc": "word",
+          ".docx": "word"
+        },
+        "csv_delimiters": [
+          ",",
+          ";",
+          "\t",
+          "|"
+        ],
+        "csv_encodings": [
+          "utf-8-sig",
+          "cp1252"
+        ],
+        "number_currency": [
+          "₹",
+          "rs.",
+          "rs",
+          "inr"
+        ],
+        "number_debit": [
+          "dr",
+          "dr."
+        ],
+        "number_credit": [
+          "cr",
+          "cr."
+        ],
+        "debit_sign": 1,
+        "credit_sign": 1,
+        "bracket_sign": -1,
+        "two_sided_left": [
+          "liabilities",
+          "expenditure",
+          "expenses",
+          "debit",
+          "dr",
+          "to",
+          "particulars",
+          "payments"
+        ],
+        "two_sided_right": [
+          "assets",
+          "income",
+          "credit",
+          "cr",
+          "by",
+          "particulars",
+          "receipts"
+        ],
+        "two_sided_min_gap": 2,
+        "right_suffix": "R",
+        "right_header": "SF Ref (right side)",
+        "pdf_min_chars": 40,
+        "pdf_gap_spaces": 2,
+        "two_sided_min_rows": 3
       }
     }
   ]

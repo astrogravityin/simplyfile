@@ -1,0 +1,173 @@
+{
+  "chip_id": "server.backup",
+  "kind": "accessor",
+  "set": "server",
+  "label": "One backup's state",
+  "aliases": [
+    "one backup's state"
+  ],
+  "params": [
+    {
+      "name": "files",
+      "type": "json",
+      "default": [],
+      "label": "copies: {age_h, size}"
+    },
+    {
+      "name": "every_h",
+      "type": "number",
+      "default": 0,
+      "label": "hours between runs (0 = not scheduled)"
+    },
+    {
+      "name": "stale_factor",
+      "type": "number",
+      "default": 2,
+      "label": ""
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "copies": {
+        "vop": "count",
+        "items": "$files"
+      },
+      "bytes": {
+        "vop": "rows_aggregate",
+        "rows": "$files",
+        "agg": "sum",
+        "key": "size"
+      },
+      "newest_h": {
+        "vop": "smallest",
+        "values": {
+          "vop": "pluck",
+          "rows": "$files",
+          "key": "age_h"
+        }
+      },
+      "state": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "eq",
+              "left": {
+                "vop": "count",
+                "items": "$files"
+              },
+              "right": 0
+            },
+            "then": "none"
+          },
+          {
+            "when": {
+              "op": "le",
+              "left": "$every_h",
+              "right": 0
+            },
+            "then": "unscheduled"
+          },
+          {
+            "when": {
+              "op": "gt",
+              "left": {
+                "vop": "smallest",
+                "values": {
+                  "vop": "pluck",
+                  "rows": "$files",
+                  "key": "age_h"
+                }
+              },
+              "right": {
+                "vop": "mul",
+                "a": "$every_h",
+                "b": "$stale_factor"
+              }
+            },
+            "then": "late"
+          }
+        ],
+        "else": "ok"
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-04: copies on disk, their space, the newest one's age - and late when that is older than stale_factor runs (a backup that stopped).",
+  "test_cases": [
+    {
+      "args": {
+        "files": [
+          {
+            "age_h": 0.5,
+            "size": 10
+          },
+          {
+            "age_h": 1.5,
+            "size": 12
+          }
+        ],
+        "every_h": 1,
+        "stale_factor": 2
+      },
+      "expect_value": {
+        "copies": 2,
+        "bytes": 22,
+        "newest_h": 0.5,
+        "state": "ok"
+      }
+    },
+    {
+      "args": {
+        "files": [
+          {
+            "age_h": 30,
+            "size": 10
+          }
+        ],
+        "every_h": 1,
+        "stale_factor": 2
+      },
+      "expect_value": {
+        "copies": 1,
+        "bytes": 10,
+        "newest_h": 30,
+        "state": "late"
+      }
+    },
+    {
+      "args": {
+        "files": [],
+        "every_h": 1,
+        "stale_factor": 2
+      },
+      "expect_value": {
+        "copies": 0,
+        "bytes": 0,
+        "newest_h": null,
+        "state": "none"
+      }
+    },
+    {
+      "args": {
+        "files": [
+          {
+            "age_h": 3,
+            "size": 5
+          }
+        ],
+        "every_h": 0,
+        "stale_factor": 2
+      },
+      "expect_value": {
+        "copies": 1,
+        "bytes": 5,
+        "newest_h": 3,
+        "state": "unscheduled"
+      }
+    }
+  ]
+}
