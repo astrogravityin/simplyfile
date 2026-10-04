@@ -1,0 +1,83 @@
+{
+  "chip_id": "list.portal_flags",
+  "kind": "accessor",
+  "set": "list",
+  "label": "Portal flag list",
+  "aliases": [
+    "portal flag list"
+  ],
+  "params": [
+    {
+      "name": "search_keys",
+      "type": "list",
+      "default": [
+        "name"
+      ],
+      "label": "search keys"
+    },
+    {
+      "name": "sort_key",
+      "type": "text",
+      "default": "name",
+      "label": "sort key"
+    },
+    {
+      "name": "sort_desc",
+      "type": "boolean",
+      "default": false,
+      "label": "sort desc"
+    },
+    {
+      "name": "sorts",
+      "type": "list",
+      "default": [
+        "name"
+      ],
+      "label": "sorts"
+    },
+    {
+      "name": "page_size",
+      "type": "number",
+      "default": 30,
+      "label": "page size"
+    },
+    {
+      "name": "max_page_size",
+      "type": "number",
+      "default": 100,
+      "label": "max page size"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "search_keys": "$search_keys",
+      "sort_key": "$sort_key",
+      "sort_desc": "$sort_desc",
+      "sorts": "$sorts",
+      "page_size": "$page_size",
+      "max_page_size": "$max_page_size"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-04: Portal analytics - every firm on one 'Needs a look' card (See all), A to Z.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "search_keys": [
+          "name"
+        ],
+        "sort_key": "name",
+        "sort_desc": false,
+        "sorts": [
+          "name"
+        ],
+        "page_size": 30,
+        "max_page_size": 100
+      }
+    }
+  ]
+}

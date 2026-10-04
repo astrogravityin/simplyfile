@@ -161,7 +161,8 @@ async function mapper(host, cid, ay, fid) {
             <span>${esc(v.client.name)}</span><code>${esc(v.client.pan)}</code><span class="tag brand">${esc(w('form_is', { form: v.form }))}</span></div></div></div>
         <div class="mp-prog"><div id="in-ring"></div><div class="sf-sum-txt"><b id="in-progress"></b><div class="sf-legend" id="in-legend"></div></div></div>
         <div class="tabs sf-only" role="tablist" aria-label="${esc(w('filter'))}">${[['', w('f_all')], ['1', w('f_open')]].map(([id, label]) =>
-          `<button type="button" role="tab" data-only="${id}" class="${id ? '' : 'on'}">${esc(label)}<span class="cl-count" data-c="${id}"></span></button>`).join('')}</div></section>
+          `<button type="button" role="tab" data-only="${id}" class="${id ? '' : 'on'}">${esc(label)}<span class="cl-count" data-c="${id}"></span></button>`).join('')}</div>
+        <input type="search" id="in-find" class="mp-find" placeholder="${esc(w('find_rows'))}" aria-label="${esc(w('find_rows'))}"/></section>
       <div class="mp-tools"><p class="mp-hint">${icon('info', 13)} <span>${esc(w('ref_hint'))}</span><span class="muted">· ${esc(w('enter_hint'))}</span></p>
         <span class="spacer"></span><button type="button" class="small ghost" id="in-expand">${icon('down', 13)} ${esc(w('expand_all'))}</button>
         <button type="button" class="small ghost" id="in-collapse">${icon('up', 13)} ${esc(w('collapse_all'))}</button></div>
@@ -207,7 +208,10 @@ async function mapper(host, cid, ay, fid) {
     // Every ref already in this file, offered while typing (presentation: the server still checks each one).
     host.querySelector('#in-refs').innerHTML = [...new Set(v.rows.flatMap((x) => [x.ref, x.suggestion]).filter(Boolean))].sort()
       .map((r) => `<option value="${esc(r)}"></option>`).join('');
-    const rows = v.rows.filter((x) => !only || P.open_states.includes(x.state));
+    // the find box: every word typed must be somewhere in the row - number, label, heading, SF Ref or an amount
+    const words = host.querySelector('#in-find').value.toLowerCase().split(/\s+/).filter(Boolean);
+    const hay = (x) => `${x.key} ${x.label || ''} ${x.heading || ''} ${x.ref || ''} ${x.suggestion || ''} ${x.numbers.join(' ')}`.toLowerCase();
+    const rows = v.rows.filter((x) => (!only || P.open_states.includes(x.state)) && words.every((t) => hay(x).includes(t)));
     // Rows grouped under the statement's own headings, in file order.
     const groups = [];
     rows.forEach((x) => {
@@ -231,7 +235,7 @@ async function mapper(host, cid, ay, fid) {
             ${todo ? `<span class="mp-chip is-todo">${esc(w('group_todo', { n: todo }))}</span>` : ''}${check}<b class="mp-sum" title="${esc(w('group_net'))}">${money(sg.net)}</b></span></button>
         <div class="mp-group-body" id="mp-g${gi}">${g.rows.map(card).join('')}</div></section>`;
     }).join('')
-      : `<div class="card sf-empty">${icon('check', 20)} ${esc(w('none_open'))}</div>`;
+      : `<div class="card sf-empty">${icon('check', 20)} ${esc(w(words.length ? 'no_rows_match' : 'none_open'))}</div>`;
     body.querySelectorAll('.mp-group-h').forEach((b) => {
       b.onclick = () => {
         const sec = b.closest('[data-g]');
@@ -276,6 +280,7 @@ async function mapper(host, cid, ay, fid) {
   };
   host.querySelector('#in-expand').onclick = foldAll(false);
   host.querySelector('#in-collapse').onclick = foldAll(true);
+  host.querySelector('#in-find').oninput = () => draw();
   host.querySelectorAll('[data-only]').forEach((b) => {
     b.onclick = () => { only = !!b.dataset.only; host.querySelectorAll('[data-only]').forEach((x) => x.classList.toggle('on', x === b)); draw(); };
   });

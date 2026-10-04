@@ -5,7 +5,7 @@
 // a fresh set of example questions on every open and after every ask, and Surprise me. Train (the firm admin, the portal
 // owner): every question asked, to review - teach the right answer or write the firm's own, skip, the taught phrases, the
 // firm's own answers, Export JSONL and the Unanswered report. Words: chip ui.chipchat.
-import { api, esc, toast, t, loadWords, modal, confirmDialog, when } from './app.js';
+import { api, esc, toast, t, loadWords, modal, confirmDialog, when, listBox } from './app.js';
 import { icon, chipChatGlyph, spinner } from './icons.js';
 
 const w = (k, v) => t('chipchat', k, v);
@@ -109,7 +109,7 @@ export async function openChipChat() {
 
 async function train(host, filter) {
   let d;
-  try { d = await api(`/api/chat/train?review=${encodeURIComponent(filter)}`); } catch (e) { host.innerHTML = `<p class="cx-err">${esc(e.message)}</p>`; return; }
+  try { d = await api('/api/chat/train'); } catch (e) { host.innerHTML = `<p class="cx-err">${esc(e.message)}</p>`; return; }
   const s = d.stats;
   const qOf = Object.fromEntries(d.entries.map((e) => [e.id, e.q]));
   const said = (r) => w(`r_${r}`).startsWith('[') ? r : w(`r_${r}`);
@@ -120,22 +120,9 @@ async function train(host, filter) {
       <button type="button" class="as-btn" data-export>${icon('download', 14)}${esc(w('export_jsonl'))}</button>
       <button type="button" class="as-btn cx-amber" data-csv title="${esc(w('unanswered_tip'))}">${icon('download', 14)}${esc(w('unanswered_csv'))}</button></div>
     <datalist id="cx-answers">${d.entries.map((e) => `<option value="${esc(e.id)}">${esc(e.q)}</option>`).join('')}</datalist>
-    <div class="cx-card cx-scroll"><table class="cx-table"><thead><tr><th>${esc(w('h_question'))}</th><th>${esc(w('h_said'))}</th><th>${esc(w('h_answer'))}</th>
-      <th>${esc(w('h_teach'))}</th><th>${esc(w('h_when'))}</th></tr></thead><tbody>
-      ${d.turns.length ? d.turns.map((tn) => `<tr data-turn="${esc(tn.id)}"><td><b>${esc(tn.q)}</b><span class="cx-sub">${esc(tn.role_label)}</span></td>
-        <td><span class="cx-route cx-${esc(tn.route)}">${esc(said(tn.route))}</span>${tn.method ? `<span class="cx-sub">${esc(w(`m_${tn.method}`))}</span>` : ''}</td>
-        <td>${tn.answer ? `<span class="cx-mono">${esc(qOf[tn.answer] || tn.answer)}</span>` : '-'}</td>
-        <td><div class="cx-teach">${tn.answer && !tn.answer.startsWith('fam:') ? `<button type="button" class="cx-ok" data-right>${icon('okcircle', 14)} ${esc(w('right_answer'))}</button>` : ''}
-          <input list="cx-answers" data-pick placeholder="${esc(w('or_answer_ph'))}"/><input data-own placeholder="${esc(w('own_answer_ph'))}"/>
-          <button type="button" class="as-btn" data-teach>${esc(w('teach_btn'))}</button>
-          <button type="button" class="as-btn" data-skip title="${esc(w('skip_tip'))}">${icon('skip', 14)}</button></div></td>
-        <td class="cx-when">${esc(when(tn.at))}</td></tr>`).join('') : `<tr><td colspan="5" class="as-empty">${esc(w('nothing_to_review'))}</td></tr>`}</tbody></table></div>
-    <div class="cx-card"><h4>${esc(w('taught_title', { n: d.taught.length }))}</h4><p class="as-muted">${esc(w('taught_lede'))}</p>
-      <ul class="cx-list">${d.taught.map((a) => `<li><span>${esc(a.phrase)}</span><span class="cx-mono">${esc(qOf[a.entry] || a.entry)}</span>
-        <button type="button" class="as-row-x" data-del-taught="${esc(a.id)}" data-phrase="${esc(a.phrase)}">${icon('trash', 15)}</button></li>`).join('')}</ul></div>
-    <div class="cx-card"><h4>${esc(w('own_title'))}</h4>
-      <ul class="cx-list">${d.custom.length ? d.custom.map((c) => `<li><span><b>${esc(c.q)}</b> - ${esc(c.a)}</span>
-        <button type="button" class="as-row-x" data-del-own="${esc(c.id)}" data-phrase="${esc(c.q)}">${icon('trash', 15)}</button></li>`).join('') : `<li class="as-muted">${esc(w('own_none'))}</li>`}</ul>
+    <div class="cx-card cx-scroll" data-turns></div>
+    <div class="cx-card"><h4>${esc(w('taught_head'))}</h4><p class="as-muted">${esc(w('taught_lede'))}</p><div data-taught></div></div>
+    <div class="cx-card"><h4>${esc(w('own_title'))}</h4><div data-custom></div>
       <div class="cx-own"><input data-oq placeholder="${esc(w('own_q'))}" maxlength="300"/><input data-oa placeholder="${esc(w('own_a'))}" maxlength="3000"/>
         ${d.portal ? `<label class="cx-check"><input type="checkbox" data-portal/> ${esc(w('own_scope_all'))}</label>` : ''}
         <button type="button" class="as-btn as-dark" data-add-own>${icon('plus', 14)}${esc(w('own_add'))}</button></div></div></div>`;
@@ -148,20 +135,37 @@ async function train(host, filter) {
   host.querySelector('[data-refresh]').onclick = again;
   host.querySelector('[data-export]').onclick = () => file('/api/chat/export', 'chip_chat_pairs.jsonl', 'application/jsonl');
   host.querySelector('[data-csv]').onclick = () => file('/api/chat/unanswered.csv', 'chip_chat_unanswered.csv', 'text/csv');
-  host.querySelectorAll('[data-turn]').forEach((row) => {
-    const id = row.dataset.turn;
-    const tn = d.turns.find((x) => x.id === id);
-    const teach = async (entry, answer) => {
-      try { toast((await api(`/api/chat/train/${id}/teach`, { method: 'POST', body: { entry, answer, portal: !!(host.querySelector('[data-portal]') || {}).checked } })).say); again(); }
-      catch (e) { toast(e.message, 'bad'); }
-    };
-    const right = row.querySelector('[data-right]');
-    if (right) right.onclick = () => teach(tn.answer, '');
-    row.querySelector('[data-teach]').onclick = () => teach(row.querySelector('[data-pick]').value.trim(), row.querySelector('[data-own]').value.trim());
-    row.querySelector('[data-skip]').onclick = async () => { await api(`/api/chat/train/${id}/skip`, { method: 'POST' }); again(); };
-  });
-  host.querySelectorAll('[data-del-taught]').forEach((x) => { x.onclick = () => confirmDialog(w('delete_taught_q'), w('delete_taught_body', { phrase: x.dataset.phrase }), async () => { await api(`/api/chat/taught/${x.dataset.delTaught}`, { method: 'DELETE' }); again(); }, w('delete')); });
-  host.querySelectorAll('[data-del-own]').forEach((x) => { x.onclick = () => confirmDialog(w('delete'), x.dataset.phrase, async () => { await api(`/api/chat/custom/${x.dataset.delOwn}`, { method: 'DELETE' }); again(); }, w('delete')); });
+  // the three lists, a searched page at a time: list.chat_turns (by filter), list.chat_taught, list.chat_custom
+  listBox(host.querySelector('[data-turns]'), { list: 'chat_turns', args: { review: filter }, empty: w('nothing_to_review'),
+    wrap: (html) => `<table class="cx-table"><thead><tr><th>${esc(w('h_question'))}</th><th>${esc(w('h_said'))}</th><th>${esc(w('h_answer'))}</th>
+      <th>${esc(w('h_teach'))}</th><th>${esc(w('h_when'))}</th></tr></thead><tbody>${html}</tbody></table>`,
+    row: (tn) => `<tr data-turn="${esc(tn.id)}" data-answer="${esc(tn.answer || '')}"><td><b>${esc(tn.q)}</b><span class="cx-sub">${esc(tn.role_label)}</span></td>
+        <td><span class="cx-route cx-${esc(tn.route)}">${esc(said(tn.route))}</span>${tn.method ? `<span class="cx-sub">${esc(w(`m_${tn.method}`))}</span>` : ''}</td>
+        <td>${tn.answer ? `<span class="cx-mono">${esc(qOf[tn.answer] || tn.answer)}</span>` : '-'}</td>
+        <td><div class="cx-teach">${tn.answer && !tn.answer.startsWith('fam:') ? `<button type="button" class="cx-ok" data-right>${icon('okcircle', 14)} ${esc(w('right_answer'))}</button>` : ''}
+          <input list="cx-answers" data-pick placeholder="${esc(w('or_answer_ph'))}"/><input data-own placeholder="${esc(w('own_answer_ph'))}"/>
+          <button type="button" class="as-btn" data-teach>${esc(w('teach_btn'))}</button>
+          <button type="button" class="as-btn" data-skip title="${esc(w('skip_tip'))}">${icon('skip', 14)}</button></div></td>
+        <td class="cx-when">${esc(when(tn.at))}</td></tr>`,
+    wire: (rows) => rows.querySelectorAll('[data-turn]').forEach((row) => {
+      const id = row.dataset.turn;
+      const teach = async (entry, answer) => {
+        try { toast((await api(`/api/chat/train/${id}/teach`, { method: 'POST', body: { entry, answer, portal: !!(host.querySelector('[data-portal]') || {}).checked } })).say); again(); }
+        catch (e) { toast(e.message, 'bad'); }
+      };
+      const right = row.querySelector('[data-right]');
+      if (right) right.onclick = () => teach(row.dataset.answer, '');
+      row.querySelector('[data-teach]').onclick = () => teach(row.querySelector('[data-pick]').value.trim(), row.querySelector('[data-own]').value.trim());
+      row.querySelector('[data-skip]').onclick = async () => { await api(`/api/chat/train/${id}/skip`, { method: 'POST' }); again(); };
+    }) });
+  listBox(host.querySelector('[data-taught]'), { list: 'chat_taught', empty: w('taught_none'), wrap: (html) => `<ul class="cx-list">${html}</ul>`,
+    row: (a) => `<li><span>${esc(a.phrase)}</span><span class="cx-mono">${esc(qOf[a.entry] || a.entry)}</span>
+        <button type="button" class="as-row-x" data-del-taught="${esc(a.id)}" data-phrase="${esc(a.phrase)}">${icon('trash', 15)}</button></li>`,
+    wire: (rows) => rows.querySelectorAll('[data-del-taught]').forEach((x) => { x.onclick = () => confirmDialog(w('delete_taught_q'), w('delete_taught_body', { phrase: x.dataset.phrase }), async () => { await api(`/api/chat/taught/${x.dataset.delTaught}`, { method: 'DELETE' }); again(); }, w('delete')); }) });
+  listBox(host.querySelector('[data-custom]'), { list: 'chat_custom', empty: w('own_none'), wrap: (html) => `<ul class="cx-list">${html}</ul>`,
+    row: (c) => `<li><span><b>${esc(c.q)}</b> - ${esc(c.a)}</span>
+        <button type="button" class="as-row-x" data-del-own="${esc(c.id)}" data-phrase="${esc(c.q)}">${icon('trash', 15)}</button></li>`,
+    wire: (rows) => rows.querySelectorAll('[data-del-own]').forEach((x) => { x.onclick = () => confirmDialog(w('delete'), x.dataset.phrase, async () => { await api(`/api/chat/custom/${x.dataset.delOwn}`, { method: 'DELETE' }); again(); }, w('delete')); }) });
   host.querySelector('[data-add-own]').onclick = async () => {
     try { await api('/api/chat/custom', { method: 'POST', body: { q: host.querySelector('[data-oq]').value, a: host.querySelector('[data-oa]').value, portal: !!(host.querySelector('[data-portal]') || {}).checked } }); again(); }
     catch (e) { toast(e.message, 'bad'); }

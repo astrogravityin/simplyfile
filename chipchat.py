@@ -21,7 +21,7 @@ import chatfam
 import clients
 import delegation
 import firms
-from core import access, engine, store
+from core import access, engine, lists, store
 
 TURNS, CUSTOM, TAUGHT = "sf_chat_turns", "sf_chat_custom", "sf_chat_taught"
 _LOCK = threading.Lock()
@@ -295,22 +295,38 @@ def _mine_turns(u: dict) -> tuple[str, list[dict]]:
     return fid, [t for t in store.read(TURNS, []) if fid == "" or t["firm_id"] == fid]
 
 
-def train(u: dict, review: str = "open") -> dict:
+def train(u: dict) -> dict:
+    """The Train tab's head: counts, the answers to point at, the filters. Its three lists come a page at a time:
+    list.chat_turns (by filter), list.chat_taught, list.chat_custom."""
     fid, rows = _mine_turns(u)
+    tr = engine.run("chat.train", {})
+    by_route: dict[str, int] = {}
+    for t in rows:
+        by_route[t["route"]] = by_route.get(t["route"], 0) + 1
+    return {"stats": {"total": len(rows), "answered": by_route.get("answer", 0), "taught": sum(1 for t in rows if t["review"] == "taught"),
+                      "by_route": by_route},
+            "entries": [{"id": e["id"], "q": e["q"]} for e in entries(u)], "portal": fid == "", "filters": tr["filters"]}
+
+
+def turns(u: dict, review: str = "open") -> list:
+    _, rows = _mine_turns(u)
     tr = engine.run("chat.train", {})
     rule = tr["filter_rules"].get(review) or tr["filter_rules"]["all"]       # what each filter shows is chip chat.train's
 
     def want(t: dict) -> bool:
         return all(t.get(f) == v for f, v in rule["is"].items()) and not any(t.get(f) == v for f, v in rule["not"].items())
     label = lambda r: say("role_owner") if r == "owner" else say("role_none") if r == "none" else firms.role_of(r)["label"]  # noqa: E731
-    shown = [t | {"role_label": label(t["role"])} for t in reversed(rows) if want(t)][: int(tr["page"])]
-    by_route: dict[str, int] = {}
-    for t in rows:
-        by_route[t["route"]] = by_route.get(t["route"], 0) + 1
-    return {"turns": shown, "stats": {"total": len(rows), "answered": by_route.get("answer", 0), "taught": sum(1 for t in rows if t["review"] == "taught"),
-                                     "by_route": by_route},
-            "entries": [{"id": e["id"], "q": e["q"]} for e in entries(u)], "taught": [t for t in store.read(TAUGHT, []) if fid == "" or t.get("firm_id") == fid],
-            "custom": [c for c in store.read(CUSTOM, []) if fid == "" or c.get("firm_id") == fid], "portal": fid == "", "filters": tr["filters"]}
+    return [t | {"role_label": label(t["role"])} for t in reversed(rows) if want(t)]
+
+
+def _firm_rows(u: dict, file: str) -> list:
+    fid, _ = _mine_turns(u)
+    return [t for t in reversed(store.read(file, [])) if fid == "" or t.get("firm_id") == fid]
+
+
+lists.source("chat_turns", lambda u, a: turns(u, str(a.get("review") or "open")))
+lists.source("chat_taught", lambda u, a: _firm_rows(u, TAUGHT))
+lists.source("chat_custom", lambda u, a: _firm_rows(u, CUSTOM))
 
 
 def teach(u: dict, tid: str, body: dict) -> dict:

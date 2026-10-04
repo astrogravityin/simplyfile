@@ -1,0 +1,101 @@
+{
+  "chip_id": "list.delegations",
+  "kind": "accessor",
+  "set": "list",
+  "label": "Delegations list",
+  "aliases": [
+    "delegations list"
+  ],
+  "params": [
+    {
+      "name": "search_keys",
+      "type": "list",
+      "default": [
+        "to_label",
+        "from_label",
+        "note",
+        "clients_text",
+        "kind",
+        "state",
+        "ay"
+      ],
+      "label": "search keys"
+    },
+    {
+      "name": "sort_key",
+      "type": "text",
+      "default": "at",
+      "label": "sort key"
+    },
+    {
+      "name": "sort_desc",
+      "type": "boolean",
+      "default": true,
+      "label": "sort desc"
+    },
+    {
+      "name": "sorts",
+      "type": "list",
+      "default": [
+        "at",
+        "starts",
+        "ends",
+        "to_label"
+      ],
+      "label": "sorts"
+    },
+    {
+      "name": "page_size",
+      "type": "number",
+      "default": 10,
+      "label": "page size"
+    },
+    {
+      "name": "max_page_size",
+      "type": "number",
+      "default": 100,
+      "label": "max page size"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "search_keys": "$search_keys",
+      "sort_key": "$sort_key",
+      "sort_desc": "$sort_desc",
+      "sorts": "$sorts",
+      "page_size": "$page_size",
+      "max_page_size": "$max_page_size"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-04: each Delegations table (lent by me, to me, the firm's) - newest first; search by person, client, note, scope, state or year.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "search_keys": [
+          "to_label",
+          "from_label",
+          "note",
+          "clients_text",
+          "kind",
+          "state",
+          "ay"
+        ],
+        "sort_key": "at",
+        "sort_desc": true,
+        "sorts": [
+          "at",
+          "starts",
+          "ends",
+          "to_label"
+        ],
+        "page_size": 10,
+        "max_page_size": 100
+      }
+    }
+  ]
+}

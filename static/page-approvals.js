@@ -2,7 +2,7 @@
 // approve manually; eventually DigiLocker"). Oldest waiting first, coloured by the review clock (chip firm.sla); open
 // one to read its details and papers, then approve, return for a fix, reject, suspend or restore. The server decides
 // every move (chip firm.move); the buttons per state are chip page.firm. Words: ui.firm.
-import { api, BASE, esc, toast, busy, pageHead, t, loadWords, modal, when, ps, fileSize } from './app.js';
+import { api, BASE, esc, toast, busy, pageHead, t, loadWords, modal, when, ps, fileSize, listBox } from './app.js';
 import { icon } from './icons.js';
 import { hue, initials } from './page-clients.js';
 
@@ -60,16 +60,17 @@ export async function approvalsPage(host) {
   host.innerHTML = pageHead(w('ap_title'), esc(w('ap_lede', { hours: S.review_hours })))
     + `<section class="card cl-card"><div class="cl-bar"><div class="tabs ap-tabs" role="tablist">${S.states.map((s) =>
         `<button type="button" role="tab" data-st="${esc(s.id)}" class="${s.id === STATE ? 'on' : ''}" aria-selected="${s.id === STATE}" title="${esc(s.label)}">${esc(s.tab)}<span class="cl-count">${d.counts[s.id] || 0}</span></button>`).join('')}</div></div>
-      <div class="ap-list">${d.rows.length ? d.rows.map((f) => `<div class="cl-row" data-id="${esc(f.id)}">
+      <div class="ap-list" id="ap-list"></div></section>`;
+  host.querySelectorAll('[data-st]').forEach((b) => { b.onclick = () => { STATE = b.dataset.st; approvalsPage(host); }; });
+  listBox(host.querySelector('#ap-list'), { list: 'firm_requests', args: { state: STATE }, empty: w('ap_empty'),
+    row: (f) => `<div class="cl-row" data-id="${esc(f.id)}">
         <span class="cl-av" style="--h:${hue(f.name || '?')}" aria-hidden="true">${esc(initials(f.name || '?'))}</span>
         <div class="cl-main"><div class="cl-name">${esc(f.name || w('unnamed'))} <span class="tag">${esc(f.kind_label)}</span></div>
           <div class="cl-meta">${f.pan ? `<code>${esc(f.pan)}</code>` : ''}<span>${esc(f.email || '')}</span><span>${esc(w('ap_docs', { n: f.docs.length }))}</span>
             <span>${esc(when(f.submitted_at || f.created_at))}</span></div></div>
         <div class="cl-stage">${clock(f, S.review_hours)}${f.sla ? `<span>${esc(w(`sla_${f.sla}`, { h: Math.round(f.waited_hours) }))}</span>` : ''}</div>
-        <div class="cl-acts"><button type="button" class="small" data-open>${icon('eye', 13)} ${esc(w('ap_open'))}</button></div></div>`).join('')
-        : `<div class="empty">${icon('check', 22)}<div>${esc(w('ap_empty'))}</div></div>`}</div></section>`;
-  host.querySelectorAll('[data-st]').forEach((b) => { b.onclick = () => { STATE = b.dataset.st; approvalsPage(host); }; });
-  host.querySelectorAll('[data-id]').forEach((el) => {
-    el.querySelector('[data-open]').onclick = () => view(d.rows.find((f) => f.id === el.dataset.id), S, () => approvalsPage(host));
-  });
+        <div class="cl-acts"><button type="button" class="small" data-open>${icon('eye', 13)} ${esc(w('ap_open'))}</button></div></div>`,
+    wire: (rows, r) => rows.querySelectorAll('[data-id]').forEach((el) => {
+      el.querySelector('[data-open]').onclick = () => view(r.rows.find((f) => f.id === el.dataset.id), S, () => approvalsPage(host));
+    }) });
 }

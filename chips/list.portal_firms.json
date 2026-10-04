@@ -1,0 +1,95 @@
+{
+  "chip_id": "list.portal_firms",
+  "kind": "accessor",
+  "set": "list",
+  "label": "Portal firms list",
+  "aliases": [
+    "portal firms list"
+  ],
+  "params": [
+    {
+      "name": "search_keys",
+      "type": "list",
+      "default": [
+        "name",
+        "kind",
+        "state"
+      ],
+      "label": "search keys"
+    },
+    {
+      "name": "sort_key",
+      "type": "text",
+      "default": "returns",
+      "label": "sort key"
+    },
+    {
+      "name": "sort_desc",
+      "type": "boolean",
+      "default": true,
+      "label": "sort desc"
+    },
+    {
+      "name": "sorts",
+      "type": "list",
+      "default": [
+        "returns",
+        "clients",
+        "name",
+        "bytes",
+        "team"
+      ],
+      "label": "sorts"
+    },
+    {
+      "name": "page_size",
+      "type": "number",
+      "default": 20,
+      "label": "page size"
+    },
+    {
+      "name": "max_page_size",
+      "type": "number",
+      "default": 100,
+      "label": "max page size"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "search_keys": "$search_keys",
+      "sort_key": "$sort_key",
+      "sort_desc": "$sort_desc",
+      "sorts": "$sorts",
+      "page_size": "$page_size",
+      "max_page_size": "$max_page_size"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-04: Portal analytics - every firm, most returns first; search by name, kind or state.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "search_keys": [
+          "name",
+          "kind",
+          "state"
+        ],
+        "sort_key": "returns",
+        "sort_desc": true,
+        "sorts": [
+          "returns",
+          "clients",
+          "name",
+          "bytes",
+          "team"
+        ],
+        "page_size": 20,
+        "max_page_size": 100
+      }
+    }
+  ]
+}

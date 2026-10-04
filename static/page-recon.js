@@ -85,6 +85,7 @@ export async function reconPage(host) {
     + `<section class="card rc-hero" id="rc-hero"></section>
        <section class="card"><h3 class="rc-h">${icon('folder', 15)} ${esc(w('sources'))}</h3><div class="rc-src" id="rc-files"></div></section>
        <section class="card"><div class="rc-find-head"><h3 class="rc-h">${icon('check', 15)} ${esc(w('findings'))}</h3><div class="tabs rc-tabs" role="tablist" id="rc-tabs"></div></div>
+         <input type="search" id="rc-q" class="mp-find" placeholder="${esc(w('find_findings'))}" aria-label="${esc(w('find_findings'))}"/>
          <div id="rc-find"></div></section>`;
   host.querySelector('#rc-ay').onchange = (e) => { location.hash = `#/recon?c=${encodeURIComponent(cid)}&ay=${encodeURIComponent(e.target.value)}`; };
 
@@ -128,10 +129,14 @@ export async function reconPage(host) {
     host.querySelector('#rc-tabs').innerHTML = [['', w('f_all'), d.findings.length], ...Object.keys(S.severity_color).map((s) => [s, w(`sev_${s}`), d.summary[s] || 0])]
       .map(([id, label, n]) => `<button type="button" role="tab" data-sev="${id}" class="${SEV === id ? 'on' : ''}">${id ? `<i class="rc-dot" style="background:var(${S.severity_color[id]})"></i>` : ''}${esc(label)}<span class="cl-count">${n}</span></button>`).join('');
     host.querySelectorAll('[data-sev]').forEach((b) => { b.onclick = () => { SEV = b.dataset.sev; draw(d); }; });
-    const shown = d.findings.filter((f) => !SEV || f.severity === SEV);
+    host.querySelector('#rc-q').oninput = () => draw(d);
+    // the find box: every word typed must be in the finding - its title, note, kind or an amount
+    const words = host.querySelector('#rc-q').value.toLowerCase().split(/\s+/).filter(Boolean);
+    const hay = (f) => `${f.title} ${f.note || ''} ${f.kind} ${Object.values(f.amounts || {}).join(' ')}`.toLowerCase();
+    const shown = d.findings.filter((f) => (!SEV || f.severity === SEV) && words.every((t) => hay(f).includes(t)));
     const find = host.querySelector('#rc-find');
     find.innerHTML = !d.findings.length ? `<div class="rc-empty">${icon('upload', 22)}<p>${esc(w('nothing'))}</p></div>`
-      : !shown.length ? `<div class="rc-empty">${icon('check', 22)}<p>${esc(w('none_here'))}</p></div>`
+      : !shown.length ? `<div class="rc-empty">${icon('check', 22)}<p>${esc(w(words.length ? 'no_findings_match' : 'none_here'))}</p></div>`
       : S.checks.map((c) => {
         const list = shown.filter((f) => checkOf(f).id === c.id);
         return list.length ? `<div class="rc-group"><div class="rc-group-h">${icon(c.icon, 13)} ${esc(w(`check_${c.id}`))}<span>${list.length}</span></div>

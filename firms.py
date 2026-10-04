@@ -363,6 +363,11 @@ def queue(state: str = "") -> list[dict]:
     return sorted(rows, key=lambda f: (f["state"] != wait, f.get("submitted_at") or f.get("created_at", "")))
 
 
+# the approvals queue, one searched page at a time (chip list.firm_requests): waiting first, oldest first - `queue_at` is that order
+lists.source("firm_requests", lambda u, args: [f | {"queue_at": f"{int(f['state'] != settings()['waiting_state'])}{f.get('submitted_at') or f.get('created_at', '')}"}
+                                               for f in queue(str(args.get("state") or ""))], screen="approvals")
+
+
 def counts() -> dict:
     out = {s["id"]: 0 for s in settings()["states"]}
     for f in _all():

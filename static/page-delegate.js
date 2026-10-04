@@ -110,3 +110,4 @@ export async function delegatePage(host) {
         reload();
       }, w('revoke'), { tone: 'warn' });
     }) }));
+}

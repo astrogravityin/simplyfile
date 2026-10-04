@@ -28,19 +28,26 @@
         "dormant": "--bad"
       },
       "label": "flag tone"
+    },
+    {
+      "name": "flag_chips",
+      "type": "json",
+      "default": 8,
+      "label": "flag chips"
     }
   ],
   "expr": {
     "vop": "record",
     "fields": {
       "flag_icon": "$flag_icon",
-      "flag_tone": "$flag_tone"
+      "flag_tone": "$flag_tone",
+      "flag_chips": "$flag_chips"
     }
   },
   "returns": "record",
   "version": 1,
   "status": "published",
-  "description_nl": "2026-10-04: the icon and colour of each 'Needs you' card.",
+  "description_nl": "2026-10-04: the icon and colour of each 'Needs you' card, and how many names it shows before 'See all'.",
   "test_cases": [
     {
       "args": {},
@@ -56,7 +63,8 @@
           "stuck": "--warn",
           "empty": "--warn",
           "dormant": "--bad"
-        }
+        },
+        "flag_chips": 8
       }
     }
   ]

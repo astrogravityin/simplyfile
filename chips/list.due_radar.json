@@ -1,0 +1,95 @@
+{
+  "chip_id": "list.due_radar",
+  "kind": "accessor",
+  "set": "list",
+  "label": "Due radar list",
+  "aliases": [
+    "due radar list"
+  ],
+  "params": [
+    {
+      "name": "search_keys",
+      "type": "list",
+      "default": [
+        "name",
+        "form",
+        "stage",
+        "assigned",
+        "bucket"
+      ],
+      "label": "search keys"
+    },
+    {
+      "name": "sort_key",
+      "type": "text",
+      "default": "days_left",
+      "label": "sort key"
+    },
+    {
+      "name": "sort_desc",
+      "type": "boolean",
+      "default": false,
+      "label": "sort desc"
+    },
+    {
+      "name": "sorts",
+      "type": "list",
+      "default": [
+        "days_left",
+        "name",
+        "due"
+      ],
+      "label": "sorts"
+    },
+    {
+      "name": "page_size",
+      "type": "number",
+      "default": 12,
+      "label": "page size"
+    },
+    {
+      "name": "max_page_size",
+      "type": "number",
+      "default": 100,
+      "label": "max page size"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "search_keys": "$search_keys",
+      "sort_key": "$sort_key",
+      "sort_desc": "$sort_desc",
+      "sorts": "$sorts",
+      "page_size": "$page_size",
+      "max_page_size": "$max_page_size"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-04: Firm analytics - returns not yet filed, most urgent first; search by client, form, stage, who has it or how late.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "search_keys": [
+          "name",
+          "form",
+          "stage",
+          "assigned",
+          "bucket"
+        ],
+        "sort_key": "days_left",
+        "sort_desc": false,
+        "sorts": [
+          "days_left",
+          "name",
+          "due"
+        ],
+        "page_size": 12,
+        "max_page_size": 100
+      }
+    }
+  ]
+}

@@ -1,0 +1,91 @@
+{
+  "chip_id": "list.chat_turns",
+  "kind": "accessor",
+  "set": "list",
+  "label": "Chip Chat questions list",
+  "aliases": [
+    "chip chat questions list"
+  ],
+  "params": [
+    {
+      "name": "search_keys",
+      "type": "list",
+      "default": [
+        "q",
+        "role_label",
+        "route",
+        "answer"
+      ],
+      "label": "search keys"
+    },
+    {
+      "name": "sort_key",
+      "type": "text",
+      "default": "at",
+      "label": "sort key"
+    },
+    {
+      "name": "sort_desc",
+      "type": "boolean",
+      "default": true,
+      "label": "sort desc"
+    },
+    {
+      "name": "sorts",
+      "type": "list",
+      "default": [
+        "at",
+        "q"
+      ],
+      "label": "sorts"
+    },
+    {
+      "name": "page_size",
+      "type": "number",
+      "default": 25,
+      "label": "page size"
+    },
+    {
+      "name": "max_page_size",
+      "type": "number",
+      "default": 100,
+      "label": "max page size"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "search_keys": "$search_keys",
+      "sort_key": "$sort_key",
+      "sort_desc": "$sort_desc",
+      "sorts": "$sorts",
+      "page_size": "$page_size",
+      "max_page_size": "$max_page_size"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-04: Chip Chat Train - the questions asked (by filter), newest first; search by question, role, what Chip Chat said or the answer.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "search_keys": [
+          "q",
+          "role_label",
+          "route",
+          "answer"
+        ],
+        "sort_key": "at",
+        "sort_desc": true,
+        "sorts": [
+          "at",
+          "q"
+        ],
+        "page_size": 25,
+        "max_page_size": 100
+      }
+    }
+  ]
+}

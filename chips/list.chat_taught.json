@@ -1,0 +1,87 @@
+{
+  "chip_id": "list.chat_taught",
+  "kind": "accessor",
+  "set": "list",
+  "label": "Chip Chat taught phrases list",
+  "aliases": [
+    "chip chat taught phrases list"
+  ],
+  "params": [
+    {
+      "name": "search_keys",
+      "type": "list",
+      "default": [
+        "phrase",
+        "entry"
+      ],
+      "label": "search keys"
+    },
+    {
+      "name": "sort_key",
+      "type": "text",
+      "default": "at",
+      "label": "sort key"
+    },
+    {
+      "name": "sort_desc",
+      "type": "boolean",
+      "default": true,
+      "label": "sort desc"
+    },
+    {
+      "name": "sorts",
+      "type": "list",
+      "default": [
+        "at",
+        "phrase"
+      ],
+      "label": "sorts"
+    },
+    {
+      "name": "page_size",
+      "type": "number",
+      "default": 15,
+      "label": "page size"
+    },
+    {
+      "name": "max_page_size",
+      "type": "number",
+      "default": 100,
+      "label": "max page size"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "search_keys": "$search_keys",
+      "sort_key": "$sort_key",
+      "sort_desc": "$sort_desc",
+      "sorts": "$sorts",
+      "page_size": "$page_size",
+      "max_page_size": "$max_page_size"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-04: Chip Chat Train - the phrases taught, newest first.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "search_keys": [
+          "phrase",
+          "entry"
+        ],
+        "sort_key": "at",
+        "sort_desc": true,
+        "sorts": [
+          "at",
+          "phrase"
+        ],
+        "page_size": 15,
+        "max_page_size": 100
+      }
+    }
+  ]
+}

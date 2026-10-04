@@ -11,7 +11,7 @@ import datetime
 
 import clients
 import firms
-from core import engine, ledger, store
+from core import engine, ledger, lists, store
 
 
 def _days_since(iso: str, now: datetime.datetime) -> int:
@@ -62,6 +62,13 @@ def report(ay: str = "") -> dict:
     return {"ay": ay, "years": cs["years"], "roll": roll, "firms": rows, "days": days, "kinds": {x["id"]: x["label"] for x in firms.settings()["kinds"]},
             "states": {x["id"]: {"label": x["label"], "tag": x["tag"]} for x in firms.settings()["states"]},
             "roles": {g["key"]: (firms.role_of(g["key"]) or {}).get("label") or g["key"] for g in roll["by_role"]}}
+
+
+# the firms table and each "needs a look" card in full, searched and paged on the server (chips list.portal_firms, list.portal_flags)
+# ponytail: each page rebuilds the report (disk sizes too) - fine for tens of firms; cache per ay for a few minutes if it shows
+lists.source("portal_firms", lambda u, a: report(str(a.get("ay") or ""))["firms"], screen="portalstats")
+lists.source("portal_flags", lambda u, a: [{"name": n} for n in report(str(a.get("ay") or ""))["roll"].get(str(a.get("flag") or ""), [])
+                                           if isinstance(n, str)], screen="portalstats")
 
 
 if __name__ == "__main__":  # ponytail: a firm's age reads, and the roll-up adds up on an empty portal

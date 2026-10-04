@@ -1,0 +1,93 @@
+{
+  "chip_id": "list.firm_team",
+  "kind": "accessor",
+  "set": "list",
+  "label": "Firm team list",
+  "aliases": [
+    "firm team list"
+  ],
+  "params": [
+    {
+      "name": "search_keys",
+      "type": "list",
+      "default": [
+        "name",
+        "email",
+        "role"
+      ],
+      "label": "search keys"
+    },
+    {
+      "name": "sort_key",
+      "type": "text",
+      "default": "name",
+      "label": "sort key"
+    },
+    {
+      "name": "sort_desc",
+      "type": "boolean",
+      "default": false,
+      "label": "sort desc"
+    },
+    {
+      "name": "sorts",
+      "type": "list",
+      "default": [
+        "name",
+        "email",
+        "role",
+        "last_seen"
+      ],
+      "label": "sorts"
+    },
+    {
+      "name": "page_size",
+      "type": "number",
+      "default": 15,
+      "label": "page size"
+    },
+    {
+      "name": "max_page_size",
+      "type": "number",
+      "default": 100,
+      "label": "max page size"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "search_keys": "$search_keys",
+      "sort_key": "$sort_key",
+      "sort_desc": "$sort_desc",
+      "sorts": "$sorts",
+      "page_size": "$page_size",
+      "max_page_size": "$max_page_size"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-04: the people of the firm on My firm, A to Z; search by name, email or role.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "search_keys": [
+          "name",
+          "email",
+          "role"
+        ],
+        "sort_key": "name",
+        "sort_desc": false,
+        "sorts": [
+          "name",
+          "email",
+          "role",
+          "last_seen"
+        ],
+        "page_size": 15,
+        "max_page_size": 100
+      }
+    }
+  ]
+}

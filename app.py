@@ -893,7 +893,9 @@ def api_itrimport_statement(cid: str, ay: str, which: str = "filed", _: dict = D
 @app.get("/api/analytics")
 def api_analytics(ay: str = "", u: dict = Depends(firms.gate("analytics"))):
     """Firm analytics for one assessment year: deadlines, workload, money handled, advisory leads (chips analytics.*)."""
-    return analytics.report(u, ay)
+    r = analytics.report(u, ay)
+    # the radar and the leads themselves come one page at a time (list.due_radar, list.advice_leads); here only counts and the first few
+    return r | {"radar": len(r["radar"]), "lead_n": {k: len(v) for k, v in r["leads"].items()}, "leads": {k: v[:r["top_n"]] for k, v in r["leads"].items()}}
 
 
 # --- Chip Chat (2026-10-04 owner, as AstroStage): questions answered from chips and the person's own work, by firm and
@@ -919,8 +921,8 @@ def api_chat_answer(eid: str, u: dict = Depends(signed_in)):
 
 
 @app.get("/api/chat/train")
-def api_chat_train(review: str = "open", u: dict = Depends(signed_in)):
-    return chipchat.train(u, review)
+def api_chat_train(u: dict = Depends(signed_in)):
+    return chipchat.train(u)
 
 
 @app.post("/api/chat/train/{tid}/teach")
@@ -1029,7 +1031,12 @@ def api_delegate_revoke(did: str, u: dict = Depends(screen("delegate"))):
 @app.get("/api/portalstats")
 def api_portalstats(ay: str = "", _: dict = Depends(screen("portalstats"))):
     """Portal analytics (2026-10-04 owner): firms, people, returns, files, and the firms that need the admin (chips portalstats.*)."""
-    return portal_stats.report(ay)
+    r = portal_stats.report(ay)
+    # the firms and each card's names come one page at a time (list.portal_firms, list.portal_flags); here only counts and the first few
+    n = engine.run("page.portalstats")["flag_chips"]
+    flags = {k: r["roll"][k] for k in ("review", "stuck", "empty", "dormant")}
+    return {k: v for k, v in r.items() if k != "firms"} | {"roll": r["roll"] | {k: v[:n] for k, v in flags.items()},
+                                                          "flag_n": {k: len(v) for k, v in flags.items()}}
 
 
 @app.get("/api/server")
@@ -1046,7 +1053,7 @@ def api_server_du(path: str = "/", _: dict = Depends(screen("server"))):
 
 @app.get("/api/approvals")
 def api_approvals(state: str = "", _: dict = Depends(screen("approvals"))):
-    return {"rows": firms.queue(state), "counts": firms.counts(), "settings": firms.settings()}
+    return {"counts": firms.counts(), "settings": firms.settings()}   # the rows: list.firm_requests
 
 
 # --- Clients & years (SimplyFile, 2026-10-03): the client master, carried into each assessment year (clients.py) ----

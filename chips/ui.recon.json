@@ -432,6 +432,18 @@
       "type": "text",
       "default": "Replace",
       "label": "replace_yes"
+    },
+    {
+      "name": "find_findings",
+      "type": "text",
+      "default": "Search findings - words or an amount",
+      "label": "find findings"
+    },
+    {
+      "name": "no_findings_match",
+      "type": "text",
+      "default": "No finding matches.",
+      "label": "no findings match"
     }
   ],
   "expr": {
@@ -507,13 +519,15 @@
       "none_here": "$none_here",
       "same_source": "$same_source",
       "replace_ask": "$replace_ask",
-      "replace_yes": "$replace_yes"
+      "replace_yes": "$replace_yes",
+      "find_findings": "$find_findings",
+      "no_findings_match": "$no_findings_match"
     }
   },
   "returns": "record",
   "version": 1,
   "status": "published",
-  "description_nl": "The words of the Reconcile screen, its findings and its error sentences. {placeholders} are filled by the server.",
+  "description_nl": "The words of the Reconcile screen, its findings and its error sentences. {placeholders} are filled by the server. 2026-10-04: the find box over the findings.",
   "test_cases": [
     {
       "args": {},
@@ -588,7 +602,9 @@
         "none_here": "Nothing in this view.",
         "same_source": "A {source} is already uploaded ({name}).",
         "replace_ask": "Replace the {source} ({name}) with this newer download? Your explanations stay with their findings.",
-        "replace_yes": "Replace"
+        "replace_yes": "Replace",
+        "find_findings": "Search findings - words or an amount",
+        "no_findings_match": "No finding matches."
       }
     }
   ]

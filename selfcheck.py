@@ -182,11 +182,12 @@ def firm_check(app, owner, house_cid: str) -> None:
     assert ca.post(f"/api/firm/{f['id']}/move", json={"action": "submit"}).json()["state"] == "submitted"
     assert ca.put("/api/firm", json=good).status_code == 409, "frozen while it waits"
     assert ca.get("/api/clients/settings").status_code == 403, "not approved yet"
-    q = owner.get("/api/approvals?state=submitted").json()
+    q = owner.get("/api/lists/firm_requests?state=submitted").json()
     assert [x["id"] for x in q["rows"]] == [f["id"]] and q["rows"][0]["sla"] == "on_time"
     doc = q["rows"][0]["docs"][0]
     assert owner.get(f"/api/firm/{f['id']}/docs/{doc['id']}").status_code == 200, "the portal admin reads the papers"
     assert ca.get("/api/approvals").status_code == 403
+    assert ca.get("/api/lists/firm_requests").status_code == 403, "the queue is the portal admin's"
     assert owner.post(f"/api/firm/{f['id']}/move", json={"action": "return"}).status_code == 400, "a return needs a note"
     assert owner.post(f"/api/firm/{f['id']}/move", json={"action": "approve"}).json()["state"] == "approved"
     # the firm works in its own register; the portal admin's house client does not exist for it, nor its for the admin

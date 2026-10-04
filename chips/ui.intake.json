@@ -546,6 +546,18 @@
       "type": "text",
       "default": "Not read: scanned PDFs and photos (no text recognition), password-protected files, .xlsb / .ods / Numbers (save as .xlsx), Tally XML / JSON (export to Excel), Word.",
       "label": "formats no"
+    },
+    {
+      "name": "find_rows",
+      "type": "text",
+      "default": "Search rows - number, words, amount or SF Ref",
+      "label": "find rows"
+    },
+    {
+      "name": "no_rows_match",
+      "type": "text",
+      "default": "No row matches.",
+      "label": "no rows match"
     }
   ],
   "expr": {
@@ -640,13 +652,15 @@
       "formats_title": "$formats_title",
       "formats_ok": "$formats_ok",
       "formats_partly": "$formats_partly",
-      "formats_no": "$formats_no"
+      "formats_no": "$formats_no",
+      "find_rows": "$find_rows",
+      "no_rows_match": "$no_rows_match"
     }
   },
   "returns": "record",
   "version": 1,
   "status": "published",
-  "description_nl": "The words of the Intake & map screen and its error sentences. 2026-10-04: what Intake can and cannot read, said plainly at upload.",
+  "description_nl": "The words of the Intake & map screen and its error sentences. 2026-10-04: what Intake can and cannot read, said plainly at upload. 2026-10-04: the find box over a statement's rows.",
   "test_cases": [
     {
       "args": {},
@@ -740,7 +754,9 @@
         "formats_title": "What SimplyFile can read",
         "formats_ok": "Excel (.xlsx, .xls, .xlsm) and CSV (comma, semicolon or tab; UTF-8 or Windows) - every sheet, in the usual statement layouts (headings, a label, amounts); amounts as numbers or as text (1,23,456 Dr, (12,500), Rs 5,000); two-sided statements (liabilities | assets). SimplyFile suggests an SF Ref where it recognises a row; a person accepts or changes it.",
         "formats_partly": "Text PDFs - best-effort: check every row.",
-        "formats_no": "Not read: scanned PDFs and photos (no text recognition), password-protected files, .xlsb / .ods / Numbers (save as .xlsx), Tally XML / JSON (export to Excel), Word."
+        "formats_no": "Not read: scanned PDFs and photos (no text recognition), password-protected files, .xlsb / .ods / Numbers (save as .xlsx), Tally XML / JSON (export to Excel), Word.",
+        "find_rows": "Search rows - number, words, amount or SF Ref",
+        "no_rows_match": "No row matches."
       }
     }
   ]
