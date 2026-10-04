@@ -10,7 +10,7 @@ import datetime
 
 import clients
 import compute
-from core import engine
+from core import engine, lists
 
 
 def settings() -> dict:
@@ -103,3 +103,9 @@ def report(user: dict, ay: str = "") -> dict:
     return {"ay": ay, "years": cs["years"], "today": today.isoformat(), "roll": roll, "radar": radar, "leads": leads,
             "bucket_order": k["buckets"], "lead_order": k["leads"], "top_n": k["top_n"], "grow_pct": k["grow_pct"], "drop_pct": k["drop_pct"],
             "history_years": sorted({h["ay"] for h in history})}
+
+
+# the due radar and each advice lead, searched and paged on the server (chips list.due_radar, list.advice_leads)
+# ponytail: each page rebuilds the year's report - fine for a firm's few hundred clients; cache per (firm, ay) if it shows
+lists.source("due_radar", lambda u, a: report(u, str(a.get("ay") or ""))["radar"], screen="analytics")
+lists.source("advice_leads", lambda u, a: report(u, str(a.get("ay") or ""))["leads"].get(str(a.get("lead") or ""), []), screen="analytics")

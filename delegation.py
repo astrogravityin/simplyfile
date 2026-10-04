@@ -14,7 +14,7 @@ import threading
 
 from fastapi import HTTPException
 
-from core import access, auth, engine, store
+from core import access, auth, engine, lists, store
 
 FILE = "sf_delegations"
 _LOCK = threading.Lock()
@@ -116,7 +116,6 @@ def page(u: dict) -> dict:
     owner = firms.is_owner(u)
     fid = (u or {}).get("firm_id", "")
     rows = _all()
-    head = not owner and settings()["head_grant"] in firms.role_of(u.get("firm_role", ""))["grants"]   # a firm admin sees the firm's
     people = [{"id": x["id"], "name": x.get("name") or x.get("email"), "email": x.get("email", ""), "role": x.get("firm_role", "")}
               for x in store.users() if x["id"] != u["id"] and x.get("role") != "owner"
               and ((not owner and x.get("firm_id") == fid and fid) or (owner and not x.get("firm_id")))]
@@ -125,9 +124,23 @@ def page(u: dict) -> dict:
             "lendable": [{"id": g, "label": _label(g)} for g in _mine_lendable(u)], "people": people,
             "clients": [] if owner else [{"id": c["id"], "name": c["name"], "pan": c.get("pan", "")} for c in clients._mine(u) if not c.get("archived_at")],  # noqa: SLF001
             "years": cs["years"], "ay": cs["current_ay"], "today": datetime.date.today().isoformat(),
-            "given": [_row(d) for d in rows if d["from_id"] == u["id"]],
-            "received": [_row(d) for d in rows if d["to_id"] == u["id"]],
-            "firm": [_row(d) for d in rows if head and fid and d.get("firm_id") == fid and u["id"] not in (d["from_id"], d["to_id"])]}
+            "given": any(d["from_id"] == u["id"] for d in rows), "received": any(d["to_id"] == u["id"] for d in rows),
+            "firm": any(_side(u, "firm")(d) for d in rows)}
+
+
+def _side(u: dict, side: str):
+    """Which delegations a person sees on each table: lent by me, lent to me, the rest of the firm (a firm admin)."""
+    import firms  # noqa: PLC0415
+    fid = (u or {}).get("firm_id", "")
+    head = not firms.is_owner(u) and settings()["head_grant"] in firms.role_of(u.get("firm_role", ""))["grants"]
+    return {"given": lambda d: d["from_id"] == u["id"], "received": lambda d: d["to_id"] == u["id"],
+            "firm": lambda d: bool(head and fid and d.get("firm_id") == fid and u["id"] not in (d["from_id"], d["to_id"]))}.get(side, lambda d: False)
+
+
+def listed(u: dict, args: dict) -> list:
+    """One table of delegations (args side), searched and paged on the server - chip list.delegations."""
+    keep = _side(u, str(args.get("side") or ""))
+    return [_row(d) | {"clients_text": ", ".join(d.get("client_names") or [])} for d in reversed(_all()) if keep(d)]
 
 
 def create(u: dict, body: dict) -> dict:
@@ -180,6 +193,9 @@ def revoke(u: dict, did: str) -> dict:
             d["revoked_at"], d["revoked_by"] = store.now(), auth.who(u)
             store.write(FILE, rows)
     return _row(d) | {"say": say("d_revoked")}
+
+
+lists.source("delegations", listed, screen="delegate")
 
 
 if __name__ == "__main__":  # ponytail: dates read, a lent power covers only its own client and year

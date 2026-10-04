@@ -2,7 +2,7 @@
 // kind, gives its details and papers, submits, and waits for the portal admin; once approved the firm admin adds the
 // team. The server decides everything (firms.py, chips firm.*): which fields, which papers, what is wrong, which steps
 // are done, who may do what. This page draws it. Every word is chip ui.firm; colours are chip page.firm.
-import { api, BASE, esc, toast, busy, pageHead, confirmDialog, t, loadWords, modal, uploadBox, when, ps, fileSize } from './app.js';
+import { api, BASE, esc, toast, busy, pageHead, confirmDialog, t, loadWords, modal, uploadBox, when, ps, fileSize, listBox } from './app.js';
 import { icon } from './icons.js';
 
 const w = (k, v) => t('firm', k, v);
@@ -123,16 +123,21 @@ function banner(d) {
 function teamCard(d) {
   if (!d.team) return '';
   const roles = d.roles.filter((r) => r.assignable);
-  const roleOf = (id) => d.roles.find((r) => r.id === id) || { label: id };
   return `<section class="card fi-card"><div class="row tight" style="justify-content:space-between"><h3>${icon('users', 15)} ${esc(w('team'))}</h3>
       ${d.firm.state === d.settings.working_state ? `<button type="button" class="primary small" id="fi-add">${icon('plus', 13)} ${esc(w('add_person'))}</button>` : ''}</div>
     ${d.firm.state === d.settings.working_state ? '' : `<p class="small muted">${esc(w('team_after'))}</p>`}
-    <table class="fi-team"><thead><tr><th>${esc(w('t_name'))}</th><th>${esc(w('t_role'))}</th><th></th></tr></thead><tbody>
-    ${d.team.map((m) => `<tr data-uid="${esc(m.id)}"><td><b>${esc(m.name)}</b><div class="small muted">${esc(m.email)}${m.must_change ? ` · ${esc(w('t_first'))}` : ''}</div></td>
+    <div id="fi-team"></div>
+    <details class="fi-roles"><summary class="small">${esc(w('what_roles'))}</summary>${roles.map((r) => `<div class="small"><b>${esc(r.label)}</b> - ${esc(r.sub)}</div>`).join('')}</details></section>`;
+}
+
+// list.firm_team: one searched page of the team at a time
+function teamRow(d) {
+  const roles = d.roles.filter((r) => r.assignable);
+  const roleOf = (id) => d.roles.find((r) => r.id === id) || { label: id };
+  return (m) => `<tr data-uid="${esc(m.id)}"><td><b>${esc(m.name)}</b><div class="small muted">${esc(m.email)}${m.must_change ? ` · ${esc(w('t_first'))}` : ''}</div></td>
       <td><select data-role aria-label="${esc(w('t_role'))}">${roles.concat(roles.some((r) => r.id === m.role) ? [] : [roleOf(m.role)]).map((r) =>
         `<option value="${esc(r.id)}" ${r.id === m.role ? 'selected' : ''}>${esc(r.label)}</option>`).join('')}</select></td>
-      <td><button type="button" class="small ghost" data-rm title="${esc(w('remove'))}">${icon('close', 12)}</button></td></tr>`).join('')}</tbody></table>
-    <details class="fi-roles"><summary class="small">${esc(w('what_roles'))}</summary>${roles.map((r) => `<div class="small"><b>${esc(r.label)}</b> - ${esc(r.sub)}</div>`).join('')}</details></section>`;
+      <td><button type="button" class="small ghost" data-rm title="${esc(w('remove'))}">${icon('close', 12)}</button></td></tr>`;
 }
 
 function addPerson(d, host) {
@@ -201,13 +206,15 @@ export async function firmPage(host) {
     }), w('submit'), { tone: 'brand' });
   };
   if ($('#fi-add')) $('#fi-add').onclick = () => addPerson(d, host);
-  host.querySelectorAll('[data-uid]').forEach((tr) => {
-    tr.querySelector('[data-role]').onchange = async (e) => {
-      try { await api(`/api/firm/team/${tr.dataset.uid}`, { method: 'PUT', body: { role: e.target.value } }); toast(w('saved'), 'ok'); } catch (err) { toast(err.message, 'bad', 8); }
-      firmPage(host);
-    };
-    tr.querySelector('[data-rm]').onclick = () => confirmDialog(w('remove_title'), w('remove_body'), async () => {
-      try { await api(`/api/firm/team/${tr.dataset.uid}`, { method: 'DELETE' }); firmPage(host); } catch (err) { toast(err.message, 'bad', 8); }
-    }, w('remove'));
-  });
+  if ($('#fi-team')) listBox($('#fi-team'), { list: 'firm_team', row: teamRow(d),
+    wrap: (html) => `<table class="fi-team"><thead><tr><th>${esc(w('t_name'))}</th><th>${esc(w('t_role'))}</th><th></th></tr></thead><tbody>${html}</tbody></table>`,
+    wire: (rows, r, reload) => rows.querySelectorAll('[data-uid]').forEach((tr) => {
+      tr.querySelector('[data-role]').onchange = async (e) => {
+        try { await api(`/api/firm/team/${tr.dataset.uid}`, { method: 'PUT', body: { role: e.target.value } }); toast(w('saved'), 'ok'); } catch (err) { toast(err.message, 'bad', 8); }
+        reload();
+      };
+      tr.querySelector('[data-rm]').onclick = () => confirmDialog(w('remove_title'), w('remove_body'), async () => {
+        try { await api(`/api/firm/team/${tr.dataset.uid}`, { method: 'DELETE' }); reload(); } catch (err) { toast(err.message, 'bad', 8); }
+      }, w('remove'));
+    }) });
 }

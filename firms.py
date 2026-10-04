@@ -20,7 +20,7 @@ from pathlib import Path
 from fastapi import HTTPException, Request
 
 import delegation
-from core import access, auth, engine, mailer, ops, store
+from core import access, auth, engine, lists, mailer, ops, store
 
 FILE = "sf_firms"
 _LOCK = threading.Lock()  # ponytail: one lock for every firm; per-firm locks if sign-ups ever queue
@@ -353,7 +353,7 @@ def me(u: dict) -> dict:
     out = {"settings": settings(), "roles": engine.run("firm.roles")["rows"], "role": role, "is_owner": is_owner(u),
            "firm": _public(f) if f else None}
     if f and "team" in role["grants"]:
-        out["team"] = team(u)
+        out["team"] = len(team(u))   # the people themselves: list.firm_team, one searched page at a time
     return out
 
 
@@ -377,6 +377,9 @@ def team(u: dict) -> list[dict]:
     return [{"id": x["id"], "name": x.get("name", ""), "email": x["email"], "role": x.get("firm_role", ""),
              "last_seen": x.get("last_seen", ""), "must_change": bool(x.get("must_change_password"))}
             for x in store.users() if x.get("firm_id") == fid]
+
+
+lists.source("firm_team", lambda u, args: team(u) if "team" in role_of(u.get("firm_role", ""))["grants"] and firm_of(u) else [], screen="firm")
 
 
 def _team_check(u: dict, role: str, admins_after: int) -> None:
