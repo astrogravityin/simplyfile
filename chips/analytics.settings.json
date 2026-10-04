@@ -1,0 +1,169 @@
+{
+  "chip_id": "analytics.settings",
+  "kind": "accessor",
+  "set": "analytics",
+  "label": "Firm analytics settings",
+  "aliases": [
+    "firm analytics settings"
+  ],
+  "params": [
+    {
+      "name": "buckets",
+      "type": "json",
+      "default": [
+        "overdue",
+        "week",
+        "month",
+        "later",
+        "filed"
+      ],
+      "label": "buckets"
+    },
+    {
+      "name": "week_days",
+      "type": "json",
+      "default": 7,
+      "label": "week days"
+    },
+    {
+      "name": "month_days",
+      "type": "json",
+      "default": 30,
+      "label": "month days"
+    },
+    {
+      "name": "refund_lead_min",
+      "type": "json",
+      "default": 50000,
+      "label": "refund lead min"
+    },
+    {
+      "name": "interest_lead_min",
+      "type": "json",
+      "default": 1,
+      "label": "interest lead min"
+    },
+    {
+      "name": "on_time_kinds",
+      "type": "json",
+      "default": [
+        "original"
+      ],
+      "label": "on time kinds"
+    },
+    {
+      "name": "late_kinds",
+      "type": "json",
+      "default": [
+        "belated"
+      ],
+      "label": "late kinds"
+    },
+    {
+      "name": "rework_kinds",
+      "type": "json",
+      "default": [
+        "revised",
+        "updated"
+      ],
+      "label": "rework kinds"
+    },
+    {
+      "name": "leads",
+      "type": "json",
+      "default": [
+        "advance_tax",
+        "tds_refund",
+        "late",
+        "rework",
+        "open_red",
+        "not_renewed",
+        "lapsed",
+        "growing",
+        "shrinking"
+      ],
+      "label": "leads"
+    },
+    {
+      "name": "grow_pct",
+      "type": "json",
+      "default": 25,
+      "label": "grow pct"
+    },
+    {
+      "name": "drop_pct",
+      "type": "json",
+      "default": 25,
+      "label": "drop pct"
+    },
+    {
+      "name": "top_n",
+      "type": "json",
+      "default": 8,
+      "label": "top n"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "buckets": "$buckets",
+      "week_days": "$week_days",
+      "month_days": "$month_days",
+      "refund_lead_min": "$refund_lead_min",
+      "interest_lead_min": "$interest_lead_min",
+      "on_time_kinds": "$on_time_kinds",
+      "late_kinds": "$late_kinds",
+      "rework_kinds": "$rework_kinds",
+      "leads": "$leads",
+      "grow_pct": "$grow_pct",
+      "drop_pct": "$drop_pct",
+      "top_n": "$top_n"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-04: the due-date buckets, what makes an advisory lead, which return kinds count as on time / late / rework.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "buckets": [
+          "overdue",
+          "week",
+          "month",
+          "later",
+          "filed"
+        ],
+        "week_days": 7,
+        "month_days": 30,
+        "refund_lead_min": 50000,
+        "interest_lead_min": 1,
+        "on_time_kinds": [
+          "original"
+        ],
+        "late_kinds": [
+          "belated"
+        ],
+        "rework_kinds": [
+          "revised",
+          "updated"
+        ],
+        "leads": [
+          "advance_tax",
+          "tds_refund",
+          "late",
+          "rework",
+          "open_red",
+          "not_renewed",
+          "lapsed",
+          "growing",
+          "shrinking"
+        ],
+        "grow_pct": 25,
+        "drop_pct": 25,
+        "top_n": 8
+      }
+    }
+  ]
+}

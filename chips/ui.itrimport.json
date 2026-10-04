@@ -1,0 +1,547 @@
+{
+  "chip_id": "ui.itrimport",
+  "kind": "accessor",
+  "set": "ui",
+  "label": "Import old returns: words",
+  "aliases": [
+    "import old returns: words"
+  ],
+  "params": [
+    {
+      "name": "title",
+      "type": "text",
+      "default": "Import old returns",
+      "label": "title"
+    },
+    {
+      "name": "lede",
+      "type": "text",
+      "default": "Bring a client's past ITRs into SimplyFile - the return as filed, the client record, and next year's statement ready to fill.",
+      "label": "lede"
+    },
+    {
+      "name": "s1",
+      "type": "text",
+      "default": "Upload",
+      "label": "s1"
+    },
+    {
+      "name": "s2",
+      "type": "text",
+      "default": "Client",
+      "label": "s2"
+    },
+    {
+      "name": "s3",
+      "type": "text",
+      "default": "Confirm",
+      "label": "s3"
+    },
+    {
+      "name": "s4",
+      "type": "text",
+      "default": "Done",
+      "label": "s4"
+    },
+    {
+      "name": "up_title",
+      "type": "text",
+      "default": "Upload the ITR JSON",
+      "label": "up title"
+    },
+    {
+      "name": "up_hint",
+      "type": "text",
+      "default": "The JSON as filed - download it from incometax.gov.in (e-File > Income Tax Returns > View Filed Returns) or from the offline utility. ITR-3 and ITR-5.",
+      "label": "up hint"
+    },
+    {
+      "name": "choose",
+      "type": "text",
+      "default": "Choose JSON file",
+      "label": "choose"
+    },
+    {
+      "name": "reading",
+      "type": "text",
+      "default": "Reading the return...",
+      "label": "reading"
+    },
+    {
+      "name": "found",
+      "type": "text",
+      "default": "{form} for AY {ay} - {kind}",
+      "label": "found"
+    },
+    {
+      "name": "f_name",
+      "type": "text",
+      "default": "Name",
+      "label": "f name"
+    },
+    {
+      "name": "f_email",
+      "type": "text",
+      "default": "Email",
+      "label": "f email"
+    },
+    {
+      "name": "f_mobile",
+      "type": "text",
+      "default": "Mobile",
+      "label": "f mobile"
+    },
+    {
+      "name": "f_pan",
+      "type": "text",
+      "default": "PAN",
+      "label": "f pan"
+    },
+    {
+      "name": "f_status",
+      "type": "text",
+      "default": "Status",
+      "label": "f status"
+    },
+    {
+      "name": "f_income",
+      "type": "text",
+      "default": "Total income",
+      "label": "f income"
+    },
+    {
+      "name": "f_tax",
+      "type": "text",
+      "default": "Tax",
+      "label": "f tax"
+    },
+    {
+      "name": "f_tds",
+      "type": "text",
+      "default": "TDS",
+      "label": "f tds"
+    },
+    {
+      "name": "f_paid",
+      "type": "text",
+      "default": "Taxes paid",
+      "label": "f paid"
+    },
+    {
+      "name": "f_refund",
+      "type": "text",
+      "default": "Refund",
+      "label": "f refund"
+    },
+    {
+      "name": "f_payable",
+      "type": "text",
+      "default": "Balance payable",
+      "label": "f payable"
+    },
+    {
+      "name": "f_heads",
+      "type": "text",
+      "default": "Income by head",
+      "label": "f heads"
+    },
+    {
+      "name": "h_HP",
+      "type": "text",
+      "default": "House property",
+      "label": "h HP"
+    },
+    {
+      "name": "h_BP",
+      "type": "text",
+      "default": "Business / profession",
+      "label": "h BP"
+    },
+    {
+      "name": "h_CG",
+      "type": "text",
+      "default": "Capital gains",
+      "label": "h CG"
+    },
+    {
+      "name": "h_OS",
+      "type": "text",
+      "default": "Other sources",
+      "label": "h OS"
+    },
+    {
+      "name": "h_SAL",
+      "type": "text",
+      "default": "Salary",
+      "label": "h SAL"
+    },
+    {
+      "name": "match_title",
+      "type": "text",
+      "default": "Whose return is this?",
+      "label": "match title"
+    },
+    {
+      "name": "match_found",
+      "type": "text",
+      "default": "{name} is already your client with this PAN.",
+      "label": "match found"
+    },
+    {
+      "name": "match_none",
+      "type": "text",
+      "default": "No client of yours has PAN {pan}.",
+      "label": "match none"
+    },
+    {
+      "name": "use_existing",
+      "type": "text",
+      "default": "Add it to {name}",
+      "label": "use existing"
+    },
+    {
+      "name": "make_new",
+      "type": "text",
+      "default": "Create a new client from this return",
+      "label": "make new"
+    },
+    {
+      "name": "pick_other",
+      "type": "text",
+      "default": "Or add it to another client",
+      "label": "pick other"
+    },
+    {
+      "name": "pick_ph",
+      "type": "text",
+      "default": "Choose a client",
+      "label": "pick ph"
+    },
+    {
+      "name": "also_now",
+      "type": "text",
+      "default": "Also start AY {ay} for this client (they have not come this year yet)",
+      "label": "also now"
+    },
+    {
+      "name": "confirm_title",
+      "type": "text",
+      "default": "Record the return as filed",
+      "label": "confirm title"
+    },
+    {
+      "name": "ack",
+      "type": "text",
+      "default": "Acknowledgement no. (15 digits, from the ITR-V)",
+      "label": "ack"
+    },
+    {
+      "name": "filed_on",
+      "type": "text",
+      "default": "Date filed",
+      "label": "filed on"
+    },
+    {
+      "name": "note_replace",
+      "type": "text",
+      "default": "This {kind} return takes the place of the one standing for AY {ay}; that one stays in the history.",
+      "label": "note replace"
+    },
+    {
+      "name": "import",
+      "type": "text",
+      "default": "Import return",
+      "label": "import"
+    },
+    {
+      "name": "back",
+      "type": "text",
+      "default": "Back",
+      "label": "back"
+    },
+    {
+      "name": "next",
+      "type": "text",
+      "default": "Next",
+      "label": "next"
+    },
+    {
+      "name": "another",
+      "type": "text",
+      "default": "Import another",
+      "label": "another"
+    },
+    {
+      "name": "done_title",
+      "type": "text",
+      "default": "Imported",
+      "label": "done title"
+    },
+    {
+      "name": "done_body",
+      "type": "text",
+      "default": "{name} - AY {ay} recorded as {kind}, filed {on}.",
+      "label": "done body"
+    },
+    {
+      "name": "dl_filed",
+      "type": "text",
+      "default": "Statement as filed (Excel)",
+      "label": "dl filed"
+    },
+    {
+      "name": "dl_next",
+      "type": "text",
+      "default": "Statement for AY {ay} to fill (Excel)",
+      "label": "dl next"
+    },
+    {
+      "name": "open_client",
+      "type": "text",
+      "default": "Open the client",
+      "label": "open client"
+    },
+    {
+      "name": "open_compute",
+      "type": "text",
+      "default": "Open the year",
+      "label": "open compute"
+    },
+    {
+      "name": "imp_form",
+      "type": "text",
+      "default": "Only ITR-3 and ITR-5 returns can be imported yet.",
+      "label": "imp form"
+    },
+    {
+      "name": "imp_year",
+      "type": "text",
+      "default": "AY {ay} is not one SimplyFile keeps.",
+      "label": "imp year"
+    },
+    {
+      "name": "imp_pan",
+      "type": "text",
+      "default": "This return is for PAN {pan}, but {name}'s PAN is {cpan}. Choose the right client.",
+      "label": "imp pan"
+    },
+    {
+      "name": "imp_duplicate",
+      "type": "text",
+      "default": "This return was imported already for {name}, AY {ay}.",
+      "label": "imp duplicate"
+    },
+    {
+      "name": "imp_has_return",
+      "type": "text",
+      "default": "{name} already has a return standing for AY {ay}. Only a revised or updated return can take its place.",
+      "label": "imp has return"
+    },
+    {
+      "name": "imp_replaces",
+      "type": "text",
+      "default": "This return takes the place of the one standing.",
+      "label": "imp replaces"
+    },
+    {
+      "name": "imp_bad_json",
+      "type": "text",
+      "default": "This is not an ITR JSON SimplyFile can read: {why}",
+      "label": "imp bad json"
+    },
+    {
+      "name": "imp_big",
+      "type": "text",
+      "default": "The file is larger than {kb} KB.",
+      "label": "imp big"
+    },
+    {
+      "name": "imp_ack",
+      "type": "text",
+      "default": "Give the 15-digit acknowledgement number from the ITR-V.",
+      "label": "imp ack"
+    },
+    {
+      "name": "imp_kind_original",
+      "type": "text",
+      "default": "original return",
+      "label": "imp kind original"
+    },
+    {
+      "name": "imp_kind_belated",
+      "type": "text",
+      "default": "belated return",
+      "label": "imp kind belated"
+    },
+    {
+      "name": "imp_kind_revised",
+      "type": "text",
+      "default": "revised return",
+      "label": "imp kind revised"
+    },
+    {
+      "name": "imp_kind_updated",
+      "type": "text",
+      "default": "updated return (ITR-U)",
+      "label": "imp kind updated"
+    },
+    {
+      "name": "imported_tag",
+      "type": "text",
+      "default": "Imported",
+      "label": "imported tag"
+    },
+    {
+      "name": "as_filed",
+      "type": "text",
+      "default": "As filed (imported {form} JSON)",
+      "label": "as filed"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "title": "$title",
+      "lede": "$lede",
+      "s1": "$s1",
+      "s2": "$s2",
+      "s3": "$s3",
+      "s4": "$s4",
+      "up_title": "$up_title",
+      "up_hint": "$up_hint",
+      "choose": "$choose",
+      "reading": "$reading",
+      "found": "$found",
+      "f_name": "$f_name",
+      "f_email": "$f_email",
+      "f_mobile": "$f_mobile",
+      "f_pan": "$f_pan",
+      "f_status": "$f_status",
+      "f_income": "$f_income",
+      "f_tax": "$f_tax",
+      "f_tds": "$f_tds",
+      "f_paid": "$f_paid",
+      "f_refund": "$f_refund",
+      "f_payable": "$f_payable",
+      "f_heads": "$f_heads",
+      "h_HP": "$h_HP",
+      "h_BP": "$h_BP",
+      "h_CG": "$h_CG",
+      "h_OS": "$h_OS",
+      "h_SAL": "$h_SAL",
+      "match_title": "$match_title",
+      "match_found": "$match_found",
+      "match_none": "$match_none",
+      "use_existing": "$use_existing",
+      "make_new": "$make_new",
+      "pick_other": "$pick_other",
+      "pick_ph": "$pick_ph",
+      "also_now": "$also_now",
+      "confirm_title": "$confirm_title",
+      "ack": "$ack",
+      "filed_on": "$filed_on",
+      "note_replace": "$note_replace",
+      "import": "$import",
+      "back": "$back",
+      "next": "$next",
+      "another": "$another",
+      "done_title": "$done_title",
+      "done_body": "$done_body",
+      "dl_filed": "$dl_filed",
+      "dl_next": "$dl_next",
+      "open_client": "$open_client",
+      "open_compute": "$open_compute",
+      "imp_form": "$imp_form",
+      "imp_year": "$imp_year",
+      "imp_pan": "$imp_pan",
+      "imp_duplicate": "$imp_duplicate",
+      "imp_has_return": "$imp_has_return",
+      "imp_replaces": "$imp_replaces",
+      "imp_bad_json": "$imp_bad_json",
+      "imp_big": "$imp_big",
+      "imp_ack": "$imp_ack",
+      "imp_kind_original": "$imp_kind_original",
+      "imp_kind_belated": "$imp_kind_belated",
+      "imp_kind_revised": "$imp_kind_revised",
+      "imp_kind_updated": "$imp_kind_updated",
+      "imported_tag": "$imported_tag",
+      "as_filed": "$as_filed"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-04: every word of the old-ITR import wizard.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "title": "Import old returns",
+        "lede": "Bring a client's past ITRs into SimplyFile - the return as filed, the client record, and next year's statement ready to fill.",
+        "s1": "Upload",
+        "s2": "Client",
+        "s3": "Confirm",
+        "s4": "Done",
+        "up_title": "Upload the ITR JSON",
+        "up_hint": "The JSON as filed - download it from incometax.gov.in (e-File > Income Tax Returns > View Filed Returns) or from the offline utility. ITR-3 and ITR-5.",
+        "choose": "Choose JSON file",
+        "reading": "Reading the return...",
+        "found": "{form} for AY {ay} - {kind}",
+        "f_name": "Name",
+        "f_email": "Email",
+        "f_mobile": "Mobile",
+        "f_pan": "PAN",
+        "f_status": "Status",
+        "f_income": "Total income",
+        "f_tax": "Tax",
+        "f_tds": "TDS",
+        "f_paid": "Taxes paid",
+        "f_refund": "Refund",
+        "f_payable": "Balance payable",
+        "f_heads": "Income by head",
+        "h_HP": "House property",
+        "h_BP": "Business / profession",
+        "h_CG": "Capital gains",
+        "h_OS": "Other sources",
+        "h_SAL": "Salary",
+        "match_title": "Whose return is this?",
+        "match_found": "{name} is already your client with this PAN.",
+        "match_none": "No client of yours has PAN {pan}.",
+        "use_existing": "Add it to {name}",
+        "make_new": "Create a new client from this return",
+        "pick_other": "Or add it to another client",
+        "pick_ph": "Choose a client",
+        "also_now": "Also start AY {ay} for this client (they have not come this year yet)",
+        "confirm_title": "Record the return as filed",
+        "ack": "Acknowledgement no. (15 digits, from the ITR-V)",
+        "filed_on": "Date filed",
+        "note_replace": "This {kind} return takes the place of the one standing for AY {ay}; that one stays in the history.",
+        "import": "Import return",
+        "back": "Back",
+        "next": "Next",
+        "another": "Import another",
+        "done_title": "Imported",
+        "done_body": "{name} - AY {ay} recorded as {kind}, filed {on}.",
+        "dl_filed": "Statement as filed (Excel)",
+        "dl_next": "Statement for AY {ay} to fill (Excel)",
+        "open_client": "Open the client",
+        "open_compute": "Open the year",
+        "imp_form": "Only ITR-3 and ITR-5 returns can be imported yet.",
+        "imp_year": "AY {ay} is not one SimplyFile keeps.",
+        "imp_pan": "This return is for PAN {pan}, but {name}'s PAN is {cpan}. Choose the right client.",
+        "imp_duplicate": "This return was imported already for {name}, AY {ay}.",
+        "imp_has_return": "{name} already has a return standing for AY {ay}. Only a revised or updated return can take its place.",
+        "imp_replaces": "This return takes the place of the one standing.",
+        "imp_bad_json": "This is not an ITR JSON SimplyFile can read: {why}",
+        "imp_big": "The file is larger than {kb} KB.",
+        "imp_ack": "Give the 15-digit acknowledgement number from the ITR-V.",
+        "imp_kind_original": "original return",
+        "imp_kind_belated": "belated return",
+        "imp_kind_revised": "revised return",
+        "imp_kind_updated": "updated return (ITR-U)",
+        "imported_tag": "Imported",
+        "as_filed": "As filed (imported {form} JSON)"
+      }
+    }
+  ]
+}

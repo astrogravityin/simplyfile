@@ -154,7 +154,7 @@ def compute(cid: str, ay: str) -> dict:
     ti = engine.run("compute.total_income", {"gti": gti, "deductions": sum(r["amount"] for r in ded_rows), "round_to": k["round_to"]})
     deductions, income = ti["deductions"], ti["income"]
     tax = engine.run("compute.tax", {"income": income, "status": c["status"], "slabs": reg["slabs"], "steps": reg["surcharge"],
-                                     "cess_pct": k["cess_pct"], "round_to": k["round_to"], "rebate_statuses": reg["rebate_statuses"],
+                                     "cess_pct": k["cess_pct"], "round_to": k["round_to"], "rebate_statuses": reg["rebate_statuses"], "resident": not c.get("nri"),
                                      "rebate_upto": reg["rebate_upto"], "rebate_most": reg["rebate_most"]})
 
     portal = recon.portal_entries(cid, ay)
@@ -196,7 +196,8 @@ def compute(cid: str, ay: str) -> dict:
             "tds_total": tds_total, "paid_total": paid_total, "interest": interest, "interest_auto": auto,
             "interest_override": over, "refund_interest": refund_int, "presumptive": bool(y.get("presumptive")), "balance": bal,
             "has_books": bool(books), "has_26as": has_26as, "steps": steps,
-            "signoff": sign, "signed": signed, "figures": figures, "locked": locked, "open_red": open_red}
+            "signoff": sign, "signed": signed, "figures": figures, "locked": locked, "open_red": open_red,
+            "imported": y.get("imported")}
 
 
 def set_state(user: dict, cid: str, ay: str, body: dict) -> dict:
@@ -487,7 +488,7 @@ if __name__ == "__main__":  # ponytail: one runnable self-check - the rate chips
     k = settings()
     reg = regime_of(k, "huf", "new")
     t = engine.run("compute.tax", {"income": 20721500, "status": "huf", "slabs": reg["slabs"], "steps": reg["surcharge"],
-                                   "cess_pct": k["cess_pct"], "round_to": k["round_to"], "rebate_statuses": reg["rebate_statuses"],
+                                   "cess_pct": k["cess_pct"], "round_to": k["round_to"], "rebate_statuses": reg["rebate_statuses"], "resident": True,
                                    "rebate_upto": reg["rebate_upto"], "rebate_most": reg["rebate_most"]})
     assert t["total"] == 7424040 and t["relief"] == 107062.5, t
     assert regime_of(k, "firm", "new")["id"] == "firm" and regime_of(k, "huf", "old")["id"] == "old" and regime_of(k, "huf", "")["id"] == "new"

@@ -23,7 +23,7 @@ from core import access, auth, engine, mailer, ops, store
 
 FILE = "sf_firms"
 _LOCK = threading.Lock()  # ponytail: one lock for every firm; per-firm locks if sign-ups ever queue
-FILING = ("clients", "intake", "recon", "compute")
+FILING = ("clients", "intake", "recon", "compute", "analytics", "itrimport")
 
 
 def settings() -> dict:

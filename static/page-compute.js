@@ -60,7 +60,7 @@ const datesRow = (d) => `<div class="cc-dates small"><span>${esc(w('due_on', { d
   <span>${esc(w('revise_by', { date: day(d.dates.revise_by) }))}</span><span>${esc(w('updated_by', { date: day(d.dates.updated_by) }))}</span></div>`;
 
 export async function computePage(host) {
-  await loadWords('compute');
+  await loadWords('compute', 'itrimport');
   const p = new URLSearchParams((location.hash.split('?')[1]) || '');
   if (!p.get('c')) return clientPicker(host, 'compute');
   const K = await api('/api/clients/settings');
@@ -124,6 +124,10 @@ export async function computePage(host) {
             <div class="cc-itr-box small"><span id="cc-itr-check" class="cc-check">${esc(w('itr_checking'))}</span></div>
             ${d.client.audit ? `<a class="cc-file" href="${BASE}${base}/3cd.json">${fileMark('3CD', '--warn')}<span><b>${esc(w('dl_3cd_json'))}</b><small>${esc(w('dl_3cd_json_hint'))}</small></span></a>
             <div class="cc-itr-box small"><span id="cc-3cd-check" class="cc-check">${esc(w('itr_checking'))}</span></div>` : ''}</div></section>
+          ${d.imported ? `<section class="card cc-asfiled"><h3 class="rc-h">${icon('folder', 15)} ${esc(t('itrimport', 'as_filed', { form: d.imported.form }))}</h3>
+            <table class="cc-tbl small"><colgroup><col><col class="cc-numcol-s"></colgroup>${[['f_income', d.imported.figures.income], ['f_tax', d.imported.figures.tax_net],
+              ['f_tds', d.imported.figures.tds], ['f_paid', d.imported.figures.paid], ['f_refund', d.imported.figures.refund], ['f_payable', d.imported.figures.payable]]
+              .filter((x) => x[1]).map(([k, v]) => `<tr><td>${esc(t('itrimport', k))}</td><td class="num">${esc(money(v))}</td></tr>`).join('')}</table></section>` : ''}
           <section class="card cc-close"><h3 class="rc-h">${icon('shield', 15)} ${esc(w('steps'))}</h3>
             ${d.signoff ? `<div class="cc-sig ${d.signed ? 'is-ok' : 'is-stale'}">${icon(d.signed ? 'check' : 'alert', 14)}
                 ${esc(d.signed ? w('signed_by', { by: d.signoff.by, at: when(d.signoff.at) }) : w('sign_stale'))}</div>` : ''}

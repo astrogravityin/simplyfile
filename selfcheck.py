@@ -21,9 +21,9 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 PY = sys.executable
-MODULES = ["firms", "itr_json", "clients", "intake", "recon", "compute", "edition", "tourvideo", "manuals", "projects", "scan", "source", "keyshare",
+MODULES = ["firms", "itr_json", "analytics", "itr_import", "clients", "intake", "recon", "compute", "edition", "tourvideo", "manuals", "projects", "scan", "source", "keyshare",
            "keysales", "wallet", "guideme"]
-SCREENS = ["firm", "clients", "intake", "recon", "compute", "manuals", "howto", "guideme", "tourvideo", "setup", "keys", "buykey", "keysales", "approvals"]
+SCREENS = ["firm", "analytics", "clients", "itrimport", "intake", "recon", "compute", "manuals", "howto", "guideme", "tourvideo", "setup", "keys", "buykey", "keysales", "approvals"]
 
 
 def run(args: list[str], what: str) -> None:
@@ -274,7 +274,7 @@ LEAKS = {
         ("['tds', 'tds_claim']", "which findings belong to which check -> chip page.recon checks"),
     ],
 }
-REQUIRED_CHIPS = ["compute.settings", "compute.tax", "compute.tax_parts", "compute.balance", "compute.regime", "compute.total_income",
+REQUIRED_CHIPS = ["itr.read", "itr.codes_in", "itr.import_ok", "itr.statement", "ui.itrimport", "analytics.settings", "analytics.client", "analytics.rollup", "ui.analytics", "page.analytics", "compute.settings", "compute.tax", "compute.tax_parts", "compute.balance", "compute.regime", "compute.total_income",
                   "compute.hp", "close.move", "close.settings", "close.signoff", "close.steps", "recon.settings", "page.recon",
                   "page.intake", "ui.compute",
                   "firm.settings", "firm.roles", "firm.problem", "firm.ready", "firm.move", "firm.may", "firm.sla", "firm.steps",
@@ -303,7 +303,7 @@ def chips_first_check() -> None:
     print(f"  chips first: no decision in code ({sum(len(r) for r in LEAKS.values())} shapes watched), {len(REQUIRED_CHIPS)} chips present OK")
 
 
-GUIDED = ["firm", "clients", "intake", "recon", "compute", "approvals"]
+GUIDED = ["firm", "analytics", "clients", "itrimport", "intake", "recon", "compute", "approvals"]
 
 
 def guides_tours_check() -> None:

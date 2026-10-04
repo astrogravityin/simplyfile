@@ -1,0 +1,255 @@
+{
+  "chip_id": "itr.codes_in",
+  "kind": "accessor",
+  "set": "itr",
+  "label": "Old ITR import: the JSON's codes in SimplyFile's words",
+  "aliases": [
+    "old itr import: the json's codes in simp"
+  ],
+  "params": [
+    {
+      "name": "form",
+      "type": "text",
+      "default": "",
+      "label": "ITR-3 / ITR-5"
+    },
+    {
+      "name": "status",
+      "type": "text",
+      "default": "",
+      "label": "status code in the JSON"
+    },
+    {
+      "name": "substatus",
+      "type": "text",
+      "default": "",
+      "label": "sub-status (ITR-5)"
+    },
+    {
+      "name": "section",
+      "type": "text",
+      "default": "",
+      "label": "return section code"
+    },
+    {
+      "name": "residential",
+      "type": "text",
+      "default": "",
+      "label": "RES / NRI / NOR"
+    },
+    {
+      "name": "ay_code",
+      "type": "text",
+      "default": "",
+      "label": "e.g. 2025"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "kind": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "eq",
+              "left": "$section",
+              "right": "11"
+            },
+            "then": "original"
+          },
+          {
+            "when": {
+              "op": "eq",
+              "left": "$section",
+              "right": "12"
+            },
+            "then": "belated"
+          },
+          {
+            "when": {
+              "op": "eq",
+              "left": "$section",
+              "right": "17"
+            },
+            "then": "revised"
+          },
+          {
+            "when": {
+              "op": "eq",
+              "left": "$section",
+              "right": "21"
+            },
+            "then": "updated"
+          }
+        ],
+        "else": "original"
+      },
+      "status": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "eq",
+                  "left": "$form",
+                  "right": "ITR-3"
+                },
+                {
+                  "op": "eq",
+                  "left": "$status",
+                  "right": "H"
+                }
+              ]
+            },
+            "then": "huf"
+          },
+          {
+            "when": {
+              "op": "eq",
+              "left": "$form",
+              "right": "ITR-3"
+            },
+            "then": "individual"
+          },
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "eq",
+                  "left": "$form",
+                  "right": "ITR-5"
+                },
+                {
+                  "op": "eq",
+                  "left": "$substatus",
+                  "right": "5"
+                }
+              ]
+            },
+            "then": "llp"
+          },
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "eq",
+                  "left": "$form",
+                  "right": "ITR-5"
+                },
+                {
+                  "op": "eq",
+                  "left": "$status",
+                  "right": "14"
+                }
+              ]
+            },
+            "then": "aop"
+          }
+        ],
+        "else": "firm"
+      },
+      "nri": {
+        "op": "eq",
+        "left": "$residential",
+        "right": "NRI"
+      },
+      "ay": {
+        "vop": "template",
+        "text": "{y}-{n}",
+        "values": {
+          "y": "$ay_code",
+          "n": {
+            "vop": "sub_text",
+            "text": {
+              "vop": "add",
+              "a": {
+                "vop": "sub_text",
+                "text": "$ay_code",
+                "pattern": "^\\d\\d",
+                "replacement": ""
+              },
+              "b": 1
+            },
+            "pattern": "^(\\d)$",
+            "replacement": "0$1"
+          }
+        }
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-04: return section, status and residence codes of an ITR JSON -> return kind, client status, non-resident, assessment year.",
+  "test_cases": [
+    {
+      "args": {
+        "form": "ITR-3",
+        "status": "I",
+        "substatus": "",
+        "section": "11",
+        "residential": "RES",
+        "ay_code": "2025"
+      },
+      "expect_value": {
+        "kind": "original",
+        "status": "individual",
+        "nri": false,
+        "ay": "2025-26"
+      }
+    },
+    {
+      "args": {
+        "form": "ITR-3",
+        "status": "H",
+        "substatus": "",
+        "section": "17",
+        "residential": "RES",
+        "ay_code": "2024"
+      },
+      "expect_value": {
+        "kind": "revised",
+        "status": "huf",
+        "nri": false,
+        "ay": "2024-25"
+      }
+    },
+    {
+      "args": {
+        "form": "ITR-5",
+        "status": "1",
+        "substatus": "5",
+        "section": "12",
+        "residential": "RES",
+        "ay_code": "2023"
+      },
+      "expect_value": {
+        "kind": "belated",
+        "status": "llp",
+        "nri": false,
+        "ay": "2023-24"
+      }
+    },
+    {
+      "args": {
+        "form": "ITR-3",
+        "status": "I",
+        "substatus": "",
+        "section": "11",
+        "residential": "NRI",
+        "ay_code": "2025"
+      },
+      "expect_value": {
+        "kind": "original",
+        "status": "individual",
+        "nri": true,
+        "ay": "2025-26"
+      }
+    }
+  ]
+}

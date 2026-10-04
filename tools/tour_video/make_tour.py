@@ -268,7 +268,7 @@ def spoken(text: str) -> str:
     """Apply _lexicon.json so the voice says 'Ted Book', not 'tedbook'."""
     lex = json.loads((TOOL / "_lexicon.json").read_text(encoding="utf-8"))["say_as"]
     for word, say in lex.items():
-        text = re.sub(rf"\b{re.escape(word)}\b", say, text)
+        text = re.sub(rf"(?<!\w){re.escape(word)}(?!\w)", say, text)   # not \b: "139(5)" ends in ")"
     return text
 
 
@@ -697,7 +697,10 @@ def login(base: str) -> None:
             print("Sign in in the browser window. It closes by itself once you are signed in.", flush=True)
         deadline = time.monotonic() + (45 if auto else 900)
         while time.monotonic() < deadline and not page.is_closed():
-            state = ctx.storage_state()
+            try:
+                state = ctx.storage_state()
+            except Exception:  # noqa: BLE001 - the window was closed by hand between two looks
+                break
             if _token_origins(state):
                 time.sleep(1.5)
                 done = ctx.storage_state()

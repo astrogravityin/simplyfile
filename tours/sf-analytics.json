@@ -1,0 +1,89 @@
+{
+  "prod_base": "https://sf.valuestream.in",
+  "voice": "en-IN-NeerjaNeural",
+  "rate": "+0%",
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "blur": [
+    "#whoami",
+    "#userpop .head"
+  ],
+  "page_key": "sf-analytics",
+  "title": "Firm analytics",
+  "start_url": "/#/analytics",
+  "covers": [
+    "the year at a glance",
+    "the deadline radar",
+    "team workload",
+    "growth opportunities",
+    "year on year"
+  ],
+  "steps": [
+    {
+      "chapter": "Firm analytics",
+      "say": "See how the practice is doing in SimplyFile: deadlines, workload, money handled for clients and where the next work comes from.",
+      "do": [
+        {
+          "wait": 1
+        }
+      ]
+    },
+    {
+      "chapter": "The year at a glance",
+      "say": "Clients this year, returns filed and how many on time, tax handled, refunds secured and the interest clients paid.",
+      "do": [
+        {
+          "highlight_target": ".an-kpis|main",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Deadline radar",
+      "say": "Every client-year not yet filed, by days to its own due date - overdue first. Click a name to open its computation.",
+      "do": [
+        {
+          "highlight_target": ".an-card|main",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Team workload",
+      "say": "Client-years per person assigned, filed and open, and who signed off and filed what.",
+      "do": [
+        {
+          "highlight_target": ".an-grid|main",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Growth opportunities",
+      "say": "Clients who need more than a return: advance-tax planning, big refunds from too much TDS, late filers, revisions, open mismatches, and last year's clients not yet carried in.",
+      "do": [
+        {
+          "highlight_target": ".an-leads|main",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Year on year",
+      "say": "Clients and returns filed in each assessment year.",
+      "do": [
+        {
+          "highlight_target": ".an-note|main",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    }
+  ]
+}

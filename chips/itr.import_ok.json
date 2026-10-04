@@ -1,0 +1,277 @@
+{
+  "chip_id": "itr.import_ok",
+  "kind": "accessor",
+  "set": "itr",
+  "label": "Old ITR import: may this return be imported, and does it replace the one standing?",
+  "aliases": [
+    "old itr import: may this return be impor"
+  ],
+  "params": [
+    {
+      "name": "known_year",
+      "type": "boolean",
+      "default": true,
+      "label": "the AY is one SimplyFile keeps"
+    },
+    {
+      "name": "form_ok",
+      "type": "boolean",
+      "default": true,
+      "label": "ITR-3 or ITR-5"
+    },
+    {
+      "name": "pan_ok",
+      "type": "boolean",
+      "default": true,
+      "label": "the client's PAN is the return's PAN"
+    },
+    {
+      "name": "duplicate",
+      "type": "boolean",
+      "default": false,
+      "label": "this very return was imported already"
+    },
+    {
+      "name": "has_current",
+      "type": "boolean",
+      "default": false,
+      "label": "the year already has a return standing"
+    },
+    {
+      "name": "kind",
+      "type": "text",
+      "default": "original",
+      "label": "kind of the return imported"
+    },
+    {
+      "name": "replaces",
+      "type": "json",
+      "default": [
+        "revised",
+        "updated"
+      ],
+      "label": "kinds that take the place of the return standing"
+    }
+  ],
+  "expr": {
+    "vop": "choose",
+    "cases": [
+      {
+        "when": {
+          "op": "not",
+          "item": {
+            "op": "eq",
+            "left": "$form_ok",
+            "right": true
+          }
+        },
+        "then": {
+          "ok": false,
+          "say": "imp_form",
+          "replace": false
+        }
+      },
+      {
+        "when": {
+          "op": "not",
+          "item": {
+            "op": "eq",
+            "left": "$known_year",
+            "right": true
+          }
+        },
+        "then": {
+          "ok": false,
+          "say": "imp_year",
+          "replace": false
+        }
+      },
+      {
+        "when": {
+          "op": "not",
+          "item": {
+            "op": "eq",
+            "left": "$pan_ok",
+            "right": true
+          }
+        },
+        "then": {
+          "ok": false,
+          "say": "imp_pan",
+          "replace": false
+        }
+      },
+      {
+        "when": {
+          "op": "eq",
+          "left": "$duplicate",
+          "right": true
+        },
+        "then": {
+          "ok": false,
+          "say": "imp_duplicate",
+          "replace": false
+        }
+      },
+      {
+        "when": {
+          "op": "all",
+          "items": [
+            {
+              "op": "eq",
+              "left": "$has_current",
+              "right": true
+            },
+            {
+              "op": "in_set",
+              "value": "$kind",
+              "set": "$replaces"
+            }
+          ]
+        },
+        "then": {
+          "ok": true,
+          "say": "imp_replaces",
+          "replace": true
+        }
+      },
+      {
+        "when": {
+          "op": "eq",
+          "left": "$has_current",
+          "right": true
+        },
+        "then": {
+          "ok": false,
+          "say": "imp_has_return",
+          "replace": false
+        }
+      }
+    ],
+    "else": {
+      "ok": true,
+      "say": "",
+      "replace": false
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-04: an old return is refused when its form or year is not kept, its PAN is not the client's, or it was imported already; a revised / updated return takes the place of the one standing; an original never overwrites one.",
+  "test_cases": [
+    {
+      "args": {
+        "known_year": true,
+        "form_ok": true,
+        "pan_ok": true,
+        "duplicate": false,
+        "has_current": false,
+        "kind": "original",
+        "replaces": [
+          "revised",
+          "updated"
+        ]
+      },
+      "expect_value": {
+        "ok": true,
+        "say": "",
+        "replace": false
+      }
+    },
+    {
+      "args": {
+        "known_year": true,
+        "form_ok": true,
+        "pan_ok": false,
+        "duplicate": false,
+        "has_current": false,
+        "kind": "original",
+        "replaces": [
+          "revised",
+          "updated"
+        ]
+      },
+      "expect_value": {
+        "ok": false,
+        "say": "imp_pan",
+        "replace": false
+      }
+    },
+    {
+      "args": {
+        "known_year": true,
+        "form_ok": true,
+        "pan_ok": true,
+        "duplicate": true,
+        "has_current": true,
+        "kind": "original",
+        "replaces": [
+          "revised",
+          "updated"
+        ]
+      },
+      "expect_value": {
+        "ok": false,
+        "say": "imp_duplicate",
+        "replace": false
+      }
+    },
+    {
+      "args": {
+        "known_year": true,
+        "form_ok": true,
+        "pan_ok": true,
+        "duplicate": false,
+        "has_current": true,
+        "kind": "revised",
+        "replaces": [
+          "revised",
+          "updated"
+        ]
+      },
+      "expect_value": {
+        "ok": true,
+        "say": "imp_replaces",
+        "replace": true
+      }
+    },
+    {
+      "args": {
+        "known_year": true,
+        "form_ok": true,
+        "pan_ok": true,
+        "duplicate": false,
+        "has_current": true,
+        "kind": "original",
+        "replaces": [
+          "revised",
+          "updated"
+        ]
+      },
+      "expect_value": {
+        "ok": false,
+        "say": "imp_has_return",
+        "replace": false
+      }
+    },
+    {
+      "args": {
+        "known_year": false,
+        "form_ok": true,
+        "pan_ok": true,
+        "duplicate": false,
+        "has_current": false,
+        "kind": "original",
+        "replaces": [
+          "revised",
+          "updated"
+        ]
+      },
+      "expect_value": {
+        "ok": false,
+        "say": "imp_year",
+        "replace": false
+      }
+    }
+  ]
+}

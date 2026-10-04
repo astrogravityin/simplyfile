@@ -1,0 +1,171 @@
+{
+  "chip_id": "itr.statement",
+  "kind": "accessor",
+  "set": "itr",
+  "label": "Old ITR import: the statement lines made from a return",
+  "aliases": [
+    "old itr import: the statement lines made"
+  ],
+  "params": [
+    {
+      "name": "lines",
+      "type": "json",
+      "default": [
+        {
+          "fact": "hp",
+          "label": "Income from house property (as per ITR, net)",
+          "ref": "{itr} HP"
+        },
+        {
+          "fact": "bp",
+          "label": "Profits and gains of business or profession (as per ITR)",
+          "ref": "{itr} BP"
+        },
+        {
+          "fact": "cg",
+          "label": "Capital gains (as per ITR)",
+          "ref": "{itr} CG"
+        },
+        {
+          "fact": "os",
+          "label": "Income from other sources (as per ITR)",
+          "ref": "{itr} OS"
+        },
+        {
+          "fact": "deductions",
+          "label": "Deductions under Chapter VI-A (as per ITR)",
+          "ref": "{itr} VIA"
+        },
+        {
+          "fact": "income",
+          "label": "Total income (as per ITR)",
+          "ref": "{itr} TI"
+        },
+        {
+          "fact": "tax_net",
+          "label": "Tax payable (as per ITR)",
+          "ref": "{itr} TTI"
+        },
+        {
+          "fact": "tds",
+          "label": "TDS claimed (as per ITR)",
+          "ref": "{itr} TDS2"
+        },
+        {
+          "fact": "advance",
+          "label": "Advance tax paid (as per ITR)",
+          "ref": "{itr} IT"
+        },
+        {
+          "fact": "sat",
+          "label": "Self-assessment tax paid (as per ITR)",
+          "ref": "{itr} IT"
+        }
+      ],
+      "label": "lines"
+    },
+    {
+      "name": "next_lines",
+      "type": "json",
+      "default": [
+        "hp",
+        "bp",
+        "cg",
+        "os",
+        "deductions"
+      ],
+      "label": "next lines"
+    },
+    {
+      "name": "form_code",
+      "type": "json",
+      "default": {
+        "ITR-3": "ITR3",
+        "ITR-5": "ITR5"
+      },
+      "label": "form code"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "lines": "$lines",
+      "next_lines": "$next_lines",
+      "form_code": "$form_code"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-04: which lines of an imported return go into its 'as filed' statement and the next year's statement to fill.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "lines": [
+          {
+            "fact": "hp",
+            "label": "Income from house property (as per ITR, net)",
+            "ref": "{itr} HP"
+          },
+          {
+            "fact": "bp",
+            "label": "Profits and gains of business or profession (as per ITR)",
+            "ref": "{itr} BP"
+          },
+          {
+            "fact": "cg",
+            "label": "Capital gains (as per ITR)",
+            "ref": "{itr} CG"
+          },
+          {
+            "fact": "os",
+            "label": "Income from other sources (as per ITR)",
+            "ref": "{itr} OS"
+          },
+          {
+            "fact": "deductions",
+            "label": "Deductions under Chapter VI-A (as per ITR)",
+            "ref": "{itr} VIA"
+          },
+          {
+            "fact": "income",
+            "label": "Total income (as per ITR)",
+            "ref": "{itr} TI"
+          },
+          {
+            "fact": "tax_net",
+            "label": "Tax payable (as per ITR)",
+            "ref": "{itr} TTI"
+          },
+          {
+            "fact": "tds",
+            "label": "TDS claimed (as per ITR)",
+            "ref": "{itr} TDS2"
+          },
+          {
+            "fact": "advance",
+            "label": "Advance tax paid (as per ITR)",
+            "ref": "{itr} IT"
+          },
+          {
+            "fact": "sat",
+            "label": "Self-assessment tax paid (as per ITR)",
+            "ref": "{itr} IT"
+          }
+        ],
+        "next_lines": [
+          "hp",
+          "bp",
+          "cg",
+          "os",
+          "deductions"
+        ],
+        "form_code": {
+          "ITR-3": "ITR3",
+          "ITR-5": "ITR5"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,169 @@
+{
+  "chip_id": "analytics.trend",
+  "kind": "accessor",
+  "set": "analytics",
+  "label": "A client's income trend",
+  "aliases": [
+    "a client's income trend"
+  ],
+  "params": [
+    {
+      "name": "now",
+      "type": "number",
+      "default": 0,
+      "label": "income, latest year"
+    },
+    {
+      "name": "before",
+      "type": "number",
+      "default": 0,
+      "label": "income, the year before"
+    },
+    {
+      "name": "grow_pct",
+      "type": "number",
+      "default": 25,
+      "label": ""
+    },
+    {
+      "name": "drop_pct",
+      "type": "number",
+      "default": 25,
+      "label": ""
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "pct": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "gt",
+              "left": "$before",
+              "right": 0
+            },
+            "then": {
+              "vop": "pct",
+              "part": {
+                "vop": "sub",
+                "a": "$now",
+                "b": "$before"
+              },
+              "whole": "$before",
+              "digits": 0
+            }
+          }
+        ],
+        "else": 0
+      },
+      "trend": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "le",
+              "left": "$before",
+              "right": 0
+            },
+            "then": ""
+          },
+          {
+            "when": {
+              "op": "ge",
+              "left": {
+                "vop": "pct",
+                "part": {
+                  "vop": "sub",
+                  "a": "$now",
+                  "b": "$before"
+                },
+                "whole": "$before",
+                "digits": 0
+              },
+              "right": "$grow_pct"
+            },
+            "then": "growing"
+          },
+          {
+            "when": {
+              "op": "le",
+              "left": {
+                "vop": "pct",
+                "part": {
+                  "vop": "sub",
+                  "a": "$now",
+                  "b": "$before"
+                },
+                "whole": "$before",
+                "digits": 0
+              },
+              "right": {
+                "vop": "mul",
+                "a": "$drop_pct",
+                "b": -1
+              }
+            },
+            "then": "shrinking"
+          }
+        ],
+        "else": ""
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-04: income up by grow_pct% or more = a growing client (more work, a bigger engagement); down by drop_pct% or more = at risk.",
+  "test_cases": [
+    {
+      "args": {
+        "now": 1500000,
+        "before": 1000000,
+        "grow_pct": 25,
+        "drop_pct": 25
+      },
+      "expect_value": {
+        "pct": 50,
+        "trend": "growing"
+      }
+    },
+    {
+      "args": {
+        "now": 600000,
+        "before": 1000000,
+        "grow_pct": 25,
+        "drop_pct": 25
+      },
+      "expect_value": {
+        "pct": -40,
+        "trend": "shrinking"
+      }
+    },
+    {
+      "args": {
+        "now": 1100000,
+        "before": 1000000,
+        "grow_pct": 25,
+        "drop_pct": 25
+      },
+      "expect_value": {
+        "pct": 10,
+        "trend": ""
+      }
+    },
+    {
+      "args": {
+        "now": 500000,
+        "before": 0,
+        "grow_pct": 25,
+        "drop_pct": 25
+      },
+      "expect_value": {
+        "pct": 0,
+        "trend": ""
+      }
+    }
+  ]
+}

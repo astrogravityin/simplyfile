@@ -1,0 +1,119 @@
+{
+  "chip_id": "guide.analytics",
+  "kind": "accessor",
+  "set": "guide",
+  "label": "Guide me: Firm analytics",
+  "aliases": [
+    "guide me: firm analytics"
+  ],
+  "params": [
+    {
+      "name": "title",
+      "type": "text",
+      "default": "Firm analytics",
+      "label": "title"
+    },
+    {
+      "name": "lede",
+      "type": "long",
+      "default": "See how the practice is doing in {product}: deadlines, workload, money handled for clients and where the next work comes from.",
+      "label": "lede"
+    },
+    {
+      "name": "icon",
+      "type": "text",
+      "default": "pulse",
+      "label": "icon"
+    },
+    {
+      "name": "minutes",
+      "type": "number",
+      "default": 2,
+      "label": "minutes"
+    },
+    {
+      "name": "steps",
+      "type": "rows",
+      "default": [
+        {
+          "title": "The year at a glance",
+          "say": "Clients this year, returns filed and how many on time, tax handled, refunds secured and the interest clients paid.",
+          "target": ".an-kpis|main"
+        },
+        {
+          "title": "Deadline radar",
+          "say": "Every client-year not yet filed, by days to its own due date - overdue first. Click a name to open its computation.",
+          "target": ".an-card|main"
+        },
+        {
+          "title": "Team workload",
+          "say": "Client-years per person assigned, filed and open, and who signed off and filed what.",
+          "target": ".an-grid|main"
+        },
+        {
+          "title": "Growth opportunities",
+          "say": "Clients who need more than a return: advance-tax planning, big refunds from too much TDS, late filers, revisions, open mismatches, and last year's clients not yet carried in.",
+          "target": ".an-leads|main"
+        },
+        {
+          "title": "Year on year",
+          "say": "Clients and returns filed in each assessment year.",
+          "target": ".an-note|main"
+        }
+      ],
+      "label": "steps"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "title": "$title",
+      "lede": "$lede",
+      "icon": "$icon",
+      "minutes": "$minutes",
+      "steps": "$steps"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-04: the Firm analytics walk, up to date with the screen; tours/sf-analytics.json is made from it.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "title": "Firm analytics",
+        "lede": "See how the practice is doing in {product}: deadlines, workload, money handled for clients and where the next work comes from.",
+        "icon": "pulse",
+        "minutes": 2,
+        "steps": [
+          {
+            "title": "The year at a glance",
+            "say": "Clients this year, returns filed and how many on time, tax handled, refunds secured and the interest clients paid.",
+            "target": ".an-kpis|main"
+          },
+          {
+            "title": "Deadline radar",
+            "say": "Every client-year not yet filed, by days to its own due date - overdue first. Click a name to open its computation.",
+            "target": ".an-card|main"
+          },
+          {
+            "title": "Team workload",
+            "say": "Client-years per person assigned, filed and open, and who signed off and filed what.",
+            "target": ".an-grid|main"
+          },
+          {
+            "title": "Growth opportunities",
+            "say": "Clients who need more than a return: advance-tax planning, big refunds from too much TDS, late filers, revisions, open mismatches, and last year's clients not yet carried in.",
+            "target": ".an-leads|main"
+          },
+          {
+            "title": "Year on year",
+            "say": "Clients and returns filed in each assessment year.",
+            "target": ".an-note|main"
+          }
+        ]
+      }
+    }
+  ]
+}

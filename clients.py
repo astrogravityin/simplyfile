@@ -118,8 +118,8 @@ def save(user: dict, body: dict, cid: str = "") -> dict:
             c.update(data)
         else:
             c = data | {"id": store.new_id(), "firm_id": firm_id(user), "years": {}, "created_at": store.now(), "created_by": user["id"]}
-            ay = settings()["current_ay"]
-            c["years"][ay] = year_defaults(c)            # a new client starts in this year, carried from the master
+            ay = body.get("ay") if body.get("ay") in settings()["years"] else settings()["current_ay"]
+            c["years"][ay] = year_defaults(c)            # a new client starts in the year being looked at (else this year)
             rows.append(c)
         c["updated_at"], c["updated_by"] = store.now(), user["id"]
         store.write(FILE, rows)

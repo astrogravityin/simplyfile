@@ -1,0 +1,397 @@
+{
+  "chip_id": "analytics.rollup",
+  "kind": "accessor",
+  "set": "analytics",
+  "label": "Firm analytics roll-up",
+  "aliases": [
+    "firm analytics roll-up"
+  ],
+  "params": [
+    {
+      "name": "rows",
+      "type": "json",
+      "default": [],
+      "label": "one row per client-year"
+    },
+    {
+      "name": "prev_ids",
+      "type": "json",
+      "default": [],
+      "label": "clients in last year"
+    },
+    {
+      "name": "history",
+      "type": "json",
+      "default": [],
+      "label": "one row per client per year"
+    },
+    {
+      "name": "acts",
+      "type": "json",
+      "default": [],
+      "label": "who did what"
+    },
+    {
+      "name": "older_ids",
+      "type": "json",
+      "default": [],
+      "label": "clients seen before last year"
+    },
+    {
+      "name": "recent_ids",
+      "type": "json",
+      "default": [],
+      "label": "clients last year or this year"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "clients": {
+        "vop": "count",
+        "items": "$rows"
+      },
+      "filed": {
+        "vop": "rows_aggregate",
+        "rows": "$rows",
+        "agg": "count",
+        "where": {
+          "filed_n": 1
+        }
+      },
+      "on_time": {
+        "vop": "rows_aggregate",
+        "rows": "$rows",
+        "agg": "count",
+        "where": {
+          "on_time": true
+        }
+      },
+      "audit": {
+        "vop": "rows_aggregate",
+        "rows": "$rows",
+        "agg": "count",
+        "where": {
+          "audit": true
+        }
+      },
+      "tax": {
+        "vop": "rows_aggregate",
+        "rows": "$rows",
+        "agg": "sum",
+        "key": "tax"
+      },
+      "refund": {
+        "vop": "rows_aggregate",
+        "rows": "$rows",
+        "agg": "sum",
+        "key": "refund"
+      },
+      "payable": {
+        "vop": "rows_aggregate",
+        "rows": "$rows",
+        "agg": "sum",
+        "key": "payable"
+      },
+      "interest": {
+        "vop": "rows_aggregate",
+        "rows": "$rows",
+        "agg": "sum",
+        "key": "interest"
+      },
+      "interest_bc": {
+        "vop": "rows_aggregate",
+        "rows": "$rows",
+        "agg": "sum",
+        "key": "interest_bc"
+      },
+      "refund_interest": {
+        "vop": "rows_aggregate",
+        "rows": "$rows",
+        "agg": "sum",
+        "key": "refund_interest"
+      },
+      "by_bucket": {
+        "vop": "group_rows",
+        "rows": "$rows",
+        "key": "bucket",
+        "measures": {
+          "n": [
+            "count"
+          ]
+        }
+      },
+      "by_stage": {
+        "vop": "group_rows",
+        "rows": "$rows",
+        "key": "stage",
+        "measures": {
+          "n": [
+            "count"
+          ]
+        }
+      },
+      "by_form": {
+        "vop": "group_rows",
+        "rows": "$rows",
+        "key": "form",
+        "measures": {
+          "n": [
+            "count"
+          ]
+        }
+      },
+      "by_status": {
+        "vop": "group_rows",
+        "rows": "$rows",
+        "key": "status",
+        "measures": {
+          "n": [
+            "count"
+          ]
+        }
+      },
+      "by_assignee": {
+        "vop": "group_rows",
+        "rows": "$rows",
+        "key": "assigned",
+        "measures": {
+          "n": [
+            "count"
+          ],
+          "filed": [
+            "sum",
+            "filed_n"
+          ],
+          "tax": [
+            "sum",
+            "tax"
+          ]
+        }
+      },
+      "not_renewed": {
+        "vop": "missing",
+        "want": "$prev_ids",
+        "have": {
+          "vop": "pluck",
+          "rows": "$rows",
+          "key": "id"
+        }
+      },
+      "lapsed": {
+        "vop": "missing",
+        "want": "$older_ids",
+        "have": "$recent_ids"
+      },
+      "returns": {
+        "vop": "rows_aggregate",
+        "rows": "$history",
+        "agg": "sum",
+        "key": "filed_n"
+      },
+      "years": {
+        "vop": "group_rows",
+        "rows": "$history",
+        "key": "ay",
+        "measures": {
+          "n": [
+            "count"
+          ],
+          "filed": [
+            "sum",
+            "filed_n"
+          ],
+          "income": [
+            "sum",
+            "income"
+          ]
+        }
+      },
+      "team": {
+        "vop": "group_rows",
+        "rows": "$acts",
+        "key": [
+          "who",
+          "what"
+        ],
+        "measures": {
+          "n": [
+            "count"
+          ]
+        }
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-04: the firm's numbers - counts, money, groupings, who did what, clients not carried into this year.",
+  "test_cases": [
+    {
+      "args": {
+        "rows": [
+          {
+            "id": "a",
+            "filed_n": 1,
+            "on_time": true,
+            "audit": true,
+            "tax": 100,
+            "refund": 10,
+            "payable": 0,
+            "interest": 0,
+            "interest_bc": 0,
+            "refund_interest": 0,
+            "bucket": "filed",
+            "stage": "filed",
+            "form": "ITR-3",
+            "status": "HUF",
+            "assigned": "Ravi"
+          },
+          {
+            "id": "b",
+            "filed_n": 0,
+            "on_time": false,
+            "audit": false,
+            "tax": 50,
+            "refund": 0,
+            "payable": 20,
+            "interest": 5,
+            "interest_bc": 5,
+            "refund_interest": 0,
+            "bucket": "week",
+            "stage": "review",
+            "form": "ITR-3",
+            "status": "Individual",
+            "assigned": "Ravi"
+          }
+        ],
+        "prev_ids": [
+          "a",
+          "c"
+        ],
+        "history": [
+          {
+            "ay": "2025-26",
+            "filed_n": 1,
+            "income": 100
+          },
+          {
+            "ay": "2026-27",
+            "filed_n": 0,
+            "income": 50
+          }
+        ],
+        "acts": [
+          {
+            "who": "x",
+            "what": "filed"
+          }
+        ],
+        "older_ids": [
+          "a",
+          "d"
+        ],
+        "recent_ids": [
+          "a",
+          "b",
+          "c"
+        ]
+      },
+      "expect_value": {
+        "clients": 2,
+        "filed": 1,
+        "on_time": 1,
+        "audit": 1,
+        "tax": 150,
+        "refund": 10,
+        "payable": 20,
+        "interest": 5,
+        "interest_bc": 5,
+        "refund_interest": 0,
+        "by_bucket": [
+          {
+            "key": "filed",
+            "bucket": "filed",
+            "n": 1
+          },
+          {
+            "key": "week",
+            "bucket": "week",
+            "n": 1
+          }
+        ],
+        "by_stage": [
+          {
+            "key": "filed",
+            "stage": "filed",
+            "n": 1
+          },
+          {
+            "key": "review",
+            "stage": "review",
+            "n": 1
+          }
+        ],
+        "by_form": [
+          {
+            "key": "ITR-3",
+            "form": "ITR-3",
+            "n": 2
+          }
+        ],
+        "by_status": [
+          {
+            "key": "HUF",
+            "status": "HUF",
+            "n": 1
+          },
+          {
+            "key": "Individual",
+            "status": "Individual",
+            "n": 1
+          }
+        ],
+        "by_assignee": [
+          {
+            "key": "Ravi",
+            "assigned": "Ravi",
+            "n": 2,
+            "filed": 1,
+            "tax": 150
+          }
+        ],
+        "not_renewed": [
+          "c"
+        ],
+        "lapsed": [
+          "d"
+        ],
+        "returns": 1,
+        "years": [
+          {
+            "key": "2025-26",
+            "ay": "2025-26",
+            "n": 1,
+            "filed": 1,
+            "income": 100
+          },
+          {
+            "key": "2026-27",
+            "ay": "2026-27",
+            "n": 1,
+            "filed": 0,
+            "income": 50
+          }
+        ],
+        "team": [
+          {
+            "key": "x filed",
+            "who": "x",
+            "what": "filed",
+            "n": 1
+          }
+        ]
+      }
+    }
+  ]
+}

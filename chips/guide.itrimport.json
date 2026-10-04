@@ -1,0 +1,109 @@
+{
+  "chip_id": "guide.itrimport",
+  "kind": "accessor",
+  "set": "guide",
+  "label": "Guide me: Import old returns",
+  "aliases": [
+    "guide me: import old returns"
+  ],
+  "params": [
+    {
+      "name": "title",
+      "type": "text",
+      "default": "Import old returns",
+      "label": "title"
+    },
+    {
+      "name": "lede",
+      "type": "long",
+      "default": "Bring a client's past returns into {product} - the return as filed, the client record and next year's statement ready to fill.",
+      "label": "lede"
+    },
+    {
+      "name": "icon",
+      "type": "text",
+      "default": "download",
+      "label": "icon"
+    },
+    {
+      "name": "minutes",
+      "type": "number",
+      "default": 2,
+      "label": "minutes"
+    },
+    {
+      "name": "steps",
+      "type": "rows",
+      "default": [
+        {
+          "title": "Upload the return",
+          "say": "The ITR JSON as filed - from incometax.gov.in or the offline utility. {product} reads the form, the year, the person and every figure.",
+          "target": "#ii-file|main"
+        },
+        {
+          "title": "Whose return?",
+          "say": "The client with the same PAN is picked for you. No such client? Create one from the return - and start this year for them if they have not come yet.",
+          "target": ".ii-card|main"
+        },
+        {
+          "title": "Record it as filed",
+          "say": "Give the acknowledgement number and the date filed. A revised or updated return takes the place of the one standing; the same return twice is refused.",
+          "target": "#ii-ack|.ii-card|main"
+        },
+        {
+          "title": "The statements",
+          "say": "Download the statement as filed, and next year's statement with last year's figures beside each line - ready to fill and upload.",
+          "target": ".ii-dl|main"
+        }
+      ],
+      "label": "steps"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "title": "$title",
+      "lede": "$lede",
+      "icon": "$icon",
+      "minutes": "$minutes",
+      "steps": "$steps"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-04: the Import old returns walk, up to date with the screen; tours/sf-itrimport.json is made from it.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "title": "Import old returns",
+        "lede": "Bring a client's past returns into {product} - the return as filed, the client record and next year's statement ready to fill.",
+        "icon": "download",
+        "minutes": 2,
+        "steps": [
+          {
+            "title": "Upload the return",
+            "say": "The ITR JSON as filed - from incometax.gov.in or the offline utility. {product} reads the form, the year, the person and every figure.",
+            "target": "#ii-file|main"
+          },
+          {
+            "title": "Whose return?",
+            "say": "The client with the same PAN is picked for you. No such client? Create one from the return - and start this year for them if they have not come yet.",
+            "target": ".ii-card|main"
+          },
+          {
+            "title": "Record it as filed",
+            "say": "Give the acknowledgement number and the date filed. A revised or updated return takes the place of the one standing; the same return twice is refused.",
+            "target": "#ii-ack|.ii-card|main"
+          },
+          {
+            "title": "The statements",
+            "say": "Download the statement as filed, and next year's statement with last year's figures beside each line - ready to fill and upload.",
+            "target": ".ii-dl|main"
+          }
+        ]
+      }
+    }
+  ]
+}

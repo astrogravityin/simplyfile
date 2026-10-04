@@ -1,0 +1,659 @@
+{
+  "chip_id": "ui.analytics",
+  "kind": "accessor",
+  "set": "ui",
+  "label": "Firm analytics words",
+  "aliases": [
+    "firm analytics words"
+  ],
+  "params": [
+    {
+      "name": "title",
+      "type": "text",
+      "default": "Firm analytics",
+      "label": "title"
+    },
+    {
+      "name": "lede",
+      "type": "text",
+      "default": "How the practice is doing this assessment year - deadlines, workload, money handled for clients, and where the next work will come from.",
+      "label": "lede"
+    },
+    {
+      "name": "ay",
+      "type": "text",
+      "default": "Assessment year",
+      "label": "ay"
+    },
+    {
+      "name": "loading",
+      "type": "text",
+      "default": "Working out the numbers...",
+      "label": "loading"
+    },
+    {
+      "name": "k_clients",
+      "type": "text",
+      "default": "Clients this year",
+      "label": "k clients"
+    },
+    {
+      "name": "k_clients_sub",
+      "type": "text",
+      "default": "{audit} with a tax audit",
+      "label": "k clients sub"
+    },
+    {
+      "name": "k_filed",
+      "type": "text",
+      "default": "Returns filed",
+      "label": "k filed"
+    },
+    {
+      "name": "k_filed_sub",
+      "type": "text",
+      "default": "{pct}% of this year's clients",
+      "label": "k filed sub"
+    },
+    {
+      "name": "k_ontime",
+      "type": "text",
+      "default": "Filed on time",
+      "label": "k ontime"
+    },
+    {
+      "name": "k_ontime_sub",
+      "type": "text",
+      "default": "{pct}% of those filed",
+      "label": "k ontime sub"
+    },
+    {
+      "name": "k_tax",
+      "type": "text",
+      "default": "Tax handled",
+      "label": "k tax"
+    },
+    {
+      "name": "k_tax_sub",
+      "type": "text",
+      "default": "total tax on the computations",
+      "label": "k tax sub"
+    },
+    {
+      "name": "k_refund",
+      "type": "text",
+      "default": "Refunds for clients",
+      "label": "k refund"
+    },
+    {
+      "name": "k_refund_sub",
+      "type": "text",
+      "default": "{ri} as 244A interest",
+      "label": "k refund sub"
+    },
+    {
+      "name": "k_interest",
+      "type": "text",
+      "default": "Interest clients pay",
+      "label": "k interest"
+    },
+    {
+      "name": "k_interest_sub",
+      "type": "text",
+      "default": "{bc} of it 234B/C - avoidable with planning",
+      "label": "k interest sub"
+    },
+    {
+      "name": "due_title",
+      "type": "text",
+      "default": "Deadline radar",
+      "label": "due title"
+    },
+    {
+      "name": "due_sub",
+      "type": "text",
+      "default": "Client-years not yet filed, by days to their own due date.",
+      "label": "due sub"
+    },
+    {
+      "name": "b_overdue",
+      "type": "text",
+      "default": "Overdue",
+      "label": "b overdue"
+    },
+    {
+      "name": "b_week",
+      "type": "text",
+      "default": "Due in 7 days",
+      "label": "b week"
+    },
+    {
+      "name": "b_month",
+      "type": "text",
+      "default": "Due in 30 days",
+      "label": "b month"
+    },
+    {
+      "name": "b_later",
+      "type": "text",
+      "default": "Later",
+      "label": "b later"
+    },
+    {
+      "name": "b_filed",
+      "type": "text",
+      "default": "Filed",
+      "label": "b filed"
+    },
+    {
+      "name": "due_none",
+      "type": "text",
+      "default": "Nothing open - every client-year is filed.",
+      "label": "due none"
+    },
+    {
+      "name": "h_client",
+      "type": "text",
+      "default": "Client",
+      "label": "h client"
+    },
+    {
+      "name": "h_form",
+      "type": "text",
+      "default": "Form",
+      "label": "h form"
+    },
+    {
+      "name": "h_due",
+      "type": "text",
+      "default": "Due",
+      "label": "h due"
+    },
+    {
+      "name": "h_days",
+      "type": "text",
+      "default": "Days",
+      "label": "h days"
+    },
+    {
+      "name": "h_stage",
+      "type": "text",
+      "default": "Stage",
+      "label": "h stage"
+    },
+    {
+      "name": "h_who",
+      "type": "text",
+      "default": "Assigned",
+      "label": "h who"
+    },
+    {
+      "name": "days_late",
+      "type": "text",
+      "default": "{n} late",
+      "label": "days late"
+    },
+    {
+      "name": "days_left",
+      "type": "text",
+      "default": "{n} left",
+      "label": "days left"
+    },
+    {
+      "name": "pipe_title",
+      "type": "text",
+      "default": "Pipeline",
+      "label": "pipe title"
+    },
+    {
+      "name": "pipe_sub",
+      "type": "text",
+      "default": "Where this year's client-years stand.",
+      "label": "pipe sub"
+    },
+    {
+      "name": "team_title",
+      "type": "text",
+      "default": "Team workload",
+      "label": "team title"
+    },
+    {
+      "name": "team_sub",
+      "type": "text",
+      "default": "Client-years per person assigned, and how many are filed.",
+      "label": "team sub"
+    },
+    {
+      "name": "h_assigned",
+      "type": "text",
+      "default": "Person",
+      "label": "h assigned"
+    },
+    {
+      "name": "h_clients",
+      "type": "text",
+      "default": "Clients",
+      "label": "h clients"
+    },
+    {
+      "name": "h_filed",
+      "type": "text",
+      "default": "Filed",
+      "label": "h filed"
+    },
+    {
+      "name": "h_open",
+      "type": "text",
+      "default": "Open",
+      "label": "h open"
+    },
+    {
+      "name": "h_tax",
+      "type": "text",
+      "default": "Tax handled",
+      "label": "h tax"
+    },
+    {
+      "name": "unassigned",
+      "type": "text",
+      "default": "Not assigned",
+      "label": "unassigned"
+    },
+    {
+      "name": "acts_title",
+      "type": "text",
+      "default": "Who did what",
+      "label": "acts title"
+    },
+    {
+      "name": "acts_sub",
+      "type": "text",
+      "default": "Sign-offs and filings, by the person who did them.",
+      "label": "acts sub"
+    },
+    {
+      "name": "w_signed",
+      "type": "text",
+      "default": "signed off",
+      "label": "w signed"
+    },
+    {
+      "name": "w_filed",
+      "type": "text",
+      "default": "filed",
+      "label": "w filed"
+    },
+    {
+      "name": "mix_title",
+      "type": "text",
+      "default": "Practice mix",
+      "label": "mix title"
+    },
+    {
+      "name": "mix_form",
+      "type": "text",
+      "default": "By return form",
+      "label": "mix form"
+    },
+    {
+      "name": "mix_status",
+      "type": "text",
+      "default": "By status",
+      "label": "mix status"
+    },
+    {
+      "name": "lead_title",
+      "type": "text",
+      "default": "Growth opportunities",
+      "label": "lead title"
+    },
+    {
+      "name": "lead_sub",
+      "type": "text",
+      "default": "Clients who need more than a return - each one a conversation about an advisory service.",
+      "label": "lead sub"
+    },
+    {
+      "name": "l_advance_tax",
+      "type": "text",
+      "default": "Advance-tax planning",
+      "label": "l advance tax"
+    },
+    {
+      "name": "l_advance_tax_sub",
+      "type": "text",
+      "default": "Paid 234B/C interest this year. A quarterly advance-tax calendar saves them this.",
+      "label": "l advance tax sub"
+    },
+    {
+      "name": "l_tds_refund",
+      "type": "text",
+      "default": "Big refunds - too much TDS",
+      "label": "l tds refund"
+    },
+    {
+      "name": "l_tds_refund_sub",
+      "type": "text",
+      "default": "Money locked with the department. A lower-deduction certificate (s.197) or a TDS review frees it.",
+      "label": "l tds refund sub"
+    },
+    {
+      "name": "l_late",
+      "type": "text",
+      "default": "Late filers",
+      "label": "l late"
+    },
+    {
+      "name": "l_late_sub",
+      "type": "text",
+      "default": "Filed late or will pay 234A. Offer a compliance calendar with reminders.",
+      "label": "l late sub"
+    },
+    {
+      "name": "l_rework",
+      "type": "text",
+      "default": "Revised and updated returns",
+      "label": "l rework"
+    },
+    {
+      "name": "l_rework_sub",
+      "type": "text",
+      "default": "Needed a revision or ITR-U. Review what was missed - a bookkeeping or review engagement.",
+      "label": "l rework sub"
+    },
+    {
+      "name": "l_open_red",
+      "type": "text",
+      "default": "Open mismatches",
+      "label": "l open red"
+    },
+    {
+      "name": "l_open_red_sub",
+      "type": "text",
+      "default": "26AS/AIS disagrees with the books and nobody has explained it yet.",
+      "label": "l open red sub"
+    },
+    {
+      "name": "l_not_renewed",
+      "type": "text",
+      "default": "Not yet carried into this year",
+      "label": "l not renewed"
+    },
+    {
+      "name": "l_not_renewed_sub",
+      "type": "text",
+      "default": "Were clients last year, not yet in this year. Call them before someone else does.",
+      "label": "l not renewed sub"
+    },
+    {
+      "name": "l_lapsed",
+      "type": "text",
+      "default": "Lapsed clients",
+      "label": "l lapsed"
+    },
+    {
+      "name": "l_lapsed_sub",
+      "type": "text",
+      "default": "Filed with you in an earlier year, not last year or this year. A courtesy call often brings them back.",
+      "label": "l lapsed sub"
+    },
+    {
+      "name": "l_growing",
+      "type": "text",
+      "default": "Growing clients",
+      "label": "l growing"
+    },
+    {
+      "name": "l_growing_sub",
+      "type": "text",
+      "default": "Income up {pct}% or more on the year before - time to offer more: audit, GST, advisory.",
+      "label": "l growing sub"
+    },
+    {
+      "name": "l_shrinking",
+      "type": "text",
+      "default": "Shrinking clients",
+      "label": "l shrinking"
+    },
+    {
+      "name": "l_shrinking_sub",
+      "type": "text",
+      "default": "Income down {pct}% or more - check in early; they may need help or may be leaving.",
+      "label": "l shrinking sub"
+    },
+    {
+      "name": "k_returns",
+      "type": "text",
+      "default": "Returns on record",
+      "label": "k returns"
+    },
+    {
+      "name": "k_returns_sub",
+      "type": "text",
+      "default": "across {years} assessment years",
+      "label": "k returns sub"
+    },
+    {
+      "name": "y_income",
+      "type": "text",
+      "default": "Income handled (Rs lakh)",
+      "label": "y income"
+    },
+    {
+      "name": "lead_none",
+      "type": "text",
+      "default": "None this year.",
+      "label": "lead none"
+    },
+    {
+      "name": "open",
+      "type": "text",
+      "default": "Open",
+      "label": "open"
+    },
+    {
+      "name": "years_title",
+      "type": "text",
+      "default": "Year on year",
+      "label": "years title"
+    },
+    {
+      "name": "years_sub",
+      "type": "text",
+      "default": "Clients and returns filed in each assessment year.",
+      "label": "years sub"
+    },
+    {
+      "name": "y_clients",
+      "type": "text",
+      "default": "Clients",
+      "label": "y clients"
+    },
+    {
+      "name": "y_filed",
+      "type": "text",
+      "default": "Filed",
+      "label": "y filed"
+    },
+    {
+      "name": "note",
+      "type": "text",
+      "default": "Fees are not in SimplyFile yet - add a fee per client-year to see revenue, realisation and fee per hour here.",
+      "label": "note"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "title": "$title",
+      "lede": "$lede",
+      "ay": "$ay",
+      "loading": "$loading",
+      "k_clients": "$k_clients",
+      "k_clients_sub": "$k_clients_sub",
+      "k_filed": "$k_filed",
+      "k_filed_sub": "$k_filed_sub",
+      "k_ontime": "$k_ontime",
+      "k_ontime_sub": "$k_ontime_sub",
+      "k_tax": "$k_tax",
+      "k_tax_sub": "$k_tax_sub",
+      "k_refund": "$k_refund",
+      "k_refund_sub": "$k_refund_sub",
+      "k_interest": "$k_interest",
+      "k_interest_sub": "$k_interest_sub",
+      "due_title": "$due_title",
+      "due_sub": "$due_sub",
+      "b_overdue": "$b_overdue",
+      "b_week": "$b_week",
+      "b_month": "$b_month",
+      "b_later": "$b_later",
+      "b_filed": "$b_filed",
+      "due_none": "$due_none",
+      "h_client": "$h_client",
+      "h_form": "$h_form",
+      "h_due": "$h_due",
+      "h_days": "$h_days",
+      "h_stage": "$h_stage",
+      "h_who": "$h_who",
+      "days_late": "$days_late",
+      "days_left": "$days_left",
+      "pipe_title": "$pipe_title",
+      "pipe_sub": "$pipe_sub",
+      "team_title": "$team_title",
+      "team_sub": "$team_sub",
+      "h_assigned": "$h_assigned",
+      "h_clients": "$h_clients",
+      "h_filed": "$h_filed",
+      "h_open": "$h_open",
+      "h_tax": "$h_tax",
+      "unassigned": "$unassigned",
+      "acts_title": "$acts_title",
+      "acts_sub": "$acts_sub",
+      "w_signed": "$w_signed",
+      "w_filed": "$w_filed",
+      "mix_title": "$mix_title",
+      "mix_form": "$mix_form",
+      "mix_status": "$mix_status",
+      "lead_title": "$lead_title",
+      "lead_sub": "$lead_sub",
+      "l_advance_tax": "$l_advance_tax",
+      "l_advance_tax_sub": "$l_advance_tax_sub",
+      "l_tds_refund": "$l_tds_refund",
+      "l_tds_refund_sub": "$l_tds_refund_sub",
+      "l_late": "$l_late",
+      "l_late_sub": "$l_late_sub",
+      "l_rework": "$l_rework",
+      "l_rework_sub": "$l_rework_sub",
+      "l_open_red": "$l_open_red",
+      "l_open_red_sub": "$l_open_red_sub",
+      "l_not_renewed": "$l_not_renewed",
+      "l_not_renewed_sub": "$l_not_renewed_sub",
+      "l_lapsed": "$l_lapsed",
+      "l_lapsed_sub": "$l_lapsed_sub",
+      "l_growing": "$l_growing",
+      "l_growing_sub": "$l_growing_sub",
+      "l_shrinking": "$l_shrinking",
+      "l_shrinking_sub": "$l_shrinking_sub",
+      "k_returns": "$k_returns",
+      "k_returns_sub": "$k_returns_sub",
+      "y_income": "$y_income",
+      "lead_none": "$lead_none",
+      "open": "$open",
+      "years_title": "$years_title",
+      "years_sub": "$years_sub",
+      "y_clients": "$y_clients",
+      "y_filed": "$y_filed",
+      "note": "$note"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-04: every word on Firm analytics.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "title": "Firm analytics",
+        "lede": "How the practice is doing this assessment year - deadlines, workload, money handled for clients, and where the next work will come from.",
+        "ay": "Assessment year",
+        "loading": "Working out the numbers...",
+        "k_clients": "Clients this year",
+        "k_clients_sub": "{audit} with a tax audit",
+        "k_filed": "Returns filed",
+        "k_filed_sub": "{pct}% of this year's clients",
+        "k_ontime": "Filed on time",
+        "k_ontime_sub": "{pct}% of those filed",
+        "k_tax": "Tax handled",
+        "k_tax_sub": "total tax on the computations",
+        "k_refund": "Refunds for clients",
+        "k_refund_sub": "{ri} as 244A interest",
+        "k_interest": "Interest clients pay",
+        "k_interest_sub": "{bc} of it 234B/C - avoidable with planning",
+        "due_title": "Deadline radar",
+        "due_sub": "Client-years not yet filed, by days to their own due date.",
+        "b_overdue": "Overdue",
+        "b_week": "Due in 7 days",
+        "b_month": "Due in 30 days",
+        "b_later": "Later",
+        "b_filed": "Filed",
+        "due_none": "Nothing open - every client-year is filed.",
+        "h_client": "Client",
+        "h_form": "Form",
+        "h_due": "Due",
+        "h_days": "Days",
+        "h_stage": "Stage",
+        "h_who": "Assigned",
+        "days_late": "{n} late",
+        "days_left": "{n} left",
+        "pipe_title": "Pipeline",
+        "pipe_sub": "Where this year's client-years stand.",
+        "team_title": "Team workload",
+        "team_sub": "Client-years per person assigned, and how many are filed.",
+        "h_assigned": "Person",
+        "h_clients": "Clients",
+        "h_filed": "Filed",
+        "h_open": "Open",
+        "h_tax": "Tax handled",
+        "unassigned": "Not assigned",
+        "acts_title": "Who did what",
+        "acts_sub": "Sign-offs and filings, by the person who did them.",
+        "w_signed": "signed off",
+        "w_filed": "filed",
+        "mix_title": "Practice mix",
+        "mix_form": "By return form",
+        "mix_status": "By status",
+        "lead_title": "Growth opportunities",
+        "lead_sub": "Clients who need more than a return - each one a conversation about an advisory service.",
+        "l_advance_tax": "Advance-tax planning",
+        "l_advance_tax_sub": "Paid 234B/C interest this year. A quarterly advance-tax calendar saves them this.",
+        "l_tds_refund": "Big refunds - too much TDS",
+        "l_tds_refund_sub": "Money locked with the department. A lower-deduction certificate (s.197) or a TDS review frees it.",
+        "l_late": "Late filers",
+        "l_late_sub": "Filed late or will pay 234A. Offer a compliance calendar with reminders.",
+        "l_rework": "Revised and updated returns",
+        "l_rework_sub": "Needed a revision or ITR-U. Review what was missed - a bookkeeping or review engagement.",
+        "l_open_red": "Open mismatches",
+        "l_open_red_sub": "26AS/AIS disagrees with the books and nobody has explained it yet.",
+        "l_not_renewed": "Not yet carried into this year",
+        "l_not_renewed_sub": "Were clients last year, not yet in this year. Call them before someone else does.",
+        "l_lapsed": "Lapsed clients",
+        "l_lapsed_sub": "Filed with you in an earlier year, not last year or this year. A courtesy call often brings them back.",
+        "l_growing": "Growing clients",
+        "l_growing_sub": "Income up {pct}% or more on the year before - time to offer more: audit, GST, advisory.",
+        "l_shrinking": "Shrinking clients",
+        "l_shrinking_sub": "Income down {pct}% or more - check in early; they may need help or may be leaving.",
+        "k_returns": "Returns on record",
+        "k_returns_sub": "across {years} assessment years",
+        "y_income": "Income handled (Rs lakh)",
+        "lead_none": "None this year.",
+        "open": "Open",
+        "years_title": "Year on year",
+        "years_sub": "Clients and returns filed in each assessment year.",
+        "y_clients": "Clients",
+        "y_filed": "Filed",
+        "note": "Fees are not in SimplyFile yet - add a fee per client-year to see revenue, realisation and fee per hour here."
+      }
+    }
+  ]
+}

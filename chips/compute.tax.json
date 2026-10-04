@@ -104,6 +104,12 @@
       "type": "number",
       "default": 60000,
       "label": "rebate at most"
+    },
+    {
+      "name": "resident",
+      "type": "boolean",
+      "default": true,
+      "label": "resident in India (87A is for residents only)"
     }
   ],
   "expr": {
@@ -137,6 +143,11 @@
                   "op": "le",
                   "left": "$income",
                   "right": "$rebate_upto"
+                },
+                {
+                  "op": "eq",
+                  "left": "$resident",
+                  "right": true
                 }
               ]
             },
@@ -354,6 +365,11 @@
                           "op": "le",
                           "left": "$income",
                           "right": "$rebate_upto"
+                        },
+                        {
+                          "op": "eq",
+                          "left": "$resident",
+                          "right": true
                         }
                       ]
                     },
@@ -576,6 +592,11 @@
                               "op": "le",
                               "left": "$income",
                               "right": "$rebate_upto"
+                            },
+                            {
+                              "op": "eq",
+                              "left": "$resident",
+                              "right": true
                             }
                           ]
                         },
@@ -786,6 +807,11 @@
                                   "op": "le",
                                   "left": "$income",
                                   "right": "$rebate_upto"
+                                },
+                                {
+                                  "op": "eq",
+                                  "left": "$resident",
+                                  "right": true
                                 }
                               ]
                             },
@@ -1024,6 +1050,38 @@
         "relief": 0,
         "cess": 0,
         "total": 0
+      }
+    },
+    {
+      "args": {
+        "income": 600000,
+        "status": "individual",
+        "resident": true
+      },
+      "expect_value": {
+        "tax": 10000,
+        "rebate": 10000,
+        "surcharge_rate": 0,
+        "surcharge": 0,
+        "relief": 0,
+        "cess": 0.0,
+        "total": 0
+      }
+    },
+    {
+      "args": {
+        "income": 600000,
+        "status": "individual",
+        "resident": false
+      },
+      "expect_value": {
+        "tax": 10000,
+        "rebate": 0,
+        "surcharge_rate": 0,
+        "surcharge": 0,
+        "relief": 0,
+        "cess": 400.0,
+        "total": 10400
       }
     }
   ]

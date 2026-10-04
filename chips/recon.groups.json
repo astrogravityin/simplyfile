@@ -102,7 +102,7 @@
     {
       "name": "not_income_pattern",
       "type": "text",
-      "default": "(?i)less|repairs|corporation tax|municipal|deduction",
+      "default": "(?i)less|repairs|corporation tax|municipal|deduction|interest on (housing|home) loan|interest on borrowed capital|24 ?\\(b\\)",
       "label": "not income pattern"
     }
   ],
@@ -209,6 +209,15 @@
     {
       "args": {
         "label": "Less: Repairs @ 30%"
+      },
+      "expect_value": {
+        "group": "",
+        "is_income": false
+      }
+    },
+    {
+      "args": {
+        "label": "Interest on housing loan - SBI Home Loans"
       },
       "expect_value": {
         "group": "",

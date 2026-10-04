@@ -1,0 +1,113 @@
+{
+  "chip_id": "page.analytics",
+  "kind": "accessor",
+  "set": "page",
+  "label": "Firm analytics colours",
+  "aliases": [
+    "firm analytics colours"
+  ],
+  "params": [
+    {
+      "name": "bucket_color",
+      "type": "json",
+      "default": {
+        "overdue": "--bad",
+        "week": "--warn",
+        "month": "--brand-2",
+        "later": "--brand",
+        "filed": "--ok"
+      },
+      "label": "bucket color"
+    },
+    {
+      "name": "lead_icon",
+      "type": "json",
+      "default": {
+        "advance_tax": "clock",
+        "tds_refund": "money",
+        "late": "alert",
+        "rework": "edit",
+        "open_red": "check",
+        "not_renewed": "users",
+        "lapsed": "archive",
+        "growing": "pulse",
+        "shrinking": "down"
+      },
+      "label": "lead icon"
+    },
+    {
+      "name": "stage_color",
+      "type": "json",
+      "default": {
+        "collecting": "--line-2",
+        "mapping": "--muted",
+        "reconciling": "--warn",
+        "review": "--brand-2",
+        "signed": "--brand",
+        "filed": "--ok"
+      },
+      "label": "stage color"
+    },
+    {
+      "name": "money_locale",
+      "type": "text",
+      "default": "en-IN",
+      "label": "money locale"
+    },
+    {
+      "name": "radar_rows",
+      "type": "json",
+      "default": 12,
+      "label": "radar rows"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "bucket_color": "$bucket_color",
+      "lead_icon": "$lead_icon",
+      "stage_color": "$stage_color",
+      "money_locale": "$money_locale",
+      "radar_rows": "$radar_rows"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-04: the deadline colours and lead icons on Firm analytics.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "bucket_color": {
+          "overdue": "--bad",
+          "week": "--warn",
+          "month": "--brand-2",
+          "later": "--brand",
+          "filed": "--ok"
+        },
+        "lead_icon": {
+          "advance_tax": "clock",
+          "tds_refund": "money",
+          "late": "alert",
+          "rework": "edit",
+          "open_red": "check",
+          "not_renewed": "users",
+          "lapsed": "archive",
+          "growing": "pulse",
+          "shrinking": "down"
+        },
+        "stage_color": {
+          "collecting": "--line-2",
+          "mapping": "--muted",
+          "reconciling": "--warn",
+          "review": "--brand-2",
+          "signed": "--brand",
+          "filed": "--ok"
+        },
+        "money_locale": "en-IN",
+        "radar_rows": 12
+      }
+    }
+  ]
+}

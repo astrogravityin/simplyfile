@@ -18,7 +18,7 @@ import subprocess
 from html import escape
 from pathlib import Path
 
-from fastapi import Body, Depends, FastAPI, File, HTTPException, Request, Response, UploadFile
+from fastapi import Body, Depends, FastAPI, File, Form, HTTPException, Request, Response, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import (FileResponse, HTMLResponse, JSONResponse, PlainTextResponse)
 from fastapi.staticfiles import StaticFiles
@@ -61,6 +61,8 @@ import intake
 import recon
 import compute
 import itr_json
+import analytics
+import itr_import
 import providers
 import keyshare
 import keysales
@@ -858,6 +860,34 @@ def api_firm_team_role(uid: str, body: dict = Body(...), u: dict = Depends(scree
 @app.delete("/api/firm/team/{uid}")
 def api_firm_team_remove(uid: str, u: dict = Depends(screen("firm"))):
     return firms.set_member(u, uid, None)
+
+
+@app.post("/api/itrimport/read")
+async def api_itrimport_read(file: UploadFile = File(...), u: dict = Depends(firms.gate("itrimport"))):
+    """Step 1 of Import old returns: what the ITR JSON says, and which client has its PAN - nothing is written."""
+    data = await upload_bytes(u, file, itr_import.settings()["max_kb"] * 1024 + 1)
+    return await run_in_threadpool(itr_import.preview, u, data)
+
+
+@app.post("/api/itrimport")
+async def api_itrimport(file: UploadFile = File(...), body: str = Form("{}"), u: dict = Depends(firms.gate("itrimport"))):
+    """Steps 2-3: record the return as filed for the chosen (or a new) client; chip itr.import_ok refuses or replaces."""
+    data = await upload_bytes(u, file, itr_import.settings()["max_kb"] * 1024 + 1)
+    return await run_in_threadpool(itr_import.commit, u, data, json.loads(body or "{}"))
+
+
+@app.get("/api/itrimport/{cid}/{ay}/statement")
+def api_itrimport_statement(cid: str, ay: str, which: str = "filed", _: dict = Depends(firms.gate("itrimport"))):
+    """Step 4: the return's statement as filed, or next year's statement to fill - an Excel SimplyFile reads."""
+    name, data = itr_import.statement_xlsx(cid, ay, "next" if which == "next" else "filed")
+    return Response(data, media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    headers=named(name.removesuffix(".xlsx"), ".xlsx"))
+
+
+@app.get("/api/analytics")
+def api_analytics(ay: str = "", u: dict = Depends(firms.gate("analytics"))):
+    """Firm analytics for one assessment year: deadlines, workload, money handled, advisory leads (chips analytics.*)."""
+    return analytics.report(u, ay)
 
 
 @app.get("/api/approvals")

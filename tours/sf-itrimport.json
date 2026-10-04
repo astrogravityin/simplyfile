@@ -1,0 +1,77 @@
+{
+  "prod_base": "https://sf.valuestream.in",
+  "voice": "en-IN-NeerjaNeural",
+  "rate": "+0%",
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "blur": [
+    "#whoami",
+    "#userpop .head"
+  ],
+  "page_key": "sf-itrimport",
+  "title": "Import old returns",
+  "start_url": "/#/itrimport",
+  "covers": [
+    "uploading an ITR JSON",
+    "matching it to a client or creating one",
+    "recording it as filed",
+    "next year's statement"
+  ],
+  "steps": [
+    {
+      "chapter": "Import old returns",
+      "say": "Bring a client's past returns into SimplyFile - the return as filed, the client record and next year's statement ready to fill.",
+      "do": [
+        {
+          "wait": 1
+        }
+      ]
+    },
+    {
+      "chapter": "Upload the return",
+      "say": "The ITR JSON as filed - from incometax.gov.in or the offline utility. SimplyFile reads the form, the year, the person and every figure.",
+      "do": [
+        {
+          "highlight_target": "#ii-file|main",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Whose return?",
+      "say": "The client with the same PAN is picked for you. No such client? Create one from the return - and start this year for them if they have not come yet.",
+      "do": [
+        {
+          "highlight_target": ".ii-card|main",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Record it as filed",
+      "say": "Give the acknowledgement number and the date filed. A revised or updated return takes the place of the one standing; the same return twice is refused.",
+      "do": [
+        {
+          "highlight_target": "#ii-ack|.ii-card|main",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "The statements",
+      "say": "Download the statement as filed, and next year's statement with last year's figures beside each line - ready to fill and upload.",
+      "do": [
+        {
+          "highlight_target": ".ii-dl|main",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,408 @@
+{
+  "chip_id": "analytics.client",
+  "kind": "accessor",
+  "set": "analytics",
+  "label": "One client-year for firm analytics",
+  "aliases": [
+    "one client-year for firm analytics"
+  ],
+  "params": [
+    {
+      "name": "filed",
+      "type": "boolean",
+      "default": false,
+      "label": "a return stands for the year"
+    },
+    {
+      "name": "days_left",
+      "type": "number",
+      "default": 0,
+      "label": "days from today to the due date"
+    },
+    {
+      "name": "first_kind",
+      "type": "text",
+      "default": "",
+      "label": "the kind of the first return filed"
+    },
+    {
+      "name": "kinds",
+      "type": "json",
+      "default": [],
+      "label": "every return kind filed"
+    },
+    {
+      "name": "interest_a",
+      "type": "number",
+      "default": 0,
+      "label": "234A"
+    },
+    {
+      "name": "interest_bc",
+      "type": "number",
+      "default": 0,
+      "label": "234B + 234C"
+    },
+    {
+      "name": "refund",
+      "type": "number",
+      "default": 0,
+      "label": "refund due"
+    },
+    {
+      "name": "open_red",
+      "type": "number",
+      "default": 0,
+      "label": "unexplained red findings"
+    },
+    {
+      "name": "week_days",
+      "type": "number",
+      "default": 7,
+      "label": ""
+    },
+    {
+      "name": "month_days",
+      "type": "number",
+      "default": 30,
+      "label": ""
+    },
+    {
+      "name": "refund_lead_min",
+      "type": "number",
+      "default": 50000,
+      "label": ""
+    },
+    {
+      "name": "interest_lead_min",
+      "type": "number",
+      "default": 1,
+      "label": ""
+    },
+    {
+      "name": "on_time_kinds",
+      "type": "json",
+      "default": [
+        "original"
+      ],
+      "label": ""
+    },
+    {
+      "name": "late_kinds",
+      "type": "json",
+      "default": [
+        "belated"
+      ],
+      "label": ""
+    },
+    {
+      "name": "rework_kinds",
+      "type": "json",
+      "default": [
+        "revised",
+        "updated"
+      ],
+      "label": ""
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "bucket": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "eq",
+              "left": "$filed",
+              "right": true
+            },
+            "then": "filed"
+          },
+          {
+            "when": {
+              "op": "lt",
+              "left": "$days_left",
+              "right": 0
+            },
+            "then": "overdue"
+          },
+          {
+            "when": {
+              "op": "le",
+              "left": "$days_left",
+              "right": "$week_days"
+            },
+            "then": "week"
+          },
+          {
+            "when": {
+              "op": "le",
+              "left": "$days_left",
+              "right": "$month_days"
+            },
+            "then": "month"
+          }
+        ],
+        "else": "later"
+      },
+      "on_time": {
+        "op": "all",
+        "items": [
+          {
+            "op": "eq",
+            "left": "$filed",
+            "right": true
+          },
+          {
+            "op": "in_set",
+            "value": "$first_kind",
+            "set": "$on_time_kinds"
+          }
+        ]
+      },
+      "late": {
+        "op": "any",
+        "items": [
+          {
+            "op": "in_set",
+            "value": "$first_kind",
+            "set": "$late_kinds"
+          },
+          {
+            "op": "all",
+            "items": [
+              {
+                "op": "eq",
+                "left": "$filed",
+                "right": false
+              },
+              {
+                "op": "gt",
+                "left": "$interest_a",
+                "right": 0
+              }
+            ]
+          }
+        ]
+      },
+      "advance_tax": {
+        "op": "ge",
+        "left": "$interest_bc",
+        "right": "$interest_lead_min"
+      },
+      "tds_refund": {
+        "op": "ge",
+        "left": "$refund",
+        "right": "$refund_lead_min"
+      },
+      "rework": {
+        "op": "gt",
+        "left": {
+          "vop": "count",
+          "items": {
+            "vop": "missing",
+            "want": "$kinds",
+            "have": {
+              "vop": "missing",
+              "want": "$kinds",
+              "have": "$rework_kinds"
+            }
+          }
+        },
+        "right": 0
+      },
+      "open_red": {
+        "op": "gt",
+        "left": "$open_red",
+        "right": 0
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-04: where a client-year stands against its due date, and which advisory leads it raises.",
+  "test_cases": [
+    {
+      "args": {
+        "week_days": 7,
+        "month_days": 30,
+        "refund_lead_min": 50000,
+        "interest_lead_min": 1,
+        "on_time_kinds": [
+          "original"
+        ],
+        "late_kinds": [
+          "belated"
+        ],
+        "rework_kinds": [
+          "revised",
+          "updated"
+        ],
+        "filed": true,
+        "days_left": -40,
+        "first_kind": "original",
+        "kinds": [
+          "original"
+        ],
+        "interest_a": 0,
+        "interest_bc": 0,
+        "refund": 66360,
+        "open_red": 0
+      },
+      "expect_value": {
+        "bucket": "filed",
+        "on_time": true,
+        "late": false,
+        "advance_tax": false,
+        "tds_refund": true,
+        "rework": false,
+        "open_red": false
+      }
+    },
+    {
+      "args": {
+        "week_days": 7,
+        "month_days": 30,
+        "refund_lead_min": 50000,
+        "interest_lead_min": 1,
+        "on_time_kinds": [
+          "original"
+        ],
+        "late_kinds": [
+          "belated"
+        ],
+        "rework_kinds": [
+          "revised",
+          "updated"
+        ],
+        "filed": false,
+        "days_left": -3,
+        "first_kind": "",
+        "kinds": [],
+        "interest_a": 571,
+        "interest_bc": 0,
+        "refund": 0,
+        "open_red": 0
+      },
+      "expect_value": {
+        "bucket": "overdue",
+        "on_time": false,
+        "late": true,
+        "advance_tax": false,
+        "tds_refund": false,
+        "rework": false,
+        "open_red": false
+      }
+    },
+    {
+      "args": {
+        "week_days": 7,
+        "month_days": 30,
+        "refund_lead_min": 50000,
+        "interest_lead_min": 1,
+        "on_time_kinds": [
+          "original"
+        ],
+        "late_kinds": [
+          "belated"
+        ],
+        "rework_kinds": [
+          "revised",
+          "updated"
+        ],
+        "filed": false,
+        "days_left": 5,
+        "first_kind": "",
+        "kinds": [],
+        "interest_a": 0,
+        "interest_bc": 36485,
+        "refund": 0,
+        "open_red": 2
+      },
+      "expect_value": {
+        "bucket": "week",
+        "on_time": false,
+        "late": false,
+        "advance_tax": true,
+        "tds_refund": false,
+        "rework": false,
+        "open_red": true
+      }
+    },
+    {
+      "args": {
+        "week_days": 7,
+        "month_days": 30,
+        "refund_lead_min": 50000,
+        "interest_lead_min": 1,
+        "on_time_kinds": [
+          "original"
+        ],
+        "late_kinds": [
+          "belated"
+        ],
+        "rework_kinds": [
+          "revised",
+          "updated"
+        ],
+        "filed": false,
+        "days_left": 20,
+        "first_kind": "",
+        "kinds": [],
+        "interest_a": 0,
+        "interest_bc": 0,
+        "refund": 0,
+        "open_red": 0
+      },
+      "expect_value": {
+        "bucket": "month",
+        "on_time": false,
+        "late": false,
+        "advance_tax": false,
+        "tds_refund": false,
+        "rework": false,
+        "open_red": false
+      }
+    },
+    {
+      "args": {
+        "week_days": 7,
+        "month_days": 30,
+        "refund_lead_min": 50000,
+        "interest_lead_min": 1,
+        "on_time_kinds": [
+          "original"
+        ],
+        "late_kinds": [
+          "belated"
+        ],
+        "rework_kinds": [
+          "revised",
+          "updated"
+        ],
+        "filed": true,
+        "days_left": -400,
+        "first_kind": "original",
+        "kinds": [
+          "original",
+          "updated"
+        ],
+        "interest_a": 0,
+        "interest_bc": 0,
+        "refund": 0,
+        "open_red": 0
+      },
+      "expect_value": {
+        "bucket": "filed",
+        "on_time": true,
+        "late": false,
+        "advance_tax": false,
+        "tds_refund": false,
+        "rework": true,
+        "open_red": false
+      }
+    }
+  ]
+}

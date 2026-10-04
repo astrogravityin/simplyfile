@@ -162,7 +162,7 @@ function editor(c, reload) {
       const v = (id) => $(id).value;
       const data = { name: v('#c-name'), relation: v('#c-relation'), status: v('#c-status'), pan: v('#c-pan'),
         email: v('#c-email'), phone: v('#c-phone'), gst: v('#c-gst'), address: v('#c-address'), notes: v('#c-notes'), dob: v('#c-dob'), father: v('#c-father'), signer_pan: v('#c-signer'), nri: $('#c-nri').checked,
-        banks: read('bank'), partners: read('partner') };
+        banks: read('bank'), partners: read('partner'), ay: AY };
       try {
         await api(isNew ? '/api/clients' : `/api/clients/${c.id}`, { method: isNew ? 'POST' : 'PUT', body: data });
         toast(w('saved'), 'ok'); close(true); reload();
