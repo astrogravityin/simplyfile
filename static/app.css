@@ -1439,10 +1439,15 @@ button.sf-use:hover{border-style:solid}
 .cl-stage{display:flex;flex-direction:column;gap:5px;font-size:12px;font-weight:650;color:var(--ink-2)}
 .cl-step{display:block}
 .cl-acts{display:flex;gap:6px;justify-content:flex-end}
+/* 2026-10-04 multi-select: a tick box before the avatar when the person may archive */
+.cl-row.has-pick{grid-template-columns:auto auto minmax(0,1.6fr) minmax(160px,1fr) auto}
+.cl-pick{display:flex;align-items:center}.cl-pick input{width:18px;height:18px;margin:0}
+.cl-bulk{padding:8px 4px;flex-wrap:wrap;align-items:center;gap:10px}
 .cl-ay span{white-space:nowrap}
 @media (max-width:1180px){.cl-kpis{grid-template-columns:repeat(3,minmax(0,1fr))}.cl-kpis .sf-kpi-wide{grid-column:1/-1}}
 @media (max-width:640px){.sf-kpis{gap:8px;grid-template-columns:1fr 1fr}.cl-kpis{grid-template-columns:1fr 1fr}.sf-kpi{padding:12px;gap:6px}.cl-ay span{display:none}
   .cl-row{grid-template-columns:auto minmax(0,1fr);row-gap:8px}.cl-stage,.cl-acts{grid-column:2}.cl-acts{justify-content:flex-start}
+  .cl-row.has-pick{grid-template-columns:auto auto minmax(0,1fr)}.cl-row.has-pick .cl-stage,.cl-row.has-pick .cl-acts{grid-column:3}
   .cl-tabs{min-width:0;width:100%}}
 
 /* ---- Reconcile: books against the portal (2026-10-04 owner: facelift with SVG) ---- */

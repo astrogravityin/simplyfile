@@ -522,6 +522,101 @@
       "type": "text",
       "default": "PAN of the person who signs (karta / partner; blank for self)",
       "label": "f_signer_pan"
+    },
+    {
+      "name": "pick_all",
+      "type": "text",
+      "default": "Select all on this page"
+    },
+    {
+      "name": "picked_n",
+      "type": "text",
+      "default": "{n} selected"
+    },
+    {
+      "name": "archive_picked",
+      "type": "text",
+      "default": "Archive selected"
+    },
+    {
+      "name": "restore_picked",
+      "type": "text",
+      "default": "Restore selected"
+    },
+    {
+      "name": "clear_picked",
+      "type": "text",
+      "default": "Clear"
+    },
+    {
+      "name": "archive_many_title",
+      "type": "text",
+      "default": "Archive {n} clients?"
+    },
+    {
+      "name": "archive_many_body",
+      "type": "text",
+      "default": "They move to the Archived tab with every filing of theirs. Nothing is deleted - Restore brings them and those filings back."
+    },
+    {
+      "name": "archived_n",
+      "type": "text",
+      "default": "{n} archived"
+    },
+    {
+      "name": "restored_n",
+      "type": "text",
+      "default": "{n} restored"
+    },
+    {
+      "name": "bulk_too_many",
+      "type": "text",
+      "default": "At most {max} clients at a time."
+    },
+    {
+      "name": "archive_filing",
+      "type": "text",
+      "default": "Archive this filing"
+    },
+    {
+      "name": "restore_filing",
+      "type": "text",
+      "default": "Restore this filing"
+    },
+    {
+      "name": "archive_filing_title",
+      "type": "text",
+      "default": "Archive the {ay} filing of {name}?"
+    },
+    {
+      "name": "archive_filing_body",
+      "type": "text",
+      "default": "Only this year's filing moves to the Archived tab; {name} stays active with every other year. Nothing is deleted."
+    },
+    {
+      "name": "filing_archived",
+      "type": "text",
+      "default": "Filing archived"
+    },
+    {
+      "name": "filing_archived_tag",
+      "type": "text",
+      "default": "{ay} filing archived"
+    },
+    {
+      "name": "filing_restored",
+      "type": "text",
+      "default": "Filing restored"
+    },
+    {
+      "name": "parent_archived",
+      "type": "text",
+      "default": "{name} is archived - restore the client first; its filings come back with it."
+    },
+    {
+      "name": "no_filing",
+      "type": "text",
+      "default": "{name} has no {ay} filing."
     }
   ],
   "expr": {
@@ -612,13 +707,32 @@
       "f_nri": "$f_nri",
       "bad_dob": "$bad_dob",
       "f_father": "$f_father",
-      "f_signer_pan": "$f_signer_pan"
+      "f_signer_pan": "$f_signer_pan",
+      "pick_all": "$pick_all",
+      "picked_n": "$picked_n",
+      "archive_picked": "$archive_picked",
+      "restore_picked": "$restore_picked",
+      "clear_picked": "$clear_picked",
+      "archive_many_title": "$archive_many_title",
+      "archive_many_body": "$archive_many_body",
+      "archived_n": "$archived_n",
+      "restored_n": "$restored_n",
+      "bulk_too_many": "$bulk_too_many",
+      "archive_filing": "$archive_filing",
+      "restore_filing": "$restore_filing",
+      "archive_filing_title": "$archive_filing_title",
+      "archive_filing_body": "$archive_filing_body",
+      "filing_archived": "$filing_archived",
+      "filing_archived_tag": "$filing_archived_tag",
+      "filing_restored": "$filing_restored",
+      "parent_archived": "$parent_archived",
+      "no_filing": "$no_filing"
     }
   },
   "returns": "record",
-  "version": 1,
+  "version": 2,
   "status": "published",
-  "description_nl": "The words of the Clients & years screen and its error sentences. {placeholders} are filled on the page.",
+  "description_nl": "The words of the Clients & years screen and its error sentences. {placeholders} are filled on the page. 2026-10-04 owner: \"multi select and move to Archive; archive a client -> all its filings; archive a filing alone -> the client stays; parent archived -> child archived\".",
   "test_cases": [
     {
       "args": {},
@@ -708,7 +822,26 @@
         "f_nri": "Non-resident this year",
         "bad_dob": "Date of birth {dob} is not a date (yyyy-mm-dd).",
         "f_father": "Father's name of the person who signs (self / karta / partner)",
-        "f_signer_pan": "PAN of the person who signs (karta / partner; blank for self)"
+        "f_signer_pan": "PAN of the person who signs (karta / partner; blank for self)",
+        "pick_all": "Select all on this page",
+        "picked_n": "{n} selected",
+        "archive_picked": "Archive selected",
+        "restore_picked": "Restore selected",
+        "clear_picked": "Clear",
+        "archive_many_title": "Archive {n} clients?",
+        "archive_many_body": "They move to the Archived tab with every filing of theirs. Nothing is deleted - Restore brings them and those filings back.",
+        "archived_n": "{n} archived",
+        "restored_n": "{n} restored",
+        "bulk_too_many": "At most {max} clients at a time.",
+        "archive_filing": "Archive this filing",
+        "restore_filing": "Restore this filing",
+        "archive_filing_title": "Archive the {ay} filing of {name}?",
+        "archive_filing_body": "Only this year's filing moves to the Archived tab; {name} stays active with every other year. Nothing is deleted.",
+        "filing_archived": "Filing archived",
+        "filing_archived_tag": "{ay} filing archived",
+        "filing_restored": "Filing restored",
+        "parent_archived": "{name} is archived - restore the client first; its filings come back with it.",
+        "no_filing": "{name} has no {ay} filing."
       }
     }
   ]

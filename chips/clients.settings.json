@@ -142,6 +142,18 @@
         "year_field": 60
       },
       "label": "max len"
+    },
+    {
+      "name": "bulk_max",
+      "type": "number",
+      "default": 500,
+      "label": "most clients one Archive / Restore press may move"
+    },
+    {
+      "name": "with_parent",
+      "type": "text",
+      "default": "client",
+      "label": "a filing archived BECAUSE its client was - Restore of the client brings exactly these back"
     }
   ],
   "expr": {
@@ -152,13 +164,15 @@
       "current_ay": "$current_ay",
       "years": "$years",
       "stages": "$stages",
-      "max_len": "$max_len"
+      "max_len": "$max_len",
+      "bulk_max": "$bulk_max",
+      "with_parent": "$with_parent"
     }
   },
   "returns": "record",
-  "version": 1,
+  "version": 2,
   "status": "published",
-  "description_nl": "Which statuses an assessee can have (with the PAN 4th letter and the ITR form each files), the PAN / GSTIN / IFSC shapes, the assessment years on offer and the stages a year moves through. An LLP's PAN carries F, like a firm.",
+  "description_nl": "Which statuses an assessee can have (with the PAN 4th letter and the ITR form each files), the PAN / GSTIN / IFSC shapes, the assessment years on offer and the stages a year moves through. An LLP's PAN carries F, like a firm. 2026-10-04 owner: \"multi select and move to Archive; archive a client -> all its filings; archive a filing alone -> the client stays; parent archived -> child archived\".",
   "test_cases": [
     {
       "args": {},
@@ -268,7 +282,9 @@
           "share": 10,
           "notes": 1000,
           "year_field": 60
-        }
+        },
+        "bulk_max": 500,
+        "with_parent": "client"
       }
     }
   ]

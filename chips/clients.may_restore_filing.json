@@ -1,0 +1,43 @@
+{
+  "chip_id": "clients.may_restore_filing",
+  "kind": "predicate",
+  "set": "clients",
+  "label": "May this filing come back (a child never stays live under an archived client)",
+  "aliases": [
+    "may restore filing"
+  ],
+  "params": [
+    {
+      "name": "client_archived",
+      "type": "boolean",
+      "default": false,
+      "label": "its client is archived"
+    }
+  ],
+  "expr": {
+    "op": "not",
+    "item": {
+      "op": "eq",
+      "left": "$client_archived",
+      "right": true
+    }
+  },
+  "returns": "boolean",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-04 owner: \"multi select and move to Archive; archive a client -> all its filings; archive a filing alone -> the client stays; parent archived -> child archived\".",
+  "test_cases": [
+    {
+      "args": {
+        "client_archived": true
+      },
+      "expect_value": false
+    },
+    {
+      "args": {
+        "client_archived": false
+      },
+      "expect_value": true
+    }
+  ]
+}

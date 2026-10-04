@@ -1088,6 +1088,18 @@ def api_clients_year(cid: str, ay: str, body: dict = Body(...), u: dict = Depend
     return clients.set_year(u, cid, ay, body)        # form, 3CD audit, preparer; the stage moves by itself
 
 
+@app.post("/api/clients/archive")
+def api_clients_archive_many(body: dict = Body(...), u: dict = Depends(firms.gate("clients", "archive"))):
+    """The ticked clients at once - each with every filing of theirs (2026-10-04 owner)."""
+    return clients.archive_many(u, list(body.get("ids") or []), bool(body.get("archived", True)))
+
+
+@app.post("/api/clients/{cid}/years/{ay}/archive")
+def api_clients_year_archive(cid: str, ay: str, body: dict = Body(...), u: dict = Depends(firms.gate("clients", "archive"))):
+    """One year's filing alone - the client stays active."""
+    return clients.archive_year(u, cid, ay, bool(body.get("archived", True)))
+
+
 @app.post("/api/clients/{cid}/archive")
 def api_clients_archive(cid: str, body: dict = Body(...), u: dict = Depends(firms.gate("clients", "archive"))):
     return clients.archive(u, cid, bool(body.get("archived", True)))

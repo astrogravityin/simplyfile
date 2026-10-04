@@ -72,7 +72,7 @@ def report(user: dict, ay: str = "") -> dict:
     live = [c for c in clients._mine(user) if not c.get("archived_at")]
     rows, acts = [], []
     for c in live:
-        if ay in (c.get("years") or {}):
+        if ay in clients.live_years(c):          # an archived filing is off the radar (2026-10-04)
             r, a = _one(c, ay, k, today)
             rows.append(r)
             acts += a
@@ -82,10 +82,10 @@ def report(user: dict, ay: str = "") -> dict:
             return (cur.get("figures") or {}).get("income") or 0
         return next((r["income"] for r in rows if r["id"] == c["id"]), 0) if a == ay else 0
     history = [{"ay": a, "id": c["id"], "filed_n": 1 if compute.current_filing(c["years"][a]) else 0, "income": income_of(c, a)}
-               for a in cs["years"] for c in live if a in (c.get("years") or {}) and a <= ay]
-    prev_ids = [c["id"] for c in live if _prev(ay) in (c.get("years") or {})]
-    older_ids = [c["id"] for c in live if any(a < _prev(ay) for a in (c.get("years") or {}))]
-    recent_ids = [c["id"] for c in live if {_prev(ay), ay} & set(c.get("years") or {})]
+               for a in cs["years"] for c in live if a in clients.live_years(c) and a <= ay]
+    prev_ids = [c["id"] for c in live if _prev(ay) in clients.live_years(c)]
+    older_ids = [c["id"] for c in live if any(a < _prev(ay) for a in clients.live_years(c))]
+    recent_ids = [c["id"] for c in live if {_prev(ay), ay} & set(clients.live_years(c))]
     roll = engine.run("analytics.rollup", {"rows": rows, "prev_ids": prev_ids, "history": history, "acts": acts,
                                            "older_ids": older_ids, "recent_ids": recent_ids})
     names = {c["id"]: c["name"] for c in live}

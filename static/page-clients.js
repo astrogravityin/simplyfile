@@ -8,7 +8,8 @@ import { icon } from './icons.js';
 const w = (k, v) => t('clients', k, v);
 let K = null;      // chip clients.settings
 let AY = '';
-let VIEW = '';     // '' = active clients, 'archived' = the Archived tab
+let VIEW = '';
+const PICKED = new Map();   // 2026-10-04 owner "multi select and move to Archive": id -> its row, across pages     // '' = active clients, 'archived' = the Archived tab
 
 const field = (id, label, value = '', attrs = '') => `<div class="field"><label for="${id}">${esc(label)}</label>
   <input id="${id}" value="${esc(value)}" ${attrs}/></div>`;
@@ -69,8 +70,45 @@ export async function clientsPage(host) {
     + '<section class="sf-kpis cl-kpis" id="cl-kpis" aria-live="polite"></section>'
     + `<section class="card cl-card"><div class="cl-bar"><div class="tabs cl-tabs" role="tablist">${[['', 'tab_active', 'active'], ['archived', 'tab_archived', 'archived']].map(([id, label, n]) =>
       `<button type="button" role="tab" data-view="${id}" data-n="${n}" class="${VIEW === id ? 'on' : ''}" aria-selected="${VIEW === id}">${esc(w(label))}<span class="cl-count"></span></button>`).join('')}</div></div>
-      <div id="cl-list"></div></section>`;
-  host.querySelectorAll('[data-view]').forEach((b) => { b.onclick = () => { VIEW = b.dataset.view; clientsPage(host); }; });
+      <div class="row tight cl-bulk" id="cl-bulk" hidden></div><div id="cl-list"></div></section>`;
+  host.querySelectorAll('[data-view]').forEach((b) => { b.onclick = () => { VIEW = b.dataset.view; PICKED.clear(); clientsPage(host); }; });
+  const canPick = may('clients', 'archive');
+  const bar = () => {
+    const box = host.querySelector('#cl-bulk');
+    if (!box) return;
+    const n = PICKED.size;
+    box.hidden = !canPick;
+    box.innerHTML = `<label class="check small"><input type="checkbox" id="cl-pick-all"/> <span>${esc(w('pick_all'))}</span></label>
+      <span class="small muted">${esc(w('picked_n', { n }))}</span>
+      ${VIEW ? `<button type="button" class="small" id="cl-restore-picked">${icon('refresh', 13)} ${esc(w('restore_picked'))}</button>`
+        : `<button type="button" class="small" id="cl-archive-picked">${icon('archive', 13)} ${esc(w('archive_picked'))}</button>`}
+      ${n ? `<button type="button" class="small ghost" id="cl-clear-picked">${esc(w('clear_picked'))}</button>` : ''}`;
+    const all = box.querySelector('#cl-pick-all');
+    const shown = [...host.querySelectorAll('#cl-list [data-pick]')];
+    all.checked = shown.length > 0 && shown.every((x) => x.checked);
+    all.onchange = () => { shown.forEach((x) => { x.checked = all.checked; x.onchange(); }); };
+    const clear = box.querySelector('#cl-clear-picked');
+    if (clear) clear.onclick = () => { PICKED.clear(); draw(); };
+    const nothing = () => toast(w(VIEW ? 'restore_picked' : 'archive_picked') + ' - ' + w('picked_n', { n: 0 }), 'warn');
+    const arch = box.querySelector('#cl-archive-picked');
+    if (arch) arch.onclick = () => (!n ? nothing() : confirmDialog(w('archive_many_title', { n }), w('archive_many_body'), async () => {
+      try { const r = await api('/api/clients/archive', { method: 'POST', body: { ids: [...PICKED.keys()], archived: true } }); toast(r.message, 'ok'); PICKED.clear(); draw(); }
+      catch (err) { toast(err.message, 'bad', 8); }
+    }, w('archive_picked'), { tone: 'warn' }));
+    const rest = box.querySelector('#cl-restore-picked');
+    // a picked row is an archived client (it comes back with its filings) or a filing archived on its own (that filing comes back)
+    if (rest) rest.onclick = (e) => (!n ? nothing() : busy(e.currentTarget, async () => {
+      const rows = [...PICKED.values()];
+      try {
+        const ids = rows.filter((r) => r.archived_at).map((r) => r.id);
+        if (ids.length) await api('/api/clients/archive', { method: 'POST', body: { ids, archived: false } });
+        for (const r of rows.filter((x) => !x.archived_at && x.year_archived)) {
+          await api(`/api/clients/${r.id}/years/${encodeURIComponent(AY)}/archive`, { method: 'POST', body: { archived: false } });
+        }
+        toast(w('restored_n', { n: rows.length }), 'ok'); PICKED.clear(); draw();
+      } catch (err) { toast(err.message, 'bad', 8); draw(); }
+    }));
+  };
   const head = async () => {
     const sum = await api(`/api/clients/summary?ay=${encodeURIComponent(AY)}`);
     host.querySelector('#cl-kpis').innerHTML = kpis(sum);
@@ -80,19 +118,27 @@ export async function clientsPage(host) {
     list: 'clients',
     args: { ay: AY, view: VIEW },
     empty: w(VIEW ? 'empty_archived' : 'empty'),
-    row: (r) => `<div class="cl-row" data-id="${esc(r.id)}">
+    row: (r) => `<div class="cl-row${canPick ? ' has-pick' : ''}" data-id="${esc(r.id)}">
+      ${canPick ? `<label class="cl-pick"><input type="checkbox" data-pick="${esc(r.id)}" ${PICKED.has(r.id) ? 'checked' : ''} aria-label="${esc(r.name)}"/></label>` : ''}
       <span class="cl-av" style="--h:${hue(r.name)}" aria-hidden="true">${esc(initials(r.name))}</span>
       <div class="cl-main"><div class="cl-name">${esc(r.name)}
           ${r.archived_at ? `<span class="tag">${esc(w('archived_tag'))}</span>` : ''}
+          ${r.year_archived && !r.archived_at ? `<span class="tag warn">${esc(w('filing_archived_tag', { ay: AY }))}</span>` : ''}
           ${r.audit ? `<span class="tag brand">${icon('shield', 11)} ${esc(w('audit_tag'))}</span>` : ''}</div>
         <div class="cl-meta"><code>${esc(r.pan)}</code><span>${esc(r.status)}</span><span>${esc(r.form)}</span></div></div>
       <div class="cl-stage">${r.in_year ? `${stepper(r.stage)}<span>${esc(stageOf(r.stage).label)}</span>`
         : `<span class="muted">${esc(w('not_in_year', { ay: AY }))}</span>`}</div>
       <div class="cl-acts">${may('intake') ? `<a class="small ghost button" href="#/intake?c=${esc(r.id)}&ay=${esc(AY)}">${icon('upload', 13)} ${esc(w('intake'))}</a>` : ''}
         <button type="button" class="small" data-open>${icon('edit', 13)} ${esc(w('edit'))}</button></div></div>`,
-    wire: (rows, _r, load) => rows.querySelectorAll('[data-id]').forEach((el) => {
-      el.querySelector('[data-open]').onclick = async () => editor(await api(`/api/clients/${el.dataset.id}`), () => { load(); head(); });
-    }),
+    wire: (rows, list, load) => {
+      rows.querySelectorAll('[data-id]').forEach((el) => {
+        el.querySelector('[data-open]').onclick = async () => editor(await api(`/api/clients/${el.dataset.id}`), () => { load(); head(); });
+        const cb = el.querySelector('[data-pick]');
+        const r = ((list && list.rows) || []).find((x) => x.id === el.dataset.id) || { id: el.dataset.id };
+        if (cb) cb.onchange = () => { if (cb.checked) PICKED.set(r.id, r); else PICKED.delete(r.id); bar(); };
+      });
+      bar();
+    },
   }); };
   host.querySelector('#cl-ay').onchange = (e) => { AY = e.target.value; draw(); };
   host.querySelector('#cl-new').onclick = () => editor(null, draw);
@@ -123,7 +169,10 @@ function editor(c, reload) {
       <label class="check" style="align-self:end;min-height:40px"><input type="checkbox" id="y-audit" ${y.audit ? 'checked' : ''}/> <span>${esc(w('y_audit'))}</span></label>
       <label class="check" style="align-self:end;min-height:40px"><input type="checkbox" id="y-tp" ${y.tp ? 'checked' : ''}/> <span>${esc(w('y_tp'))}</span></label>
       <label class="check" style="align-self:end;min-height:40px"><input type="checkbox" id="y-pres" ${y.presumptive ? 'checked' : ''}/> <span>${esc(w('y_presumptive'))}</span></label>`)
-      + `<div class="row tight" style="margin-top:10px"><button type="button" id="y-save">${icon('save', 14)} ${esc(w('save_year'))}</button></div>`
+      + `<div class="row tight" style="margin-top:10px"><button type="button" id="y-save">${icon('save', 14)} ${esc(w('save_year'))}</button>
+        ${may('clients', 'archive') ? (y.archived_at ? `<button type="button" id="y-restore">${icon('refresh', 14)} ${esc(w('restore_filing'))}</button>`
+          : `<button type="button" id="y-archive">${icon('archive', 14)} ${esc(w('archive_filing'))}</button>`) : ''}
+        ${y.archived_at ? `<span class="tag warn">${esc(w('filing_archived_tag', { ay: AY }))}</span>` : ''}</div>`
       : `<button type="button" id="y-add">${icon('plus', 14)} ${esc(w('add_to_year', { ay: AY }))}</button>`}</section>`;
   const body = grid(field('c-name', w('f_name'), c.name, 'required') + field('c-relation', w('f_relation'), c.relation)
       + `<div class="field"><label for="c-status">${esc(w('f_status'))}</label><select id="c-status">${K.statuses.map((s) =>
@@ -182,8 +231,17 @@ function editor(c, reload) {
       try { await api(`/api/clients/${c.id}/archive`, { method: 'POST', body: { archived: on } }); toast(w(on ? 'archived' : 'restored'), 'ok'); close(true); reload(); }
       catch (err) { toast(err.message, 'bad', 8); }
     };
+    // 2026-10-04 owner: "I can archive application then client will stay" - this year's filing alone
+    const yearArchived = (on) => async () => {
+      try { const fresh = await api(`/api/clients/${c.id}/years/${encodeURIComponent(AY)}/archive`, { method: 'POST', body: { archived: on } });
+        toast(w(on ? 'filing_archived' : 'filing_restored'), 'ok'); close(true); reload(); editor(fresh, reload); }
+      catch (err) { toast(err.message, 'bad', 8); }
+    };
+    if ($('#y-archive')) $('#y-archive').onclick = () => confirmDialog(w('archive_filing_title', { ay: AY, name: c.name }),
+      w('archive_filing_body', { name: c.name }), yearArchived(true), w('archive_filing'), { tone: 'warn' });
+    if ($('#y-restore')) $('#y-restore').onclick = (e) => busy(e.currentTarget, yearArchived(false));
     const arch = card.querySelector('[data-archive]');
-    if (arch) arch.onclick = () => confirmDialog(w('archive_title', { name: c.name }), w('archive_body', { name: c.name }), setArchived(true), w('archive'), { tone: 'warn' });
+    if (arch) arch.onclick = () => confirmDialog(w('archive_title', { name: c.name }), w('archive_body', { name: c.name }) + ' ' + w('archive_many_body'), setArchived(true), w('archive'), { tone: 'warn' });
     const rest = card.querySelector('[data-restore]');
     if (rest) rest.onclick = (e) => busy(e.currentTarget, setArchived(false));
   } });

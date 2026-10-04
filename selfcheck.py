@@ -93,6 +93,25 @@ def api_check() -> None:
         assert cl["id"] not in ids("") and cl["id"] in ids("archived"), "an archived client moves to the Archived tab"
         assert c.post(f"/api/clients/{cl['id']}/archive", json={"archived": False}).status_code == 200
         assert cl["id"] in ids("") and cl["id"] not in ids("archived"), "Restore brings it back"
+        # 2026-10-04 owner: multi-select Archive; a client takes its filings with it; a filing alone leaves the client active
+        ay_ = c.get("/api/clients/settings").json()["current_ay"]
+        two = c.post("/api/clients", json={"name": "Sample Two", "status": "individual", "pan": "BBBPS1234K"}).json()
+        for x in (cl, two):
+            assert c.put(f"/api/clients/{x['id']}/years/{ay_}", json={}).status_code == 200
+        yr = lambda cid: c.get(f"/api/clients/{cid}").json()["years"][ay_]  # noqa: E731
+        got = c.post("/api/clients/archive", json={"ids": [cl["id"], two["id"]], "archived": True}).json()
+        assert got["done"] == 2 and {cl["id"], two["id"]} <= set(ids("archived")) and yr(cl["id"]).get("archived_at"), "bulk archive takes every filing"
+        assert c.post("/api/clients/archive", json={"ids": [cl["id"], two["id"]], "archived": False}).json()["done"] == 2
+        assert not yr(cl["id"]).get("archived_at") and cl["id"] in ids(""), "Restore brings the client and its filings back"
+        assert c.post(f"/api/clients/{two['id']}/years/{ay_}/archive", json={"archived": True}).status_code == 200
+        assert two["id"] in ids("") and two["id"] in ids("archived") and yr(two["id"]).get("archived_at"), "a filing alone: the client stays active"
+        c.post("/api/clients/archive", json={"ids": [two["id"]], "archived": True})
+        assert c.post(f"/api/clients/{two['id']}/years/{ay_}/archive", json={"archived": False}).status_code == 400, "no filing back under an archived client"
+        c.post("/api/clients/archive", json={"ids": [two["id"]], "archived": False})
+        assert yr(two["id"]).get("archived_at"), "a filing archived on its own stays archived when its client comes back"
+        assert c.post(f"/api/clients/{two['id']}/years/{ay_}/archive", json={"archived": False}).status_code == 200 and not yr(two["id"]).get("archived_at")
+        big = c.post("/api/clients/archive", json={"ids": [f"x{i}" for i in range(c.get("/api/clients/settings").json().get("bulk_max", 500) + 1)], "archived": True})
+        assert big.status_code == 400, "a bulk press over chip clients.settings bulk_max is refused"
         import openpyxl  # noqa: PLC0415
         wb = openpyxl.Workbook()
         ws = wb.active

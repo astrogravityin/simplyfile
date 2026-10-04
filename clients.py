@@ -14,7 +14,7 @@ import threading
 
 from fastapi import HTTPException
 
-from core import engine, lists
+from core import engine, limits, lists
 from core import store
 
 FILE = "sf_clients.json"
@@ -187,19 +187,82 @@ def change_year(cid: str, ay: str, fn) -> dict:
         return y
 
 
+def live_years(c: dict) -> dict:
+    """A client's filings still in play - an archived filing (alone, or with its client) counts nowhere."""
+    return {a: y for a, y in (c.get("years") or {}).items() if not y.get("archived_at")}
+
+
+def _set_archived(c: dict, user: dict, on: bool) -> None:
+    """2026-10-04 owner: "if Parent is Archived child should also be archived". Archiving a client archives every filing
+    still live, marked as archived WITH it (chip clients.settings with_parent); Restore brings back exactly those -
+    a filing archived on its own before stays archived."""
+    now, mark = store.now(), settings()["with_parent"]
+    if on:
+        c["archived_at"], c["archived_by"] = now, user["id"]
+        for y in (c.get("years") or {}).values():
+            if not y.get("archived_at"):
+                y.update(archived_at=now, archived_by=user["id"], archived_with=mark)
+    else:
+        c.pop("archived_at", None)
+        c.pop("archived_by", None)
+        for y in (c.get("years") or {}).values():
+            if y.get("archived_with") == mark:
+                for f in ("archived_at", "archived_by", "archived_with"):
+                    y.pop(f, None)
+    c["updated_at"], c["updated_by"] = now, user["id"]
+
+
+def _of_firm(rows: list[dict], user: dict, cid: str) -> dict:
+    """One client of THIS person's firm (2026-10-04: archive found any firm's client by id)."""
+    c = next((c for c in rows if c["id"] == cid and c.get("firm_id", "") == firm_id(user)), None)
+    if not c:
+        raise HTTPException(404, say("not_found"))
+    return c
+
+
 def archive(user: dict, cid: str, on: bool) -> dict:
-    """Archive (or bring back) a client. Nothing is deleted: the master and every year stay, the client only
-    moves to the Archived tab. Statements and reconciliations already filed keep pointing at it."""
+    """Archive (or bring back) a client and its filings. Nothing is deleted: the master and every year stay, the client
+    only moves to the Archived tab. Statements and reconciliations already filed keep pointing at it."""
     with _LOCK:
         rows = _all()
-        c = next((c for c in rows if c["id"] == cid), None)
-        if not c:
-            raise HTTPException(404, say("not_found"))
+        c = _of_firm(rows, user, cid)
+        _set_archived(c, user, on)
+        store.write(FILE, rows)
+        return c
+
+
+def archive_many(user: dict, ids: list, on: bool) -> dict:
+    """The ticked clients at once (2026-10-04 owner: "multi select and move to Archive"), in one write."""
+    ids = [str(x) for x in ids or [] if str(x)]
+    if not limits.within(len(ids), settings()["bulk_max"]):
+        _bad("bulk_too_many", max=settings()["bulk_max"])
+    with _LOCK:
+        rows = _all()
+        mine = {c["id"]: c for c in rows if c.get("firm_id", "") == firm_id(user)}
+        hit = [mine[i] for i in dict.fromkeys(ids) if i in mine]
+        for c in hit:
+            _set_archived(c, user, on)
+        if hit:
+            store.write(FILE, rows)
+    return {"done": len(hit), "message": say("archived_n" if on else "restored_n", n=len(hit))}
+
+
+def archive_year(user: dict, cid: str, ay: str, on: bool) -> dict:
+    """One year's filing alone - the client stays active. A filing never comes back under an archived client
+    (chip clients.may_restore_filing)."""
+    with _LOCK:
+        rows = _all()
+        c = _of_firm(rows, user, cid)
+        y = (c.get("years") or {}).get(ay)
+        if y is None:
+            _bad("no_filing", name=c["name"], ay=ay)
         if on:
-            c["archived_at"], c["archived_by"] = store.now(), user["id"]
+            y.update(archived_at=store.now(), archived_by=user["id"], archived_with="")
         else:
-            c.pop("archived_at", None)
-            c.pop("archived_by", None)
+            if engine.run("clients.may_restore_filing", {"client_archived": bool(c.get("archived_at"))}) is not True:
+                _bad("parent_archived", name=c["name"])
+            for f in ("archived_at", "archived_by", "archived_with"):
+                y.pop(f, None)
         c["updated_at"], c["updated_by"] = store.now(), user["id"]
         store.write(FILE, rows)
         return c
@@ -210,14 +273,18 @@ def row(c: dict, ay: str) -> dict:
     st = status_of(c["status"]) or {}
     return {"id": c["id"], "name": c["name"], "pan": c["pan"], "status": st.get("label", c["status"]),
             "form": y.get("form") or st.get("form", ""), "audit": bool(y.get("audit")), "stage": y.get("stage", ""),
-            "in_year": bool(y), "updated_at": c.get("updated_at", ""), "archived_at": c.get("archived_at", "")}
+            "in_year": bool(y), "updated_at": c.get("updated_at", ""), "archived_at": c.get("archived_at", ""),
+            "year_archived": bool(y.get("archived_at"))}
 
 
 def listed(args: dict, user: dict | None = None) -> list[dict]:
     """The Clients list (this person's firm's only): `view=archived` is the Archived tab, anything else the active clients."""
     archived = str(args.get("view") or "") == "archived"
     ay = str(args.get("ay") or settings()["current_ay"])
-    return [row(c, ay) for c in _mine(user) if bool(c.get("archived_at")) == archived]
+    # the Archived tab also holds an active client whose filing for this year was archived on its own (to restore it)
+    return [row(c, ay) for c in _mine(user)
+            if (bool(c.get("archived_at")) or bool(((c.get("years") or {}).get(ay) or {}).get("archived_at"))) == archived
+            or (not archived and not c.get("archived_at"))]
 
 
 lists.source("clients", lambda user, args: listed(args, user), screen="clients")
@@ -231,7 +298,7 @@ def summary(ay: str, user: dict | None = None) -> dict:
     """The headline numbers above the Clients list: active / archived, who is in this year, 3CD audits, per stage."""
     rows = _mine(user)
     live = [c for c in rows if not c.get("archived_at")]
-    years = [(c.get("years") or {}).get(ay) for c in live]
+    years = [live_years(c).get(ay) for c in live]
     years = [y for y in years if y]
     stages = {s["id"]: 0 for s in settings()["stages"]}
     for y in years:

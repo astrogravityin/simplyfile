@@ -86,7 +86,29 @@
     },
     {
       "chapter": "Archive, never delete",
-      "say": "A client you no longer serve moves to the Archived tab with all its years; restore brings it back.",
+      "say": "Tick the clients you no longer serve - or Select all on this page - and Archive selected. Each moves to the Archived tab with every filing of theirs; nothing is deleted.",
+      "do": [
+        {
+          "highlight_target": "#cl-bulk|.cl-bar",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "One filing only",
+      "say": "To put away just one year's filing, open the client and press Archive this filing - the client stays active with every other year.",
+      "do": [
+        {
+          "highlight_target": ".cl-tabs|.cl-bar",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Bring them back",
+      "say": "On the Archived tab, tick and Restore selected: a client comes back with the filings archived with it; a filing archived on its own comes back by itself.",
       "do": [
         {
           "highlight_target": ".cl-tabs|.cl-bar",
