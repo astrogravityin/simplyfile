@@ -1398,15 +1398,20 @@ button.sf-use:hover{border-style:solid}
 .cl-ay{display:inline-flex;align-items:center;gap:8px;padding:0 4px 0 12px;border:1px solid var(--line);border-radius:12px;
   background:var(--panel);color:var(--muted);font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
 .cl-ay select{border:0;background-color:transparent;box-shadow:none;font-weight:750;color:var(--ink);min-height:38px;text-transform:none;letter-spacing:0}
-.cl-kpis{display:grid;grid-template-columns:repeat(3,minmax(170px,1fr)) minmax(280px,1.6fr);gap:14px;margin:0 0 16px}
-.cl-kpi{display:flex;gap:14px;align-items:flex-start;padding:16px 18px;border:1px solid var(--line);border-radius:var(--radius-lg);
-  background:var(--panel);box-shadow:var(--shadow-1)}
-.cl-kpi-wide{display:block}
-.cl-kpi-ic{flex:none;display:grid;place-items:center;width:40px;height:40px;border-radius:12px;color:var(--k);
-  background:color-mix(in srgb,var(--k) 13%,transparent)}
-.cl-kpi-lbl{font-size:11px;font-weight:750;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
-.cl-kpi-big{font-size:28px;font-weight:800;line-height:1.15;color:var(--ink);font-variant-numeric:tabular-nums}
-.cl-kpi-sub{font-size:12px;color:var(--muted)}
+/* One KPI tile for every screen (2026-10-04 owner: "consistent through out"): icon + label in a fixed band, the value on
+   one line below, the sub-line last - so values line up across a row whatever the label length. */
+.sf-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin:0 0 16px}
+.sf-kpi{display:grid;grid-template-rows:auto auto 1fr;gap:8px;padding:16px;border:1px solid var(--line);border-radius:var(--radius-lg);
+  background:var(--panel);box-shadow:var(--shadow-1);min-width:0;container-type:inline-size}
+.sf-kpi-top{display:grid;grid-template-rows:34px calc(2 * 1.3em);gap:8px;min-width:0;font-size:11px}
+.sf-kpi-ic{display:grid;place-items:center;width:34px;height:34px;border-radius:10px;color:var(--k,var(--brand));
+  background:color-mix(in srgb,var(--k,var(--brand)) 13%,transparent)}
+.sf-kpi-lbl{font-size:11px;font-weight:750;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);line-height:1.3;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.sf-kpi-big{font-size:clamp(17px,13.5cqi,26px);font-weight:800;line-height:1.15;color:var(--ink);font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sf-kpi-sub{font-size:12px;color:var(--muted);line-height:1.35}
+.sf-kpi-wide{display:block}
+.cl-kpis{grid-template-columns:repeat(3,minmax(160px,1fr)) minmax(280px,1.6fr)}
 .cl-pipe{display:block;margin:14px 0 10px}
 .cl-pipe-key{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12px;color:var(--ink-2)}
 .cl-pipe-key span{display:inline-flex;align-items:center;gap:6px}
@@ -1435,9 +1440,8 @@ button.sf-use:hover{border-style:solid}
 .cl-step{display:block}
 .cl-acts{display:flex;gap:6px;justify-content:flex-end}
 .cl-ay span{white-space:nowrap}
-@media (max-width:1180px){.cl-kpis{grid-template-columns:repeat(3,minmax(0,1fr))}.cl-kpi-wide{grid-column:1/-1}}
-@media (max-width:640px){.cl-kpis{gap:8px}.cl-kpi{padding:12px;flex-direction:column;gap:8px}.cl-kpi-ic{width:32px;height:32px;border-radius:10px}
-  .cl-kpi-big{font-size:22px}.cl-kpi-sub{display:none}.cl-ay span{display:none}
+@media (max-width:1180px){.cl-kpis{grid-template-columns:repeat(3,minmax(0,1fr))}.cl-kpis .sf-kpi-wide{grid-column:1/-1}}
+@media (max-width:640px){.sf-kpis{gap:8px;grid-template-columns:1fr 1fr}.cl-kpis{grid-template-columns:1fr 1fr}.sf-kpi{padding:12px;gap:6px}.cl-ay span{display:none}
   .cl-row{grid-template-columns:auto minmax(0,1fr);row-gap:8px}.cl-stage,.cl-acts{grid-column:2}.cl-acts{justify-content:flex-start}
   .cl-tabs{min-width:0;width:100%}}
 
@@ -1561,10 +1565,11 @@ button.sf-use:hover{border-style:solid}
   .mp-row{grid-template-columns:auto minmax(0,1fr) auto;row-gap:8px}.mp-row .sf-refcell{grid-column:1/-1}}
 
 /* ---- Compute & close (phases 4 + 5) ---- */
-.cc-head{display:grid;grid-template-columns:minmax(240px,auto) 1fr;gap:22px;align-items:center}
-.cc-steps{display:flex;flex-wrap:wrap;gap:6px 0;margin:0;padding:0;list-style:none;justify-content:flex-end}
-.cc-steps li{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:650;color:var(--muted)}
-.cc-steps li + li::before{content:"";width:22px;height:2px;margin:0 8px;background:var(--line-2);border-radius:2px}
+.cc-head{display:grid;grid-template-columns:1fr;gap:16px;align-items:center}
+.cc-steps{display:flex;flex-wrap:nowrap;gap:0;margin:0;padding:12px 0 0;list-style:none;border-top:1px solid var(--line);overflow-x:auto}
+.cc-steps li{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:650;color:var(--muted);flex:1 1 auto;white-space:nowrap}
+.cc-steps li:first-child{flex:0 0 auto}
+.cc-steps li + li::before{content:"";flex:1;min-width:14px;height:2px;margin:0 10px;background:var(--line-2);border-radius:2px}
 .cc-steps li.is-done{color:var(--ink-2)}
 .cc-steps li.is-done + li::before{background:var(--ok)}
 .cc-steps li.is-now{color:var(--brand)}
@@ -1599,6 +1604,7 @@ button.sf-use:hover{border-style:solid}
 .cc-file{display:flex;align-items:center;gap:12px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;text-decoration:none;color:var(--ink);transition:background .15s}
 .cc-file:hover{background:var(--panel-2)}
 .cc-file span{display:grid;gap:2px;font-size:13px}
+.cc-file svg{flex:none}
 .cc-file small{color:var(--muted);font-size:11.5px}
 .cc-close{display:grid;gap:10px}
 .cc-close .rc-h{margin:0}
@@ -1711,10 +1717,6 @@ table.ap-facts{display:table;width:100%;border-collapse:collapse;table-layout:fi
 .cc-itr-box{padding:0 10px 6px}
 
 /* Firm analytics (page-analytics.js) */
-.an-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:12px;margin:6px 0 14px}
-.an-kpi{display:flex;gap:12px;align-items:flex-start;padding:16px;margin:0}
-.an-kpi-ic{flex:none;width:36px;height:36px;border-radius:10px;display:grid;place-items:center;background:var(--brand-soft,rgba(99,102,241,.1));color:var(--brand)}
-.an-kpi-l{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}.an-kpi-v{font-size:22px;font-weight:700;margin:2px 0}
 .an-card{margin:0 0 14px}.an-card h4{margin:6px 0 8px;font-size:13px;color:var(--muted)}
 .an-bar{display:block;margin:8px 0 6px}
 .an-tbl{margin-top:12px;width:100%}.an-tbl th{text-align:left;font-size:12px;color:var(--muted);font-weight:600}.an-tbl th.num,.an-tbl td.num{text-align:right}
@@ -1730,7 +1732,7 @@ table.ap-facts{display:table;width:100%;border-collapse:collapse;table-layout:fi
 .an-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}.an-chip{font-size:12px;padding:4px 10px;border-radius:999px;border:1px solid var(--line);text-decoration:none;color:var(--ink);background:var(--panel)}
 .an-chip:hover{border-color:var(--brand);color:var(--brand)}
 .an-note{display:flex;gap:6px;align-items:center;margin:4px 0 20px}
-@media (max-width:640px){.an-grid{grid-template-columns:1fr}.an-kpis{grid-template-columns:1fr 1fr}.an-kpi{flex-direction:column;gap:6px}.an-kpi-v{font-size:18px}.an-brow{grid-template-columns:90px 1fr 32px}.an-tbl{font-size:12px}}
+@media (max-width:640px){.an-grid{grid-template-columns:1fr}.an-brow{grid-template-columns:90px 1fr 32px}.an-tbl{font-size:12px}}
 
 /* Import old returns (page-itrimport.js) */
 .ii-steps{display:flex;gap:8px;list-style:none;padding:0;margin:4px 0 14px;flex-wrap:wrap}
@@ -1743,3 +1745,7 @@ table.ap-facts{display:table;width:100%;border-collapse:collapse;table-layout:fi
 .ii-opt{display:flex;gap:8px;align-items:center;margin:10px 0;cursor:pointer}.ii-new{margin:4px 0 6px 26px}.ii-now{margin-top:12px}
 #ii-other{margin-left:26px;max-width:420px}.ii-ok{color:var(--ok)}.ii-acts{margin-top:14px;justify-content:space-between}
 .ii-done .ii-sum-h{color:var(--ok)}.ii-dl{margin:14px 0}
+
+/* the team table on a phone: each person a block - name and email, then the role and remove side by side */
+@media (max-width:640px){.fi-team thead{display:none}.fi-team tr{display:grid;grid-template-columns:1fr auto;gap:6px 8px;padding:10px 0;border-bottom:1px solid var(--line)}
+  .fi-team td{padding:0;border:0}.fi-team td:first-child{grid-column:1/-1}.fi-team td select{width:100%}}

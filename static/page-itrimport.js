@@ -2,7 +2,7 @@
 // client with this PAN, another client, or a new client made from the return (and start this year for them); 3 the
 // acknowledgement no. and date filed; 4 done - the statement as filed and next year's statement to fill, as Excel.
 // The server reads and decides (itr_import.py, chips itr.*); words: chip ui.itrimport.
-import { api, BASE, esc, toast, busy, pageHead, t, loadWords } from './app.js';
+import { api, BASE, esc, toast, busy, pageHead, t, loadWords, dropZone, wireDrops } from './app.js';
 import { icon } from './icons.js';
 
 const w = (k, v) => t('itrimport', k, v);
@@ -29,8 +29,8 @@ export async function itrImportPage(host) {
     let body = '';
     if (S.step === 1) {
       body = `<section class="card ii-card"><h3 class="rc-h">${icon('upload', 15)} ${esc(w('up_title'))}</h3><p class="small muted">${esc(w('up_hint'))}</p>
-        <div class="row tight"><input type="file" id="ii-file" accept=".json,application/json"/>
-        <button type="button" class="primary" id="ii-read">${icon('right', 14)} ${esc(w('next'))}</button></div></section>`;
+        ${dropZone('ii-file', { accept: '.json,application/json', title: w('choose'), hint: '.json' })}
+        <div class="row tight ii-acts"><span></span><button type="button" class="primary" id="ii-read">${esc(w('next'))} ${icon('right', 14)}</button></div></section>`;
     } else if (S.step === 2) {
       const m = S.p.match[0];
       const others = S.p.clients.filter((c) => !m || c.id !== m.id);
@@ -70,6 +70,7 @@ export async function itrImportPage(host) {
 
   const wire = () => {
     const $ = (s) => host.querySelector(s);
+    wireDrops(host);
     if ($('#ii-read')) $('#ii-read').onclick = (e) => busy(e.currentTarget, async () => {
       const f = $('#ii-file').files[0];
       if (!f) { toast(w('choose'), 'warn'); return; }

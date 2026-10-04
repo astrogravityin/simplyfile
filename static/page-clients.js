@@ -47,13 +47,15 @@ function pipeline(sum) {
       `<span><i style="background:var(${s.color})"></i>${esc(s.label)} <b>${sum.stages[s.id]}</b></span>`).join('')}</div>`;
 }
 
+// The one KPI tile every screen uses (CSS .sf-kpi): icon + label, the value, a sub-line - values line up across a row.
+export const kpiTile = (ic, tone, label, value, sub) => `<div class="sf-kpi" style="--k:var(${tone})"><div class="sf-kpi-top"><span class="sf-kpi-ic">${icon(ic, 18)}</span>
+  <span class="sf-kpi-lbl" title="${esc(label)}">${esc(label)}</span></div><div class="sf-kpi-big" title="${esc(String(value))}">${esc(String(value))}</div><div class="sf-kpi-sub">${esc(sub)}</div></div>`;
+
 function kpis(sum) {
-  const card = (ic, tone, label, big, sub) => `<div class="cl-kpi"><span class="cl-kpi-ic" style="--k:var(${tone})">${icon(ic, 18)}</span>
-    <div><div class="cl-kpi-lbl">${esc(label)}</div><div class="cl-kpi-big">${big}</div><div class="cl-kpi-sub">${esc(sub)}</div></div></div>`;
-  return card('users', '--brand', w('k_clients'), sum.active, w('k_archived', { n: sum.archived }))
-    + card('clock', '--brand-2', w('k_in_year', { ay: AY }), sum.in_year, w('k_of', { n: sum.active }))
-    + card('shield', '--warn', w('k_audit'), sum.audit, w('k_audit_sub'))
-    + `<div class="cl-kpi cl-kpi-wide"><div class="cl-kpi-lbl">${esc(w('k_pipeline', { ay: AY }))}</div>${pipeline(sum)}</div>`;
+  return kpiTile('users', '--brand', w('k_clients'), sum.active, w('k_archived', { n: sum.archived }))
+    + kpiTile('clock', '--brand-2', w('k_in_year', { ay: AY }), sum.in_year, w('k_of', { n: sum.active }))
+    + kpiTile('shield', '--warn', w('k_audit'), sum.audit, w('k_audit_sub'))
+    + `<div class="sf-kpi sf-kpi-wide"><div class="sf-kpi-lbl">${esc(w('k_pipeline', { ay: AY }))}</div>${pipeline(sum)}</div>`;
 }
 
 export async function clientsPage(host) {
@@ -64,7 +66,7 @@ export async function clientsPage(host) {
     `<label class="cl-ay" for="cl-ay">${icon('clock', 14)}<span>${esc(w('ay'))}</span>
        <select id="cl-ay">${K.years.map((y) => `<option ${y === AY ? 'selected' : ''}>${esc(y)}</option>`).join('')}</select></label>
      <button type="button" class="primary" id="cl-new">${icon('plus', 15)} ${esc(w('new'))}</button>`)
-    + '<section class="cl-kpis" id="cl-kpis" aria-live="polite"></section>'
+    + '<section class="sf-kpis cl-kpis" id="cl-kpis" aria-live="polite"></section>'
     + `<section class="card cl-card"><div class="cl-bar"><div class="tabs cl-tabs" role="tablist">${[['', 'tab_active', 'active'], ['archived', 'tab_archived', 'archived']].map(([id, label, n]) =>
       `<button type="button" role="tab" data-view="${id}" data-n="${n}" class="${VIEW === id ? 'on' : ''}" aria-selected="${VIEW === id}">${esc(w(label))}<span class="cl-count"></span></button>`).join('')}</div></div>
       <div id="cl-list"></div></section>`;

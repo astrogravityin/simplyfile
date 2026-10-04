@@ -83,9 +83,29 @@
         ]
       },
       "s_sign": {
-        "op": "eq",
-        "left": "$signed",
-        "right": true
+        "op": "any",
+        "items": [
+          {
+            "op": "eq",
+            "left": "$signed",
+            "right": true
+          },
+          {
+            "op": "all",
+            "items": [
+              {
+                "op": "eq",
+                "left": "$has_ack",
+                "right": true
+              },
+              {
+                "op": "eq",
+                "left": "$locked",
+                "right": true
+              }
+            ]
+          }
+        ]
       },
       "s_file": {
         "op": "all",
@@ -112,7 +132,7 @@
   "returns": "record",
   "version": 1,
   "status": "published",
-  "description_nl": "The strip on Compute & close: the server works out the facts, this chip says which steps are done; the page only draws them.",
+  "description_nl": "The strip on Compute & close: the server works out the facts, this chip says which steps are done; the page only draws them. 2026-10-04: a filed, closed year counts as signed off (it was signed when filed; a discarded revision clears only the new sign-off).",
   "test_cases": [
     {
       "args": {
@@ -134,6 +154,24 @@
         "has_books": true,
         "has_26as": true,
         "signed": true,
+        "has_ack": true,
+        "locked": true
+      },
+      "expect_value": {
+        "s_map": true,
+        "s_recon": true,
+        "s_compute": true,
+        "s_sign": true,
+        "s_file": true,
+        "s_close": true
+      }
+    },
+    {
+      "args": {
+        "has_books": true,
+        "has_26as": true,
+        "open_red": 0,
+        "signed": false,
         "has_ack": true,
         "locked": true
       },

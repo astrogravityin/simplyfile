@@ -3,6 +3,7 @@
 // analytics.*); this page draws it. Words: chip ui.analytics. Colours and icons: chip page.analytics.
 import { api, esc, pageHead, t, ps, loadWords } from './app.js';
 import { icon } from './icons.js';
+import { kpiTile } from './page-clients.js';
 
 const w = (k, v) => t('analytics', k, v);
 const P = () => ps('analytics');
@@ -28,8 +29,7 @@ function bars(groups, field = 'n', keep = false) {
     <svg width="100%" height="10"><rect width="100%" height="10" rx="5" fill="var(--panel-2)"/><rect width="${Math.max(2, ((g[field] || 0) / top) * 100)}%" height="10" rx="5" fill="var(--brand)"/></svg><b>${g[field] || 0}</b></div>`).join('')}</div>`;
 }
 
-const tile = (ic, label, value, sub) => `<div class="card an-kpi"><span class="an-kpi-ic">${icon(ic, 18)}</span><div><div class="an-kpi-l">${esc(label)}</div>
-  <div class="an-kpi-v">${esc(value)}</div><div class="small muted">${esc(sub)}</div></div></div>`;
+const tile = (ic, label, value, sub, tone = '--brand') => kpiTile(ic, tone, label, value, sub);
 
 export async function analyticsPage(host) {
   await loadWords('analytics');
@@ -55,13 +55,13 @@ export async function analyticsPage(host) {
   host.innerHTML = pageHead(w('title'), esc(w('lede')),
     `<label class="cl-ay" for="an-ay">${icon('clock', 14)}<span>${esc(w('ay'))}</span>
        <select id="an-ay">${d.years.map((y) => `<option ${y === d.ay ? 'selected' : ''}>${esc(y)}</option>`).join('')}</select></label>`)
-    + `<section class="an-kpis">
+    + `<section class="sf-kpis an-kpis">
         ${tile('users', w('k_clients'), String(r.clients), w('k_clients_sub', { audit: r.audit }))}
         ${tile('check', w('k_filed'), `${r.filed} / ${r.clients}`, w('k_filed_sub', { pct: pct(r.filed, r.clients) }))}
         ${tile('clock', w('k_ontime'), String(r.on_time), w('k_ontime_sub', { pct: pct(r.on_time, r.filed) }))}
         ${tile('money', w('k_tax'), money(r.tax), w('k_tax_sub'))}
-        ${tile('download', w('k_refund'), money(r.refund), w('k_refund_sub', { ri: money(r.refund_interest) }))}
-        ${tile('alert', w('k_interest'), money(r.interest), w('k_interest_sub', { bc: money(r.interest_bc) }))}
+        ${tile('download', w('k_refund'), money(r.refund), w('k_refund_sub', { ri: money(r.refund_interest) }), '--ok')}
+        ${tile('alert', w('k_interest'), money(r.interest), w('k_interest_sub', { bc: money(r.interest_bc) }), '--warn')}
         ${tile('folder', w('k_returns'), String(r.returns), w('k_returns_sub', { years: d.history_years.length }))}</section>
       <section class="card an-card"><h3 class="rc-h">${icon('clock', 15)} ${esc(w('due_title'))}</h3><p class="small muted">${esc(w('due_sub'))}</p>
         ${stackBar(r.by_bucket, d.bucket_order, (b) => P().bucket_color[b], (b) => w(`b_${b}`))}
