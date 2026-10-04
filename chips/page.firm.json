@@ -1,0 +1,177 @@
+{
+  "chip_id": "page.firm",
+  "kind": "accessor",
+  "set": "page",
+  "label": "My firm and Approvals: colours and the admin's buttons per state",
+  "aliases": [
+    "my firm and approvals: colours and the a"
+  ],
+  "params": [
+    {
+      "name": "sla_color",
+      "type": "json",
+      "default": {
+        "on_time": "--ok",
+        "due_soon": "--warn",
+        "overdue": "--bad"
+      },
+      "label": "sla color"
+    },
+    {
+      "name": "actions",
+      "type": "json",
+      "default": {
+        "submitted": [
+          "approve",
+          "return",
+          "reject"
+        ],
+        "approved": [
+          "suspend"
+        ],
+        "suspended": [
+          "restore"
+        ],
+        "rejected": [
+          "reopen"
+        ]
+      },
+      "label": "actions"
+    },
+    {
+      "name": "action_tone",
+      "type": "json",
+      "default": {
+        "approve": "primary",
+        "return": "ghost",
+        "reject": "danger",
+        "suspend": "danger",
+        "restore": "primary",
+        "reopen": "ghost"
+      },
+      "label": "action tone"
+    },
+    {
+      "name": "kind_icon",
+      "type": "json",
+      "default": {
+        "ca_firm": "users",
+        "self": "user"
+      },
+      "label": "kind icon"
+    },
+    {
+      "name": "state_color",
+      "type": "json",
+      "default": {
+        "draft": "--muted",
+        "submitted": "--warn",
+        "returned": "--brand-2",
+        "approved": "--ok",
+        "rejected": "--bad",
+        "suspended": "--bad"
+      },
+      "label": "state color"
+    },
+    {
+      "name": "state_icon",
+      "type": "json",
+      "default": {
+        "draft": "edit",
+        "submitted": "clock",
+        "returned": "alert",
+        "approved": "check",
+        "rejected": "ban",
+        "suspended": "lock"
+      },
+      "label": "state icon"
+    },
+    {
+      "name": "note_states",
+      "type": "json",
+      "default": [
+        "returned",
+        "rejected",
+        "suspended"
+      ],
+      "label": "note states"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "sla_color": "$sla_color",
+      "actions": "$actions",
+      "action_tone": "$action_tone",
+      "kind_icon": "$kind_icon",
+      "state_color": "$state_color",
+      "state_icon": "$state_icon",
+      "note_states": "$note_states"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "Presentation knobs; the server decides every move (firm.move).",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "sla_color": {
+          "on_time": "--ok",
+          "due_soon": "--warn",
+          "overdue": "--bad"
+        },
+        "actions": {
+          "submitted": [
+            "approve",
+            "return",
+            "reject"
+          ],
+          "approved": [
+            "suspend"
+          ],
+          "suspended": [
+            "restore"
+          ],
+          "rejected": [
+            "reopen"
+          ]
+        },
+        "action_tone": {
+          "approve": "primary",
+          "return": "ghost",
+          "reject": "danger",
+          "suspend": "danger",
+          "restore": "primary",
+          "reopen": "ghost"
+        },
+        "kind_icon": {
+          "ca_firm": "users",
+          "self": "user"
+        },
+        "state_color": {
+          "draft": "--muted",
+          "submitted": "--warn",
+          "returned": "--brand-2",
+          "approved": "--ok",
+          "rejected": "--bad",
+          "suspended": "--bad"
+        },
+        "state_icon": {
+          "draft": "edit",
+          "submitted": "clock",
+          "returned": "alert",
+          "approved": "check",
+          "rejected": "ban",
+          "suspended": "lock"
+        },
+        "note_states": [
+          "returned",
+          "rejected",
+          "suspended"
+        ]
+      }
+    }
+  ]
+}

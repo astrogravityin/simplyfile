@@ -1,0 +1,131 @@
+{
+  "chip_id": "intake.row_sign",
+  "kind": "accessor",
+  "set": "intake",
+  "label": "Intake: how a row counts in its heading's total",
+  "aliases": [
+    "intake: how a row counts in its heading'"
+  ],
+  "params": [
+    {
+      "name": "label",
+      "type": "text",
+      "default": "",
+      "label": "the row's label"
+    },
+    {
+      "name": "total_pattern",
+      "type": "text",
+      "default": "(?i)^(income returned|total income|gross total income|net total income|total)\\b",
+      "label": "the statement's own total: left out of the sum, the sum is checked against it"
+    },
+    {
+      "name": "note_pattern",
+      "type": "text",
+      "default": "(?i)^(add:\\s*)?(tax on|surcharge|.*\\bcess\\b|rebate|interest u/s 234)",
+      "label": "tax lines below the total: shown, not added"
+    },
+    {
+      "name": "less_pattern",
+      "type": "text",
+      "default": "(?i)^less\\b",
+      "label": "taken off"
+    }
+  ],
+  "expr": {
+    "vop": "choose",
+    "cases": [
+      {
+        "when": {
+          "op": "eq",
+          "left": {
+            "vop": "search",
+            "text": "$label",
+            "pattern": "$total_pattern"
+          },
+          "right": true
+        },
+        "then": "total"
+      },
+      {
+        "when": {
+          "op": "eq",
+          "left": {
+            "vop": "search",
+            "text": "$label",
+            "pattern": "$note_pattern"
+          },
+          "right": true
+        },
+        "then": "note"
+      },
+      {
+        "when": {
+          "op": "eq",
+          "left": {
+            "vop": "search",
+            "text": "$label",
+            "pattern": "$less_pattern"
+          },
+          "right": true
+        },
+        "then": "less"
+      }
+    ],
+    "else": "add"
+  },
+  "returns": "text",
+  "version": 1,
+  "status": "published",
+  "description_nl": "add / less / total / note. A heading's total = adds minus lesses; a total row is the statement's own figure, checked against that sum; notes (tax, surcharge, cess) are below the line and not added.",
+  "test_cases": [
+    {
+      "args": {
+        "label": "Net profit as per Profit & Loss account"
+      },
+      "expect_value": "add"
+    },
+    {
+      "args": {
+        "label": "Less: Standard deduction @ 30%"
+      },
+      "expect_value": "less"
+    },
+    {
+      "args": {
+        "label": "Income returned"
+      },
+      "expect_value": "total"
+    },
+    {
+      "args": {
+        "label": "Tax on income returned"
+      },
+      "expect_value": "note"
+    },
+    {
+      "args": {
+        "label": "Add: Surcharge @ 25% (after marginal relief)"
+      },
+      "expect_value": "note"
+    },
+    {
+      "args": {
+        "label": "Add: Education cess @ 4%"
+      },
+      "expect_value": "note"
+    },
+    {
+      "args": {
+        "label": "Add: Depreciation as per books"
+      },
+      "expect_value": "add"
+    },
+    {
+      "args": {
+        "label": "HDFC Bank Ltd"
+      },
+      "expect_value": "add"
+    }
+  ]
+}

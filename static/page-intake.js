@@ -214,7 +214,8 @@ async function mapper(host, cid, ay, fid) {
     // Each heading folds: its title, the row numbers it covers, how many rows, their total and what still needs a person.
     body.innerHTML = rows.length ? groups.map((g, gi) => {
       const key = g.h || '-';
-      const sum = g.rows.reduce((a, x) => a + (Number(x.numbers[0]) || 0), 0);
+      const sg = (v.groups || [])[g.rows[0].group] || { net: 0, stated: null };   // the server adds it (chip intake.row_sign)
+      const check = sg.stated === null ? '' : `<span class="mp-chip ${sg.agrees ? 'is-ok' : 'is-todo'}" title="${esc(w(sg.agrees ? 'group_agrees' : 'group_differs', { stated: money(sg.stated) }))}">${icon(sg.agrees ? 'check' : 'alert', 11)} ${esc(w(sg.agrees ? 'group_agrees_short' : 'group_differs_short', { stated: money(sg.stated) }))}</span>`;
       const todo = g.rows.filter((x) => P.open_states.includes(x.state)).length;
       const span = g.rows.length > 1 ? `${g.rows[0].key} – ${g.rows[g.rows.length - 1].key}` : g.rows[0].key;
       const shut = closed.has(key);
@@ -223,7 +224,7 @@ async function mapper(host, cid, ay, fid) {
           <svg class="mp-chev" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
           <span class="mp-group-t">${esc((g.h || w('no_heading')).slice(0, P.heading_chars))}</span>
           <span class="mp-group-meta"><span class="mp-chip">${esc(span)}</span><span class="mp-chip">${esc(w('group_count', { n: g.rows.length }))}</span>
-            ${todo ? `<span class="mp-chip is-todo">${esc(w('group_todo', { n: todo }))}</span>` : ''}<b class="mp-sum">${money(sum)}</b></span></button>
+            ${todo ? `<span class="mp-chip is-todo">${esc(w('group_todo', { n: todo }))}</span>` : ''}${check}<b class="mp-sum" title="${esc(w('group_net'))}">${money(sg.net)}</b></span></button>
         <div class="mp-group-body" id="mp-g${gi}">${g.rows.map(card).join('')}</div></section>`;
     }).join('')
       : `<div class="card sf-empty">${icon('check', 20)} ${esc(w('none_open'))}</div>`;

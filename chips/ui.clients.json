@@ -442,7 +442,7 @@
     {
       "name": "year_closed",
       "type": "text",
-      "default": "{ay} is closed (filed) for this client. Reopen it in Clients & years to change anything.",
+      "default": "{ay} is closed (filed) for this client. To change it, start a revised return in Compute & close.",
       "label": "year closed"
     },
     {
@@ -456,6 +456,72 @@
       "type": "text",
       "default": "Signed off by {by}",
       "label": "y signed"
+    },
+    {
+      "name": "stage_auto",
+      "type": "text",
+      "default": "Moves by itself: statements in -> every row mapped -> 26AS in and every red explained -> signed off -> filed.",
+      "label": "stage_auto"
+    },
+    {
+      "name": "ack_auto",
+      "type": "text",
+      "default": "Set when the return is marked filed in Compute & close.",
+      "label": "ack_auto"
+    },
+    {
+      "name": "to_compute",
+      "type": "text",
+      "default": "Open Compute & close",
+      "label": "to_compute"
+    },
+    {
+      "name": "revising_tag",
+      "type": "text",
+      "default": "Revising",
+      "label": "revising_tag"
+    },
+    {
+      "name": "y_tp",
+      "type": "text",
+      "default": "Transfer pricing report (Form 3CEB) - due 30 Nov",
+      "label": "y_tp"
+    },
+    {
+      "name": "y_presumptive",
+      "type": "text",
+      "default": "Presumptive (44AD / 44ADA) - one advance tax instalment, 15 Mar",
+      "label": "y_presumptive"
+    },
+    {
+      "name": "f_dob",
+      "type": "text",
+      "default": "Date of birth / formation",
+      "label": "f_dob"
+    },
+    {
+      "name": "f_nri",
+      "type": "text",
+      "default": "Non-resident this year",
+      "label": "f_nri"
+    },
+    {
+      "name": "bad_dob",
+      "type": "text",
+      "default": "Date of birth {dob} is not a date (yyyy-mm-dd).",
+      "label": "bad_dob"
+    },
+    {
+      "name": "f_father",
+      "type": "text",
+      "default": "Father's name of the person who signs (self / karta / partner)",
+      "label": "f_father"
+    },
+    {
+      "name": "f_signer_pan",
+      "type": "text",
+      "default": "PAN of the person who signs (karta / partner; blank for self)",
+      "label": "f_signer_pan"
     }
   ],
   "expr": {
@@ -535,7 +601,18 @@
       "stage_of": "$stage_of",
       "year_closed": "$year_closed",
       "y_closed": "$y_closed",
-      "y_signed": "$y_signed"
+      "y_signed": "$y_signed",
+      "stage_auto": "$stage_auto",
+      "ack_auto": "$ack_auto",
+      "to_compute": "$to_compute",
+      "revising_tag": "$revising_tag",
+      "y_tp": "$y_tp",
+      "y_presumptive": "$y_presumptive",
+      "f_dob": "$f_dob",
+      "f_nri": "$f_nri",
+      "bad_dob": "$bad_dob",
+      "f_father": "$f_father",
+      "f_signer_pan": "$f_signer_pan"
     }
   },
   "returns": "record",
@@ -618,9 +695,20 @@
         "k_pipeline": "Where {ay} stands",
         "k_none_year": "Nobody added to {ay} yet",
         "stage_of": "Stage {i} of {n}",
-        "year_closed": "{ay} is closed (filed) for this client. Reopen it in Clients & years to change anything.",
+        "year_closed": "{ay} is closed (filed) for this client. To change it, start a revised return in Compute & close.",
         "y_closed": "Closed",
-        "y_signed": "Signed off by {by}"
+        "y_signed": "Signed off by {by}",
+        "stage_auto": "Moves by itself: statements in -> every row mapped -> 26AS in and every red explained -> signed off -> filed.",
+        "ack_auto": "Set when the return is marked filed in Compute & close.",
+        "to_compute": "Open Compute & close",
+        "revising_tag": "Revising",
+        "y_tp": "Transfer pricing report (Form 3CEB) - due 30 Nov",
+        "y_presumptive": "Presumptive (44AD / 44ADA) - one advance tax instalment, 15 Mar",
+        "f_dob": "Date of birth / formation",
+        "f_nri": "Non-resident this year",
+        "bad_dob": "Date of birth {dob} is not a date (yyyy-mm-dd).",
+        "f_father": "Father's name of the person who signs (self / karta / partner)",
+        "f_signer_pan": "PAN of the person who signs (karta / partner; blank for self)"
       }
     }
   ]

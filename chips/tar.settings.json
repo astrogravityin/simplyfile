@@ -1,0 +1,89 @@
+{
+  "chip_id": "tar.settings",
+  "kind": "accessor",
+  "set": "tar",
+  "label": "3CD JSON: the schemas and which form",
+  "aliases": [
+    "3cd json: the schemas and which form"
+  ],
+  "params": [
+    {
+      "name": "forms",
+      "type": "json",
+      "default": {
+        "3CB": {
+          "schema": "schemas/3cd/schema_3CB.json",
+          "root": "F3CB",
+          "wrap": "FORM3CB"
+        },
+        "3CA": {
+          "schema": "schemas/3cd/schema_3CA.json",
+          "root": "F3CA",
+          "wrap": "FORM3CA"
+        }
+      },
+      "label": "forms"
+    },
+    {
+      "name": "default_form",
+      "type": "text",
+      "default": "3CB",
+      "label": "default form"
+    },
+    {
+      "name": "form_by_status",
+      "type": "json",
+      "default": {},
+      "label": "form by status"
+    },
+    {
+      "name": "pan_pattern",
+      "type": "text",
+      "default": "[A-Z]{5}[0-9]{4}[A-Z]",
+      "label": "pan pattern"
+    },
+    {
+      "name": "address_blank",
+      "type": "text",
+      "default": "-",
+      "label": "address blank"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "forms": "$forms",
+      "default_form": "$default_form",
+      "form_by_status": "$form_by_status",
+      "pan_pattern": "$pan_pattern",
+      "address_blank": "$address_blank"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "Form 3CA when the accounts are audited under another law (a company, a co-operative society), else 3CB - SimplyFile's statuses are 3CB by default (form_by_status names a status that takes 3CA). Schema V2.5, 1 April 2026, incometax.gov.in > Downloads > Income Tax Forms. The CA's details (OtherInformation1) are the CA firm's own, from its approved application.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "forms": {
+          "3CB": {
+            "schema": "schemas/3cd/schema_3CB.json",
+            "root": "F3CB",
+            "wrap": "FORM3CB"
+          },
+          "3CA": {
+            "schema": "schemas/3cd/schema_3CA.json",
+            "root": "F3CA",
+            "wrap": "FORM3CA"
+          }
+        },
+        "default_form": "3CB",
+        "form_by_status": {},
+        "pan_pattern": "[A-Z]{5}[0-9]{4}[A-Z]",
+        "address_blank": "-"
+      }
+    }
+  ]
+}

@@ -1,0 +1,237 @@
+{
+  "chip_id": "firm.roles",
+  "kind": "accessor",
+  "set": "firm",
+  "label": "Firms: roles and what each may do",
+  "aliases": [
+    "firms: roles and what each may do"
+  ],
+  "params": [
+    {
+      "name": "rows",
+      "type": "json",
+      "default": [
+        {
+          "id": "firm_admin",
+          "label": "Firm admin",
+          "sub": "Everything, and the firm's profile and team.",
+          "assignable": true,
+          "grants": [
+            "firm",
+            "team",
+            "clients",
+            "clients.create",
+            "clients.archive",
+            "intake",
+            "intake.delete",
+            "recon",
+            "recon.delete",
+            "compute",
+            "compute.signoff",
+            "compute.file",
+            "compute.reopen"
+          ]
+        },
+        {
+          "id": "partner",
+          "label": "Partner",
+          "sub": "All client work, sign-off, filing and reopening.",
+          "assignable": true,
+          "grants": [
+            "clients",
+            "clients.create",
+            "clients.archive",
+            "intake",
+            "intake.delete",
+            "recon",
+            "recon.delete",
+            "compute",
+            "compute.signoff",
+            "compute.file",
+            "compute.reopen"
+          ]
+        },
+        {
+          "id": "reviewer",
+          "label": "Reviewer",
+          "sub": "Reviews and signs off computations.",
+          "assignable": true,
+          "grants": [
+            "clients",
+            "intake",
+            "recon",
+            "compute",
+            "compute.signoff"
+          ]
+        },
+        {
+          "id": "auditor",
+          "label": "Auditor (3CD)",
+          "sub": "Tax audit: reads everything, signs off the computation.",
+          "assignable": true,
+          "grants": [
+            "clients",
+            "intake",
+            "recon",
+            "compute",
+            "compute.signoff"
+          ]
+        },
+        {
+          "id": "preparer",
+          "label": "Tax preparer",
+          "sub": "Adds clients, maps statements, reconciles, computes.",
+          "assignable": true,
+          "grants": [
+            "clients",
+            "clients.create",
+            "intake",
+            "intake.delete",
+            "recon",
+            "recon.delete",
+            "compute"
+          ]
+        },
+        {
+          "id": "self",
+          "label": "Self-filer",
+          "sub": "Files their own return.",
+          "assignable": false,
+          "grants": [
+            "firm",
+            "clients",
+            "clients.create",
+            "intake",
+            "intake.delete",
+            "recon",
+            "recon.delete",
+            "compute",
+            "compute.signoff",
+            "compute.file",
+            "compute.reopen"
+          ]
+        }
+      ],
+      "label": "rows"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "rows": "$rows"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "A grant is a screen (clients, intake, recon, compute), a screen.function (compute.signoff), firm (edit the firm's profile and papers) or team (add people, change roles). The firm admin gives roles marked assignable.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "rows": [
+          {
+            "id": "firm_admin",
+            "label": "Firm admin",
+            "sub": "Everything, and the firm's profile and team.",
+            "assignable": true,
+            "grants": [
+              "firm",
+              "team",
+              "clients",
+              "clients.create",
+              "clients.archive",
+              "intake",
+              "intake.delete",
+              "recon",
+              "recon.delete",
+              "compute",
+              "compute.signoff",
+              "compute.file",
+              "compute.reopen"
+            ]
+          },
+          {
+            "id": "partner",
+            "label": "Partner",
+            "sub": "All client work, sign-off, filing and reopening.",
+            "assignable": true,
+            "grants": [
+              "clients",
+              "clients.create",
+              "clients.archive",
+              "intake",
+              "intake.delete",
+              "recon",
+              "recon.delete",
+              "compute",
+              "compute.signoff",
+              "compute.file",
+              "compute.reopen"
+            ]
+          },
+          {
+            "id": "reviewer",
+            "label": "Reviewer",
+            "sub": "Reviews and signs off computations.",
+            "assignable": true,
+            "grants": [
+              "clients",
+              "intake",
+              "recon",
+              "compute",
+              "compute.signoff"
+            ]
+          },
+          {
+            "id": "auditor",
+            "label": "Auditor (3CD)",
+            "sub": "Tax audit: reads everything, signs off the computation.",
+            "assignable": true,
+            "grants": [
+              "clients",
+              "intake",
+              "recon",
+              "compute",
+              "compute.signoff"
+            ]
+          },
+          {
+            "id": "preparer",
+            "label": "Tax preparer",
+            "sub": "Adds clients, maps statements, reconciles, computes.",
+            "assignable": true,
+            "grants": [
+              "clients",
+              "clients.create",
+              "intake",
+              "intake.delete",
+              "recon",
+              "recon.delete",
+              "compute"
+            ]
+          },
+          {
+            "id": "self",
+            "label": "Self-filer",
+            "sub": "Files their own return.",
+            "assignable": false,
+            "grants": [
+              "firm",
+              "clients",
+              "clients.create",
+              "intake",
+              "intake.delete",
+              "recon",
+              "recon.delete",
+              "compute",
+              "compute.signoff",
+              "compute.file",
+              "compute.reopen"
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,1409 @@
+{
+  "chip_id": "itr.map",
+  "kind": "accessor",
+  "set": "itr",
+  "label": "ITR JSON: where each SimplyFile figure goes",
+  "aliases": [
+    "itr json: where each simplyfile figure g"
+  ],
+  "params": [
+    {
+      "name": "forms",
+      "type": "json",
+      "default": {
+        "ITR-3": [
+          {
+            "path": "ITR3.CreationInfo.SWVersionNo",
+            "from": "sw_version"
+          },
+          {
+            "path": "ITR3.CreationInfo.SWCreatedBy",
+            "from": "sw_id"
+          },
+          {
+            "path": "ITR3.CreationInfo.JSONCreatedBy",
+            "from": "sw_id"
+          },
+          {
+            "path": "ITR3.CreationInfo.JSONCreationDate",
+            "from": "today"
+          },
+          {
+            "path": "ITR3.CreationInfo.IntermediaryCity",
+            "from": "client.city"
+          },
+          {
+            "path": "ITR3.CreationInfo.Digest",
+            "from": "=-"
+          },
+          {
+            "path": "ITR3.Form_ITR3.FormName",
+            "from": "form"
+          },
+          {
+            "path": "ITR3.Form_ITR3.Description",
+            "from": "=SimplyFile"
+          },
+          {
+            "path": "ITR3.Form_ITR3.AssessmentYear",
+            "from": "ay_code"
+          },
+          {
+            "path": "ITR3.Form_ITR3.SchemaVer",
+            "from": "=Ver1.0"
+          },
+          {
+            "path": "ITR3.Form_ITR3.FormVer",
+            "from": "=Ver1.0"
+          },
+          {
+            "path": "ITR3.PartA_GEN1.FilingStatus.ResidentialStatus",
+            "from": "client.residential"
+          },
+          {
+            "path": "ITR3.PartA_GEN1.FilingStatus.ItrFilingDueDate",
+            "from": "filing.due"
+          },
+          {
+            "path": "ITR3.PartA_GEN1.FilingStatus.ReceiptNo",
+            "from": "filing.orig_ack"
+          },
+          {
+            "path": "ITR3.PartA_GEN1.FilingStatus.OrigRetFiledDate",
+            "from": "filing.orig_date"
+          },
+          {
+            "path": "ITR3.PartB-TI.IncomeFromHP",
+            "from": "income.hp"
+          },
+          {
+            "path": "ITR3.PartB-TI.ProfBusGain.ProfGainNoSpecBus",
+            "from": "income.bp"
+          },
+          {
+            "path": "ITR3.PartB-TI.ProfBusGain.TotProfBusGain",
+            "from": "income.bp"
+          },
+          {
+            "path": "ITR3.PartB-TI.CapGain.TotalCapGains",
+            "from": "income.cg"
+          },
+          {
+            "path": "ITR3.PartB-TI.IncFromOS.OtherSrcThanOwnRaceHorse",
+            "from": "income.os"
+          },
+          {
+            "path": "ITR3.PartB-TI.IncFromOS.TotIncFromOS",
+            "from": "income.os"
+          },
+          {
+            "path": "ITR3.PartB-TI.TotalTI",
+            "from": "income.gti"
+          },
+          {
+            "path": "ITR3.PartB-TI.BalanceAfterSetoffLosses",
+            "from": "income.gti"
+          },
+          {
+            "path": "ITR3.PartB-TI.GrossTotalIncome",
+            "from": "income.gti"
+          },
+          {
+            "path": "ITR3.PartB-TI.DeductionsUndSchVIADtl.PartBchapterVIA",
+            "from": "income.deductions"
+          },
+          {
+            "path": "ITR3.PartB-TI.DeductionsUndSchVIADtl.TotDeductUndSchVIA",
+            "from": "income.deductions"
+          },
+          {
+            "path": "ITR3.PartB-TI.TotalIncome",
+            "from": "income.total"
+          },
+          {
+            "path": "ITR3.PartB-TI.AggregateIncome",
+            "from": "income.total"
+          },
+          {
+            "path": "ITR3.PartB_TTI.ComputationOfTaxLiability.TaxPayableOnTI.TaxPayableOnTotInc",
+            "from": "tax.normal"
+          },
+          {
+            "path": "ITR3.PartB_TTI.ComputationOfTaxLiability.TaxPayableOnTI.TotalSurcharge",
+            "from": "tax.surcharge"
+          },
+          {
+            "path": "ITR3.PartB_TTI.ComputationOfTaxLiability.TaxPayableOnTI.EducationCess",
+            "from": "tax.cess"
+          },
+          {
+            "path": "ITR3.PartB_TTI.ComputationOfTaxLiability.TaxPayableOnTI.GrossTaxLiability",
+            "from": "tax.gross"
+          },
+          {
+            "path": "ITR3.PartB_TTI.ComputationOfTaxLiability.GrossTaxPayable",
+            "from": "tax.gross"
+          },
+          {
+            "path": "ITR3.PartB_TTI.ComputationOfTaxLiability.NetTaxLiability",
+            "from": "tax.net"
+          },
+          {
+            "path": "ITR3.PartB_TTI.ComputationOfTaxLiability.IntrstPay.IntrstPayUs234A",
+            "from": "tax.i234a"
+          },
+          {
+            "path": "ITR3.PartB_TTI.ComputationOfTaxLiability.IntrstPay.IntrstPayUs234B",
+            "from": "tax.i234b"
+          },
+          {
+            "path": "ITR3.PartB_TTI.ComputationOfTaxLiability.IntrstPay.IntrstPayUs234C",
+            "from": "tax.i234c"
+          },
+          {
+            "path": "ITR3.PartB_TTI.ComputationOfTaxLiability.IntrstPay.TotalIntrstPay",
+            "from": "tax.interest"
+          },
+          {
+            "path": "ITR3.PartB_TTI.ComputationOfTaxLiability.AggregateTaxInterestLiability",
+            "from": "tax.aggregate"
+          },
+          {
+            "path": "ITR3.PartB_TTI.TaxPaid.TaxesPaid.AdvanceTax",
+            "from": "tax.advance"
+          },
+          {
+            "path": "ITR3.PartB_TTI.TaxPaid.TaxesPaid.TDS",
+            "from": "tax.tds"
+          },
+          {
+            "path": "ITR3.PartB_TTI.TaxPaid.TaxesPaid.SelfAssessmentTax",
+            "from": "tax.sat"
+          },
+          {
+            "path": "ITR3.PartB_TTI.TaxPaid.TaxesPaid.TotalTaxesPaid",
+            "from": "tax.paid"
+          },
+          {
+            "path": "ITR3.PartB_TTI.TaxPaid.BalTaxPayable",
+            "from": "tax.payable"
+          },
+          {
+            "path": "ITR3.PartB_TTI.Refund.RefundDue",
+            "from": "tax.refund"
+          },
+          {
+            "path": "ITR3.PartB_TTI.Refund.BankAccountDtls.BankDtlsFlag",
+            "from": "has_banks"
+          },
+          {
+            "path": "ITR3.Verification.Declaration.FatherName",
+            "from": "client.verifier_father"
+          },
+          {
+            "path": "ITR3.ScheduleTDS2.TotalTDSonOthThanSals",
+            "from": "tax.tds"
+          },
+          {
+            "path": "ITR3.ScheduleIT.TotalTaxPayments",
+            "from": "tax.challans"
+          },
+          {
+            "path": "ITR3.PartA_GEN1.PersonalInfo.AssesseeName.FirstName",
+            "from": "client.first"
+          },
+          {
+            "path": "ITR3.PartA_GEN1.PersonalInfo.AssesseeName.SurNameOrOrgName",
+            "from": "client.surname"
+          },
+          {
+            "path": "ITR3.PartA_GEN1.PersonalInfo.PAN",
+            "from": "client.pan"
+          },
+          {
+            "path": "ITR3.PartA_GEN1.PersonalInfo.DOB",
+            "from": "client.dob"
+          },
+          {
+            "path": "ITR3.PartA_GEN1.PersonalInfo.Status",
+            "from": "client.status"
+          },
+          {
+            "path": "ITR3.PartA_GEN1.PersonalInfo.Address.ResidenceNo",
+            "from": "client.flat"
+          },
+          {
+            "path": "ITR3.PartA_GEN1.PersonalInfo.Address.LocalityOrArea",
+            "from": "client.area"
+          },
+          {
+            "path": "ITR3.PartA_GEN1.PersonalInfo.Address.CityOrTownOrDistrict",
+            "from": "client.city"
+          },
+          {
+            "path": "ITR3.PartA_GEN1.PersonalInfo.Address.StateCode",
+            "from": "client.state"
+          },
+          {
+            "path": "ITR3.PartA_GEN1.PersonalInfo.Address.CountryCode",
+            "from": "=91"
+          },
+          {
+            "path": "ITR3.PartA_GEN1.PersonalInfo.Address.PinCode",
+            "from": "client.pin"
+          },
+          {
+            "path": "ITR3.PartA_GEN1.PersonalInfo.Address.CountryCodeMobile",
+            "from": "#91"
+          },
+          {
+            "path": "ITR3.PartA_GEN1.PersonalInfo.Address.MobileNo",
+            "from": "client.mobile"
+          },
+          {
+            "path": "ITR3.PartA_GEN1.PersonalInfo.Address.EmailAddress",
+            "from": "client.email"
+          },
+          {
+            "path": "ITR3.PartA_GEN1.FilingStatus.IncFrmBusOrProf",
+            "from": "filing.business"
+          },
+          {
+            "path": "ITR3.PartA_GEN1.FilingStatus.ReturnFileSec",
+            "from": "filing.section"
+          },
+          {
+            "path": "ITR3.PartA_GEN2.AuditInfo.LiableSec44AAflg",
+            "from": "filing.books"
+          },
+          {
+            "path": "ITR3.PartA_GEN2.AuditInfo.LiableSec44ABflg",
+            "from": "filing.audit"
+          },
+          {
+            "path": "ITR3.PartB-TI.Salaries",
+            "from": "income.sal"
+          },
+          {
+            "path": "ITR3.PartB_TTI.ComputationOfTaxLiability.TaxPayableOnTI.TaxAtNormalRatesOnAggrInc",
+            "from": "tax.normal"
+          },
+          {
+            "path": "ITR3.PartB_TTI.ComputationOfTaxLiability.TaxPayableOnTI.Rebate87A",
+            "from": "tax.rebate"
+          },
+          {
+            "path": "ITR3.PartB_TTI.ComputationOfTaxLiability.TaxPayableOnTI.TaxPayableOnRebate",
+            "from": "tax.after_rebate"
+          },
+          {
+            "path": "ITR3.PartB_TTI.ComputationOfTaxLiability.TaxPayableOnTI.SurchargeOnAboveCrore",
+            "from": "tax.surcharge"
+          },
+          {
+            "path": "ITR3.PartB_TTI.ComputationOfTaxLiability.TaxPayableOnTI.SurchargeOnAboveCroreBeforeMarginal",
+            "from": "tax.surcharge_before"
+          },
+          {
+            "path": "ITR3.PartB_TTI.ComputationOfTaxLiability.TaxPayAfterCreditUs115JD",
+            "from": "tax.net"
+          },
+          {
+            "path": "ITR3.Verification.Declaration.AssesseeVerName",
+            "from": "client.verifier"
+          },
+          {
+            "path": "ITR3.Verification.Declaration.AssesseeVerPAN",
+            "from": "client.verifier_pan"
+          },
+          {
+            "path": "ITR3.Verification.Capacity",
+            "from": "client.capacity"
+          },
+          {
+            "path": "ITR3.Verification.Date",
+            "from": "today"
+          },
+          {
+            "path": "ITR3.Verification.Place",
+            "from": "client.city"
+          },
+          {
+            "path": "ITR3.PartB_TTI.Refund.BankAccountDtls.AddtnlBankDetails",
+            "each": "banks",
+            "item": {
+              "IFSCCode": "ifsc",
+              "BankName": "bank",
+              "BankAccountNo": "account",
+              "AccountType": "type",
+              "UseForRefund": "refund"
+            }
+          },
+          {
+            "path": "ITR3.ScheduleTDS2.TDSOthThanSalaryDtls",
+            "each": "tds",
+            "item": {
+              "TDSCreditName": "=S",
+              "TANOfDeductor": "tan",
+              "TDSSection": "section",
+              "TaxDeductCreditDtls.TaxDeductedOwnHands": "tax",
+              "TaxDeductCreditDtls.TaxClaimedOwnHands": "tax",
+              "GrossAmount": "gross",
+              "HeadOfIncome": "head",
+              "AmtCarriedFwd": "#0"
+            }
+          },
+          {
+            "path": "ITR3.ScheduleIT.TaxPayment",
+            "each": "challans",
+            "item": {
+              "BSRCode": "bsr",
+              "DateDep": "date",
+              "SrlNoOfChaln": "serial",
+              "Amt": "amount"
+            }
+          }
+        ],
+        "ITR-5": [
+          {
+            "path": "ITR5.CreationInfo.SWVersionNo",
+            "from": "sw_version"
+          },
+          {
+            "path": "ITR5.CreationInfo.SWCreatedBy",
+            "from": "sw_id"
+          },
+          {
+            "path": "ITR5.CreationInfo.JSONCreatedBy",
+            "from": "sw_id"
+          },
+          {
+            "path": "ITR5.CreationInfo.JSONCreationDate",
+            "from": "today"
+          },
+          {
+            "path": "ITR5.CreationInfo.IntermediaryCity",
+            "from": "client.city"
+          },
+          {
+            "path": "ITR5.CreationInfo.Digest",
+            "from": "=-"
+          },
+          {
+            "path": "ITR5.Form_ITR5.FormName",
+            "from": "form"
+          },
+          {
+            "path": "ITR5.Form_ITR5.Description",
+            "from": "=SimplyFile"
+          },
+          {
+            "path": "ITR5.Form_ITR5.AssessmentYear",
+            "from": "ay_code"
+          },
+          {
+            "path": "ITR5.Form_ITR5.SchemaVer",
+            "from": "=Ver1.0"
+          },
+          {
+            "path": "ITR5.Form_ITR5.FormVer",
+            "from": "=Ver1.0"
+          },
+          {
+            "path": "ITR5.PartA_GEN1.FilingStatus.ResidentialStatus",
+            "from": "client.residential"
+          },
+          {
+            "path": "ITR5.PartA_GEN1.FilingStatus.ItrFilingDueDate",
+            "from": "filing.due"
+          },
+          {
+            "path": "ITR5.PartA_GEN1.FilingStatus.ReceiptNo",
+            "from": "filing.orig_ack"
+          },
+          {
+            "path": "ITR5.PartA_GEN1.FilingStatus.OrigRetFiledDate",
+            "from": "filing.orig_date"
+          },
+          {
+            "path": "ITR5.PartB-TI.IncomeFromHP",
+            "from": "income.hp"
+          },
+          {
+            "path": "ITR5.PartB-TI.ProfBusGain.ProfGainNoSpecBus",
+            "from": "income.bp"
+          },
+          {
+            "path": "ITR5.PartB-TI.ProfBusGain.TotProfBusGain",
+            "from": "income.bp"
+          },
+          {
+            "path": "ITR5.PartB-TI.CapGain.TotalCapGains",
+            "from": "income.cg"
+          },
+          {
+            "path": "ITR5.PartB-TI.IncFromOS.OtherSrcThanOwnRaceHorse",
+            "from": "income.os"
+          },
+          {
+            "path": "ITR5.PartB-TI.IncFromOS.TotIncFromOS",
+            "from": "income.os"
+          },
+          {
+            "path": "ITR5.PartB-TI.TotalTI",
+            "from": "income.gti"
+          },
+          {
+            "path": "ITR5.PartB-TI.BalanceAfterSetoffLosses",
+            "from": "income.gti"
+          },
+          {
+            "path": "ITR5.PartB-TI.GrossTotalIncome",
+            "from": "income.gti"
+          },
+          {
+            "path": "ITR5.PartB-TI.DeductionsUndSchVIADtl.PartBchapterVIA",
+            "from": "income.deductions"
+          },
+          {
+            "path": "ITR5.PartB-TI.DeductionsUndSchVIADtl.TotDeductUndSchVIA",
+            "from": "income.deductions"
+          },
+          {
+            "path": "ITR5.PartB-TI.TotalIncome",
+            "from": "income.total"
+          },
+          {
+            "path": "ITR5.PartB-TI.AggregateIncome",
+            "from": "income.total"
+          },
+          {
+            "path": "ITR5.PartB_TTI.ComputationOfTaxLiability.TaxPayableOnTI.TaxPayableOnTotInc",
+            "from": "tax.normal"
+          },
+          {
+            "path": "ITR5.PartB_TTI.ComputationOfTaxLiability.TaxPayableOnTI.TotalSurcharge",
+            "from": "tax.surcharge"
+          },
+          {
+            "path": "ITR5.PartB_TTI.ComputationOfTaxLiability.TaxPayableOnTI.EducationCess",
+            "from": "tax.cess"
+          },
+          {
+            "path": "ITR5.PartB_TTI.ComputationOfTaxLiability.TaxPayableOnTI.GrossTaxLiability",
+            "from": "tax.gross"
+          },
+          {
+            "path": "ITR5.PartB_TTI.ComputationOfTaxLiability.GrossTaxPayable",
+            "from": "tax.gross"
+          },
+          {
+            "path": "ITR5.PartB_TTI.ComputationOfTaxLiability.NetTaxLiability",
+            "from": "tax.net"
+          },
+          {
+            "path": "ITR5.PartB_TTI.ComputationOfTaxLiability.IntrstPay.IntrstPayUs234A",
+            "from": "tax.i234a"
+          },
+          {
+            "path": "ITR5.PartB_TTI.ComputationOfTaxLiability.IntrstPay.IntrstPayUs234B",
+            "from": "tax.i234b"
+          },
+          {
+            "path": "ITR5.PartB_TTI.ComputationOfTaxLiability.IntrstPay.IntrstPayUs234C",
+            "from": "tax.i234c"
+          },
+          {
+            "path": "ITR5.PartB_TTI.ComputationOfTaxLiability.IntrstPay.TotalIntrstPay",
+            "from": "tax.interest"
+          },
+          {
+            "path": "ITR5.PartB_TTI.ComputationOfTaxLiability.AggregateTaxInterestLiability",
+            "from": "tax.aggregate"
+          },
+          {
+            "path": "ITR5.PartB_TTI.TaxPaid.TaxesPaid.AdvanceTax",
+            "from": "tax.advance"
+          },
+          {
+            "path": "ITR5.PartB_TTI.TaxPaid.TaxesPaid.TDS",
+            "from": "tax.tds"
+          },
+          {
+            "path": "ITR5.PartB_TTI.TaxPaid.TaxesPaid.SelfAssessmentTax",
+            "from": "tax.sat"
+          },
+          {
+            "path": "ITR5.PartB_TTI.TaxPaid.TaxesPaid.TotalTaxesPaid",
+            "from": "tax.paid"
+          },
+          {
+            "path": "ITR5.PartB_TTI.TaxPaid.BalTaxPayable",
+            "from": "tax.payable"
+          },
+          {
+            "path": "ITR5.PartB_TTI.Refund.RefundDue",
+            "from": "tax.refund"
+          },
+          {
+            "path": "ITR5.PartB_TTI.Refund.BankAccountDtls.BankDtlsFlag",
+            "from": "has_banks"
+          },
+          {
+            "path": "ITR5.Verification.Declaration.FatherName",
+            "from": "client.verifier_father"
+          },
+          {
+            "path": "ITR5.ScheduleTDS2.TotalTDSonOthThanSals",
+            "from": "tax.tds"
+          },
+          {
+            "path": "ITR5.ScheduleIT.TotalTaxPayments",
+            "from": "tax.challans"
+          },
+          {
+            "path": "ITR5.PartA_GEN1.FilingStatus.ReturnFileSec.IncomeTaxSec",
+            "from": "filing.section"
+          },
+          {
+            "path": "ITR5.PartA_GEN2.AuditInfo.AudFrmPAN",
+            "from": "auditor.pan"
+          },
+          {
+            "path": "ITR5.PartA_GEN2.AuditInfo.AudFrmName",
+            "from": "auditor.name"
+          },
+          {
+            "path": "ITR5.PartA_GEN1.OrgFirmInfo.AssesseeName.SurNameOrOrgName",
+            "from": "client.name"
+          },
+          {
+            "path": "ITR5.PartA_GEN1.OrgFirmInfo.PAN",
+            "from": "client.pan"
+          },
+          {
+            "path": "ITR5.PartA_GEN1.OrgFirmInfo.DateOFFormOrIncorp",
+            "from": "client.dob"
+          },
+          {
+            "path": "ITR5.PartA_GEN1.OrgFirmInfo.StatusOrCompanyType",
+            "from": "client.status"
+          },
+          {
+            "path": "ITR5.PartA_GEN1.OrgFirmInfo.SubStatus",
+            "from": "client.substatus"
+          },
+          {
+            "path": "ITR5.PartA_GEN1.OrgFirmInfo.Address.ResidenceNo",
+            "from": "client.flat"
+          },
+          {
+            "path": "ITR5.PartA_GEN1.OrgFirmInfo.Address.LocalityOrArea",
+            "from": "client.area"
+          },
+          {
+            "path": "ITR5.PartA_GEN1.OrgFirmInfo.Address.CityOrTownOrDistrict",
+            "from": "client.city"
+          },
+          {
+            "path": "ITR5.PartA_GEN1.OrgFirmInfo.Address.StateCode",
+            "from": "client.state"
+          },
+          {
+            "path": "ITR5.PartA_GEN1.OrgFirmInfo.Address.CountryCode",
+            "from": "=91"
+          },
+          {
+            "path": "ITR5.PartA_GEN1.OrgFirmInfo.Address.PinCode",
+            "from": "client.pin"
+          },
+          {
+            "path": "ITR5.PartA_GEN1.OrgFirmInfo.Address.CountryCodeMobile",
+            "from": "#91"
+          },
+          {
+            "path": "ITR5.PartA_GEN1.OrgFirmInfo.Address.MobileNo",
+            "from": "client.mobile"
+          },
+          {
+            "path": "ITR5.PartA_GEN1.OrgFirmInfo.Address.EmailAddress",
+            "from": "client.email"
+          },
+          {
+            "path": "ITR5.PartB_TTI.ComputationOfTaxLiability.TaxPayableOnTI.TaxAtNormalRates",
+            "from": "tax.normal"
+          },
+          {
+            "path": "ITR5.PartB_TTI.ComputationOfTaxLiability.TaxPayableOnTI.SurchargeOnTaxPayable",
+            "from": "tax.surcharge"
+          },
+          {
+            "path": "ITR5.PartB_TTI.ComputationOfTaxLiability.TaxPayableOnTI.SurchargeOnTaxPayableBeforeMarginal",
+            "from": "tax.surcharge_before"
+          },
+          {
+            "path": "ITR5.Verification.Declaration.AssesseeVerName",
+            "from": "client.verifier"
+          },
+          {
+            "path": "ITR5.Verification.Declaration.AssesseeVerPAN",
+            "from": "client.verifier_pan"
+          },
+          {
+            "path": "ITR5.Verification.Declaration.Capacity",
+            "from": "client.capacity"
+          },
+          {
+            "path": "ITR5.Verification.Declaration.Date",
+            "from": "today"
+          },
+          {
+            "path": "ITR5.Verification.Declaration.Place",
+            "from": "client.city"
+          },
+          {
+            "path": "ITR5.PartB_TTI.Refund.BankAccountDtls.AddtnlBankDetails",
+            "each": "banks",
+            "item": {
+              "IFSCCode": "ifsc",
+              "BankName": "bank",
+              "BankAccountNo": "account",
+              "AccountType": "type",
+              "UseForRefund": "refund"
+            }
+          },
+          {
+            "path": "ITR5.ScheduleTDS2.TDSOthThanSalaryDtls",
+            "each": "tds",
+            "item": {
+              "TDSCreditName": "=S",
+              "TANOfDeductor": "tan",
+              "TDSSection": "section",
+              "TaxDeductCreditDtls.TaxDeductedOwnHands": "tax",
+              "TaxDeductCreditDtls.TaxClaimedOwnHands": "tax",
+              "GrossAmount": "gross",
+              "HeadOfIncome": "head",
+              "AmtCarriedFwd": "#0"
+            }
+          },
+          {
+            "path": "ITR5.ScheduleIT.TaxPayment",
+            "each": "challans",
+            "item": {
+              "BSRCode": "bsr",
+              "DateDep": "date",
+              "SrlNoOfChaln": "serial",
+              "Amt": "amount"
+            }
+          }
+        ]
+      },
+      "label": "forms"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "forms": "$forms"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "Each row: a path in the CBDT JSON and the SimplyFile fact it takes (=text, #number for a fixed value). A list row ('each') writes one item per TDS line, challan or bank account. What is not here stays as the schema's empty default and is completed in the department's utility (balance sheet, P&L, schedules).",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "forms": {
+          "ITR-3": [
+            {
+              "path": "ITR3.CreationInfo.SWVersionNo",
+              "from": "sw_version"
+            },
+            {
+              "path": "ITR3.CreationInfo.SWCreatedBy",
+              "from": "sw_id"
+            },
+            {
+              "path": "ITR3.CreationInfo.JSONCreatedBy",
+              "from": "sw_id"
+            },
+            {
+              "path": "ITR3.CreationInfo.JSONCreationDate",
+              "from": "today"
+            },
+            {
+              "path": "ITR3.CreationInfo.IntermediaryCity",
+              "from": "client.city"
+            },
+            {
+              "path": "ITR3.CreationInfo.Digest",
+              "from": "=-"
+            },
+            {
+              "path": "ITR3.Form_ITR3.FormName",
+              "from": "form"
+            },
+            {
+              "path": "ITR3.Form_ITR3.Description",
+              "from": "=SimplyFile"
+            },
+            {
+              "path": "ITR3.Form_ITR3.AssessmentYear",
+              "from": "ay_code"
+            },
+            {
+              "path": "ITR3.Form_ITR3.SchemaVer",
+              "from": "=Ver1.0"
+            },
+            {
+              "path": "ITR3.Form_ITR3.FormVer",
+              "from": "=Ver1.0"
+            },
+            {
+              "path": "ITR3.PartA_GEN1.FilingStatus.ResidentialStatus",
+              "from": "client.residential"
+            },
+            {
+              "path": "ITR3.PartA_GEN1.FilingStatus.ItrFilingDueDate",
+              "from": "filing.due"
+            },
+            {
+              "path": "ITR3.PartA_GEN1.FilingStatus.ReceiptNo",
+              "from": "filing.orig_ack"
+            },
+            {
+              "path": "ITR3.PartA_GEN1.FilingStatus.OrigRetFiledDate",
+              "from": "filing.orig_date"
+            },
+            {
+              "path": "ITR3.PartB-TI.IncomeFromHP",
+              "from": "income.hp"
+            },
+            {
+              "path": "ITR3.PartB-TI.ProfBusGain.ProfGainNoSpecBus",
+              "from": "income.bp"
+            },
+            {
+              "path": "ITR3.PartB-TI.ProfBusGain.TotProfBusGain",
+              "from": "income.bp"
+            },
+            {
+              "path": "ITR3.PartB-TI.CapGain.TotalCapGains",
+              "from": "income.cg"
+            },
+            {
+              "path": "ITR3.PartB-TI.IncFromOS.OtherSrcThanOwnRaceHorse",
+              "from": "income.os"
+            },
+            {
+              "path": "ITR3.PartB-TI.IncFromOS.TotIncFromOS",
+              "from": "income.os"
+            },
+            {
+              "path": "ITR3.PartB-TI.TotalTI",
+              "from": "income.gti"
+            },
+            {
+              "path": "ITR3.PartB-TI.BalanceAfterSetoffLosses",
+              "from": "income.gti"
+            },
+            {
+              "path": "ITR3.PartB-TI.GrossTotalIncome",
+              "from": "income.gti"
+            },
+            {
+              "path": "ITR3.PartB-TI.DeductionsUndSchVIADtl.PartBchapterVIA",
+              "from": "income.deductions"
+            },
+            {
+              "path": "ITR3.PartB-TI.DeductionsUndSchVIADtl.TotDeductUndSchVIA",
+              "from": "income.deductions"
+            },
+            {
+              "path": "ITR3.PartB-TI.TotalIncome",
+              "from": "income.total"
+            },
+            {
+              "path": "ITR3.PartB-TI.AggregateIncome",
+              "from": "income.total"
+            },
+            {
+              "path": "ITR3.PartB_TTI.ComputationOfTaxLiability.TaxPayableOnTI.TaxPayableOnTotInc",
+              "from": "tax.normal"
+            },
+            {
+              "path": "ITR3.PartB_TTI.ComputationOfTaxLiability.TaxPayableOnTI.TotalSurcharge",
+              "from": "tax.surcharge"
+            },
+            {
+              "path": "ITR3.PartB_TTI.ComputationOfTaxLiability.TaxPayableOnTI.EducationCess",
+              "from": "tax.cess"
+            },
+            {
+              "path": "ITR3.PartB_TTI.ComputationOfTaxLiability.TaxPayableOnTI.GrossTaxLiability",
+              "from": "tax.gross"
+            },
+            {
+              "path": "ITR3.PartB_TTI.ComputationOfTaxLiability.GrossTaxPayable",
+              "from": "tax.gross"
+            },
+            {
+              "path": "ITR3.PartB_TTI.ComputationOfTaxLiability.NetTaxLiability",
+              "from": "tax.net"
+            },
+            {
+              "path": "ITR3.PartB_TTI.ComputationOfTaxLiability.IntrstPay.IntrstPayUs234A",
+              "from": "tax.i234a"
+            },
+            {
+              "path": "ITR3.PartB_TTI.ComputationOfTaxLiability.IntrstPay.IntrstPayUs234B",
+              "from": "tax.i234b"
+            },
+            {
+              "path": "ITR3.PartB_TTI.ComputationOfTaxLiability.IntrstPay.IntrstPayUs234C",
+              "from": "tax.i234c"
+            },
+            {
+              "path": "ITR3.PartB_TTI.ComputationOfTaxLiability.IntrstPay.TotalIntrstPay",
+              "from": "tax.interest"
+            },
+            {
+              "path": "ITR3.PartB_TTI.ComputationOfTaxLiability.AggregateTaxInterestLiability",
+              "from": "tax.aggregate"
+            },
+            {
+              "path": "ITR3.PartB_TTI.TaxPaid.TaxesPaid.AdvanceTax",
+              "from": "tax.advance"
+            },
+            {
+              "path": "ITR3.PartB_TTI.TaxPaid.TaxesPaid.TDS",
+              "from": "tax.tds"
+            },
+            {
+              "path": "ITR3.PartB_TTI.TaxPaid.TaxesPaid.SelfAssessmentTax",
+              "from": "tax.sat"
+            },
+            {
+              "path": "ITR3.PartB_TTI.TaxPaid.TaxesPaid.TotalTaxesPaid",
+              "from": "tax.paid"
+            },
+            {
+              "path": "ITR3.PartB_TTI.TaxPaid.BalTaxPayable",
+              "from": "tax.payable"
+            },
+            {
+              "path": "ITR3.PartB_TTI.Refund.RefundDue",
+              "from": "tax.refund"
+            },
+            {
+              "path": "ITR3.PartB_TTI.Refund.BankAccountDtls.BankDtlsFlag",
+              "from": "has_banks"
+            },
+            {
+              "path": "ITR3.Verification.Declaration.FatherName",
+              "from": "client.verifier_father"
+            },
+            {
+              "path": "ITR3.ScheduleTDS2.TotalTDSonOthThanSals",
+              "from": "tax.tds"
+            },
+            {
+              "path": "ITR3.ScheduleIT.TotalTaxPayments",
+              "from": "tax.challans"
+            },
+            {
+              "path": "ITR3.PartA_GEN1.PersonalInfo.AssesseeName.FirstName",
+              "from": "client.first"
+            },
+            {
+              "path": "ITR3.PartA_GEN1.PersonalInfo.AssesseeName.SurNameOrOrgName",
+              "from": "client.surname"
+            },
+            {
+              "path": "ITR3.PartA_GEN1.PersonalInfo.PAN",
+              "from": "client.pan"
+            },
+            {
+              "path": "ITR3.PartA_GEN1.PersonalInfo.DOB",
+              "from": "client.dob"
+            },
+            {
+              "path": "ITR3.PartA_GEN1.PersonalInfo.Status",
+              "from": "client.status"
+            },
+            {
+              "path": "ITR3.PartA_GEN1.PersonalInfo.Address.ResidenceNo",
+              "from": "client.flat"
+            },
+            {
+              "path": "ITR3.PartA_GEN1.PersonalInfo.Address.LocalityOrArea",
+              "from": "client.area"
+            },
+            {
+              "path": "ITR3.PartA_GEN1.PersonalInfo.Address.CityOrTownOrDistrict",
+              "from": "client.city"
+            },
+            {
+              "path": "ITR3.PartA_GEN1.PersonalInfo.Address.StateCode",
+              "from": "client.state"
+            },
+            {
+              "path": "ITR3.PartA_GEN1.PersonalInfo.Address.CountryCode",
+              "from": "=91"
+            },
+            {
+              "path": "ITR3.PartA_GEN1.PersonalInfo.Address.PinCode",
+              "from": "client.pin"
+            },
+            {
+              "path": "ITR3.PartA_GEN1.PersonalInfo.Address.CountryCodeMobile",
+              "from": "#91"
+            },
+            {
+              "path": "ITR3.PartA_GEN1.PersonalInfo.Address.MobileNo",
+              "from": "client.mobile"
+            },
+            {
+              "path": "ITR3.PartA_GEN1.PersonalInfo.Address.EmailAddress",
+              "from": "client.email"
+            },
+            {
+              "path": "ITR3.PartA_GEN1.FilingStatus.IncFrmBusOrProf",
+              "from": "filing.business"
+            },
+            {
+              "path": "ITR3.PartA_GEN1.FilingStatus.ReturnFileSec",
+              "from": "filing.section"
+            },
+            {
+              "path": "ITR3.PartA_GEN2.AuditInfo.LiableSec44AAflg",
+              "from": "filing.books"
+            },
+            {
+              "path": "ITR3.PartA_GEN2.AuditInfo.LiableSec44ABflg",
+              "from": "filing.audit"
+            },
+            {
+              "path": "ITR3.PartB-TI.Salaries",
+              "from": "income.sal"
+            },
+            {
+              "path": "ITR3.PartB_TTI.ComputationOfTaxLiability.TaxPayableOnTI.TaxAtNormalRatesOnAggrInc",
+              "from": "tax.normal"
+            },
+            {
+              "path": "ITR3.PartB_TTI.ComputationOfTaxLiability.TaxPayableOnTI.Rebate87A",
+              "from": "tax.rebate"
+            },
+            {
+              "path": "ITR3.PartB_TTI.ComputationOfTaxLiability.TaxPayableOnTI.TaxPayableOnRebate",
+              "from": "tax.after_rebate"
+            },
+            {
+              "path": "ITR3.PartB_TTI.ComputationOfTaxLiability.TaxPayableOnTI.SurchargeOnAboveCrore",
+              "from": "tax.surcharge"
+            },
+            {
+              "path": "ITR3.PartB_TTI.ComputationOfTaxLiability.TaxPayableOnTI.SurchargeOnAboveCroreBeforeMarginal",
+              "from": "tax.surcharge_before"
+            },
+            {
+              "path": "ITR3.PartB_TTI.ComputationOfTaxLiability.TaxPayAfterCreditUs115JD",
+              "from": "tax.net"
+            },
+            {
+              "path": "ITR3.Verification.Declaration.AssesseeVerName",
+              "from": "client.verifier"
+            },
+            {
+              "path": "ITR3.Verification.Declaration.AssesseeVerPAN",
+              "from": "client.verifier_pan"
+            },
+            {
+              "path": "ITR3.Verification.Capacity",
+              "from": "client.capacity"
+            },
+            {
+              "path": "ITR3.Verification.Date",
+              "from": "today"
+            },
+            {
+              "path": "ITR3.Verification.Place",
+              "from": "client.city"
+            },
+            {
+              "path": "ITR3.PartB_TTI.Refund.BankAccountDtls.AddtnlBankDetails",
+              "each": "banks",
+              "item": {
+                "IFSCCode": "ifsc",
+                "BankName": "bank",
+                "BankAccountNo": "account",
+                "AccountType": "type",
+                "UseForRefund": "refund"
+              }
+            },
+            {
+              "path": "ITR3.ScheduleTDS2.TDSOthThanSalaryDtls",
+              "each": "tds",
+              "item": {
+                "TDSCreditName": "=S",
+                "TANOfDeductor": "tan",
+                "TDSSection": "section",
+                "TaxDeductCreditDtls.TaxDeductedOwnHands": "tax",
+                "TaxDeductCreditDtls.TaxClaimedOwnHands": "tax",
+                "GrossAmount": "gross",
+                "HeadOfIncome": "head",
+                "AmtCarriedFwd": "#0"
+              }
+            },
+            {
+              "path": "ITR3.ScheduleIT.TaxPayment",
+              "each": "challans",
+              "item": {
+                "BSRCode": "bsr",
+                "DateDep": "date",
+                "SrlNoOfChaln": "serial",
+                "Amt": "amount"
+              }
+            }
+          ],
+          "ITR-5": [
+            {
+              "path": "ITR5.CreationInfo.SWVersionNo",
+              "from": "sw_version"
+            },
+            {
+              "path": "ITR5.CreationInfo.SWCreatedBy",
+              "from": "sw_id"
+            },
+            {
+              "path": "ITR5.CreationInfo.JSONCreatedBy",
+              "from": "sw_id"
+            },
+            {
+              "path": "ITR5.CreationInfo.JSONCreationDate",
+              "from": "today"
+            },
+            {
+              "path": "ITR5.CreationInfo.IntermediaryCity",
+              "from": "client.city"
+            },
+            {
+              "path": "ITR5.CreationInfo.Digest",
+              "from": "=-"
+            },
+            {
+              "path": "ITR5.Form_ITR5.FormName",
+              "from": "form"
+            },
+            {
+              "path": "ITR5.Form_ITR5.Description",
+              "from": "=SimplyFile"
+            },
+            {
+              "path": "ITR5.Form_ITR5.AssessmentYear",
+              "from": "ay_code"
+            },
+            {
+              "path": "ITR5.Form_ITR5.SchemaVer",
+              "from": "=Ver1.0"
+            },
+            {
+              "path": "ITR5.Form_ITR5.FormVer",
+              "from": "=Ver1.0"
+            },
+            {
+              "path": "ITR5.PartA_GEN1.FilingStatus.ResidentialStatus",
+              "from": "client.residential"
+            },
+            {
+              "path": "ITR5.PartA_GEN1.FilingStatus.ItrFilingDueDate",
+              "from": "filing.due"
+            },
+            {
+              "path": "ITR5.PartA_GEN1.FilingStatus.ReceiptNo",
+              "from": "filing.orig_ack"
+            },
+            {
+              "path": "ITR5.PartA_GEN1.FilingStatus.OrigRetFiledDate",
+              "from": "filing.orig_date"
+            },
+            {
+              "path": "ITR5.PartB-TI.IncomeFromHP",
+              "from": "income.hp"
+            },
+            {
+              "path": "ITR5.PartB-TI.ProfBusGain.ProfGainNoSpecBus",
+              "from": "income.bp"
+            },
+            {
+              "path": "ITR5.PartB-TI.ProfBusGain.TotProfBusGain",
+              "from": "income.bp"
+            },
+            {
+              "path": "ITR5.PartB-TI.CapGain.TotalCapGains",
+              "from": "income.cg"
+            },
+            {
+              "path": "ITR5.PartB-TI.IncFromOS.OtherSrcThanOwnRaceHorse",
+              "from": "income.os"
+            },
+            {
+              "path": "ITR5.PartB-TI.IncFromOS.TotIncFromOS",
+              "from": "income.os"
+            },
+            {
+              "path": "ITR5.PartB-TI.TotalTI",
+              "from": "income.gti"
+            },
+            {
+              "path": "ITR5.PartB-TI.BalanceAfterSetoffLosses",
+              "from": "income.gti"
+            },
+            {
+              "path": "ITR5.PartB-TI.GrossTotalIncome",
+              "from": "income.gti"
+            },
+            {
+              "path": "ITR5.PartB-TI.DeductionsUndSchVIADtl.PartBchapterVIA",
+              "from": "income.deductions"
+            },
+            {
+              "path": "ITR5.PartB-TI.DeductionsUndSchVIADtl.TotDeductUndSchVIA",
+              "from": "income.deductions"
+            },
+            {
+              "path": "ITR5.PartB-TI.TotalIncome",
+              "from": "income.total"
+            },
+            {
+              "path": "ITR5.PartB-TI.AggregateIncome",
+              "from": "income.total"
+            },
+            {
+              "path": "ITR5.PartB_TTI.ComputationOfTaxLiability.TaxPayableOnTI.TaxPayableOnTotInc",
+              "from": "tax.normal"
+            },
+            {
+              "path": "ITR5.PartB_TTI.ComputationOfTaxLiability.TaxPayableOnTI.TotalSurcharge",
+              "from": "tax.surcharge"
+            },
+            {
+              "path": "ITR5.PartB_TTI.ComputationOfTaxLiability.TaxPayableOnTI.EducationCess",
+              "from": "tax.cess"
+            },
+            {
+              "path": "ITR5.PartB_TTI.ComputationOfTaxLiability.TaxPayableOnTI.GrossTaxLiability",
+              "from": "tax.gross"
+            },
+            {
+              "path": "ITR5.PartB_TTI.ComputationOfTaxLiability.GrossTaxPayable",
+              "from": "tax.gross"
+            },
+            {
+              "path": "ITR5.PartB_TTI.ComputationOfTaxLiability.NetTaxLiability",
+              "from": "tax.net"
+            },
+            {
+              "path": "ITR5.PartB_TTI.ComputationOfTaxLiability.IntrstPay.IntrstPayUs234A",
+              "from": "tax.i234a"
+            },
+            {
+              "path": "ITR5.PartB_TTI.ComputationOfTaxLiability.IntrstPay.IntrstPayUs234B",
+              "from": "tax.i234b"
+            },
+            {
+              "path": "ITR5.PartB_TTI.ComputationOfTaxLiability.IntrstPay.IntrstPayUs234C",
+              "from": "tax.i234c"
+            },
+            {
+              "path": "ITR5.PartB_TTI.ComputationOfTaxLiability.IntrstPay.TotalIntrstPay",
+              "from": "tax.interest"
+            },
+            {
+              "path": "ITR5.PartB_TTI.ComputationOfTaxLiability.AggregateTaxInterestLiability",
+              "from": "tax.aggregate"
+            },
+            {
+              "path": "ITR5.PartB_TTI.TaxPaid.TaxesPaid.AdvanceTax",
+              "from": "tax.advance"
+            },
+            {
+              "path": "ITR5.PartB_TTI.TaxPaid.TaxesPaid.TDS",
+              "from": "tax.tds"
+            },
+            {
+              "path": "ITR5.PartB_TTI.TaxPaid.TaxesPaid.SelfAssessmentTax",
+              "from": "tax.sat"
+            },
+            {
+              "path": "ITR5.PartB_TTI.TaxPaid.TaxesPaid.TotalTaxesPaid",
+              "from": "tax.paid"
+            },
+            {
+              "path": "ITR5.PartB_TTI.TaxPaid.BalTaxPayable",
+              "from": "tax.payable"
+            },
+            {
+              "path": "ITR5.PartB_TTI.Refund.RefundDue",
+              "from": "tax.refund"
+            },
+            {
+              "path": "ITR5.PartB_TTI.Refund.BankAccountDtls.BankDtlsFlag",
+              "from": "has_banks"
+            },
+            {
+              "path": "ITR5.Verification.Declaration.FatherName",
+              "from": "client.verifier_father"
+            },
+            {
+              "path": "ITR5.ScheduleTDS2.TotalTDSonOthThanSals",
+              "from": "tax.tds"
+            },
+            {
+              "path": "ITR5.ScheduleIT.TotalTaxPayments",
+              "from": "tax.challans"
+            },
+            {
+              "path": "ITR5.PartA_GEN1.FilingStatus.ReturnFileSec.IncomeTaxSec",
+              "from": "filing.section"
+            },
+            {
+              "path": "ITR5.PartA_GEN2.AuditInfo.AudFrmPAN",
+              "from": "auditor.pan"
+            },
+            {
+              "path": "ITR5.PartA_GEN2.AuditInfo.AudFrmName",
+              "from": "auditor.name"
+            },
+            {
+              "path": "ITR5.PartA_GEN1.OrgFirmInfo.AssesseeName.SurNameOrOrgName",
+              "from": "client.name"
+            },
+            {
+              "path": "ITR5.PartA_GEN1.OrgFirmInfo.PAN",
+              "from": "client.pan"
+            },
+            {
+              "path": "ITR5.PartA_GEN1.OrgFirmInfo.DateOFFormOrIncorp",
+              "from": "client.dob"
+            },
+            {
+              "path": "ITR5.PartA_GEN1.OrgFirmInfo.StatusOrCompanyType",
+              "from": "client.status"
+            },
+            {
+              "path": "ITR5.PartA_GEN1.OrgFirmInfo.SubStatus",
+              "from": "client.substatus"
+            },
+            {
+              "path": "ITR5.PartA_GEN1.OrgFirmInfo.Address.ResidenceNo",
+              "from": "client.flat"
+            },
+            {
+              "path": "ITR5.PartA_GEN1.OrgFirmInfo.Address.LocalityOrArea",
+              "from": "client.area"
+            },
+            {
+              "path": "ITR5.PartA_GEN1.OrgFirmInfo.Address.CityOrTownOrDistrict",
+              "from": "client.city"
+            },
+            {
+              "path": "ITR5.PartA_GEN1.OrgFirmInfo.Address.StateCode",
+              "from": "client.state"
+            },
+            {
+              "path": "ITR5.PartA_GEN1.OrgFirmInfo.Address.CountryCode",
+              "from": "=91"
+            },
+            {
+              "path": "ITR5.PartA_GEN1.OrgFirmInfo.Address.PinCode",
+              "from": "client.pin"
+            },
+            {
+              "path": "ITR5.PartA_GEN1.OrgFirmInfo.Address.CountryCodeMobile",
+              "from": "#91"
+            },
+            {
+              "path": "ITR5.PartA_GEN1.OrgFirmInfo.Address.MobileNo",
+              "from": "client.mobile"
+            },
+            {
+              "path": "ITR5.PartA_GEN1.OrgFirmInfo.Address.EmailAddress",
+              "from": "client.email"
+            },
+            {
+              "path": "ITR5.PartB_TTI.ComputationOfTaxLiability.TaxPayableOnTI.TaxAtNormalRates",
+              "from": "tax.normal"
+            },
+            {
+              "path": "ITR5.PartB_TTI.ComputationOfTaxLiability.TaxPayableOnTI.SurchargeOnTaxPayable",
+              "from": "tax.surcharge"
+            },
+            {
+              "path": "ITR5.PartB_TTI.ComputationOfTaxLiability.TaxPayableOnTI.SurchargeOnTaxPayableBeforeMarginal",
+              "from": "tax.surcharge_before"
+            },
+            {
+              "path": "ITR5.Verification.Declaration.AssesseeVerName",
+              "from": "client.verifier"
+            },
+            {
+              "path": "ITR5.Verification.Declaration.AssesseeVerPAN",
+              "from": "client.verifier_pan"
+            },
+            {
+              "path": "ITR5.Verification.Declaration.Capacity",
+              "from": "client.capacity"
+            },
+            {
+              "path": "ITR5.Verification.Declaration.Date",
+              "from": "today"
+            },
+            {
+              "path": "ITR5.Verification.Declaration.Place",
+              "from": "client.city"
+            },
+            {
+              "path": "ITR5.PartB_TTI.Refund.BankAccountDtls.AddtnlBankDetails",
+              "each": "banks",
+              "item": {
+                "IFSCCode": "ifsc",
+                "BankName": "bank",
+                "BankAccountNo": "account",
+                "AccountType": "type",
+                "UseForRefund": "refund"
+              }
+            },
+            {
+              "path": "ITR5.ScheduleTDS2.TDSOthThanSalaryDtls",
+              "each": "tds",
+              "item": {
+                "TDSCreditName": "=S",
+                "TANOfDeductor": "tan",
+                "TDSSection": "section",
+                "TaxDeductCreditDtls.TaxDeductedOwnHands": "tax",
+                "TaxDeductCreditDtls.TaxClaimedOwnHands": "tax",
+                "GrossAmount": "gross",
+                "HeadOfIncome": "head",
+                "AmtCarriedFwd": "#0"
+              }
+            },
+            {
+              "path": "ITR5.ScheduleIT.TaxPayment",
+              "each": "challans",
+              "item": {
+                "BSRCode": "bsr",
+                "DateDep": "date",
+                "SrlNoOfChaln": "serial",
+                "Amt": "amount"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

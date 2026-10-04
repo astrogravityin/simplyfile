@@ -6,7 +6,7 @@ cd "$(dirname "$0")"
 [ -d .venv ] || python3 -m venv .venv
 # shellcheck disable=SC1091
 . .venv/bin/activate
-python -c "import fastapi, openpyxl" 2>/dev/null || {
+python -c "import fastapi, openpyxl, jsonschema" 2>/dev/null || {
   python -m pip install --upgrade pip
   python -m pip install -r requirements.txt
 }

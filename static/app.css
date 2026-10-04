@@ -1635,3 +1635,68 @@ button.mp-group-h:hover{background:var(--brand-soft);color:var(--ink)}
 .mp-chip.is-todo{background:var(--warn-soft);border-color:transparent;color:var(--ink)}
 .mp-sum{min-width:96px;text-align:right;font-size:13px;color:var(--ink);font-variant-numeric:tabular-nums}
 @media (max-width:640px){button.mp-group-h{flex-wrap:wrap}.mp-group-t{white-space:normal;flex-basis:calc(100% - 30px)}.mp-group-meta{width:100%;justify-content:flex-start}}
+
+/* My firm + Firm approvals (2026-10-04 multi-tenant) */
+.fi-kinds{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:6px}
+button.fi-kind{display:flex;flex-direction:column;align-items:flex-start;gap:8px;text-align:left;padding:22px;min-height:220px;cursor:pointer;border:1px solid var(--line);background:var(--panel);transition:border-color .15s,box-shadow .15s,transform .15s}
+button.fi-kind:hover{border-color:var(--brand);box-shadow:0 8px 24px rgba(0,0,0,.08);transform:translateY(-2px)}
+.fi-kind b{font-size:17px}.fi-kind .muted{font-weight:400;line-height:1.45}
+.fi-kind-ic{display:grid;place-items:center;width:48px;height:48px;border-radius:14px;background:var(--brand-soft,rgba(37,99,235,.1));color:var(--brand)}
+.fi-kind-docs{display:flex;flex-wrap:wrap;gap:4px;margin-top:auto}
+.fi-kind .button{margin-top:6px;pointer-events:none}
+.fi-privacy{display:flex;gap:6px;align-items:flex-start;margin-top:14px}
+.fi-hero{display:flex;gap:18px;align-items:center;padding:20px 22px}
+.fi-hero-main{flex:1;min-width:0}
+.fi-name{font-size:20px;font-weight:700;letter-spacing:-.01em}
+.fi-meta{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:6px 0 12px;color:var(--ink-2);font-size:13px}
+.fi-road{display:block;width:100%;height:14px;margin-bottom:-14px}
+.fi-steps{display:grid;grid-template-columns:repeat(4,1fr);list-style:none;margin:0;padding:0;position:relative}
+.fi-steps li{display:flex;flex-direction:column;align-items:center;gap:5px;font-size:12px;color:var(--muted)}
+.fi-steps li:first-child{align-items:flex-start}.fi-steps li:last-child{align-items:flex-end}
+.fi-steps li.on{color:var(--ink);font-weight:600}
+.fi-dot{display:grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--panel);border:1.5px solid var(--line-2);font-size:11px;font-weight:700}
+.fi-steps li.on .fi-dot{background:var(--ok);border-color:var(--ok);color:#fff}
+.fi-banner{display:flex;gap:12px;align-items:center;padding:14px 16px;margin:14px 0 4px;border-radius:12px;border:1px solid var(--line);background:var(--panel)}
+.fi-banner>div{flex:1;min-width:0}
+.fi-banner.fi-approved{background:var(--ok-soft,rgba(22,163,74,.08));border-color:transparent}
+.fi-banner.fi-submitted,.fi-banner.fi-returned{background:var(--warn-soft);border-color:transparent}
+.fi-banner.fi-rejected,.fi-banner.fi-suspended{background:var(--bad-soft,rgba(220,38,38,.08));border-color:transparent}
+.fi-note{margin-top:6px;padding:6px 10px;border-radius:8px;background:var(--panel)}
+.fi-why{margin:0 0 10px 4px}
+.fi-card{margin-top:14px}.fi-card h3{display:flex;gap:8px;align-items:center;margin-top:0}
+.fi-req{color:var(--bad)}
+.fi-consent{margin-top:12px;align-items:flex-start;line-height:1.45}
+.fi-save{margin-top:12px;gap:12px;align-items:center}
+#fi-problem{color:var(--bad)}
+.fi-doc{display:flex;gap:12px;align-items:center;padding:10px 12px;border:1px dashed var(--line-2);border-radius:10px;margin-top:8px}
+.fi-doc.on{border-style:solid;border-color:var(--line)}
+.fi-doc-main{flex:1;min-width:0}.fi-doc-main .small{overflow-wrap:anywhere}
+.fi-doc-acts{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+table.fi-team{display:table;width:100%;border-collapse:collapse;margin-top:8px}
+.fi-team th{text-align:left;font-size:12px;color:var(--muted);font-weight:600;padding:6px 8px;border-bottom:1px solid var(--line)}
+.fi-team td{padding:8px;border-bottom:1px solid var(--line);vertical-align:middle}
+.fi-team select{min-width:150px}
+.fi-roles{margin-top:10px}.fi-roles div{margin:4px 0}
+.fi-pw code{font-size:18px;padding:8px 12px;display:inline-block;user-select:all}
+.ap-clock{flex:none}
+.ap-head{display:flex;gap:12px;align-items:center;margin-bottom:12px}
+table.ap-facts{display:table;width:100%;border-collapse:collapse;table-layout:fixed}
+.ap-facts th{width:40%;white-space:normal;text-align:left;font-weight:500;color:var(--muted);padding:6px 8px;border-bottom:1px solid var(--line);font-size:13px}
+.ap-facts td{white-space:normal;padding:6px 8px;border-bottom:1px solid var(--line);font-weight:600;overflow-wrap:anywhere}
+.ap-hist{margin:0;padding-left:18px}.ap-hist li{margin:4px 0;font-size:13px}
+@media (max-width:640px){.fi-hero{flex-direction:column;align-items:flex-start}.fi-banner{flex-wrap:wrap}.fi-steps li span:last-child{font-size:11px;text-align:center}.fi-team select{min-width:0;width:100%}}
+#fi-submit[aria-disabled="true"]{opacity:.55;cursor:not-allowed}
+.tabs.ap-tabs{display:flex;flex-wrap:nowrap;overflow-x:auto;max-width:100%;border-radius:999px;scrollbar-width:none}.ap-tabs button{white-space:nowrap}
+.mp-chip.is-ok{background:var(--ok-soft);border-color:transparent;color:var(--ok)}
+.cl-stage-ro{display:flex;align-items:center;gap:8px;min-height:40px}
+.cc-dates{display:flex;flex-wrap:wrap;gap:6px 14px;color:var(--muted);margin-bottom:10px}
+.cc-filed{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:10px;background:var(--ok-soft);margin-bottom:10px}
+.cc-acts{flex-wrap:wrap;gap:8px}
+.cc-fileform{margin-top:10px}
+.cc-hist{margin:0;padding-left:18px}.cc-hist li{margin:6px 0}
+.cc-itru{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:10px;background:var(--warn-soft);margin:8px 0}
+.cc-itru.is-bad{background:var(--bad-soft,rgba(220,38,38,.1))}
+.cc-sub td{font-size:12.5px;color:var(--muted);padding-left:18px}
+.cc-check{display:block;margin-top:4px;font-weight:600}.cc-check.is-ok{color:var(--ok)}.cc-check.is-bad{color:var(--warn)}
+.cc-itr-list{margin-top:6px}.cc-itr-list ul{margin:6px 0;padding-left:18px}.cc-itr-list summary{cursor:pointer;color:var(--brand)}
+.cc-itr-box{padding:0 10px 6px}

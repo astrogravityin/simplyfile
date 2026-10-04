@@ -1,0 +1,76 @@
+{
+  "prod_base": "https://sf.valuestream.in",
+  "voice": "en-IN-NeerjaNeural",
+  "rate": "+0%",
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "blur": [
+    "#whoami",
+    "#userpop .head"
+  ],
+  "page_key": "sf-recon",
+  "title": "Reconcile",
+  "start_url": "/#/recon",
+  "covers": [
+    "26AS, AIS and TIS",
+    "replacing a newer download",
+    "findings and explanations"
+  ],
+  "steps": [
+    {
+      "chapter": "Reconcile",
+      "say": "Check the books against the Income-tax portal in SimplyFile: 26AS, AIS and TIS.",
+      "do": [
+        {
+          "wait": 1
+        }
+      ]
+    },
+    {
+      "chapter": "Portal files",
+      "say": "Upload 26AS, AIS and TIS. A newer 26AS replaces the older one; your explanations stay.",
+      "do": [
+        {
+          "highlight_target": "#rc-up|#rc-files|main",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "The verdict",
+      "say": "How much is cleared, and what still holds the year in Reconciling.",
+      "do": [
+        {
+          "highlight_target": "#rc-hero|main",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Findings",
+      "say": "TDS by deductor, income by head and each challan, books against portal. Red ones must be fixed or explained.",
+      "do": [
+        {
+          "highlight_target": "#rc-find|main",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Explain",
+      "say": "Write why a difference is right; once every red is explained the year moves to Review by itself.",
+      "do": [
+        {
+          "highlight_target": "#rc-find|main",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    }
+  ]
+}

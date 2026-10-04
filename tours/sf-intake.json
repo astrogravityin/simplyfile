@@ -1,0 +1,94 @@
+{
+  "prod_base": "https://sf.valuestream.in",
+  "voice": "en-IN-NeerjaNeural",
+  "rate": "+0%",
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "blur": [
+    "#whoami",
+    "#userpop .head"
+  ],
+  "page_key": "sf-intake",
+  "title": "Intake & map",
+  "start_url": "/#/intake",
+  "covers": [
+    "uploading statements",
+    "headings that add up",
+    "replacing a file",
+    "suggested refs for the income statement, balance sheet and P&L"
+  ],
+  "steps": [
+    {
+      "chapter": "Intake & map",
+      "say": "Bring the client's statements and final accounts into SimplyFile and give every row its SF Ref - most are suggested for you.",
+      "do": [
+        {
+          "wait": 1
+        }
+      ]
+    },
+    {
+      "chapter": "Pick the client",
+      "say": "Choose the client and year; their statements are listed here.",
+      "do": [
+        {
+          "highlight_target": ".cl-row|main",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Upload",
+      "say": "Excel or CSV. The same file again offers to replace it - refs stay on unchanged rows and the old version is kept.",
+      "do": [
+        {
+          "highlight_target": "#in-up|#in-up2|main",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Map rows",
+      "say": "Rows come grouped under the statement's own headings. Each heading adds up the way the statement means it - Less: rows taken off - and is checked against the statement's own total.",
+      "do": [
+        {
+          "click_target": ".in-file .primary|.in-file a",
+          "unless": ".mp-group-h|main",
+          "optional": true,
+          "timeout": 5
+        },
+        {
+          "highlight_target": ".mp-group-h|main",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Suggested refs",
+      "say": "Most rows are already suggested: income heads, TDS, 3CD clauses - and under a Balance Sheet or P&L heading, items like ITR3 BS debtors or ITR3 PL salaries. Accept them all, then fix the few left.",
+      "do": [
+        {
+          "highlight_target": "#in-accept|main",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Save",
+      "say": "Every change is saved; the stage moves on once every row has a valid ref.",
+      "do": [
+        {
+          "highlight_target": "#in-save|main",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    }
+  ]
+}

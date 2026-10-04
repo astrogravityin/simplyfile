@@ -1,0 +1,166 @@
+{
+  "chip_id": "compute.no_advance",
+  "kind": "predicate",
+  "set": "compute",
+  "label": "Compute: is this assessee free of advance tax (s.207(2))?",
+  "aliases": [
+    "compute: is this assessee free of advanc"
+  ],
+  "params": [
+    {
+      "name": "status",
+      "type": "text",
+      "default": "",
+      "label": "client status"
+    },
+    {
+      "name": "statuses",
+      "type": "json",
+      "default": [
+        "individual"
+      ],
+      "label": "who the exemption is for"
+    },
+    {
+      "name": "nri",
+      "type": "boolean",
+      "default": false,
+      "label": "non-resident this year"
+    },
+    {
+      "name": "born",
+      "type": "number",
+      "default": 0,
+      "label": "date of birth yyyymmdd (0 = not given)"
+    },
+    {
+      "name": "fy_end",
+      "type": "number",
+      "default": 0,
+      "label": "31 March ending the financial year, yyyymmdd"
+    },
+    {
+      "name": "age",
+      "type": "number",
+      "default": 60,
+      "label": "age reached during the year"
+    },
+    {
+      "name": "has_business",
+      "type": "boolean",
+      "default": false,
+      "label": "income under Profits and gains of business or profession"
+    }
+  ],
+  "expr": {
+    "op": "all",
+    "items": [
+      {
+        "op": "in_set",
+        "value": "$status",
+        "set": "$statuses"
+      },
+      {
+        "op": "not",
+        "item": {
+          "op": "eq",
+          "left": "$nri",
+          "right": true
+        }
+      },
+      {
+        "op": "gt",
+        "left": "$born",
+        "right": 0
+      },
+      {
+        "op": "le",
+        "left": "$born",
+        "right": {
+          "vop": "add",
+          "a": {
+            "vop": "sub",
+            "a": "$fy_end",
+            "b": {
+              "vop": "mul",
+              "a": "$age",
+              "b": 10000
+            }
+          },
+          "b": 70
+        }
+      },
+      {
+        "op": "not",
+        "item": {
+          "op": "eq",
+          "left": "$has_business",
+          "right": true
+        }
+      }
+    ]
+  },
+  "returns": "boolean",
+  "version": 1,
+  "status": "published",
+  "description_nl": "A resident individual who is 60 or more at any time in the year and has no business or professional income pays no advance tax, so no interest u/s 234B or 234C. One born on 1 April 1966 is 60 on 31 March 2026 (a person reaches an age the day before the birthday) - the cut-off is 1 April, 60 years before the year's end.",
+  "test_cases": [
+    {
+      "args": {
+        "status": "individual",
+        "born": 19650812,
+        "fy_end": 20260331
+      },
+      "expect_value": true
+    },
+    {
+      "args": {
+        "status": "individual",
+        "born": 19660401,
+        "fy_end": 20260331
+      },
+      "expect_value": true
+    },
+    {
+      "args": {
+        "status": "individual",
+        "born": 19660402,
+        "fy_end": 20260331
+      },
+      "expect_value": false
+    },
+    {
+      "args": {
+        "status": "individual",
+        "born": 19500101,
+        "fy_end": 20260331,
+        "has_business": true
+      },
+      "expect_value": false
+    },
+    {
+      "args": {
+        "status": "individual",
+        "born": 19500101,
+        "fy_end": 20260331,
+        "nri": true
+      },
+      "expect_value": false
+    },
+    {
+      "args": {
+        "status": "huf",
+        "born": 19500101,
+        "fy_end": 20260331
+      },
+      "expect_value": false
+    },
+    {
+      "args": {
+        "status": "individual",
+        "fy_end": 20260331
+      },
+      "expect_value": false
+    }
+  ]
+}

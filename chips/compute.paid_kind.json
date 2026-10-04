@@ -1,0 +1,105 @@
+{
+  "chip_id": "compute.paid_kind",
+  "kind": "accessor",
+  "set": "compute",
+  "label": "Compute: is a challan advance tax or self-assessment tax?",
+  "aliases": [
+    "compute: is a challan advance tax or sel"
+  ],
+  "params": [
+    {
+      "name": "minor",
+      "type": "text",
+      "default": "",
+      "label": "26AS minor head (100 advance, 300 self-assessment, 400 regular assessment)"
+    },
+    {
+      "name": "paid_on",
+      "type": "number",
+      "default": 0,
+      "label": "date paid, yyyymmdd"
+    },
+    {
+      "name": "fy_end",
+      "type": "number",
+      "default": 0,
+      "label": "31 March of the financial year, yyyymmdd"
+    }
+  ],
+  "expr": {
+    "vop": "choose",
+    "cases": [
+      {
+        "when": {
+          "op": "eq",
+          "left": "$minor",
+          "right": "400"
+        },
+        "then": "regular"
+      },
+      {
+        "when": {
+          "op": "gt",
+          "left": "$paid_on",
+          "right": "$fy_end"
+        },
+        "then": "self"
+      },
+      {
+        "when": {
+          "op": "eq",
+          "left": "$minor",
+          "right": "300"
+        },
+        "then": "self"
+      }
+    ],
+    "else": "advance"
+  },
+  "returns": "text",
+  "version": 1,
+  "status": "published",
+  "description_nl": "Advance tax is paid within the financial year: a challan after 31 March is self-assessment tax (s.140A) whatever head it was paid under; within the year, minor head 300 is self-assessment and 400 regular assessment, the rest advance tax.",
+  "test_cases": [
+    {
+      "args": {
+        "minor": "100",
+        "paid_on": 20250615,
+        "fy_end": 20260331
+      },
+      "expect_value": "advance"
+    },
+    {
+      "args": {
+        "minor": "300",
+        "paid_on": 20260115,
+        "fy_end": 20260331
+      },
+      "expect_value": "self"
+    },
+    {
+      "args": {
+        "minor": "100",
+        "paid_on": 20260615,
+        "fy_end": 20260331
+      },
+      "expect_value": "self"
+    },
+    {
+      "args": {
+        "minor": "",
+        "paid_on": 20260315,
+        "fy_end": 20260331
+      },
+      "expect_value": "advance"
+    },
+    {
+      "args": {
+        "minor": "",
+        "paid_on": 20260720,
+        "fy_end": 20260331
+      },
+      "expect_value": "self"
+    }
+  ]
+}

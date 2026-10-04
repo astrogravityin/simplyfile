@@ -1,0 +1,102 @@
+{
+  "chip_id": "firm.steps",
+  "kind": "accessor",
+  "set": "firm",
+  "label": "Firms: which steps of the application are done",
+  "aliases": [
+    "firms: which steps of the application ar"
+  ],
+  "params": [
+    {
+      "name": "details_ok",
+      "type": "boolean",
+      "default": false,
+      "label": "firm.problem is empty"
+    },
+    {
+      "name": "docs_ok",
+      "type": "boolean",
+      "default": false,
+      "label": "no paper missing"
+    },
+    {
+      "name": "state",
+      "type": "text",
+      "default": "draft",
+      "label": "the firm's state"
+    },
+    {
+      "name": "sent_states",
+      "type": "json",
+      "default": [
+        "submitted",
+        "approved",
+        "suspended"
+      ],
+      "label": "states after submitting"
+    },
+    {
+      "name": "working_state",
+      "type": "text",
+      "default": "approved",
+      "label": "the state a firm works in"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "s_details": {
+        "op": "eq",
+        "left": "$details_ok",
+        "right": true
+      },
+      "s_docs": {
+        "op": "eq",
+        "left": "$docs_ok",
+        "right": true
+      },
+      "s_submit": {
+        "op": "in_set",
+        "value": "$state",
+        "set": "$sent_states"
+      },
+      "s_approved": {
+        "op": "eq",
+        "left": "$state",
+        "right": "$working_state"
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "Details right, papers uploaded, sent for approval, approved.",
+  "test_cases": [
+    {
+      "args": {
+        "details_ok": true,
+        "docs_ok": false,
+        "state": "draft"
+      },
+      "expect_value": {
+        "s_details": true,
+        "s_docs": false,
+        "s_submit": false,
+        "s_approved": false
+      }
+    },
+    {
+      "args": {
+        "details_ok": true,
+        "docs_ok": true,
+        "state": "approved"
+      },
+      "expect_value": {
+        "s_details": true,
+        "s_docs": true,
+        "s_submit": true,
+        "s_approved": true
+      }
+    }
+  ]
+}

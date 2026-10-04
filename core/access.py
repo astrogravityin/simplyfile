@@ -127,9 +127,10 @@ def subject_label(subject: str, d: dict, users: list[dict]) -> str:
 _AVAILABLE: dict = {}
 
 
-def register_available(screen_id: str, test) -> None:
-    """`test(user) -> bool`: has this person anything at all on that screen right now?"""
-    _AVAILABLE[screen_id] = test
+def register_available(screen_id: str, test, functions: bool = False) -> None:
+    """`test(user) -> bool`: has this person anything at all on that screen right now? With functions=True the test is
+    `test(user, function_id)` and answers per button too (a tenant's role: a preparer sees no Sign off)."""
+    _AVAILABLE[screen_id] = (lambda u, _fn: test(u)) if not functions else test
 
 
 def decide(user: dict | None, screen_id: str, function_id: str = "", d: dict | None = None,
@@ -141,7 +142,7 @@ def decide(user: dict | None, screen_id: str, function_id: str = "", d: dict | N
     facts = {"signed_in": bool(user), "role": (user or {}).get("role", "member"), "known": bool(screen),
              "admin": bool(screen.get("admin")), "screen": screen_id, "label": screen.get("label", screen_id)}
     if user and screen and _AVAILABLE.get(screen_id) is not None:
-        facts["available"] = "yes" if _AVAILABLE[screen_id](user) else "no"
+        facts["available"] = "yes" if _AVAILABLE[screen_id](user, function_id) else "no"
     if user and screen and user.get("role") != "owner" and not screen.get("admin"):
         if screen.get("gate_chip"):
             facts["gate"] = "yes" if engine.run(screen["gate_chip"], {"role": facts["role"], "action": "view"}) is True else "no"

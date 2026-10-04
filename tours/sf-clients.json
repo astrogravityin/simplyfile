@@ -15,63 +15,83 @@
   "start_url": "/#/clients",
   "covers": [
     "the client register",
-    "assessment years",
-    "adding a client once",
-    "PAN and GSTIN checks",
-    "the year card: form, audit, stage"
+    "active and archived",
+    "the year's stage, worked out",
+    "date of birth, signatory, 3CEB and 44AD"
   ],
   "steps": [
     {
-      "chapter": "Welcome",
-      "say": "Clients and years is the firm's register. Every assessee is entered once, and carried into each assessment year.",
+      "chapter": "Clients & years",
+      "say": "Your firm's client register in SimplyFile: every assessee once, carried into each assessment year - and each year's stage moves by itself.",
       "do": [
         {
-          "wait_for": "#cl-list"
+          "wait": 1
         }
       ]
     },
     {
-      "chapter": "The year",
-      "say": "Pick the assessment year here. Each row shows the return form, a 3 C D tag when the year is audited, and the stage it has reached.",
+      "chapter": "The register",
+      "say": "Every client of your firm, once. Other firms' clients never show here.",
       "do": [
         {
-          "highlight": "#cl-ay",
-          "optional": true
-        },
+          "highlight_target": "#cl-list|main",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "The year at a glance",
+      "say": "How many clients are in this year, how many are audited, and the pipeline by stage.",
+      "do": [
         {
-          "wait": 1
+          "highlight_target": "#cl-kpis|main",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Pick the year",
+      "say": "Switch the assessment year; each row shows its form, the 3CD tag and its stage.",
+      "do": [
+        {
+          "highlight_target": "#cl-ay|main",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Stages move by themselves",
+      "say": "Nobody picks the stage: statements in, every row mapped, 26AS in and the reds explained, signed off, filed. Each row's dots show where it is.",
+      "do": [
+        {
+          "highlight_target": ".cl-stage|#cl-list",
+          "optional": true,
+          "timeout": 5
         }
       ]
     },
     {
       "chapter": "A new client",
-      "say": "New client opens the master: name, status, PAN, contacts, GST, bank accounts, and partners for a firm. The PAN's fourth letter must match the status, and a GSTIN must carry the same PAN, so a typing slip is caught before it reaches a return.",
+      "say": "Name, status, PAN, GSTIN, banks - plus date of birth, non-resident, and the signatory's father's name and PAN for the ITR. The PAN's fourth letter must fit the status.",
       "do": [
         {
-          "click": "#cl-new"
-        },
-        {
-          "wait": 1
-        },
-        {
-          "highlight": "#c-pan",
-          "optional": true
-        },
-        {
-          "wait": 1
+          "highlight_target": "#cl-new",
+          "optional": true,
+          "timeout": 5
         }
       ]
     },
     {
-      "chapter": "Done",
-      "say": "Once saved, the client starts in the current year, ready for the statements to come in.",
+      "chapter": "Archive, never delete",
+      "say": "A client you no longer serve moves to the Archived tab with all its years; restore brings it back.",
       "do": [
         {
-          "key": "Escape",
-          "optional": true
-        },
-        {
-          "wait": 1
+          "highlight_target": ".cl-tabs|.cl-bar",
+          "optional": true,
+          "timeout": 5
         }
       ]
     }

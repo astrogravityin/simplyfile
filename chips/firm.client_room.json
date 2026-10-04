@@ -1,0 +1,65 @@
+{
+  "chip_id": "firm.client_room",
+  "kind": "predicate",
+  "set": "firm",
+  "label": "Firms: may this firm add another client?",
+  "aliases": [
+    "firms: may this firm add another client?"
+  ],
+  "params": [
+    {
+      "name": "count",
+      "type": "number",
+      "default": 0,
+      "label": "clients it has"
+    },
+    {
+      "name": "most",
+      "type": "number",
+      "default": 0,
+      "label": "its kind's max_clients (0 = no limit)"
+    }
+  ],
+  "expr": {
+    "op": "any",
+    "items": [
+      {
+        "op": "eq",
+        "left": "$most",
+        "right": 0
+      },
+      {
+        "op": "lt",
+        "left": "$count",
+        "right": "$most"
+      }
+    ]
+  },
+  "returns": "boolean",
+  "version": 1,
+  "status": "published",
+  "description_nl": "A self-filer holds one client (themselves); a CA firm any number.",
+  "test_cases": [
+    {
+      "args": {
+        "count": 500,
+        "most": 0
+      },
+      "expect_value": true
+    },
+    {
+      "args": {
+        "count": 0,
+        "most": 1
+      },
+      "expect_value": true
+    },
+    {
+      "args": {
+        "count": 1,
+        "most": 1
+      },
+      "expect_value": false
+    }
+  ]
+}

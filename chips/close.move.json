@@ -2,16 +2,16 @@
   "chip_id": "close.move",
   "kind": "accessor",
   "set": "close",
-  "label": "Close: may a year move to this stage?",
+  "label": "Close: may this filing action happen now?",
   "aliases": [
-    "close: may a year move to this stage?"
+    "close: may this filing action happen now"
   ],
   "params": [
     {
       "name": "facts",
       "type": "json",
       "default": {},
-      "label": "to_filed, signed, has_ack, from_closed, to_closed, may_reopen"
+      "label": "action (file / withdraw / revise / discard), signed, ack_ok, kind, filed, revising, has_note, may_revise, may_update"
     },
     {
       "name": "rules",
@@ -19,7 +19,7 @@
       "default": [
         {
           "when": {
-            "to_filed": true,
+            "action": "file",
             "signed": false
           },
           "set": {
@@ -29,8 +29,8 @@
         },
         {
           "when": {
-            "to_filed": true,
-            "has_ack": false
+            "action": "file",
+            "ack_ok": false
           },
           "set": {
             "ok": false,
@@ -39,13 +39,105 @@
         },
         {
           "when": {
-            "from_closed": true,
-            "to_closed": false,
-            "may_reopen": false
+            "action": "file",
+            "kind": "too_late"
           },
           "set": {
             "ok": false,
-            "say": "no_reopen"
+            "say": "too_late"
+          }
+        },
+        {
+          "when": {
+            "action": "file",
+            "future": true
+          },
+          "set": {
+            "ok": false,
+            "say": "future_date"
+          }
+        },
+        {
+          "when": {
+            "action": "file",
+            "kind": "updated",
+            "itru_ok": false
+          },
+          "set": {
+            "ok": false,
+            "say": "itru_not_more"
+          }
+        },
+        {
+          "when": {
+            "action": "file",
+            "kind": "updated",
+            "itru_confirmed": false
+          },
+          "set": {
+            "ok": false,
+            "say": "itru_confirm_needed"
+          }
+        },
+        {
+          "when": {
+            "action": "file",
+            "filed": true
+          },
+          "set": {
+            "ok": false,
+            "say": "already_filed"
+          }
+        },
+        {
+          "when": {
+            "action": "withdraw",
+            "filed": false
+          },
+          "set": {
+            "ok": false,
+            "say": "nothing_filed"
+          }
+        },
+        {
+          "when": {
+            "action": "withdraw",
+            "has_note": false
+          },
+          "set": {
+            "ok": false,
+            "say": "need_reason"
+          }
+        },
+        {
+          "when": {
+            "action": "revise",
+            "filed": false
+          },
+          "set": {
+            "ok": false,
+            "say": "nothing_filed"
+          }
+        },
+        {
+          "when": {
+            "action": "revise",
+            "may_revise": false,
+            "may_update": false
+          },
+          "set": {
+            "ok": false,
+            "say": "no_revision_window"
+          }
+        },
+        {
+          "when": {
+            "action": "discard",
+            "revising": false
+          },
+          "set": {
+            "ok": false,
+            "say": "not_revising"
           }
         }
       ],
@@ -70,14 +162,14 @@
   "returns": "record",
   "version": 1,
   "status": "published",
-  "description_nl": "Filed needs a reviewer's sign-off and the acknowledgement number; leaving a closed year needs the reopen right.",
+  "description_nl": "Mark filed: signed off, a 15-digit acknowledgement, within the dates. Undo 'filed' (marked by mistake, wrong ack): with a reason, the filing is kept as withdrawn. Start a revision: while a revised (139(5)) or updated (ITR-U) return is still possible. Discard a revision: back to the return that stands. Nothing filed is ever deleted.",
   "test_cases": [
     {
       "args": {
         "facts": {
-          "to_filed": true,
+          "action": "file",
           "signed": false,
-          "has_ack": true
+          "ack_ok": true
         }
       },
       "expect_value": {
@@ -88,9 +180,9 @@
     {
       "args": {
         "facts": {
-          "to_filed": true,
+          "action": "file",
           "signed": true,
-          "has_ack": false
+          "ack_ok": false
         }
       },
       "expect_value": {
@@ -101,9 +193,11 @@
     {
       "args": {
         "facts": {
-          "to_filed": true,
+          "action": "file",
           "signed": true,
-          "has_ack": true
+          "ack_ok": true,
+          "kind": "original",
+          "filed": false
         }
       },
       "expect_value": {
@@ -114,14 +208,54 @@
     {
       "args": {
         "facts": {
-          "from_closed": true,
-          "to_closed": false,
-          "may_reopen": false
+          "action": "withdraw",
+          "filed": true,
+          "has_note": false
         }
       },
       "expect_value": {
         "ok": false,
-        "say": "no_reopen"
+        "say": "need_reason"
+      }
+    },
+    {
+      "args": {
+        "facts": {
+          "action": "revise",
+          "filed": true,
+          "may_revise": false,
+          "may_update": false
+        }
+      },
+      "expect_value": {
+        "ok": false,
+        "say": "no_revision_window"
+      }
+    },
+    {
+      "args": {
+        "facts": {
+          "action": "revise",
+          "filed": true,
+          "may_revise": true,
+          "may_update": false
+        }
+      },
+      "expect_value": {
+        "ok": true,
+        "say": ""
+      }
+    },
+    {
+      "args": {
+        "facts": {
+          "action": "discard",
+          "revising": false
+        }
+      },
+      "expect_value": {
+        "ok": false,
+        "say": "not_revising"
       }
     }
   ]

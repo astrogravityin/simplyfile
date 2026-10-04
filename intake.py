@@ -123,7 +123,9 @@ def parse(book: dict[str, list[list]]) -> list[dict]:
         rc = ref_column(rows, k)
         heading, colhead = "", {}
         for r, cells in enumerate(rows):
-            if rc and r == rc[0]:
+            if rc and r == rc[0]:                                 # the SF Ref title row may carry the heading too
+                words = next((v for i, v in enumerate(cells) if isinstance(v, str) and i != rc[1]), "")   # its first words, not "Amount (Rs)"
+                heading = words[: k["max_len"]["heading"]] if head_re.search(words) else heading
                 continue
             own = cells[rc[1]] if rc and rc[1] < len(cells) else None
             body = [v for i, v in enumerate(cells) if not (rc and i == rc[1])]
@@ -144,7 +146,9 @@ def parse(book: dict[str, list[list]]) -> list[dict]:
                         if isinstance(v, str) and i != first:
                             colhead[i] = (colhead.get(i, "") + " " + v).strip()[: k["max_len"]["column_title"]]
                 continue
+            titles = [colhead.get(i, "") for i, v in enumerate(body) if isinstance(v, float) and not (serial is not None and i == first)]
             out.append({"key": f"{sheet}!{r + 1}", "sheet": sheet, "row": r + 1, "serial": int(serial) if serial is not None else None,
+                        "amount": nums[int(engine.run("intake.amount_col", {"titles": titles}))] if nums else 0.0,
                         "label": label[: k["max_len"]["label"]], "text": text[: k["max_len"]["text"]], "numbers": nums, "heading": heading,
                         "own": str(own).strip() if isinstance(own, str) and own.strip() else "",
                         "by_col": [[colhead.get(i, ""), v] for i, v in enumerate(body) if isinstance(v, float) and v
@@ -223,7 +227,7 @@ def files(cid: str, ay: str) -> dict:
             "files": [m | counts(cid, ay, m["id"]) for m in metas]}
 
 
-def add(user: dict, cid: str, ay: str, name: str, data: bytes) -> dict:
+def add(user: dict, cid: str, ay: str, name: str, data: bytes, replace: str = "") -> dict:
     clients.guard_open(cid, ay)                                  # a closed (filed) year changes no more
     k = settings()
     ext = Path(name).suffix.lower()
@@ -242,16 +246,30 @@ def add(user: dict, cid: str, ay: str, name: str, data: bytes) -> dict:
     with _LOCK:
         metas = store.read(_meta_name(cid, ay), [])
         sha = hashlib.sha256(data).hexdigest()
-        if any(m["sha256"] == sha for m in metas):
-            _bad("same_file", name=name)
-        fid = store.new_id()
+        # 2026-10-04 owner "Can't I override?": the same file, or one of the same name, is offered as a replacement
+        same = next((m for m in metas if m["sha256"] == sha or m["name"] == Path(name).name[: k["max_len"]["file_name"]]), None)
+        if same and replace != same["id"]:
+            raise HTTPException(409, {"message": say("same_file", name=name), "replace": same["id"],
+                                      "ask": say("replace_ask", name=same["name"]), "yes": say("replace_yes")})
+        old = next((m for m in metas if m["id"] == replace), None) if replace else None
+        if replace and not old:
+            _bad("no_file", 404)
+        fid = old["id"] if old else store.new_id()
         d.mkdir(parents=True, exist_ok=True)
+        if old:   # the old version is kept beside (never listed); refs stay on rows whose place and words did not change
+            (d / f"{fid}{old['ext']}").replace(d / f"{fid}.v{old.get('version', 1)}{old['ext']}")
+            was = {x["key"]: x["label"] for x in store.read(f"sf_files/{cid}/{ay}/{fid}.rows.json", [])}
+            now_ = {x["key"]: x["label"] for x in rows}
+            tags = store.read(_tags_name(cid, ay, fid), {})
+            store.write(_tags_name(cid, ay, fid), {key: ref for key, ref in tags.items() if was.get(key) == now_.get(key)})
+            metas = [m for m in metas if m["id"] != fid]
         (d / f"{fid}{ext}").write_bytes(data)
         store.write(f"sf_files/{cid}/{ay}/{fid}.rows.json", rows)
         c = clients.get(cid)
         pan_seen = c["pan"] in re.sub(r"\s+", "", " ".join(str(v) for s in book.values() for r in s for v in r if v)).upper()
         meta = {"id": fid, "name": Path(name).name[: k["max_len"]["file_name"]], "ext": ext, "size": len(data), "sha256": sha,
-                "sheets": list(book), "pan_seen": pan_seen, "uploaded_at": store.now(), "uploaded_by": user["id"]}
+                "sheets": list(book), "pan_seen": pan_seen, "uploaded_at": store.now(), "uploaded_by": user["id"],
+                "version": (old or {}).get("version", 0) + 1}
         store.write(_meta_name(cid, ay), metas + [meta])
         return meta | counts(cid, ay, fid)
 
@@ -267,7 +285,7 @@ def _meta(cid: str, ay: str, fid: str) -> dict:
 def view(cid: str, ay: str, fid: str) -> dict:
     """The file's rows, each with its ref, where the ref came from and whether it is valid."""
     m = _meta(cid, ay, fid)
-    rows = store.read(f"sf_files/{cid}/{ay}/{fid}.rows.json", [])
+    rows = _rows(cid, ay, m)
     tags = store.read(_tags_name(cid, ay, fid), {})
     form = _form(cid, ay)
     sug = suggest(rows, form)
@@ -281,7 +299,46 @@ def view(cid: str, ay: str, fid: str) -> dict:
         x["suggestion"] = sug.get(x["key"], "") if x["from"] == "none" else ""
         x["state"] = engine.run("intake.row_state", {"has_ref": bool(x["ref"]), "ref_ok": bool(x["ref"] and parse_ref(x["ref"])),
                                                      "has_suggestion": bool(x["suggestion"]), "has_label": bool(x["label"])})
-    return {"file": m, "form": form, "rows": rows, "counts": _count(rows), "client": clients.row(clients.get(cid), ay)}
+    return {"file": m, "form": form, "rows": rows, "counts": _count(rows), "groups": groups(rows),
+            "client": clients.row(clients.get(cid), ay)}
+
+
+def _rows(cid: str, ay: str, m: dict) -> list[dict]:
+    """The parsed rows; a file read by an older parser (no amount column) is read again from the kept original, once.
+    Keys (sheet!row) do not change, so the refs already saved stay on their rows."""
+    name = f"sf_files/{cid}/{ay}/{m['id']}.rows.json"
+    rows = store.read(name, [])
+    if rows and "amount" not in rows[0]:
+        try:
+            rows = parse(read_book((_dir(cid, ay) / f"{m['id']}{m['ext']}").read_bytes(), m["ext"]))
+            store.write(name, rows)
+        except (OSError, ValueError):
+            pass
+    return rows
+
+
+def groups(rows: list[dict]) -> list[dict]:
+    """Each heading's rows added the way the statement means them (chip intake.row_sign: add / less / total / note),
+    and, when the statement states its own total, whether the sum agrees with it (chip recon.agrees)."""
+    out: list[dict] = []
+    for x in rows:
+        h = x.get("heading") or ""
+        if not out or out[-1]["heading"] != h:
+            out.append({"heading": h, "first": x["key"], "last": x["key"], "n": 0, "net": 0.0, "stated": None})
+        gp = out[-1]
+        gp["last"], gp["n"] = x["key"], gp["n"] + 1
+        x["group"] = len(out) - 1
+        sign = engine.run("intake.row_sign", {"label": x.get("label") or ""})
+        x["sign"] = sign
+        amt = float(x.get("amount", (x.get("numbers") or [0])[0]) or 0)
+        if sign == "total":
+            gp["stated"] = amt
+        elif sign in ("add", "less"):
+            gp["net"] += amt if sign == "add" else -amt
+    for gp in out:
+        gp["net"] = round(gp["net"], 2)
+        gp["agrees"] = None if gp["stated"] is None else engine.run("recon.agrees", {"books": gp["net"], "portal": gp["stated"]}) is True
+    return out
 
 
 def _count(rows: list[dict]) -> dict:

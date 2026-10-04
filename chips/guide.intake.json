@@ -4,95 +4,65 @@
   "set": "guide",
   "label": "Guide me: Intake & map",
   "aliases": [
-    "intake & map guide"
+    "guide me: intake & map"
   ],
   "params": [
     {
       "name": "title",
       "type": "text",
       "default": "Intake & map",
-      "label": "The tour's name (its cover card)"
+      "label": "title"
     },
     {
       "name": "lede",
       "type": "long",
-      "default": "Upload a client's statements and give every figure its SF Ref - the 3CD clause or ITR schedule it belongs to.",
-      "label": "The cover's opening line; {product} = this edition's name"
+      "default": "Bring the client's statements and final accounts into {product} and give every row its SF Ref - most are suggested for you.",
+      "label": "lede"
     },
     {
       "name": "icon",
       "type": "text",
       "default": "upload",
-      "label": "The emblem on the cover (an icon name)"
+      "label": "icon"
     },
     {
       "name": "minutes",
       "type": "number",
-      "default": 2,
-      "label": "How long the tour takes"
+      "default": 3,
+      "label": "minutes"
     },
     {
       "name": "steps",
       "type": "rows",
       "default": [
         {
+          "title": "Pick the client",
+          "say": "Choose the client and year; their statements are listed here.",
+          "target": ".cl-row|main"
+        },
+        {
           "title": "Upload",
-          "say": "Upload the client's Excel for the year - xls, xlsx or csv, Tally exports included. The file is kept exactly as uploaded.",
-          "target": "#in-up|main",
-          "art": {
-            "kind": "flow",
-            "items": [
-              "Excel",
-              "Rows",
-              "SF Ref"
-            ],
-            "at": 0
-          }
+          "say": "Excel or CSV. The same file again offers to replace it - refs stay on unchanged rows and the old version is kept.",
+          "target": "#in-up|#in-up2|main"
         },
         {
           "title": "Map rows",
-          "say": "Map rows lists every row with a figure. A ref saved by a person wins, then the file's own SF Ref column, then a suggestion from the rules - shown, never applied until you accept it.",
-          "target": "main",
-          "art": {
-            "kind": "stack",
-            "items": [
-              "Saved",
-              "From the file",
-              "Suggested"
-            ],
-            "icon": "link"
-          }
+          "say": "Rows come grouped under the statement's own headings. Each heading adds up the way the statement means it - Less: rows taken off - and is checked against the statement's own total.",
+          "target": ".mp-group-h|main",
+          "open": ".in-file .primary|.in-file a"
         },
         {
-          "title": "Accept and fix",
-          "say": "Accept all suggestions takes every suggestion at once; type over any ref and press Save refs. A ref that is not 3CD, ITR3 or ITR5 with a real clause or schedule is refused, naming why.",
-          "target": "main",
-          "art": {
-            "kind": "flow",
-            "items": [
-              "Accept",
-              "Edit",
-              "Save"
-            ],
-            "at": 1
-          }
+          "title": "Suggested refs",
+          "say": "Most rows are already suggested: income heads, TDS, 3CD clauses - and under a Balance Sheet or P&L heading, items like ITR3 BS debtors or ITR3 PL salaries. Accept them all, then fix the few left.",
+          "target": "#in-accept|main"
         },
         {
-          "title": "Back to the client",
-          "say": "Excel with SF Ref downloads the workbook with the column filled. Send it to the client: next year's file arrives already tagged.",
-          "target": "main",
-          "art": {
-            "kind": "flow",
-            "items": [
-              "Download",
-              "Client",
-              "Next year"
-            ],
-            "at": 2
-          }
+          "title": "Save",
+          "say": "Every change is saved; the stage moves on once every row has a valid ref.",
+          "target": "#in-save|main"
         }
       ],
-      "label": "The steps in order: title, say (the narration), target (where the spotlight goes; alternatives split by |, the first on screen wins), art (the picture: hero/flow/roads/meter/stack/check), place (below/above/right/left/center, optional), open (optional: what the guide presses first when the part is not on screen - open the first item, go back Home; alternatives split by |)"
+      "label": "steps"
     }
   ],
   "expr": {
@@ -108,31 +78,41 @@
   "returns": "record",
   "version": 1,
   "status": "published",
-  "description_nl": "2026-10-02 owner: Tour Video in sm, owner only - its own Guide me.",
-  "weight_basis": "page",
+  "description_nl": "2026-10-04: the Intake & map walk, up to date with the screen; tours/sf-intake.json is made from it.",
   "test_cases": [
     {
-      "args": {
-        "title": "T",
-        "lede": "L",
-        "icon": "spark",
-        "minutes": 1,
-        "steps": [
-          {
-            "title": "a",
-            "say": "b"
-          }
-        ]
-      },
+      "args": {},
       "expect_value": {
-        "title": "T",
-        "lede": "L",
-        "icon": "spark",
-        "minutes": 1,
+        "title": "Intake & map",
+        "lede": "Bring the client's statements and final accounts into {product} and give every row its SF Ref - most are suggested for you.",
+        "icon": "upload",
+        "minutes": 3,
         "steps": [
           {
-            "title": "a",
-            "say": "b"
+            "title": "Pick the client",
+            "say": "Choose the client and year; their statements are listed here.",
+            "target": ".cl-row|main"
+          },
+          {
+            "title": "Upload",
+            "say": "Excel or CSV. The same file again offers to replace it - refs stay on unchanged rows and the old version is kept.",
+            "target": "#in-up|#in-up2|main"
+          },
+          {
+            "title": "Map rows",
+            "say": "Rows come grouped under the statement's own headings. Each heading adds up the way the statement means it - Less: rows taken off - and is checked against the statement's own total.",
+            "target": ".mp-group-h|main",
+            "open": ".in-file .primary|.in-file a"
+          },
+          {
+            "title": "Suggested refs",
+            "say": "Most rows are already suggested: income heads, TDS, 3CD clauses - and under a Balance Sheet or P&L heading, items like ITR3 BS debtors or ITR3 PL salaries. Accept them all, then fix the few left.",
+            "target": "#in-accept|main"
+          },
+          {
+            "title": "Save",
+            "say": "Every change is saved; the stage moves on once every row has a valid ref.",
+            "target": "#in-save|main"
           }
         ]
       }

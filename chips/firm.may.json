@@ -1,0 +1,252 @@
+{
+  "chip_id": "firm.may",
+  "kind": "accessor",
+  "set": "firm",
+  "label": "Firms: may this person do this here?",
+  "aliases": [
+    "firms: may this person do this here?"
+  ],
+  "params": [
+    {
+      "name": "is_owner",
+      "type": "boolean",
+      "default": false,
+      "label": "the portal admin"
+    },
+    {
+      "name": "has_firm",
+      "type": "boolean",
+      "default": false,
+      "label": "belongs to a firm"
+    },
+    {
+      "name": "state",
+      "type": "text",
+      "default": "",
+      "label": "the firm's state"
+    },
+    {
+      "name": "working_state",
+      "type": "text",
+      "default": "approved",
+      "label": "the state a firm works in"
+    },
+    {
+      "name": "grants",
+      "type": "json",
+      "default": [],
+      "label": "the person's role's grants (firm.roles)"
+    },
+    {
+      "name": "want",
+      "type": "text",
+      "default": "",
+      "label": "screen or grant asked for"
+    },
+    {
+      "name": "want_fn",
+      "type": "text",
+      "default": "",
+      "label": "screen.function asked for, or empty"
+    },
+    {
+      "name": "same_firm",
+      "type": "boolean",
+      "default": true,
+      "label": "the client asked about belongs to the person's firm (true when no client)"
+    }
+  ],
+  "expr": {
+    "vop": "choose",
+    "cases": [
+      {
+        "when": {
+          "op": "not",
+          "item": {
+            "op": "eq",
+            "left": "$same_firm",
+            "right": true
+          }
+        },
+        "then": {
+          "ok": false,
+          "say": "not_yours",
+          "code": 404
+        }
+      },
+      {
+        "when": {
+          "op": "eq",
+          "left": "$is_owner",
+          "right": true
+        },
+        "then": {
+          "ok": true,
+          "say": "",
+          "code": 200
+        }
+      },
+      {
+        "when": {
+          "op": "not",
+          "item": {
+            "op": "eq",
+            "left": "$has_firm",
+            "right": true
+          }
+        },
+        "then": {
+          "ok": false,
+          "say": "no_firm",
+          "code": 403
+        }
+      },
+      {
+        "when": {
+          "op": "ne",
+          "left": "$state",
+          "right": "$working_state"
+        },
+        "then": {
+          "ok": false,
+          "say": "firm_wait",
+          "code": 403
+        }
+      },
+      {
+        "when": {
+          "op": "not",
+          "item": {
+            "op": "in_set",
+            "value": "$want",
+            "set": "$grants"
+          }
+        },
+        "then": {
+          "ok": false,
+          "say": "role_no",
+          "code": 403
+        }
+      },
+      {
+        "when": {
+          "op": "all",
+          "items": [
+            {
+              "op": "gt",
+              "left": {
+                "vop": "text_length",
+                "text": "$want_fn"
+              },
+              "right": 0
+            },
+            {
+              "op": "not",
+              "item": {
+                "op": "in_set",
+                "value": "$want_fn",
+                "set": "$grants"
+              }
+            }
+          ]
+        },
+        "then": {
+          "ok": false,
+          "say": "role_no",
+          "code": 403
+        }
+      }
+    ],
+    "else": {
+      "ok": true,
+      "say": "",
+      "code": 200
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "One answer for the menu and every Filing route: another firm's client does not exist for you (not even for the portal admin - a firm's clients are the firm's); then the portal admin may; then you need a firm, approved, and a role that grants the screen and the function.",
+  "test_cases": [
+    {
+      "args": {
+        "has_firm": true,
+        "state": "approved",
+        "grants": [
+          "compute"
+        ],
+        "want": "compute"
+      },
+      "expect_value": {
+        "ok": true,
+        "say": "",
+        "code": 200
+      }
+    },
+    {
+      "args": {
+        "has_firm": true,
+        "state": "submitted",
+        "grants": [
+          "compute"
+        ],
+        "want": "compute"
+      },
+      "expect_value": {
+        "ok": false,
+        "say": "firm_wait",
+        "code": 403
+      }
+    },
+    {
+      "args": {
+        "has_firm": false,
+        "want": "clients"
+      },
+      "expect_value": {
+        "ok": false,
+        "say": "no_firm",
+        "code": 403
+      }
+    },
+    {
+      "args": {
+        "has_firm": true,
+        "state": "approved",
+        "grants": [
+          "compute"
+        ],
+        "want": "compute",
+        "want_fn": "compute.signoff"
+      },
+      "expect_value": {
+        "ok": false,
+        "say": "role_no",
+        "code": 403
+      }
+    },
+    {
+      "args": {
+        "is_owner": true,
+        "want": "compute",
+        "same_firm": false
+      },
+      "expect_value": {
+        "ok": false,
+        "say": "not_yours",
+        "code": 404
+      }
+    },
+    {
+      "args": {
+        "is_owner": true,
+        "want": "compute"
+      },
+      "expect_value": {
+        "ok": true,
+        "say": "",
+        "code": 200
+      }
+    }
+  ]
+}

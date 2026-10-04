@@ -1,0 +1,164 @@
+{
+  "chip_id": "close.stage",
+  "kind": "accessor",
+  "set": "close",
+  "label": "Close: which stage a client's year is at",
+  "aliases": [
+    "close: which stage a client's year is at"
+  ],
+  "params": [
+    {
+      "name": "has_files",
+      "type": "boolean",
+      "default": false,
+      "label": "a statement is uploaded"
+    },
+    {
+      "name": "open_rows",
+      "type": "number",
+      "default": 0,
+      "label": "rows still without a valid SF Ref"
+    },
+    {
+      "name": "has_26as",
+      "type": "boolean",
+      "default": false,
+      "label": "26AS uploaded"
+    },
+    {
+      "name": "open_red",
+      "type": "number",
+      "default": 0,
+      "label": "red findings with no explanation"
+    },
+    {
+      "name": "signed",
+      "type": "boolean",
+      "default": false,
+      "label": "a sign-off stands behind the current figures"
+    },
+    {
+      "name": "filed",
+      "type": "boolean",
+      "default": false,
+      "label": "a filing stands and no revision is open"
+    }
+  ],
+  "expr": {
+    "vop": "choose",
+    "cases": [
+      {
+        "when": {
+          "op": "eq",
+          "left": "$filed",
+          "right": true
+        },
+        "then": "filed"
+      },
+      {
+        "when": {
+          "op": "not",
+          "item": {
+            "op": "eq",
+            "left": "$has_files",
+            "right": true
+          }
+        },
+        "then": "collecting"
+      },
+      {
+        "when": {
+          "op": "gt",
+          "left": "$open_rows",
+          "right": 0
+        },
+        "then": "mapping"
+      },
+      {
+        "when": {
+          "op": "any",
+          "items": [
+            {
+              "op": "not",
+              "item": {
+                "op": "eq",
+                "left": "$has_26as",
+                "right": true
+              }
+            },
+            {
+              "op": "gt",
+              "left": "$open_red",
+              "right": 0
+            }
+          ]
+        },
+        "then": "reconciling"
+      },
+      {
+        "when": {
+          "op": "not",
+          "item": {
+            "op": "eq",
+            "left": "$signed",
+            "right": true
+          }
+        },
+        "then": "review"
+      }
+    ],
+    "else": "signed"
+  },
+  "returns": "text",
+  "version": 1,
+  "status": "published",
+  "description_nl": "Nobody picks the stage: statements in -> Mapping until every row has a valid SF Ref -> Reconciling until 26AS is in and every red finding is explained -> Review until a sign-off -> Signed off -> Filed when the return is marked filed. A sign-off goes stale when the figures change, so the year falls back to Review by itself.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": "collecting"
+    },
+    {
+      "args": {
+        "has_files": true,
+        "open_rows": 3
+      },
+      "expect_value": "mapping"
+    },
+    {
+      "args": {
+        "has_files": true
+      },
+      "expect_value": "reconciling"
+    },
+    {
+      "args": {
+        "has_files": true,
+        "has_26as": true,
+        "open_red": 1
+      },
+      "expect_value": "reconciling"
+    },
+    {
+      "args": {
+        "has_files": true,
+        "has_26as": true
+      },
+      "expect_value": "review"
+    },
+    {
+      "args": {
+        "has_files": true,
+        "has_26as": true,
+        "signed": true
+      },
+      "expect_value": "signed"
+    },
+    {
+      "args": {
+        "filed": true
+      },
+      "expect_value": "filed"
+    }
+  ]
+}

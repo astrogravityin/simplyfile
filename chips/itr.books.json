@@ -1,0 +1,1201 @@
+{
+  "chip_id": "itr.books",
+  "kind": "accessor",
+  "set": "itr",
+  "label": "ITR JSON: balance sheet, trading account and P&L from mapped rows",
+  "aliases": [
+    "itr json: balance sheet, trading account"
+  ],
+  "params": [
+    {
+      "name": "tables",
+      "type": "json",
+      "default": [
+        "BS",
+        "PL"
+      ],
+      "label": "tables"
+    },
+    {
+      "name": "items",
+      "type": "json",
+      "default": {
+        "capital": "PARTA_BS.FundSrc.PropFund.PropCap",
+        "reserves": "PARTA_BS.FundSrc.PropFund.ResrNSurp.OthResr",
+        "secured_bank": "PARTA_BS.FundSrc.LoanFunds.SecrLoan.RupeeLoan.FrmBank",
+        "secured_other": "PARTA_BS.FundSrc.LoanFunds.SecrLoan.RupeeLoan.FrmOthrs",
+        "unsecured_bank": "PARTA_BS.FundSrc.LoanFunds.UnsecrLoan.FrmBank",
+        "unsecured_other": "PARTA_BS.FundSrc.LoanFunds.UnsecrLoan.FrmOthrs",
+        "advances_received": "PARTA_BS.FundSrc.Advances.FromOthers",
+        "deferred_tax": "PARTA_BS.FundSrc.DeferredTax",
+        "gross_block": "PARTA_BS.FundApply.FixedAsset.GrossBlock",
+        "acc_depreciation": "PARTA_BS.FundApply.FixedAsset.Depreciation",
+        "cwip": "PARTA_BS.FundApply.FixedAsset.CapWrkProg",
+        "investments": "PARTA_BS.FundApply.Investments.LongTermInv.GovOthSecUnQoted",
+        "shares": "PARTA_BS.FundApply.Investments.TradeInv.EquityShares",
+        "stores": "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrAsset.Inventories.StoresConsumables",
+        "raw_material": "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrAsset.Inventories.RawMatl",
+        "wip": "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrAsset.Inventories.StkInProcess",
+        "stock": "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrAsset.Inventories.FinOrTradGood",
+        "debtors": "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrAsset.SndryDebtors",
+        "cash": "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrAsset.CashOrBankBal.CashinHand",
+        "bank": "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrAsset.CashOrBankBal.BankBal",
+        "other_current": "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrAsset.OthCurrAsset",
+        "advances_given": "PARTA_BS.FundApply.CurrAssetLoanAdv.LoanAdv.AdvRecoverable",
+        "deposits": "PARTA_BS.FundApply.CurrAssetLoanAdv.LoanAdv.Deposits",
+        "tax_balances": "PARTA_BS.FundApply.CurrAssetLoanAdv.LoanAdv.BalWithRevAuth",
+        "creditors": "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrLiabilitiesProv.CurrLiabilities.SundryCred",
+        "tax_provision": "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrLiabilitiesProv.Provisions.ITProvision",
+        "provisions": "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrLiabilitiesProv.Provisions.OthProvision",
+        "misc_expenditure": "PARTA_BS.FundApply.MiscAdjust.MiscExpndr",
+        "sales": "TradingAccount.SaleOfGoods",
+        "services": "TradingAccount.SaleOfServices",
+        "professional_receipts": "TradingAccount.GrossRcptFromProfession",
+        "closing_stock": "TradingAccount.ClsngStckOfFinishedStcks",
+        "opening_stock": "TradingAccount.OpngStckOfFinishedStcks",
+        "purchases": "TradingAccount.Purchases",
+        "carriage": "TradingAccount.CarriageInward",
+        "power_direct": "TradingAccount.PowerAndFuel",
+        "rent_income": "PARTA_PL.CreditsToPL.OthIncome.RentInc",
+        "commission_income": "PARTA_PL.CreditsToPL.OthIncome.Comissions",
+        "dividend": "PARTA_PL.CreditsToPL.OthIncome.Dividends",
+        "interest_income": "PARTA_PL.CreditsToPL.OthIncome.InterestInc",
+        "other_income": "PARTA_PL.CreditsToPL.OthIncome.MiscOthIncome",
+        "freight": "PARTA_PL.DebitsToPL.Freight",
+        "power": "PARTA_PL.DebitsToPL.PowerFuel",
+        "rent": "PARTA_PL.DebitsToPL.RentExpdr",
+        "repairs_building": "PARTA_PL.DebitsToPL.RepairsBldg",
+        "repairs_machinery": "PARTA_PL.DebitsToPL.RepairMach",
+        "salaries": "PARTA_PL.DebitsToPL.EmployeeComp.SalsWages",
+        "bonus": "PARTA_PL.DebitsToPL.EmployeeComp.Bonus",
+        "pf": "PARTA_PL.DebitsToPL.EmployeeComp.ContToPF",
+        "staff_welfare": "PARTA_PL.DebitsToPL.StaffWelfareExp",
+        "insurance": "PARTA_PL.DebitsToPL.Insurances.OthInsur",
+        "entertainment": "PARTA_PL.DebitsToPL.Entertainment",
+        "advertisement": "PARTA_PL.DebitsToPL.Advertisement",
+        "commission": "PARTA_PL.DebitsToPL.CommissionExpdrDtls.Others",
+        "professional": "PARTA_PL.DebitsToPL.ProfessionalConstDtls.Others",
+        "travel": "PARTA_PL.DebitsToPL.TravelExp",
+        "conveyance": "PARTA_PL.DebitsToPL.ConveyanceExp",
+        "telephone": "PARTA_PL.DebitsToPL.TelephoneExp",
+        "gift": "PARTA_PL.DebitsToPL.Gift",
+        "donation": "PARTA_PL.DebitsToPL.Donation",
+        "audit_fee": "PARTA_PL.DebitsToPL.AuditFee",
+        "bad_debts": "PARTA_PL.DebitsToPL.BadDebtDtls.OthersAmtLt1Lakh",
+        "other_expenses": "PARTA_PL.DebitsToPL.OtherExpenses",
+        "interest": "PARTA_PL.DebitsToPL.InterestExpdrtDtls.Others",
+        "depreciation": "PARTA_PL.DebitsToPL.DepreciationAmort",
+        "tax_provision_pl": "PARTA_PL.TaxProvAppr.ProvForCurrTax"
+      },
+      "label": "items"
+    },
+    {
+      "name": "totals",
+      "type": "json",
+      "default": [
+        {
+          "path": "PARTA_BS.FundSrc.PropFund.ResrNSurp.TotResrNSurp",
+          "plus": [
+            "PARTA_BS.FundSrc.PropFund.ResrNSurp.RevResr",
+            "PARTA_BS.FundSrc.PropFund.ResrNSurp.CapResr",
+            "PARTA_BS.FundSrc.PropFund.ResrNSurp.StatResr",
+            "PARTA_BS.FundSrc.PropFund.ResrNSurp.OthResr"
+          ]
+        },
+        {
+          "path": "PARTA_BS.FundSrc.PropFund.TotPropFund",
+          "plus": [
+            "PARTA_BS.FundSrc.PropFund.PropCap",
+            "PARTA_BS.FundSrc.PropFund.ResrNSurp.TotResrNSurp"
+          ]
+        },
+        {
+          "path": "PARTA_BS.FundSrc.LoanFunds.SecrLoan.RupeeLoan.TotRupeeLoan",
+          "plus": [
+            "PARTA_BS.FundSrc.LoanFunds.SecrLoan.RupeeLoan.FrmBank",
+            "PARTA_BS.FundSrc.LoanFunds.SecrLoan.RupeeLoan.FrmOthrs"
+          ]
+        },
+        {
+          "path": "PARTA_BS.FundSrc.LoanFunds.SecrLoan.TotSecrLoan",
+          "plus": [
+            "PARTA_BS.FundSrc.LoanFunds.SecrLoan.ForeignCurrLoan",
+            "PARTA_BS.FundSrc.LoanFunds.SecrLoan.RupeeLoan.TotRupeeLoan"
+          ]
+        },
+        {
+          "path": "PARTA_BS.FundSrc.LoanFunds.UnsecrLoan.TotUnSecrLoan",
+          "plus": [
+            "PARTA_BS.FundSrc.LoanFunds.UnsecrLoan.FrmBank",
+            "PARTA_BS.FundSrc.LoanFunds.UnsecrLoan.FrmOthrs"
+          ]
+        },
+        {
+          "path": "PARTA_BS.FundSrc.LoanFunds.TotLoanFund",
+          "plus": [
+            "PARTA_BS.FundSrc.LoanFunds.SecrLoan.TotSecrLoan",
+            "PARTA_BS.FundSrc.LoanFunds.UnsecrLoan.TotUnSecrLoan"
+          ]
+        },
+        {
+          "path": "PARTA_BS.FundSrc.Advances.TotalAdvances",
+          "plus": [
+            "PARTA_BS.FundSrc.Advances.FromPrsn",
+            "PARTA_BS.FundSrc.Advances.FromOthers"
+          ]
+        },
+        {
+          "path": "PARTA_BS.FundSrc.TotFundSrc",
+          "plus": [
+            "PARTA_BS.FundSrc.PropFund.TotPropFund",
+            "PARTA_BS.FundSrc.LoanFunds.TotLoanFund",
+            "PARTA_BS.FundSrc.DeferredTax",
+            "PARTA_BS.FundSrc.Advances.TotalAdvances"
+          ]
+        },
+        {
+          "path": "PARTA_BS.FundApply.FixedAsset.NetBlock",
+          "plus": [
+            "PARTA_BS.FundApply.FixedAsset.GrossBlock"
+          ],
+          "minus": [
+            "PARTA_BS.FundApply.FixedAsset.Depreciation"
+          ]
+        },
+        {
+          "path": "PARTA_BS.FundApply.FixedAsset.TotFixedAsset",
+          "plus": [
+            "PARTA_BS.FundApply.FixedAsset.NetBlock",
+            "PARTA_BS.FundApply.FixedAsset.CapWrkProg"
+          ]
+        },
+        {
+          "path": "PARTA_BS.FundApply.Investments.LongTermInv.TotLongTermInv",
+          "plus": [
+            "PARTA_BS.FundApply.Investments.LongTermInv.GovtOthSecQuoted",
+            "PARTA_BS.FundApply.Investments.LongTermInv.GovOthSecUnQoted"
+          ]
+        },
+        {
+          "path": "PARTA_BS.FundApply.Investments.TradeInv.TotTradeInv",
+          "plus": [
+            "PARTA_BS.FundApply.Investments.TradeInv.EquityShares",
+            "PARTA_BS.FundApply.Investments.TradeInv.PreferShares",
+            "PARTA_BS.FundApply.Investments.TradeInv.Debenture"
+          ]
+        },
+        {
+          "path": "PARTA_BS.FundApply.Investments.TotInvestments",
+          "plus": [
+            "PARTA_BS.FundApply.Investments.LongTermInv.TotLongTermInv",
+            "PARTA_BS.FundApply.Investments.TradeInv.TotTradeInv"
+          ]
+        },
+        {
+          "path": "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrAsset.Inventories.TotInventries",
+          "plus": [
+            "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrAsset.Inventories.StoresConsumables",
+            "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrAsset.Inventories.RawMatl",
+            "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrAsset.Inventories.StkInProcess",
+            "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrAsset.Inventories.FinOrTradGood"
+          ]
+        },
+        {
+          "path": "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrAsset.CashOrBankBal.TotCashOrBankBal",
+          "plus": [
+            "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrAsset.CashOrBankBal.CashinHand",
+            "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrAsset.CashOrBankBal.BankBal"
+          ]
+        },
+        {
+          "path": "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrAsset.TotCurrAsset",
+          "plus": [
+            "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrAsset.Inventories.TotInventries",
+            "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrAsset.SndryDebtors",
+            "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrAsset.CashOrBankBal.TotCashOrBankBal",
+            "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrAsset.OthCurrAsset"
+          ]
+        },
+        {
+          "path": "PARTA_BS.FundApply.CurrAssetLoanAdv.LoanAdv.TotLoanAdv",
+          "plus": [
+            "PARTA_BS.FundApply.CurrAssetLoanAdv.LoanAdv.AdvRecoverable",
+            "PARTA_BS.FundApply.CurrAssetLoanAdv.LoanAdv.Deposits",
+            "PARTA_BS.FundApply.CurrAssetLoanAdv.LoanAdv.BalWithRevAuth"
+          ]
+        },
+        {
+          "path": "PARTA_BS.FundApply.CurrAssetLoanAdv.TotCurrAssetLoanAdv",
+          "plus": [
+            "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrAsset.TotCurrAsset",
+            "PARTA_BS.FundApply.CurrAssetLoanAdv.LoanAdv.TotLoanAdv"
+          ]
+        },
+        {
+          "path": "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrLiabilitiesProv.CurrLiabilities.TotCurrLiabilities",
+          "plus": [
+            "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrLiabilitiesProv.CurrLiabilities.SundryCred",
+            "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrLiabilitiesProv.CurrLiabilities.LiabForLeasedAsset",
+            "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrLiabilitiesProv.CurrLiabilities.AccrIntonLeasedAsset",
+            "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrLiabilitiesProv.CurrLiabilities.AccrIntNotDue"
+          ]
+        },
+        {
+          "path": "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrLiabilitiesProv.Provisions.TotProvisions",
+          "plus": [
+            "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrLiabilitiesProv.Provisions.ITProvision",
+            "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrLiabilitiesProv.Provisions.ELSuperAnnGratProvision",
+            "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrLiabilitiesProv.Provisions.OthProvision"
+          ]
+        },
+        {
+          "path": "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrLiabilitiesProv.TotCurrLiabilitiesProvision",
+          "plus": [
+            "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrLiabilitiesProv.CurrLiabilities.TotCurrLiabilities",
+            "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrLiabilitiesProv.Provisions.TotProvisions"
+          ]
+        },
+        {
+          "path": "PARTA_BS.FundApply.CurrAssetLoanAdv.NetCurrAsset",
+          "plus": [
+            "PARTA_BS.FundApply.CurrAssetLoanAdv.TotCurrAssetLoanAdv"
+          ],
+          "minus": [
+            "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrLiabilitiesProv.TotCurrLiabilitiesProvision"
+          ]
+        },
+        {
+          "path": "PARTA_BS.FundApply.MiscAdjust.TotMiscAdjust",
+          "plus": [
+            "PARTA_BS.FundApply.MiscAdjust.MiscExpndr",
+            "PARTA_BS.FundApply.MiscAdjust.DefTaxAsset",
+            "PARTA_BS.FundApply.MiscAdjust.AccumaltedLosses"
+          ]
+        },
+        {
+          "path": "PARTA_BS.FundApply.TotFundApply",
+          "plus": [
+            "PARTA_BS.FundApply.FixedAsset.TotFixedAsset",
+            "PARTA_BS.FundApply.Investments.TotInvestments",
+            "PARTA_BS.FundApply.CurrAssetLoanAdv.NetCurrAsset",
+            "PARTA_BS.FundApply.MiscAdjust.TotMiscAdjust"
+          ]
+        },
+        {
+          "path": "TradingAccount.SalesGrossReceiptsTotal",
+          "plus": [
+            "TradingAccount.SaleOfGoods",
+            "TradingAccount.SaleOfServices"
+          ]
+        },
+        {
+          "path": "TradingAccount.TotRevenueFrmOperations",
+          "plus": [
+            "TradingAccount.SalesGrossReceiptsTotal",
+            "TradingAccount.OperatingRevenueTotal",
+            "TradingAccount.GrossRcptFromProfession"
+          ],
+          "minus": [
+            "TradingAccount.ExciseCustomsVAT.TotExciseCustomsVAT"
+          ]
+        },
+        {
+          "path": "TradingAccount.TardingAccTotCred",
+          "plus": [
+            "TradingAccount.TotRevenueFrmOperations",
+            "TradingAccount.ClsngStckOfFinishedStcks"
+          ]
+        },
+        {
+          "path": "TradingAccount.DirectExpensesTotal",
+          "plus": [
+            "TradingAccount.CarriageInward",
+            "TradingAccount.PowerAndFuel"
+          ]
+        },
+        {
+          "path": "TradingAccount.GrossProfitFrmBusProf",
+          "plus": [
+            "TradingAccount.TardingAccTotCred"
+          ],
+          "minus": [
+            "TradingAccount.OpngStckOfFinishedStcks",
+            "TradingAccount.Purchases",
+            "TradingAccount.DirectExpensesTotal",
+            "TradingAccount.DutyTaxPay.ExciseCustomsVAT.TotExciseCustomsVAT"
+          ]
+        },
+        {
+          "path": "PARTA_PL.CreditsToPL.GrossProfitTrnsfFrmTrdAcc",
+          "plus": [
+            "TradingAccount.GrossProfitFrmBusProf"
+          ]
+        },
+        {
+          "path": "PARTA_PL.CreditsToPL.OthIncome.TotOthIncome",
+          "plus": [
+            "PARTA_PL.CreditsToPL.OthIncome.RentInc",
+            "PARTA_PL.CreditsToPL.OthIncome.Comissions",
+            "PARTA_PL.CreditsToPL.OthIncome.Dividends",
+            "PARTA_PL.CreditsToPL.OthIncome.InterestInc",
+            "PARTA_PL.CreditsToPL.OthIncome.ProfitOnSaleFixedAsset",
+            "PARTA_PL.CreditsToPL.OthIncome.ProfitOnInvChrSTT",
+            "PARTA_PL.CreditsToPL.OthIncome.ProfitOnOthInv",
+            "PARTA_PL.CreditsToPL.OthIncome.ProfitOnCurrFluct",
+            "PARTA_PL.CreditsToPL.OthIncome.ProfitOnAgriIncome",
+            "PARTA_PL.CreditsToPL.OthIncome.MiscOthIncome"
+          ]
+        },
+        {
+          "path": "PARTA_PL.CreditsToPL.TotCreditsToPL",
+          "plus": [
+            "PARTA_PL.CreditsToPL.GrossProfitTrnsfFrmTrdAcc",
+            "PARTA_PL.CreditsToPL.OthIncome.TotOthIncome"
+          ]
+        },
+        {
+          "path": "PARTA_PL.DebitsToPL.EmployeeComp.TotEmployeeComp",
+          "plus": [
+            "PARTA_PL.DebitsToPL.EmployeeComp.SalsWages",
+            "PARTA_PL.DebitsToPL.EmployeeComp.Bonus",
+            "PARTA_PL.DebitsToPL.EmployeeComp.MedExpReimb",
+            "PARTA_PL.DebitsToPL.EmployeeComp.LeaveEncash",
+            "PARTA_PL.DebitsToPL.EmployeeComp.LeaveTravelBenft",
+            "PARTA_PL.DebitsToPL.EmployeeComp.ContToSuperAnnFund",
+            "PARTA_PL.DebitsToPL.EmployeeComp.ContToPF",
+            "PARTA_PL.DebitsToPL.EmployeeComp.ContToGratFund",
+            "PARTA_PL.DebitsToPL.EmployeeComp.ContToOthFund",
+            "PARTA_PL.DebitsToPL.EmployeeComp.OthEmpBenftExpdr"
+          ]
+        },
+        {
+          "path": "PARTA_PL.DebitsToPL.Insurances.TotInsurances",
+          "plus": [
+            "PARTA_PL.DebitsToPL.Insurances.MedInsur",
+            "PARTA_PL.DebitsToPL.Insurances.LifeInsur",
+            "PARTA_PL.DebitsToPL.Insurances.KeyManInsur",
+            "PARTA_PL.DebitsToPL.Insurances.OthInsur"
+          ]
+        },
+        {
+          "path": "PARTA_PL.DebitsToPL.CommissionExpdrDtls.Total",
+          "plus": [
+            "PARTA_PL.DebitsToPL.CommissionExpdrDtls.NonResOtherCompany",
+            "PARTA_PL.DebitsToPL.CommissionExpdrDtls.Others"
+          ]
+        },
+        {
+          "path": "PARTA_PL.DebitsToPL.RoyalityDtls.Total",
+          "plus": [
+            "PARTA_PL.DebitsToPL.RoyalityDtls.NonResOtherCompany",
+            "PARTA_PL.DebitsToPL.RoyalityDtls.Others"
+          ]
+        },
+        {
+          "path": "PARTA_PL.DebitsToPL.ProfessionalConstDtls.Total",
+          "plus": [
+            "PARTA_PL.DebitsToPL.ProfessionalConstDtls.NonResOtherCompany",
+            "PARTA_PL.DebitsToPL.ProfessionalConstDtls.Others"
+          ]
+        },
+        {
+          "path": "PARTA_PL.DebitsToPL.BadDebtDtls.BadDebt",
+          "plus": [
+            "PARTA_PL.DebitsToPL.BadDebtDtls.BadDebtAmtDtlsTotal",
+            "PARTA_PL.DebitsToPL.BadDebtDtls.OthersPANNotAvlblDtlTotal",
+            "PARTA_PL.DebitsToPL.BadDebtDtls.OthersAmtLt1Lakh"
+          ]
+        },
+        {
+          "path": "PARTA_PL.DebitsToPL.PBIDTA",
+          "plus": [
+            "PARTA_PL.CreditsToPL.TotCreditsToPL"
+          ],
+          "minus": [
+            "PARTA_PL.DebitsToPL.Freight",
+            "PARTA_PL.DebitsToPL.ConsumptionOfStores",
+            "PARTA_PL.DebitsToPL.PowerFuel",
+            "PARTA_PL.DebitsToPL.RentExpdr",
+            "PARTA_PL.DebitsToPL.RepairsBldg",
+            "PARTA_PL.DebitsToPL.RepairMach",
+            "PARTA_PL.DebitsToPL.EmployeeComp.TotEmployeeComp",
+            "PARTA_PL.DebitsToPL.Insurances.TotInsurances",
+            "PARTA_PL.DebitsToPL.StaffWelfareExp",
+            "PARTA_PL.DebitsToPL.Entertainment",
+            "PARTA_PL.DebitsToPL.Hospitality",
+            "PARTA_PL.DebitsToPL.Conference",
+            "PARTA_PL.DebitsToPL.SalePromoExp",
+            "PARTA_PL.DebitsToPL.Advertisement",
+            "PARTA_PL.DebitsToPL.CommissionExpdrDtls.Total",
+            "PARTA_PL.DebitsToPL.RoyalityDtls.Total",
+            "PARTA_PL.DebitsToPL.ProfessionalConstDtls.Total",
+            "PARTA_PL.DebitsToPL.HotelBoardLodge",
+            "PARTA_PL.DebitsToPL.TravelExp",
+            "PARTA_PL.DebitsToPL.ForeignTravelExp",
+            "PARTA_PL.DebitsToPL.ConveyanceExp",
+            "PARTA_PL.DebitsToPL.TelephoneExp",
+            "PARTA_PL.DebitsToPL.GuestHouseExp",
+            "PARTA_PL.DebitsToPL.ClubExp",
+            "PARTA_PL.DebitsToPL.FestivalCelebExp",
+            "PARTA_PL.DebitsToPL.Scholarship",
+            "PARTA_PL.DebitsToPL.Gift",
+            "PARTA_PL.DebitsToPL.Donation",
+            "PARTA_PL.DebitsToPL.RatesTaxesPays.ExciseCustomsVAT.TotExciseCustomsVAT",
+            "PARTA_PL.DebitsToPL.AuditFee",
+            "PARTA_PL.DebitsToPL.OtherExpenses",
+            "PARTA_PL.DebitsToPL.BadDebtDtls.BadDebt",
+            "PARTA_PL.DebitsToPL.ProvForBadDoubtDebt",
+            "PARTA_PL.DebitsToPL.OthProvisionsExpdr"
+          ]
+        },
+        {
+          "path": "PARTA_PL.DebitsToPL.InterestExpdrtDtls.InterestExpdr",
+          "plus": [
+            "PARTA_PL.DebitsToPL.InterestExpdrtDtls.NonResOtherCompany",
+            "PARTA_PL.DebitsToPL.InterestExpdrtDtls.Others"
+          ]
+        },
+        {
+          "path": "PARTA_PL.DebitsToPL.PBT",
+          "plus": [
+            "PARTA_PL.DebitsToPL.PBIDTA"
+          ],
+          "minus": [
+            "PARTA_PL.DebitsToPL.InterestExpdrtDtls.InterestExpdr",
+            "PARTA_PL.DebitsToPL.DepreciationAmort"
+          ]
+        },
+        {
+          "path": "PARTA_PL.TaxProvAppr.ProfitAfterTax",
+          "plus": [
+            "PARTA_PL.DebitsToPL.PBT"
+          ],
+          "minus": [
+            "PARTA_PL.TaxProvAppr.ProvForCurrTax",
+            "PARTA_PL.TaxProvAppr.ProvDefTax"
+          ]
+        },
+        {
+          "path": "PARTA_PL.TaxProvAppr.AmtAvlAppr",
+          "plus": [
+            "PARTA_PL.TaxProvAppr.ProfitAfterTax",
+            "PARTA_PL.TaxProvAppr.BalBFPrevYr"
+          ]
+        },
+        {
+          "path": "PARTA_PL.TaxProvAppr.ProprietorAccBalTrf",
+          "plus": [
+            "PARTA_PL.TaxProvAppr.AmtAvlAppr"
+          ],
+          "minus": [
+            "PARTA_PL.TaxProvAppr.TrfToReserves"
+          ]
+        }
+      ],
+      "label": "totals"
+    },
+    {
+      "name": "checks",
+      "type": "json",
+      "default": {
+        "bs_sources": "PARTA_BS.FundSrc.TotFundSrc",
+        "bs_applied": "PARTA_BS.FundApply.TotFundApply",
+        "pl_profit": "PARTA_PL.DebitsToPL.PBT"
+      },
+      "label": "checks"
+    },
+    {
+      "name": "profit_tables",
+      "type": "json",
+      "default": [
+        "BP"
+      ],
+      "label": "profit tables"
+    },
+    {
+      "name": "profit_pattern",
+      "type": "text",
+      "default": "(?i)net profit",
+      "label": "profit pattern"
+    },
+    {
+      "name": "rewrites",
+      "type": "json",
+      "default": {
+        "ITR-5": [
+          [
+            "PropFund.PropCap",
+            "PartnerOrMemberFund.PartnerOrMemberCap"
+          ],
+          [
+            "PropFund.TotPropFund",
+            "PartnerOrMemberFund.TotPartnerOrMemberFund"
+          ],
+          [
+            "PropFund.",
+            "PartnerOrMemberFund."
+          ],
+          [
+            "UnsecrLoan.FrmBank",
+            "UnsecrLoan.RupeeLoan.FrmBank"
+          ],
+          [
+            "UnsecrLoan.FrmOthrs",
+            "UnsecrLoan.RupeeLoan.FrmOthrs"
+          ],
+          [
+            "Advances.FromOthers",
+            "Advances.FrmOthers"
+          ],
+          [
+            "Advances.FromPrsn",
+            "Advances.FrmPersonSpcfdUs40A2b"
+          ],
+          [
+            "CurrAsset.SndryDebtors",
+            "CurrAsset.SundryDebtorDtls.Others"
+          ],
+          [
+            "CurrLiabilities.SundryCred",
+            "CurrLiabilities.SundryCreditorDtls.Others"
+          ],
+          [
+            "LongTermInv.GovOthSecUnQoted",
+            "LongTermInv.Others"
+          ],
+          [
+            "MiscAdjust.AccumaltedLosses",
+            "MiscAdjust.AccumultedLosses"
+          ],
+          [
+            "PARTA_PL.DebitsToPL.",
+            "PARTA_PL.DebitsToPL.DebitPlAcnt."
+          ],
+          [
+            "PARTA_PL.TaxProvAppr.",
+            "PARTA_PL.DebitsToPL.TaxProvAppr."
+          ]
+        ]
+      },
+      "label": "rewrites"
+    },
+    {
+      "name": "extra_totals",
+      "type": "json",
+      "default": {
+        "ITR-5": [
+          {
+            "path": "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrAsset.SundryDebtorDtls.TotalSundryDebtors",
+            "plus": [
+              "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrAsset.SundryDebtorDtls.OutstandindMorethanOneYr",
+              "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrAsset.SundryDebtorDtls.Others"
+            ]
+          },
+          {
+            "path": "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrLiabilitiesProv.CurrLiabilities.SundryCreditorDtls.TotalSundryCreditors",
+            "plus": [
+              "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrLiabilitiesProv.CurrLiabilities.SundryCreditorDtls.OutstandindMorethanOneYr",
+              "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrLiabilitiesProv.CurrLiabilities.SundryCreditorDtls.Others"
+            ]
+          },
+          {
+            "path": "PARTA_BS.FundSrc.LoanFunds.UnsecrLoan.RupeeLoan.TotRupeeLoan",
+            "plus": [
+              "PARTA_BS.FundSrc.LoanFunds.UnsecrLoan.RupeeLoan.FrmBank",
+              "PARTA_BS.FundSrc.LoanFunds.UnsecrLoan.RupeeLoan.FrmPersonSpcfdUs40A2b",
+              "PARTA_BS.FundSrc.LoanFunds.UnsecrLoan.RupeeLoan.FrmOthrs"
+            ]
+          }
+        ]
+      },
+      "label": "extra totals"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "tables": "$tables",
+      "items": "$items",
+      "totals": "$totals",
+      "checks": "$checks",
+      "profit_tables": "$profit_tables",
+      "profit_pattern": "$profit_pattern",
+      "rewrites": "$rewrites",
+      "extra_totals": "$extra_totals"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "SF Ref 'ITR3 BS debtors' or 'ITR3 PL salaries' puts a row's amount on that item; rows on one item add up. Then the totals are worked out in this order (each = its plus items less its minus items). Two checks ride with the export: the balance sheet's sources against its application, and the P&L's profit before tax against the 'Net profit as per P&L' row mapped to business income. Paths are the ITR-3 schema's; 'rewrites' turn them into another form's names (ITR-5: partners' fund, debtor / creditor details, P&L debits under DebitPlAcnt) - and a path a schema still does not have is skipped and named.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "tables": [
+          "BS",
+          "PL"
+        ],
+        "items": {
+          "capital": "PARTA_BS.FundSrc.PropFund.PropCap",
+          "reserves": "PARTA_BS.FundSrc.PropFund.ResrNSurp.OthResr",
+          "secured_bank": "PARTA_BS.FundSrc.LoanFunds.SecrLoan.RupeeLoan.FrmBank",
+          "secured_other": "PARTA_BS.FundSrc.LoanFunds.SecrLoan.RupeeLoan.FrmOthrs",
+          "unsecured_bank": "PARTA_BS.FundSrc.LoanFunds.UnsecrLoan.FrmBank",
+          "unsecured_other": "PARTA_BS.FundSrc.LoanFunds.UnsecrLoan.FrmOthrs",
+          "advances_received": "PARTA_BS.FundSrc.Advances.FromOthers",
+          "deferred_tax": "PARTA_BS.FundSrc.DeferredTax",
+          "gross_block": "PARTA_BS.FundApply.FixedAsset.GrossBlock",
+          "acc_depreciation": "PARTA_BS.FundApply.FixedAsset.Depreciation",
+          "cwip": "PARTA_BS.FundApply.FixedAsset.CapWrkProg",
+          "investments": "PARTA_BS.FundApply.Investments.LongTermInv.GovOthSecUnQoted",
+          "shares": "PARTA_BS.FundApply.Investments.TradeInv.EquityShares",
+          "stores": "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrAsset.Inventories.StoresConsumables",
+          "raw_material": "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrAsset.Inventories.RawMatl",
+          "wip": "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrAsset.Inventories.StkInProcess",
+          "stock": "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrAsset.Inventories.FinOrTradGood",
+          "debtors": "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrAsset.SndryDebtors",
+          "cash": "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrAsset.CashOrBankBal.CashinHand",
+          "bank": "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrAsset.CashOrBankBal.BankBal",
+          "other_current": "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrAsset.OthCurrAsset",
+          "advances_given": "PARTA_BS.FundApply.CurrAssetLoanAdv.LoanAdv.AdvRecoverable",
+          "deposits": "PARTA_BS.FundApply.CurrAssetLoanAdv.LoanAdv.Deposits",
+          "tax_balances": "PARTA_BS.FundApply.CurrAssetLoanAdv.LoanAdv.BalWithRevAuth",
+          "creditors": "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrLiabilitiesProv.CurrLiabilities.SundryCred",
+          "tax_provision": "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrLiabilitiesProv.Provisions.ITProvision",
+          "provisions": "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrLiabilitiesProv.Provisions.OthProvision",
+          "misc_expenditure": "PARTA_BS.FundApply.MiscAdjust.MiscExpndr",
+          "sales": "TradingAccount.SaleOfGoods",
+          "services": "TradingAccount.SaleOfServices",
+          "professional_receipts": "TradingAccount.GrossRcptFromProfession",
+          "closing_stock": "TradingAccount.ClsngStckOfFinishedStcks",
+          "opening_stock": "TradingAccount.OpngStckOfFinishedStcks",
+          "purchases": "TradingAccount.Purchases",
+          "carriage": "TradingAccount.CarriageInward",
+          "power_direct": "TradingAccount.PowerAndFuel",
+          "rent_income": "PARTA_PL.CreditsToPL.OthIncome.RentInc",
+          "commission_income": "PARTA_PL.CreditsToPL.OthIncome.Comissions",
+          "dividend": "PARTA_PL.CreditsToPL.OthIncome.Dividends",
+          "interest_income": "PARTA_PL.CreditsToPL.OthIncome.InterestInc",
+          "other_income": "PARTA_PL.CreditsToPL.OthIncome.MiscOthIncome",
+          "freight": "PARTA_PL.DebitsToPL.Freight",
+          "power": "PARTA_PL.DebitsToPL.PowerFuel",
+          "rent": "PARTA_PL.DebitsToPL.RentExpdr",
+          "repairs_building": "PARTA_PL.DebitsToPL.RepairsBldg",
+          "repairs_machinery": "PARTA_PL.DebitsToPL.RepairMach",
+          "salaries": "PARTA_PL.DebitsToPL.EmployeeComp.SalsWages",
+          "bonus": "PARTA_PL.DebitsToPL.EmployeeComp.Bonus",
+          "pf": "PARTA_PL.DebitsToPL.EmployeeComp.ContToPF",
+          "staff_welfare": "PARTA_PL.DebitsToPL.StaffWelfareExp",
+          "insurance": "PARTA_PL.DebitsToPL.Insurances.OthInsur",
+          "entertainment": "PARTA_PL.DebitsToPL.Entertainment",
+          "advertisement": "PARTA_PL.DebitsToPL.Advertisement",
+          "commission": "PARTA_PL.DebitsToPL.CommissionExpdrDtls.Others",
+          "professional": "PARTA_PL.DebitsToPL.ProfessionalConstDtls.Others",
+          "travel": "PARTA_PL.DebitsToPL.TravelExp",
+          "conveyance": "PARTA_PL.DebitsToPL.ConveyanceExp",
+          "telephone": "PARTA_PL.DebitsToPL.TelephoneExp",
+          "gift": "PARTA_PL.DebitsToPL.Gift",
+          "donation": "PARTA_PL.DebitsToPL.Donation",
+          "audit_fee": "PARTA_PL.DebitsToPL.AuditFee",
+          "bad_debts": "PARTA_PL.DebitsToPL.BadDebtDtls.OthersAmtLt1Lakh",
+          "other_expenses": "PARTA_PL.DebitsToPL.OtherExpenses",
+          "interest": "PARTA_PL.DebitsToPL.InterestExpdrtDtls.Others",
+          "depreciation": "PARTA_PL.DebitsToPL.DepreciationAmort",
+          "tax_provision_pl": "PARTA_PL.TaxProvAppr.ProvForCurrTax"
+        },
+        "totals": [
+          {
+            "path": "PARTA_BS.FundSrc.PropFund.ResrNSurp.TotResrNSurp",
+            "plus": [
+              "PARTA_BS.FundSrc.PropFund.ResrNSurp.RevResr",
+              "PARTA_BS.FundSrc.PropFund.ResrNSurp.CapResr",
+              "PARTA_BS.FundSrc.PropFund.ResrNSurp.StatResr",
+              "PARTA_BS.FundSrc.PropFund.ResrNSurp.OthResr"
+            ]
+          },
+          {
+            "path": "PARTA_BS.FundSrc.PropFund.TotPropFund",
+            "plus": [
+              "PARTA_BS.FundSrc.PropFund.PropCap",
+              "PARTA_BS.FundSrc.PropFund.ResrNSurp.TotResrNSurp"
+            ]
+          },
+          {
+            "path": "PARTA_BS.FundSrc.LoanFunds.SecrLoan.RupeeLoan.TotRupeeLoan",
+            "plus": [
+              "PARTA_BS.FundSrc.LoanFunds.SecrLoan.RupeeLoan.FrmBank",
+              "PARTA_BS.FundSrc.LoanFunds.SecrLoan.RupeeLoan.FrmOthrs"
+            ]
+          },
+          {
+            "path": "PARTA_BS.FundSrc.LoanFunds.SecrLoan.TotSecrLoan",
+            "plus": [
+              "PARTA_BS.FundSrc.LoanFunds.SecrLoan.ForeignCurrLoan",
+              "PARTA_BS.FundSrc.LoanFunds.SecrLoan.RupeeLoan.TotRupeeLoan"
+            ]
+          },
+          {
+            "path": "PARTA_BS.FundSrc.LoanFunds.UnsecrLoan.TotUnSecrLoan",
+            "plus": [
+              "PARTA_BS.FundSrc.LoanFunds.UnsecrLoan.FrmBank",
+              "PARTA_BS.FundSrc.LoanFunds.UnsecrLoan.FrmOthrs"
+            ]
+          },
+          {
+            "path": "PARTA_BS.FundSrc.LoanFunds.TotLoanFund",
+            "plus": [
+              "PARTA_BS.FundSrc.LoanFunds.SecrLoan.TotSecrLoan",
+              "PARTA_BS.FundSrc.LoanFunds.UnsecrLoan.TotUnSecrLoan"
+            ]
+          },
+          {
+            "path": "PARTA_BS.FundSrc.Advances.TotalAdvances",
+            "plus": [
+              "PARTA_BS.FundSrc.Advances.FromPrsn",
+              "PARTA_BS.FundSrc.Advances.FromOthers"
+            ]
+          },
+          {
+            "path": "PARTA_BS.FundSrc.TotFundSrc",
+            "plus": [
+              "PARTA_BS.FundSrc.PropFund.TotPropFund",
+              "PARTA_BS.FundSrc.LoanFunds.TotLoanFund",
+              "PARTA_BS.FundSrc.DeferredTax",
+              "PARTA_BS.FundSrc.Advances.TotalAdvances"
+            ]
+          },
+          {
+            "path": "PARTA_BS.FundApply.FixedAsset.NetBlock",
+            "plus": [
+              "PARTA_BS.FundApply.FixedAsset.GrossBlock"
+            ],
+            "minus": [
+              "PARTA_BS.FundApply.FixedAsset.Depreciation"
+            ]
+          },
+          {
+            "path": "PARTA_BS.FundApply.FixedAsset.TotFixedAsset",
+            "plus": [
+              "PARTA_BS.FundApply.FixedAsset.NetBlock",
+              "PARTA_BS.FundApply.FixedAsset.CapWrkProg"
+            ]
+          },
+          {
+            "path": "PARTA_BS.FundApply.Investments.LongTermInv.TotLongTermInv",
+            "plus": [
+              "PARTA_BS.FundApply.Investments.LongTermInv.GovtOthSecQuoted",
+              "PARTA_BS.FundApply.Investments.LongTermInv.GovOthSecUnQoted"
+            ]
+          },
+          {
+            "path": "PARTA_BS.FundApply.Investments.TradeInv.TotTradeInv",
+            "plus": [
+              "PARTA_BS.FundApply.Investments.TradeInv.EquityShares",
+              "PARTA_BS.FundApply.Investments.TradeInv.PreferShares",
+              "PARTA_BS.FundApply.Investments.TradeInv.Debenture"
+            ]
+          },
+          {
+            "path": "PARTA_BS.FundApply.Investments.TotInvestments",
+            "plus": [
+              "PARTA_BS.FundApply.Investments.LongTermInv.TotLongTermInv",
+              "PARTA_BS.FundApply.Investments.TradeInv.TotTradeInv"
+            ]
+          },
+          {
+            "path": "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrAsset.Inventories.TotInventries",
+            "plus": [
+              "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrAsset.Inventories.StoresConsumables",
+              "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrAsset.Inventories.RawMatl",
+              "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrAsset.Inventories.StkInProcess",
+              "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrAsset.Inventories.FinOrTradGood"
+            ]
+          },
+          {
+            "path": "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrAsset.CashOrBankBal.TotCashOrBankBal",
+            "plus": [
+              "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrAsset.CashOrBankBal.CashinHand",
+              "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrAsset.CashOrBankBal.BankBal"
+            ]
+          },
+          {
+            "path": "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrAsset.TotCurrAsset",
+            "plus": [
+              "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrAsset.Inventories.TotInventries",
+              "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrAsset.SndryDebtors",
+              "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrAsset.CashOrBankBal.TotCashOrBankBal",
+              "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrAsset.OthCurrAsset"
+            ]
+          },
+          {
+            "path": "PARTA_BS.FundApply.CurrAssetLoanAdv.LoanAdv.TotLoanAdv",
+            "plus": [
+              "PARTA_BS.FundApply.CurrAssetLoanAdv.LoanAdv.AdvRecoverable",
+              "PARTA_BS.FundApply.CurrAssetLoanAdv.LoanAdv.Deposits",
+              "PARTA_BS.FundApply.CurrAssetLoanAdv.LoanAdv.BalWithRevAuth"
+            ]
+          },
+          {
+            "path": "PARTA_BS.FundApply.CurrAssetLoanAdv.TotCurrAssetLoanAdv",
+            "plus": [
+              "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrAsset.TotCurrAsset",
+              "PARTA_BS.FundApply.CurrAssetLoanAdv.LoanAdv.TotLoanAdv"
+            ]
+          },
+          {
+            "path": "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrLiabilitiesProv.CurrLiabilities.TotCurrLiabilities",
+            "plus": [
+              "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrLiabilitiesProv.CurrLiabilities.SundryCred",
+              "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrLiabilitiesProv.CurrLiabilities.LiabForLeasedAsset",
+              "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrLiabilitiesProv.CurrLiabilities.AccrIntonLeasedAsset",
+              "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrLiabilitiesProv.CurrLiabilities.AccrIntNotDue"
+            ]
+          },
+          {
+            "path": "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrLiabilitiesProv.Provisions.TotProvisions",
+            "plus": [
+              "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrLiabilitiesProv.Provisions.ITProvision",
+              "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrLiabilitiesProv.Provisions.ELSuperAnnGratProvision",
+              "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrLiabilitiesProv.Provisions.OthProvision"
+            ]
+          },
+          {
+            "path": "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrLiabilitiesProv.TotCurrLiabilitiesProvision",
+            "plus": [
+              "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrLiabilitiesProv.CurrLiabilities.TotCurrLiabilities",
+              "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrLiabilitiesProv.Provisions.TotProvisions"
+            ]
+          },
+          {
+            "path": "PARTA_BS.FundApply.CurrAssetLoanAdv.NetCurrAsset",
+            "plus": [
+              "PARTA_BS.FundApply.CurrAssetLoanAdv.TotCurrAssetLoanAdv"
+            ],
+            "minus": [
+              "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrLiabilitiesProv.TotCurrLiabilitiesProvision"
+            ]
+          },
+          {
+            "path": "PARTA_BS.FundApply.MiscAdjust.TotMiscAdjust",
+            "plus": [
+              "PARTA_BS.FundApply.MiscAdjust.MiscExpndr",
+              "PARTA_BS.FundApply.MiscAdjust.DefTaxAsset",
+              "PARTA_BS.FundApply.MiscAdjust.AccumaltedLosses"
+            ]
+          },
+          {
+            "path": "PARTA_BS.FundApply.TotFundApply",
+            "plus": [
+              "PARTA_BS.FundApply.FixedAsset.TotFixedAsset",
+              "PARTA_BS.FundApply.Investments.TotInvestments",
+              "PARTA_BS.FundApply.CurrAssetLoanAdv.NetCurrAsset",
+              "PARTA_BS.FundApply.MiscAdjust.TotMiscAdjust"
+            ]
+          },
+          {
+            "path": "TradingAccount.SalesGrossReceiptsTotal",
+            "plus": [
+              "TradingAccount.SaleOfGoods",
+              "TradingAccount.SaleOfServices"
+            ]
+          },
+          {
+            "path": "TradingAccount.TotRevenueFrmOperations",
+            "plus": [
+              "TradingAccount.SalesGrossReceiptsTotal",
+              "TradingAccount.OperatingRevenueTotal",
+              "TradingAccount.GrossRcptFromProfession"
+            ],
+            "minus": [
+              "TradingAccount.ExciseCustomsVAT.TotExciseCustomsVAT"
+            ]
+          },
+          {
+            "path": "TradingAccount.TardingAccTotCred",
+            "plus": [
+              "TradingAccount.TotRevenueFrmOperations",
+              "TradingAccount.ClsngStckOfFinishedStcks"
+            ]
+          },
+          {
+            "path": "TradingAccount.DirectExpensesTotal",
+            "plus": [
+              "TradingAccount.CarriageInward",
+              "TradingAccount.PowerAndFuel"
+            ]
+          },
+          {
+            "path": "TradingAccount.GrossProfitFrmBusProf",
+            "plus": [
+              "TradingAccount.TardingAccTotCred"
+            ],
+            "minus": [
+              "TradingAccount.OpngStckOfFinishedStcks",
+              "TradingAccount.Purchases",
+              "TradingAccount.DirectExpensesTotal",
+              "TradingAccount.DutyTaxPay.ExciseCustomsVAT.TotExciseCustomsVAT"
+            ]
+          },
+          {
+            "path": "PARTA_PL.CreditsToPL.GrossProfitTrnsfFrmTrdAcc",
+            "plus": [
+              "TradingAccount.GrossProfitFrmBusProf"
+            ]
+          },
+          {
+            "path": "PARTA_PL.CreditsToPL.OthIncome.TotOthIncome",
+            "plus": [
+              "PARTA_PL.CreditsToPL.OthIncome.RentInc",
+              "PARTA_PL.CreditsToPL.OthIncome.Comissions",
+              "PARTA_PL.CreditsToPL.OthIncome.Dividends",
+              "PARTA_PL.CreditsToPL.OthIncome.InterestInc",
+              "PARTA_PL.CreditsToPL.OthIncome.ProfitOnSaleFixedAsset",
+              "PARTA_PL.CreditsToPL.OthIncome.ProfitOnInvChrSTT",
+              "PARTA_PL.CreditsToPL.OthIncome.ProfitOnOthInv",
+              "PARTA_PL.CreditsToPL.OthIncome.ProfitOnCurrFluct",
+              "PARTA_PL.CreditsToPL.OthIncome.ProfitOnAgriIncome",
+              "PARTA_PL.CreditsToPL.OthIncome.MiscOthIncome"
+            ]
+          },
+          {
+            "path": "PARTA_PL.CreditsToPL.TotCreditsToPL",
+            "plus": [
+              "PARTA_PL.CreditsToPL.GrossProfitTrnsfFrmTrdAcc",
+              "PARTA_PL.CreditsToPL.OthIncome.TotOthIncome"
+            ]
+          },
+          {
+            "path": "PARTA_PL.DebitsToPL.EmployeeComp.TotEmployeeComp",
+            "plus": [
+              "PARTA_PL.DebitsToPL.EmployeeComp.SalsWages",
+              "PARTA_PL.DebitsToPL.EmployeeComp.Bonus",
+              "PARTA_PL.DebitsToPL.EmployeeComp.MedExpReimb",
+              "PARTA_PL.DebitsToPL.EmployeeComp.LeaveEncash",
+              "PARTA_PL.DebitsToPL.EmployeeComp.LeaveTravelBenft",
+              "PARTA_PL.DebitsToPL.EmployeeComp.ContToSuperAnnFund",
+              "PARTA_PL.DebitsToPL.EmployeeComp.ContToPF",
+              "PARTA_PL.DebitsToPL.EmployeeComp.ContToGratFund",
+              "PARTA_PL.DebitsToPL.EmployeeComp.ContToOthFund",
+              "PARTA_PL.DebitsToPL.EmployeeComp.OthEmpBenftExpdr"
+            ]
+          },
+          {
+            "path": "PARTA_PL.DebitsToPL.Insurances.TotInsurances",
+            "plus": [
+              "PARTA_PL.DebitsToPL.Insurances.MedInsur",
+              "PARTA_PL.DebitsToPL.Insurances.LifeInsur",
+              "PARTA_PL.DebitsToPL.Insurances.KeyManInsur",
+              "PARTA_PL.DebitsToPL.Insurances.OthInsur"
+            ]
+          },
+          {
+            "path": "PARTA_PL.DebitsToPL.CommissionExpdrDtls.Total",
+            "plus": [
+              "PARTA_PL.DebitsToPL.CommissionExpdrDtls.NonResOtherCompany",
+              "PARTA_PL.DebitsToPL.CommissionExpdrDtls.Others"
+            ]
+          },
+          {
+            "path": "PARTA_PL.DebitsToPL.RoyalityDtls.Total",
+            "plus": [
+              "PARTA_PL.DebitsToPL.RoyalityDtls.NonResOtherCompany",
+              "PARTA_PL.DebitsToPL.RoyalityDtls.Others"
+            ]
+          },
+          {
+            "path": "PARTA_PL.DebitsToPL.ProfessionalConstDtls.Total",
+            "plus": [
+              "PARTA_PL.DebitsToPL.ProfessionalConstDtls.NonResOtherCompany",
+              "PARTA_PL.DebitsToPL.ProfessionalConstDtls.Others"
+            ]
+          },
+          {
+            "path": "PARTA_PL.DebitsToPL.BadDebtDtls.BadDebt",
+            "plus": [
+              "PARTA_PL.DebitsToPL.BadDebtDtls.BadDebtAmtDtlsTotal",
+              "PARTA_PL.DebitsToPL.BadDebtDtls.OthersPANNotAvlblDtlTotal",
+              "PARTA_PL.DebitsToPL.BadDebtDtls.OthersAmtLt1Lakh"
+            ]
+          },
+          {
+            "path": "PARTA_PL.DebitsToPL.PBIDTA",
+            "plus": [
+              "PARTA_PL.CreditsToPL.TotCreditsToPL"
+            ],
+            "minus": [
+              "PARTA_PL.DebitsToPL.Freight",
+              "PARTA_PL.DebitsToPL.ConsumptionOfStores",
+              "PARTA_PL.DebitsToPL.PowerFuel",
+              "PARTA_PL.DebitsToPL.RentExpdr",
+              "PARTA_PL.DebitsToPL.RepairsBldg",
+              "PARTA_PL.DebitsToPL.RepairMach",
+              "PARTA_PL.DebitsToPL.EmployeeComp.TotEmployeeComp",
+              "PARTA_PL.DebitsToPL.Insurances.TotInsurances",
+              "PARTA_PL.DebitsToPL.StaffWelfareExp",
+              "PARTA_PL.DebitsToPL.Entertainment",
+              "PARTA_PL.DebitsToPL.Hospitality",
+              "PARTA_PL.DebitsToPL.Conference",
+              "PARTA_PL.DebitsToPL.SalePromoExp",
+              "PARTA_PL.DebitsToPL.Advertisement",
+              "PARTA_PL.DebitsToPL.CommissionExpdrDtls.Total",
+              "PARTA_PL.DebitsToPL.RoyalityDtls.Total",
+              "PARTA_PL.DebitsToPL.ProfessionalConstDtls.Total",
+              "PARTA_PL.DebitsToPL.HotelBoardLodge",
+              "PARTA_PL.DebitsToPL.TravelExp",
+              "PARTA_PL.DebitsToPL.ForeignTravelExp",
+              "PARTA_PL.DebitsToPL.ConveyanceExp",
+              "PARTA_PL.DebitsToPL.TelephoneExp",
+              "PARTA_PL.DebitsToPL.GuestHouseExp",
+              "PARTA_PL.DebitsToPL.ClubExp",
+              "PARTA_PL.DebitsToPL.FestivalCelebExp",
+              "PARTA_PL.DebitsToPL.Scholarship",
+              "PARTA_PL.DebitsToPL.Gift",
+              "PARTA_PL.DebitsToPL.Donation",
+              "PARTA_PL.DebitsToPL.RatesTaxesPays.ExciseCustomsVAT.TotExciseCustomsVAT",
+              "PARTA_PL.DebitsToPL.AuditFee",
+              "PARTA_PL.DebitsToPL.OtherExpenses",
+              "PARTA_PL.DebitsToPL.BadDebtDtls.BadDebt",
+              "PARTA_PL.DebitsToPL.ProvForBadDoubtDebt",
+              "PARTA_PL.DebitsToPL.OthProvisionsExpdr"
+            ]
+          },
+          {
+            "path": "PARTA_PL.DebitsToPL.InterestExpdrtDtls.InterestExpdr",
+            "plus": [
+              "PARTA_PL.DebitsToPL.InterestExpdrtDtls.NonResOtherCompany",
+              "PARTA_PL.DebitsToPL.InterestExpdrtDtls.Others"
+            ]
+          },
+          {
+            "path": "PARTA_PL.DebitsToPL.PBT",
+            "plus": [
+              "PARTA_PL.DebitsToPL.PBIDTA"
+            ],
+            "minus": [
+              "PARTA_PL.DebitsToPL.InterestExpdrtDtls.InterestExpdr",
+              "PARTA_PL.DebitsToPL.DepreciationAmort"
+            ]
+          },
+          {
+            "path": "PARTA_PL.TaxProvAppr.ProfitAfterTax",
+            "plus": [
+              "PARTA_PL.DebitsToPL.PBT"
+            ],
+            "minus": [
+              "PARTA_PL.TaxProvAppr.ProvForCurrTax",
+              "PARTA_PL.TaxProvAppr.ProvDefTax"
+            ]
+          },
+          {
+            "path": "PARTA_PL.TaxProvAppr.AmtAvlAppr",
+            "plus": [
+              "PARTA_PL.TaxProvAppr.ProfitAfterTax",
+              "PARTA_PL.TaxProvAppr.BalBFPrevYr"
+            ]
+          },
+          {
+            "path": "PARTA_PL.TaxProvAppr.ProprietorAccBalTrf",
+            "plus": [
+              "PARTA_PL.TaxProvAppr.AmtAvlAppr"
+            ],
+            "minus": [
+              "PARTA_PL.TaxProvAppr.TrfToReserves"
+            ]
+          }
+        ],
+        "checks": {
+          "bs_sources": "PARTA_BS.FundSrc.TotFundSrc",
+          "bs_applied": "PARTA_BS.FundApply.TotFundApply",
+          "pl_profit": "PARTA_PL.DebitsToPL.PBT"
+        },
+        "profit_tables": [
+          "BP"
+        ],
+        "profit_pattern": "(?i)net profit",
+        "rewrites": {
+          "ITR-5": [
+            [
+              "PropFund.PropCap",
+              "PartnerOrMemberFund.PartnerOrMemberCap"
+            ],
+            [
+              "PropFund.TotPropFund",
+              "PartnerOrMemberFund.TotPartnerOrMemberFund"
+            ],
+            [
+              "PropFund.",
+              "PartnerOrMemberFund."
+            ],
+            [
+              "UnsecrLoan.FrmBank",
+              "UnsecrLoan.RupeeLoan.FrmBank"
+            ],
+            [
+              "UnsecrLoan.FrmOthrs",
+              "UnsecrLoan.RupeeLoan.FrmOthrs"
+            ],
+            [
+              "Advances.FromOthers",
+              "Advances.FrmOthers"
+            ],
+            [
+              "Advances.FromPrsn",
+              "Advances.FrmPersonSpcfdUs40A2b"
+            ],
+            [
+              "CurrAsset.SndryDebtors",
+              "CurrAsset.SundryDebtorDtls.Others"
+            ],
+            [
+              "CurrLiabilities.SundryCred",
+              "CurrLiabilities.SundryCreditorDtls.Others"
+            ],
+            [
+              "LongTermInv.GovOthSecUnQoted",
+              "LongTermInv.Others"
+            ],
+            [
+              "MiscAdjust.AccumaltedLosses",
+              "MiscAdjust.AccumultedLosses"
+            ],
+            [
+              "PARTA_PL.DebitsToPL.",
+              "PARTA_PL.DebitsToPL.DebitPlAcnt."
+            ],
+            [
+              "PARTA_PL.TaxProvAppr.",
+              "PARTA_PL.DebitsToPL.TaxProvAppr."
+            ]
+          ]
+        },
+        "extra_totals": {
+          "ITR-5": [
+            {
+              "path": "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrAsset.SundryDebtorDtls.TotalSundryDebtors",
+              "plus": [
+                "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrAsset.SundryDebtorDtls.OutstandindMorethanOneYr",
+                "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrAsset.SundryDebtorDtls.Others"
+              ]
+            },
+            {
+              "path": "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrLiabilitiesProv.CurrLiabilities.SundryCreditorDtls.TotalSundryCreditors",
+              "plus": [
+                "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrLiabilitiesProv.CurrLiabilities.SundryCreditorDtls.OutstandindMorethanOneYr",
+                "PARTA_BS.FundApply.CurrAssetLoanAdv.CurrLiabilitiesProv.CurrLiabilities.SundryCreditorDtls.Others"
+              ]
+            },
+            {
+              "path": "PARTA_BS.FundSrc.LoanFunds.UnsecrLoan.RupeeLoan.TotRupeeLoan",
+              "plus": [
+                "PARTA_BS.FundSrc.LoanFunds.UnsecrLoan.RupeeLoan.FrmBank",
+                "PARTA_BS.FundSrc.LoanFunds.UnsecrLoan.RupeeLoan.FrmPersonSpcfdUs40A2b",
+                "PARTA_BS.FundSrc.LoanFunds.UnsecrLoan.RupeeLoan.FrmOthrs"
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

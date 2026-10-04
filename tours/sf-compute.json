@@ -1,0 +1,111 @@
+{
+  "prod_base": "https://sf.valuestream.in",
+  "voice": "en-IN-NeerjaNeural",
+  "rate": "+0%",
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "blur": [
+    "#whoami",
+    "#userpop .head"
+  ],
+  "page_key": "sf-compute",
+  "title": "Compute & close",
+  "start_url": "/#/compute",
+  "covers": [
+    "the computation",
+    "234A/B/C and 244A interest, worked out",
+    "ITR-3 / ITR-5 JSON and the 3CD JSON",
+    "balance sheet and P&L checks",
+    "original, belated, revised and updated returns"
+  ],
+  "steps": [
+    {
+      "chapter": "Compute & close",
+      "say": "Turn the mapped books and 26AS into the return in SimplyFile: the computation, interest, the filing files in the department's own format, sign-off, filing and revisions.",
+      "do": [
+        {
+          "wait": 1
+        }
+      ]
+    },
+    {
+      "chapter": "Where the year stands",
+      "say": "The strip: mapped, reconciled, computed, signed off, filed, closed.",
+      "do": [
+        {
+          "highlight_target": ".cc-steps|main",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "The computation",
+      "say": "Each head adds its mapped rows; house property gets its 30%. Pick the regime here.",
+      "do": [
+        {
+          "highlight_target": ".cc-comp|main",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Interest, worked out",
+      "say": "234A, 234B and 234C come from the 26AS challans by date; a senior citizen with no business income pays no advance-tax interest. Type a figure only to override.",
+      "do": [
+        {
+          "highlight_target": "#cc-int|.cc-comp",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Refund interest",
+      "say": "On a refund, 244A interest at half a percent a month - none when the refund is under 10% of the tax.",
+      "do": [
+        {
+          "highlight_target": ".cc-bal|.cc-comp",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Files in the department's format",
+      "say": "The ITR JSON and, for an audit, the Form 3CB-3CD JSON - each checked against the CBDT schema before you download, with what is still missing listed. The balance sheet tallies and the P&L profit matches business income.",
+      "do": [
+        {
+          "highlight_target": ".cc-dl|main",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Sign off and file",
+      "say": "A reviewer signs off; then the acknowledgement number and date filed. The return type - original, belated, revised or ITR-U - follows from the dates.",
+      "do": [
+        {
+          "highlight_target": ".cc-close|main",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Revise or undo",
+      "say": "Start a revised return, or an ITR-U after 31 December with its 140B additional tax; discard a revision; or undo a wrong 'filed' with a reason. Nothing filed is ever deleted.",
+      "do": [
+        {
+          "highlight_target": ".cc-close|main",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    }
+  ]
+}

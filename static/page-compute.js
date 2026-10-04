@@ -2,7 +2,7 @@
 // books and the credit as 26AS shows it (every rate is chip compute.settings / compute.tax), the files for filing, the
 // reviewer's sign-off, and Filed - which closes the year (chip close.move decides; the server refuses every later write).
 // Words: chip ui.compute. The steps strip and the waterfall colours: chip page.compute.
-import { api, BASE, esc, toast, busy, pageHead, confirmDialog, t, ps, loadWords, may, when } from './app.js';
+import { api, BASE, esc, toast, busy, pageHead, confirmDialog, t, ps, loadWords, may, when, modal } from './app.js';
 import { clientPicker } from './page-intake.js';
 import { hue, initials } from './page-clients.js';
 import { icon } from './icons.js';
@@ -52,6 +52,13 @@ const fileMark = (label, tone) => `<svg width="30" height="36" viewBox="0 0 34 4
   <path d="M22 2v8a2 2 0 0 0 2 2h8" fill="none" stroke="var(${tone})" stroke-width="1.6"/>
   <rect x="5" y="24" width="24" height="10" rx="3" fill="var(${tone})"/><text x="17" y="31.6" text-anchor="middle" class="rc-doc-t">${esc(label)}</text></svg>`;
 
+// Dates come as yyyymmdd numbers (chip close.dates compares them); shown as dd/mm/yyyy.
+const ymd = (n) => String(n || '').replace(/(\d{4})(\d{2})(\d{2})/, '$3/$2/$1');
+const day = (n) => (n ? `${String(n).slice(6, 8)}/${String(n).slice(4, 6)}/${String(n).slice(0, 4)}` : '');
+const filedWords = (f) => (f ? { kind: w(`k_${f.kind}`), ack: f.ack_no, on: day(String(f.filed_on).replace(/-/g, '')), by: f.by } : {});
+const datesRow = (d) => `<div class="cc-dates small"><span>${esc(w('due_on', { date: day(d.dates.due) }))}</span>
+  <span>${esc(w('revise_by', { date: day(d.dates.revise_by) }))}</span><span>${esc(w('updated_by', { date: day(d.dates.updated_by) }))}</span></div>`;
+
 export async function computePage(host) {
   await loadWords('compute');
   const p = new URLSearchParams((location.hash.split('?')[1]) || '');
@@ -92,25 +99,54 @@ export async function computePage(host) {
           ${line(w('t_tax'), x.tax)}${x.rebate ? line(w('t_rebate'), -x.rebate) : ''}
           ${x.surcharge ? line(w('t_surcharge', { rate: x.surcharge_rate }), x.surcharge) : ''}${x.relief ? line(w('t_relief'), -x.relief) : ''}
           ${line(w('t_cess'), x.cess)}${line(w('t_total'), x.total, 'cc-key')}
-          <tr><td>${esc(w('t_interest'))}<div class="small muted">${esc(w('interest_hint'))}</div></td>
-            <td class="num"><input id="cc-int" type="number" min="0" step="1" value="${Math.round(d.interest)}" ${ro ? 'disabled' : ''} aria-label="${esc(w('interest'))}"/></td></tr>
+          ${d.interest_auto.exempt ? `<tr class="cc-sub"><td colspan="2">${esc(w('i_exempt'))}</td></tr>` : ''}
+          ${['a', 'b', 'c'].map((s) => `<tr class="cc-sub"><td>${esc(w(`i_234${s}`))}</td><td class="num">${esc(signed(d.interest_auto[s]))}</td></tr>`).join('')}
+          <tr><td>${esc(w(d.interest_override === null || d.interest_override === undefined ? 't_interest_auto' : 't_interest_over'))}
+              <div class="small muted">${esc(w('interest_hint', { day: ymd(d.interest_auto.filing_day) }))}</div></td>
+            <td class="num"><input id="cc-int" type="number" min="0" step="1" placeholder="${Math.round(d.interest_auto.total)}"
+              value="${d.interest_override === null || d.interest_override === undefined ? '' : Math.round(d.interest_override)}" ${ro ? 'disabled' : ''} aria-label="${esc(w('interest'))}"/></td></tr>
           ${line(w('t_tds'), -d.tds_total)}${line(w('t_paid'), -d.paid_total)}
           <tr class="cc-bal is-${esc(d.balance.kind)}"><td>${esc(w(`bal_${d.balance.kind}`))}</td><td class="num">${esc(money(d.balance.amount))}</td></tr>
+          ${d.balance.kind === 'refund' ? `<tr class="cc-sub"><td>${esc(w(`ri_${d.refund_interest.say}`, { from: ymd(d.refund_interest.from), to: ymd(d.refund_interest.to) }))}
+              ${d.refund_interest.eligible ? `<div class="row tight" style="margin-top:6px"><label class="small" for="cc-refon">${esc(w('refund_on'))}</label>
+              <input id="cc-refon" type="date" value="${esc(d.refund_interest.refund_on)}" style="max-width:170px"/></div>` : ''}</td>
+            <td class="num">${d.refund_interest.eligible ? esc(money(d.refund_interest.interest)) : '-'}</td></tr>` : ''}
           </tbody></table></section>
         <div class="cc-side">
           <section class="card"><h3 class="rc-h">${icon('pulse', 15)} ${esc(w('waterfall'))}</h3>${waterfall(d)}</section>
           <section class="card"><h3 class="rc-h">${icon('download', 15)} ${esc(w('downloads'))}</h3><div class="cc-dl">
             <a class="cc-file" href="${BASE}${base}/computation.xlsx">${fileMark('XLSX', '--ok')}<span><b>${esc(w('dl_comp'))}</b></span></a>
             <a class="cc-file" href="${BASE}${base}/utility.zip">${fileMark('CSV', '--brand-2')}<span><b>${esc(w('dl_util'))}</b><small>${esc(w('dl_util_hint'))}</small></span></a>
-            <a class="cc-file" href="${BASE}${base}/3cd.xlsx">${fileMark('3CD', '--warn')}<span><b>${esc(w('dl_3cd'))}</b></span></a></div></section>
+            <a class="cc-file" href="${BASE}${base}/3cd.xlsx">${fileMark('3CD', '--warn')}<span><b>${esc(w('dl_3cd'))}</b></span></a>
+            <a class="cc-file" href="${BASE}${base}/itr.json">${fileMark('ITR', '--brand')}<span><b>${esc(w('dl_itr', { form: d.client.form }))}</b><small>${esc(w('dl_itr_hint'))}</small></span></a>
+            <div class="cc-itr-box small"><span id="cc-itr-check" class="cc-check">${esc(w('itr_checking'))}</span></div>
+            ${d.client.audit ? `<a class="cc-file" href="${BASE}${base}/3cd.json">${fileMark('3CD', '--warn')}<span><b>${esc(w('dl_3cd_json'))}</b><small>${esc(w('dl_3cd_json_hint'))}</small></span></a>
+            <div class="cc-itr-box small"><span id="cc-3cd-check" class="cc-check">${esc(w('itr_checking'))}</span></div>` : ''}</div></section>
           <section class="card cc-close"><h3 class="rc-h">${icon('shield', 15)} ${esc(w('steps'))}</h3>
             ${d.signoff ? `<div class="cc-sig ${d.signed ? 'is-ok' : 'is-stale'}">${icon(d.signed ? 'check' : 'alert', 14)}
                 ${esc(d.signed ? w('signed_by', { by: d.signoff.by, at: when(d.signoff.at) }) : w('sign_stale'))}</div>` : ''}
-            ${ro ? `<p class="small">${esc(w('closed_note'))}</p><div class="cc-ack"><span class="muted small">${esc(w('ack'))}</span><code>${esc(d.ack_no)}</code></div>
-                ${may('compute', 'reopen') ? `<button type="button" id="cc-reopen">${icon('refresh', 14)} ${esc(w('reopen'))}</button>` : ''}`
+            ${datesRow(d)}
+            ${d.revising ? `<div class="cc-sig is-stale">${icon('edit', 14)} ${esc(w('revising_note', filedWords(d.current)))}</div>` : ''}
+            ${ro ? `<div class="cc-filed">${icon('lock', 14)}<div><b>${esc(w(`k_${d.current.kind}`))}</b>
+                  <div class="small">${esc(w('filed_as', filedWords(d.current)))}</div></div></div>
+                ${may('compute', 'reopen') ? `<div class="row tight cc-acts">
+                  ${d.dates.may_revise ? `<button type="button" class="primary" data-act="revise">${icon('edit', 14)} ${esc(w('revise'))}</button>` : ''}
+                  ${!d.dates.may_revise && d.dates.may_update ? `<button type="button" class="primary" data-act="revise">${icon('edit', 14)} ${esc(w('update'))}</button>` : ''}
+                  <button type="button" class="ghost" data-act="withdraw">${icon('refresh', 14)} ${esc(w('withdraw'))}</button></div>` : ''}`
               : `${may('compute', 'signoff') ? `<div class="row tight"><button type="button" class="${d.signed ? '' : 'primary'}" id="cc-sign">${icon('check', 14)} ${esc(w(d.signed ? 'unsign' : 'sign'))}</button></div>` : ''}
-                ${may('compute', 'file') ? `<div class="field"><label for="cc-ack">${esc(w('ack'))}</label><input id="cc-ack" value="${esc(d.ack_no)}" placeholder="e.g. 123456789012345"/></div>
-                <button type="button" class="primary" id="cc-file" ${d.signed ? '' : 'disabled'}>${icon('lock', 14)} ${esc(w('file'))}</button>` : ''}`}
+                ${may('compute', 'file') ? `<div class="grid two cc-fileform"><div class="field"><label for="cc-ack">${esc(w('ack'))}</label><input id="cc-ack" inputmode="numeric" maxlength="15" placeholder="${esc(w('ack_hint'))}"/></div>
+                  <div class="field"><label for="cc-on">${esc(w('filed_on'))}</label><input id="cc-on" type="date" value="${new Date().toISOString().slice(0, 10)}" max="${new Date().toISOString().slice(0, 10)}"/></div></div>
+                <p class="small muted">${esc(w('will_be', { kind: w(`k_${d.dates.kind}`) }))}</p>
+                ${d.itr_u ? `<div class="cc-itru ${d.itr_u.ok ? '' : 'is-bad'}">${icon(d.itr_u.ok ? 'info' : 'alert', 14)}<div>
+                  ${d.itr_u.ok ? `<b>${esc(w('itru_add', { pct: d.itr_u.pct, amount: money(d.itr_u.additional) }))}</b>
+                    <div class="small">${esc(w('itru_base', { extra: money(d.itr_u.extra), before: money(d.itr_u.net_before) }))}</div>
+                    <label class="check small" style="margin-top:8px"><input type="checkbox" id="cc-itru"/> <span>${esc(w('itru_confirm'))}</span></label>`
+                  : `<b>${esc(w('itru_not_more'))}</b><div class="small">${esc(w('itru_base', { extra: money(d.itr_u.extra), before: money(d.itr_u.net_before) }))}</div>`}</div></div>` : ''}
+                <button type="button" class="primary" id="cc-file" ${d.signed ? '' : 'disabled'}>${icon('lock', 14)} ${esc(w('file'))}</button>` : ''}
+                ${d.revising && may('compute', 'reopen') ? `<button type="button" class="ghost" data-act="discard">${icon('close', 14)} ${esc(w('discard'))}</button>` : ''}`}
+            ${d.filings.length ? `<h3 class="rc-h" style="margin-top:14px">${icon('clock', 15)} ${esc(w('history'))}</h3><ol class="cc-hist">${d.filings.slice().reverse().map((f) =>
+              `<li><span class="tag ${f.status === 'current' ? 'ok' : ''}">${esc(w(`fs_${f.status}`))}</span> <b>${esc(w(`k_${f.kind}`))}</b>
+                <div class="small muted">${esc(w('filed_as', filedWords(f)))}${f.note ? ` · ${esc(f.note)}` : ''}</div></li>`).join('')}</ol>` : ''}
           </section>
           <section class="card"><h3 class="rc-h">${icon('shield', 15)} ${esc(w('tds_title'))}</h3>
             <table class="cc-tbl small"><colgroup><col><col class="cc-numcol-s"></colgroup>${d.tds.map((e) => `<tr><td>${esc(e.party)}<div class="muted">${esc(e.tan)} · ${esc(e.section)} · ${esc(money(e.gross))}</div></td><td class="num">${esc(money(e.tax))}</td></tr>`).join('')}</table>
@@ -118,12 +154,39 @@ export async function computePage(host) {
             <table class="cc-tbl small"><colgroup><col><col class="cc-numcol-s"></colgroup>${d.paid.map((e) => `<tr><td>${esc(e.date)}<div class="muted">${esc(w('bsr'))} ${esc(e.bsr)} · ${esc(w('challan'))} ${esc(e.challan)}</div></td><td class="num">${esc(money(e.amount))}</td></tr>`).join('')}</table></section>
         </div></div>`;
 
+    api(`${base}/itr-check`).then((r) => {                       // the CBDT schema's own verdict, shown before anyone uploads
+      const el = host.querySelector('#cc-itr-check');
+      if (!el) return;
+      el.className = `cc-check ${r.valid ? 'is-ok' : 'is-bad'}`;
+      el.textContent = r.valid ? w('itr_valid', { schema: r.schema }) : w('itr_issues', { n: r.error_count });
+      const bk = r.books || {};                                   // balance sheet and P&L from mapped rows: do they tie?
+      if (bk.items) {
+        const tie = (ok, good, bad, v) => `<div class="cc-check ${ok ? 'is-ok' : 'is-bad'}">${esc(w(ok ? good : bad, v))}</div>`;
+        el.insertAdjacentHTML('afterend', tie(Math.abs(bk.bs_diff) < 1, 'bs_ties', 'bs_differs', { total: money(bk.bs_sources), diff: money(Math.abs(bk.bs_diff)) })
+          + (bk.pl_diff === null ? '' : tie(Math.abs(bk.pl_diff) < 1, 'pl_ties', 'pl_differs', { pbt: money(bk.pl_profit), bp: money(bk.bp_profit || 0) }))
+          + (bk.unknown.length ? `<div class="cc-check is-bad">${esc(w('books_unknown', { items: bk.unknown.join(', ') }))}</div>` : ''));
+      } else el.insertAdjacentHTML('afterend', `<div class="small muted">${esc(w('books_none'))}</div>`);
+      if (!r.valid) {
+        el.insertAdjacentHTML('afterend', `<details class="cc-itr-list small"><summary>${esc(w('itr_show'))}</summary><ul>${r.errors.map((e) =>
+          `<li><b>${esc(e.field)}</b> - ${esc(e.what)}</li>`).join('')}</ul><p class="muted">${esc(w('itr_where'))}</p></details>`);
+      }
+    }).catch((err) => { const el = host.querySelector('#cc-itr-check'); if (el) el.textContent = err.message; });
+    if (d.client.audit) api(`${base}/3cd-check`).then((r) => {   // the tax audit report against its own CBDT schema
+      const el = host.querySelector('#cc-3cd-check');
+      if (!el) return;
+      el.className = `cc-check ${r.valid ? 'is-ok' : 'is-bad'}`;
+      el.textContent = r.valid ? w('itr_valid', { schema: r.schema }) : w('itr_issues', { n: r.error_count });
+      if (!r.valid) el.insertAdjacentHTML('afterend', `<details class="cc-itr-list small"><summary>${esc(w('itr_show'))}</summary><ul>${r.errors.map((e) =>
+        `<li><b>${esc(e.field)}</b> - ${esc(e.what)}</li>`).join('')}</ul><p class="muted">${esc(w('tar_where'))}</p></details>`);
+    }).catch((err) => { const el = host.querySelector('#cc-3cd-check'); if (el) el.textContent = err.message; });
     host.querySelector('#cc-ay').onchange = (e) => { location.hash = `#/compute?c=${encodeURIComponent(cid)}&ay=${encodeURIComponent(e.target.value)}`; };
     const put = async (body) => { try { draw(await api(base, { method: 'PUT', body })); toast(w('saved'), 'ok'); } catch (err) { toast(err.message, 'bad', 8); } };
     const reg = host.querySelector('#cc-regime');
     if (reg && !ro) reg.onchange = () => put({ regime: reg.value });
     const int = host.querySelector('#cc-int');
     if (int && !ro) int.onchange = () => put({ interest: int.value });
+    const refon = host.querySelector('#cc-refon');
+    if (refon) refon.onchange = () => put({ refund_on: refon.value });
     const sign = host.querySelector('#cc-sign');
     if (sign) sign.onclick = () => (d.signed
       ? busy(sign, async () => { try { draw(await api(`${base}/signoff`, { method: 'POST', body: { on: false } })); } catch (err) { toast(err.message, 'bad', 8); } })
@@ -132,12 +195,21 @@ export async function computePage(host) {
       }, w('sign'), { tone: 'brand' }));
     const file = host.querySelector('#cc-file');
     if (file) file.onclick = () => confirmDialog(w('file_title'), w('file_body'), async () => {
-      try { draw(await api(`${base}/file`, { method: 'POST', body: { ack_no: host.querySelector('#cc-ack').value } })); toast(w('filed_ok'), 'ok'); }
+      try { draw(await api(`${base}/file`, { method: 'POST', body: { ack_no: host.querySelector('#cc-ack').value, filed_on: host.querySelector('#cc-on').value, itru_confirm: !!(host.querySelector('#cc-itru') || {}).checked } })); toast(w('filed_ok'), 'ok'); }
       catch (err) { toast(err.message, 'bad', 8); }
     }, w('file'), { tone: 'warn' });
-    const reopen = host.querySelector('#cc-reopen');
-    if (reopen) reopen.onclick = () => busy(reopen, async () => {
-      try { draw(await api(`${base}/reopen`, { method: 'POST' })); toast(w('reopened'), 'ok'); } catch (err) { toast(err.message, 'bad', 8); }
+    host.querySelectorAll('[data-act]').forEach((b) => {
+      const act = b.dataset.act;
+      b.onclick = () => {
+        const ask = act === 'withdraw'
+          ? `${esc(w('withdraw_body'))}<div class="field" style="margin-top:10px"><label for="cc-why">${esc(w('reason'))}</label><textarea id="cc-why" rows="2"></textarea></div>`
+          : esc(w(`${act}_body`, filedWords(d.current)));
+        modal(w(`${act}_title`), ask, { footer: `<button type="button" class="${act === 'withdraw' ? 'danger' : 'primary'}" data-yes>${esc(w(act === 'revise' && !d.dates.may_revise ? 'update' : act))}</button>`,
+          onOpen: (m, close) => { m.closest('.modal').querySelector('[data-yes]').onclick = (ev) => busy(ev.currentTarget, async () => {
+            try { draw(await api(`${base}/${act}`, { method: 'POST', body: { note: (m.querySelector('#cc-why') || {}).value || '' } })); close(); toast(w(`${act}_ok`), 'ok'); }
+            catch (err) { toast(err.message, 'bad', 8); }
+          }); } });
+      };
     });
   };
   draw(await api(base));

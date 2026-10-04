@@ -58,7 +58,7 @@
     {
       "name": "interest_hint",
       "type": "text",
-      "default": "As you worked it out; added to the tax.",
+      "default": "Worked out to {day} from the 26AS challans. Type a figure to override; clear it to go back to the calculation.",
       "label": "interest hint"
     },
     {
@@ -358,7 +358,7 @@
     {
       "name": "file_body",
       "type": "text",
-      "default": "The year moves to Filed and closes: no new statements, refs, portal files or notes until it is reopened.",
+      "default": "The year moves to Filed and closes: no new statements, refs, portal files or notes. To change it later, start a revised return (the filed one is kept).",
       "label": "file body"
     },
     {
@@ -394,7 +394,7 @@
     {
       "name": "need_ack",
       "type": "text",
-      "default": "Give the acknowledgement number of the filed return.",
+      "default": "Give the 15-digit acknowledgement number from the ITR-V.",
       "label": "need ack"
     },
     {
@@ -594,6 +594,450 @@
       "type": "text",
       "default": "Nil",
       "label": "wf nil"
+    },
+    {
+      "name": "k_original",
+      "type": "text",
+      "default": "Original return u/s 139(1)",
+      "label": "k_original"
+    },
+    {
+      "name": "k_belated",
+      "type": "text",
+      "default": "Belated return u/s 139(4)",
+      "label": "k_belated"
+    },
+    {
+      "name": "k_revised",
+      "type": "text",
+      "default": "Revised return u/s 139(5)",
+      "label": "k_revised"
+    },
+    {
+      "name": "k_updated",
+      "type": "text",
+      "default": "Updated return (ITR-U) u/s 139(8A)",
+      "label": "k_updated"
+    },
+    {
+      "name": "k_too_late",
+      "type": "text",
+      "default": "Too late - no return can be filed for this year now",
+      "label": "k_too_late"
+    },
+    {
+      "name": "due_on",
+      "type": "text",
+      "default": "Due {date}",
+      "label": "due_on"
+    },
+    {
+      "name": "revise_by",
+      "type": "text",
+      "default": "Belated / revised by {date}",
+      "label": "revise_by"
+    },
+    {
+      "name": "updated_by",
+      "type": "text",
+      "default": "ITR-U by {date}",
+      "label": "updated_by"
+    },
+    {
+      "name": "ack_hint",
+      "type": "text",
+      "default": "15 digits",
+      "label": "ack_hint"
+    },
+    {
+      "name": "filed_on",
+      "type": "text",
+      "default": "Date filed",
+      "label": "filed_on"
+    },
+    {
+      "name": "will_be",
+      "type": "text",
+      "default": "Filed on that date this is: {kind} (worked out from the dates).",
+      "label": "will_be"
+    },
+    {
+      "name": "filed_as",
+      "type": "text",
+      "default": "Ack {ack} · filed {on} · marked by {by}",
+      "label": "filed_as"
+    },
+    {
+      "name": "too_late",
+      "type": "text",
+      "default": "No return can be filed for this year on that date (past the ITR-U window, or an ITR-U was already filed).",
+      "label": "too_late"
+    },
+    {
+      "name": "already_filed",
+      "type": "text",
+      "default": "A return is already filed. Start a revised return to file again.",
+      "label": "already_filed"
+    },
+    {
+      "name": "revise",
+      "type": "text",
+      "default": "Start a revised return",
+      "label": "revise"
+    },
+    {
+      "name": "update",
+      "type": "text",
+      "default": "Start an updated return (ITR-U)",
+      "label": "update"
+    },
+    {
+      "name": "revise_title",
+      "type": "text",
+      "default": "Start a revision?",
+      "label": "revise_title"
+    },
+    {
+      "name": "revise_body",
+      "type": "text",
+      "default": "The year opens again for changes. The {kind} (ack {ack}, filed {on}) stays on record and stands until the new return is filed; the revised ITR asks for its ack and date. The sign-off is cleared.",
+      "label": "revise_body"
+    },
+    {
+      "name": "revise_ok",
+      "type": "text",
+      "default": "Revision started - the year is open.",
+      "label": "revise_ok"
+    },
+    {
+      "name": "revising_note",
+      "type": "text",
+      "default": "Revising. The return that stands: {kind}, ack {ack}, filed {on} - quote these in the revised ITR.",
+      "label": "revising_note"
+    },
+    {
+      "name": "discard",
+      "type": "text",
+      "default": "Discard the revision",
+      "label": "discard"
+    },
+    {
+      "name": "discard_title",
+      "type": "text",
+      "default": "Discard the revision?",
+      "label": "discard_title"
+    },
+    {
+      "name": "discard_body",
+      "type": "text",
+      "default": "Changes stay as they are, but the year closes again on the {kind} (ack {ack}). Nothing new is filed.",
+      "label": "discard_body"
+    },
+    {
+      "name": "discard_ok",
+      "type": "text",
+      "default": "Revision discarded - closed on the return that stands.",
+      "label": "discard_ok"
+    },
+    {
+      "name": "withdraw",
+      "type": "text",
+      "default": "Undo 'filed'",
+      "label": "withdraw"
+    },
+    {
+      "name": "withdraw_title",
+      "type": "text",
+      "default": "Undo marking this return filed?",
+      "label": "withdraw_title"
+    },
+    {
+      "name": "withdraw_body",
+      "type": "text",
+      "default": "For a return marked filed by mistake or with a wrong ack. The record stays, marked withdrawn, with your reason; the year opens again.",
+      "label": "withdraw_body"
+    },
+    {
+      "name": "withdraw_ok",
+      "type": "text",
+      "default": "Undone - the year is open.",
+      "label": "withdraw_ok"
+    },
+    {
+      "name": "reason",
+      "type": "text",
+      "default": "Reason",
+      "label": "reason"
+    },
+    {
+      "name": "need_reason",
+      "type": "text",
+      "default": "Say why the filing is undone.",
+      "label": "need_reason"
+    },
+    {
+      "name": "nothing_filed",
+      "type": "text",
+      "default": "No filed return to work on.",
+      "label": "nothing_filed"
+    },
+    {
+      "name": "no_revision_window",
+      "type": "text",
+      "default": "The revision window has closed and an ITR-U is not possible now.",
+      "label": "no_revision_window"
+    },
+    {
+      "name": "not_revising",
+      "type": "text",
+      "default": "No revision is open.",
+      "label": "not_revising"
+    },
+    {
+      "name": "history",
+      "type": "text",
+      "default": "Returns for this year",
+      "label": "history"
+    },
+    {
+      "name": "fs_current",
+      "type": "text",
+      "default": "Stands",
+      "label": "fs_current"
+    },
+    {
+      "name": "fs_superseded",
+      "type": "text",
+      "default": "Revised",
+      "label": "fs_superseded"
+    },
+    {
+      "name": "fs_withdrawn",
+      "type": "text",
+      "default": "Withdrawn",
+      "label": "fs_withdrawn"
+    },
+    {
+      "name": "legacy_by",
+      "type": "text",
+      "default": "an earlier version",
+      "label": "legacy_by"
+    },
+    {
+      "name": "future_date",
+      "type": "text",
+      "default": "The date filed cannot be after today.",
+      "label": "future_date"
+    },
+    {
+      "name": "itru_add",
+      "type": "text",
+      "default": "ITR-U: additional tax u/s 140B @ {pct}% = {amount} - pay it with the tax before filing.",
+      "label": "itru_add"
+    },
+    {
+      "name": "itru_base",
+      "type": "text",
+      "default": "Further tax and interest over the return that stands: {extra} (that return: {before}; positive = payable).",
+      "label": "itru_base"
+    },
+    {
+      "name": "itru_confirm",
+      "type": "text",
+      "default": "I confirm: no search, survey or requisition; no assessment, reassessment or recomputation pending or done for this year; no prosecution - so an ITR-U is allowed (s.139(8A)).",
+      "label": "itru_confirm"
+    },
+    {
+      "name": "itru_not_more",
+      "type": "text",
+      "default": "An updated return (ITR-U) must leave more tax to pay than the return that stands - it cannot lower the tax, create or raise a refund, or raise a loss.",
+      "label": "itru_not_more"
+    },
+    {
+      "name": "itru_confirm_needed",
+      "type": "text",
+      "default": "Tick the ITR-U confirmation (no search, survey, assessment or prosecution) before filing.",
+      "label": "itru_confirm_needed"
+    },
+    {
+      "name": "i_234a",
+      "type": "text",
+      "default": "Interest u/s 234A (late return)",
+      "label": "i_234a"
+    },
+    {
+      "name": "i_234b",
+      "type": "text",
+      "default": "Interest u/s 234B (advance tax under 90%)",
+      "label": "i_234b"
+    },
+    {
+      "name": "i_234c",
+      "type": "text",
+      "default": "Interest u/s 234C (instalments short)",
+      "label": "i_234c"
+    },
+    {
+      "name": "t_interest_auto",
+      "type": "text",
+      "default": "Add: interest u/s 234A/B/C (calculated)",
+      "label": "t_interest_auto"
+    },
+    {
+      "name": "t_interest_over",
+      "type": "text",
+      "default": "Add: interest u/s 234A/B/C (your figure)",
+      "label": "t_interest_over"
+    },
+    {
+      "name": "i_exempt",
+      "type": "text",
+      "default": "No 234B / 234C: resident senior citizen with no business income - no advance tax (s.207(2)).",
+      "label": "i_exempt"
+    },
+    {
+      "name": "ri_r_due",
+      "type": "text",
+      "default": "Interest on the refund u/s 244A, {from} to {to} (estimate; the department pays it with the refund, taxable as other income when received)",
+      "label": "ri_r_due"
+    },
+    {
+      "name": "ri_r_small",
+      "type": "text",
+      "default": "No interest on the refund u/s 244A: the refund is under 10% of the tax determined.",
+      "label": "ri_r_small"
+    },
+    {
+      "name": "ri_r_none",
+      "type": "text",
+      "default": "No refund.",
+      "label": "ri_r_none"
+    },
+    {
+      "name": "refund_on",
+      "type": "text",
+      "default": "Refund received on",
+      "label": "refund_on"
+    },
+    {
+      "name": "bad_date",
+      "type": "text",
+      "default": "Give the date as yyyy-mm-dd.",
+      "label": "bad_date"
+    },
+    {
+      "name": "dl_itr",
+      "type": "text",
+      "default": "{form} JSON (Income-tax Department format)",
+      "label": "dl_itr"
+    },
+    {
+      "name": "dl_itr_hint",
+      "type": "text",
+      "default": "Balance sheet and P&L come from rows mapped ITR3 BS / PL <item>. Open it in the department's offline utility to complete the remaining schedules, then upload on incometax.gov.in.",
+      "label": "dl_itr_hint"
+    },
+    {
+      "name": "itr_checking",
+      "type": "text",
+      "default": "Checking against the CBDT schema...",
+      "label": "itr_checking"
+    },
+    {
+      "name": "itr_valid",
+      "type": "text",
+      "default": "Fits the CBDT schema ({schema})",
+      "label": "itr_valid"
+    },
+    {
+      "name": "itr_issues",
+      "type": "text",
+      "default": "{n} {n:detail|details} still needed",
+      "label": "itr_issues"
+    },
+    {
+      "name": "itr_no_schema",
+      "type": "text",
+      "default": "No CBDT schema for {form} here yet.",
+      "label": "itr_no_schema"
+    },
+    {
+      "name": "itr_show",
+      "type": "text",
+      "default": "What is missing",
+      "label": "itr_show"
+    },
+    {
+      "name": "itr_err_missing",
+      "type": "text",
+      "default": "missing",
+      "label": "itr_err_missing"
+    },
+    {
+      "name": "itr_err_bad",
+      "type": "text",
+      "default": "not in the right form",
+      "label": "itr_err_bad"
+    },
+    {
+      "name": "itr_where",
+      "type": "text",
+      "default": "Most come from the client master (address with PIN, email, mobile, date of birth / formation, father's name and PAN of the signatory) - fill them in Clients & years, or complete them in the department's utility.",
+      "label": "itr_where"
+    },
+    {
+      "name": "bs_ties",
+      "type": "text",
+      "default": "Balance sheet tallies at {total}",
+      "label": "bs_ties"
+    },
+    {
+      "name": "bs_differs",
+      "type": "text",
+      "default": "Balance sheet does not tally: off by {diff}",
+      "label": "bs_differs"
+    },
+    {
+      "name": "pl_ties",
+      "type": "text",
+      "default": "P&L profit before tax {pbt} = net profit taken to business income",
+      "label": "pl_ties"
+    },
+    {
+      "name": "pl_differs",
+      "type": "text",
+      "default": "P&L profit before tax {pbt} differs from the net profit in business income ({bp})",
+      "label": "pl_differs"
+    },
+    {
+      "name": "books_unknown",
+      "type": "text",
+      "default": "Not a balance sheet / P&L item: {items}",
+      "label": "books_unknown"
+    },
+    {
+      "name": "books_none",
+      "type": "text",
+      "default": "No balance sheet or P&L yet - map the final accounts' rows as ITR3 BS <item> / ITR3 PL <item> (e.g. ITR3 BS debtors, ITR3 PL salaries) and they fill Part A-BS and P&L.",
+      "label": "books_none"
+    },
+    {
+      "name": "dl_3cd_json",
+      "type": "text",
+      "default": "Form 3CB-3CD JSON (tax audit report, department format)",
+      "label": "dl_3cd_json"
+    },
+    {
+      "name": "dl_3cd_json_hint",
+      "type": "text",
+      "default": "Part A, you as the auditor, depreciation (cl. 18), loans accepted / repaid (cl. 31) and s.40A(2)(b) payments (cl. 23) from mapped rows. Open it in the department's 3CA-3CD / 3CB-3CD utility to complete the other clauses, then upload with your DSC.",
+      "label": "dl_3cd_json_hint"
+    },
+    {
+      "name": "tar_where",
+      "type": "text",
+      "default": "Part A comes from the client master; your own details (name, address, membership no., FRN) from My firm.",
+      "label": "tar_where"
     }
   ],
   "expr": {
@@ -696,7 +1140,81 @@
       "wf_paid": "$wf_paid",
       "wf_payable": "$wf_payable",
       "wf_refund": "$wf_refund",
-      "wf_nil": "$wf_nil"
+      "wf_nil": "$wf_nil",
+      "k_original": "$k_original",
+      "k_belated": "$k_belated",
+      "k_revised": "$k_revised",
+      "k_updated": "$k_updated",
+      "k_too_late": "$k_too_late",
+      "due_on": "$due_on",
+      "revise_by": "$revise_by",
+      "updated_by": "$updated_by",
+      "ack_hint": "$ack_hint",
+      "filed_on": "$filed_on",
+      "will_be": "$will_be",
+      "filed_as": "$filed_as",
+      "too_late": "$too_late",
+      "already_filed": "$already_filed",
+      "revise": "$revise",
+      "update": "$update",
+      "revise_title": "$revise_title",
+      "revise_body": "$revise_body",
+      "revise_ok": "$revise_ok",
+      "revising_note": "$revising_note",
+      "discard": "$discard",
+      "discard_title": "$discard_title",
+      "discard_body": "$discard_body",
+      "discard_ok": "$discard_ok",
+      "withdraw": "$withdraw",
+      "withdraw_title": "$withdraw_title",
+      "withdraw_body": "$withdraw_body",
+      "withdraw_ok": "$withdraw_ok",
+      "reason": "$reason",
+      "need_reason": "$need_reason",
+      "nothing_filed": "$nothing_filed",
+      "no_revision_window": "$no_revision_window",
+      "not_revising": "$not_revising",
+      "history": "$history",
+      "fs_current": "$fs_current",
+      "fs_superseded": "$fs_superseded",
+      "fs_withdrawn": "$fs_withdrawn",
+      "legacy_by": "$legacy_by",
+      "future_date": "$future_date",
+      "itru_add": "$itru_add",
+      "itru_base": "$itru_base",
+      "itru_confirm": "$itru_confirm",
+      "itru_not_more": "$itru_not_more",
+      "itru_confirm_needed": "$itru_confirm_needed",
+      "i_234a": "$i_234a",
+      "i_234b": "$i_234b",
+      "i_234c": "$i_234c",
+      "t_interest_auto": "$t_interest_auto",
+      "t_interest_over": "$t_interest_over",
+      "i_exempt": "$i_exempt",
+      "ri_r_due": "$ri_r_due",
+      "ri_r_small": "$ri_r_small",
+      "ri_r_none": "$ri_r_none",
+      "refund_on": "$refund_on",
+      "bad_date": "$bad_date",
+      "dl_itr": "$dl_itr",
+      "dl_itr_hint": "$dl_itr_hint",
+      "itr_checking": "$itr_checking",
+      "itr_valid": "$itr_valid",
+      "itr_issues": "$itr_issues",
+      "itr_no_schema": "$itr_no_schema",
+      "itr_show": "$itr_show",
+      "itr_err_missing": "$itr_err_missing",
+      "itr_err_bad": "$itr_err_bad",
+      "itr_where": "$itr_where",
+      "bs_ties": "$bs_ties",
+      "bs_differs": "$bs_differs",
+      "pl_ties": "$pl_ties",
+      "pl_differs": "$pl_differs",
+      "books_unknown": "$books_unknown",
+      "books_none": "$books_none",
+      "dl_3cd_json": "$dl_3cd_json",
+      "dl_3cd_json_hint": "$dl_3cd_json_hint",
+      "tar_where": "$tar_where"
     }
   },
   "returns": "record",
@@ -715,7 +1233,7 @@
         "regime_old": "Old regime",
         "regime_firm": "Firm / LLP rate",
         "interest": "Interest u/s 234A / 234B / 234C",
-        "interest_hint": "As you worked it out; added to the tax.",
+        "interest_hint": "Worked out to {day} from the 26AS challans. Type a figure to override; clear it to go back to the calculation.",
         "save_interest": "Save",
         "head_SAL": "Salaries",
         "head_HP": "Income from house property",
@@ -765,13 +1283,13 @@
         "file_title": "Mark as filed",
         "ack": "Acknowledgement no. (ITR-V)",
         "file": "Mark filed & close the year",
-        "file_body": "The year moves to Filed and closes: no new statements, refs, portal files or notes until it is reopened.",
+        "file_body": "The year moves to Filed and closes: no new statements, refs, portal files or notes. To change it later, start a revised return (the filed one is kept).",
         "filed_ok": "Filed and closed.",
         "reopen": "Reopen the year",
         "reopened": "Reopened - back to Review.",
         "closed_note": "Closed. This year is filed; everything is kept as it was.",
         "need_signoff": "Sign off the computation before marking the year filed.",
-        "need_ack": "Give the acknowledgement number of the filed return.",
+        "need_ack": "Give the 15-digit acknowledgement number from the ITR-V.",
         "no_reopen": "Only someone with the reopen right can take a filed year back.",
         "not_allowed": "That move is not allowed.",
         "bad_regime": "Pick one of the regimes.",
@@ -804,7 +1322,81 @@
         "wf_paid": "Taxes paid",
         "wf_payable": "Balance payable",
         "wf_refund": "Refund due",
-        "wf_nil": "Nil"
+        "wf_nil": "Nil",
+        "k_original": "Original return u/s 139(1)",
+        "k_belated": "Belated return u/s 139(4)",
+        "k_revised": "Revised return u/s 139(5)",
+        "k_updated": "Updated return (ITR-U) u/s 139(8A)",
+        "k_too_late": "Too late - no return can be filed for this year now",
+        "due_on": "Due {date}",
+        "revise_by": "Belated / revised by {date}",
+        "updated_by": "ITR-U by {date}",
+        "ack_hint": "15 digits",
+        "filed_on": "Date filed",
+        "will_be": "Filed on that date this is: {kind} (worked out from the dates).",
+        "filed_as": "Ack {ack} · filed {on} · marked by {by}",
+        "too_late": "No return can be filed for this year on that date (past the ITR-U window, or an ITR-U was already filed).",
+        "already_filed": "A return is already filed. Start a revised return to file again.",
+        "revise": "Start a revised return",
+        "update": "Start an updated return (ITR-U)",
+        "revise_title": "Start a revision?",
+        "revise_body": "The year opens again for changes. The {kind} (ack {ack}, filed {on}) stays on record and stands until the new return is filed; the revised ITR asks for its ack and date. The sign-off is cleared.",
+        "revise_ok": "Revision started - the year is open.",
+        "revising_note": "Revising. The return that stands: {kind}, ack {ack}, filed {on} - quote these in the revised ITR.",
+        "discard": "Discard the revision",
+        "discard_title": "Discard the revision?",
+        "discard_body": "Changes stay as they are, but the year closes again on the {kind} (ack {ack}). Nothing new is filed.",
+        "discard_ok": "Revision discarded - closed on the return that stands.",
+        "withdraw": "Undo 'filed'",
+        "withdraw_title": "Undo marking this return filed?",
+        "withdraw_body": "For a return marked filed by mistake or with a wrong ack. The record stays, marked withdrawn, with your reason; the year opens again.",
+        "withdraw_ok": "Undone - the year is open.",
+        "reason": "Reason",
+        "need_reason": "Say why the filing is undone.",
+        "nothing_filed": "No filed return to work on.",
+        "no_revision_window": "The revision window has closed and an ITR-U is not possible now.",
+        "not_revising": "No revision is open.",
+        "history": "Returns for this year",
+        "fs_current": "Stands",
+        "fs_superseded": "Revised",
+        "fs_withdrawn": "Withdrawn",
+        "legacy_by": "an earlier version",
+        "future_date": "The date filed cannot be after today.",
+        "itru_add": "ITR-U: additional tax u/s 140B @ {pct}% = {amount} - pay it with the tax before filing.",
+        "itru_base": "Further tax and interest over the return that stands: {extra} (that return: {before}; positive = payable).",
+        "itru_confirm": "I confirm: no search, survey or requisition; no assessment, reassessment or recomputation pending or done for this year; no prosecution - so an ITR-U is allowed (s.139(8A)).",
+        "itru_not_more": "An updated return (ITR-U) must leave more tax to pay than the return that stands - it cannot lower the tax, create or raise a refund, or raise a loss.",
+        "itru_confirm_needed": "Tick the ITR-U confirmation (no search, survey, assessment or prosecution) before filing.",
+        "i_234a": "Interest u/s 234A (late return)",
+        "i_234b": "Interest u/s 234B (advance tax under 90%)",
+        "i_234c": "Interest u/s 234C (instalments short)",
+        "t_interest_auto": "Add: interest u/s 234A/B/C (calculated)",
+        "t_interest_over": "Add: interest u/s 234A/B/C (your figure)",
+        "i_exempt": "No 234B / 234C: resident senior citizen with no business income - no advance tax (s.207(2)).",
+        "ri_r_due": "Interest on the refund u/s 244A, {from} to {to} (estimate; the department pays it with the refund, taxable as other income when received)",
+        "ri_r_small": "No interest on the refund u/s 244A: the refund is under 10% of the tax determined.",
+        "ri_r_none": "No refund.",
+        "refund_on": "Refund received on",
+        "bad_date": "Give the date as yyyy-mm-dd.",
+        "dl_itr": "{form} JSON (Income-tax Department format)",
+        "dl_itr_hint": "Balance sheet and P&L come from rows mapped ITR3 BS / PL <item>. Open it in the department's offline utility to complete the remaining schedules, then upload on incometax.gov.in.",
+        "itr_checking": "Checking against the CBDT schema...",
+        "itr_valid": "Fits the CBDT schema ({schema})",
+        "itr_issues": "{n} {n:detail|details} still needed",
+        "itr_no_schema": "No CBDT schema for {form} here yet.",
+        "itr_show": "What is missing",
+        "itr_err_missing": "missing",
+        "itr_err_bad": "not in the right form",
+        "itr_where": "Most come from the client master (address with PIN, email, mobile, date of birth / formation, father's name and PAN of the signatory) - fill them in Clients & years, or complete them in the department's utility.",
+        "bs_ties": "Balance sheet tallies at {total}",
+        "bs_differs": "Balance sheet does not tally: off by {diff}",
+        "pl_ties": "P&L profit before tax {pbt} = net profit taken to business income",
+        "pl_differs": "P&L profit before tax {pbt} differs from the net profit in business income ({bp})",
+        "books_unknown": "Not a balance sheet / P&L item: {items}",
+        "books_none": "No balance sheet or P&L yet - map the final accounts' rows as ITR3 BS <item> / ITR3 PL <item> (e.g. ITR3 BS debtors, ITR3 PL salaries) and they fill Part A-BS and P&L.",
+        "dl_3cd_json": "Form 3CB-3CD JSON (tax audit report, department format)",
+        "dl_3cd_json_hint": "Part A, you as the auditor, depreciation (cl. 18), loans accepted / repaid (cl. 31) and s.40A(2)(b) payments (cl. 23) from mapped rows. Open it in the department's 3CA-3CD / 3CB-3CD utility to complete the other clauses, then upload with your DSC.",
+        "tar_where": "Part A comes from the client master; your own details (name, address, membership no., FRN) from My firm."
       }
     }
   ]

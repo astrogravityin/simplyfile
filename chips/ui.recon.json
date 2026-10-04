@@ -414,6 +414,24 @@
       "type": "text",
       "default": "Nothing in this view.",
       "label": "none here"
+    },
+    {
+      "name": "same_source",
+      "type": "text",
+      "default": "A {source} is already uploaded ({name}).",
+      "label": "same_source"
+    },
+    {
+      "name": "replace_ask",
+      "type": "text",
+      "default": "Replace the {source} ({name}) with this newer download? Your explanations stay with their findings.",
+      "label": "replace_ask"
+    },
+    {
+      "name": "replace_yes",
+      "type": "text",
+      "default": "Replace",
+      "label": "replace_yes"
     }
   ],
   "expr": {
@@ -486,7 +504,10 @@
       "portal": "$portal",
       "explained_tag": "$explained_tag",
       "findings": "$findings",
-      "none_here": "$none_here"
+      "none_here": "$none_here",
+      "same_source": "$same_source",
+      "replace_ask": "$replace_ask",
+      "replace_yes": "$replace_yes"
     }
   },
   "returns": "record",
@@ -564,7 +585,10 @@
         "portal": "Portal",
         "explained_tag": "Explained",
         "findings": "Findings",
-        "none_here": "Nothing in this view."
+        "none_here": "Nothing in this view.",
+        "same_source": "A {source} is already uploaded ({name}).",
+        "replace_ask": "Replace the {source} ({name}) with this newer download? Your explanations stay with their findings.",
+        "replace_yes": "Replace"
       }
     }
   ]

@@ -998,7 +998,18 @@ export function uploadBox(title, exts, url, then) {
         if (!f) { toast(sw('as_file_first'), 'warn'); return; }
         busy(ev.currentTarget, async () => {
           const fd = new FormData(); fd.append('file', f);
-          try { await api(url, { method: 'POST', body: fd }); close(); toast(sw('rd_saved'), 'ok'); await then(); } catch (err) { toast(err.message, 'bad', 8); }
+          try { await api(url, { method: 'POST', body: fd }); close(); toast(sw('rd_saved'), 'ok'); await then(); } catch (err) {
+            // 2026-10-04: the server may offer to replace what is there ({replace, ask, yes}) - ask, then send it again
+            const o = err.data || {};
+            if (err.status === 409 && o.replace) {
+              close();
+              confirmDialog(err.message, o.ask || err.message, async () => {
+                const again = new FormData(); again.append('file', f);
+                try { await api(`${url}${url.includes('?') ? '&' : '?'}replace=${encodeURIComponent(o.replace)}`, { method: 'POST', body: again }); toast(sw('rd_saved'), 'ok'); await then(); }
+                catch (e2) { toast(e2.message, 'bad', 8); }
+              }, o.yes || sw('rd_saved'), { tone: 'warn' });
+            } else toast(err.message, 'bad', 8);
+          }
         });
       };
     } });

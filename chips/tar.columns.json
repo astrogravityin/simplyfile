@@ -1,0 +1,73 @@
+{
+  "chip_id": "tar.columns",
+  "kind": "accessor",
+  "set": "tar",
+  "label": "3CD JSON: which column of a clause row is which figure",
+  "aliases": [
+    "3cd json: which column of a clause row i"
+  ],
+  "params": [
+    {
+      "name": "clauses",
+      "type": "json",
+      "default": {
+        "18": {
+          "opening": "(?i)wdv.*(01|opening|1st)|opening",
+          "additions": "(?i)addition",
+          "depreciation": "(?i)^depreciation|depreciation allowable",
+          "closing": "(?i)wdv.*(31|closing)|closing",
+          "rate": "(?i)rate"
+        },
+        "31(a)": {
+          "accepted": "(?i)accepted|amount",
+          "repaid": "(?i)repaid|repayment"
+        },
+        "31(b)": {
+          "accepted": "(?i)accepted",
+          "repaid": "(?i)repaid|repayment|amount"
+        },
+        "23": {
+          "amount": "(?i)amount|paid"
+        }
+      },
+      "label": "clauses"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "clauses": "$clauses"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "A 3CD schedule names its columns; each figure of a clause is the first column whose title fits. A row's PAN is found in its words (tar.settings pan_pattern); its payment mode in its words (tar.codes modes).",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "clauses": {
+          "18": {
+            "opening": "(?i)wdv.*(01|opening|1st)|opening",
+            "additions": "(?i)addition",
+            "depreciation": "(?i)^depreciation|depreciation allowable",
+            "closing": "(?i)wdv.*(31|closing)|closing",
+            "rate": "(?i)rate"
+          },
+          "31(a)": {
+            "accepted": "(?i)accepted|amount",
+            "repaid": "(?i)repaid|repayment"
+          },
+          "31(b)": {
+            "accepted": "(?i)accepted",
+            "repaid": "(?i)repaid|repayment|amount"
+          },
+          "23": {
+            "amount": "(?i)amount|paid"
+          }
+        }
+      }
+    }
+  ]
+}

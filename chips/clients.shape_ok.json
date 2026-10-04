@@ -30,6 +30,12 @@
       "type": "text",
       "default": "[A-Z]{4}0[A-Z0-9]{6}",
       "label": "ifsc pattern"
+    },
+    {
+      "name": "date_pattern",
+      "type": "text",
+      "default": "(19|20)[0-9]{2}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])",
+      "label": "date pattern (yyyy-mm-dd)"
     }
   ],
   "expr": {
@@ -58,6 +64,18 @@
           "text": "$value",
           "pattern": "$ifsc_pattern"
         }
+      },
+      {
+        "when": {
+          "op": "eq",
+          "left": "$kind",
+          "right": "date"
+        },
+        "then": {
+          "vop": "matches",
+          "text": "$value",
+          "pattern": "$date_pattern"
+        }
       }
     ],
     "else": false
@@ -65,7 +83,7 @@
   "returns": "boolean",
   "version": 1,
   "status": "published",
-  "description_nl": "TRUE when the value has the shape of its kind: a PAN is 5 letters, 4 digits, a letter; an IFSC is 4 letters, a zero, then 6 letters or digits.",
+  "description_nl": "TRUE when the value has the shape of its kind: a PAN is 5 letters, 4 digits, a letter; an IFSC is 4 letters, a zero, then 6 letters or digits. A date of birth is yyyy-mm-dd.",
   "test_cases": [
     {
       "args": {
@@ -92,6 +110,20 @@
       "args": {
         "kind": "ifsc",
         "value": "HDFC1000700"
+      },
+      "expect_value": false
+    },
+    {
+      "args": {
+        "kind": "date",
+        "value": "1962-05-14"
+      },
+      "expect_value": true
+    },
+    {
+      "args": {
+        "kind": "date",
+        "value": "14/05/1962"
       },
       "expect_value": false
     }

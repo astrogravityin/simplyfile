@@ -113,9 +113,14 @@ function editor(c, reload) {
   const y = (c.years || {})[AY];
   const yearCard = isNew ? '' : `<section class="card" style="margin-top:14px"><h3>${esc(w('year_card', { ay: AY }))}</h3>
     ${y ? grid(`<div class="field"><label for="y-form">${esc(w('y_form'))}</label><select id="y-form">${K.forms.map((f) => `<option ${f === y.form ? 'selected' : ''}>${esc(f)}</option>`).join('')}</select></div>
-      <div class="field"><label for="y-stage">${esc(w('y_stage'))}</label><select id="y-stage">${K.stages.map((s) => `<option value="${esc(s.id)}" ${s.id === y.stage ? 'selected' : ''}>${esc(s.label)}</option>`).join('')}</select></div>
-      ${field('y-assigned', w('y_assigned'), y.assigned)}${field('y-ack', w('y_ack'), y.ack_no)}
-      <label class="check" style="align-self:end;min-height:40px"><input type="checkbox" id="y-audit" ${y.audit ? 'checked' : ''}/> <span>${esc(w('y_audit'))}</span></label>`)
+      <div class="field"><label>${esc(w('y_stage'))}</label><div class="cl-stage-ro">${stepper(y.stage)}<b>${esc(stageOf(y.stage).label)}</b></div>
+        <div class="small muted">${esc(w('stage_auto'))}</div></div>
+      ${field('y-assigned', w('y_assigned'), y.assigned)}
+      <div class="field"><label>${esc(w('y_ack'))}</label><div class="cl-stage-ro">${y.ack_no ? `<code>${esc(y.ack_no)}</code>` : '<span class="muted">-</span>'}${y.revising ? ` <span class="tag warn">${esc(w('revising_tag'))}</span>` : ''}</div>
+        <div class="small muted">${esc(w('ack_auto'))} ${may('compute') ? `<a href="#/compute?c=${esc(c.id)}&ay=${esc(AY)}">${esc(w('to_compute'))}</a>` : ''}</div></div>
+      <label class="check" style="align-self:end;min-height:40px"><input type="checkbox" id="y-audit" ${y.audit ? 'checked' : ''}/> <span>${esc(w('y_audit'))}</span></label>
+      <label class="check" style="align-self:end;min-height:40px"><input type="checkbox" id="y-tp" ${y.tp ? 'checked' : ''}/> <span>${esc(w('y_tp'))}</span></label>
+      <label class="check" style="align-self:end;min-height:40px"><input type="checkbox" id="y-pres" ${y.presumptive ? 'checked' : ''}/> <span>${esc(w('y_presumptive'))}</span></label>`)
       + `<div class="row tight" style="margin-top:10px"><button type="button" id="y-save">${icon('save', 14)} ${esc(w('save_year'))}</button></div>`
       : `<button type="button" id="y-add">${icon('plus', 14)} ${esc(w('add_to_year', { ay: AY }))}</button>`}</section>`;
   const body = grid(field('c-name', w('f_name'), c.name, 'required') + field('c-relation', w('f_relation'), c.relation)
@@ -123,6 +128,10 @@ function editor(c, reload) {
         `<option value="${esc(s.id)}" ${s.id === c.status ? 'selected' : ''}>${esc(s.label)}</option>`).join('')}</select></div>`
       + field('c-pan', w('f_pan'), c.pan, 'maxlength="12" style="text-transform:uppercase"')
       + field('c-email', w('f_email'), c.email, 'type="email"') + field('c-phone', w('f_phone'), c.phone)
+      + field('c-dob', w('f_dob'), c.dob, 'type="date"')
+      + field('c-father', w('f_father'), c.father)
+      + field('c-signer', w('f_signer_pan'), c.signer_pan, 'maxlength="10" style="text-transform:uppercase"')
+      + `<label class="check" style="align-self:end;min-height:40px"><input type="checkbox" id="c-nri" ${c.nri ? 'checked' : ''}/> <span>${esc(w('f_nri'))}</span></label>`
       + field('c-gst', w('f_gst'), c.gst, 'maxlength="15" style="text-transform:uppercase"'))
     + `<div class="field"><label for="c-address">${esc(w('f_address'))}</label><textarea id="c-address" rows="2">${esc(c.address || '')}</textarea></div>
     <h3>${esc(w('banks'))}</h3><div id="c-banks">${banks.html}</div>
@@ -152,7 +161,7 @@ function editor(c, reload) {
     $('[data-save]').onclick = (e) => busy(e.currentTarget, async () => {
       const v = (id) => $(id).value;
       const data = { name: v('#c-name'), relation: v('#c-relation'), status: v('#c-status'), pan: v('#c-pan'),
-        email: v('#c-email'), phone: v('#c-phone'), gst: v('#c-gst'), address: v('#c-address'), notes: v('#c-notes'),
+        email: v('#c-email'), phone: v('#c-phone'), gst: v('#c-gst'), address: v('#c-address'), notes: v('#c-notes'), dob: v('#c-dob'), father: v('#c-father'), signer_pan: v('#c-signer'), nri: $('#c-nri').checked,
         banks: read('bank'), partners: read('partner') };
       try {
         await api(isNew ? '/api/clients' : `/api/clients/${c.id}`, { method: isNew ? 'POST' : 'PUT', body: data });
@@ -166,8 +175,7 @@ function editor(c, reload) {
       } catch (err) { toast(err.message, 'bad', 8); }
     });
     if ($('#y-add')) $('#y-add').onclick = saveYear(() => ({}));
-    if ($('#y-save')) $('#y-save').onclick = saveYear(() => ({ form: $('#y-form').value, stage: $('#y-stage').value,
-      audit: $('#y-audit').checked, assigned: $('#y-assigned').value, ack_no: $('#y-ack').value }));
+    if ($('#y-save')) $('#y-save').onclick = saveYear(() => ({ form: $('#y-form').value, audit: $('#y-audit').checked, tp: $('#y-tp').checked, presumptive: $('#y-pres').checked, assigned: $('#y-assigned').value }));
     const setArchived = (on) => async () => {
       try { await api(`/api/clients/${c.id}/archive`, { method: 'POST', body: { archived: on } }); toast(w(on ? 'archived' : 'restored'), 'ok'); close(true); reload(); }
       catch (err) { toast(err.message, 'bad', 8); }

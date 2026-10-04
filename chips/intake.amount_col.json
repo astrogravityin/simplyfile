@@ -1,0 +1,71 @@
+{
+  "chip_id": "intake.amount_col",
+  "kind": "accessor",
+  "set": "intake",
+  "label": "Intake: which column of a row is its amount",
+  "aliases": [
+    "intake: which column of a row is its amo"
+  ],
+  "params": [
+    {
+      "name": "titles",
+      "type": "json",
+      "default": [],
+      "label": "the column titles of the row's numbers, in order"
+    },
+    {
+      "name": "pattern",
+      "type": "text",
+      "default": "(?i)^depreciation\\b|depreciation allowed|amount|^rs\\b|rupees",
+      "label": "a title that names the amount column; when none fits, the first number is the amount"
+    }
+  ],
+  "expr": {
+    "vop": "first_index_matching",
+    "values": "$titles",
+    "pattern": "$pattern",
+    "default": 0
+  },
+  "returns": "number",
+  "version": 1,
+  "status": "published",
+  "description_nl": "A schedule names its columns; the amount of a depreciation row is its Depreciation, of a loan row the amount accepted. A plain statement (one Amount column, or none named) uses its first number.",
+  "test_cases": [
+    {
+      "args": {
+        "titles": [
+          "WDV 01.04.2025",
+          "Additions",
+          "Depreciation",
+          "WDV 31.03.2026",
+          "Rate %"
+        ]
+      },
+      "expect_value": 2
+    },
+    {
+      "args": {
+        "titles": [
+          "Amount accepted",
+          "Amount repaid"
+        ]
+      },
+      "expect_value": 0
+    },
+    {
+      "args": {
+        "titles": [
+          "",
+          ""
+        ]
+      },
+      "expect_value": 0
+    },
+    {
+      "args": {
+        "titles": []
+      },
+      "expect_value": 0
+    }
+  ]
+}

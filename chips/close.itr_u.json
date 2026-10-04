@@ -1,0 +1,191 @@
+{
+  "chip_id": "close.itr_u",
+  "kind": "accessor",
+  "set": "close",
+  "label": "Close: may this be an updated return (ITR-U), and its additional tax u/s 140B",
+  "aliases": [
+    "close: may this be an updated return (it"
+  ],
+  "params": [
+    {
+      "name": "net_now",
+      "type": "number",
+      "default": 0,
+      "label": "tax + interest - TDS - taxes paid now (positive = payable)"
+    },
+    {
+      "name": "net_before",
+      "type": "number",
+      "default": 0,
+      "label": "the same on the return that stands (0 when none was filed)"
+    },
+    {
+      "name": "months",
+      "type": "number",
+      "default": 0,
+      "label": "months from the end of the AY to the day of filing"
+    },
+    {
+      "name": "steps",
+      "type": "json",
+      "default": [
+        {
+          "above": -1,
+          "rate": 25
+        },
+        {
+          "above": 12,
+          "rate": 50
+        },
+        {
+          "above": 24,
+          "rate": 60
+        },
+        {
+          "above": 36,
+          "rate": 70
+        }
+      ],
+      "label": "140B: 25% within 12 months, 50% within 24, 60% within 36, 70% within 48 (Finance Act 2025)"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "extra": {
+        "vop": "sub",
+        "a": "$net_now",
+        "b": "$net_before"
+      },
+      "ok": {
+        "op": "gt",
+        "left": {
+          "vop": "sub",
+          "a": "$net_now",
+          "b": "$net_before"
+        },
+        "right": 0
+      },
+      "say": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "le",
+              "left": {
+                "vop": "sub",
+                "a": "$net_now",
+                "b": "$net_before"
+              },
+              "right": 0
+            },
+            "then": "itru_not_more"
+          }
+        ],
+        "else": ""
+      },
+      "pct": {
+        "vop": "step_rate",
+        "amount": "$months",
+        "steps": "$steps"
+      },
+      "additional": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "gt",
+              "left": {
+                "vop": "sub",
+                "a": "$net_now",
+                "b": "$net_before"
+              },
+              "right": 0
+            },
+            "then": {
+              "vop": "div",
+              "a": {
+                "vop": "mul",
+                "a": {
+                  "vop": "sub",
+                  "a": "$net_now",
+                  "b": "$net_before"
+                },
+                "b": {
+                  "vop": "step_rate",
+                  "amount": "$months",
+                  "steps": "$steps"
+                }
+              },
+              "b": 100,
+              "digits": 0
+            }
+          }
+        ],
+        "else": 0
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "An updated return must leave more tax to pay than the return that stands (or than nothing, when none was filed): it may not lower the tax, create or raise a refund, or raise a loss (s.139(8A)). On the further tax and interest it carries an additional 25 / 50 / 60 / 70% by how many months after the end of the AY it is filed (s.140B). The cases the books cannot see - search, survey, a pending assessment or prosecution - are a confirmation the person ticks.",
+  "test_cases": [
+    {
+      "args": {
+        "net_now": 50000,
+        "net_before": -66360,
+        "months": 3
+      },
+      "expect_value": {
+        "extra": 116360,
+        "ok": true,
+        "say": "",
+        "pct": 25,
+        "additional": 29090
+      }
+    },
+    {
+      "args": {
+        "net_now": 50000,
+        "net_before": 0,
+        "months": 13
+      },
+      "expect_value": {
+        "extra": 50000,
+        "ok": true,
+        "say": "",
+        "pct": 50,
+        "additional": 25000
+      }
+    },
+    {
+      "args": {
+        "net_now": -80000,
+        "net_before": -66360,
+        "months": 3
+      },
+      "expect_value": {
+        "extra": -13640,
+        "ok": false,
+        "say": "itru_not_more",
+        "pct": 25,
+        "additional": 0
+      }
+    },
+    {
+      "args": {
+        "net_now": 10000,
+        "net_before": 0,
+        "months": 40
+      },
+      "expect_value": {
+        "extra": 10000,
+        "ok": true,
+        "say": "",
+        "pct": 70,
+        "additional": 7000
+      }
+    }
+  ]
+}

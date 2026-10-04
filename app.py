@@ -56,9 +56,11 @@ import narrator
 import edition
 import guideme
 import clients
+import firms
 import intake
 import recon
 import compute
+import itr_json
 import providers
 import keyshare
 import keysales
@@ -84,6 +86,21 @@ STORAGE_LIMITS = ("max_upload_mb", "quota_gb", "keep_source_days")
 # "Buy a key" does not exist until somebody puts a key up for sale: not a locked door, simply absent
 # (catalog.json marks it hide_when_denied, chip access.decide refuses it, the shell leaves it out).
 access.register_available("buykey", keysales.anything_to_buy)
+firms.install()
+
+
+@app.middleware("http")
+async def stage_moves_by_itself(request: Request, call_next):
+    """2026-10-04 owner: "Stage should move automatically". After any change to a client's year - a statement, a ref, a portal
+    file, a note, a sign-off, a filing - the stage is worked out again from the facts (compute.refresh, chip close.stage)."""
+    response = await call_next(request)
+    m = re.match(r"^/api/(?:intake|recon|compute|clients)/([0-9a-f]{6,32})/(?:years/)?(\d{4}-\d{2})(?:/|$)", request.url.path)
+    if m and request.method in ("POST", "PUT", "DELETE") and response.status_code < 400:
+        try:
+            await run_in_threadpool(compute.refresh, m.group(1), m.group(2))
+        except HTTPException:
+            pass
+    return response                                     # Filing opens when the firm is approved, per the role
 # 2026-10-01 owner "Avatar Card is taking lot of time to load": MediaPipe's first start (~1.6 s) and the caption probes
 # (ffmpeg per script) ran inside the first Avatar Home list after every restart. Done here, in the background (avatar.warm).
 
@@ -795,81 +812,132 @@ def _help_recordings(u: dict, args: dict) -> list[dict]:
 lists.source("help_recordings", _help_recordings)
 
 
+# --- Firms (SimplyFile, 2026-10-04): tenants - sign-up papers, the portal admin's approval, the team (firms.py) ------
+@app.get("/api/firm")
+def api_firm(u: dict = Depends(screen("firm"))):
+    return firms.me(u)
+
+
+@app.post("/api/firm/start")
+def api_firm_start(body: dict = Body(...), u: dict = Depends(screen("firm"))):
+    return firms.start(u, str(body.get("kind") or ""))
+
+
+@app.put("/api/firm")
+def api_firm_update(body: dict = Body(...), u: dict = Depends(screen("firm"))):
+    return firms.update(u, body)
+
+
+@app.post("/api/firm/docs/{kind}")
+async def api_firm_doc(kind: str, file: UploadFile = File(...), u: dict = Depends(screen("firm"))):
+    data = await upload_bytes(u, file, int(firms.settings()["doc_max_mb"]) * 1024 * 1024 + 1)
+    return firms.add_doc(u, kind, file.filename or "paper", data)
+
+
+@app.get("/api/firm/{fid}/docs/{did}")
+def api_firm_doc_get(fid: str, did: str, u: dict = Depends(signed_in)):
+    path, name = firms.doc_path(u, fid, did)
+    return FileResponse(path, filename=name, content_disposition_type="inline")
+
+
+@app.post("/api/firm/{fid}/move")
+def api_firm_move(fid: str, body: dict = Body(...), u: dict = Depends(signed_in)):
+    return firms.move(u, fid, str(body.get("action") or ""), str(body.get("note") or ""))
+
+
+@app.post("/api/firm/team")
+def api_firm_team_add(request: Request, body: dict = Body(...), u: dict = Depends(screen("firm"))):
+    return firms.add_member(request, u, body)
+
+
+@app.put("/api/firm/team/{uid}")
+def api_firm_team_role(uid: str, body: dict = Body(...), u: dict = Depends(screen("firm"))):
+    return firms.set_member(u, uid, str(body.get("role") or ""))
+
+
+@app.delete("/api/firm/team/{uid}")
+def api_firm_team_remove(uid: str, u: dict = Depends(screen("firm"))):
+    return firms.set_member(u, uid, None)
+
+
+@app.get("/api/approvals")
+def api_approvals(state: str = "", _: dict = Depends(screen("approvals"))):
+    return {"rows": firms.queue(state), "counts": firms.counts(), "settings": firms.settings()}
+
+
 # --- Clients & years (SimplyFile, 2026-10-03): the client master, carried into each assessment year (clients.py) ----
 @app.get("/api/clients/settings")
-def api_clients_settings(_: dict = Depends(screen("clients"))):
+def api_clients_settings(_: dict = Depends(firms.gate("clients"))):
     return clients.settings()
 
 
 @app.get("/api/clients/summary")
-def api_clients_summary(ay: str = "", _: dict = Depends(screen("clients"))):
-    return clients.summary(ay or clients.settings()["current_ay"])
+def api_clients_summary(ay: str = "", u: dict = Depends(firms.gate("clients"))):
+    return clients.summary(ay or clients.settings()["current_ay"], u)
 
 
 @app.get("/api/clients/{cid}")
-def api_clients_get(cid: str, _: dict = Depends(screen("clients"))):
+def api_clients_get(cid: str, _: dict = Depends(firms.gate("clients"))):
     return clients.get(cid)
 
 
 @app.post("/api/clients")
-def api_clients_create(body: dict = Body(...), u: dict = Depends(screen("clients"))):
+def api_clients_create(body: dict = Body(...), u: dict = Depends(firms.gate("clients", "create"))):
+    firms.may_add_client(u, clients.count(u))        # a self-filer holds one client (chip firm.client_room)
     return clients.save(u, body)
 
 
 @app.put("/api/clients/{cid}")
-def api_clients_update(cid: str, body: dict = Body(...), u: dict = Depends(screen("clients"))):
+def api_clients_update(cid: str, body: dict = Body(...), u: dict = Depends(firms.gate("clients"))):
     return clients.save(u, body, cid)
 
 
 @app.put("/api/clients/{cid}/years/{ay}")
-def api_clients_year(cid: str, ay: str, body: dict = Body(...), u: dict = Depends(screen("clients"))):
-    if "stage" in body:
-        recon.gate(cid, ay, str(body["stage"]))       # red findings in Reconcile keep a year out of review / filed
-        compute.gate_move(u, cid, ay, str(body["stage"]), body.get("ack_no"), access.may(u, "compute", "reopen"))
-    return clients.set_year(u, cid, ay, body)
+def api_clients_year(cid: str, ay: str, body: dict = Body(...), u: dict = Depends(firms.gate("clients"))):
+    return clients.set_year(u, cid, ay, body)        # form, 3CD audit, preparer; the stage moves by itself
 
 
 @app.post("/api/clients/{cid}/archive")
-def api_clients_archive(cid: str, body: dict = Body(...), u: dict = Depends(screen("clients", "archive"))):
+def api_clients_archive(cid: str, body: dict = Body(...), u: dict = Depends(firms.gate("clients", "archive"))):
     return clients.archive(u, cid, bool(body.get("archived", True)))
 
 
 # --- Intake & map (SimplyFile phase 2, 2026-10-03): statements per client and year, each row's SF Ref (intake.py) ----
 @app.get("/api/intake/{cid}/{ay}")
-def api_intake_files(cid: str, ay: str, _: dict = Depends(screen("intake"))):
+def api_intake_files(cid: str, ay: str, _: dict = Depends(firms.gate("intake"))):
     return intake.files(cid, ay)
 
 
 @app.post("/api/intake/{cid}/{ay}")
-async def api_intake_upload(cid: str, ay: str, file: UploadFile = File(...), u: dict = Depends(screen("intake"))):
+async def api_intake_upload(cid: str, ay: str, file: UploadFile = File(...), replace: str = "", u: dict = Depends(firms.gate("intake"))):
     data = await upload_bytes(u, file, intake.settings()["max_mb"] * 1024 * 1024 + 1)
-    return await run_in_threadpool(intake.add, u, cid, ay, file.filename or "", data)
+    return await run_in_threadpool(intake.add, u, cid, ay, file.filename or "", data, replace)
 
 
 @app.get("/api/intake/{cid}/{ay}/{fid}")
-def api_intake_view(cid: str, ay: str, fid: str, _: dict = Depends(screen("intake"))):
+def api_intake_view(cid: str, ay: str, fid: str, _: dict = Depends(firms.gate("intake"))):
     return intake.view(cid, ay, fid)
 
 
 @app.put("/api/intake/{cid}/{ay}/{fid}/tags")
-def api_intake_tags(cid: str, ay: str, fid: str, body: dict = Body(...), u: dict = Depends(screen("intake"))):
+def api_intake_tags(cid: str, ay: str, fid: str, body: dict = Body(...), u: dict = Depends(firms.gate("intake"))):
     return intake.set_tags(u, cid, ay, fid, body.get("tags") or {})
 
 
 @app.post("/api/intake/{cid}/{ay}/{fid}/accept")
-def api_intake_accept(cid: str, ay: str, fid: str, u: dict = Depends(screen("intake"))):
+def api_intake_accept(cid: str, ay: str, fid: str, u: dict = Depends(firms.gate("intake"))):
     return intake.accept_all(u, cid, ay, fid)
 
 
 @app.get("/api/intake/{cid}/{ay}/{fid}/download")
-def api_intake_download(cid: str, ay: str, fid: str, _: dict = Depends(screen("intake"))):
+def api_intake_download(cid: str, ay: str, fid: str, _: dict = Depends(firms.gate("intake"))):
     name, data = intake.tagged_book(cid, ay, fid)
     return Response(data, media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                     headers=named(name.removesuffix(".xlsx"), ".xlsx"))
 
 
 @app.delete("/api/intake/{cid}/{ay}/{fid}")
-def api_intake_delete(cid: str, ay: str, fid: str, _: dict = Depends(screen("intake", "delete"))):
+def api_intake_delete(cid: str, ay: str, fid: str, _: dict = Depends(firms.gate("intake", "delete"))):
     intake.delete(cid, ay, fid)
     return {"ok": True}
 
@@ -879,75 +947,95 @@ XLSX = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 
 
 @app.get("/api/compute/{cid}/{ay}")
-def api_compute(cid: str, ay: str, _: dict = Depends(screen("compute"))):
+def api_compute(cid: str, ay: str, _: dict = Depends(firms.gate("compute"))):
     return compute.compute(cid, ay)
 
 
 @app.put("/api/compute/{cid}/{ay}")
-def api_compute_set(cid: str, ay: str, body: dict = Body(...), u: dict = Depends(screen("compute"))):
+def api_compute_set(cid: str, ay: str, body: dict = Body(...), u: dict = Depends(firms.gate("compute"))):
     return compute.set_state(u, cid, ay, body)
 
 
 @app.post("/api/compute/{cid}/{ay}/signoff")
-def api_compute_signoff(cid: str, ay: str, body: dict = Body(...), u: dict = Depends(screen("compute", "signoff"))):
+def api_compute_signoff(cid: str, ay: str, body: dict = Body(...), u: dict = Depends(firms.gate("compute", "signoff"))):
     return compute.sign_off(u, cid, ay, bool(body.get("on", True)))
 
 
 @app.post("/api/compute/{cid}/{ay}/file")
-def api_compute_file(cid: str, ay: str, body: dict = Body(...), u: dict = Depends(screen("compute", "file"))):
-    """Mark the return filed (with its acknowledgement number) - the year closes. Same gates as Clients & years."""
-    stage = engine.run("close.settings")["filed_stage"]
-    recon.gate(cid, ay, stage)
-    compute.gate_move(u, cid, ay, stage, str(body.get("ack_no") or ""), access.may(u, "compute", "reopen"))
-    clients.set_year(u, cid, ay, {"stage": stage, "ack_no": str(body.get("ack_no") or "")})
-    return compute.compute(cid, ay)
+def api_compute_file(cid: str, ay: str, body: dict = Body(...), u: dict = Depends(firms.gate("compute", "file"))):
+    """Mark the return filed (acknowledgement no. + date filed); the kind - original, belated, revised, ITR-U - is chip close.dates."""
+    return compute.act(u, cid, ay, "file", body)
 
 
-@app.post("/api/compute/{cid}/{ay}/reopen")
-def api_compute_reopen(cid: str, ay: str, u: dict = Depends(screen("compute", "reopen"))):
-    to = engine.run("close.settings")["signoff_stages"][0]
-    compute.gate_move(u, cid, ay, to, None, True)
-    clients.set_year(u, cid, ay, {"stage": to})
-    return compute.compute(cid, ay)
+@app.post("/api/compute/{cid}/{ay}/{action}")
+def api_compute_act(cid: str, ay: str, action: str, body: dict = Body(default={}), u: dict = Depends(firms.gate("compute", "reopen"))):
+    """withdraw (undo a wrong 'filed', with a reason) / revise (start a revised or updated return) / discard (drop the revision)."""
+    if action not in ("withdraw", "revise", "discard"):
+        raise HTTPException(404)
+    return compute.act(u, cid, ay, action, body)
 
 
 @app.get("/api/compute/{cid}/{ay}/computation.xlsx")
-def api_compute_xlsx(cid: str, ay: str, _: dict = Depends(screen("compute"))):
+def api_compute_xlsx(cid: str, ay: str, _: dict = Depends(firms.gate("compute"))):
     name, data = compute.computation_xlsx(cid, ay)
     return Response(data, media_type=XLSX, headers=named(name.removesuffix(".xlsx"), ".xlsx"))
 
 
 @app.get("/api/compute/{cid}/{ay}/utility.zip")
-def api_compute_zip(cid: str, ay: str, _: dict = Depends(screen("compute"))):
+def api_compute_zip(cid: str, ay: str, _: dict = Depends(firms.gate("compute"))):
     name, data = compute.utility_zip(cid, ay)
     return Response(data, media_type="application/zip", headers=named(name.removesuffix(".zip"), ".zip"))
 
 
+@app.get("/api/compute/{cid}/{ay}/3cd-check")
+def api_compute_3cd_check(cid: str, ay: str, _: dict = Depends(firms.gate("compute"))):
+    """The Form 3CA/3CB-3CD JSON checked against the CBDT schema."""
+    return itr_json.report(cid, ay, "tar")
+
+
+@app.get("/api/compute/{cid}/{ay}/3cd.json")
+def api_compute_3cd_json(cid: str, ay: str, _: dict = Depends(firms.gate("compute"))):
+    name, data = itr_json.export(cid, ay, "tar")
+    return Response(data, media_type="application/json", headers=named(name.removesuffix(".json"), ".json"))
+
+
+@app.get("/api/compute/{cid}/{ay}/itr-check")
+def api_compute_itr_check(cid: str, ay: str, _: dict = Depends(firms.gate("compute"))):
+    """The ITR JSON checked against the CBDT schema: valid?, and every problem with its path."""
+    return itr_json.report(cid, ay)
+
+
+@app.get("/api/compute/{cid}/{ay}/itr.json")
+def api_compute_itr_json(cid: str, ay: str, _: dict = Depends(firms.gate("compute"))):
+    name, data = itr_json.export(cid, ay)
+    return Response(data, media_type="application/json", headers=named(name.removesuffix(".json"), ".json"))
+
+
 @app.get("/api/compute/{cid}/{ay}/3cd.xlsx")
-def api_compute_3cd(cid: str, ay: str, _: dict = Depends(screen("compute"))):
+def api_compute_3cd(cid: str, ay: str, _: dict = Depends(firms.gate("compute"))):
     name, data = compute.schedule_3cd_xlsx(cid, ay)
     return Response(data, media_type=XLSX, headers=named(name.removesuffix(".xlsx"), ".xlsx"))
 
 
 # --- Reconcile (SimplyFile phase 3, 2026-10-04): books against 26AS / AIS / TIS (recon.py) ------------------------------
 @app.get("/api/recon/{cid}/{ay}")
-def api_recon(cid: str, ay: str, _: dict = Depends(screen("recon"))):
+def api_recon(cid: str, ay: str, _: dict = Depends(firms.gate("recon"))):
     return {"files": recon.files(cid, ay)} | recon.findings(cid, ay)
 
 
 @app.post("/api/recon/{cid}/{ay}")
-async def api_recon_upload(cid: str, ay: str, file: UploadFile = File(...), u: dict = Depends(screen("recon"))):
+async def api_recon_upload(cid: str, ay: str, file: UploadFile = File(...), replace: str = "", u: dict = Depends(firms.gate("recon"))):
     data = await upload_bytes(u, file, recon.settings()["max_mb"] * 1024 * 1024 + 1)
-    return await run_in_threadpool(recon.add, u, cid, ay, file.filename or "", data)
+    return await run_in_threadpool(recon.add, u, cid, ay, file.filename or "", data, replace)
 
 
 @app.put("/api/recon/{cid}/{ay}/notes/{fid}")
-def api_recon_note(cid: str, ay: str, fid: str, body: dict = Body(...), u: dict = Depends(screen("recon"))):
+def api_recon_note(cid: str, ay: str, fid: str, body: dict = Body(...), u: dict = Depends(firms.gate("recon"))):
     return {"files": recon.files(cid, ay)} | recon.explain(u, cid, ay, fid, body.get("note", ""))
 
 
 @app.delete("/api/recon/{cid}/{ay}/{fid}")
-def api_recon_delete(cid: str, ay: str, fid: str, _: dict = Depends(screen("recon", "delete"))):
+def api_recon_delete(cid: str, ay: str, fid: str, _: dict = Depends(firms.gate("recon", "delete"))):
     recon.delete(cid, ay, fid)
     return {"ok": True}
 

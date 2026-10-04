@@ -1,0 +1,76 @@
+{
+  "prod_base": "https://sf.valuestream.in",
+  "voice": "en-IN-NeerjaNeural",
+  "rate": "+0%",
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "blur": [
+    "#whoami",
+    "#userpop .head"
+  ],
+  "page_key": "sf-firm",
+  "title": "My firm",
+  "start_url": "/#/firm",
+  "covers": [
+    "the firm's details and papers",
+    "sending for approval",
+    "the team and roles"
+  ],
+  "steps": [
+    {
+      "chapter": "My firm",
+      "say": "Get your firm approved in SimplyFile, then bring in your team.",
+      "do": [
+        {
+          "wait": 1
+        }
+      ]
+    },
+    {
+      "chapter": "Where you stand",
+      "say": "The strip: details, papers, sent, approved.",
+      "do": [
+        {
+          "highlight_target": ".fi-hero|main",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Details",
+      "say": "PAN, TAN, GSTIN, FRN, the owner's last 4 Aadhaar digits and the mobile linked to your tax papers.",
+      "do": [
+        {
+          "highlight_target": ".fi-card|main",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Papers and sending",
+      "say": "Upload the masked Aadhaar, PAN card, TAN letter and GST certificate, then send them for approval.",
+      "do": [
+        {
+          "highlight_target": ".fi-banner|main",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Your team",
+      "say": "Once approved, add people with a role: partner, reviewer, auditor or preparer.",
+      "do": [
+        {
+          "highlight_target": ".fi-team|.fi-card|main",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    }
+  ]
+}

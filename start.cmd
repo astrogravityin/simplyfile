@@ -20,7 +20,7 @@ if not exist "%PY%" (
   set "PY=python"
 )
 
-"%PY%" -c "import fastapi" 2>nul || (
+"%PY%" -c "import fastapi, jsonschema" 2>nul || (
   echo Installing requirements ...
   "%PY%" -m pip install --upgrade pip
   "%PY%" -m pip install -r requirements.txt || goto :fail

@@ -1,0 +1,303 @@
+{
+  "chip_id": "itr.codes",
+  "kind": "accessor",
+  "set": "itr",
+  "label": "ITR JSON: our words as the schema's codes",
+  "aliases": [
+    "itr json: our words as the schema's code"
+  ],
+  "params": [
+    {
+      "name": "sections",
+      "type": "json",
+      "default": {
+        "192": "92B",
+        "193": "193",
+        "194": "194",
+        "194A": "94A",
+        "194B": "94B",
+        "194BB": "4BB",
+        "194C": "94C",
+        "194D": "94D",
+        "194DA": "4DA",
+        "194EE": "4EE",
+        "194G": "4G",
+        "194H": "4H",
+        "194I": "4-IB",
+        "194I(A)": "4-IA",
+        "194I(B)": "4-IB",
+        "194IA": "4IA",
+        "194IB": "4IB",
+        "194IC": "4IC",
+        "194J": "94J-B",
+        "194J(A)": "94J-A",
+        "194J(B)": "94J-B",
+        "194K": "94K",
+        "194LA": "4LA",
+        "194M": "94M",
+        "194N": "94N",
+        "194O": "94O",
+        "194P": "94P",
+        "194Q": "94Q",
+        "194R": "94R",
+        "194S": "94S",
+        "194T": "94T",
+        "195": "195"
+      },
+      "label": "sections"
+    },
+    {
+      "name": "heads",
+      "type": "json",
+      "default": {
+        "BP": "BP",
+        "OS": "OS",
+        "HP": "HP",
+        "CG": "CG",
+        "SAL": "NA",
+        "": "OS"
+      },
+      "label": "heads"
+    },
+    {
+      "name": "return_sec",
+      "type": "json",
+      "default": {
+        "original": 11,
+        "belated": 12,
+        "revised": 17,
+        "updated": 21
+      },
+      "label": "return sec"
+    },
+    {
+      "name": "flags",
+      "type": "json",
+      "default": {
+        "true": "Y",
+        "false": "N"
+      },
+      "label": "flags"
+    },
+    {
+      "name": "residential",
+      "type": "json",
+      "default": {
+        "true": "NRI",
+        "false": "RES"
+      },
+      "label": "residential"
+    },
+    {
+      "name": "default_head",
+      "type": "text",
+      "default": "OS",
+      "label": "default head"
+    },
+    {
+      "name": "default_account",
+      "type": "text",
+      "default": "SB",
+      "label": "default account"
+    },
+    {
+      "name": "person_statuses",
+      "type": "json",
+      "default": [
+        "individual"
+      ],
+      "label": "person statuses"
+    },
+    {
+      "name": "business_head",
+      "type": "text",
+      "default": "BP",
+      "label": "business head"
+    },
+    {
+      "name": "account_types",
+      "type": "json",
+      "default": {
+        "current": "CA",
+        "ca": "CA",
+        "savings": "SB",
+        "saving": "SB",
+        "sb": "SB",
+        "cc": "CC",
+        "od": "OD",
+        "nro": "NRO"
+      },
+      "label": "account types"
+    },
+    {
+      "name": "by_form",
+      "type": "json",
+      "default": {
+        "ITR-3": {
+          "statuses": {
+            "individual": "I",
+            "huf": "H"
+          },
+          "capacity": {
+            "individual": "S",
+            "huf": "K"
+          },
+          "substatus": {}
+        },
+        "ITR-5": {
+          "statuses": {
+            "firm": "1",
+            "llp": "1",
+            "aop": "14",
+            "boi": "14"
+          },
+          "substatus": {
+            "firm": "10",
+            "llp": "5",
+            "aop": "8",
+            "boi": "8"
+          },
+          "capacity": {
+            "firm": "MP",
+            "llp": "DP",
+            "aop": "PO",
+            "boi": "PO"
+          }
+        }
+      },
+      "label": "by form"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "sections": "$sections",
+      "heads": "$heads",
+      "return_sec": "$return_sec",
+      "flags": "$flags",
+      "residential": "$residential",
+      "default_head": "$default_head",
+      "default_account": "$default_account",
+      "person_statuses": "$person_statuses",
+      "business_head": "$business_head",
+      "account_types": "$account_types",
+      "by_form": "$by_form"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "From the schemas' own descriptions: TDS sections are written without the leading 1 (194A = 94A, 194-I(b) rent = 4-IB, 194J professional = 94J-B); ReturnFileSec 11 = 139(1), 12 = 139(4), 17 = 139(5) revised, 21 = 139(8A) updated; ITR-3 status I / H and verifies as S (self) / K (karta); ITR-5 status 1 firm (sub 10 partnership, 5 LLP), 14 AOP/BOI.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "sections": {
+          "192": "92B",
+          "193": "193",
+          "194": "194",
+          "194A": "94A",
+          "194B": "94B",
+          "194BB": "4BB",
+          "194C": "94C",
+          "194D": "94D",
+          "194DA": "4DA",
+          "194EE": "4EE",
+          "194G": "4G",
+          "194H": "4H",
+          "194I": "4-IB",
+          "194I(A)": "4-IA",
+          "194I(B)": "4-IB",
+          "194IA": "4IA",
+          "194IB": "4IB",
+          "194IC": "4IC",
+          "194J": "94J-B",
+          "194J(A)": "94J-A",
+          "194J(B)": "94J-B",
+          "194K": "94K",
+          "194LA": "4LA",
+          "194M": "94M",
+          "194N": "94N",
+          "194O": "94O",
+          "194P": "94P",
+          "194Q": "94Q",
+          "194R": "94R",
+          "194S": "94S",
+          "194T": "94T",
+          "195": "195"
+        },
+        "heads": {
+          "BP": "BP",
+          "OS": "OS",
+          "HP": "HP",
+          "CG": "CG",
+          "SAL": "NA",
+          "": "OS"
+        },
+        "return_sec": {
+          "original": 11,
+          "belated": 12,
+          "revised": 17,
+          "updated": 21
+        },
+        "flags": {
+          "true": "Y",
+          "false": "N"
+        },
+        "residential": {
+          "true": "NRI",
+          "false": "RES"
+        },
+        "default_head": "OS",
+        "default_account": "SB",
+        "person_statuses": [
+          "individual"
+        ],
+        "business_head": "BP",
+        "account_types": {
+          "current": "CA",
+          "ca": "CA",
+          "savings": "SB",
+          "saving": "SB",
+          "sb": "SB",
+          "cc": "CC",
+          "od": "OD",
+          "nro": "NRO"
+        },
+        "by_form": {
+          "ITR-3": {
+            "statuses": {
+              "individual": "I",
+              "huf": "H"
+            },
+            "capacity": {
+              "individual": "S",
+              "huf": "K"
+            },
+            "substatus": {}
+          },
+          "ITR-5": {
+            "statuses": {
+              "firm": "1",
+              "llp": "1",
+              "aop": "14",
+              "boi": "14"
+            },
+            "substatus": {
+              "firm": "10",
+              "llp": "5",
+              "aop": "8",
+              "boi": "8"
+            },
+            "capacity": {
+              "firm": "MP",
+              "llp": "DP",
+              "aop": "PO",
+              "boi": "PO"
+            }
+          }
+        }
+      }
+    }
+  ]
+}

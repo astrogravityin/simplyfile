@@ -1,0 +1,52 @@
+{
+  "chip_id": "close.ack_ok",
+  "kind": "predicate",
+  "set": "close",
+  "label": "Close: is this an ITR acknowledgement number?",
+  "aliases": [
+    "close: is this an itr acknowledgement nu"
+  ],
+  "params": [
+    {
+      "name": "ack",
+      "type": "text",
+      "default": "",
+      "label": "acknowledgement number typed"
+    },
+    {
+      "name": "pattern",
+      "type": "text",
+      "default": "[0-9]{15}",
+      "label": "15 digits (ITR-V)"
+    }
+  ],
+  "expr": {
+    "vop": "matches",
+    "text": "$ack",
+    "pattern": "$pattern"
+  },
+  "returns": "boolean",
+  "version": 1,
+  "status": "published",
+  "description_nl": "The e-filing acknowledgement on ITR-V is 15 digits.",
+  "test_cases": [
+    {
+      "args": {
+        "ack": "456789012345678"
+      },
+      "expect_value": true
+    },
+    {
+      "args": {
+        "ack": "123"
+      },
+      "expect_value": false
+    },
+    {
+      "args": {
+        "ack": ""
+      },
+      "expect_value": false
+    }
+  ]
+}

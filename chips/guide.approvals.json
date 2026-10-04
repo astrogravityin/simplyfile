@@ -1,0 +1,99 @@
+{
+  "chip_id": "guide.approvals",
+  "kind": "accessor",
+  "set": "guide",
+  "label": "Guide me: Firm approvals",
+  "aliases": [
+    "guide me: firm approvals"
+  ],
+  "params": [
+    {
+      "name": "title",
+      "type": "text",
+      "default": "Firm approvals",
+      "label": "title"
+    },
+    {
+      "name": "lede",
+      "type": "long",
+      "default": "Check each firm's papers in {product} and let it in.",
+      "label": "lede"
+    },
+    {
+      "name": "icon",
+      "type": "text",
+      "default": "check",
+      "label": "icon"
+    },
+    {
+      "name": "minutes",
+      "type": "number",
+      "default": 1,
+      "label": "minutes"
+    },
+    {
+      "name": "steps",
+      "type": "rows",
+      "default": [
+        {
+          "title": "The queue",
+          "say": "Oldest first; the ring shows how much of the review promise has gone.",
+          "target": ".ap-list|main"
+        },
+        {
+          "title": "Read the papers",
+          "say": "Open a firm: its details, each paper, and the checklist - PAN, GSTIN, TAN and the masked Aadhaar must agree.",
+          "target": ".ap-list|main"
+        },
+        {
+          "title": "Decide",
+          "say": "Approve - or return it with a note saying what to fix. Suspend later if a firm must stop.",
+          "target": ".ap-list|main"
+        }
+      ],
+      "label": "steps"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "title": "$title",
+      "lede": "$lede",
+      "icon": "$icon",
+      "minutes": "$minutes",
+      "steps": "$steps"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-04: the Firm approvals walk, up to date with the screen; tours/sf-approvals.json is made from it.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "title": "Firm approvals",
+        "lede": "Check each firm's papers in {product} and let it in.",
+        "icon": "check",
+        "minutes": 1,
+        "steps": [
+          {
+            "title": "The queue",
+            "say": "Oldest first; the ring shows how much of the review promise has gone.",
+            "target": ".ap-list|main"
+          },
+          {
+            "title": "Read the papers",
+            "say": "Open a firm: its details, each paper, and the checklist - PAN, GSTIN, TAN and the masked Aadhaar must agree.",
+            "target": ".ap-list|main"
+          },
+          {
+            "title": "Decide",
+            "say": "Approve - or return it with a note saying what to fix. Suspend later if a firm must stop.",
+            "target": ".ap-list|main"
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -120,7 +120,7 @@ def read_portal(data: bytes, ext: str) -> dict:
             continue
         out.append({"kind": kind, "party": get("party") or party, "tan": get("tan") or tan, "section": get("section").upper(),
                     "category": get("category"), "gross": gross or 0.0, "tax": tax or 0.0, "date": get("date"),
-                    "bsr": get("bsr"), "challan": get("challan")})
+                    "bsr": get("bsr"), "challan": get("challan"), "minor": get("minor")})
     return {"source": source, "entries": out}
 
 
@@ -136,7 +136,7 @@ def files(cid: str, ay: str) -> list[dict]:
     return store.read(_meta_name(cid, ay), [])
 
 
-def add(user: dict, cid: str, ay: str, name: str, data: bytes) -> dict:
+def add(user: dict, cid: str, ay: str, name: str, data: bytes, replace: str = "") -> dict:
     clients.guard_open(cid, ay)                                  # a closed (filed) year changes no more
     k = settings()
     ext = Path(name).suffix.lower()
@@ -154,8 +154,18 @@ def add(user: dict, cid: str, ay: str, name: str, data: bytes) -> dict:
     with _LOCK:
         metas = store.read(_meta_name(cid, ay), [])
         sha = hashlib.sha256(data).hexdigest()
-        if any(m["sha256"] == sha for m in metas):
-            _bad("same_file", name=name)
+        # one 26AS, one AIS, one TIS a year: a newer download replaces the older (the notes stay with their findings)
+        same = next((m for m in metas if m["sha256"] == sha or m["source"] == got["source"]), None)
+        if same and replace != same["id"]:
+            raise HTTPException(409, {"message": say("same_source", name=same["name"], source=got["source"].upper()), "replace": same["id"],
+                                      "ask": say("replace_ask", name=same["name"], source=got["source"].upper()), "yes": say("replace_yes")})
+        if replace:
+            old = next((m for m in metas if m["id"] == replace), None)
+            if not old:
+                _bad("no_file", 404)
+            (d / f"{old['id']}{old['ext']}").unlink(missing_ok=True)
+            store.path_of(f"sf_portal/{cid}/{ay}/{old['id']}.entries.json").unlink(missing_ok=True)
+            metas = [m for m in metas if m["id"] != replace]
         fid = store.new_id()
         d.mkdir(parents=True, exist_ok=True)
         (d / f"{fid}{ext}").write_bytes(data)
@@ -195,8 +205,8 @@ def book_rows(cid: str, ay: str) -> list[dict]:
             if x["state"] != "tagged":
                 continue
             for p in intake.parse_ref(x["ref"]) or []:
-                out.append({"table": p["table"], "form": p["form"], "label": x["label"], "text": x["text"],
-                            "amount": x["numbers"][0] if x["numbers"] else 0.0, "key": x["key"], "file": m["name"]})
+                out.append({"table": p["table"], "form": p["form"], "serial": p["serial"], "label": x["label"], "text": x["text"],
+                            "amount": x.get("amount", x["numbers"][0] if x["numbers"] else 0.0), "key": x["key"], "file": m["name"]})
     return out
 
 

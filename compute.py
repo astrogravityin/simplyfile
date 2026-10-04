@@ -51,11 +51,77 @@ def _state_name(cid: str, ay: str) -> str:
     return f"sf_compute/{cid}/{ay}.json"
 
 
-def regime_of(k: dict, status: str, chosen: str) -> dict:
+def year_day(ay: str, which: str, years: int = 0) -> int:
+    """yyyymmdd of the AY's start (1 April) or of a financial year's end (31 March), from chip compute.settings.
+    years: 0 = the AY's first year (its 1 April; the previous year's 31 March), 1 = the year after."""
+    k = settings()
+    return (int(ay[:4]) + years) * 10000 + int(k["year_start_mmdd"] if which == "start" else k["year_end_mmdd"])
+
+
+def _day(s: str) -> int:
+    """26AS 15-Jun-2025 / ISO 2025-06-15 -> 20250615 (0 when unreadable)."""
+    m = re.fullmatch(r"(\d{1,2})-([A-Za-z]{3})-(\d{4})", str(s or "").strip())
+    if m:
+        return int(m.group(3)) * 10000 + _MONTHS.get(m.group(2).lower(), 0) * 100 + int(m.group(1))
+    return int(re.sub(r"\D", "", str(s or ""))[:8] or 0)
+
+
+def interest_234(cid: str, ay: str, k: dict, assessed: float, paid: list[dict], exempt: bool = False) -> dict:
+    """Interest u/s 234A / 234B / 234C (chip compute.interest). Here: which challan is advance tax and which self-assessment
+    (chip compute.paid_kind), what was paid by each instalment date, and the months - counted by op months_part."""
+    import datetime  # noqa: PLC0415
+    from core.ops import months_part  # noqa: PLC0415
+    ayy = int(ay[:4])
+    y = clients.year_of(cid, ay)
+    cur = current_filing(y)
+    filing = _day(cur["filed_on"]) if cur and cur.get("filed_on") and not y.get("revising") else _day(datetime.date.today().isoformat())
+    due = dates(cid, ay)["due"]
+    rows = [{"on": _day(e["date"]), "amount": e["tax"] or e["gross"],
+             "kind": engine.run("compute.paid_kind", {"minor": str(e.get("minor") or ""), "paid_on": _day(e["date"]), "fy_end": year_day(ay, "end")})}
+            for e in paid]
+    adv = [r for r in rows if r["kind"] == "advance"]
+    sat = [r for r in rows if r["kind"] == "self"]
+    cut = [(ayy + yy) * 10000 + md for yy, md in k["advance_due"]]
+    after_due = int((datetime.date(due // 10000, due // 100 % 100, due % 100) + datetime.timedelta(days=1)).strftime("%Y%m%d"))
+    adv_total = sum(r["amount"] for r in adv)
+
+    def upto(pays: list[dict], owed: float) -> list[dict]:
+        """Self-assessment payments in date order, each counted only up to what was still owed."""
+        out = []
+        for r in sorted(pays, key=lambda r: r["on"]):
+            take = max(0.0, min(r["amount"], owed))
+            owed -= take
+            out.append(r | {"amount": take})
+        return out
+    sat_b = upto(sat, assessed - adv_total)
+    before = sum(r["amount"] for r in sat_b if r["on"] <= due)
+    sat_a = upto([r for r in sat if r["on"] > due], assessed - adv_total - before)
+    return engine.run("compute.interest", {
+        "assessed": assessed, "adv_by": [sum(r["amount"] for r in adv if r["on"] <= c) for c in cut],
+        "adv_total": adv_total, "sat_total": sum(r["amount"] for r in sat_b), "sat_before_due": before,
+        "sat_im": sum(r["amount"] * months_part(year_day(ay, "start"), r["on"]) for r in sat_b),
+        "sat_after_due": sum(r["amount"] for r in sat_a), "sat_after_im": sum(r["amount"] * months_part(after_due, r["on"]) for r in sat_a),
+        "months_b": months_part(year_day(ay, "start"), filing), "months_a": months_part(after_due, filing),
+        "presumptive": bool(y.get("presumptive")), "exempt": exempt}) | {"filing_day": filing, "exempt": exempt, "due": due}
+
+
+def refund_interest(ay: str, st: dict, auto: dict, refund: float, tax_total: float) -> dict:
+    """s.244A (chip compute.refund_interest): from 1 April when the return is on time, else from the filing, to the day
+    the refund came (typed in) or today."""
+    import datetime  # noqa: PLC0415
+    from core.ops import months_part  # noqa: PLC0415
+    filed, due = auto["filing_day"], auto["due"]
+    start = year_day(ay, "start") if filed <= due else filed
+    end = _day(st.get("refund_on") or datetime.date.today().isoformat())
+    return engine.run("compute.refund_interest", {"refund": refund, "tax_determined": tax_total, "months": months_part(start, end)}) | {
+        "from": start, "to": end, "refund_on": st.get("refund_on") or ""}
+
+
+def regime_of(k: dict, status: str, chosen: str, ay: str = "") -> dict:
     """The rate table for this status - which one is chip compute.regime's answer (the chosen one if this status may)."""
     rid = engine.run("compute.regime", {"chosen": chosen or "", "allowed": k["status_regimes"].get(status, []),
                                         "default": k["status_default"].get(status, "")})
-    return next(r for r in k["regimes"] if r["id"] == rid)
+    return next(r for r in k["regimes_by_ay"].get(ay, k["regimes"]) if r["id"] == rid)   # the AY's own slabs
 
 
 # --- the computation ------------------------------------------------------------------------------------------------------
@@ -65,7 +131,7 @@ def compute(cid: str, ay: str) -> dict:
     c = clients.get(cid)
     y = clients.year_of(cid, ay)
     st = store.read(_state_name(cid, ay), {})
-    reg = regime_of(k, c["status"], st.get("regime") or "")
+    reg = regime_of(k, c["status"], st.get("regime") or "", ay)
     books = recon.book_rows(cid, ay)
 
     heads = []
@@ -98,30 +164,45 @@ def compute(cid: str, ay: str) -> dict:
     paid = [e for e in src26 if e["kind"] in k["prepaid_paid_kinds"] and (e["tax"] or e["gross"])]
     tds_total = sum(e["tax"] for e in tds)
     paid_total = sum(e["tax"] or e["gross"] for e in paid)
-    interest = float(st.get("interest") or 0)
+    born = int(str(c.get("dob") or "0").replace("-", "") or 0)
+    exempt = engine.run("compute.no_advance", {"status": c["status"], "nri": bool(c.get("nri")), "born": born,
+                                               "fy_end": year_day(ay, "end"),
+                                               "has_business": any(h["id"] == "BP" and h["lines"] for h in heads)}) is True
+    auto = interest_234(cid, ay, k, tax["total"] - tds_total, paid, exempt)
+    over = st.get("interest_override")
+    interest = float(over) if over is not None else auto["total"]
     bal = engine.run("compute.balance", {"total": tax["total"], "interest": interest, "tds": tds_total, "paid": paid_total})
+    refund_int = refund_interest(ay, st, auto, -bal["net"], tax["total"])
 
     figures = {"income": income, "tax": tax["total"], "net": bal["net"]}
     sign = st.get("signoff")
     signed = bool(sign) and sign.get("figures") == figures      # a sign-off stands behind these exact figures
     open_red = recon.findings(cid, ay)["open_red"]
-    locked = clients.locked(cid, ay)
     has_26as = any(e["source"] == "26as" for e in portal)
+    stage = refresh(cid, ay, signed=signed, open_red=open_red, has_26as=has_26as)
+    y = clients.year_of(cid, ay)
+    locked = clients.locked(cid, ay)
+    cur = current_filing(y)
     steps = engine.run("close.steps", {"has_books": bool(books), "has_26as": has_26as, "open_red": open_red, "signed": signed,
-                                       "has_ack": bool(str(y.get("ack_no") or "").strip()), "locked": locked})
-    return {"client": clients.row(c, ay), "ay": ay, "stage": y.get("stage", ""), "ack_no": y.get("ack_no", ""),
+                                       "has_ack": bool(cur), "locked": locked})
+    return {"client": clients.row(clients.get(cid), ay), "ay": ay, "stage": stage, "ack_no": (cur or {}).get("ack_no", ""),
+            "filings": y.get("filings", []), "current": cur, "revising": bool(y.get("revising")), "dates": (dd := dates(cid, ay)),
+            "itr_u": itr_u(cid, ay, bal["net"]) if dd["kind"] == "updated" else None, "tp": bool(y.get("tp")),
             "regime": reg["id"], "regimes": k["status_regimes"].get(c["status"], [reg["id"]]),
             "heads": heads, "gti": gti, "deductions": deductions, "deduction_rows": ded_rows, "income": income, "tax": tax,
             "tds": [{"party": e["party"], "tan": e["tan"], "section": e["section"], "gross": e["gross"], "tax": e["tax"]} for e in tds],
-            "paid": [{"date": e["date"], "bsr": e["bsr"], "challan": e["challan"], "amount": e["tax"] or e["gross"]} for e in paid],
-            "tds_total": tds_total, "paid_total": paid_total, "interest": interest, "balance": bal,
+            "paid": [{"date": e["date"], "bsr": e["bsr"], "challan": e["challan"], "amount": e["tax"] or e["gross"], "minor": e.get("minor", "")}
+                     for e in paid],
+            "tds_total": tds_total, "paid_total": paid_total, "interest": interest, "interest_auto": auto,
+            "interest_override": over, "refund_interest": refund_int, "presumptive": bool(y.get("presumptive")), "balance": bal,
             "has_books": bool(books), "has_26as": has_26as, "steps": steps,
             "signoff": sign, "signed": signed, "figures": figures, "locked": locked, "open_red": open_red}
 
 
 def set_state(user: dict, cid: str, ay: str, body: dict) -> dict:
-    """The person's choices on the computation: the regime, and interest u/s 234A/B/C as worked out by them."""
-    clients.guard_open(cid, ay)
+    """The person's choices: the regime, an interest override, and the day the refund came (allowed after filing too)."""
+    if set(body) - {"refund_on"}:
+        clients.guard_open(cid, ay)
     k = settings()
     with _LOCK:
         st = store.read(_state_name(cid, ay), {})
@@ -129,14 +210,22 @@ def set_state(user: dict, cid: str, ay: str, body: dict) -> dict:
             if str(body["regime"]) not in {r["id"] for r in k["regimes"]}:
                 _bad("bad_regime")
             st["regime"] = str(body["regime"])
-        if "interest" in body:
-            try:
-                v = float(body["interest"] or 0)
-            except (TypeError, ValueError):
-                _bad("bad_interest")
-            if not 0 <= v <= k["interest_max"]:
-                _bad("bad_interest")
-            st["interest"] = v
+        if "refund_on" in body:                  # the day the refund was granted (244A interest stops there); blank = today
+            v = str(body["refund_on"] or "")[:10]
+            if v and not re.fullmatch(r"\d{4}-\d{2}-\d{2}", v):
+                _bad("bad_date")
+            st["refund_on"] = v
+        if "interest" in body:                   # an override of the calculated 234A/B/C; blank = back to calculated
+            if body["interest"] in (None, ""):
+                st.pop("interest_override", None)
+            else:
+                try:
+                    v = float(body["interest"])
+                except (TypeError, ValueError):
+                    _bad("bad_interest")
+                if not 0 <= v <= k["interest_max"]:
+                    _bad("bad_interest")
+                st["interest_override"] = v
         st["updated_at"], st["updated_by"] = store.now(), user["id"]
         store.write(_state_name(cid, ay), st)
     return compute(cid, ay)
@@ -161,16 +250,111 @@ def sign_off(user: dict, cid: str, ay: str, on: bool = True) -> dict:
     return compute(cid, ay)
 
 
-def gate_move(user: dict, cid: str, ay: str, to_stage: str, ack_no: str | None, may_reopen: bool) -> None:
-    """May the year move to `to_stage`? Facts here; chip close.move decides (filed needs sign-off + ack; leaving it, reopen)."""
-    k = engine.run("close.settings")
+# --- the stage and the filings (2026-10-04 owner: "Stage should move automatically ... discard old filing and create new") ---
+
+def current_filing(y: dict) -> dict | None:
+    """The return that stands for the year: the last one filed and not withdrawn or superseded."""
+    return next((f for f in reversed(y.get("filings") or []) if f.get("status") == "current"), None)
+
+
+def _ymd(d) -> int:
+    return int(str(d).replace("-", "")[:8] or 0)
+
+
+def dates(cid: str, ay: str, filed_on: str = "") -> dict:
+    """Due date, last day to revise, last day for an ITR-U, and what a return filed on `filed_on` (today) would be."""
+    import datetime  # noqa: PLC0415
+    y = clients.year_of(cid, ay)
+    today = datetime.date.today().isoformat()
+    filings = y.get("filings") or []
+    return engine.run("close.dates", {"ay_year": int(ay[:4]), "audit": bool(y.get("audit")), "tp": bool(y.get("tp")), "form": y.get("form") or "", "filed_on": _ymd(filed_on or today),
+                                      "today": _ymd(today), "has_current": bool(current_filing(y)),
+                                      "has_updated": any(f["kind"] == "updated" and f["status"] != "withdrawn" for f in filings)})
+
+
+def itr_u(cid: str, ay: str, net_now: float, filed_on: str = "") -> dict:
+    """What an updated return filed on `filed_on` (today) would mean: allowed?, the further tax, 140B's % and amount."""
+    import datetime  # noqa: PLC0415
+    day = datetime.date.fromisoformat(filed_on or datetime.date.today().isoformat())
+    e = year_day(ay, "end", 1)                                           # the AY ends on 31 March of the next year
+    end = datetime.date(e // 10000, e // 100 % 100, e % 100)
+    months = (day.year - end.year) * 12 + (day.month - end.month) + (day.day - end.day) / 31
+    before = ((current_filing(clients.year_of(cid, ay)) or {}).get("figures") or {}).get("net") or 0
+    return engine.run("close.itr_u", {"net_now": net_now, "net_before": before, "months": round(months, 3)}) | {"net_before": before}
+
+
+def refresh(cid: str, ay: str, *, signed: bool | None = None, open_red: int | None = None, has_26as: bool | None = None) -> str:
+    """Work out the year's stage from what has happened (chip close.stage) and keep it. Called after every change."""
+    import intake  # noqa: PLC0415 - intake imports nothing of ours
+    if signed is None:
+        return compute(cid, ay)["stage"]                    # compute() gathers every fact and calls back here
+    y = clients.year_of(cid, ay)
+    if y.get("ack_no") and not y.get("filings"):           # filed before filings were kept (2026-10-04): its record, once
+        c = clients.get(cid)
+        clients.change_year(cid, ay, lambda yy: yy.update(filings=[{
+            "n": 1, "kind": "original", "ack_no": yy["ack_no"], "filed_on": str(c.get("updated_at") or store.now())[:10],
+            "by": say("legacy_by"), "at": store.now(), "figures": {}, "status": "current", "revises": "", "note": ""}]))
+        y = clients.year_of(cid, ay)
+    files = intake.files(cid, ay)["files"]
+    open_states = engine.run("page.intake")["open_states"]
+    stage = engine.run("close.stage", {
+        "has_files": bool(files), "open_rows": sum(f.get(s, 0) for f in files for s in open_states),
+        "has_26as": bool(has_26as), "open_red": open_red or 0, "signed": signed,
+        "filed": bool(current_filing(y)) and not y.get("revising")})
+    if y.get("stage") != stage:
+        clients.change_year(cid, ay, lambda yy: yy.update(stage=stage))
+    return stage
+
+
+def act(user: dict, cid: str, ay: str, action: str, body: dict) -> dict:
+    """file / withdraw / revise / discard - facts here, chip close.move decides, nothing filed is ever deleted."""
     d = compute(cid, ay)
-    ack = d["ack_no"] if ack_no is None else ack_no
-    facts = {"to_filed": to_stage == k["filed_stage"], "signed": d["signed"], "has_ack": bool(str(ack or "").strip()),
-             "from_closed": d["stage"] in k["locked_stages"], "to_closed": to_stage in k["locked_stages"], "may_reopen": may_reopen}
+    y = clients.year_of(cid, ay)
+    ack = re.sub(r"\s+", "", str(body.get("ack_no") or ""))
+    filed_on = str(body.get("filed_on") or "")[:10]
+    when = dates(cid, ay, filed_on)
+    upd = itr_u(cid, ay, d["balance"]["net"], filed_on) if when["kind"] == "updated" else None
+    note = re.sub(r"\s+", " ", str(body.get("note") or "")).strip()[: settings()["note_max"]]
+    facts = {"action": action, "signed": d["signed"], "ack_ok": engine.run("close.ack_ok", {"ack": ack}) is True,
+             "kind": when["kind"], "filed": bool(d["current"]) and not d["revising"], "revising": d["revising"],
+             "has_note": bool(note), "may_revise": when["may_revise"], "may_update": when["may_update"],
+             "future": _ymd(filed_on or "0") > _ymd(store.now()[:10]),
+             "itru_ok": bool(upd and upd["ok"]), "itru_confirmed": bool(body.get("itru_confirm"))}
     verdict = engine.run("close.move", {"facts": facts})
     if not verdict.get("ok"):
-        _bad(verdict.get("say") or "not_allowed", 409)
+        _bad(verdict["say"], 409)
+    who, now = user.get("email") or user["id"], store.now()
+
+    def change(yy: dict) -> None:
+        fl = yy.setdefault("filings", [])
+        cur = current_filing(yy)
+        if action == "file":
+            if cur:
+                cur["status"], cur["superseded_at"] = "superseded", now
+            fl.append({"n": len(fl) + 1, "kind": when["kind"], "ack_no": ack, "filed_on": filed_on or now[:10], "by": who, "at": now,
+                       "figures": d["figures"], "status": "current", "revises": (cur or {}).get("ack_no", ""),
+                       "itr_u": {k: upd[k] for k in ("extra", "pct", "additional")} if upd else None})
+            yy["revising"] = False
+            yy["ack_no"] = ack
+        elif action == "withdraw":
+            cur["status"], cur["withdrawn_by"], cur["withdrawn_at"], cur["note"] = "withdrawn", who, now, note
+            prev = next((f for f in reversed(fl) if f["status"] == "superseded" and f["ack_no"] == cur.get("revises")), None)
+            if prev:          # a revised return undone: the one it revised stands again, and the revision is open again
+                prev["status"] = "current"
+                prev.pop("superseded_at", None)
+                yy["revising"] = True
+            yy["ack_no"] = (current_filing(yy) or {}).get("ack_no", "")
+        elif action == "revise":
+            yy["revising"], yy["revising_since"], yy["revising_by"] = True, now, who
+        elif action == "discard":
+            yy["revising"] = False
+    clients.change_year(cid, ay, change)
+    if action in engine.run("close.settings")["clear_signoff_on"]:   # the figures will change: a fresh sign-off is needed
+        with _LOCK:
+            st = store.read(_state_name(cid, ay), {})
+            st.pop("signoff", None)
+            store.write(_state_name(cid, ay), st)
+    return compute(cid, ay)
 
 
 # --- the three files ------------------------------------------------------------------------------------------------------
@@ -310,5 +494,6 @@ if __name__ == "__main__":  # ponytail: one runnable self-check - the rate chips
     assert engine.run("compute.hp", {"nav": 2340000, "std_pct": 30, "loss_cap": 200000}) == {"std": 702000, "net": 1638000}
     assert engine.run("compute.hp", {"nav": -500000, "std_pct": 30, "loss_cap": 200000}) == {"std": 0, "net": -200000}
     assert _ddmmyyyy("13-Jun-2025") == "13/06/2025"
-    assert engine.run("close.move", {"facts": {"to_filed": True, "signed": False, "has_ack": True}})["say"] == "need_signoff"
+    assert engine.run("close.move", {"facts": {"action": "file", "signed": False, "ack_ok": True}})["say"] == "need_signoff"
+    assert engine.run("close.stage", {"has_files": True, "has_26as": True}) == "review"
     print("compute self-check OK")

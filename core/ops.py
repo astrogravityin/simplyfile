@@ -586,6 +586,37 @@ def slice_list(items: Any = None, start: Any = None, end: Any = None) -> list | 
     return items[s:e]
 
 
+def months_part(start: Any = None, end: Any = None) -> int | None:
+    """Months from `start` to `end` (yyyymmdd numbers, both days counted) with a part of a month as a whole month - the
+    Income-tax Act's way for interest (1 Apr -> 31 Jul = 4, 1 Apr -> 1 Aug = 5, 1 Nov -> 15 Nov = 1); 0 when end is before start."""
+    a, b = _num(start), _num(end)
+    if a is None or b is None:
+        return None
+    (y1, m1, d1), (y2, m2, d2) = (divmod(int(a), 10000)[0], divmod(int(a), 100)[0] % 100, int(a) % 100),         (divmod(int(b), 10000)[0], divmod(int(b), 100)[0] % 100, int(b) % 100)
+    n = (y2 - y1) * 12 + (m2 - m1) + (1 if d2 >= d1 else 0)
+    return max(0, n)
+
+
+def first_index_matching(values: Any = None, pattern: Any = "", default: Any = None) -> Any:
+    """Where (0-based) the first text in a list fits the pattern (found anywhere, any case), else default - which
+    column of a statement is its amount ("WDV", "Additions", "Depreciation" -> 2 for "^depreciation")."""
+    for i, v in enumerate(values if isinstance(values, list) else []):
+        try:
+            if v is not None and re.search(str(pattern or ""), str(v), re.I):
+                return i
+        except re.error:
+            return default
+    return default
+
+
+def missing(want: Any = None, have: Any = None) -> list | None:
+    """The items of `want` not in `have`, in want's order (the documents still to upload)."""
+    if not isinstance(want, list):
+        return None
+    got = {str(x) for x in (have or [])}
+    return [x for x in want if str(x) not in got]
+
+
 def count(items: Any = None) -> int | None:
     """How many items a list holds (None when it is not a list)."""
     return len(items) if isinstance(items, list) else None
@@ -1250,7 +1281,7 @@ OPS = {f.__name__: f for f in (
     add, sub, mul, div, pct, round_to, floor_to, first_free_slot, clamp, largest, smallest, first_at_least, slab_tax, step_rate, median, median_shift,
     template, starts_with_any, ends_with_any, text_length, matches, split_text, key_sentences, pattern_hits, shared_runs, replace_once, first_with, html_texts, html_put_texts, script_of, script_shift, same_members, search, text_pick, values_matching, cut_at_any,
     truncate, sub_text, contains, ip_network, first_matching, epoch_date,
-    pluck, slice_list, count, last, compact, coalesce, json_in_text, fit_count, match_case, stable_hash, hash_hex, strings_in, total, first_named, pack_text, trim_to_sentence, after_heading, last_line, pack_words, name_value_lines, ease, filter_rows, rank_rows, rows_view, fuzzy_rows, match_rows, rows_math, group_rows, rows_aggregate,
+    pluck, slice_list, months_part, first_index_matching, missing, count, last, compact, coalesce, json_in_text, fit_count, match_case, stable_hash, hash_hex, strings_in, total, first_named, pack_text, trim_to_sentence, after_heading, last_line, pack_words, name_value_lines, ease, filter_rows, rank_rows, rows_view, fuzzy_rows, match_rows, rows_math, group_rows, rows_aggregate,
     rows_product, rows_band, rows_index, rows_lookup, rows_check, rows_having, decision_table, doc_problems, literal, record, merge, get,
 )}
 
@@ -1282,6 +1313,11 @@ if __name__ == "__main__":
     _sur = [{"above": 5000000, "rate": 10}, {"above": 10000000, "rate": 15}, {"above": 20000000, "rate": 25}]
     assert step_rate(20000000, _sur) == 15 and step_rate(20000001, _sur) == 25 and step_rate(100, _sur) is None
     assert step_rate(20721500, _sur, "above") == 20000000
+    assert missing(["pan", "tan", "gst"], ["tan"]) == ["pan", "gst"] and missing(["a"], None) == ["a"]
+    assert first_index_matching(["WDV 01.04", "Additions", "Depreciation"], "^depreciation") == 2
+    assert first_index_matching(["a"], "zz", 0) == 0
+    assert months_part(20260401, 20260731) == 4 and months_part(20260401, 20260801) == 5 and months_part(20261101, 20261115) == 1
+    assert months_part(20261101, 20261031) == 0 and months_part(20260401, 20270331) == 12
     # 2026-10-02 "1 people": {n:one|many} - the word for one, or for any other count
     assert template("{n} {n:person|people}", {"n": 1}) == "1 person" and template("{n} {n:person|people}", {"n": 2}) == "2 people"
     assert template("{n:work|works}", {"n": "1"}) == "work" and template("{n:work|works}", {}) == "works"

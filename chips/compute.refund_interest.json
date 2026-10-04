@@ -1,0 +1,219 @@
+{
+  "chip_id": "compute.refund_interest",
+  "kind": "accessor",
+  "set": "compute",
+  "label": "Compute: interest on the refund u/s 244A",
+  "aliases": [
+    "compute: interest on the refund u/s 244a"
+  ],
+  "params": [
+    {
+      "name": "refund",
+      "type": "number",
+      "default": 0,
+      "label": "refund due (positive)"
+    },
+    {
+      "name": "tax_determined",
+      "type": "number",
+      "default": 0,
+      "label": "tax as determined on the return (tax payable)"
+    },
+    {
+      "name": "months",
+      "type": "number",
+      "default": 0,
+      "label": "months from 1 April of the AY (return on time) or the filing date (late) to the refund"
+    },
+    {
+      "name": "rate",
+      "type": "number",
+      "default": 0.5,
+      "label": "% per month or part of a month"
+    },
+    {
+      "name": "min_pct",
+      "type": "number",
+      "default": 10,
+      "label": "none when the refund is under 10% of the tax determined"
+    },
+    {
+      "name": "floor_step",
+      "type": "number",
+      "default": 100,
+      "label": "Rule 119A: the refund rounded down to a multiple of 100"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "eligible": {
+        "op": "all",
+        "items": [
+          {
+            "op": "gt",
+            "left": "$refund",
+            "right": 0
+          },
+          {
+            "op": "ge",
+            "left": "$refund",
+            "right": {
+              "vop": "div",
+              "a": {
+                "vop": "mul",
+                "a": "$tax_determined",
+                "b": "$min_pct"
+              },
+              "b": 100
+            }
+          }
+        ]
+      },
+      "interest": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "gt",
+                  "left": "$refund",
+                  "right": 0
+                },
+                {
+                  "op": "ge",
+                  "left": "$refund",
+                  "right": {
+                    "vop": "div",
+                    "a": {
+                      "vop": "mul",
+                      "a": "$tax_determined",
+                      "b": "$min_pct"
+                    },
+                    "b": 100
+                  }
+                }
+              ]
+            },
+            "then": {
+              "vop": "div",
+              "a": {
+                "vop": "div",
+                "a": {
+                  "vop": "mul",
+                  "a": {
+                    "vop": "mul",
+                    "a": {
+                      "vop": "floor_to",
+                      "value": {
+                        "vop": "largest",
+                        "values": [
+                          "$refund",
+                          0
+                        ]
+                      },
+                      "step": "$floor_step"
+                    },
+                    "b": "$months"
+                  },
+                  "b": "$rate"
+                },
+                "b": 100
+              },
+              "b": 1,
+              "digits": 0
+            }
+          }
+        ],
+        "else": 0
+      },
+      "say": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "le",
+              "left": "$refund",
+              "right": 0
+            },
+            "then": "r_none"
+          },
+          {
+            "when": {
+              "op": "not",
+              "item": {
+                "op": "all",
+                "items": [
+                  {
+                    "op": "gt",
+                    "left": "$refund",
+                    "right": 0
+                  },
+                  {
+                    "op": "ge",
+                    "left": "$refund",
+                    "right": {
+                      "vop": "div",
+                      "a": {
+                        "vop": "mul",
+                        "a": "$tax_determined",
+                        "b": "$min_pct"
+                      },
+                      "b": 100
+                    }
+                  }
+                ]
+              }
+            },
+            "then": "r_small"
+          }
+        ],
+        "else": "r_due"
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "Refund of TDS, TCS or advance tax: 0.5% a month from 1 April of the AY when the return was filed by the due date u/s 139(1), else from the date it was filed, to the date the refund is granted. Nothing when the refund is under 10% of the tax determined. The interest is income of the year it is received (Income from other sources).",
+  "test_cases": [
+    {
+      "args": {
+        "refund": 66360,
+        "tax_determined": 7439640,
+        "months": 8
+      },
+      "expect_value": {
+        "eligible": false,
+        "interest": 0,
+        "say": "r_small"
+      }
+    },
+    {
+      "args": {
+        "refund": 166360,
+        "tax_determined": 1000000,
+        "months": 8
+      },
+      "expect_value": {
+        "eligible": true,
+        "interest": 6652,
+        "say": "r_due"
+      }
+    },
+    {
+      "args": {
+        "refund": 0,
+        "tax_determined": 1000000,
+        "months": 8
+      },
+      "expect_value": {
+        "eligible": false,
+        "interest": 0,
+        "say": "r_none"
+      }
+    }
+  ]
+}

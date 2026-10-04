@@ -37,6 +37,15 @@ def _all() -> list[dict]:
     return store.read(FILE, [])
 
 
+def firm_id(user: dict | None) -> str:
+    """The register this person works in (firms.py): their firm's, or "" - the portal admin's house register."""
+    return (user or {}).get("firm_id") or ""
+
+
+def _mine(user: dict | None) -> list[dict]:
+    return [c for c in _all() if c.get("firm_id", "") == firm_id(user)]
+
+
 def status_of(sid: str) -> dict | None:
     return next((s for s in settings()["statuses"] if s["id"] == sid), None)
 
@@ -76,7 +85,14 @@ def clean(body: dict) -> dict:
         if ppan and not shape_ok("pan", ppan):
             _bad("bad_pan", pan=ppan)
         partners.append({"name": _txt(p.get("name"), "partner_name"), "pan": ppan, "share": _txt(p.get("share"), "share")})
+    signer = _code(body.get("signer_pan"))
+    if signer and not shape_ok("pan", signer):
+        _bad("bad_pan", pan=signer)
+    dob = str(body.get("dob") or "").strip()[:10]
+    if dob and not shape_ok("date", dob):
+        _bad("bad_dob", dob=dob)
     return {"name": name, "pan": pan, "status": st["id"], "relation": _txt(body.get("relation"), "relation"),
+            "dob": dob, "nri": bool(body.get("nri")), "father": _txt(body.get("father"), "relation"), "signer_pan": signer,
             "address": _txt(body.get("address"), "address"), "email": email, "phone": _txt(body.get("phone"), "phone"),
             "gst": gst, "banks": banks, "partners": partners if st["has_partners"] else [],
             "notes": _txt(body.get("notes"), "notes")}
@@ -93,7 +109,7 @@ def save(user: dict, body: dict, cid: str = "") -> dict:
     data = clean(body)
     with _LOCK:
         rows = _all()
-        if any(c["pan"] == data["pan"] and c["id"] != cid for c in rows):
+        if any(c["pan"] == data["pan"] and c["id"] != cid and c.get("firm_id", "") == firm_id(user) for c in rows):
             _bad("pan_taken", pan=data["pan"])
         if cid:
             c = next((c for c in rows if c["id"] == cid), None)
@@ -101,7 +117,7 @@ def save(user: dict, body: dict, cid: str = "") -> dict:
                 raise HTTPException(404, say("not_found"))
             c.update(data)
         else:
-            c = data | {"id": store.new_id(), "years": {}, "created_at": store.now(), "created_by": user["id"]}
+            c = data | {"id": store.new_id(), "firm_id": firm_id(user), "years": {}, "created_at": store.now(), "created_by": user["id"]}
             ay = settings()["current_ay"]
             c["years"][ay] = year_defaults(c)            # a new client starts in this year, carried from the master
             rows.append(c)
@@ -140,22 +156,35 @@ def set_year(user: dict, cid: str, ay: str, body: dict) -> dict:
         if not c:
             raise HTTPException(404, say("not_found"))
         y = c.setdefault("years", {}).setdefault(ay, year_defaults(c))
-        if "stage" in body:
-            if body["stage"] not in {s["id"] for s in k["stages"]}:
-                _bad("bad_stage")
-            y["stage"] = body["stage"]
-        if "form" in body:
+        if "form" in body:                                # the stage moves by itself (compute.refresh); filing has its own road
             if body["form"] not in k["forms"]:
                 _bad("bad_form")
             y["form"] = body["form"]
         if "audit" in body:
             y["audit"] = bool(body["audit"])
-        for f in ("assigned", "ack_no"):
+        if "presumptive" in body:                         # 44AD / 44ADA: one advance tax instalment, 15 March (234C)
+            y["presumptive"] = bool(body["presumptive"])
+        if "tp" in body:                                  # Form 3CEB (s.92E): the due date moves to 30 November
+            y["tp"] = bool(body["tp"])
+        for f in ("assigned",):
             if f in body:
                 y[f] = _txt(body[f], "year_field")
         c["updated_at"], c["updated_by"] = store.now(), user["id"]
         store.write(FILE, rows)
         return c
+
+
+def change_year(cid: str, ay: str, fn) -> dict:
+    """Run fn(year) on a client's year under the lock and keep it (the stage, the filings - compute.py decides them)."""
+    with _LOCK:
+        rows = _all()
+        c = next((c for c in rows if c["id"] == cid), None)
+        if not c:
+            raise HTTPException(404, say("not_found"))
+        y = c.setdefault("years", {}).setdefault(ay, year_defaults(c))
+        if fn(y) is not False:
+            store.write(FILE, rows)
+        return y
 
 
 def archive(user: dict, cid: str, on: bool) -> dict:
@@ -184,19 +213,23 @@ def row(c: dict, ay: str) -> dict:
             "in_year": bool(y), "updated_at": c.get("updated_at", ""), "archived_at": c.get("archived_at", "")}
 
 
-def listed(args: dict) -> list[dict]:
-    """The Clients list: `view=archived` is the Archived tab, anything else the active clients."""
+def listed(args: dict, user: dict | None = None) -> list[dict]:
+    """The Clients list (this person's firm's only): `view=archived` is the Archived tab, anything else the active clients."""
     archived = str(args.get("view") or "") == "archived"
     ay = str(args.get("ay") or settings()["current_ay"])
-    return [row(c, ay) for c in _all() if bool(c.get("archived_at")) == archived]
+    return [row(c, ay) for c in _mine(user) if bool(c.get("archived_at")) == archived]
 
 
-lists.source("clients", lambda user, args: listed(args), screen="clients")
+lists.source("clients", lambda user, args: listed(args, user), screen="clients")
 
 
-def summary(ay: str) -> dict:
+def count(user: dict | None) -> int:
+    return len(_mine(user))
+
+
+def summary(ay: str, user: dict | None = None) -> dict:
     """The headline numbers above the Clients list: active / archived, who is in this year, 3CD audits, per stage."""
-    rows = _all()
+    rows = _mine(user)
     live = [c for c in rows if not c.get("archived_at")]
     years = [(c.get("years") or {}).get(ay) for c in live]
     years = [y for y in years if y]

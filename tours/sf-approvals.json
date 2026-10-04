@@ -1,0 +1,65 @@
+{
+  "prod_base": "https://sf.valuestream.in",
+  "voice": "en-IN-NeerjaNeural",
+  "rate": "+0%",
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "blur": [
+    "#whoami",
+    "#userpop .head"
+  ],
+  "page_key": "sf-approvals",
+  "title": "Firm approvals",
+  "start_url": "/#/approvals",
+  "covers": [
+    "the queue and the review clock",
+    "reading the papers",
+    "approve, return, reject, suspend"
+  ],
+  "steps": [
+    {
+      "chapter": "Firm approvals",
+      "say": "Check each firm's papers in SimplyFile and let it in.",
+      "do": [
+        {
+          "wait": 1
+        }
+      ]
+    },
+    {
+      "chapter": "The queue",
+      "say": "Oldest first; the ring shows how much of the review promise has gone.",
+      "do": [
+        {
+          "highlight_target": ".ap-list|main",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Read the papers",
+      "say": "Open a firm: its details, each paper, and the checklist - PAN, GSTIN, TAN and the masked Aadhaar must agree.",
+      "do": [
+        {
+          "highlight_target": ".ap-list|main",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Decide",
+      "say": "Approve - or return it with a note saying what to fix. Suspend later if a firm must stop.",
+      "do": [
+        {
+          "highlight_target": ".ap-list|main",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    }
+  ]
+}

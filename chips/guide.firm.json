@@ -1,0 +1,109 @@
+{
+  "chip_id": "guide.firm",
+  "kind": "accessor",
+  "set": "guide",
+  "label": "Guide me: My firm",
+  "aliases": [
+    "guide me: my firm"
+  ],
+  "params": [
+    {
+      "name": "title",
+      "type": "text",
+      "default": "My firm",
+      "label": "title"
+    },
+    {
+      "name": "lede",
+      "type": "long",
+      "default": "Get your firm approved in {product}, then bring in your team.",
+      "label": "lede"
+    },
+    {
+      "name": "icon",
+      "type": "text",
+      "default": "shield",
+      "label": "icon"
+    },
+    {
+      "name": "minutes",
+      "type": "number",
+      "default": 2,
+      "label": "minutes"
+    },
+    {
+      "name": "steps",
+      "type": "rows",
+      "default": [
+        {
+          "title": "Where you stand",
+          "say": "The strip: details, papers, sent, approved.",
+          "target": ".fi-hero|main"
+        },
+        {
+          "title": "Details",
+          "say": "PAN, TAN, GSTIN, FRN, the owner's last 4 Aadhaar digits and the mobile linked to your tax papers.",
+          "target": ".fi-card|main"
+        },
+        {
+          "title": "Papers and sending",
+          "say": "Upload the masked Aadhaar, PAN card, TAN letter and GST certificate, then send them for approval.",
+          "target": ".fi-banner|main"
+        },
+        {
+          "title": "Your team",
+          "say": "Once approved, add people with a role: partner, reviewer, auditor or preparer.",
+          "target": ".fi-team|.fi-card|main"
+        }
+      ],
+      "label": "steps"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "title": "$title",
+      "lede": "$lede",
+      "icon": "$icon",
+      "minutes": "$minutes",
+      "steps": "$steps"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-04: the My firm walk, up to date with the screen; tours/sf-firm.json is made from it.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "title": "My firm",
+        "lede": "Get your firm approved in {product}, then bring in your team.",
+        "icon": "shield",
+        "minutes": 2,
+        "steps": [
+          {
+            "title": "Where you stand",
+            "say": "The strip: details, papers, sent, approved.",
+            "target": ".fi-hero|main"
+          },
+          {
+            "title": "Details",
+            "say": "PAN, TAN, GSTIN, FRN, the owner's last 4 Aadhaar digits and the mobile linked to your tax papers.",
+            "target": ".fi-card|main"
+          },
+          {
+            "title": "Papers and sending",
+            "say": "Upload the masked Aadhaar, PAN card, TAN letter and GST certificate, then send them for approval.",
+            "target": ".fi-banner|main"
+          },
+          {
+            "title": "Your team",
+            "say": "Once approved, add people with a role: partner, reviewer, auditor or preparer.",
+            "target": ".fi-team|.fi-card|main"
+          }
+        ]
+      }
+    }
+  ]
+}

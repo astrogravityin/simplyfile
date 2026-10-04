@@ -1,0 +1,73 @@
+{
+  "chip_id": "firm.team_ok",
+  "kind": "accessor",
+  "set": "firm",
+  "label": "Firms: is this team change allowed?",
+  "aliases": [
+    "firms: is this team change allowed?"
+  ],
+  "params": [
+    {
+      "name": "admins_after",
+      "type": "number",
+      "default": 1,
+      "label": "firm admins left after the change"
+    },
+    {
+      "name": "role_ok",
+      "type": "boolean",
+      "default": true,
+      "label": "the role is one the firm admin may give"
+    }
+  ],
+  "expr": {
+    "vop": "choose",
+    "cases": [
+      {
+        "when": {
+          "op": "not",
+          "item": {
+            "op": "eq",
+            "left": "$role_ok",
+            "right": true
+          }
+        },
+        "then": "bad_role"
+      },
+      {
+        "when": {
+          "op": "lt",
+          "left": "$admins_after",
+          "right": 1
+        },
+        "then": "last_admin"
+      }
+    ],
+    "else": ""
+  },
+  "returns": "text",
+  "version": 1,
+  "status": "published",
+  "description_nl": "A firm always keeps one firm admin; only assignable roles are given.",
+  "test_cases": [
+    {
+      "args": {
+        "admins_after": 0
+      },
+      "expect_value": "last_admin"
+    },
+    {
+      "args": {
+        "admins_after": 2,
+        "role_ok": false
+      },
+      "expect_value": "bad_role"
+    },
+    {
+      "args": {
+        "admins_after": 1
+      },
+      "expect_value": ""
+    }
+  ]
+}

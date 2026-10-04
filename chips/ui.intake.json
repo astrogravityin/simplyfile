@@ -426,6 +426,48 @@
       "type": "text",
       "default": "{n} to do",
       "label": "group todo"
+    },
+    {
+      "name": "group_net",
+      "type": "text",
+      "default": "Rows added, Less: rows taken off; tax lines and the statement's own total left out.",
+      "label": "group_net"
+    },
+    {
+      "name": "group_agrees",
+      "type": "text",
+      "default": "Adds up to the statement's own total, {stated}.",
+      "label": "group_agrees"
+    },
+    {
+      "name": "group_agrees_short",
+      "type": "text",
+      "default": "Adds up",
+      "label": "group_agrees_short"
+    },
+    {
+      "name": "group_differs",
+      "type": "text",
+      "default": "Does not add up: the statement says {stated}.",
+      "label": "group_differs"
+    },
+    {
+      "name": "group_differs_short",
+      "type": "text",
+      "default": "≠ {stated}",
+      "label": "group_differs_short"
+    },
+    {
+      "name": "replace_ask",
+      "type": "text",
+      "default": "{name} is already here. Replace it with this one? Refs stay on rows whose place and words did not change; the old version is kept.",
+      "label": "replace_ask"
+    },
+    {
+      "name": "replace_yes",
+      "type": "text",
+      "default": "Replace",
+      "label": "replace_yes"
     }
   ],
   "expr": {
@@ -500,7 +542,14 @@
       "enter_hint": "$enter_hint",
       "expand_all": "$expand_all",
       "collapse_all": "$collapse_all",
-      "group_todo": "$group_todo"
+      "group_todo": "$group_todo",
+      "group_net": "$group_net",
+      "group_agrees": "$group_agrees",
+      "group_agrees_short": "$group_agrees_short",
+      "group_differs": "$group_differs",
+      "group_differs_short": "$group_differs_short",
+      "replace_ask": "$replace_ask",
+      "replace_yes": "$replace_yes"
     }
   },
   "returns": "record",
@@ -580,7 +629,14 @@
         "enter_hint": "Enter moves to the next row",
         "expand_all": "Expand all",
         "collapse_all": "Collapse all",
-        "group_todo": "{n} to do"
+        "group_todo": "{n} to do",
+        "group_net": "Rows added, Less: rows taken off; tax lines and the statement's own total left out.",
+        "group_agrees": "Adds up to the statement's own total, {stated}.",
+        "group_agrees_short": "Adds up",
+        "group_differs": "Does not add up: the statement says {stated}.",
+        "group_differs_short": "≠ {stated}",
+        "replace_ask": "{name} is already here. Replace it with this one? Refs stay on rows whose place and words did not change; the old version is kept.",
+        "replace_yes": "Replace"
       }
     }
   ]

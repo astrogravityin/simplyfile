@@ -340,6 +340,169 @@
       "type": "text",
       "default": "OS",
       "label": "Head of income written for a TDS section no head matches"
+    },
+    {
+      "name": "note_max",
+      "type": "number",
+      "default": 500,
+      "label": "note max"
+    },
+    {
+      "name": "advance_due",
+      "type": "json",
+      "default": [
+        [
+          -1,
+          615
+        ],
+        [
+          -1,
+          915
+        ],
+        [
+          -1,
+          1215
+        ],
+        [
+          0,
+          331
+        ]
+      ],
+      "label": "advance tax instalment dates as [years from the AY's first year, mmdd]; paid by 31 March counts for 15 March"
+    },
+    {
+      "name": "year_start_mmdd",
+      "type": "number",
+      "default": 401,
+      "label": "year start mmdd"
+    },
+    {
+      "name": "year_end_mmdd",
+      "type": "number",
+      "default": 331,
+      "label": "year end mmdd"
+    },
+    {
+      "name": "regimes_by_ay",
+      "type": "json",
+      "default": {
+        "2025-26": [
+          {
+            "id": "new",
+            "slabs": [
+              {
+                "upto": 300000,
+                "rate": 0
+              },
+              {
+                "upto": 700000,
+                "rate": 5
+              },
+              {
+                "upto": 1000000,
+                "rate": 10
+              },
+              {
+                "upto": 1200000,
+                "rate": 15
+              },
+              {
+                "upto": 1500000,
+                "rate": 20
+              },
+              {
+                "upto": null,
+                "rate": 30
+              }
+            ],
+            "surcharge": [
+              {
+                "above": 5000000,
+                "rate": 10
+              },
+              {
+                "above": 10000000,
+                "rate": 15
+              },
+              {
+                "above": 20000000,
+                "rate": 25
+              }
+            ],
+            "allows_via": false,
+            "rebate_statuses": [
+              "individual"
+            ],
+            "rebate_upto": 700000,
+            "rebate_most": 25000
+          },
+          {
+            "id": "old",
+            "slabs": [
+              {
+                "upto": 250000,
+                "rate": 0
+              },
+              {
+                "upto": 500000,
+                "rate": 5
+              },
+              {
+                "upto": 1000000,
+                "rate": 20
+              },
+              {
+                "upto": null,
+                "rate": 30
+              }
+            ],
+            "surcharge": [
+              {
+                "above": 5000000,
+                "rate": 10
+              },
+              {
+                "above": 10000000,
+                "rate": 15
+              },
+              {
+                "above": 20000000,
+                "rate": 25
+              },
+              {
+                "above": 50000000,
+                "rate": 37
+              }
+            ],
+            "allows_via": true,
+            "rebate_statuses": [
+              "individual"
+            ],
+            "rebate_upto": 500000,
+            "rebate_most": 12500
+          },
+          {
+            "id": "firm",
+            "slabs": [
+              {
+                "upto": null,
+                "rate": 30
+              }
+            ],
+            "surcharge": [
+              {
+                "above": 10000000,
+                "rate": 12
+              }
+            ],
+            "allows_via": true,
+            "rebate_statuses": [],
+            "rebate_upto": 0,
+            "rebate_most": 0
+          }
+        ]
+      },
+      "label": "an earlier AY's own rate tables (Finance Act 2024 for AY 2025-26); an AY not here uses 'regimes'"
     }
   ],
   "expr": {
@@ -363,13 +526,18 @@
       "status_regimes": "$status_regimes",
       "status_default": "$status_default",
       "credit_sources": "$credit_sources",
-      "csv_head_default": "$csv_head_default"
+      "csv_head_default": "$csv_head_default",
+      "note_max": "$note_max",
+      "advance_due": "$advance_due",
+      "year_start_mmdd": "$year_start_mmdd",
+      "year_end_mmdd": "$year_end_mmdd",
+      "regimes_by_ay": "$regimes_by_ay"
     }
   },
   "returns": "record",
   "version": 1,
   "status": "published",
-  "description_nl": "AY 2026-27 rates. Every number the computation uses is here; compute.py only adds up the books.",
+  "description_nl": "AY 2026-27 rates. Every number the computation uses is here; compute.py only adds up the books. regimes_by_ay: each earlier AY keeps its own slabs and 87A rebate (AY 2025-26 new regime: 3/7/10/12/15 lakh, rebate up to 7 lakh, 25,000).",
   "test_cases": [
     {
       "args": {},
@@ -612,7 +780,145 @@
         "credit_sources": [
           "26as"
         ],
-        "csv_head_default": "OS"
+        "csv_head_default": "OS",
+        "note_max": 500,
+        "advance_due": [
+          [
+            -1,
+            615
+          ],
+          [
+            -1,
+            915
+          ],
+          [
+            -1,
+            1215
+          ],
+          [
+            0,
+            331
+          ]
+        ],
+        "year_start_mmdd": 401,
+        "year_end_mmdd": 331,
+        "regimes_by_ay": {
+          "2025-26": [
+            {
+              "id": "new",
+              "slabs": [
+                {
+                  "upto": 300000,
+                  "rate": 0
+                },
+                {
+                  "upto": 700000,
+                  "rate": 5
+                },
+                {
+                  "upto": 1000000,
+                  "rate": 10
+                },
+                {
+                  "upto": 1200000,
+                  "rate": 15
+                },
+                {
+                  "upto": 1500000,
+                  "rate": 20
+                },
+                {
+                  "upto": null,
+                  "rate": 30
+                }
+              ],
+              "surcharge": [
+                {
+                  "above": 5000000,
+                  "rate": 10
+                },
+                {
+                  "above": 10000000,
+                  "rate": 15
+                },
+                {
+                  "above": 20000000,
+                  "rate": 25
+                }
+              ],
+              "allows_via": false,
+              "rebate_statuses": [
+                "individual"
+              ],
+              "rebate_upto": 700000,
+              "rebate_most": 25000
+            },
+            {
+              "id": "old",
+              "slabs": [
+                {
+                  "upto": 250000,
+                  "rate": 0
+                },
+                {
+                  "upto": 500000,
+                  "rate": 5
+                },
+                {
+                  "upto": 1000000,
+                  "rate": 20
+                },
+                {
+                  "upto": null,
+                  "rate": 30
+                }
+              ],
+              "surcharge": [
+                {
+                  "above": 5000000,
+                  "rate": 10
+                },
+                {
+                  "above": 10000000,
+                  "rate": 15
+                },
+                {
+                  "above": 20000000,
+                  "rate": 25
+                },
+                {
+                  "above": 50000000,
+                  "rate": 37
+                }
+              ],
+              "allows_via": true,
+              "rebate_statuses": [
+                "individual"
+              ],
+              "rebate_upto": 500000,
+              "rebate_most": 12500
+            },
+            {
+              "id": "firm",
+              "slabs": [
+                {
+                  "upto": null,
+                  "rate": 30
+                }
+              ],
+              "surcharge": [
+                {
+                  "above": 10000000,
+                  "rate": 12
+                }
+              ],
+              "allows_via": true,
+              "rebate_statuses": [],
+              "rebate_upto": 0,
+              "rebate_most": 0
+            }
+          ]
+        }
       }
     }
   ]

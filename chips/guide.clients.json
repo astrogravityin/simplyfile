@@ -4,32 +4,32 @@
   "set": "guide",
   "label": "Guide me: Clients & years",
   "aliases": [
-    "clients & years guide"
+    "guide me: clients & years"
   ],
   "params": [
     {
       "name": "title",
       "type": "text",
       "default": "Clients & years",
-      "label": "The tour's name (its cover card)"
+      "label": "title"
     },
     {
       "name": "lede",
       "type": "long",
-      "default": "Enter every assessee once in {product}, then carry them into each assessment year.",
-      "label": "The cover's opening line; {product} = this edition's name"
+      "default": "Your firm's client register in {product}: every assessee once, carried into each assessment year - and each year's stage moves by itself.",
+      "label": "lede"
     },
     {
       "name": "icon",
       "type": "text",
       "default": "users",
-      "label": "The emblem on the cover (an icon name)"
+      "label": "icon"
     },
     {
       "name": "minutes",
       "type": "number",
-      "default": 2,
-      "label": "How long the tour takes"
+      "default": 3,
+      "label": "minutes"
     },
     {
       "name": "steps",
@@ -37,62 +37,36 @@
       "default": [
         {
           "title": "The register",
-          "say": "Every client of the firm, one row each, for the assessment year picked at the top: return form, a 3CD tag when the year is audited, and its stage.",
-          "target": "#cl-list",
-          "art": {
-            "kind": "stack",
-            "items": [
-              "Name and PAN",
-              "Form and 3CD",
-              "Stage"
-            ],
-            "icon": "users"
-          }
+          "say": "Every client of your firm, once. Other firms' clients never show here.",
+          "target": "#cl-list|main"
+        },
+        {
+          "title": "The year at a glance",
+          "say": "How many clients are in this year, how many are audited, and the pipeline by stage.",
+          "target": "#cl-kpis|main"
         },
         {
           "title": "Pick the year",
-          "say": "Change the assessment year here. A client not yet in that year says so; open it and press Add to carry the master into the year.",
-          "target": "#cl-ay",
-          "art": {
-            "kind": "flow",
-            "items": [
-              "2025-26",
-              "2026-27",
-              "2027-28"
-            ],
-            "at": 1
-          }
+          "say": "Switch the assessment year; each row shows its form, the 3CD tag and its stage.",
+          "target": "#cl-ay|main"
         },
         {
-          "title": "A new client, once",
-          "say": "New client opens the master: name, status, PAN, contacts, GSTIN, banks and partners for a firm. The PAN's 4th letter must match the status and a GSTIN must carry the PAN, so a slip is caught here.",
-          "target": "#cl-new",
-          "art": {
-            "kind": "flow",
-            "items": [
-              "Master",
-              "Checks",
-              "Saved"
-            ],
-            "at": 0
-          }
+          "title": "Stages move by themselves",
+          "say": "Nobody picks the stage: statements in, every row mapped, 26AS in and the reds explained, signed off, filed. Each row's dots show where it is.",
+          "target": ".cl-stage|#cl-list"
         },
         {
-          "title": "Statements",
-          "say": "Statements on a row opens Intake & map for that client and year, where the Excel files go.",
-          "target": "#cl-list",
-          "art": {
-            "kind": "flow",
-            "items": [
-              "Client",
-              "Statements",
-              "SF Ref"
-            ],
-            "at": 1
-          }
+          "title": "A new client",
+          "say": "Name, status, PAN, GSTIN, banks - plus date of birth, non-resident, and the signatory's father's name and PAN for the ITR. The PAN's fourth letter must fit the status.",
+          "target": "#cl-new"
+        },
+        {
+          "title": "Archive, never delete",
+          "say": "A client you no longer serve moves to the Archived tab with all its years; restore brings it back.",
+          "target": ".cl-tabs|.cl-bar"
         }
       ],
-      "label": "The steps in order: title, say (the narration), target (where the spotlight goes; alternatives split by |, the first on screen wins), art (the picture: hero/flow/roads/meter/stack/check), place (below/above/right/left/center, optional), open (optional: what the guide presses first when the part is not on screen - open the first item, go back Home; alternatives split by |)"
+      "label": "steps"
     }
   ],
   "expr": {
@@ -108,31 +82,45 @@
   "returns": "record",
   "version": 1,
   "status": "published",
-  "description_nl": "2026-10-02 owner: Tour Video in sm, owner only - its own Guide me.",
-  "weight_basis": "page",
+  "description_nl": "2026-10-04: the Clients & years walk, up to date with the screen; tours/sf-clients.json is made from it.",
   "test_cases": [
     {
-      "args": {
-        "title": "T",
-        "lede": "L",
-        "icon": "spark",
-        "minutes": 1,
-        "steps": [
-          {
-            "title": "a",
-            "say": "b"
-          }
-        ]
-      },
+      "args": {},
       "expect_value": {
-        "title": "T",
-        "lede": "L",
-        "icon": "spark",
-        "minutes": 1,
+        "title": "Clients & years",
+        "lede": "Your firm's client register in {product}: every assessee once, carried into each assessment year - and each year's stage moves by itself.",
+        "icon": "users",
+        "minutes": 3,
         "steps": [
           {
-            "title": "a",
-            "say": "b"
+            "title": "The register",
+            "say": "Every client of your firm, once. Other firms' clients never show here.",
+            "target": "#cl-list|main"
+          },
+          {
+            "title": "The year at a glance",
+            "say": "How many clients are in this year, how many are audited, and the pipeline by stage.",
+            "target": "#cl-kpis|main"
+          },
+          {
+            "title": "Pick the year",
+            "say": "Switch the assessment year; each row shows its form, the 3CD tag and its stage.",
+            "target": "#cl-ay|main"
+          },
+          {
+            "title": "Stages move by themselves",
+            "say": "Nobody picks the stage: statements in, every row mapped, 26AS in and the reds explained, signed off, filed. Each row's dots show where it is.",
+            "target": ".cl-stage|#cl-list"
+          },
+          {
+            "title": "A new client",
+            "say": "Name, status, PAN, GSTIN, banks - plus date of birth, non-resident, and the signatory's father's name and PAN for the ITR. The PAN's fourth letter must fit the status.",
+            "target": "#cl-new"
+          },
+          {
+            "title": "Archive, never delete",
+            "say": "A client you no longer serve moves to the Archived tab with all its years; restore brings it back.",
+            "target": ".cl-tabs|.cl-bar"
           }
         ]
       }

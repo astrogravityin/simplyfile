@@ -1,0 +1,124 @@
+{
+  "chip_id": "firm.ready",
+  "kind": "accessor",
+  "set": "firm",
+  "label": "Firms: is the application complete?",
+  "aliases": [
+    "firms: is the application complete?"
+  ],
+  "params": [
+    {
+      "name": "problem",
+      "type": "text",
+      "default": "",
+      "label": "firm.problem's answer"
+    },
+    {
+      "name": "docs_required",
+      "type": "json",
+      "default": [],
+      "label": "papers this kind must upload"
+    },
+    {
+      "name": "docs_have",
+      "type": "json",
+      "default": [],
+      "label": "papers uploaded"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "missing": {
+        "vop": "missing",
+        "want": "$docs_required",
+        "have": "$docs_have"
+      },
+      "say": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "gt",
+              "left": {
+                "vop": "text_length",
+                "text": "$problem"
+              },
+              "right": 0
+            },
+            "then": "$problem"
+          },
+          {
+            "when": {
+              "op": "gt",
+              "left": {
+                "vop": "count",
+                "items": {
+                  "vop": "missing",
+                  "want": "$docs_required",
+                  "have": "$docs_have"
+                }
+              },
+              "right": 0
+            },
+            "then": "need_docs"
+          }
+        ],
+        "else": ""
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "Submit opens only when the details are right and every required paper is uploaded.",
+  "test_cases": [
+    {
+      "args": {
+        "docs_required": [
+          "pan_card",
+          "tan_letter"
+        ],
+        "docs_have": [
+          "tan_letter"
+        ]
+      },
+      "expect_value": {
+        "missing": [
+          "pan_card"
+        ],
+        "say": "need_docs"
+      }
+    },
+    {
+      "args": {
+        "problem": "bad_tan",
+        "docs_required": [
+          "pan_card"
+        ],
+        "docs_have": []
+      },
+      "expect_value": {
+        "missing": [
+          "pan_card"
+        ],
+        "say": "bad_tan"
+      }
+    },
+    {
+      "args": {
+        "docs_required": [
+          "pan_card"
+        ],
+        "docs_have": [
+          "pan_card",
+          "icai_cert"
+        ]
+      },
+      "expect_value": {
+        "missing": [],
+        "say": ""
+      }
+    }
+  ]
+}

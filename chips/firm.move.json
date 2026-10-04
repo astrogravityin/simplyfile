@@ -1,0 +1,220 @@
+{
+  "chip_id": "firm.move",
+  "kind": "accessor",
+  "set": "firm",
+  "label": "Firms: where an application goes next",
+  "aliases": [
+    "firms: where an application goes next"
+  ],
+  "params": [
+    {
+      "name": "facts",
+      "type": "json",
+      "default": {},
+      "label": "action, state (now), by (admin = the portal admin, else the person's firm role)"
+    },
+    {
+      "name": "rules",
+      "type": "json",
+      "default": [
+        {
+          "when": {
+            "action": "submit",
+            "state": "draft",
+            "by": "firm_admin"
+          },
+          "set": {
+            "to": "submitted",
+            "say": "m_submitted"
+          }
+        },
+        {
+          "when": {
+            "action": "submit",
+            "state": "draft",
+            "by": "self"
+          },
+          "set": {
+            "to": "submitted",
+            "say": "m_submitted"
+          }
+        },
+        {
+          "when": {
+            "action": "submit",
+            "state": "returned",
+            "by": "firm_admin"
+          },
+          "set": {
+            "to": "submitted",
+            "say": "m_submitted"
+          }
+        },
+        {
+          "when": {
+            "action": "submit",
+            "state": "returned",
+            "by": "self"
+          },
+          "set": {
+            "to": "submitted",
+            "say": "m_submitted"
+          }
+        },
+        {
+          "when": {
+            "action": "approve",
+            "state": "submitted",
+            "by": "admin"
+          },
+          "set": {
+            "to": "approved",
+            "say": "m_approved"
+          }
+        },
+        {
+          "when": {
+            "action": "return",
+            "state": "submitted",
+            "by": "admin"
+          },
+          "set": {
+            "to": "returned",
+            "say": "m_returned"
+          }
+        },
+        {
+          "when": {
+            "action": "reject",
+            "state": "submitted",
+            "by": "admin"
+          },
+          "set": {
+            "to": "rejected",
+            "say": "m_rejected"
+          }
+        },
+        {
+          "when": {
+            "action": "suspend",
+            "state": "approved",
+            "by": "admin"
+          },
+          "set": {
+            "to": "suspended",
+            "say": "m_suspended"
+          }
+        },
+        {
+          "when": {
+            "action": "restore",
+            "state": "suspended",
+            "by": "admin"
+          },
+          "set": {
+            "to": "approved",
+            "say": "m_approved"
+          }
+        },
+        {
+          "when": {
+            "action": "reopen",
+            "state": "rejected",
+            "by": "admin"
+          },
+          "set": {
+            "to": "returned",
+            "say": "m_returned"
+          }
+        }
+      ],
+      "label": "First matching row wins"
+    },
+    {
+      "name": "otherwise",
+      "type": "json",
+      "default": {
+        "to": "",
+        "say": "bad_move"
+      },
+      "label": "No row matches"
+    }
+  ],
+  "expr": {
+    "vop": "decision_table",
+    "facts": "$facts",
+    "rules": "$rules",
+    "current": "$otherwise"
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "The firm admin submits a draft (or a returned application); only the portal admin approves, returns for a fix, rejects, suspends, restores or reopens a rejected one.",
+  "test_cases": [
+    {
+      "args": {
+        "facts": {
+          "action": "submit",
+          "state": "draft",
+          "by": "firm_admin"
+        }
+      },
+      "expect_value": {
+        "to": "submitted",
+        "say": "m_submitted"
+      }
+    },
+    {
+      "args": {
+        "facts": {
+          "action": "submit",
+          "state": "draft",
+          "by": "preparer"
+        }
+      },
+      "expect_value": {
+        "to": "",
+        "say": "bad_move"
+      }
+    },
+    {
+      "args": {
+        "facts": {
+          "action": "approve",
+          "state": "submitted",
+          "by": "admin"
+        }
+      },
+      "expect_value": {
+        "to": "approved",
+        "say": "m_approved"
+      }
+    },
+    {
+      "args": {
+        "facts": {
+          "action": "approve",
+          "state": "draft",
+          "by": "admin"
+        }
+      },
+      "expect_value": {
+        "to": "",
+        "say": "bad_move"
+      }
+    },
+    {
+      "args": {
+        "facts": {
+          "action": "approve",
+          "state": "submitted",
+          "by": "firm_admin"
+        }
+      },
+      "expect_value": {
+        "to": "",
+        "say": "bad_move"
+      }
+    }
+  ]
+}

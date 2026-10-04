@@ -20,7 +20,7 @@
       "type": "json",
       "default": [
         "review",
-        "filed"
+        "signed"
       ],
       "label": "Sign-off is given while the year is in one of these"
     },
@@ -29,6 +29,15 @@
       "type": "text",
       "default": "filed",
       "label": "The stage that means the return is filed"
+    },
+    {
+      "name": "clear_signoff_on",
+      "type": "json",
+      "default": [
+        "revise",
+        "withdraw"
+      ],
+      "label": "clear signoff on"
     }
   ],
   "expr": {
@@ -36,7 +45,8 @@
     "fields": {
       "locked_stages": "$locked_stages",
       "signoff_stages": "$signoff_stages",
-      "filed_stage": "$filed_stage"
+      "filed_stage": "$filed_stage",
+      "clear_signoff_on": "$clear_signoff_on"
     }
   },
   "returns": "record",
@@ -52,9 +62,13 @@
         ],
         "signoff_stages": [
           "review",
-          "filed"
+          "signed"
         ],
-        "filed_stage": "filed"
+        "filed_stage": "filed",
+        "clear_signoff_on": [
+          "revise",
+          "withdraw"
+        ]
       }
     }
   ]

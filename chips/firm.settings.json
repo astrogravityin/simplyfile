@@ -1,0 +1,561 @@
+{
+  "chip_id": "firm.settings",
+  "kind": "accessor",
+  "set": "firm",
+  "label": "Firms: kinds of account, their papers, the review clock",
+  "aliases": [
+    "firms: kinds of account, their papers, t"
+  ],
+  "params": [
+    {
+      "name": "kinds",
+      "type": "json",
+      "default": [
+        {
+          "id": "ca_firm",
+          "label": "CA firm",
+          "sub": "A chartered accountants' firm or practice, filing for its clients. Your team joins under you.",
+          "icon": "users",
+          "pan_letters": [
+            "F",
+            "P"
+          ],
+          "fields": [
+            "name",
+            "pan",
+            "tan",
+            "gstin",
+            "frn",
+            "membership_no",
+            "owner_name",
+            "aadhaar_last4",
+            "phone",
+            "email",
+            "address"
+          ],
+          "required": [
+            "name",
+            "pan",
+            "tan",
+            "gstin",
+            "frn",
+            "owner_name",
+            "aadhaar_last4",
+            "phone",
+            "email"
+          ],
+          "docs_required": [
+            "owner_aadhaar",
+            "pan_card",
+            "tan_letter",
+            "gst_cert"
+          ],
+          "docs_optional": [
+            "icai_cert"
+          ],
+          "first_role": "firm_admin",
+          "max_clients": 0,
+          "self_client": false,
+          "client_status": {}
+        },
+        {
+          "id": "self",
+          "label": "Individual / HUF",
+          "sub": "File your own return - one PAN, yours (or your HUF's).",
+          "icon": "user",
+          "pan_letters": [
+            "P",
+            "H"
+          ],
+          "fields": [
+            "name",
+            "pan",
+            "owner_name",
+            "aadhaar_last4",
+            "phone",
+            "email",
+            "address"
+          ],
+          "required": [
+            "name",
+            "pan",
+            "owner_name",
+            "aadhaar_last4",
+            "phone",
+            "email"
+          ],
+          "docs_required": [
+            "owner_aadhaar",
+            "pan_card"
+          ],
+          "docs_optional": [],
+          "first_role": "self",
+          "max_clients": 1,
+          "self_client": true,
+          "client_status": {
+            "P": "individual",
+            "H": "huf"
+          }
+        }
+      ],
+      "label": "kinds"
+    },
+    {
+      "name": "docs",
+      "type": "json",
+      "default": [
+        {
+          "id": "owner_aadhaar",
+          "label": "Owner's Aadhaar (masked)",
+          "hint": "The masked e-Aadhaar from myaadhaar.uidai.gov.in - only the last 4 digits show. Never the full number."
+        },
+        {
+          "id": "pan_card",
+          "label": "PAN card",
+          "hint": "The firm's PAN card (or your own, filing for yourself)."
+        },
+        {
+          "id": "tan_letter",
+          "label": "TAN allotment letter",
+          "hint": "From TIN-NSDL / Protean, or the TAN search print."
+        },
+        {
+          "id": "gst_cert",
+          "label": "GST registration certificate",
+          "hint": "Form GST REG-06 from gst.gov.in."
+        },
+        {
+          "id": "icai_cert",
+          "label": "ICAI registration",
+          "hint": "Firm registration (FRN) or the CA's certificate of practice."
+        }
+      ],
+      "label": "docs"
+    },
+    {
+      "name": "states",
+      "type": "json",
+      "default": [
+        {
+          "id": "draft",
+          "tab": "Draft",
+          "label": "Draft",
+          "tag": "tag",
+          "color": "--muted"
+        },
+        {
+          "id": "submitted",
+          "tab": "Waiting",
+          "label": "Waiting for approval",
+          "tag": "tag warn",
+          "color": "--warn"
+        },
+        {
+          "id": "returned",
+          "tab": "Returned",
+          "label": "Returned - fix and resubmit",
+          "tag": "tag warn",
+          "color": "--brand-2"
+        },
+        {
+          "id": "approved",
+          "tab": "Approved",
+          "label": "Approved",
+          "tag": "tag ok",
+          "color": "--ok"
+        },
+        {
+          "id": "rejected",
+          "tab": "Rejected",
+          "label": "Rejected",
+          "tag": "tag bad",
+          "color": "--bad"
+        },
+        {
+          "id": "suspended",
+          "tab": "Suspended",
+          "label": "Suspended",
+          "tag": "tag bad",
+          "color": "--bad"
+        }
+      ],
+      "label": "states"
+    },
+    {
+      "name": "editable_states",
+      "type": "json",
+      "default": [
+        "draft",
+        "returned"
+      ],
+      "label": "editable states"
+    },
+    {
+      "name": "working_state",
+      "type": "text",
+      "default": "approved",
+      "label": "working state"
+    },
+    {
+      "name": "waiting_state",
+      "type": "text",
+      "default": "submitted",
+      "label": "waiting state"
+    },
+    {
+      "name": "head_role",
+      "type": "text",
+      "default": "firm_admin",
+      "label": "head role"
+    },
+    {
+      "name": "doc_exts",
+      "type": "json",
+      "default": [
+        ".pdf",
+        ".jpg",
+        ".jpeg",
+        ".png"
+      ],
+      "label": "doc exts"
+    },
+    {
+      "name": "doc_max_mb",
+      "type": "json",
+      "default": 5,
+      "label": "doc max mb"
+    },
+    {
+      "name": "review_hours",
+      "type": "json",
+      "default": 24,
+      "label": "review hours"
+    },
+    {
+      "name": "verify_via",
+      "type": "text",
+      "default": "manual",
+      "label": "verify via"
+    },
+    {
+      "name": "needs_note",
+      "type": "json",
+      "default": [
+        "return",
+        "reject",
+        "suspend"
+      ],
+      "label": "needs note"
+    },
+    {
+      "name": "code_fields",
+      "type": "json",
+      "default": [
+        "pan",
+        "tan",
+        "gstin",
+        "frn"
+      ],
+      "label": "code fields"
+    },
+    {
+      "name": "digit_fields",
+      "type": "json",
+      "default": [
+        "phone",
+        "aadhaar_last4",
+        "membership_no"
+      ],
+      "label": "digit fields"
+    },
+    {
+      "name": "phone_digits",
+      "type": "json",
+      "default": 10,
+      "label": "phone digits"
+    },
+    {
+      "name": "refuse_fields",
+      "type": "json",
+      "default": [
+        "aadhaar_last4"
+      ],
+      "label": "refuse fields"
+    },
+    {
+      "name": "owner_may_start",
+      "type": "json",
+      "default": false,
+      "label": "owner may start"
+    },
+    {
+      "name": "max_len",
+      "type": "json",
+      "default": {
+        "name": 120,
+        "address": 300,
+        "owner_name": 80,
+        "email": 120,
+        "note": 500,
+        "field": 40
+      },
+      "label": "max len"
+    },
+    {
+      "name": "steps",
+      "type": "json",
+      "default": [
+        "s_details",
+        "s_docs",
+        "s_submit",
+        "s_approved"
+      ],
+      "label": "steps"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "kinds": "$kinds",
+      "docs": "$docs",
+      "states": "$states",
+      "editable_states": "$editable_states",
+      "working_state": "$working_state",
+      "waiting_state": "$waiting_state",
+      "head_role": "$head_role",
+      "doc_exts": "$doc_exts",
+      "doc_max_mb": "$doc_max_mb",
+      "review_hours": "$review_hours",
+      "verify_via": "$verify_via",
+      "needs_note": "$needs_note",
+      "code_fields": "$code_fields",
+      "digit_fields": "$digit_fields",
+      "phone_digits": "$phone_digits",
+      "refuse_fields": "$refuse_fields",
+      "owner_may_start": "$owner_may_start",
+      "max_len": "$max_len",
+      "steps": "$steps"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-04 owner: a CA firm (or an individual filing their own return) signs up, gives PAN, TAN, GSTIN, the owner's masked Aadhaar and the phone linked to the tax papers, uploads the papers, and waits for the portal admin's approval (review_hours). verify_via is manual now; DigiLocker later. A firm of kind self holds one client: itself.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "kinds": [
+          {
+            "id": "ca_firm",
+            "label": "CA firm",
+            "sub": "A chartered accountants' firm or practice, filing for its clients. Your team joins under you.",
+            "icon": "users",
+            "pan_letters": [
+              "F",
+              "P"
+            ],
+            "fields": [
+              "name",
+              "pan",
+              "tan",
+              "gstin",
+              "frn",
+              "membership_no",
+              "owner_name",
+              "aadhaar_last4",
+              "phone",
+              "email",
+              "address"
+            ],
+            "required": [
+              "name",
+              "pan",
+              "tan",
+              "gstin",
+              "frn",
+              "owner_name",
+              "aadhaar_last4",
+              "phone",
+              "email"
+            ],
+            "docs_required": [
+              "owner_aadhaar",
+              "pan_card",
+              "tan_letter",
+              "gst_cert"
+            ],
+            "docs_optional": [
+              "icai_cert"
+            ],
+            "first_role": "firm_admin",
+            "max_clients": 0,
+            "self_client": false,
+            "client_status": {}
+          },
+          {
+            "id": "self",
+            "label": "Individual / HUF",
+            "sub": "File your own return - one PAN, yours (or your HUF's).",
+            "icon": "user",
+            "pan_letters": [
+              "P",
+              "H"
+            ],
+            "fields": [
+              "name",
+              "pan",
+              "owner_name",
+              "aadhaar_last4",
+              "phone",
+              "email",
+              "address"
+            ],
+            "required": [
+              "name",
+              "pan",
+              "owner_name",
+              "aadhaar_last4",
+              "phone",
+              "email"
+            ],
+            "docs_required": [
+              "owner_aadhaar",
+              "pan_card"
+            ],
+            "docs_optional": [],
+            "first_role": "self",
+            "max_clients": 1,
+            "self_client": true,
+            "client_status": {
+              "P": "individual",
+              "H": "huf"
+            }
+          }
+        ],
+        "docs": [
+          {
+            "id": "owner_aadhaar",
+            "label": "Owner's Aadhaar (masked)",
+            "hint": "The masked e-Aadhaar from myaadhaar.uidai.gov.in - only the last 4 digits show. Never the full number."
+          },
+          {
+            "id": "pan_card",
+            "label": "PAN card",
+            "hint": "The firm's PAN card (or your own, filing for yourself)."
+          },
+          {
+            "id": "tan_letter",
+            "label": "TAN allotment letter",
+            "hint": "From TIN-NSDL / Protean, or the TAN search print."
+          },
+          {
+            "id": "gst_cert",
+            "label": "GST registration certificate",
+            "hint": "Form GST REG-06 from gst.gov.in."
+          },
+          {
+            "id": "icai_cert",
+            "label": "ICAI registration",
+            "hint": "Firm registration (FRN) or the CA's certificate of practice."
+          }
+        ],
+        "states": [
+          {
+            "id": "draft",
+            "tab": "Draft",
+            "label": "Draft",
+            "tag": "tag",
+            "color": "--muted"
+          },
+          {
+            "id": "submitted",
+            "tab": "Waiting",
+            "label": "Waiting for approval",
+            "tag": "tag warn",
+            "color": "--warn"
+          },
+          {
+            "id": "returned",
+            "tab": "Returned",
+            "label": "Returned - fix and resubmit",
+            "tag": "tag warn",
+            "color": "--brand-2"
+          },
+          {
+            "id": "approved",
+            "tab": "Approved",
+            "label": "Approved",
+            "tag": "tag ok",
+            "color": "--ok"
+          },
+          {
+            "id": "rejected",
+            "tab": "Rejected",
+            "label": "Rejected",
+            "tag": "tag bad",
+            "color": "--bad"
+          },
+          {
+            "id": "suspended",
+            "tab": "Suspended",
+            "label": "Suspended",
+            "tag": "tag bad",
+            "color": "--bad"
+          }
+        ],
+        "editable_states": [
+          "draft",
+          "returned"
+        ],
+        "working_state": "approved",
+        "waiting_state": "submitted",
+        "head_role": "firm_admin",
+        "doc_exts": [
+          ".pdf",
+          ".jpg",
+          ".jpeg",
+          ".png"
+        ],
+        "doc_max_mb": 5,
+        "review_hours": 24,
+        "verify_via": "manual",
+        "needs_note": [
+          "return",
+          "reject",
+          "suspend"
+        ],
+        "code_fields": [
+          "pan",
+          "tan",
+          "gstin",
+          "frn"
+        ],
+        "digit_fields": [
+          "phone",
+          "aadhaar_last4",
+          "membership_no"
+        ],
+        "phone_digits": 10,
+        "refuse_fields": [
+          "aadhaar_last4"
+        ],
+        "owner_may_start": false,
+        "max_len": {
+          "name": 120,
+          "address": 300,
+          "owner_name": 80,
+          "email": 120,
+          "note": 500,
+          "field": 40
+        },
+        "steps": [
+          "s_details",
+          "s_docs",
+          "s_submit",
+          "s_approved"
+        ]
+      }
+    }
+  ]
+}

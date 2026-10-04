@@ -1,0 +1,79 @@
+{
+  "chip_id": "firm.sla",
+  "kind": "accessor",
+  "set": "firm",
+  "label": "Firms: is an application's review on time?",
+  "aliases": [
+    "firms: is an application's review on tim"
+  ],
+  "params": [
+    {
+      "name": "waited_hours",
+      "type": "number",
+      "default": 0,
+      "label": "hours since it was submitted"
+    },
+    {
+      "name": "review_hours",
+      "type": "number",
+      "default": 24,
+      "label": "the promise"
+    },
+    {
+      "name": "soon_pct",
+      "type": "number",
+      "default": 75,
+      "label": "from this share of the promise it is due soon"
+    }
+  ],
+  "expr": {
+    "vop": "choose",
+    "cases": [
+      {
+        "when": {
+          "op": "ge",
+          "left": "$waited_hours",
+          "right": "$review_hours"
+        },
+        "then": "overdue"
+      },
+      {
+        "when": {
+          "op": "ge",
+          "left": {
+            "vop": "pct",
+            "part": "$waited_hours",
+            "whole": "$review_hours"
+          },
+          "right": "$soon_pct"
+        },
+        "then": "due_soon"
+      }
+    ],
+    "else": "on_time"
+  },
+  "returns": "text",
+  "version": 1,
+  "status": "published",
+  "description_nl": "Approvals sorts and colours the queue by this.",
+  "test_cases": [
+    {
+      "args": {
+        "waited_hours": 30
+      },
+      "expect_value": "overdue"
+    },
+    {
+      "args": {
+        "waited_hours": 19
+      },
+      "expect_value": "due_soon"
+    },
+    {
+      "args": {
+        "waited_hours": 2
+      },
+      "expect_value": "on_time"
+    }
+  ]
+}

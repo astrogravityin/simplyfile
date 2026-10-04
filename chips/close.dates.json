@@ -1,0 +1,670 @@
+{
+  "chip_id": "close.dates",
+  "kind": "accessor",
+  "set": "close",
+  "label": "Close: the year's due dates and what a return filed on a day is",
+  "aliases": [
+    "close: the year's due dates and what a r"
+  ],
+  "params": [
+    {
+      "name": "ay_year",
+      "type": "number",
+      "default": 2026,
+      "label": "the AY's first year (2026 for 2026-27)"
+    },
+    {
+      "name": "audit",
+      "type": "boolean",
+      "default": false,
+      "label": "tax audit (3CD) applies"
+    },
+    {
+      "name": "tp",
+      "type": "boolean",
+      "default": false,
+      "label": "transfer pricing report (Form 3CEB, s.92E) applies"
+    },
+    {
+      "name": "form",
+      "type": "text",
+      "default": "",
+      "label": "the year's ITR form"
+    },
+    {
+      "name": "business_forms",
+      "type": "json",
+      "default": [
+        "ITR-3",
+        "ITR-4",
+        "ITR-5"
+      ],
+      "label": "forms with business / profession income: non-audit due date 31 August (Finance Act 2026)"
+    },
+    {
+      "name": "business_from_year",
+      "type": "number",
+      "default": 2026,
+      "label": "the 31 August date applies from AY 2026-27 (earlier years: 31 July)"
+    },
+    {
+      "name": "due_business_mmdd",
+      "type": "number",
+      "default": 831,
+      "label": "s.139(1) due date, business or profession without audit: 31 August (from AY 2026-27)"
+    },
+    {
+      "name": "due_tp_mmdd",
+      "type": "number",
+      "default": 1130,
+      "label": "s.139(1) due date with a Form 3CEB report: 30 November"
+    },
+    {
+      "name": "filed_on",
+      "type": "number",
+      "default": 0,
+      "label": "the day the return is filed, yyyymmdd"
+    },
+    {
+      "name": "today",
+      "type": "number",
+      "default": 0,
+      "label": "today, yyyymmdd"
+    },
+    {
+      "name": "has_current",
+      "type": "boolean",
+      "default": false,
+      "label": "a filed return already stands"
+    },
+    {
+      "name": "has_updated",
+      "type": "boolean",
+      "default": false,
+      "label": "an ITR-U was already filed"
+    },
+    {
+      "name": "due_mmdd",
+      "type": "number",
+      "default": 731,
+      "label": "s.139(1) due date, no audit: 31 July"
+    },
+    {
+      "name": "due_audit_mmdd",
+      "type": "number",
+      "default": 1031,
+      "label": "s.139(1) due date with tax audit: 31 October"
+    },
+    {
+      "name": "revise_mmdd",
+      "type": "number",
+      "default": 1231,
+      "label": "s.139(4) belated / s.139(5) revised: by 31 December of the AY"
+    },
+    {
+      "name": "updated_mmdd",
+      "type": "number",
+      "default": 331,
+      "label": "s.139(8A) ITR-U: within 48 months of the end of the AY ..."
+    },
+    {
+      "name": "updated_years_after",
+      "type": "number",
+      "default": 5,
+      "label": "... = 31 March, AY's first year + 5"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "due": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "eq",
+              "left": "$tp",
+              "right": true
+            },
+            "then": {
+              "vop": "add",
+              "a": {
+                "vop": "mul",
+                "a": {
+                  "vop": "add",
+                  "a": "$ay_year",
+                  "b": 0
+                },
+                "b": 10000
+              },
+              "b": "$due_tp_mmdd"
+            }
+          },
+          {
+            "when": {
+              "op": "eq",
+              "left": "$audit",
+              "right": true
+            },
+            "then": {
+              "vop": "add",
+              "a": {
+                "vop": "mul",
+                "a": {
+                  "vop": "add",
+                  "a": "$ay_year",
+                  "b": 0
+                },
+                "b": 10000
+              },
+              "b": "$due_audit_mmdd"
+            }
+          },
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "in_set",
+                  "value": "$form",
+                  "set": "$business_forms"
+                },
+                {
+                  "op": "ge",
+                  "left": "$ay_year",
+                  "right": "$business_from_year"
+                }
+              ]
+            },
+            "then": {
+              "vop": "add",
+              "a": {
+                "vop": "mul",
+                "a": {
+                  "vop": "add",
+                  "a": "$ay_year",
+                  "b": 0
+                },
+                "b": 10000
+              },
+              "b": "$due_business_mmdd"
+            }
+          }
+        ],
+        "else": {
+          "vop": "add",
+          "a": {
+            "vop": "mul",
+            "a": {
+              "vop": "add",
+              "a": "$ay_year",
+              "b": 0
+            },
+            "b": 10000
+          },
+          "b": "$due_mmdd"
+        }
+      },
+      "revise_by": {
+        "vop": "add",
+        "a": {
+          "vop": "mul",
+          "a": {
+            "vop": "add",
+            "a": "$ay_year",
+            "b": 0
+          },
+          "b": 10000
+        },
+        "b": "$revise_mmdd"
+      },
+      "updated_by": {
+        "vop": "add",
+        "a": {
+          "vop": "mul",
+          "a": {
+            "vop": "add",
+            "a": "$ay_year",
+            "b": "$updated_years_after"
+          },
+          "b": 10000
+        },
+        "b": "$updated_mmdd"
+      },
+      "kind": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "eq",
+              "left": "$has_current",
+              "right": true
+            },
+            "then": {
+              "vop": "choose",
+              "cases": [
+                {
+                  "when": {
+                    "op": "le",
+                    "left": "$filed_on",
+                    "right": {
+                      "vop": "add",
+                      "a": {
+                        "vop": "mul",
+                        "a": {
+                          "vop": "add",
+                          "a": "$ay_year",
+                          "b": 0
+                        },
+                        "b": 10000
+                      },
+                      "b": "$revise_mmdd"
+                    }
+                  },
+                  "then": "revised"
+                },
+                {
+                  "when": {
+                    "op": "all",
+                    "items": [
+                      {
+                        "op": "le",
+                        "left": "$filed_on",
+                        "right": {
+                          "vop": "add",
+                          "a": {
+                            "vop": "mul",
+                            "a": {
+                              "vop": "add",
+                              "a": "$ay_year",
+                              "b": "$updated_years_after"
+                            },
+                            "b": 10000
+                          },
+                          "b": "$updated_mmdd"
+                        }
+                      },
+                      {
+                        "op": "not",
+                        "item": {
+                          "op": "eq",
+                          "left": "$has_updated",
+                          "right": true
+                        }
+                      }
+                    ]
+                  },
+                  "then": "updated"
+                }
+              ],
+              "else": "too_late"
+            }
+          },
+          {
+            "when": {
+              "op": "le",
+              "left": "$filed_on",
+              "right": {
+                "vop": "choose",
+                "cases": [
+                  {
+                    "when": {
+                      "op": "eq",
+                      "left": "$tp",
+                      "right": true
+                    },
+                    "then": {
+                      "vop": "add",
+                      "a": {
+                        "vop": "mul",
+                        "a": {
+                          "vop": "add",
+                          "a": "$ay_year",
+                          "b": 0
+                        },
+                        "b": 10000
+                      },
+                      "b": "$due_tp_mmdd"
+                    }
+                  },
+                  {
+                    "when": {
+                      "op": "eq",
+                      "left": "$audit",
+                      "right": true
+                    },
+                    "then": {
+                      "vop": "add",
+                      "a": {
+                        "vop": "mul",
+                        "a": {
+                          "vop": "add",
+                          "a": "$ay_year",
+                          "b": 0
+                        },
+                        "b": 10000
+                      },
+                      "b": "$due_audit_mmdd"
+                    }
+                  },
+                  {
+                    "when": {
+                      "op": "all",
+                      "items": [
+                        {
+                          "op": "in_set",
+                          "value": "$form",
+                          "set": "$business_forms"
+                        },
+                        {
+                          "op": "ge",
+                          "left": "$ay_year",
+                          "right": "$business_from_year"
+                        }
+                      ]
+                    },
+                    "then": {
+                      "vop": "add",
+                      "a": {
+                        "vop": "mul",
+                        "a": {
+                          "vop": "add",
+                          "a": "$ay_year",
+                          "b": 0
+                        },
+                        "b": 10000
+                      },
+                      "b": "$due_business_mmdd"
+                    }
+                  }
+                ],
+                "else": {
+                  "vop": "add",
+                  "a": {
+                    "vop": "mul",
+                    "a": {
+                      "vop": "add",
+                      "a": "$ay_year",
+                      "b": 0
+                    },
+                    "b": 10000
+                  },
+                  "b": "$due_mmdd"
+                }
+              }
+            },
+            "then": "original"
+          },
+          {
+            "when": {
+              "op": "le",
+              "left": "$filed_on",
+              "right": {
+                "vop": "add",
+                "a": {
+                  "vop": "mul",
+                  "a": {
+                    "vop": "add",
+                    "a": "$ay_year",
+                    "b": 0
+                  },
+                  "b": 10000
+                },
+                "b": "$revise_mmdd"
+              }
+            },
+            "then": "belated"
+          },
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "le",
+                  "left": "$filed_on",
+                  "right": {
+                    "vop": "add",
+                    "a": {
+                      "vop": "mul",
+                      "a": {
+                        "vop": "add",
+                        "a": "$ay_year",
+                        "b": "$updated_years_after"
+                      },
+                      "b": 10000
+                    },
+                    "b": "$updated_mmdd"
+                  }
+                },
+                {
+                  "op": "not",
+                  "item": {
+                    "op": "eq",
+                    "left": "$has_updated",
+                    "right": true
+                  }
+                }
+              ]
+            },
+            "then": "updated"
+          }
+        ],
+        "else": "too_late"
+      },
+      "may_revise": {
+        "op": "all",
+        "items": [
+          {
+            "op": "eq",
+            "left": "$has_current",
+            "right": true
+          },
+          {
+            "op": "le",
+            "left": "$today",
+            "right": {
+              "vop": "add",
+              "a": {
+                "vop": "mul",
+                "a": {
+                  "vop": "add",
+                  "a": "$ay_year",
+                  "b": 0
+                },
+                "b": 10000
+              },
+              "b": "$revise_mmdd"
+            }
+          }
+        ]
+      },
+      "may_update": {
+        "op": "all",
+        "items": [
+          {
+            "op": "eq",
+            "left": "$has_current",
+            "right": true
+          },
+          {
+            "op": "not",
+            "item": {
+              "op": "eq",
+              "left": "$has_updated",
+              "right": true
+            }
+          },
+          {
+            "op": "gt",
+            "left": "$today",
+            "right": {
+              "vop": "add",
+              "a": {
+                "vop": "mul",
+                "a": {
+                  "vop": "add",
+                  "a": "$ay_year",
+                  "b": 0
+                },
+                "b": 10000
+              },
+              "b": "$revise_mmdd"
+            }
+          },
+          {
+            "op": "le",
+            "left": "$today",
+            "right": {
+              "vop": "add",
+              "a": {
+                "vop": "mul",
+                "a": {
+                  "vop": "add",
+                  "a": "$ay_year",
+                  "b": "$updated_years_after"
+                },
+                "b": 10000
+              },
+              "b": "$updated_mmdd"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "Income-tax Act dates as amended by the Finance Acts 2025 and 2026: due date u/s 139(1) 31 July (ITR-1 / ITR-2), 31 August for business or profession without audit (ITR-3 / 4 / 5, Finance Act 2026), 31 October with a tax audit, 30 November with a transfer pricing report in Form 3CEB u/s 92E); a belated (139(4)) or revised (139(5)) return by 31 December of the AY; an updated return (ITR-U, 139(8A)) once, within 48 months from the end of the AY. Dates are numbers yyyymmdd so the chip compares them.",
+  "test_cases": [
+    {
+      "args": {
+        "ay_year": 2026,
+        "audit": true,
+        "filed_on": 20261015,
+        "today": 20261015
+      },
+      "expect_value": {
+        "due": 20261031,
+        "revise_by": 20261231,
+        "updated_by": 20310331,
+        "kind": "original",
+        "may_revise": false,
+        "may_update": false
+      }
+    },
+    {
+      "args": {
+        "ay_year": 2026,
+        "audit": true,
+        "tp": true,
+        "filed_on": 20261115,
+        "today": 20261115
+      },
+      "expect_value": {
+        "due": 20261130,
+        "revise_by": 20261231,
+        "updated_by": 20310331,
+        "kind": "original",
+        "may_revise": false,
+        "may_update": false
+      }
+    },
+    {
+      "args": {
+        "ay_year": 2026,
+        "form": "ITR-3",
+        "filed_on": 20260825,
+        "today": 20260825
+      },
+      "expect_value": {
+        "due": 20260831,
+        "revise_by": 20261231,
+        "updated_by": 20310331,
+        "kind": "original",
+        "may_revise": false,
+        "may_update": false
+      }
+    },
+    {
+      "args": {
+        "ay_year": 2025,
+        "form": "ITR-3",
+        "filed_on": 20250820,
+        "today": 20250820
+      },
+      "expect_value": {
+        "due": 20250731,
+        "revise_by": 20251231,
+        "updated_by": 20300331,
+        "kind": "belated",
+        "may_revise": false,
+        "may_update": false
+      }
+    },
+    {
+      "args": {
+        "ay_year": 2026,
+        "filed_on": 20260901,
+        "today": 20260901
+      },
+      "expect_value": {
+        "due": 20260731,
+        "revise_by": 20261231,
+        "updated_by": 20310331,
+        "kind": "belated",
+        "may_revise": false,
+        "may_update": false
+      }
+    },
+    {
+      "args": {
+        "ay_year": 2026,
+        "filed_on": 20261120,
+        "today": 20261120,
+        "has_current": true
+      },
+      "expect_value": {
+        "due": 20260731,
+        "revise_by": 20261231,
+        "updated_by": 20310331,
+        "kind": "revised",
+        "may_revise": true,
+        "may_update": false
+      }
+    },
+    {
+      "args": {
+        "ay_year": 2026,
+        "filed_on": 20270610,
+        "today": 20270610,
+        "has_current": true
+      },
+      "expect_value": {
+        "due": 20260731,
+        "revise_by": 20261231,
+        "updated_by": 20310331,
+        "kind": "updated",
+        "may_revise": false,
+        "may_update": true
+      }
+    },
+    {
+      "args": {
+        "ay_year": 2026,
+        "filed_on": 20270610,
+        "today": 20270610,
+        "has_current": true,
+        "has_updated": true
+      },
+      "expect_value": {
+        "due": 20260731,
+        "revise_by": 20261231,
+        "updated_by": 20310331,
+        "kind": "too_late",
+        "may_revise": false,
+        "may_update": false
+      }
+    }
+  ]
+}

@@ -1,0 +1,93 @@
+{
+  "chip_id": "itr.settings",
+  "kind": "accessor",
+  "set": "itr",
+  "label": "ITR JSON: the schemas and how the export behaves",
+  "aliases": [
+    "itr json: the schemas and how the export"
+  ],
+  "params": [
+    {
+      "name": "forms",
+      "type": "json",
+      "default": {
+        "ITR-3": {
+          "schema": "schemas/itr/ITR-3_2026_Main_V1.1.json",
+          "root": "ITR3"
+        },
+        "ITR-5": {
+          "schema": "schemas/itr/ITR-5_2026_Main_V1.1.json",
+          "root": "ITR5"
+        }
+      },
+      "label": "forms"
+    },
+    {
+      "name": "enum_default",
+      "type": "text",
+      "default": "N",
+      "label": "enum default"
+    },
+    {
+      "name": "errors_shown",
+      "type": "json",
+      "default": 60,
+      "label": "errors shown"
+    },
+    {
+      "name": "error_chars",
+      "type": "json",
+      "default": 220,
+      "label": "error chars"
+    },
+    {
+      "name": "sw_id",
+      "type": "text",
+      "default": "SW00000000",
+      "label": "sw id"
+    },
+    {
+      "name": "sw_version",
+      "type": "text",
+      "default": "1.0",
+      "label": "sw version"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "forms": "$forms",
+      "enum_default": "$enum_default",
+      "errors_shown": "$errors_shown",
+      "error_chars": "$error_chars",
+      "sw_id": "$sw_id",
+      "sw_version": "$sw_version"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "The CBDT's JSON Schema per form for AY 2026-27 (incometax.gov.in > Downloads, V1.1). A new AY = new schema files and new paths here. sw_id: the software ID the CBDT gives a registered utility (SW + 8 digits); until SimplyFile has one, the JSON is opened in the department's offline utility, which writes its own and uploads it.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "forms": {
+          "ITR-3": {
+            "schema": "schemas/itr/ITR-3_2026_Main_V1.1.json",
+            "root": "ITR3"
+          },
+          "ITR-5": {
+            "schema": "schemas/itr/ITR-5_2026_Main_V1.1.json",
+            "root": "ITR5"
+          }
+        },
+        "enum_default": "N",
+        "errors_shown": 60,
+        "error_chars": 220,
+        "sw_id": "SW00000000",
+        "sw_version": "1.0"
+      }
+    }
+  ]
+}
