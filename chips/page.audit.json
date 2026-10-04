@@ -1,0 +1,227 @@
+{
+  "chip_id": "page.audit",
+  "kind": "accessor",
+  "set": "page",
+  "label": "Tax audit look",
+  "aliases": [
+    "tax audit look"
+  ],
+  "params": [
+    {
+      "name": "need_tone",
+      "type": "json",
+      "default": {
+        "yes": "--warn",
+        "no": "--ok",
+        "unknown": "--muted"
+      },
+      "label": "need tone"
+    },
+    {
+      "name": "need_icon",
+      "type": "json",
+      "default": {
+        "yes": "alert",
+        "no": "check",
+        "unknown": "info"
+      },
+      "label": "need icon"
+    },
+    {
+      "name": "flag_tone",
+      "type": "json",
+      "default": {
+        "new": "--brand",
+        "gone": "--muted",
+        "spike": "--bad",
+        "drop": "--warn",
+        "outpaced": "--bad"
+      },
+      "label": "flag tone"
+    },
+    {
+      "name": "state_tone",
+      "type": "json",
+      "default": {
+        "todo": "--muted",
+        "done": "--ok",
+        "na": "--muted",
+        "issue": "--bad"
+      },
+      "label": "state tone"
+    },
+    {
+      "name": "money_locale",
+      "type": "text",
+      "default": "en-IN",
+      "label": "money locale"
+    },
+    {
+      "name": "items",
+      "type": "json",
+      "default": {
+        "acc_depreciation": "Accumulated depreciation",
+        "advances_given": "Advances given",
+        "advances_received": "Advances received",
+        "bank": "Bank",
+        "capital": "Capital",
+        "cash": "Cash",
+        "creditors": "Creditors",
+        "cwip": "Capital work in progress",
+        "debtors": "Debtors",
+        "deposits": "Deposits",
+        "gross_block": "Fixed assets (gross block)",
+        "investments": "Investments",
+        "provisions": "Provisions",
+        "reserves": "Reserves",
+        "secured_bank": "Secured loans from banks",
+        "stock": "Stock",
+        "tax_balances": "Tax paid / TDS receivable",
+        "tax_provision": "Provision for tax",
+        "unsecured_other": "Unsecured loans",
+        "advertisement": "Advertisement",
+        "audit_fee": "Audit fee",
+        "bad_debts": "Bad debts",
+        "bonus": "Bonus",
+        "carriage": "Carriage",
+        "closing_stock": "Closing stock",
+        "commission": "Commission",
+        "commission_income": "Commission income",
+        "conveyance": "Conveyance",
+        "depreciation": "Depreciation",
+        "dividend": "Dividend",
+        "donation": "Donation",
+        "entertainment": "Entertainment",
+        "freight": "Freight",
+        "gift": "Gift",
+        "insurance": "Insurance",
+        "interest": "Interest",
+        "interest_income": "Interest income",
+        "opening_stock": "Opening stock",
+        "other_expenses": "Other expenses",
+        "other_income": "Other income",
+        "pf": "PF / ESI contribution",
+        "power": "Power",
+        "professional": "Professional fees paid",
+        "professional_receipts": "Professional receipts",
+        "purchases": "Purchases",
+        "rent": "Rent",
+        "rent_income": "Rent income",
+        "repairs_building": "Repairs building",
+        "repairs_machinery": "Repairs machinery",
+        "salaries": "Salaries",
+        "sales": "Sales",
+        "services": "Services",
+        "staff_welfare": "Staff welfare",
+        "tax_provision_pl": "Income tax (P&L)",
+        "telephone": "Telephone",
+        "travel": "Travel"
+      },
+      "label": "items"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "need_tone": "$need_tone",
+      "need_icon": "$need_icon",
+      "flag_tone": "$flag_tone",
+      "state_tone": "$state_tone",
+      "money_locale": "$money_locale",
+      "items": "$items"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-04: colours and icons on the Tax audit screen.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "need_tone": {
+          "yes": "--warn",
+          "no": "--ok",
+          "unknown": "--muted"
+        },
+        "need_icon": {
+          "yes": "alert",
+          "no": "check",
+          "unknown": "info"
+        },
+        "flag_tone": {
+          "new": "--brand",
+          "gone": "--muted",
+          "spike": "--bad",
+          "drop": "--warn",
+          "outpaced": "--bad"
+        },
+        "state_tone": {
+          "todo": "--muted",
+          "done": "--ok",
+          "na": "--muted",
+          "issue": "--bad"
+        },
+        "money_locale": "en-IN",
+        "items": {
+          "acc_depreciation": "Accumulated depreciation",
+          "advances_given": "Advances given",
+          "advances_received": "Advances received",
+          "bank": "Bank",
+          "capital": "Capital",
+          "cash": "Cash",
+          "creditors": "Creditors",
+          "cwip": "Capital work in progress",
+          "debtors": "Debtors",
+          "deposits": "Deposits",
+          "gross_block": "Fixed assets (gross block)",
+          "investments": "Investments",
+          "provisions": "Provisions",
+          "reserves": "Reserves",
+          "secured_bank": "Secured loans from banks",
+          "stock": "Stock",
+          "tax_balances": "Tax paid / TDS receivable",
+          "tax_provision": "Provision for tax",
+          "unsecured_other": "Unsecured loans",
+          "advertisement": "Advertisement",
+          "audit_fee": "Audit fee",
+          "bad_debts": "Bad debts",
+          "bonus": "Bonus",
+          "carriage": "Carriage",
+          "closing_stock": "Closing stock",
+          "commission": "Commission",
+          "commission_income": "Commission income",
+          "conveyance": "Conveyance",
+          "depreciation": "Depreciation",
+          "dividend": "Dividend",
+          "donation": "Donation",
+          "entertainment": "Entertainment",
+          "freight": "Freight",
+          "gift": "Gift",
+          "insurance": "Insurance",
+          "interest": "Interest",
+          "interest_income": "Interest income",
+          "opening_stock": "Opening stock",
+          "other_expenses": "Other expenses",
+          "other_income": "Other income",
+          "pf": "PF / ESI contribution",
+          "power": "Power",
+          "professional": "Professional fees paid",
+          "professional_receipts": "Professional receipts",
+          "purchases": "Purchases",
+          "rent": "Rent",
+          "rent_income": "Rent income",
+          "repairs_building": "Repairs building",
+          "repairs_machinery": "Repairs machinery",
+          "salaries": "Salaries",
+          "sales": "Sales",
+          "services": "Services",
+          "staff_welfare": "Staff welfare",
+          "tax_provision_pl": "Income tax (P&L)",
+          "telephone": "Telephone",
+          "travel": "Travel"
+        }
+      }
+    }
+  ]
+}

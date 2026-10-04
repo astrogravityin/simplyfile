@@ -31,7 +31,9 @@
             "compute.signoff",
             "compute.file",
             "compute.reopen",
-            "itrimport"
+            "itrimport",
+            "audit",
+            "audit.clear"
           ]
         },
         {
@@ -52,6 +54,8 @@
             "compute.file",
             "compute.reopen",
             "itrimport",
+            "audit",
+            "audit.clear",
             "analytics"
           ]
         },
@@ -65,26 +69,30 @@
             "intake",
             "recon",
             "compute",
-            "compute.signoff"
+            "compute.signoff",
+            "audit",
+            "audit.clear"
           ]
         },
         {
           "id": "auditor",
           "label": "Auditor (3CD)",
-          "sub": "Tax audit: reads everything, signs off the computation.",
+          "sub": "Tax audit: reads everything, works the 3CD checklist, clears audit points, signs off the computation.",
           "assignable": true,
           "grants": [
             "clients",
             "intake",
             "recon",
             "compute",
-            "compute.signoff"
+            "compute.signoff",
+            "audit",
+            "audit.clear"
           ]
         },
         {
           "id": "preparer",
           "label": "Tax preparer",
-          "sub": "Adds clients, maps statements, reconciles, computes.",
+          "sub": "Adds clients, maps statements, reconciles, computes, raises audit points.",
           "assignable": true,
           "grants": [
             "clients",
@@ -94,7 +102,8 @@
             "recon",
             "recon.delete",
             "compute",
-            "itrimport"
+            "itrimport",
+            "audit"
           ]
         },
         {
@@ -114,7 +123,9 @@
             "compute.signoff",
             "compute.file",
             "compute.reopen",
-            "itrimport"
+            "itrimport",
+            "audit",
+            "audit.clear"
           ]
         }
       ],
@@ -156,7 +167,9 @@
               "compute.signoff",
               "compute.file",
               "compute.reopen",
-              "itrimport"
+              "itrimport",
+              "audit",
+              "audit.clear"
             ]
           },
           {
@@ -177,6 +190,8 @@
               "compute.file",
               "compute.reopen",
               "itrimport",
+              "audit",
+              "audit.clear",
               "analytics"
             ]
           },
@@ -190,26 +205,30 @@
               "intake",
               "recon",
               "compute",
-              "compute.signoff"
+              "compute.signoff",
+              "audit",
+              "audit.clear"
             ]
           },
           {
             "id": "auditor",
             "label": "Auditor (3CD)",
-            "sub": "Tax audit: reads everything, signs off the computation.",
+            "sub": "Tax audit: reads everything, works the 3CD checklist, clears audit points, signs off the computation.",
             "assignable": true,
             "grants": [
               "clients",
               "intake",
               "recon",
               "compute",
-              "compute.signoff"
+              "compute.signoff",
+              "audit",
+              "audit.clear"
             ]
           },
           {
             "id": "preparer",
             "label": "Tax preparer",
-            "sub": "Adds clients, maps statements, reconciles, computes.",
+            "sub": "Adds clients, maps statements, reconciles, computes, raises audit points.",
             "assignable": true,
             "grants": [
               "clients",
@@ -219,7 +238,8 @@
               "recon",
               "recon.delete",
               "compute",
-              "itrimport"
+              "itrimport",
+              "audit"
             ]
           },
           {
@@ -239,7 +259,9 @@
               "compute.signoff",
               "compute.file",
               "compute.reopen",
-              "itrimport"
+              "itrimport",
+              "audit",
+              "audit.clear"
             ]
           }
         ]

@@ -212,6 +212,9 @@ def _parse_part(sheet: str, rows: list[list], suffix: str, k: dict, head_re, out
         if rc and r == rc[0]:                                 # the SF Ref title row may carry the heading too
             words = next((v for i, v in enumerate(cells) if isinstance(v, str) and i != rc[1]), "")   # its first words, not "Amount (Rs)"
             heading = words[: k["max_len"]["heading"]] if head_re.search(words) else heading
+            # ... and the column titles ("Amount (Rs)", "Previous year") - numbered as the body below is, without the SF Ref cell
+            colhead = {i: v[: k["max_len"]["column_title"]] for i, v in enumerate(c for j, c in enumerate(cells) if j != rc[1])
+                       if isinstance(v, str) and v.strip()}
             continue
         own = cells[rc[1]] if rc and rc[1] < len(cells) else None
         body = [v for i, v in enumerate(cells) if not (rc and i == rc[1])]

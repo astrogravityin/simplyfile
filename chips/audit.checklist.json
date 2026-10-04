@@ -1,0 +1,537 @@
+{
+  "chip_id": "audit.checklist",
+  "kind": "accessor",
+  "set": "audit",
+  "label": "Tax audit: the Form 3CD points for this client",
+  "aliases": [
+    "tax audit: the form 3cd points for this "
+  ],
+  "params": [
+    {
+      "name": "rows",
+      "type": "json",
+      "default": [
+        {
+          "id": "c8",
+          "clause": "8",
+          "title": "Clause of s.44AB under which the audit is done",
+          "hint": "Turnover, receipts or presumptive - from the applicability card above.",
+          "needs": [],
+          "any": []
+        },
+        {
+          "id": "c9",
+          "clause": "9",
+          "title": "Partners or members and their profit-sharing ratio, and changes in the year",
+          "hint": "Partnership deed and any retirement or admission.",
+          "needs": [
+            "partners"
+          ],
+          "any": []
+        },
+        {
+          "id": "c10",
+          "clause": "10",
+          "title": "Nature of business or profession and changes in it",
+          "hint": "",
+          "needs": [],
+          "any": []
+        },
+        {
+          "id": "c11",
+          "clause": "11",
+          "title": "Books of account kept, where, and those examined",
+          "hint": "List the books and the software used.",
+          "needs": [],
+          "any": []
+        },
+        {
+          "id": "c12",
+          "clause": "12",
+          "title": "Presumptive income included in profit (44AD, 44ADA, 44AE...)",
+          "hint": "",
+          "needs": [
+            "presumptive"
+          ],
+          "any": []
+        },
+        {
+          "id": "c13",
+          "clause": "13",
+          "title": "Method of accounting, changes, and ICDS adjustments",
+          "hint": "Mercantile or cash; any effect of ICDS on profit.",
+          "needs": [],
+          "any": []
+        },
+        {
+          "id": "c14",
+          "clause": "14",
+          "title": "Method of valuing closing stock",
+          "hint": "Cost or market value; GST included or not (s.145A).",
+          "needs": [],
+          "any": [
+            "has_closing_stock",
+            "has_stock"
+          ]
+        },
+        {
+          "id": "c17",
+          "clause": "17",
+          "title": "Land or building transferred below the stamp-duty value (43CA / 50C)",
+          "hint": "",
+          "needs": [],
+          "any": [
+            "has_gross_block",
+            "has_investments"
+          ]
+        },
+        {
+          "id": "c18",
+          "clause": "18",
+          "title": "Depreciation as per the Income-tax Act, block by block",
+          "hint": "Additions with dates (put-to-use under 180 days = half rate).",
+          "needs": [],
+          "any": [
+            "has_depreciation",
+            "has_gross_block"
+          ]
+        },
+        {
+          "id": "c20b",
+          "clause": "20(b)",
+          "title": "Employees' PF / ESI contribution deposited by the due date (36(1)(va))",
+          "hint": "Late deposit of the employees' share is never allowed.",
+          "needs": [],
+          "any": [
+            "has_salaries",
+            "has_pf"
+          ]
+        },
+        {
+          "id": "c21a",
+          "clause": "21(a)",
+          "title": "Capital, personal, advertisement in political souvenirs and penalty expenses debited",
+          "hint": "",
+          "needs": [],
+          "any": []
+        },
+        {
+          "id": "c21b",
+          "clause": "21(b)",
+          "title": "Payments without TDS, or TDS not paid in time (40(a)(i), 40(a)(ia))",
+          "hint": "Rent, interest, commission, professional fees, contractors.",
+          "needs": [],
+          "any": [
+            "has_rent",
+            "has_interest",
+            "has_commission",
+            "has_professional",
+            "has_freight",
+            "has_carriage"
+          ]
+        },
+        {
+          "id": "c21d",
+          "clause": "21(d)",
+          "title": "Cash payments above Rs 10,000 a day to one person (40A(3))",
+          "hint": "Scan the cash book for payments above the limit.",
+          "needs": [],
+          "any": []
+        },
+        {
+          "id": "c22",
+          "clause": "22",
+          "title": "Interest not allowed under the MSMED Act, and payments to micro / small enterprises beyond 45 days (43B(h))",
+          "hint": "Creditors registered under MSME, and when each was paid.",
+          "needs": [],
+          "any": [
+            "has_creditors",
+            "has_purchases"
+          ]
+        },
+        {
+          "id": "c23",
+          "clause": "23",
+          "title": "Payments to related persons (40A(2)(b))",
+          "hint": "Partners, relatives, firms they control - salary, rent, interest.",
+          "needs": [],
+          "any": []
+        },
+        {
+          "id": "c26",
+          "clause": "26",
+          "title": "Sums allowed only when paid (43B): taxes, duties, bonus, leave, bank interest",
+          "hint": "Paid by the return due date?",
+          "needs": [],
+          "any": [
+            "has_provisions",
+            "has_tax_provision",
+            "has_bonus",
+            "has_interest",
+            "has_salaries"
+          ]
+        },
+        {
+          "id": "c31ab",
+          "clause": "31(a)(b)",
+          "title": "Loans and deposits taken or accepted in cash (269SS)",
+          "hint": "Every loan of Rs 20,000 or more - mode of acceptance.",
+          "needs": [],
+          "any": [
+            "has_unsecured_other",
+            "has_advances_received",
+            "has_deposits"
+          ]
+        },
+        {
+          "id": "c31c",
+          "clause": "31(c)",
+          "title": "Loans and deposits repaid in cash (269T)",
+          "hint": "",
+          "needs": [],
+          "any": [
+            "has_unsecured_other",
+            "has_advances_received"
+          ]
+        },
+        {
+          "id": "c31d",
+          "clause": "31(d)(e)",
+          "title": "Receipts of Rs 2 lakh or more in cash (269ST)",
+          "hint": "",
+          "needs": [],
+          "any": [
+            "has_sales",
+            "has_services",
+            "has_professional_receipts"
+          ]
+        },
+        {
+          "id": "c32",
+          "clause": "32",
+          "title": "Losses and depreciation brought forward",
+          "hint": "",
+          "needs": [],
+          "any": []
+        },
+        {
+          "id": "c34",
+          "clause": "34",
+          "title": "TDS / TCS: deducted, paid and returns filed in time",
+          "hint": "Match with 26AS and the TDS returns; interest under 201(1A).",
+          "needs": [],
+          "any": [
+            "has_salaries",
+            "has_rent",
+            "has_interest",
+            "has_commission",
+            "has_professional"
+          ]
+        },
+        {
+          "id": "c35",
+          "clause": "35",
+          "title": "Quantitative details of goods traded or manufactured",
+          "hint": "Opening, purchases, sales, closing - in units.",
+          "needs": [],
+          "any": [
+            "has_sales",
+            "has_purchases"
+          ]
+        },
+        {
+          "id": "c40",
+          "clause": "40",
+          "title": "Accounting ratios: turnover, gross profit, net profit, stock turnover",
+          "hint": "Compare with last year in the table above.",
+          "needs": [],
+          "any": [
+            "has_sales",
+            "has_services",
+            "has_professional_receipts"
+          ]
+        },
+        {
+          "id": "c44",
+          "clause": "44",
+          "title": "Break-up of expenditure by GST registration of the supplier",
+          "hint": "",
+          "needs": [
+            "business"
+          ],
+          "any": []
+        }
+      ],
+      "label": "the checklist"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "rows": "$rows"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-04: the Form 3CD clauses an SME tax audit works through, each shown only when it applies to this client: needs = every fact must hold, any = at least one. Facts come from the tagged statements (has_<item>), the client (status_<status>, partners) and the year (presumptive).",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "rows": [
+          {
+            "id": "c8",
+            "clause": "8",
+            "title": "Clause of s.44AB under which the audit is done",
+            "hint": "Turnover, receipts or presumptive - from the applicability card above.",
+            "needs": [],
+            "any": []
+          },
+          {
+            "id": "c9",
+            "clause": "9",
+            "title": "Partners or members and their profit-sharing ratio, and changes in the year",
+            "hint": "Partnership deed and any retirement or admission.",
+            "needs": [
+              "partners"
+            ],
+            "any": []
+          },
+          {
+            "id": "c10",
+            "clause": "10",
+            "title": "Nature of business or profession and changes in it",
+            "hint": "",
+            "needs": [],
+            "any": []
+          },
+          {
+            "id": "c11",
+            "clause": "11",
+            "title": "Books of account kept, where, and those examined",
+            "hint": "List the books and the software used.",
+            "needs": [],
+            "any": []
+          },
+          {
+            "id": "c12",
+            "clause": "12",
+            "title": "Presumptive income included in profit (44AD, 44ADA, 44AE...)",
+            "hint": "",
+            "needs": [
+              "presumptive"
+            ],
+            "any": []
+          },
+          {
+            "id": "c13",
+            "clause": "13",
+            "title": "Method of accounting, changes, and ICDS adjustments",
+            "hint": "Mercantile or cash; any effect of ICDS on profit.",
+            "needs": [],
+            "any": []
+          },
+          {
+            "id": "c14",
+            "clause": "14",
+            "title": "Method of valuing closing stock",
+            "hint": "Cost or market value; GST included or not (s.145A).",
+            "needs": [],
+            "any": [
+              "has_closing_stock",
+              "has_stock"
+            ]
+          },
+          {
+            "id": "c17",
+            "clause": "17",
+            "title": "Land or building transferred below the stamp-duty value (43CA / 50C)",
+            "hint": "",
+            "needs": [],
+            "any": [
+              "has_gross_block",
+              "has_investments"
+            ]
+          },
+          {
+            "id": "c18",
+            "clause": "18",
+            "title": "Depreciation as per the Income-tax Act, block by block",
+            "hint": "Additions with dates (put-to-use under 180 days = half rate).",
+            "needs": [],
+            "any": [
+              "has_depreciation",
+              "has_gross_block"
+            ]
+          },
+          {
+            "id": "c20b",
+            "clause": "20(b)",
+            "title": "Employees' PF / ESI contribution deposited by the due date (36(1)(va))",
+            "hint": "Late deposit of the employees' share is never allowed.",
+            "needs": [],
+            "any": [
+              "has_salaries",
+              "has_pf"
+            ]
+          },
+          {
+            "id": "c21a",
+            "clause": "21(a)",
+            "title": "Capital, personal, advertisement in political souvenirs and penalty expenses debited",
+            "hint": "",
+            "needs": [],
+            "any": []
+          },
+          {
+            "id": "c21b",
+            "clause": "21(b)",
+            "title": "Payments without TDS, or TDS not paid in time (40(a)(i), 40(a)(ia))",
+            "hint": "Rent, interest, commission, professional fees, contractors.",
+            "needs": [],
+            "any": [
+              "has_rent",
+              "has_interest",
+              "has_commission",
+              "has_professional",
+              "has_freight",
+              "has_carriage"
+            ]
+          },
+          {
+            "id": "c21d",
+            "clause": "21(d)",
+            "title": "Cash payments above Rs 10,000 a day to one person (40A(3))",
+            "hint": "Scan the cash book for payments above the limit.",
+            "needs": [],
+            "any": []
+          },
+          {
+            "id": "c22",
+            "clause": "22",
+            "title": "Interest not allowed under the MSMED Act, and payments to micro / small enterprises beyond 45 days (43B(h))",
+            "hint": "Creditors registered under MSME, and when each was paid.",
+            "needs": [],
+            "any": [
+              "has_creditors",
+              "has_purchases"
+            ]
+          },
+          {
+            "id": "c23",
+            "clause": "23",
+            "title": "Payments to related persons (40A(2)(b))",
+            "hint": "Partners, relatives, firms they control - salary, rent, interest.",
+            "needs": [],
+            "any": []
+          },
+          {
+            "id": "c26",
+            "clause": "26",
+            "title": "Sums allowed only when paid (43B): taxes, duties, bonus, leave, bank interest",
+            "hint": "Paid by the return due date?",
+            "needs": [],
+            "any": [
+              "has_provisions",
+              "has_tax_provision",
+              "has_bonus",
+              "has_interest",
+              "has_salaries"
+            ]
+          },
+          {
+            "id": "c31ab",
+            "clause": "31(a)(b)",
+            "title": "Loans and deposits taken or accepted in cash (269SS)",
+            "hint": "Every loan of Rs 20,000 or more - mode of acceptance.",
+            "needs": [],
+            "any": [
+              "has_unsecured_other",
+              "has_advances_received",
+              "has_deposits"
+            ]
+          },
+          {
+            "id": "c31c",
+            "clause": "31(c)",
+            "title": "Loans and deposits repaid in cash (269T)",
+            "hint": "",
+            "needs": [],
+            "any": [
+              "has_unsecured_other",
+              "has_advances_received"
+            ]
+          },
+          {
+            "id": "c31d",
+            "clause": "31(d)(e)",
+            "title": "Receipts of Rs 2 lakh or more in cash (269ST)",
+            "hint": "",
+            "needs": [],
+            "any": [
+              "has_sales",
+              "has_services",
+              "has_professional_receipts"
+            ]
+          },
+          {
+            "id": "c32",
+            "clause": "32",
+            "title": "Losses and depreciation brought forward",
+            "hint": "",
+            "needs": [],
+            "any": []
+          },
+          {
+            "id": "c34",
+            "clause": "34",
+            "title": "TDS / TCS: deducted, paid and returns filed in time",
+            "hint": "Match with 26AS and the TDS returns; interest under 201(1A).",
+            "needs": [],
+            "any": [
+              "has_salaries",
+              "has_rent",
+              "has_interest",
+              "has_commission",
+              "has_professional"
+            ]
+          },
+          {
+            "id": "c35",
+            "clause": "35",
+            "title": "Quantitative details of goods traded or manufactured",
+            "hint": "Opening, purchases, sales, closing - in units.",
+            "needs": [],
+            "any": [
+              "has_sales",
+              "has_purchases"
+            ]
+          },
+          {
+            "id": "c40",
+            "clause": "40",
+            "title": "Accounting ratios: turnover, gross profit, net profit, stock turnover",
+            "hint": "Compare with last year in the table above.",
+            "needs": [],
+            "any": [
+              "has_sales",
+              "has_services",
+              "has_professional_receipts"
+            ]
+          },
+          {
+            "id": "c44",
+            "clause": "44",
+            "title": "Break-up of expenditure by GST registration of the supplier",
+            "hint": "",
+            "needs": [
+              "business"
+            ],
+            "any": []
+          }
+        ]
+      }
+    }
+  ]
+}

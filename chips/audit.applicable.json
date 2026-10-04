@@ -1,0 +1,253 @@
+{
+  "chip_id": "audit.applicable",
+  "kind": "accessor",
+  "set": "audit",
+  "label": "Is a tax audit needed (s.44AB)?",
+  "aliases": [
+    "is a tax audit needed (s.44ab)?"
+  ],
+  "params": [
+    {
+      "name": "business",
+      "type": "boolean",
+      "default": true,
+      "label": "carries on a business (not only a profession)"
+    },
+    {
+      "name": "turnover",
+      "type": "number",
+      "default": 0,
+      "label": "turnover or gross receipts this year"
+    },
+    {
+      "name": "cash_ok",
+      "type": "boolean",
+      "default": false,
+      "label": "cash receipts and cash payments each within 5% of the total"
+    },
+    {
+      "name": "presumptive_lower",
+      "type": "boolean",
+      "default": false,
+      "label": "under 44AD/44ADA but declares a lower profit than the presumptive rate"
+    },
+    {
+      "name": "income_above_exempt",
+      "type": "boolean",
+      "default": false,
+      "label": "total income above the basic exemption limit"
+    },
+    {
+      "name": "business_limit",
+      "type": "number",
+      "default": 10000000,
+      "label": "44AB(a): business turnover limit"
+    },
+    {
+      "name": "business_limit_cash_ok",
+      "type": "number",
+      "default": 100000000,
+      "label": "44AB(a) proviso: the limit when cash is within 5%"
+    },
+    {
+      "name": "profession_limit",
+      "type": "number",
+      "default": 5000000,
+      "label": "44AB(b): professional receipts limit"
+    }
+  ],
+  "expr": {
+    "vop": "choose",
+    "cases": [
+      {
+        "when": {
+          "op": "le",
+          "left": "$turnover",
+          "right": 0
+        },
+        "then": {
+          "need": "unknown",
+          "why": "why_unknown"
+        }
+      },
+      {
+        "when": {
+          "op": "all",
+          "items": [
+            {
+              "op": "eq",
+              "left": "$business",
+              "right": true
+            },
+            {
+              "op": "eq",
+              "left": "$cash_ok",
+              "right": true
+            },
+            {
+              "op": "gt",
+              "left": "$turnover",
+              "right": "$business_limit_cash_ok"
+            }
+          ]
+        },
+        "then": {
+          "need": "yes",
+          "why": "why_business_cash_ok"
+        }
+      },
+      {
+        "when": {
+          "op": "all",
+          "items": [
+            {
+              "op": "eq",
+              "left": "$business",
+              "right": true
+            },
+            {
+              "op": "eq",
+              "left": "$cash_ok",
+              "right": false
+            },
+            {
+              "op": "gt",
+              "left": "$turnover",
+              "right": "$business_limit"
+            }
+          ]
+        },
+        "then": {
+          "need": "yes",
+          "why": "why_business"
+        }
+      },
+      {
+        "when": {
+          "op": "all",
+          "items": [
+            {
+              "op": "eq",
+              "left": "$business",
+              "right": false
+            },
+            {
+              "op": "gt",
+              "left": "$turnover",
+              "right": "$profession_limit"
+            }
+          ]
+        },
+        "then": {
+          "need": "yes",
+          "why": "why_profession"
+        }
+      },
+      {
+        "when": {
+          "op": "all",
+          "items": [
+            {
+              "op": "eq",
+              "left": "$presumptive_lower",
+              "right": true
+            },
+            {
+              "op": "eq",
+              "left": "$income_above_exempt",
+              "right": true
+            }
+          ]
+        },
+        "then": {
+          "need": "yes",
+          "why": "why_presumptive"
+        }
+      }
+    ],
+    "else": {
+      "need": "no",
+      "why": "why_below"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-04: s.44AB as it stands for AY 2026-27 - business turnover above 1 crore (10 crore when cash receipts and payments are each within 5%), professional receipts above 50 lakh, or a presumptive assessee declaring less than the presumptive profit with income above the exemption limit. The limits are params: change them here when the law changes.",
+  "test_cases": [
+    {
+      "args": {
+        "business": true,
+        "turnover": 25000000
+      },
+      "expect_value": {
+        "need": "yes",
+        "why": "why_business"
+      }
+    },
+    {
+      "args": {
+        "business": true,
+        "turnover": 25000000,
+        "cash_ok": true
+      },
+      "expect_value": {
+        "need": "no",
+        "why": "why_below"
+      }
+    },
+    {
+      "args": {
+        "business": true,
+        "turnover": 120000000,
+        "cash_ok": true
+      },
+      "expect_value": {
+        "need": "yes",
+        "why": "why_business_cash_ok"
+      }
+    },
+    {
+      "args": {
+        "business": false,
+        "turnover": 6000000
+      },
+      "expect_value": {
+        "need": "yes",
+        "why": "why_profession"
+      }
+    },
+    {
+      "args": {
+        "business": true,
+        "turnover": 4000000,
+        "presumptive_lower": true,
+        "income_above_exempt": true
+      },
+      "expect_value": {
+        "need": "yes",
+        "why": "why_presumptive"
+      }
+    },
+    {
+      "args": {
+        "business": true,
+        "turnover": 4000000
+      },
+      "expect_value": {
+        "need": "no",
+        "why": "why_below"
+      }
+    },
+    {
+      "args": {
+        "business": true,
+        "turnover": 0
+      },
+      "expect_value": {
+        "need": "unknown",
+        "why": "why_unknown"
+      }
+    }
+  ]
+}

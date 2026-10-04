@@ -1,0 +1,133 @@
+{
+  "chip_id": "audit.settings",
+  "kind": "accessor",
+  "set": "audit",
+  "label": "Tax audit settings",
+  "aliases": [
+    "tax audit settings"
+  ],
+  "params": [
+    {
+      "name": "tables",
+      "type": "json",
+      "default": [
+        "PL",
+        "BS"
+      ],
+      "label": "tables"
+    },
+    {
+      "name": "revenue_items",
+      "type": "json",
+      "default": [
+        "sales",
+        "services",
+        "professional_receipts"
+      ],
+      "label": "revenue items"
+    },
+    {
+      "name": "profession_items",
+      "type": "json",
+      "default": [
+        "professional_receipts"
+      ],
+      "label": "profession items"
+    },
+    {
+      "name": "prev_pattern",
+      "type": "text",
+      "default": "(?i)previous|prev\\.?\\s*y|last\\s*year|preceding|\\bpy\\b|2024-25|31[./-]0?3[./-](?:20)?25",
+      "label": "prev pattern"
+    },
+    {
+      "name": "check_states",
+      "type": "json",
+      "default": [
+        "todo",
+        "done",
+        "na",
+        "issue"
+      ],
+      "label": "check states"
+    },
+    {
+      "name": "point_states",
+      "type": "json",
+      "default": [
+        "open",
+        "cleared"
+      ],
+      "label": "point states"
+    },
+    {
+      "name": "issue_raises_point",
+      "type": "json",
+      "default": true,
+      "label": "issue raises point"
+    },
+    {
+      "name": "fact_keys",
+      "type": "json",
+      "default": [
+        "cash_ok",
+        "presumptive_lower",
+        "income_above_exempt"
+      ],
+      "label": "fact keys"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "tables": "$tables",
+      "revenue_items": "$revenue_items",
+      "profession_items": "$profession_items",
+      "prev_pattern": "$prev_pattern",
+      "check_states": "$check_states",
+      "point_states": "$point_states",
+      "issue_raises_point": "$issue_raises_point",
+      "fact_keys": "$fact_keys"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-04: what the tax audit screen compares, what counts as turnover, how last year's column is recognised, the states of a checklist line and an audit point, and the facts a person answers.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "tables": [
+          "PL",
+          "BS"
+        ],
+        "revenue_items": [
+          "sales",
+          "services",
+          "professional_receipts"
+        ],
+        "profession_items": [
+          "professional_receipts"
+        ],
+        "prev_pattern": "(?i)previous|prev\\.?\\s*y|last\\s*year|preceding|\\bpy\\b|2024-25|31[./-]0?3[./-](?:20)?25",
+        "check_states": [
+          "todo",
+          "done",
+          "na",
+          "issue"
+        ],
+        "point_states": [
+          "open",
+          "cleared"
+        ],
+        "issue_raises_point": true,
+        "fact_keys": [
+          "cash_ok",
+          "presumptive_lower",
+          "income_above_exempt"
+        ]
+      }
+    }
+  ]
+}

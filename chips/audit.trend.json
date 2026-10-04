@@ -1,0 +1,325 @@
+{
+  "chip_id": "audit.trend",
+  "kind": "accessor",
+  "set": "audit",
+  "label": "Tax audit: one line of the accounts, this year against last",
+  "aliases": [
+    "tax audit: one line of the accounts, thi"
+  ],
+  "params": [
+    {
+      "name": "now",
+      "type": "number",
+      "default": 0,
+      "label": "this year"
+    },
+    {
+      "name": "before",
+      "type": "number",
+      "default": 0,
+      "label": "last year"
+    },
+    {
+      "name": "revenue",
+      "type": "number",
+      "default": 0,
+      "label": "this year's turnover"
+    },
+    {
+      "name": "rev_pct",
+      "type": "number",
+      "default": 0,
+      "label": "turnover change, %"
+    },
+    {
+      "name": "min_amount",
+      "type": "number",
+      "default": 50000,
+      "label": "smaller lines are not flagged"
+    },
+    {
+      "name": "has_before",
+      "type": "boolean",
+      "default": true,
+      "label": "last year's figures exist at all"
+    },
+    {
+      "name": "spike_pct",
+      "type": "number",
+      "default": 50,
+      "label": "up this much or more"
+    },
+    {
+      "name": "drop_pct",
+      "type": "number",
+      "default": 50,
+      "label": "down this much or more"
+    },
+    {
+      "name": "gap_pct",
+      "type": "number",
+      "default": 30,
+      "label": "grew this much faster than turnover"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "pct": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "gt",
+              "left": "$before",
+              "right": 0
+            },
+            "then": {
+              "vop": "pct",
+              "part": {
+                "vop": "sub",
+                "a": "$now",
+                "b": "$before"
+              },
+              "whole": "$before",
+              "digits": 0
+            }
+          }
+        ],
+        "else": 0
+      },
+      "share": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "gt",
+              "left": "$revenue",
+              "right": 0
+            },
+            "then": {
+              "vop": "pct",
+              "part": "$now",
+              "whole": "$revenue",
+              "digits": 1
+            }
+          }
+        ],
+        "else": 0
+      },
+      "flag": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "eq",
+              "left": "$has_before",
+              "right": false
+            },
+            "then": ""
+          },
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "lt",
+                  "left": "$now",
+                  "right": "$min_amount"
+                },
+                {
+                  "op": "lt",
+                  "left": "$before",
+                  "right": "$min_amount"
+                }
+              ]
+            },
+            "then": ""
+          },
+          {
+            "when": {
+              "op": "le",
+              "left": "$before",
+              "right": 0
+            },
+            "then": "new"
+          },
+          {
+            "when": {
+              "op": "le",
+              "left": "$now",
+              "right": 0
+            },
+            "then": "gone"
+          },
+          {
+            "when": {
+              "op": "ge",
+              "left": {
+                "vop": "pct",
+                "part": {
+                  "vop": "sub",
+                  "a": "$now",
+                  "b": "$before"
+                },
+                "whole": "$before",
+                "digits": 0
+              },
+              "right": "$spike_pct"
+            },
+            "then": "spike"
+          },
+          {
+            "when": {
+              "op": "le",
+              "left": {
+                "vop": "pct",
+                "part": {
+                  "vop": "sub",
+                  "a": "$now",
+                  "b": "$before"
+                },
+                "whole": "$before",
+                "digits": 0
+              },
+              "right": {
+                "vop": "mul",
+                "a": "$drop_pct",
+                "b": -1
+              }
+            },
+            "then": "drop"
+          },
+          {
+            "when": {
+              "op": "ge",
+              "left": {
+                "vop": "sub",
+                "a": {
+                  "vop": "pct",
+                  "part": {
+                    "vop": "sub",
+                    "a": "$now",
+                    "b": "$before"
+                  },
+                  "whole": "$before",
+                  "digits": 0
+                },
+                "b": "$rev_pct"
+              },
+              "right": "$gap_pct"
+            },
+            "then": "outpaced"
+          }
+        ],
+        "else": ""
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-04: a line deserves the auditor's look when it is new, gone, up or down sharply, or grew much faster than turnover (an 80% jump in an expense while sales are flat). Small lines are left alone. share = the line as % of turnover.",
+  "test_cases": [
+    {
+      "args": {
+        "now": 900000,
+        "before": 500000,
+        "revenue": 10000000,
+        "rev_pct": 2
+      },
+      "expect_value": {
+        "pct": 80,
+        "share": 9,
+        "flag": "spike"
+      }
+    },
+    {
+      "args": {
+        "now": 200000,
+        "before": 500000,
+        "revenue": 10000000
+      },
+      "expect_value": {
+        "pct": -60,
+        "share": 2,
+        "flag": "drop"
+      }
+    },
+    {
+      "args": {
+        "now": 650000,
+        "before": 500000,
+        "revenue": 10000000,
+        "rev_pct": 0
+      },
+      "expect_value": {
+        "pct": 30,
+        "share": 6.5,
+        "flag": "outpaced"
+      }
+    },
+    {
+      "args": {
+        "now": 520000,
+        "before": 500000,
+        "revenue": 10000000,
+        "rev_pct": 0
+      },
+      "expect_value": {
+        "pct": 4,
+        "share": 5.2,
+        "flag": ""
+      }
+    },
+    {
+      "args": {
+        "now": 300000,
+        "before": 0,
+        "revenue": 10000000
+      },
+      "expect_value": {
+        "pct": 0,
+        "share": 3,
+        "flag": "new"
+      }
+    },
+    {
+      "args": {
+        "now": 0,
+        "before": 300000,
+        "revenue": 10000000
+      },
+      "expect_value": {
+        "pct": -100,
+        "share": 0,
+        "flag": "gone"
+      }
+    },
+    {
+      "args": {
+        "now": 40000,
+        "before": 10000,
+        "revenue": 10000000
+      },
+      "expect_value": {
+        "pct": 300,
+        "share": 0.4,
+        "flag": ""
+      }
+    },
+    {
+      "args": {
+        "now": 300000,
+        "before": 0,
+        "revenue": 10000000,
+        "has_before": false
+      },
+      "expect_value": {
+        "pct": 0,
+        "share": 3,
+        "flag": ""
+      }
+    }
+  ]
+}

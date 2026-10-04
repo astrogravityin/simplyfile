@@ -1,0 +1,579 @@
+{
+  "chip_id": "ui.audit",
+  "kind": "accessor",
+  "set": "ui",
+  "label": "Tax audit words",
+  "aliases": [
+    "tax audit words"
+  ],
+  "params": [
+    {
+      "name": "t_PL",
+      "type": "text",
+      "default": "P&L",
+      "label": "t PL"
+    },
+    {
+      "name": "t_BS",
+      "type": "text",
+      "default": "Balance sheet",
+      "label": "t BS"
+    },
+    {
+      "name": "title",
+      "type": "text",
+      "default": "Tax audit",
+      "label": "title"
+    },
+    {
+      "name": "lede",
+      "type": "text",
+      "default": "Form 3CD, worked through: is an audit needed, what moved since last year, the clauses that apply to this client, and the points still open.",
+      "label": "lede"
+    },
+    {
+      "name": "ay",
+      "type": "text",
+      "default": "Assessment year",
+      "label": "ay"
+    },
+    {
+      "name": "loading",
+      "type": "text",
+      "default": "Reading the statements...",
+      "label": "loading"
+    },
+    {
+      "name": "need_title",
+      "type": "text",
+      "default": "Is a tax audit needed?",
+      "label": "need title"
+    },
+    {
+      "name": "need_yes",
+      "type": "text",
+      "default": "Yes - a tax audit is needed",
+      "label": "need yes"
+    },
+    {
+      "name": "need_no",
+      "type": "text",
+      "default": "Not on these figures",
+      "label": "need no"
+    },
+    {
+      "name": "need_unknown",
+      "type": "text",
+      "default": "Not known yet",
+      "label": "need unknown"
+    },
+    {
+      "name": "why_business",
+      "type": "text",
+      "default": "Business turnover {turnover} is above {limit}.",
+      "label": "why business"
+    },
+    {
+      "name": "why_business_cash_ok",
+      "type": "text",
+      "default": "Turnover {turnover} is above {limit}, even with cash within 5%.",
+      "label": "why business cash ok"
+    },
+    {
+      "name": "why_profession",
+      "type": "text",
+      "default": "Professional receipts {turnover} are above {limit}.",
+      "label": "why profession"
+    },
+    {
+      "name": "why_presumptive",
+      "type": "text",
+      "default": "Under 44AD / 44ADA with a lower profit than the presumptive rate, and income above the exemption limit.",
+      "label": "why presumptive"
+    },
+    {
+      "name": "why_below",
+      "type": "text",
+      "default": "Turnover {turnover} is within the limit and none of the other triggers apply.",
+      "label": "why below"
+    },
+    {
+      "name": "why_unknown",
+      "type": "text",
+      "default": "No turnover found - map the profit and loss statement in Intake & map (sales, services or professional receipts).",
+      "label": "why unknown"
+    },
+    {
+      "name": "fact_cash_ok",
+      "type": "text",
+      "default": "Cash receipts and cash payments are each within 5%",
+      "label": "fact cash ok"
+    },
+    {
+      "name": "fact_presumptive_lower",
+      "type": "text",
+      "default": "Under 44AD / 44ADA, declaring a lower profit",
+      "label": "fact presumptive lower"
+    },
+    {
+      "name": "fact_income_above_exempt",
+      "type": "text",
+      "default": "Total income above the basic exemption limit",
+      "label": "fact income above exempt"
+    },
+    {
+      "name": "mark_audit",
+      "type": "text",
+      "default": "Mark this year as a tax audit",
+      "label": "mark audit"
+    },
+    {
+      "name": "marked",
+      "type": "text",
+      "default": "This year is marked as a tax audit (Form 3CD).",
+      "label": "marked"
+    },
+    {
+      "name": "trend_title",
+      "type": "text",
+      "default": "This year against last",
+      "label": "trend title"
+    },
+    {
+      "name": "trend_sub",
+      "type": "text",
+      "default": "Every mapped profit and loss and balance sheet line. Flagged lines deserve a look.",
+      "label": "trend sub"
+    },
+    {
+      "name": "src_statements",
+      "type": "text",
+      "default": "Last year from {ay}'s statements.",
+      "label": "src statements"
+    },
+    {
+      "name": "src_return",
+      "type": "text",
+      "default": "Last year from the {ay} return as filed (imported).",
+      "label": "src return"
+    },
+    {
+      "name": "src_column",
+      "type": "text",
+      "default": "Last year from the previous-year column in this year's statement.",
+      "label": "src column"
+    },
+    {
+      "name": "src_none",
+      "type": "text",
+      "default": "No figures for last year yet - upload last year's statements or keep the previous-year column in this year's file.",
+      "label": "src none"
+    },
+    {
+      "name": "h_line",
+      "type": "text",
+      "default": "Line",
+      "label": "h line"
+    },
+    {
+      "name": "h_before",
+      "type": "text",
+      "default": "Last year",
+      "label": "h before"
+    },
+    {
+      "name": "h_now",
+      "type": "text",
+      "default": "This year",
+      "label": "h now"
+    },
+    {
+      "name": "h_change",
+      "type": "text",
+      "default": "Change",
+      "label": "h change"
+    },
+    {
+      "name": "h_share",
+      "type": "text",
+      "default": "% of turnover",
+      "label": "h share"
+    },
+    {
+      "name": "h_flag",
+      "type": "text",
+      "default": "Look at",
+      "label": "h flag"
+    },
+    {
+      "name": "flag_new",
+      "type": "text",
+      "default": "New this year",
+      "label": "flag new"
+    },
+    {
+      "name": "flag_gone",
+      "type": "text",
+      "default": "Gone",
+      "label": "flag gone"
+    },
+    {
+      "name": "flag_spike",
+      "type": "text",
+      "default": "Up sharply",
+      "label": "flag spike"
+    },
+    {
+      "name": "flag_drop",
+      "type": "text",
+      "default": "Down sharply",
+      "label": "flag drop"
+    },
+    {
+      "name": "flag_outpaced",
+      "type": "text",
+      "default": "Faster than turnover",
+      "label": "flag outpaced"
+    },
+    {
+      "name": "only_flagged",
+      "type": "text",
+      "default": "Only flagged",
+      "label": "only flagged"
+    },
+    {
+      "name": "find_lines",
+      "type": "text",
+      "default": "Search lines",
+      "label": "find lines"
+    },
+    {
+      "name": "no_lines",
+      "type": "text",
+      "default": "No mapped lines yet - tag the statements in Intake & map.",
+      "label": "no lines"
+    },
+    {
+      "name": "raise",
+      "type": "text",
+      "default": "Raise a point",
+      "label": "raise"
+    },
+    {
+      "name": "raised",
+      "type": "text",
+      "default": "Point raised",
+      "label": "raised"
+    },
+    {
+      "name": "turnover",
+      "type": "text",
+      "default": "Turnover",
+      "label": "turnover"
+    },
+    {
+      "name": "turnover_change",
+      "type": "text",
+      "default": "Turnover change",
+      "label": "turnover change"
+    },
+    {
+      "name": "check_title",
+      "type": "text",
+      "default": "Form 3CD checklist",
+      "label": "check title"
+    },
+    {
+      "name": "check_sub",
+      "type": "text",
+      "default": "Only the clauses that apply to this client. Mark each one; an issue opens an audit point.",
+      "label": "check sub"
+    },
+    {
+      "name": "st_todo",
+      "type": "text",
+      "default": "To do",
+      "label": "st todo"
+    },
+    {
+      "name": "st_done",
+      "type": "text",
+      "default": "Done",
+      "label": "st done"
+    },
+    {
+      "name": "st_na",
+      "type": "text",
+      "default": "Not applicable",
+      "label": "st na"
+    },
+    {
+      "name": "st_issue",
+      "type": "text",
+      "default": "Issue",
+      "label": "st issue"
+    },
+    {
+      "name": "note_ph",
+      "type": "text",
+      "default": "Working note",
+      "label": "note ph"
+    },
+    {
+      "name": "checks_done",
+      "type": "text",
+      "default": "{done} of {n} done",
+      "label": "checks done"
+    },
+    {
+      "name": "points_title",
+      "type": "text",
+      "default": "Audit points",
+      "label": "points title"
+    },
+    {
+      "name": "points_sub",
+      "type": "text",
+      "default": "What still needs an answer before the report is signed.",
+      "label": "points sub"
+    },
+    {
+      "name": "points_none",
+      "type": "text",
+      "default": "No open points.",
+      "label": "points none"
+    },
+    {
+      "name": "point_new",
+      "type": "text",
+      "default": "Add a point",
+      "label": "point new"
+    },
+    {
+      "name": "point_title_ph",
+      "type": "text",
+      "default": "What needs an answer",
+      "label": "point title ph"
+    },
+    {
+      "name": "point_owner",
+      "type": "text",
+      "default": "Who answers",
+      "label": "point owner"
+    },
+    {
+      "name": "nobody",
+      "type": "text",
+      "default": "Not assigned",
+      "label": "nobody"
+    },
+    {
+      "name": "pt_open",
+      "type": "text",
+      "default": "Open",
+      "label": "pt open"
+    },
+    {
+      "name": "pt_cleared",
+      "type": "text",
+      "default": "Cleared",
+      "label": "pt cleared"
+    },
+    {
+      "name": "clear",
+      "type": "text",
+      "default": "Clear",
+      "label": "clear"
+    },
+    {
+      "name": "reopen",
+      "type": "text",
+      "default": "Reopen",
+      "label": "reopen"
+    },
+    {
+      "name": "from_trend",
+      "type": "text",
+      "default": "Year on year",
+      "label": "from trend"
+    },
+    {
+      "name": "from_check",
+      "type": "text",
+      "default": "Checklist",
+      "label": "from check"
+    },
+    {
+      "name": "from_hand",
+      "type": "text",
+      "default": "Added",
+      "label": "from hand"
+    },
+    {
+      "name": "saved",
+      "type": "text",
+      "default": "Saved",
+      "label": "saved"
+    },
+    {
+      "name": "no_clear",
+      "type": "text",
+      "default": "Your role may raise points but not clear them.",
+      "label": "no clear"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "t_PL": "$t_PL",
+      "t_BS": "$t_BS",
+      "title": "$title",
+      "lede": "$lede",
+      "ay": "$ay",
+      "loading": "$loading",
+      "need_title": "$need_title",
+      "need_yes": "$need_yes",
+      "need_no": "$need_no",
+      "need_unknown": "$need_unknown",
+      "why_business": "$why_business",
+      "why_business_cash_ok": "$why_business_cash_ok",
+      "why_profession": "$why_profession",
+      "why_presumptive": "$why_presumptive",
+      "why_below": "$why_below",
+      "why_unknown": "$why_unknown",
+      "fact_cash_ok": "$fact_cash_ok",
+      "fact_presumptive_lower": "$fact_presumptive_lower",
+      "fact_income_above_exempt": "$fact_income_above_exempt",
+      "mark_audit": "$mark_audit",
+      "marked": "$marked",
+      "trend_title": "$trend_title",
+      "trend_sub": "$trend_sub",
+      "src_statements": "$src_statements",
+      "src_return": "$src_return",
+      "src_column": "$src_column",
+      "src_none": "$src_none",
+      "h_line": "$h_line",
+      "h_before": "$h_before",
+      "h_now": "$h_now",
+      "h_change": "$h_change",
+      "h_share": "$h_share",
+      "h_flag": "$h_flag",
+      "flag_new": "$flag_new",
+      "flag_gone": "$flag_gone",
+      "flag_spike": "$flag_spike",
+      "flag_drop": "$flag_drop",
+      "flag_outpaced": "$flag_outpaced",
+      "only_flagged": "$only_flagged",
+      "find_lines": "$find_lines",
+      "no_lines": "$no_lines",
+      "raise": "$raise",
+      "raised": "$raised",
+      "turnover": "$turnover",
+      "turnover_change": "$turnover_change",
+      "check_title": "$check_title",
+      "check_sub": "$check_sub",
+      "st_todo": "$st_todo",
+      "st_done": "$st_done",
+      "st_na": "$st_na",
+      "st_issue": "$st_issue",
+      "note_ph": "$note_ph",
+      "checks_done": "$checks_done",
+      "points_title": "$points_title",
+      "points_sub": "$points_sub",
+      "points_none": "$points_none",
+      "point_new": "$point_new",
+      "point_title_ph": "$point_title_ph",
+      "point_owner": "$point_owner",
+      "nobody": "$nobody",
+      "pt_open": "$pt_open",
+      "pt_cleared": "$pt_cleared",
+      "clear": "$clear",
+      "reopen": "$reopen",
+      "from_trend": "$from_trend",
+      "from_check": "$from_check",
+      "from_hand": "$from_hand",
+      "saved": "$saved",
+      "no_clear": "$no_clear"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-04: the words of the Tax audit screen.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "t_PL": "P&L",
+        "t_BS": "Balance sheet",
+        "title": "Tax audit",
+        "lede": "Form 3CD, worked through: is an audit needed, what moved since last year, the clauses that apply to this client, and the points still open.",
+        "ay": "Assessment year",
+        "loading": "Reading the statements...",
+        "need_title": "Is a tax audit needed?",
+        "need_yes": "Yes - a tax audit is needed",
+        "need_no": "Not on these figures",
+        "need_unknown": "Not known yet",
+        "why_business": "Business turnover {turnover} is above {limit}.",
+        "why_business_cash_ok": "Turnover {turnover} is above {limit}, even with cash within 5%.",
+        "why_profession": "Professional receipts {turnover} are above {limit}.",
+        "why_presumptive": "Under 44AD / 44ADA with a lower profit than the presumptive rate, and income above the exemption limit.",
+        "why_below": "Turnover {turnover} is within the limit and none of the other triggers apply.",
+        "why_unknown": "No turnover found - map the profit and loss statement in Intake & map (sales, services or professional receipts).",
+        "fact_cash_ok": "Cash receipts and cash payments are each within 5%",
+        "fact_presumptive_lower": "Under 44AD / 44ADA, declaring a lower profit",
+        "fact_income_above_exempt": "Total income above the basic exemption limit",
+        "mark_audit": "Mark this year as a tax audit",
+        "marked": "This year is marked as a tax audit (Form 3CD).",
+        "trend_title": "This year against last",
+        "trend_sub": "Every mapped profit and loss and balance sheet line. Flagged lines deserve a look.",
+        "src_statements": "Last year from {ay}'s statements.",
+        "src_return": "Last year from the {ay} return as filed (imported).",
+        "src_column": "Last year from the previous-year column in this year's statement.",
+        "src_none": "No figures for last year yet - upload last year's statements or keep the previous-year column in this year's file.",
+        "h_line": "Line",
+        "h_before": "Last year",
+        "h_now": "This year",
+        "h_change": "Change",
+        "h_share": "% of turnover",
+        "h_flag": "Look at",
+        "flag_new": "New this year",
+        "flag_gone": "Gone",
+        "flag_spike": "Up sharply",
+        "flag_drop": "Down sharply",
+        "flag_outpaced": "Faster than turnover",
+        "only_flagged": "Only flagged",
+        "find_lines": "Search lines",
+        "no_lines": "No mapped lines yet - tag the statements in Intake & map.",
+        "raise": "Raise a point",
+        "raised": "Point raised",
+        "turnover": "Turnover",
+        "turnover_change": "Turnover change",
+        "check_title": "Form 3CD checklist",
+        "check_sub": "Only the clauses that apply to this client. Mark each one; an issue opens an audit point.",
+        "st_todo": "To do",
+        "st_done": "Done",
+        "st_na": "Not applicable",
+        "st_issue": "Issue",
+        "note_ph": "Working note",
+        "checks_done": "{done} of {n} done",
+        "points_title": "Audit points",
+        "points_sub": "What still needs an answer before the report is signed.",
+        "points_none": "No open points.",
+        "point_new": "Add a point",
+        "point_title_ph": "What needs an answer",
+        "point_owner": "Who answers",
+        "nobody": "Not assigned",
+        "pt_open": "Open",
+        "pt_cleared": "Cleared",
+        "clear": "Clear",
+        "reopen": "Reopen",
+        "from_trend": "Year on year",
+        "from_check": "Checklist",
+        "from_hand": "Added",
+        "saved": "Saved",
+        "no_clear": "Your role may raise points but not clear them."
+      }
+    }
+  ]
+}

@@ -59,6 +59,7 @@ import clients
 import firms
 import intake
 import recon
+import audit
 import compute
 import itr_json
 import analytics
@@ -1218,6 +1219,37 @@ def api_compute_itr_json(cid: str, ay: str, _: dict = Depends(firms.gate("comput
 def api_compute_3cd(cid: str, ay: str, _: dict = Depends(firms.gate("compute"))):
     name, data = compute.schedule_3cd_xlsx(cid, ay)
     return Response(data, media_type=XLSX, headers=named(name.removesuffix(".xlsx"), ".xlsx"))
+
+
+# --- Tax audit (2026-10-04 owner: "phase 1, tax audit for SMEs"): applicability, year on year, the 3CD checklist, points (audit.py)
+@app.get("/api/audit/{cid}/{ay}")
+def api_audit(cid: str, ay: str, u: dict = Depends(firms.gate("audit"))):
+    return audit.page(u, cid, ay)
+
+
+@app.put("/api/audit/{cid}/{ay}/facts")
+def api_audit_facts(cid: str, ay: str, body: dict = Body(...), u: dict = Depends(firms.gate("audit"))):
+    return audit.set_facts(u, cid, ay, body)
+
+
+@app.put("/api/audit/{cid}/{ay}/checks/{iid}")
+def api_audit_check(cid: str, ay: str, iid: str, body: dict = Body(...), u: dict = Depends(firms.gate("audit"))):
+    return audit.set_check(u, cid, ay, iid, body)
+
+
+@app.post("/api/audit/{cid}/{ay}/points")
+def api_audit_point(cid: str, ay: str, body: dict = Body(...), u: dict = Depends(firms.gate("audit"))):
+    return audit.add_point(u, cid, ay, body)
+
+
+@app.put("/api/audit/{cid}/{ay}/points/{pid}")
+def api_audit_point_edit(cid: str, ay: str, pid: str, body: dict = Body(...), u: dict = Depends(firms.gate("audit"))):
+    return audit.set_point(u, cid, ay, pid, {k: v for k, v in body.items() if k in ("owner", "note")})
+
+
+@app.put("/api/audit/{cid}/{ay}/points/{pid}/status")
+def api_audit_point_status(cid: str, ay: str, pid: str, body: dict = Body(...), u: dict = Depends(firms.gate("audit", "clear"))):
+    return audit.set_point(u, cid, ay, pid, {"status": body.get("status")})
 
 
 # --- Reconcile (SimplyFile phase 3, 2026-10-04): books against 26AS / AIS / TIS (recon.py) ------------------------------
