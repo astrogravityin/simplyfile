@@ -972,6 +972,12 @@
       "type": "text",
       "default": "required",
       "label": "ready_req"
+    },
+    {
+      "name": "st_ready",
+      "type": "text",
+      "default": "Everything is in - nothing pending. Press Send for approval; the portal admin checks it, usually within {hours} hours.",
+      "label": "st_ready"
     }
   ],
   "expr": {
@@ -1137,7 +1143,8 @@
       "ready_papers": "$ready_papers",
       "ready_files": "$ready_files",
       "ready_done": "$ready_done",
-      "ready_req": "$ready_req"
+      "ready_req": "$ready_req",
+      "st_ready": "$st_ready"
     }
   },
   "returns": "record",
@@ -1308,7 +1315,8 @@
         "ready_papers": "Papers to upload",
         "ready_files": "PDF or a photo ({exts}), up to {mb} MB each.",
         "ready_done": "{done} of {n} ready",
-        "ready_req": "required"
+        "ready_req": "required",
+        "st_ready": "Everything is in - nothing pending. Press Send for approval; the portal admin checks it, usually within {hours} hours."
       }
     }
   ]

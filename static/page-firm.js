@@ -112,7 +112,7 @@ function papers(d) {
 
 function banner(d) {
   const f = d.firm, last = [...(f.history || [])].reverse().find((h) => h.note);
-  const text = w(`st_${f.state}`, { hours: d.settings.review_hours, at: when(f.submitted_at || '') });
+  const text = w(f.editable && !f.ready.say ? 'st_ready' : `st_${f.state}`, { hours: d.settings.review_hours, at: when(f.submitted_at || '') });
   return `<div class="fi-banner fi-${esc(f.state)}">${icon((P().state_icon || {})[f.state] || 'info', 16)}
     <div><b>${esc(stateOf(d, f.state).label)}</b><div class="small">${esc(text)}</div>
     ${last && (P().note_states || []).includes(f.state) ? `<div class="small fi-note">${icon('chat', 12)} ${esc(last.note)}</div>` : ''}</div>
