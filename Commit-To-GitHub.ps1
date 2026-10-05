@@ -75,8 +75,12 @@ Assert-Ok 'git add'
 # with -NoVerify.
 & $Python tools\staged_check.py
 Assert-Ok 'Staged file check (files are staged but NOT committed - fix them, or unstage with: git restore --staged <file>)'
-git commit -m $Message
-Assert-Ok 'git commit'
+# Another run may have committed these same changes meanwhile (2026-10-06): nothing staged = nothing to commit, push anyway.
+git diff --cached --quiet
+if ($LASTEXITCODE -ne 0) {
+    git commit -m $Message
+    Assert-Ok 'git commit'
+} else { Write-Host 'Already committed - nothing new to commit.' -ForegroundColor Yellow }
 }
 
 if ($NoPush) {
