@@ -234,6 +234,11 @@ input::placeholder,textarea::placeholder{color:var(--faint)}
 input:hover,select:hover,textarea:hover{border-color:var(--ink-2)}
 input:focus,select:focus,textarea:focus{outline:none;border-color:var(--brand);box-shadow:var(--ring)}
 input:disabled,select:disabled,textarea:disabled{background:var(--panel-2);color:var(--muted);cursor:not-allowed}
+/* 2026-10-06: the browser's autofill paints its own pale fill under our light ink in dark mode - the email vanished.
+   Keep our field colours under autofill too (an inset shadow is the only paint autofill lets a page set). */
+input:-webkit-autofill,input:-webkit-autofill:hover{-webkit-text-fill-color:var(--ink);caret-color:var(--ink);
+  -webkit-box-shadow:0 0 0 1000px var(--panel) inset;box-shadow:0 0 0 1000px var(--panel) inset;transition:background-color 99999s}
+input:-webkit-autofill:focus{-webkit-text-fill-color:var(--ink);-webkit-box-shadow:0 0 0 1000px var(--panel) inset,var(--ring);box-shadow:0 0 0 1000px var(--panel) inset,var(--ring)}
 input[readonly]{background:var(--panel-2);color:var(--ink-2)}
 textarea{min-height:82px;resize:vertical}
 input[type=checkbox]{width:16px;height:16px;accent-color:var(--brand);cursor:pointer}
