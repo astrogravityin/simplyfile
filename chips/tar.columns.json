@@ -20,14 +20,20 @@
         },
         "31(a)": {
           "accepted": "(?i)accepted|amount",
-          "repaid": "(?i)repaid|repayment"
+          "repaid": "(?i)repaid|repayment",
+          "max": "(?i)maxim|max\\b"
         },
-        "31(b)": {
+        "31(c)": {
           "accepted": "(?i)accepted",
-          "repaid": "(?i)repaid|repayment|amount"
+          "repaid": "(?i)repaid|repayment|amount",
+          "max": "(?i)maxim|max\\b"
         },
         "23": {
           "amount": "(?i)amount|paid"
+        },
+        "31(b)": {
+          "accepted": "(?i)accepted|amount",
+          "max": "(?i)maxim|max\\b"
         }
       },
       "label": "clauses"
@@ -42,7 +48,7 @@
   "returns": "record",
   "version": 1,
   "status": "published",
-  "description_nl": "A 3CD schedule names its columns; each figure of a clause is the first column whose title fits. A row's PAN is found in its words (tar.settings pan_pattern); its payment mode in its words (tar.codes modes).",
+  "description_nl": "A 3CD schedule names its columns; each figure of a clause is the first column whose title fits. A row's PAN is found in its words (tar.settings pan_pattern); its payment mode in its words (tar.codes modes). 2026-10-05 owner (3CD from a party master): 31(a)/31(b) also read the maximum outstanding column. 2026-10-05 owner (\"yes\" to the form's own numbering): repayments are clause 31(c), as Form 3CD numbers them; 31(b) is a specified sum taken (s.269SS) - Form3cdSec269SSDtls.",
   "test_cases": [
     {
       "args": {},
@@ -57,14 +63,20 @@
           },
           "31(a)": {
             "accepted": "(?i)accepted|amount",
-            "repaid": "(?i)repaid|repayment"
+            "repaid": "(?i)repaid|repayment",
+            "max": "(?i)maxim|max\\b"
           },
-          "31(b)": {
+          "31(c)": {
             "accepted": "(?i)accepted",
-            "repaid": "(?i)repaid|repayment|amount"
+            "repaid": "(?i)repaid|repayment|amount",
+            "max": "(?i)maxim|max\\b"
           },
           "23": {
             "amount": "(?i)amount|paid"
+          },
+          "31(b)": {
+            "accepted": "(?i)accepted|amount",
+            "max": "(?i)maxim|max\\b"
           }
         }
       }

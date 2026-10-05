@@ -263,16 +263,32 @@ def tar_facts(cid: str, ay: str) -> dict:
                 if p["form"] != "3CD" or p["table"] not in tm["clause_lists"]:
                     continue
                 titles, vals = [t for t, _ in x.get("by_col") or []], [v for _, v in x.get("by_col") or []]
-                it = {"label": x["label"], "address": ts["address_blank"], "pan": (re.findall(ts["pan_pattern"], (x["text"] or "").upper()) or [""])[0]}
+                party = row_party(c, x, ts)
+                it = {"label": party["name"], "address": party["address"] or ts["address_blank"], "pan": party["pan"]}
                 for name, pat in cols.get(p["table"], {}).items():
                     i = ops.first_index_matching(titles, pat)
                     it[name] = vals[i] if i is not None else 0
-                mode = ops.first_matching(x["text"] or "", tc["modes"], "pattern", "code", "")
-                it |= {"mode": mode, "account_payee": yn(mode in tc["account_payee_modes"]) if mode else ""}
+                if not it.get(tm["main_amount"].get(p["table"], ""), 1):            # one amount, under a title we cannot read
+                    it[tm["main_amount"][p["table"]]] = x["amount"]
+                said = {name: next((v for t, v in x.get("texts") or [] if ops.search(t, pat)), "")
+                        for name, pat in tm["text_columns"].get(p["table"], {}).items()}
+                yes = lambda name: bool(said.get(name)) and ops.search(said[name], tc["yes_pattern"])  # noqa: E731
+                mode = ops.first_matching(x["text"] or "", tc["modes"], "pattern", "code", "") or party["mode"]
+                payee = (not yes("otherwise")) if said.get("otherwise") else (mode in tc["account_payee_modes"]) if mode else True
+                it |= {"mode": mode or tc["mode_default"][str(payee).lower()], "account_payee": yn(payee),
+                       "squared": yn(yes("squared")), "relation": party["relation"] or said.get("relation") or tc["relation_default"],
+                       "nature": ops.first_matching(x["text"] or "", tc["natures"], "pattern", "word", tc["nature_default"])}
+                if not it.get("max"):
+                    it["max"] = max(_int(it.get("accepted")), _int(x["amount"]))   # no maximum column: at least what was taken
                 if "rate" in it:
                     blk = next((b for b in tc["blocks"] if ops.search(x["label"] or "", b["pattern"])), {"by_rate": {}})
                     it["block"] = blk["by_rate"].get(str(int(float(it["rate"] or 0))), "")
-                lists[tm["clause_lists"][p["table"]]].append({k: (_int(v) if isinstance(v, float) and k != "rate" else v) for k, v in it.items()})
+                one = {k: (_int(v) if isinstance(v, float) and k != "rate" else v) for k, v in it.items()}
+                lists[tm["clause_lists"][p["table"]]].append(one)
+                own = {tm["clause_lists"].get(q["table"]) for q in intake.parse_ref(x["ref"]) or [] if q["form"] == "3CD"}
+                for also in tm["also"].get(p["table"], []):                   # a loan repaid in the year is a repayment too
+                    if one.get(also["when"]) and also["list"] not in own:     # ... unless the row is tagged there itself
+                        lists[also["list"]].append(one)
     for lst, field in tm["skip_zero"].items():
         lists[lst] = [x for x in lists[lst] if x.get(field)]
     import firms  # noqa: PLC0415
@@ -291,6 +307,34 @@ def tar_facts(cid: str, ay: str) -> dict:
         "auditor": {"first": " ".join(owner[:-1]), "last": owner[-1] if owner else "", "membership_no": fm.get("membership_no", ""),
                     "frn": fm.get("frn", ""), "flat": (aparts[0] if aparts else "")[:100], "city": (aparts[-1] if len(aparts) > 1 else "")[:50],
                     "state": (fm.get("gstin") or "")[:2], "pin": apin, "voice": tc["voice"][str(bool(fm.get("frn"))).lower()]}}
+
+
+def row_party(c: dict, x: dict, ts: dict) -> dict:
+    """The party a 3CD row names - its name, and the lines under it (address, PAN) - with the client's party master filling
+    in, and correcting, what the statement says (a name that wraps onto the next line, a PAN with spaces)."""
+    more = [m for m in x.get("more") or [] if re.search(r"\w", m)]
+    pan = next((re.sub(r"\s", "", m.group(0)) for ln in [x["text"] or ""] + more for m in [re.search(ts["pan_loose"], ln.upper())] if m), "")
+    addr = [re.sub(ts["pan_loose"], "", ln, flags=re.I).strip(ts["address_trim"]) for ln in more]
+    got = {"name": x["label"], "address": ts["address_join"].join(a for a in addr if a)[: ts["address_max"]], "pan": pan, "relation": "", "mode": ""}
+    have = clients.party_of(c, got["name"], pan) or {}
+    return {k: have.get(k) or got[k] for k in got}
+
+
+def statement_parties(cid: str, ay: str) -> list[dict]:
+    """Every party the year's 3CD-tagged rows name, read from the statements (for Fill the party master)."""
+    import intake  # noqa: PLC0415
+    tm, ts, c = engine.run("tar.map"), engine.run("tar.settings"), clients.get(cid)
+    seen, out = set(), []
+    for m in intake.files(cid, ay)["files"]:
+        for x in intake.view(cid, ay, m["id"])["rows"]:
+            if x["state"] == "tagged" and any(p["form"] == "3CD" and p["table"] in tm["party_clauses"] for p in intake.parse_ref(x["ref"]) or []):
+                got = row_party({"parties": []}, x, ts)
+                got["relation"] = next((v for t, v in x.get("texts") or [] if re.search(tm["relation_title"], t)), "")
+                k = clients.party_key(got["name"], got["pan"])
+                if got["name"] and k not in seen:
+                    seen.add(k)
+                    out.append(got)
+    return out
 
 
 def _book_profit(cid: str, ay: str) -> float:

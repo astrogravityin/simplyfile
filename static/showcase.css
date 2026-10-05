@@ -342,6 +342,38 @@ footer a { color: var(--on-night); text-decoration: none; font-weight: 600; disp
 [data-skin="ledger"] .marks button:hover, [data-skin="ledger"] .marks button.on { background: rgba(16, 185, 129, .25); border-color: #34d399; }
 [data-skin="ledger"] .pillars .card::after { background: radial-gradient(circle, rgba(16, 185, 129, .12), transparent 70%); }
 
+/* --- skin "justice" (Justify, chip showcase.page skin): ink blue and gold, crisp sans headings - a chambers' tool --- */
+:root[data-skin="justice"] {
+  --ink: #101a3d; --ink-2: #3b4566; --ink-3: #6b7493;
+  --paper: #f7f8fc; --paper-2: #eef0f8; --card: #ffffff; --line: #dde1ef;
+  --night: #0b1230; --night-2: #121b44; --night-3: #1f2b63; --on-night: #eef1ff; --on-night-2: #aab3d6;
+  --brand: #3b5bdb; --brand-2: #748ffc; --kite: #3b5bdb; --saffron: #f6c453; --teal: #2b8a3e; --sky: #4c6ef5;
+  --serif: var(--sans); --radius: 14px; --radius-s: 10px;
+}
+@media (prefers-color-scheme: dark) {
+  :root[data-skin="justice"]:not([data-theme="light"]) { --ink: #e8ecfb; --ink-2: #b6bedc; --ink-3: #8790b3; --paper: #0b1230; --paper-2: #10183d; --card: #151f4a; --line: #26326a; }
+}
+:root[data-skin="justice"][data-theme="dark"] { --ink: #e8ecfb; --ink-2: #b6bedc; --ink-3: #8790b3; --paper: #0b1230; --paper-2: #10183d; --card: #151f4a; --line: #26326a; }
+[data-skin="justice"] h1, [data-skin="justice"] h2 { letter-spacing: -.025em; font-weight: 800; }
+[data-skin="justice"] .hero { background: radial-gradient(1100px 560px at 80% 0%, rgba(76, 110, 245, .28), transparent 60%), radial-gradient(800px 480px at 0% 100%, rgba(246, 196, 83, .14), transparent 55%), var(--night); }
+[data-skin="justice"] .hero h1 em { background: linear-gradient(100deg, #ffd875, #f6c453 55%, #fff1c2); -webkit-background-clip: text; background-clip: text; }
+[data-skin="justice"] .btn.primary { background: #3b5bdb; box-shadow: 0 10px 26px -10px rgba(59, 91, 219, .9); }
+[data-skin="justice"] .btn.primary:hover { background: #2f4ac0; }
+[data-skin="justice"] .btn { border-radius: 10px; }
+[data-skin="justice"] .stat b { background: linear-gradient(120deg, #fff, #f6c453); -webkit-background-clip: text; background-clip: text; }
+[data-skin="justice"] .top.solid { background: rgba(11, 18, 48, .9); }
+[data-skin="justice"] .cover span { background: #3b5bdb; box-shadow: 0 0 0 10px rgba(255, 255, 255, .12), 0 20px 50px -10px rgba(59, 91, 219, .9); }
+[data-skin="justice"] .ch.on { background: linear-gradient(90deg, rgba(76, 110, 245, .3), rgba(76, 110, 245, .06)); }
+[data-skin="justice"] .bar i { background: linear-gradient(90deg, #748ffc, #f6c453); }
+[data-skin="justice"] .cta { background: radial-gradient(900px 420px at 50% 0%, rgba(76, 110, 245, .3), transparent 60%), linear-gradient(160deg, #121b44, #0b1230); }
+[data-skin="justice"] .cta svg.sky { display: none; }
+[data-skin="justice"] .b0 { background: linear-gradient(135deg, #3b5bdb, #748ffc); }
+[data-skin="justice"] .b1 { background: linear-gradient(135deg, #b8860b, #f6c453); }
+[data-skin="justice"] .b2 { background: linear-gradient(135deg, #2b8a3e, #51cf66); }
+[data-skin="justice"] .b3 { background: linear-gradient(135deg, #c92a2a, #ff6b6b); }
+[data-skin="justice"] .marks button:hover, [data-skin="justice"] .marks button.on { background: rgba(76, 110, 245, .25); border-color: #748ffc; }
+[data-skin="justice"] .pillars .card::after { background: radial-gradient(circle, rgba(76, 110, 245, .12), transparent 70%); }
+
 /* Try it live (chip showcase.page play): how to get into the demo, what to try, a look at the firm you get. */
 .play { background: radial-gradient(900px 480px at 100% 0%, rgba(109, 94, 252, .22), transparent 60%), linear-gradient(170deg, var(--night-2), var(--night)); color: var(--on-night); position: relative; overflow: hidden; }
 .play .lede, .play .fine { color: var(--on-night-2); }

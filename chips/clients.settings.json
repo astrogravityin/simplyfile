@@ -139,7 +139,11 @@
         "partner_name": 120,
         "share": 10,
         "notes": 1000,
-        "year_field": 60
+        "year_field": 60,
+        "party_name": 125,
+        "party_address": 150,
+        "party_relation": 100,
+        "party_mode": 6
       },
       "label": "max len"
     },
@@ -154,6 +158,12 @@
       "type": "text",
       "default": "client",
       "label": "a filing archived BECAUSE its client was - Restore of the client brings exactly these back"
+    },
+    {
+      "name": "party_name_drop",
+      "type": "text",
+      "default": "(?i)^\\s*(sri|smt|shri|shrimati|mr|mrs|ms|miss|dr|m/s)\\.?\\s+",
+      "label": "party name drop"
     }
   ],
   "expr": {
@@ -166,13 +176,14 @@
       "stages": "$stages",
       "max_len": "$max_len",
       "bulk_max": "$bulk_max",
-      "with_parent": "$with_parent"
+      "with_parent": "$with_parent",
+      "party_name_drop": "$party_name_drop"
     }
   },
   "returns": "record",
   "version": 2,
   "status": "published",
-  "description_nl": "Which statuses an assessee can have (with the PAN 4th letter and the ITR form each files), the PAN / GSTIN / IFSC shapes, the assessment years on offer and the stages a year moves through. An LLP's PAN carries F, like a firm. 2026-10-04 owner: \"multi select and move to Archive; archive a client -> all its filings; archive a filing alone -> the client stays; parent archived -> child archived\".",
+  "description_nl": "Which statuses an assessee can have (with the PAN 4th letter and the ITR form each files), the PAN / GSTIN / IFSC shapes, the assessment years on offer and the stages a year moves through. An LLP's PAN carries F, like a firm. 2026-10-04 owner: \"multi select and move to Archive; archive a client -> all its filings; archive a filing alone -> the client stays; parent archived -> child archived\". 2026-10-05 owner (3CD from a party master: \"we need to input 30-40 names, addresses and PANs\"): each client keeps a party master - lenders, payees, relatives - with name, address, PAN, relationship and usual payment mode; the party fields fit the Form 3CD schema (name 125, address 150). party_name_drop: honorifics a statement may put before a name, ignored when matching a party by name.",
   "test_cases": [
     {
       "args": {},
@@ -281,10 +292,15 @@
           "partner_name": 120,
           "share": 10,
           "notes": 1000,
-          "year_field": 60
+          "year_field": 60,
+          "party_name": 125,
+          "party_address": 150,
+          "party_relation": 100,
+          "party_mode": 6
         },
         "bulk_max": 500,
-        "with_parent": "client"
+        "with_parent": "client",
+        "party_name_drop": "(?i)^\\s*(sri|smt|shri|shrimati|mr|mrs|ms|miss|dr|m/s)\\.?\\s+"
       }
     }
   ]

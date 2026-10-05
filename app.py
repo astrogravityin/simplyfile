@@ -1101,6 +1101,12 @@ def api_clients_update(cid: str, body: dict = Body(...), u: dict = Depends(firms
     return clients.save(u, body, cid)
 
 
+@app.post("/api/clients/{cid}/parties/learn")
+def api_clients_parties_learn(cid: str, ay: str = "", u: dict = Depends(firms.gate("clients"))):
+    """2026-10-05 owner (3CD): the parties this year's 3CD rows name, into the client's party master."""
+    return clients.learn_parties(u, cid, itr_json.statement_parties(cid, ay or clients.settings()["current_ay"]))
+
+
 @app.put("/api/clients/{cid}/years/{ay}")
 def api_clients_year(cid: str, ay: str, body: dict = Body(...), u: dict = Depends(firms.gate("clients"))):
     return clients.set_year(u, cid, ay, body)        # form, 3CD audit, preparer; the stage moves by itself

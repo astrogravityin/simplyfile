@@ -297,7 +297,7 @@ def _():
     return f"valid against {rep['schema']}, {rep['filled']} values placed; BS tallies {b['bs_sources']:,.0f}, P&L PBT = business profit {b['pl_profit']:,.0f}"
 
 
-@step("16e Form 3CB-3CD JSON in the CBDT format: Part A, the CA firm as auditor, clauses 18 / 31(a) / 31(b)")
+@step("16e Form 3CB-3CD JSON in the CBDT format: Part A, the CA firm as auditor, clauses 18 / 31(a) / 31(c)")
 def _():
     p, cb = S["partner"], f"/api/compute/{S['cid']}/{AY}"
     rep = p.get(f"{cb}/3cd-check").json()

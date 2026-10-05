@@ -20,7 +20,11 @@ const LOGO = `<svg viewBox="0 0 32 32" aria-hidden="true"><defs><linearGradient 
 // a page with a tick on it (chip nav.logo "ledger" - SimplyFile)
 const LEDGER_LOGO = `<svg viewBox="0 0 32 32" aria-hidden="true"><defs><linearGradient id="llg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#34d399"/><stop offset="1" stop-color="#059669"/></linearGradient></defs>
   <rect width="32" height="32" rx="8" fill="url(#llg)"/><path d="M10 7h9l4 4v14H10z" fill="#fff"/><path d="M13.5 18l2.6 2.6 5-5.2" fill="none" stroke="#059669" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M13 11.5h5M13 14.5h7" stroke="#a7f3d0" stroke-width="1.8" stroke-linecap="round"/></svg>`;
-const LOGOS = { play: LOGO, ledger: LEDGER_LOGO };
+// the scales of justice (chip nav.logo "scales" - Justify)
+const SCALES_LOGO = `<svg viewBox="0 0 32 32" aria-hidden="true"><defs><linearGradient id="slg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3b5bdb"/><stop offset="1" stop-color="#1e2a78"/></linearGradient></defs>
+  <rect width="32" height="32" rx="8" fill="url(#slg)"/><path d="M16 7v17M11 25h10" stroke="#fff" stroke-width="2" stroke-linecap="round"/><path d="M8 11h16" stroke="#f6c453" stroke-width="2.2" stroke-linecap="round"/>
+  <path d="M10 11l-3 6h6zM22 11l-3 6h6z" fill="none" stroke="#f6c453" stroke-width="1.6" stroke-linejoin="round"/><path d="M7 17a3 2 0 0 0 6 0M19 17a3 2 0 0 0 6 0" fill="#f6c453"/></svg>`;
+const LOGOS = { play: LOGO, ledger: LEDGER_LOGO, scales: SCALES_LOGO };
 
 const HERO_ART = `<svg viewBox="0 0 560 500" role="img" aria-label="A kite in the wind, carrying a book, a comic, a film and a sound wave">
   <defs>
@@ -90,7 +94,33 @@ const LEDGER_ART = `<svg viewBox="0 0 560 500" role="img" aria-label="Spreadshee
     <circle cx="65" cy="160" r="34" fill="url(#lok)"/><path d="M50 160 l11 11 l21 -23" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
   </g></g>
 </svg>`;
-const HERO = { kite: HERO_ART, ledger: LEDGER_ART };
+// a court diary, the scales and two deadline chips - one met, one running (Justify - chip hero.art "scales"); shapes only
+const SCALES_ART = `<svg viewBox="0 0 560 500" role="img" aria-label="A court diary, the scales of justice and a deadline met">
+  <defs>
+    <radialGradient id="sglow" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#4c6ef5" stop-opacity=".45"/><stop offset="1" stop-color="#4c6ef5" stop-opacity="0"/></radialGradient>
+    <linearGradient id="sgold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffd875"/><stop offset="1" stop-color="#e8a917"/></linearGradient>
+    <filter id="ssoft" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="12" stdDeviation="14" flood-color="#000" flood-opacity=".35"/></filter>
+  </defs>
+  <circle cx="290" cy="240" r="225" fill="url(#sglow)"/>
+  <g transform="translate(36 86)"><g class="float" filter="url(#ssoft)">
+    <rect width="190" height="230" rx="14" fill="#f3f5ff"/><rect width="190" height="44" rx="14" fill="#3b5bdb"/><rect y="30" width="190" height="14" fill="#3b5bdb"/>
+    <rect x="16" y="14" width="78" height="14" rx="5" fill="#fff" opacity=".9"/>
+    ${[0, 1, 2, 3, 4].map((r) => [0, 1, 2, 3, 4, 5].map((c) => `<rect x="${14 + c * 28}" y="${58 + r * 32}" width="22" height="22" rx="5" fill="${r === 2 && c === 3 ? '#e8a917' : r === 1 && c === 1 ? '#3b5bdb' : '#dfe4fb'}"/>`).join('')).join('')}
+  </g></g>
+  <g transform="translate(262 70)"><g class="kite" filter="url(#ssoft)">
+    <path d="M110 30v190M70 230h80" stroke="#f3f5ff" stroke-width="10" stroke-linecap="round"/>
+    <path d="M30 70h160" stroke="url(#sgold)" stroke-width="10" stroke-linecap="round"/><circle cx="110" cy="30" r="12" fill="url(#sgold)"/>
+    <path d="M44 70l-26 62h52zM176 70l-26 62h52z" fill="none" stroke="url(#sgold)" stroke-width="6" stroke-linejoin="round"/>
+    <path d="M14 132a30 16 0 0 0 60 0zM146 132a30 16 0 0 0 60 0z" fill="url(#sgold)"/>
+  </g></g>
+  <g transform="translate(300 330)"><g class="float c" filter="url(#ssoft)"><rect width="200" height="58" rx="29" fill="#2b8a3e"/>
+    <path d="M30 29 l9 9 l18 -19" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="70" y="18" width="104" height="9" rx="4.5" fill="#fff" opacity=".9"/><rect x="70" y="33" width="70" height="8" rx="4" fill="#fff" opacity=".6"/></g></g>
+  <g transform="translate(70 360)"><g class="float d" filter="url(#ssoft)"><rect width="170" height="52" rx="26" fill="#c92a2a"/>
+    <circle cx="28" cy="26" r="11" fill="none" stroke="#fff" stroke-width="3.5"/><path d="M28 19v8l5 3" stroke="#fff" stroke-width="3.5" stroke-linecap="round"/>
+    <rect x="52" y="17" width="94" height="9" rx="4.5" fill="#fff" opacity=".9"/><rect x="52" y="30" width="60" height="7" rx="3.5" fill="#fff" opacity=".6"/></g></g>
+</svg>`;
+const HERO = { kite: HERO_ART, ledger: LEDGER_ART, scales: SCALES_ART };
 
 // one step splitting into four roads that meet again at "done"
 const ROADS_ART = (rows) => {
@@ -143,8 +173,9 @@ function draw(d) {
   document.title = d.meta.title;
   if (d.skin) document.documentElement.dataset.skin = d.skin;   // a site's own look (showcase.css [data-skin=...])
   const md = document.querySelector('meta[name="description"]'); if (md) md.content = d.meta.description;
-  const groups = d.theatre.groups;
-  const chs = d.chapters;
+  const films = !!(d.theatre && (d.chapters || []).length);   // 2026-10-05: a new domain may have no films yet - its page still draws
+  const groups = films ? d.theatre.groups : [];
+  const chs = d.chapters || [];
   const firstOf = (mod) => chs.findIndex((c) => c.module === mod);
   root.innerHTML = `
   <header class="top" id="top"><div class="wrap">
@@ -160,7 +191,7 @@ function draw(d) {
       <h1>${headline(d.hero.title)}</h1>
       <p class="lede">${esc(d.hero.sub)}</p>
       <div class="acts">
-        <button class="btn primary" type="button" data-play-all>${icon('play', 18)} ${esc(d.hero.play)}</button>
+        ${films ? `<button class="btn primary" type="button" data-play-all>${icon('play', 18)} ${esc(d.hero.play)}</button>` : ''}
         <a class="btn ghost" href="${esc(d.hero.start_href)}">${esc(d.hero.start)} ${icon('right', 16)}</a>
       </div>
       <p class="note">${icon('shield', 16)} <span>${esc(d.hero.note)}</span></p>
@@ -176,7 +207,7 @@ ${d.steps ? `  <section class="steps" id="how"><div class="wrap">
     <ol class="steprow">${d.steps.rows.map((r, i) => `<li class="reveal">${badge(r.icon, i)}<span class="n">${i + 1}</span><h3>${esc(r.title)}</h3><p>${esc(r.line)}</p></li>`).join('')}</ol>
   </div></section>` : ''}
 
-  <section class="theatre" id="watch"><div class="wrap">
+  ${films ? `  <section class="theatre" id="watch"><div class="wrap">
     ${head(d.theatre)}
     <div class="stage">
       <div class="list" role="listbox" aria-label="${esc(d.theatre.playlist)}">
@@ -203,7 +234,7 @@ ${d.steps ? `  <section class="steps" id="how"><div class="wrap">
         <p class="next" id="sc-next"></p>
       </div>
     </div>
-  </div></section>
+  </div></section>` : ''}
 
 ${d.play ? `  <section class="play" id="play"><div class="wrap">
     <div class="playgrid">
@@ -214,7 +245,7 @@ ${d.play ? `  <section class="play" id="play"><div class="wrap">
         <ol class="playsteps">${d.play.steps.map((r, i) => `<li>${badge(r.icon, i)}<span><b>${esc(r.title)}</b><span>${esc(r.line)}</span></span></li>`).join('')}</ol>
         <div class="acts">
           <a class="btn primary" href="${esc(d.play.href)}" target="_blank" rel="noopener">${icon('play', 17)} ${esc(d.play.button)} ${icon('external', 14)}</a>
-          <button type="button" class="btn ghost" data-play-all>${esc(d.play.watch)}</button>
+          ${films ? `<button type="button" class="btn ghost" data-play-all>${esc(d.play.watch)}</button>` : ''}
         </div>
         <p class="fine">${icon('shield', 14)} <span>${esc(d.play.fine)}</span></p>
       </div>
@@ -303,14 +334,14 @@ ${d.faq ? `  <section class="faq" id="faq"><div class="wrap">
     <div class="acts">
       <a class="btn primary" href="${esc(d.hero.start_href)}">${esc(d.cta.start)} ${icon('right', 16)}</a>
       ${d.play ? `<a class="btn ghost" href="${esc(d.play.href)}" target="_blank" rel="noopener">${esc(d.cta.demo || d.play.button)} ${icon('external', 14)}</a>` : ''}
-      <button type="button" class="btn ghost" data-play-all>${icon('play', 16)} ${esc(d.cta.watch)}</button>
+      ${films ? `<button type="button" class="btn ghost" data-play-all>${icon('play', 16)} ${esc(d.cta.watch)}</button>` : ''}
     </div>
     <p class="fine">${esc(d.cta.fine)}</p>
   </div>${SKY}</section>
 
   <footer><div class="wrap"><span>${esc(d.foot.line)}</span><a href="${esc(d.foot.katha_href)}" target="_blank" rel="noopener">${esc(d.foot.katha)} ${icon('external', 13)}</a></div></footer>`;
   root.removeAttribute('aria-busy');
-  wirePlayer(d);
+  if (d.theatre && (d.chapters || []).length) wirePlayer(d);
   wireFeatures(d);
   wireChrome();
   // a link to a section (/#features) arrives before the sections exist - the browser found nothing to scroll to; go there now

@@ -617,6 +617,66 @@
       "name": "no_filing",
       "type": "text",
       "default": "{name} has no {ay} filing."
+    },
+    {
+      "name": "parties",
+      "type": "text",
+      "default": "Parties - lenders, payees and relatives",
+      "label": "parties"
+    },
+    {
+      "name": "parties_lede",
+      "type": "text",
+      "default": "Typed once, used every year: Form 3CD clauses 31 (loans and repayments) and 23 (payments to relatives) take the name, address and PAN from here when a statement leaves them out. Fill from statements adds the parties this year's 3CD rows name and fills in what is missing - save your own changes first.",
+      "label": "parties lede"
+    },
+    {
+      "name": "pt_name",
+      "type": "text",
+      "default": "Name",
+      "label": "pt name"
+    },
+    {
+      "name": "pt_address",
+      "type": "text",
+      "default": "Address",
+      "label": "pt address"
+    },
+    {
+      "name": "pt_pan",
+      "type": "text",
+      "default": "PAN",
+      "label": "pt pan"
+    },
+    {
+      "name": "pt_relation",
+      "type": "text",
+      "default": "Relationship",
+      "label": "pt relation"
+    },
+    {
+      "name": "pt_mode",
+      "type": "text",
+      "default": "Usual mode (NEFT, C, CR ...)",
+      "label": "pt mode"
+    },
+    {
+      "name": "add_party",
+      "type": "text",
+      "default": "Add a party",
+      "label": "add party"
+    },
+    {
+      "name": "learn_parties",
+      "type": "text",
+      "default": "Fill from {ay} statements",
+      "label": "learn parties"
+    },
+    {
+      "name": "learned_parties",
+      "type": "text",
+      "default": "{added} new parties added, {filled} filled in. Nothing you typed was changed.",
+      "label": "learned parties"
     }
   ],
   "expr": {
@@ -726,13 +786,23 @@
       "filing_archived_tag": "$filing_archived_tag",
       "filing_restored": "$filing_restored",
       "parent_archived": "$parent_archived",
-      "no_filing": "$no_filing"
+      "no_filing": "$no_filing",
+      "parties": "$parties",
+      "parties_lede": "$parties_lede",
+      "pt_name": "$pt_name",
+      "pt_address": "$pt_address",
+      "pt_pan": "$pt_pan",
+      "pt_relation": "$pt_relation",
+      "pt_mode": "$pt_mode",
+      "add_party": "$add_party",
+      "learn_parties": "$learn_parties",
+      "learned_parties": "$learned_parties"
     }
   },
   "returns": "record",
   "version": 2,
   "status": "published",
-  "description_nl": "The words of the Clients & years screen and its error sentences. {placeholders} are filled on the page. 2026-10-04 owner: \"multi select and move to Archive; archive a client -> all its filings; archive a filing alone -> the client stays; parent archived -> child archived\".",
+  "description_nl": "The words of the Clients & years screen and its error sentences. {placeholders} are filled on the page. 2026-10-04 owner: \"multi select and move to Archive; archive a client -> all its filings; archive a filing alone -> the client stays; parent archived -> child archived\". 2026-10-05 owner (3CD): the client's party master.",
   "test_cases": [
     {
       "args": {},
@@ -841,7 +911,17 @@
         "filing_archived_tag": "{ay} filing archived",
         "filing_restored": "Filing restored",
         "parent_archived": "{name} is archived - restore the client first; its filings come back with it.",
-        "no_filing": "{name} has no {ay} filing."
+        "no_filing": "{name} has no {ay} filing.",
+        "parties": "Parties - lenders, payees and relatives",
+        "parties_lede": "Typed once, used every year: Form 3CD clauses 31 (loans and repayments) and 23 (payments to relatives) take the name, address and PAN from here when a statement leaves them out. Fill from statements adds the parties this year's 3CD rows name and fills in what is missing - save your own changes first.",
+        "pt_name": "Name",
+        "pt_address": "Address",
+        "pt_pan": "PAN",
+        "pt_relation": "Relationship",
+        "pt_mode": "Usual mode (NEFT, C, CR ...)",
+        "add_party": "Add a party",
+        "learn_parties": "Fill from {ay} statements",
+        "learned_parties": "{added} new parties added, {filled} filled in. Nothing you typed was changed."
       }
     }
   ]

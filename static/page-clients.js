@@ -17,9 +17,8 @@ const field = (id, label, value = '', attrs = '') => `<div class="field"><label 
 const grid = (html) => `<div class="grid two">${html}</div>`;   // the framework grid: labels line up (no stacked .field margin)
 const stageOf = (id) => K.stages.find((s) => s.id === id) || { label: id, tag: 'tag' };
 
-// Presentation only: a steady colour per name for the initials badge.
-export const hue = (name) => [...String(name)].reduce((h, ch) => (h * 31 + ch.charCodeAt(0)) % 360, 7);
-export const initials = (name) => String(name).split(/\s+/).filter(Boolean).slice(0, 2).map((x) => x[0]).join('').toUpperCase() || '?';
+import { hue, initials, kpiTile } from './page-kit.js';   // 2026-10-05: shared helpers live in the boilerplate page-kit.js
+export { hue, initials, kpiTile };
 
 // Dots on a line: the stages done, the one the year is at, the ones to come (colours = chip clients.settings).
 function stepper(stageId) {
@@ -49,9 +48,6 @@ function pipeline(sum) {
       `<span><i style="background:var(${s.color})"></i>${esc(s.label)} <b>${sum.stages[s.id]}</b></span>`).join('')}</div>`;
 }
 
-// The one KPI tile every screen uses (CSS .sf-kpi): icon + label, the value, a sub-line - values line up across a row.
-export const kpiTile = (ic, tone, label, value, sub) => `<div class="sf-kpi" style="--k:var(${tone})"><div class="sf-kpi-top"><span class="sf-kpi-ic">${icon(ic, 18)}</span>
-  <span class="sf-kpi-lbl" title="${esc(label)}">${esc(label)}</span></div><div class="sf-kpi-big" title="${esc(String(value))}">${esc(String(value))}</div><div class="sf-kpi-sub">${esc(sub)}</div></div>`;
 
 function kpis(sum) {
   return kpiTile('users', '--brand', w('k_clients'), sum.active, w('k_archived', { n: sum.archived }))
@@ -159,6 +155,8 @@ function editor(c, reload) {
   const banks = rowsBox('bank', c.banks.length ? c.banks : [{}],
     [['bank', 'b_bank'], ['branch', 'b_branch'], ['type', 'b_type'], ['account', 'b_account'], ['ifsc', 'b_ifsc']]);
   const partners = rowsBox('partner', c.partners, [['name', 'p_name'], ['pan', 'p_pan'], ['share', 'p_share']]);
+  // 2026-10-05 owner (3CD): lenders, payees, relatives - name, address, PAN typed once, used in Form 3CD every year
+  const parties = rowsBox('party', c.parties || [], [['name', 'pt_name'], ['address', 'pt_address'], ['pan', 'pt_pan'], ['relation', 'pt_relation'], ['mode', 'pt_mode']]);
   const y = (c.years || {})[AY];
   const yearCard = isNew ? '' : `<section class="card" style="margin-top:14px"><h3>${esc(w('year_card', { ay: AY }))}</h3>
     ${y ? grid(`<div class="field"><label for="y-form">${esc(w('y_form'))}</label><select id="y-form">${K.forms.map((f) => `<option ${f === y.form ? 'selected' : ''}>${esc(f)}</option>`).join('')}</select></div>
@@ -190,6 +188,10 @@ function editor(c, reload) {
     <button type="button" class="small ghost" id="c-add-bank">${icon('plus', 12)} ${esc(w('add_bank'))}</button>
     <div id="c-partners-box"><h3>${esc(w('partners'))}</h3><div id="c-partners">${partners.html}</div>
     <button type="button" class="small ghost" id="c-add-partner">${icon('plus', 12)} ${esc(w('add_partner'))}</button></div>
+    <h3 style="margin-top:14px">${esc(w('parties'))}</h3><div class="small muted">${esc(w('parties_lede'))}</div>
+    <div id="c-parties">${parties.html}</div>
+    <div class="row tight"><button type="button" class="small ghost" id="c-add-party">${icon('plus', 12)} ${esc(w('add_party'))}</button>
+      ${isNew ? '' : `<button type="button" class="small ghost" id="c-learn">${icon('wand', 12)} ${esc(w('learn_parties', { ay: AY }))}</button>`}</div>
     <div class="field" style="margin-top:14px"><label for="c-notes">${esc(w('f_notes'))}</label><textarea id="c-notes" rows="2">${esc(c.notes || '')}</textarea></div>
     ${yearCard}`;
   const footer = `${isNew ? '' : historyButton()}${!isNew && may('clients', 'archive') ? (c.archived_at
@@ -207,6 +209,14 @@ function editor(c, reload) {
     };
     $('#c-add-bank').onclick = () => { $('#c-banks').insertAdjacentHTML('beforeend', banks.one()); wireRm(); };
     $('#c-add-partner').onclick = () => { $('#c-partners').insertAdjacentHTML('beforeend', partners.one()); wireRm(); };
+    $('#c-add-party').onclick = () => { $('#c-parties').insertAdjacentHTML('beforeend', parties.one()); wireRm(); };
+    if ($('#c-learn')) $('#c-learn').onclick = (e) => busy(e.currentTarget, async () => {
+      try {
+        const r = await api(`/api/clients/${c.id}/parties/learn?ay=${encodeURIComponent(AY)}`, { method: 'POST' });
+        toast(w('learned_parties', { added: r.added, filled: r.filled }), r.added || r.filled ? 'ok' : 'info', 6);
+        $('#c-parties').innerHTML = (r.client.parties || []).map(parties.one).join(''); wireRm();
+      } catch (err) { toast(err.message, 'bad', 8); }
+    });
     $('#c-status').onchange = showPartners;
     wireRm(); showPartners();
     const read = (kind) => [...card.querySelectorAll(`[data-${kind}]`)].map((r) =>
@@ -215,7 +225,7 @@ function editor(c, reload) {
       const v = (id) => $(id).value;
       const data = { name: v('#c-name'), relation: v('#c-relation'), status: v('#c-status'), pan: v('#c-pan'),
         email: v('#c-email'), phone: v('#c-phone'), gst: v('#c-gst'), address: v('#c-address'), notes: v('#c-notes'), dob: v('#c-dob'), father: v('#c-father'), signer_pan: v('#c-signer'), nri: $('#c-nri').checked,
-        banks: read('bank'), partners: read('partner'), ay: AY };
+        banks: read('bank'), partners: read('partner'), parties: read('party'), ay: AY };
       try {
         await api(isNew ? '/api/clients' : `/api/clients/${c.id}`, { method: isNew ? 'POST' : 'PUT', body: data });
         toast(w('saved'), 'ok'); close(true); reload();

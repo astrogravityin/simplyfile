@@ -80,10 +80,12 @@ if __name__ == "__main__":  # ponytail: one runnable self-check - SimplyFile is 
     import store  # noqa: F401 - registers this portal's chips, as the app does
     keep = os.environ.pop("PORTAL_EDITION", None)
     try:
-        assert current()["id"] == "simplyfile" and current()["landing"] == "#/clients"
-        shown = [s["id"] for s in catalog([{"id": x} for x in ("keys", "clients", "video", "intake")])]
-        assert shown == ["clients", "intake", "keys"], shown        # the edition's order; a screen it does not list is absent
-        assert door("sf.valuestream.in") is None
+        e = current()                                                # 2026-10-05: boilerplate - any domain's default edition
+        assert e["id"] == engine.run("edition.settings")["default_edition"] and e["landing"].startswith("#/")
+        listed = e["screens"][:3]
+        shown = [s["id"] for s in catalog([{"id": x} for x in [*reversed(listed), "no_such_screen"]])]
+        assert shown == listed, shown                                 # the edition's order; a screen it does not list is absent
+        assert door("no-such-host.example") is None
         os.environ["PORTAL_EDITION"] = "nonsense"
         try:
             current()

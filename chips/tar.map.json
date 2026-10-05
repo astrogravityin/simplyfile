@@ -309,19 +309,31 @@
               "AmtLoanDeposit": "accepted",
               "LoanDepChqDrftFlag": "account_payee",
               "NatureAmtCdeType": "mode",
-              "LoanDepSqrdPyFlag": "=N",
-              "MaxAmtOsAccPy": "accepted"
+              "LoanDepSqrdPyFlag": "squared",
+              "MaxAmtOsAccPy": "max"
+            }
+          },
+          {
+            "path": "F3CB.Form3cdSec269SSDtls",
+            "each": "c31b",
+            "item": {
+              "ReceiverName": "label",
+              "ReceiverPanNo": "pan",
+              "ReceiverAddress": "address",
+              "AmtAccepted": "accepted",
+              "OsAccPy": "account_payee",
+              "NatureAmtCdeBType": "mode"
             }
           },
           {
             "path": "F3CB.Form3cdAmtSec269tDetail",
-            "each": "c31b",
+            "each": "c31c",
             "item": {
               "PayeeName": "label",
               "PayeePanNo": "pan",
               "PayeeAddress": "address",
               "AmtRepayment": "repaid",
-              "MaxAmtOsAccPy": "accepted",
+              "MaxAmtOsAccPy": "max",
               "RepaymentChqDraftFlag": "account_payee",
               "NatureAmtCdeCType": "mode"
             }
@@ -331,10 +343,10 @@
             "each": "c23",
             "item": {
               "RelatedParyName": "label",
-              "RelatedParyType": "=Relative",
+              "RelatedParyType": "relation",
               "Amount": "amount",
               "RelatedPAN": "pan",
-              "NatureOfTrnsc": "=Payment"
+              "NatureOfTrnsc": "nature"
             }
           }
         ],
@@ -636,19 +648,31 @@
               "AmtLoanDeposit": "accepted",
               "LoanDepChqDrftFlag": "account_payee",
               "NatureAmtCdeType": "mode",
-              "LoanDepSqrdPyFlag": "=N",
-              "MaxAmtOsAccPy": "accepted"
+              "LoanDepSqrdPyFlag": "squared",
+              "MaxAmtOsAccPy": "max"
+            }
+          },
+          {
+            "path": "F3CA.Form3cdSec269SSDtls",
+            "each": "c31b",
+            "item": {
+              "ReceiverName": "label",
+              "ReceiverPanNo": "pan",
+              "ReceiverAddress": "address",
+              "AmtAccepted": "accepted",
+              "OsAccPy": "account_payee",
+              "NatureAmtCdeBType": "mode"
             }
           },
           {
             "path": "F3CA.Form3cdAmtSec269tDetail",
-            "each": "c31b",
+            "each": "c31c",
             "item": {
               "PayeeName": "label",
               "PayeePanNo": "pan",
               "PayeeAddress": "address",
               "AmtRepayment": "repaid",
-              "MaxAmtOsAccPy": "accepted",
+              "MaxAmtOsAccPy": "max",
               "RepaymentChqDraftFlag": "account_payee",
               "NatureAmtCdeCType": "mode"
             }
@@ -658,10 +682,10 @@
             "each": "c23",
             "item": {
               "RelatedParyName": "label",
-              "RelatedParyType": "=Relative",
+              "RelatedParyType": "relation",
               "Amount": "amount",
               "RelatedPAN": "pan",
-              "NatureOfTrnsc": "=Payment"
+              "NatureOfTrnsc": "nature"
             }
           }
         ]
@@ -674,8 +698,9 @@
       "default": {
         "18": "c18",
         "31(a)": "c31a",
-        "31(b)": "c31b",
-        "23": "c23"
+        "31(c)": "c31c",
+        "23": "c23",
+        "31(b)": "c31b"
       },
       "label": "clause lists"
     },
@@ -683,9 +708,70 @@
       "name": "skip_zero",
       "type": "json",
       "default": {
-        "c31b": "repaid"
+        "c31c": "repaid"
       },
       "label": "skip zero"
+    },
+    {
+      "name": "main_amount",
+      "type": "json",
+      "default": {
+        "23": "amount",
+        "31(a)": "accepted",
+        "31(c)": "repaid",
+        "31(b)": "accepted"
+      },
+      "label": "main amount"
+    },
+    {
+      "name": "text_columns",
+      "type": "json",
+      "default": {
+        "31(a)": {
+          "squared": "(?i)squ",
+          "otherwise": "(?i)otherwise"
+        },
+        "31(c)": {
+          "otherwise": "(?i)otherwise"
+        },
+        "23": {
+          "relation": "(?i)relation"
+        },
+        "31(b)": {
+          "otherwise": "(?i)otherwise"
+        }
+      },
+      "label": "text columns"
+    },
+    {
+      "name": "also",
+      "type": "json",
+      "default": {
+        "31(a)": [
+          {
+            "list": "c31c",
+            "when": "repaid"
+          }
+        ]
+      },
+      "label": "also"
+    },
+    {
+      "name": "party_clauses",
+      "type": "json",
+      "default": [
+        "23",
+        "31(a)",
+        "31(b)",
+        "31(c)"
+      ],
+      "label": "party clauses"
+    },
+    {
+      "name": "relation_title",
+      "type": "text",
+      "default": "(?i)relation",
+      "label": "relation title"
     }
   ],
   "expr": {
@@ -693,13 +779,18 @@
     "fields": {
       "forms": "$forms",
       "clause_lists": "$clause_lists",
-      "skip_zero": "$skip_zero"
+      "skip_zero": "$skip_zero",
+      "main_amount": "$main_amount",
+      "text_columns": "$text_columns",
+      "also": "$also",
+      "party_clauses": "$party_clauses",
+      "relation_title": "$relation_title"
     }
   },
   "returns": "record",
   "version": 1,
   "status": "published",
-  "description_nl": "Part A from the client master; OtherInformation1 (the CA) from the CA firm's approved application; clause 18 (depreciation), 31(a) (loans accepted), 31(b) (repaid) and 23 (payments to persons in s.40A(2)(b)) from rows mapped '3CD <clause>'. clause_lists says which list each clause fills; skip_zero leaves out a row whose figure is nil there (a loan not repaid has no 31(b) line). The rest stays the schema's default for the department's utility.",
+  "description_nl": "Part A from the client master; OtherInformation1 (the CA) from the CA firm's approved application; clause 18 (depreciation), 31(a) (loans accepted), 31(c) (repaid) and 23 (payments to persons in s.40A(2)(b)) from rows mapped '3CD <clause>'. clause_lists says which list each clause fills; skip_zero leaves out a row whose figure is nil there (a loan not repaid has no 31(b) line). The rest stays the schema's default for the department's utility. 2026-10-05 owner (3CD from a party master): main_amount: a row whose only amount sits under a title we cannot read still gives that amount; text_columns: the Yes/No and words a statement gives per party; also: a loan row repaid in the year is listed under 31(c) repayments too; party_clauses: the clauses whose rows name a party (for Fill the party master). 2026-10-05 owner (\"yes\" to the form's own numbering): repayments are clause 31(c), as Form 3CD numbers them; 31(b) is a specified sum taken (s.269SS) - Form3cdSec269SSDtls.",
   "test_cases": [
     {
       "args": {},
@@ -1003,19 +1094,31 @@
                 "AmtLoanDeposit": "accepted",
                 "LoanDepChqDrftFlag": "account_payee",
                 "NatureAmtCdeType": "mode",
-                "LoanDepSqrdPyFlag": "=N",
-                "MaxAmtOsAccPy": "accepted"
+                "LoanDepSqrdPyFlag": "squared",
+                "MaxAmtOsAccPy": "max"
+              }
+            },
+            {
+              "path": "F3CB.Form3cdSec269SSDtls",
+              "each": "c31b",
+              "item": {
+                "ReceiverName": "label",
+                "ReceiverPanNo": "pan",
+                "ReceiverAddress": "address",
+                "AmtAccepted": "accepted",
+                "OsAccPy": "account_payee",
+                "NatureAmtCdeBType": "mode"
               }
             },
             {
               "path": "F3CB.Form3cdAmtSec269tDetail",
-              "each": "c31b",
+              "each": "c31c",
               "item": {
                 "PayeeName": "label",
                 "PayeePanNo": "pan",
                 "PayeeAddress": "address",
                 "AmtRepayment": "repaid",
-                "MaxAmtOsAccPy": "accepted",
+                "MaxAmtOsAccPy": "max",
                 "RepaymentChqDraftFlag": "account_payee",
                 "NatureAmtCdeCType": "mode"
               }
@@ -1025,10 +1128,10 @@
               "each": "c23",
               "item": {
                 "RelatedParyName": "label",
-                "RelatedParyType": "=Relative",
+                "RelatedParyType": "relation",
                 "Amount": "amount",
                 "RelatedPAN": "pan",
-                "NatureOfTrnsc": "=Payment"
+                "NatureOfTrnsc": "nature"
               }
             }
           ],
@@ -1330,19 +1433,31 @@
                 "AmtLoanDeposit": "accepted",
                 "LoanDepChqDrftFlag": "account_payee",
                 "NatureAmtCdeType": "mode",
-                "LoanDepSqrdPyFlag": "=N",
-                "MaxAmtOsAccPy": "accepted"
+                "LoanDepSqrdPyFlag": "squared",
+                "MaxAmtOsAccPy": "max"
+              }
+            },
+            {
+              "path": "F3CA.Form3cdSec269SSDtls",
+              "each": "c31b",
+              "item": {
+                "ReceiverName": "label",
+                "ReceiverPanNo": "pan",
+                "ReceiverAddress": "address",
+                "AmtAccepted": "accepted",
+                "OsAccPy": "account_payee",
+                "NatureAmtCdeBType": "mode"
               }
             },
             {
               "path": "F3CA.Form3cdAmtSec269tDetail",
-              "each": "c31b",
+              "each": "c31c",
               "item": {
                 "PayeeName": "label",
                 "PayeePanNo": "pan",
                 "PayeeAddress": "address",
                 "AmtRepayment": "repaid",
-                "MaxAmtOsAccPy": "accepted",
+                "MaxAmtOsAccPy": "max",
                 "RepaymentChqDraftFlag": "account_payee",
                 "NatureAmtCdeCType": "mode"
               }
@@ -1352,10 +1467,10 @@
               "each": "c23",
               "item": {
                 "RelatedParyName": "label",
-                "RelatedParyType": "=Relative",
+                "RelatedParyType": "relation",
                 "Amount": "amount",
                 "RelatedPAN": "pan",
-                "NatureOfTrnsc": "=Payment"
+                "NatureOfTrnsc": "nature"
               }
             }
           ]
@@ -1363,12 +1478,49 @@
         "clause_lists": {
           "18": "c18",
           "31(a)": "c31a",
-          "31(b)": "c31b",
-          "23": "c23"
+          "31(c)": "c31c",
+          "23": "c23",
+          "31(b)": "c31b"
         },
         "skip_zero": {
-          "c31b": "repaid"
-        }
+          "c31c": "repaid"
+        },
+        "main_amount": {
+          "23": "amount",
+          "31(a)": "accepted",
+          "31(c)": "repaid",
+          "31(b)": "accepted"
+        },
+        "text_columns": {
+          "31(a)": {
+            "squared": "(?i)squ",
+            "otherwise": "(?i)otherwise"
+          },
+          "31(c)": {
+            "otherwise": "(?i)otherwise"
+          },
+          "23": {
+            "relation": "(?i)relation"
+          },
+          "31(b)": {
+            "otherwise": "(?i)otherwise"
+          }
+        },
+        "also": {
+          "31(a)": [
+            {
+              "list": "c31c",
+              "when": "repaid"
+            }
+          ]
+        },
+        "party_clauses": [
+          "23",
+          "31(a)",
+          "31(b)",
+          "31(c)"
+        ],
+        "relation_title": "(?i)relation"
       }
     }
   ]

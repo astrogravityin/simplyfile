@@ -387,6 +387,31 @@ def days_between(start: Any = "", end: Any = "", digits: Any = 1) -> float | Non
         return None
 
 
+def date_shift(date: Any = "", days: Any = 0, months: Any = 0, closed: Any = None, closed_weekdays: Any = None) -> str | None:
+    """An ISO date moved by `months` then `days` (a month end stays in its month: 31 Jan + 1 month = 28/29 Feb), and then,
+    while it falls on a `closed` date or a `closed_weekdays` day (0 = Monday ... 6 = Sunday), on to the next open day.
+    2026-10-05 Justify: a deadline "expires on a day the court is closed -> on the day it reopens" (Limitation Act s.4).
+    None when the date is blank or unreadable."""
+    import calendar  # noqa: PLC0415
+    from datetime import date as _d, timedelta  # noqa: PLC0415
+    try:
+        d = _d.fromisoformat(str(date)[:10])
+    except (ValueError, TypeError):
+        return None
+    m = int(_num(months) or 0)
+    if m:
+        y, mo = divmod(d.month - 1 + m, 12)
+        y, mo = d.year + y, mo + 1
+        d = d.replace(year=y, month=mo, day=min(d.day, calendar.monthrange(y, mo)[1]))
+    d += timedelta(days=int(_num(days) or 0))
+    shut, wk = {str(x)[:10] for x in closed or []}, {int(x) for x in closed_weekdays or []}
+    for _ in range(400):                                    # ponytail: a year of closed days is the most it walks
+        if d.isoformat() not in shut and d.weekday() not in wk:
+            return d.isoformat()
+        d += timedelta(days=1)
+    return None
+
+
 def split_text(text: Any = "", separators: Any = ", ;", strip: Any = " @", pattern: Any = "") -> list:
     """Text cut into words at any of the separator characters (or, given, at every match of the regular expression
     `pattern`); each word trimmed of `strip` characters, blanks dropped. "a.com, @b.org" → ["a.com", "b.org"]."""
@@ -1281,7 +1306,7 @@ OPS = {f.__name__: f for f in (
     add, sub, mul, div, pct, round_to, floor_to, first_free_slot, clamp, largest, smallest, first_at_least, slab_tax, step_rate, median, median_shift,
     template, starts_with_any, ends_with_any, text_length, matches, split_text, key_sentences, pattern_hits, shared_runs, replace_once, first_with, html_texts, html_put_texts, script_of, script_shift, same_members, search, text_pick, values_matching, cut_at_any,
     truncate, sub_text, contains, ip_network, first_matching, epoch_date,
-    pluck, slice_list, months_part, first_index_matching, missing, count, last, compact, coalesce, json_in_text, fit_count, match_case, stable_hash, hash_hex, strings_in, total, first_named, pack_text, trim_to_sentence, after_heading, last_line, pack_words, name_value_lines, ease, filter_rows, rank_rows, rows_view, fuzzy_rows, match_rows, rows_math, group_rows, rows_aggregate,
+    pluck, slice_list, months_part, date_shift, first_index_matching, missing, count, last, compact, coalesce, json_in_text, fit_count, match_case, stable_hash, hash_hex, strings_in, total, first_named, pack_text, trim_to_sentence, after_heading, last_line, pack_words, name_value_lines, ease, filter_rows, rank_rows, rows_view, fuzzy_rows, match_rows, rows_math, group_rows, rows_aggregate,
     rows_product, rows_band, rows_index, rows_lookup, rows_check, rows_having, decision_table, doc_problems, literal, record, merge, get,
 )}
 
@@ -1441,6 +1466,9 @@ if __name__ == "__main__":
     assert search("MyBot/1", "(?i)bot") and epoch_date(0) == "01 Jan 1970" and contains("text/html; utf-8", "TEXT/HTML")
     assert days_between("2026-09-20T00:00:00", "2026-09-22T12:00:00") == 2.5 and days_between("", "2026-09-22") is None
     assert days_between("2026-09-20T00:00:00Z", "2026-09-22T00:00:00") is None, "a zone beside none is unknown, not a guess"
+    assert date_shift("2026-01-31", months=1) == "2026-02-28" and date_shift("2026-10-05", 90) == "2027-01-03"
+    assert date_shift("2026-10-03", 0, 0, [], [6]) == "2026-10-03" and date_shift("2026-10-04", 0, 0, [], [6]) == "2026-10-05", "Sunday -> Monday"
+    assert date_shift("2026-10-05", 0, 0, ["2026-10-05", "2026-10-06"]) == "2026-10-07" and date_shift("x", 3) is None
     assert rows_aggregate([{"v": 0.00012}, {"v": 0.0001}], "sum", "v", digits=4) == 0.0002 and rows_aggregate([{"v": 0.004}], "sum", "v") == 0
     # 2026-09-19 a list of thousands reaches the screen one page at a time
     big = [{"id": i, "name": f"Film {i}", "logline": "rain" if i % 2 else "sun", "updated": f"2026-09-{i % 28 + 1:02d}"} for i in range(1, 251)]

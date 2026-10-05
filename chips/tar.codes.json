@@ -164,6 +164,80 @@
       "type": "text",
       "default": "Profit and loss account",
       "label": "type of account"
+    },
+    {
+      "name": "yes_pattern",
+      "type": "text",
+      "default": "(?i)^\\s*(y|yes)\\b",
+      "label": "yes pattern"
+    },
+    {
+      "name": "mode_default",
+      "type": "json",
+      "default": {
+        "true": "C",
+        "false": "CR"
+      },
+      "label": "mode default"
+    },
+    {
+      "name": "relation_default",
+      "type": "text",
+      "default": "Relative",
+      "label": "relation default"
+    },
+    {
+      "name": "natures",
+      "type": "json",
+      "default": [
+        {
+          "pattern": "(?i)interest",
+          "word": "Interest"
+        },
+        {
+          "pattern": "(?i)\\brent",
+          "word": "Rent"
+        },
+        {
+          "pattern": "(?i)salar",
+          "word": "Salary"
+        },
+        {
+          "pattern": "(?i)remunerat",
+          "word": "Remuneration"
+        },
+        {
+          "pattern": "(?i)commission",
+          "word": "Commission"
+        },
+        {
+          "pattern": "(?i)professional|consult",
+          "word": "Professional fees"
+        },
+        {
+          "pattern": "(?i)purchase",
+          "word": "Purchase of goods"
+        },
+        {
+          "pattern": "(?i)\\bsale",
+          "word": "Sale of goods"
+        },
+        {
+          "pattern": "(?i)service",
+          "word": "Services"
+        },
+        {
+          "pattern": "(?i)loan",
+          "word": "Loan"
+        }
+      ],
+      "label": "natures"
+    },
+    {
+      "name": "nature_default",
+      "type": "text",
+      "default": "Payment",
+      "label": "nature default"
     }
   ],
   "expr": {
@@ -176,13 +250,18 @@
       "flags": "$flags",
       "voice": "$voice",
       "plsd": "$plsd",
-      "type_of_account": "$type_of_account"
+      "type_of_account": "$type_of_account",
+      "yes_pattern": "$yes_pattern",
+      "mode_default": "$mode_default",
+      "relation_default": "$relation_default",
+      "natures": "$natures",
+      "nature_default": "$nature_default"
     }
   },
   "returns": "record",
   "version": 1,
   "status": "published",
-  "description_nl": "The report speaks as 'We / Our / Us' when the CA is a firm (it has an FRN), else 'I / My / Me'; Profit or Loss from the P&L. From the schema's descriptions: PartA Status 1 individual, 2 HUF, 3 firm, 4 LLP, 7 AOP, 12 BOI; depreciation blocks 1-7 plant and machinery @15/30/40/50/60/80/100%, 8/9/47/10 building @5/10/40/100%, 11 furniture @10%, 12 intangibles @25%, 13 ships @20%; payment modes C cheque, BD bank draft, E ECS, NB net banking, NEFT, RTGS, IMPS, UPI.",
+  "description_nl": "The report speaks as 'We / Our / Us' when the CA is a firm (it has an FRN), else 'I / My / Me'; Profit or Loss from the P&L. From the schema's descriptions: PartA Status 1 individual, 2 HUF, 3 firm, 4 LLP, 7 AOP, 12 BOI; depreciation blocks 1-7 plant and machinery @15/30/40/50/60/80/100%, 8/9/47/10 building @5/10/40/100%, 11 furniture @10%, 12 intangibles @25%, 13 ships @20%; payment modes C cheque, BD bank draft, E ECS, NB net banking, NEFT, RTGS, IMPS, UPI. 2026-10-05 owner (3CD from a party master): yes_pattern: a statement's Yes; mode_default: the mode when neither the statement nor the party master says (by account payee cheque, else cash); relation_default / natures / nature_default: clause 23's relationship and nature of transaction when the master or statement does not give them.",
   "test_cases": [
     {
       "args": {},
@@ -304,7 +383,56 @@
           "true": "Profit",
           "false": "Loss"
         },
-        "type_of_account": "Profit and loss account"
+        "type_of_account": "Profit and loss account",
+        "yes_pattern": "(?i)^\\s*(y|yes)\\b",
+        "mode_default": {
+          "true": "C",
+          "false": "CR"
+        },
+        "relation_default": "Relative",
+        "natures": [
+          {
+            "pattern": "(?i)interest",
+            "word": "Interest"
+          },
+          {
+            "pattern": "(?i)\\brent",
+            "word": "Rent"
+          },
+          {
+            "pattern": "(?i)salar",
+            "word": "Salary"
+          },
+          {
+            "pattern": "(?i)remunerat",
+            "word": "Remuneration"
+          },
+          {
+            "pattern": "(?i)commission",
+            "word": "Commission"
+          },
+          {
+            "pattern": "(?i)professional|consult",
+            "word": "Professional fees"
+          },
+          {
+            "pattern": "(?i)purchase",
+            "word": "Purchase of goods"
+          },
+          {
+            "pattern": "(?i)\\bsale",
+            "word": "Sale of goods"
+          },
+          {
+            "pattern": "(?i)service",
+            "word": "Services"
+          },
+          {
+            "pattern": "(?i)loan",
+            "word": "Loan"
+          }
+        ],
+        "nature_default": "Payment"
       }
     }
   ]

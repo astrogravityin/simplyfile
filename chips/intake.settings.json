@@ -230,6 +230,18 @@
       "type": "number",
       "default": 3,
       "label": "two sided min rows"
+    },
+    {
+      "name": "more_gap",
+      "type": "json",
+      "default": 3,
+      "label": "more gap"
+    },
+    {
+      "name": "texts_max",
+      "type": "json",
+      "default": 8,
+      "label": "texts max"
     }
   ],
   "expr": {
@@ -260,13 +272,15 @@
       "right_header": "$right_header",
       "pdf_min_chars": "$pdf_min_chars",
       "pdf_gap_spaces": "$pdf_gap_spaces",
-      "two_sided_min_rows": "$two_sided_min_rows"
+      "two_sided_min_rows": "$two_sided_min_rows",
+      "more_gap": "$more_gap",
+      "texts_max": "$texts_max"
     }
   },
   "returns": "record",
   "version": 1,
   "status": "published",
-  "description_nl": "Which files intake takes and how large, the names an SF Ref column may carry, how many top rows are searched for it, which words make a words-only row a heading, the serial-number column, and what a date in a label looks like. 2026-10-04: .xlsm and best-effort .pdf; formats it cannot read and why (cant_exts); CSV separators and encodings; amounts written as text (Dr/Cr words and signs, brackets negative); two-sided statements split where the right side's header starts.",
+  "description_nl": "Which files intake takes and how large, the names an SF Ref column may carry, how many top rows are searched for it, which words make a words-only row a heading, the serial-number column, and what a date in a label looks like. 2026-10-04: .xlsm and best-effort .pdf; formats it cannot read and why (cant_exts); CSV separators and encodings; amounts written as text (Dr/Cr words and signs, brackets negative); two-sided statements split where the right side's header starts. 2026-10-05 (3CD from a party master): more_gap - lines with words but no amount, within this many rows under a row, are that row's own (a party's address and PAN on the lines under its name); texts_max - how many word cells a row keeps by column title (Squared up: No).",
   "test_cases": [
     {
       "args": {},
@@ -364,7 +378,9 @@
         "right_header": "SF Ref (right side)",
         "pdf_min_chars": 40,
         "pdf_gap_spaces": 2,
-        "two_sided_min_rows": 3
+        "two_sided_min_rows": 3,
+        "more_gap": 3,
+        "texts_max": 8
       }
     }
   ]

@@ -85,6 +85,15 @@ def clean(body: dict) -> dict:
         if ppan and not shape_ok("pan", ppan):
             _bad("bad_pan", pan=ppan)
         partners.append({"name": _txt(p.get("name"), "partner_name"), "pan": ppan, "share": _txt(p.get("share"), "share")})
+    parties = []                                     # 2026-10-05 the party master: lenders, payees, relatives - typed once, every year
+    for p in body.get("parties") or []:
+        if not isinstance(p, dict) or not _txt(p.get("name"), "party_name"):
+            continue
+        ppan = _code(p.get("pan"))
+        if ppan and not shape_ok("pan", ppan):
+            _bad("bad_pan", pan=ppan)
+        parties.append({"name": _txt(p.get("name"), "party_name"), "address": _txt(p.get("address"), "party_address"), "pan": ppan,
+                        "relation": _txt(p.get("relation"), "party_relation"), "mode": _code(p.get("mode"))[: settings()["max_len"]["party_mode"]]})
     signer = _code(body.get("signer_pan"))
     if signer and not shape_ok("pan", signer):
         _bad("bad_pan", pan=signer)
@@ -94,7 +103,7 @@ def clean(body: dict) -> dict:
     return {"name": name, "pan": pan, "status": st["id"], "relation": _txt(body.get("relation"), "relation"),
             "dob": dob, "nri": bool(body.get("nri")), "father": _txt(body.get("father"), "relation"), "signer_pan": signer,
             "address": _txt(body.get("address"), "address"), "email": email, "phone": _txt(body.get("phone"), "phone"),
-            "gst": gst, "banks": banks, "partners": partners if st["has_partners"] else [],
+            "gst": gst, "banks": banks, "partners": partners if st["has_partners"] else [], "parties": parties,
             "notes": _txt(body.get("notes"), "notes")}
 
 
@@ -107,6 +116,8 @@ def get(cid: str) -> dict:
 
 def save(user: dict, body: dict, cid: str = "") -> dict:
     data = clean(body)
+    if "parties" not in body:                        # a save that does not carry the party master (an import, a firm's own row) keeps it
+        data.pop("parties")
     with _LOCK:
         rows = _all()
         if any(c["pan"] == data["pan"] and c["id"] != cid and c.get("firm_id", "") == firm_id(user) for c in rows):
@@ -124,6 +135,48 @@ def save(user: dict, body: dict, cid: str = "") -> dict:
         c["updated_at"], c["updated_by"] = store.now(), user["id"]
         store.write(FILE, rows)
         return c
+
+
+def party_key(name: str, pan: str = "") -> str:
+    """One party, however a statement spells it: its PAN, else its name without honorifics, spaces or case (chip
+    clients.settings party_name_drop)."""
+    if pan:
+        return _code(pan)
+    return re.sub(r"[^a-z0-9]", "", re.sub(settings()["party_name_drop"], "", str(name or "")).lower())
+
+
+def party_of(c: dict, name: str, pan: str = "") -> dict | None:
+    """The client's master entry for this party - by PAN first, then by name."""
+    ps = c.get("parties") or []
+    return next((p for p in ps if pan and p.get("pan") == _code(pan)), None)         or next((p for p in ps if party_key(p["name"]) == party_key(name)), None)
+
+
+def learn_parties(user: dict, cid: str, found: list[dict]) -> dict:
+    """Statement parties into the master: a new one is added; a known one gets what it lacks (address, PAN). What the CA
+    typed is never overwritten."""
+    added = filled = 0
+    with _LOCK:
+        rows = _all()
+        c = next((x for x in rows if x["id"] == cid), None)
+        if not c:
+            raise HTTPException(404, say("not_found"))
+        c.setdefault("parties", [])
+        for f in found:
+            if not f.get("name"):
+                continue
+            have = party_of(c, f["name"], f.get("pan", ""))
+            if not have:
+                c["parties"].append({k: f.get(k, "") for k in ("name", "address", "pan", "relation", "mode")})
+                added += 1
+                continue
+            gap = [k for k in ("address", "pan", "relation") if f.get(k) and not have.get(k)]
+            for k in gap:
+                have[k] = f[k]
+            filled += bool(gap)
+        if added or filled:
+            c["updated_at"], c["updated_by"] = store.now(), user["id"]
+            store.write(FILE, rows)
+    return {"added": added, "filled": filled, "client": c}
 
 
 def year_defaults(c: dict) -> dict:

@@ -147,7 +147,7 @@ def on_write(name: str, old, new) -> None:
                     born = rid in b
                     name = next((str(r.get(f)) for f in w["named_by"] for r in (y if born else x,) if r.get(f)), "")
                     e = _entry(w, f"{w['scope']}-{owner}", "", "" if born else name, name if born else "", cid)
-                    entries.append(e | {"field": say(f"{'add' if born else 'del'}_{w['id']}")})
+                    entries.append(e | {"field": w.get("added" if born else "removed") or say(f"{'add' if born else 'del'}_{w['id']}")})   # a domain's own words
                     continue
                 for p, o, n in _diff(x, y):
                     yr = re.match(w["year_path"], p) if w.get("year_path") else None
@@ -193,7 +193,8 @@ def listed(u: dict, args: dict) -> list[dict]:
         rows = store.read(f"sf_changes/client-{cid}", [])
     ay, kind = str(args.get("ay") or ""), str(args.get("kind") or "")
     every = settings()["yearless_in_every_year"]
-    return [r | {"area_label": say(f"a_{r['area']}")} for r in rows
+    areas = {w["id"]: w.get("area") for w in _watch()}           # a domain's own area words (changes.watch area), else ui.changes
+    return [r | {"area_label": areas.get(r["area"]) or say(f"a_{r['area']}")} for r in rows
             if r["old"] != r["new"] and (not ay or r.get("ay") == ay or (every and not r.get("ay"))) and (not kind or r["kind"] == kind)]
 
 

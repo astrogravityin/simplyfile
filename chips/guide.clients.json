@@ -61,6 +61,11 @@
           "target": "#cl-new"
         },
         {
+          "title": "Parties, typed once",
+          "say": "Each client keeps its parties - lenders, payees and relatives - with name, address and PAN. Fill from statements reads them off this year's 3CD rows; type a missing PAN once and Form 3CD clauses 31 and 23 carry it every year.",
+          "target": "#cl-new"
+        },
+        {
           "title": "Archive, never delete",
           "say": "Tick the clients you no longer serve - or Select all on this page - and Archive selected. Each moves to the Archived tab with every filing of theirs; nothing is deleted.",
           "target": "#cl-bulk|.cl-bar"
@@ -92,7 +97,7 @@
   "returns": "record",
   "version": 2,
   "status": "published",
-  "description_nl": "2026-10-04: the Clients & years walk, up to date with the screen; tours/sf-clients.json is made from it.",
+  "description_nl": "2026-10-04: the Clients & years walk, up to date with the screen; tours/sf-clients.json is made from it. 2026-10-05: + Parties, typed once (the party master for Form 3CD).",
   "test_cases": [
     {
       "args": {},
@@ -125,6 +130,11 @@
           {
             "title": "A new client",
             "say": "Name, status, PAN, GSTIN, banks - plus date of birth, non-resident, and the signatory's father's name and PAN for the ITR. The PAN's fourth letter must fit the status.",
+            "target": "#cl-new"
+          },
+          {
+            "title": "Parties, typed once",
+            "say": "Each client keeps its parties - lenders, payees and relatives - with name, address and PAN. Fill from statements reads them off this year's 3CD rows; type a missing PAN once and Form 3CD clauses 31 and 23 carry it every year.",
             "target": "#cl-new"
           },
           {

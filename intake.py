@@ -207,7 +207,7 @@ def two_sided_at(rows: list[list], k: dict) -> int | None:
 def _parse_part(sheet: str, rows: list[list], suffix: str, k: dict, head_re, out: list) -> None:
     """One sheet (or one side of a two-sided sheet): every row with words or numbers."""
     rc = ref_column(rows, k)
-    heading, colhead = "", {}
+    heading, colhead, last_r = "", {}, -1
     for r, cells in enumerate(rows):
         if rc and r == rc[0]:                                 # the SF Ref title row may carry the heading too
             words = next((v for i, v in enumerate(cells) if isinstance(v, str) and i != rc[1]), "")   # its first words, not "Amount (Rs)"
@@ -226,10 +226,15 @@ def _parse_part(sheet: str, rows: list[list], suffix: str, k: dict, head_re, out
         nums = [v for i, v in enumerate(body) if isinstance(v, float) and not (serial is not None and i == first)]
         words = [v for v in body if isinstance(v, str)]
         label = words[0] if words else ""
+        wi = next((i for i, v in enumerate(body) if isinstance(v, str)), None)
         text = " ".join(words)
         if not nums:
             if head_re.search(text):
                 heading, colhead = text[: k["max_len"]["heading"]], {}
+            elif out and out[-1]["sheet"] == sheet and out[-1]["side"] == (suffix and "right") and out[-1]["heading"] == heading \
+                    and r - last_r <= k["more_gap"]:          # 2026-10-05 a party's address / PAN on the lines under its name
+                out[-1]["more"].append(text[: k["max_len"]["text"]])
+                last_r = r
             else:                                             # words under a heading = column titles ("Amount" / "repaid")
                 for i, v in enumerate(body):
                     if isinstance(v, str) and i != first:
@@ -242,7 +247,11 @@ def _parse_part(sheet: str, rows: list[list], suffix: str, k: dict, head_re, out
                     "label": label[: k["max_len"]["label"]], "text": text[: k["max_len"]["text"]], "numbers": nums, "heading": heading,
                     "own": str(own).strip() if isinstance(own, str) and own.strip() else "",
                     "by_col": [[colhead.get(i, ""), v] for i, v in enumerate(body) if isinstance(v, float) and v
-                               and not (serial is not None and i == first)]})
+                               and not (serial is not None and i == first)],
+                    "texts": [[colhead.get(i, ""), v.strip()] for i, v in enumerate(body)        # "Squared up: No", "Relationship: ..."
+                              if isinstance(v, str) and v.strip() and i != wi][: k["texts_max"]],
+                    "more": []})
+        last_r = r
 
 
 # --- SF Ref -----------------------------------------------------------------------------------------------------------
@@ -400,7 +409,7 @@ def _rows(cid: str, ay: str, m: dict) -> list[dict]:
     Keys (sheet!row) do not change, so the refs already saved stay on their rows."""
     name = f"sf_files/{cid}/{ay}/{m['id']}.rows.json"
     rows = store.read(name, [])
-    if rows and "amount" not in rows[0]:
+    if rows and "more" not in rows[0]:                            # 2026-10-05: + a row's address lines and text columns
         try:
             rows = parse(read_book((_dir(cid, ay) / f"{m['id']}{m['ext']}").read_bytes(), m["ext"]))
             store.write(name, rows)
@@ -556,8 +565,8 @@ if __name__ == "__main__":  # ponytail: one runnable self-check - the client's o
     assert [s.get(x["key"]) for x in rows if x["sheet"] == "Income" and x["row"] in (8, 9)] == ["ITR3 IT", "ITR3 IT"], "a date continues"
     assert not any(x["key"] in s for x in rows if x["sheet"] == "Income" and x["row"] == 10), "a sum with no words is not tagged"
     assert s[by[("Loans", "Lender A")]] == "3CD 31(a) #1"
-    assert s[by[("Loans", "Lender B")]] == "3CD 31(a) #2; 3CD 31(b) #1", "accepted and repaid in one row"
-    assert s[by[("Loans", "Lender C")]] == "3CD 31(b) #2", "repaid only = 31(b)"
+    assert s[by[("Loans", "Lender B")]] == "3CD 31(a) #2; 3CD 31(c) #1", "accepted and repaid in one row"
+    assert s[by[("Loans", "Lender C")]] == "3CD 31(c) #2", "repaid only = 31(c)"
     assert s[by[("Dep", "Computers")]] == "3CD 18 #2; ITR3 DPM"
     assert suggest(rows, "ITR-5")[by[("Income", "Interest on SB a/c")]] == "ITR5 OS"
     # 2026-10-04: more formats, and plain reasons for what cannot be read

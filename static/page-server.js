@@ -4,7 +4,7 @@
 // Words: chip ui.server. Colours: chip page.server.
 import { api, esc, pageHead, t, ps, loadWords } from './app.js';
 import { icon } from './icons.js';
-import { kpiTile } from './page-clients.js';
+import { kpiTile } from './page-kit.js';
 
 const w = (k, v) => t('server', k, v);
 const P = () => ps('server');

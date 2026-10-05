@@ -3,7 +3,8 @@
 H="$(cd "$(dirname "$0")" && pwd)"; R="$(cd "$H/../.." && pwd)"; DATA="$R/tmp/showcase/data"
 MODE=$1; shift
 cd "$R"
-TOUR_USER=$(grep ^uncle= "$H/TEST-LOGIN.txt" | cut -d= -f2) TOUR_PASSWORD=$(grep ^uncle_pw= "$H/TEST-LOGIN.txt" | cut -d= -f2) \
+WHO=${TOUR_LOGIN:-uncle}     # the TEST-LOGIN.txt login the tours play as (Justify: TOUR_LOGIN=principal)
+TOUR_USER=$(grep "^$WHO=" "$H/TEST-LOGIN.txt" | cut -d= -f2) TOUR_PASSWORD=$(grep "^${WHO}_pw=" "$H/TEST-LOGIN.txt" | cut -d= -f2) \
   python tools/tour_video/make_tour.py --login --base http://localhost:8832 2>&1 | tail -1
 for t in "$@"; do
   case $t in @*) .venv/Scripts/python.exe "$H/${t#@}" "$(cygpath -w "$DATA")" 2>&1 | tail -1; continue;; esac

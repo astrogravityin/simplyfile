@@ -4,7 +4,7 @@
 // every move (chip firm.move); the buttons per state are chip page.firm. Words: ui.firm.
 import { api, BASE, esc, toast, busy, pageHead, t, loadWords, modal, when, ps, fileSize, listBox } from './app.js';
 import { icon } from './icons.js';
-import { hue, initials } from './page-clients.js';
+import { hue, initials } from './page-kit.js';
 
 const w = (k, v) => t('firm', k, v);
 const P = () => ps('firm');

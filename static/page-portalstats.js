@@ -3,8 +3,8 @@
 // page draws it with the same tiles, bars and cards as Firm analytics. Words: chip ui.portalstats.
 import { api, esc, pageHead, t, ps, loadWords, listBox, modal } from './app.js';
 import { icon } from './icons.js';
-import { kpiTile } from './page-clients.js';
-import { bars } from './page-analytics.js';
+import { kpiTile } from './page-kit.js';
+import { bars } from './page-kit.js';
 
 const w = (k, v) => t('portalstats', k, v);
 const size = (n) => (n >= 1024 ** 3 ? `${(n / 1024 ** 3).toFixed(1)} GB` : n >= 1024 ** 2 ? `${(n / 1024 ** 2).toFixed(1)} MB` : `${Math.round((n || 0) / 1024)} KB`);

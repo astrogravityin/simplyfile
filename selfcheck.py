@@ -53,7 +53,23 @@ def static_checks() -> None:
             assert target.exists(), f"{f.name} imports {imp}, which is not here"
     views = re.search(r"views: \{([^}]*)\}", app_js).group(1)
     assert sorted(x.split(":")[0].strip() for x in views.split(",") if x.strip()) == sorted(SCREENS), views
-    print("  static: every import resolves, one page per screen OK")
+    # 2026-10-05 owner: "Copy the prompt" barely visible on white - controls were drawn with --line-2 (1.4:1). A control's
+    # edge is --edge (>= 3:1) and quiet text --muted (>= 4.5:1) on every surface, light and dark (same guard as tv).
+    css = (HERE / "core" / "static" / "portal.css").read_text(encoding="utf-8")
+    def lum(h: str) -> float:
+        c = [int(h[i:i + 2], 16) / 255 for i in (1, 3, 5)]
+        c = [v / 12.92 if v <= 0.03928 else ((v + 0.055) / 1.055) ** 2.4 for v in c]
+        return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]
+    light = dict(re.findall(r"--([\w-]+):(#[0-9a-f]{6})", css[:css.index("@media (prefers-color-scheme: dark)")]))
+    dark = light | dict(re.findall(r"--([\w-]+):(#[0-9a-f]{6})", css[css.index(':root[data-theme="dark"]'):][:2000]))
+    for name, t in (("light", light), ("dark", dark)):
+        for sf in ("panel", "panel-2", "bg", "bg-2"):
+            for tok, need in (("edge", 3), ("muted", 4.5)):
+                r = (max(lum(t[tok]), lum(t[sf])) + 0.05) / (min(lum(t[tok]), lum(t[sf])) + 0.05)
+                assert r >= need, f"{name}: --{tok} on --{sf} is {r:.2f}:1, needs {need}:1"
+    for rule in ("input,select,textarea{", "button{"):
+        assert "border:1px solid var(--edge)" in css[css.index("\n" + rule):].split("}")[0], f"the shared {rule} rule must draw its border with --edge"
+    print("  static: every import resolves, one page per screen, controls stand out OK")
 
 
 def api_check() -> None:
@@ -175,6 +191,45 @@ def api_check() -> None:
         assert cd["income"] > 0 and cd["tax"]["total"] > 0 and cd["tds_total"] > 0 and cd["balance"]["kind"] in ("payable", "refund", "nil"), cd
         assert "valid" in c.get(f"{cb}/itr-check").json() and c.get(f"{cb}/itr.json").json()["ITR"], "the ITR JSON is made and checked"
         assert "valid" in c.get(f"{cb}/3cd-check").json() and c.get(f"{cb}/3cd.json").json()["FORM3CB"], "the 3CD JSON is made and checked"
+        # 2026-10-05 owner (3CD from a party master): a loans statement as CAs write it - name, then address and PAN on the
+        # lines below - gives 31(a) / 31(c) and 23 their address and PAN; the client's party master fills what a statement leaves out
+        wb = openpyxl.Workbook()
+        ws = wb.active
+        for row in [["", "Statement regarding payments to relatives u/s 40A(2)(b)"], ["Sl.No.", "Name and address", "Amount", "Nature", "Relationship"],
+                    [1, "Smt Asha Test", 120000, "Interest", "Mother"], ["", "Testpur"], ["", "AAAPT1234A"],
+                    ["", "Statement regarding loans u/s 269SS"], ["Sl", "Name & address of the lender", "Amount accepted", "Amount repaid",
+                                                              "Whether squared up", "Maximum outstanding", "Whether accepted otherwise than account payee cheque"],
+                    [1, "Ravi Test Kumar", 500000, 0, "No", 800000, "No"], ["", "Testpur"], ["", "BBBPT 5678 B"],
+                    [2, "Mohan Test", 300000, 100000, "Yes", 300000, "No"], ["", "Sample Nagar, Testpur"]]:
+            ws.append(row)
+        buf = io.BytesIO()
+        wb.save(buf)
+        lf = c.post(base, files={"file": ("loans.xlsx", buf.getvalue())}).json()
+        rows_ = {x["label"]: x["key"] for x in c.get(f"{base}/{lf['id']}").json()["rows"]}
+        tag = {rows_["Smt Asha Test"]: "3CD 23", rows_["Ravi Test Kumar"]: "3CD 31(a)", rows_["Mohan Test"]: "3CD 31(a)"}
+        assert c.put(f"{base}/{lf['id']}/tags", json={"tags": tag}).status_code == 200
+        learned = c.post(f"/api/clients/{cl['id']}/parties/learn", params={"ay": "2026-27"}).json()
+        assert learned["added"] == 3, learned
+        mohan = next(p for p in learned["client"]["parties"] if p["name"] == "Mohan Test")
+        assert mohan["address"] == "Sample Nagar, Testpur" and not mohan["pan"], mohan
+        mine = c.get(f"/api/clients/{cl['id']}").json()
+        for p_ in mine["parties"]:
+            if p_["name"] == "Mohan Test":
+                p_["pan"] = "CCCPT9012C"                            # the CA types the PAN once ...
+        assert c.put(f"/api/clients/{cl['id']}", json=mine).status_code == 200
+        f3 = c.get(f"{cb}/3cd.json").json()["FORM3CB"]["F3CB"]
+        loans = {x["LenderName"]: x for x in f3["Form3cdAmtSec269ssDetail"]}
+        assert loans["Ravi Test Kumar"]["PanNoLender"] == "BBBPT5678B" and loans["Ravi Test Kumar"]["LenderAddress"] == "Testpur", loans
+        assert loans["Ravi Test Kumar"]["MaxAmtOsAccPy"] == 800000 and loans["Ravi Test Kumar"]["LoanDepSqrdPyFlag"] == "N"
+        assert loans["Ravi Test Kumar"]["LoanDepChqDrftFlag"] == "Y", "otherwise than account payee: No -> by account payee cheque"
+        assert loans["Mohan Test"]["PanNoLender"] == "CCCPT9012C" and loans["Mohan Test"]["LoanDepSqrdPyFlag"] == "Y", "... and every year after"
+        assert [x["PayeeName"] for x in f3["Form3cdAmtSec269tDetail"]] == ["Mohan Test"], "a loan repaid in the year is a repayment too"
+        rel = f3["Form3cdPymtSec40a2bDetail"][0]
+        assert rel["RelatedPAN"] == "AAAPT1234A" and rel["NatureOfTrnsc"] == "Interest" and rel["Amount"] == 120000, rel
+        bad = [e for e in c.get(f"{cb}/3cd-check").json()["errors"] if re.search("269ss|269t|40a2b", e["path"], re.I)]
+        assert not bad, bad
+        assert c.put(f"/api/clients/{cl['id']}", json={k: v for k, v in mine.items() if k != "parties"}).status_code == 200
+        assert len(c.get(f"/api/clients/{cl['id']}").json()["parties"]) == 3, "a save without the party master keeps it"
         for part in ("computation.xlsx", "utility.zip", "3cd.xlsx"):
             assert c.get(f"{cb}/{part}").status_code == 200, part
         assert c.post(f"{cb}/file", json={"ack_no": "998877665544332"}).status_code == 409, "filing needs a sign-off"

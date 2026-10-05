@@ -28,7 +28,7 @@
     {
       "name": "tours_glob",
       "type": "text",
-      "default": "sf-*.json",
+      "default": "*.json",
       "label": "tours glob"
     },
     {
@@ -88,7 +88,7 @@
   "returns": "record",
   "version": 1,
   "status": "published",
-  "description_nl": "2026-10-02 owner: \"bring Tour Video from AstroStage to sm, visible to portal admin\". The screen runs AstroStage's own runner (tools/tour_video/make_tour.py, skill module-tour-video) on each SteadyMove tour script (tours/<tours_glob>): Check steps walks it without sound, Record makes the narrated MP4 + subtitles + YouTube chapters, Sign in opens a window on this computer once. Paths are from the repo root. python = the Python that has Playwright and edge-tts (a hosting fact); install = what to run when it does not. One job at a time; the last log_keep lines are kept.",
+  "description_nl": "2026-10-02 owner: \"bring Tour Video from AstroStage to sm, visible to portal admin\". The screen runs AstroStage's own runner (tools/tour_video/make_tour.py, skill module-tour-video) on each SteadyMove tour script (tours/<tours_glob>): Check steps walks it without sound, Record makes the narrated MP4 + subtitles + YouTube chapters, Sign in opens a window on this computer once. Paths are from the repo root. python = the Python that has Playwright and edge-tts (a hosting fact); install = what to run when it does not. One job at a time; the last log_keep lines are kept. 2026-10-05: every portal's own tour scripts (SimplyFile sf-*, Justify jf-*) - the folder holds only tours.",
   "test_cases": [
     {
       "args": {},
@@ -96,7 +96,7 @@
         "runner": "tools/tour_video/make_tour.py",
         "out_dir": "tmp/tour_video",
         "tours_dir": "tours",
-        "tours_glob": "sf-*.json",
+        "tours_glob": "*.json",
         "python": "python",
         "log_keep": 200,
         "install": "pip install -r tools/tour_video/requirements.txt && python -m playwright install chromium",
