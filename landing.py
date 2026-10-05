@@ -19,7 +19,7 @@ from fastapi import HTTPException, Request, Response
 from fastapi.responses import FileResponse, HTMLResponse, StreamingResponse
 
 import edition
-from core import auth, engine
+from core import auth, demo, engine
 
 ROOT = Path(__file__).resolve().parent
 BASE = auth.BASE
@@ -73,7 +73,7 @@ def chip_for(request: Request) -> str:
 
 def lands_on_showcase(request: Request, signed_in: bool) -> bool:
     """/ shows the showcase to a visitor: not signed in, and (when returning_skip) not a browser that signed in here before."""
-    if signed_in or not chip_for(request):
+    if signed_in or demo.ON or not chip_for(request):   # a demo copy's pitch is the demo hub: its links go straight in
         return False
     return not (engine.run("showcase.settings").get("returning_skip") and auth.known(request))
 

@@ -313,6 +313,9 @@ ${d.faq ? `  <section class="faq" id="faq"><div class="wrap">
   wirePlayer(d);
   wireFeatures(d);
   wireChrome();
+  // a link to a section (/#features) arrives before the sections exist - the browser found nothing to scroll to; go there now
+  const there = location.hash.length > 1 && document.getElementById(decodeURIComponent(location.hash.slice(1)));
+  if (there) requestAnimationFrame(() => there.scrollIntoView());
 }
 
 // ------------------------------------------------------------------------------------------- the player and its list

@@ -76,7 +76,13 @@ export async function openChipChat() {
         ask('/api/chat/ask', q, { q });
       };
       b.querySelector('[data-send]').onclick = send;
-      box.onkeydown = (e) => { if (e.key === 'Enter') send(); };
+      box.onkeydown = (e) => {
+        if (e.key === 'Enter') send();
+        // Tab (or → at the end) on an empty box takes the gray example question, as AstroStage's Chip Chat does
+        else if ((e.key === 'Tab' || e.key === 'ArrowRight') && !box.value && box.placeholder && box.placeholder !== w('ask_own')) {
+          e.preventDefault(); box.value = box.placeholder; hint('');
+        }
+      };
       b.querySelector('[data-surprise]').onclick = async () => {
         if (st.busy) return;
         try { const d = await api(`/api/chat/surprise?n=${st.presses}`); st.presses += 1; if (d.question) { hint(''); ask('/api/chat/ask', d.question, { q: d.question }); } }

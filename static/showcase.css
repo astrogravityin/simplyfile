@@ -379,3 +379,6 @@ footer a { color: var(--on-night); text-decoration: none; font-weight: 600; disp
 @media (max-width: 560px) { .tries ul { grid-template-columns: 1fr; } .play .acts .btn { width: 100%; justify-content: center; } }
 [data-skin="ledger"] .play { background: radial-gradient(900px 480px at 100% 0%, rgba(16, 185, 129, .2), transparent 60%), linear-gradient(170deg, #0c1e38, #071426); }
 [data-skin="ledger"] .play h2 em { background: linear-gradient(100deg, #6ee7b7, #34d399 50%, #fbbf24); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+/* a section reached by a link sits below the fixed top bar, not under it */
+section[id] { scroll-margin-top: 68px; }
