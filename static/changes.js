@@ -73,20 +73,28 @@ export async function openHistory({ cid = '', ay = '', name = '', firm = false }
     wide: true,
     onOpen: (m) => {
       const log = m.querySelector('[data-log]');
+      let seq = 0;
       const load = async () => {
-        log.innerHTML = `<div class="ch-state"><span class="spinner"></span></div>`;
+        // keep what is shown (dimmed) until the answer comes - no blank-then-redraw flash between tabs; a late answer is dropped
+        const mine = ++seq;
+        if (log.children.length) log.classList.add('ch-busy');
+        else log.innerHTML = `<div class="ch-state"><span class="spinner"></span></div>`;
         let r;
         try {
           r = await api(`/api/lists/changes?${new URLSearchParams({ ...(firm ? { firm: 1 } : { cid, ay: st.ay }), kind: st.kind, q: st.q, page: st.page })}`);
+          if (mine !== seq) return;
         } catch (e) {
+          if (mine !== seq) return;
           log.innerHTML = `<div class="ch-state ch-fail">${icon('alert', 22)}<b>${esc(w('fail_title'))}</b>
             <p>${esc(e.status === 404 ? w('fail_old_server') : w('fail_body', { why: e.message }))}</p>
             <button type="button" class="small" data-retry>${icon('refresh', 13)} ${esc(w('retry'))}</button></div>`;
+          log.classList.remove('ch-busy');
           m.querySelector('[data-count]').textContent = '';
           m.querySelector('[data-pager]').innerHTML = '';
           log.querySelector('[data-retry]').onclick = load;
           return;
         }
+        log.classList.remove('ch-busy');
         m.querySelector('[data-count]').textContent = r.total ? w(r.total === 1 ? 'count_one' : 'count', { n: r.total }) : '';
         if (!r.rows.length) {
           log.innerHTML = st.q ? `<div class="ch-state">${icon('search', 22)}<p>${esc(w('no_match'))}</p></div>`
