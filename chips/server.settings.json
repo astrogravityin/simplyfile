@@ -23,7 +23,7 @@
           "label": "Justify",
           "host": "jf.valuestream.in",
           "service": "justify",
-          "health": "http://127.0.0.1:8850/health/run"
+          "health": "http://127.0.0.1:8831/health/run"
         },
         {
           "id": "astrostage",
@@ -65,9 +65,9 @@
           "id": "jf",
           "label": "Justify data",
           "cron": "/etc/cron.d/justify-backup",
-          "dir": "/var/backups/jf",
-          "pattern": "*.tar.gz",
-          "plan": "24 hourly + 7 daily + 5 weekly; daily and weekly also off-site"
+          "dir": "/var/backups",
+          "pattern": "justify-data-*.tar.gz",
+          "plan": "hourly, kept 4.5 hours (VPS Console New site)"
         },
         {
           "id": "sm",
@@ -173,7 +173,7 @@
   "returns": "record",
   "version": 2,
   "status": "published",
-  "description_nl": "2026-10-04: the sites on the VPS (service, health URL), the backups (cron file, folder, file pattern), the disk-history logs AstroStage's VPS Console writes, disk bands, when a backup counts as late. 2026-10-06: Justify (jf.valuestream.in, service justify, port 8850) and its backups.",
+  "description_nl": "2026-10-04: the sites on the VPS (service, health URL), the backups (cron file, folder, file pattern), the disk-history logs AstroStage's VPS Console writes, disk bands, when a backup counts as late. 2026-10-06: Justify (jf.valuestream.in, service justify, port 8831 - as VPS Console's New site made it) and its backups.",
   "test_cases": [
     {
       "args": {},
@@ -191,7 +191,7 @@
             "label": "Justify",
             "host": "jf.valuestream.in",
             "service": "justify",
-            "health": "http://127.0.0.1:8850/health/run"
+            "health": "http://127.0.0.1:8831/health/run"
           },
           {
             "id": "astrostage",
@@ -228,9 +228,9 @@
             "id": "jf",
             "label": "Justify data",
             "cron": "/etc/cron.d/justify-backup",
-            "dir": "/var/backups/jf",
-            "pattern": "*.tar.gz",
-            "plan": "24 hourly + 7 daily + 5 weekly; daily and weekly also off-site"
+            "dir": "/var/backups",
+            "pattern": "justify-data-*.tar.gz",
+            "plan": "hourly, kept 4.5 hours (VPS Console New site)"
           },
           {
             "id": "sm",

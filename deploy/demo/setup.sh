@@ -8,7 +8,7 @@ set -euo pipefail
 NAME=${1:?demo name, e.g. tax}
 PORT=${2:?port, e.g. 8840}
 TGZ=${3:-}
-APP=${4:-${PORTAL_APP:-simplyfile}}          # the product: its folder /opt/<app> and its prod service <app>
+APP=${4:-${PORTAL_APP:-$(basename "$(cd "$(dirname "$0")/../.." && pwd)")}}   # the product: its folder /opt/<app> and its prod service <app> - default: the folder this script ships in
 ROOT=/opt/$APP-demo/$NAME
 SERVICE=$APP-demo-$NAME
 CODE=/opt/$APP

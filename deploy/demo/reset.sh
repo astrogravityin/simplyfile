@@ -5,7 +5,7 @@
 # opened), mail settings and portal settings. Everything else - clients, files, returns, audit work, History - is the snapshot again.
 set -euo pipefail
 NAME=${1:?which demo - e.g. tax}
-APP=${PORTAL_APP:-simplyfile}                # the product (setup.sh writes it into the cron line)
+APP=${PORTAL_APP:-$(basename "$(cd "$(dirname "$0")/../.." && pwd)")}   # the product - default: the folder this script ships in (/opt/justify -> justify)
 ROOT=/opt/$APP-demo/$NAME
 SERVICE=$APP-demo-$NAME
 KEEP=(users.json ledger.sqlite3 smtp.json settings.json)

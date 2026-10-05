@@ -240,7 +240,7 @@
         ${(p.stats || []).length ? `<div class="stats">${p.stats.map(([n, l]) => `<div><b>${esc(n)}</b><span>${esc(l)}</span></div>`).join('')}</div>` : ''}
         <div class="acts">${live
           ? `<a class="btn primary" href="${esc(p.href)}">${esc(d.try)} &rarr;</a>${p.videos ? `<a class="btn ghost" href="${esc(p.videos)}" target="_blank" rel="noopener">${esc(d.watch)}</a>` : ''}`
-          : `<span class="tag">${esc(d.soon)}</span>`}</div></article>`;
+          : `<span class="tag">${esc(d.soon)}</span>${p.videos ? `<a class="btn ghost" href="${esc(p.videos)}" target="_blank" rel="noopener">${esc(d.watch)}</a>` : ''}`}</div></article>`;
     }).join('');
     startClock(d);
   }).catch(() => { $('lede').textContent = 'The demo list could not be loaded - please refresh.'; });
