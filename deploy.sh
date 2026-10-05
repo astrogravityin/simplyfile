@@ -10,7 +10,13 @@ SERVICE=${SF_SERVICE:-simplyfile}
 PORT=${SF_PORT:-$(grep -oP '^Environment=PORT=\K[0-9]+' "/etc/systemd/system/$SERVICE.service" 2>/dev/null || echo 8830)}
 
 before=$(git rev-parse --short HEAD)
-git pull --ff-only
+if [ -z "${DEPLOY_PULLED:-}" ]; then
+  git pull --ff-only
+  # This script may have just changed: bash is still reading the old copy, so run the new one from the top
+  # (2026-10-05: a pulled fix to this file failed its own first run).
+  DEPLOY_PULLED=$before exec bash "$0" "$@"
+fi
+before=$DEPLOY_PULLED
 after=$(git rev-parse --short HEAD)
 echo "code: $before -> $after"
 
