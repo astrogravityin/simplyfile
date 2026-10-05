@@ -3,6 +3,7 @@ never stored anywhere but as its hash.
 
     sudo -u <service user> /opt/simplyfile/.venv/bin/python /opt/simplyfile/deploy/demo/account.py /opt/simplyfile-demo/tax/data you@x.com
     ... account.py <data dir> <current email> --new-email someone@valuestream.in
+    ... account.py <data dir> <email> --generate     (no typing: prints a one-time password, changed at first sign-in)
 """
 import getpass
 import os
@@ -30,6 +31,15 @@ if "--new-email" in sys.argv:
                 x["email"] = new
         cs.write("users", rows)
     email = new
+if "--generate" in sys.argv:
+    # For a console that cannot take typed input (VPS Console Terminal tab): a one-time password, printed once, that
+    # must be changed at the first sign-in - so the printed one stops working as soon as it is used.
+    import secrets  # noqa: PLC0415
+    pw = secrets.token_urlsafe(12)
+    cs.set_password(email, pw, must_change=True)
+    cs.end_sessions_for(u["id"])
+    print(f"Done: {email} one-time password: {pw}\nSign in with it once; the portal then asks for your own password.")
+    sys.exit(0)
 pw = getpass.getpass(f"New password for {email}: ")
 if pw != getpass.getpass("Again: "):
     sys.exit("The two did not match - nothing changed.")
