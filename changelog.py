@@ -23,6 +23,12 @@ WHO: ContextVar = ContextVar("changes_who", default="")
 _LOCK = threading.Lock()
 
 
+def _product() -> str:
+    """The portal's own name, for the system's own changes (chip edition.settings)."""
+    import edition  # noqa: PLC0415 - edition imports the engine; changelog loads before it
+    return edition.current().get("product_name", "")
+
+
 def settings() -> dict:
     return engine.run("changes.settings")
 
@@ -93,7 +99,7 @@ def _named(area: str, path: str, v):
 
 def _entry(w: dict, scope: str, field_path: str, old, new, cid: str = "", ay: str = "", file: dict | None = None, area_path: str = "") -> dict:
     old, new = (_named(w["id"], area_path or field_path, v) for v in (old, new))
-    return {"id": store.new_id(), "batch": _BATCH.get(), "at": store.now(), "by": WHO.get() or settings()["system_by"], "scope": scope, "cid": cid, "ay": ay,
+    return {"id": store.new_id(), "batch": _BATCH.get(), "at": store.now(), "by": WHO.get() or settings()["system_by"].replace("{product}", _product()), "scope": scope, "cid": cid, "ay": ay,
             "area": w["id"], "kind": w["kind"], "path": field_path, "field": _label(w["id"], area_path or field_path),
             "old": _value(old), "new": _value(new), **({"file": file} if file else {})}
 

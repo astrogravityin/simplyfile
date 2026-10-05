@@ -677,9 +677,12 @@ def login(base: str) -> None:
                 # "Sign up / Sign in" button. Brand hosts (tedbook.in, familyos.in) show the form at once.
                 pw_box = page.locator(PASS_BOX)
                 entry = page.locator("button:has-text('Sign in') >> visible=true")
-                for _ in range(20):
+                for i in range(30):
                     if pw_box.count() or entry.count() or page.locator("button:text-is('Password') >> visible=true").count():
                         break
+                    start = page.locator("a[href$='start'] >> visible=true")   # a portal's landing page: its Start here opens the sign-in
+                    if i == 4 and start.count():
+                        start.first.click()
                     page.wait_for_timeout(500)
                 if not pw_box.count() and entry.count():
                     entry.first.click()

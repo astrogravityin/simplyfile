@@ -60,10 +60,15 @@ const PAGE = {};
 const STATEMENTS = new Set();   // words that are statements, not work (chip work.statements) - looked up, never tested here
 export function ps(screen) { return PAGE[screen] || {}; }
 
+/** The portal's own name for {product} in any word (2026-10-06: shared words said "SimplyFile" on Justify). The shell sets it. */
+let PRODUCT = '';
+export function setProduct(name) { PRODUCT = name || ''; }
+
 /** One word of a screen, {placeholders} filled. A missing key shows as [screen.key] - visible, never silent. */
 export function t(screen, key, values = {}) {
   const text = (WORDS[screen] || {})[key];
   if (text === undefined) return `[${screen}.${key}]`;
+  if (values.product === undefined && PRODUCT) values = { ...values, product: PRODUCT };
   // `{n:person|people}` = the word for one or for any other count (2026-10-02 "1 people"); same rule as ops.template
   return String(text).replace(/\{(\w+):([^{}|]*)\|([^{}]*)\}/g, (_, k, one, many) => (Number(values[k]) === 1 ? one : many))
     .replace(/\{(\w+)\}/g, (_, k) => String(values[k] ?? ''));

@@ -19,6 +19,13 @@
           "health": "http://127.0.0.1:8830/health/run"
         },
         {
+          "id": "jf",
+          "label": "Justify",
+          "host": "jf.valuestream.in",
+          "service": "justify",
+          "health": "http://127.0.0.1:8850/health/run"
+        },
+        {
           "id": "astrostage",
           "label": "AstroStage",
           "host": "astrostage.in",
@@ -51,6 +58,14 @@
           "label": "SimplyFile data",
           "cron": "/etc/cron.d/simplyfile-backup",
           "dir": "/var/backups/sf",
+          "pattern": "*.tar.gz",
+          "plan": "24 hourly + 7 daily + 5 weekly; daily and weekly also off-site"
+        },
+        {
+          "id": "jf",
+          "label": "Justify data",
+          "cron": "/etc/cron.d/justify-backup",
+          "dir": "/var/backups/jf",
           "pattern": "*.tar.gz",
           "plan": "24 hourly + 7 daily + 5 weekly; daily and weekly also off-site"
         },
@@ -156,9 +171,9 @@
     }
   },
   "returns": "record",
-  "version": 1,
+  "version": 2,
   "status": "published",
-  "description_nl": "2026-10-04: the sites on the VPS (service, health URL), the backups (cron file, folder, file pattern), the disk-history logs AstroStage's VPS Console writes, disk bands, when a backup counts as late.",
+  "description_nl": "2026-10-04: the sites on the VPS (service, health URL), the backups (cron file, folder, file pattern), the disk-history logs AstroStage's VPS Console writes, disk bands, when a backup counts as late. 2026-10-06: Justify (jf.valuestream.in, service justify, port 8850) and its backups.",
   "test_cases": [
     {
       "args": {},
@@ -170,6 +185,13 @@
             "host": "sf.valuestream.in",
             "service": "simplyfile",
             "health": "http://127.0.0.1:8830/health/run"
+          },
+          {
+            "id": "jf",
+            "label": "Justify",
+            "host": "jf.valuestream.in",
+            "service": "justify",
+            "health": "http://127.0.0.1:8850/health/run"
           },
           {
             "id": "astrostage",
@@ -199,6 +221,14 @@
             "label": "SimplyFile data",
             "cron": "/etc/cron.d/simplyfile-backup",
             "dir": "/var/backups/sf",
+            "pattern": "*.tar.gz",
+            "plan": "24 hourly + 7 daily + 5 weekly; daily and weekly also off-site"
+          },
+          {
+            "id": "jf",
+            "label": "Justify data",
+            "cron": "/etc/cron.d/justify-backup",
+            "dir": "/var/backups/jf",
             "pattern": "*.tar.gz",
             "plan": "24 hourly + 7 daily + 5 weekly; daily and weekly also off-site"
           },

@@ -12,7 +12,7 @@
 //     navFoot: html | () => html, userMenu: html | () => html,
 //     onBoot: async (bootstrap) => {},             // copy the host's own bootstrap fields into state
 //   })
-import { api, BASE, esc, say, modal, toast, busy, wireSecrets, applyTheme, nextTheme, shownTheme, hooks, confirmDialog, t, loadWords, remembersFor, ps, BUILD, reportIssue, myReports, when, clockAt } from './ui.js';
+import { api, BASE, esc, say, modal, toast, busy, wireSecrets, applyTheme, nextTheme, shownTheme, hooks, confirmDialog, t, loadWords, remembersFor, ps, BUILD, reportIssue, myReports, when, clockAt, setProduct } from './ui.js';
 import { icon, logo as defaultLogo, spinner } from './icons.js';
 import { guideButton, wireGuide } from './guide.js';
 
@@ -1244,6 +1244,7 @@ function take(d) {
   state.passwordMin = Number(d.password_min_length) || 8;
   state.code = { digits: Number(d.code && d.code.digits) || 6, resend: Number(d.code && d.code.resend_after_seconds) || 60 };
   state.productName = d.product_name || state.productName;
+  setProduct(state.productName);
   state.guides = d.guides || [];
   state.portalUrl = d.portal_url || '';
   state.catalog = d.catalog || [];
