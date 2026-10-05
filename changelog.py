@@ -75,7 +75,9 @@ def _value(v) -> str:
 
 def _diff(old: dict, new: dict) -> list[tuple[str, object, object]]:
     a, b = _flat(old or {}), _flat(new or {})
-    return [(p, a.get(p), b.get(p)) for p in sorted(set(a) | set(b)) if a.get(p) != b.get(p) and not _skipped(p)]
+    blank = settings()["blank"]          # missing, empty and No all read as nothing: a form filling in its defaults is no change
+    return [(p, a.get(p), b.get(p)) for p in sorted(set(a) | set(b))
+            if a.get(p) != b.get(p) and not (a.get(p) in blank and b.get(p) in blank) and not _skipped(p)]
 
 
 # --- the watcher ---------------------------------------------------------------------------------------------------------
@@ -186,7 +188,7 @@ def listed(u: dict, args: dict) -> list[dict]:
     ay, kind = str(args.get("ay") or ""), str(args.get("kind") or "")
     every = settings()["yearless_in_every_year"]
     return [r | {"area_label": say(f"a_{r['area']}")} for r in rows
-            if (not ay or r.get("ay") == ay or (every and not r.get("ay"))) and (not kind or r["kind"] == kind)]
+            if r["old"] != r["new"] and (not ay or r.get("ay") == ay or (every and not r.get("ay"))) and (not kind or r["kind"] == kind)]
 
 
 def who_of(u: dict) -> str:
@@ -211,6 +213,7 @@ if __name__ == "__main__":  # ponytail: a client edit and a replaced statement c
     w = next(x for x in _watch() if x["id"] == "client")
     d = _diff({"name": "A", "years": {"2026-27": {"form": "ITR-3", "updated_at": "x"}}}, {"name": "B", "years": {"2026-27": {"form": "ITR-5", "updated_at": "y"}}})
     assert [p for p, _o, _n in d] == ["name", "years.2026-27.form"], d
+    assert _diff({"phone": "1"}, {"phone": "1", "father": "", "nri": False}) == []      # defaults filled in by a form save
     assert _label("client", "form") == "Return form" and _label("mapping", "Sheet1!12") == "SF Ref, row Sheet1!12"
     ws = next(x for x in _watch() if x["id"] == "statements")
     es = _docs(ws, {"cid": "c1", "ay": "2026-27"}, [{"id": "f1", "name": "books.xlsx", "version": 1}], [{"id": "f1", "name": "books.xlsx", "version": 2}])

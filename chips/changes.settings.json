@@ -57,6 +57,16 @@
         "email"
       ],
       "label": "who fields"
+    },
+    {
+      "name": "blank",
+      "type": "json",
+      "default": [
+        null,
+        "",
+        false
+      ],
+      "label": "blank"
     }
   ],
   "expr": {
@@ -68,7 +78,8 @@
       "system_by": "$system_by",
       "kinds": "$kinds",
       "yearless_in_every_year": "$yearless_in_every_year",
-      "who_fields": "$who_fields"
+      "who_fields": "$who_fields",
+      "blank": "$blank"
     }
   },
   "returns": "record",
@@ -94,6 +105,11 @@
         "who_fields": [
           "name",
           "email"
+        ],
+        "blank": [
+          null,
+          "",
+          false
         ]
       }
     }
