@@ -118,7 +118,7 @@
     {
       "name": "banner",
       "type": "text",
-      "default": "Demo - sample data, put back every night. Try anything.",
+      "default": "This is a demo with sample data - try anything. Everything you add or change here is wiped at the nightly reset ({when} your time).",
       "label": "banner"
     },
     {
@@ -126,6 +126,18 @@
       "type": "text",
       "default": "A demo visitor",
       "label": "visitor"
+    },
+    {
+      "name": "left",
+      "type": "text",
+      "default": "Wiped in {h} hrs {m} min {s} sec",
+      "label": "left"
+    },
+    {
+      "name": "resetting",
+      "type": "text",
+      "default": "Being reset now - refresh in a minute.",
+      "label": "resetting"
     }
   ],
   "expr": {
@@ -150,7 +162,9 @@
       "no_mail": "$no_mail",
       "not_demo": "$not_demo",
       "banner": "$banner",
-      "visitor": "$visitor"
+      "visitor": "$visitor",
+      "left": "$left",
+      "resetting": "$resetting"
     }
   },
   "returns": "record",
@@ -179,8 +193,10 @@
         "mail_body": "Hello {name},\n\nYour code for the {product} demo is {code}. It works for {minutes} minutes.\n\nOpen {url} and type it in. Everything in the demo is sample data, put back every night.\n\nIf you did not ask for this, ignore this email.",
         "no_mail": "The demo cannot send codes just now. Please try again in a little while.",
         "not_demo": "This is not a demo site.",
-        "banner": "Demo - sample data, put back every night. Try anything.",
-        "visitor": "A demo visitor"
+        "banner": "This is a demo with sample data - try anything. Everything you add or change here is wiped at the nightly reset ({when} your time).",
+        "visitor": "A demo visitor",
+        "left": "Wiped in {h} hrs {m} min {s} sec",
+        "resetting": "Being reset now - refresh in a minute."
       }
     }
   ]

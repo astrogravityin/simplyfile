@@ -42,6 +42,12 @@
       "type": "text",
       "default": "",
       "label": "seat role"
+    },
+    {
+      "name": "reset_utc",
+      "type": "text",
+      "default": "21:30",
+      "label": "reset utc"
     }
   ],
   "expr": {
@@ -52,13 +58,14 @@
       "max_attempts": "$max_attempts",
       "resend_after_seconds": "$resend_after_seconds",
       "sends_per_hour": "$sends_per_hour",
-      "seat_role": "$seat_role"
+      "seat_role": "$seat_role",
+      "reset_utc": "$reset_utc"
     }
   },
   "returns": "record",
   "version": 1,
   "status": "published",
-  "description_nl": "2026-10-05: a demo visitor signs in with a code mailed to them: how long it is, how long it lives, how many tries, and how often one address may ask.",
+  "description_nl": "2026-10-05: a demo visitor signs in with a code mailed to them: how long it is, how long it lives, how many tries, and how often one address may ask. reset_utc: when the nightly reset runs (HH:MM UTC) - keep it the same as the cron line deploy/demo/setup.sh writes; the banner counts down to it.",
   "test_cases": [
     {
       "args": {},
@@ -68,7 +75,8 @@
         "max_attempts": 5,
         "resend_after_seconds": 60,
         "sends_per_hour": 5,
-        "seat_role": ""
+        "seat_role": "",
+        "reset_utc": "21:30"
       }
     }
   ]

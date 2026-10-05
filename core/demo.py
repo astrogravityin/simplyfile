@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import os
 import secrets
+from datetime import datetime, timedelta, timezone
 
 from fastapi import APIRouter, Body, HTTPException, Request, Response
 
@@ -34,8 +35,16 @@ def say(key: str, **v) -> str:
     return engine.say("ui.demo", key, **v)
 
 
+def next_reset(now: datetime | None = None) -> int:
+    """Epoch seconds of the next nightly reset (chip demo.settings reset_utc) - the banner counts down to it."""
+    hh, mm = (int(x) for x in str(settings()["reset_utc"]).split(":"))
+    now = now or datetime.now(timezone.utc)
+    t = now.replace(hour=hh, minute=mm, second=0, microsecond=0)
+    return int((t if t > now else t + timedelta(days=1)).timestamp())
+
+
 def bootstrap_extra(_request: Request, u: dict | None) -> dict:
-    return {"demo": ON, "demo_visitor": bool(u and u.get("demo"))}
+    return {"demo": ON, "demo_visitor": bool(u and u.get("demo")), "demo_reset_at": next_reset() if ON else 0}
 
 
 def _on() -> None:
@@ -108,7 +117,9 @@ if __name__ == "__main__":  # ponytail: the chip's numbers are sane and every se
     k = settings()
     assert int(k["digits"]) >= 6 and int(k["max_attempts"]) >= 3 and int(k["code_ttl_seconds"]) >= 300, k
     for key in ("tab", "title", "lede", "name", "email", "send", "code", "enter", "code_sent", "code_wrong", "code_burned",
-                "mail_subject", "mail_body", "no_mail", "not_demo", "banner", "visitor"):
-        assert say(key, product="P", code="123456", name="N", minutes=15, url="u", email="e"), key
+                "mail_subject", "mail_body", "no_mail", "not_demo", "banner", "visitor", "left", "resetting"):
+        assert say(key, product="P", code="123456", name="N", minutes=15, url="u", email="e", when="3:00 AM", h=1, m=2, s=3), key
+    t0 = datetime(2026, 10, 5, 21, 29, tzinfo=timezone.utc)
+    assert next_reset(t0) - int(t0.timestamp()) == 60 and next_reset(t0 + timedelta(minutes=1)) - int(t0.timestamp()) == 86460
     assert visitor({"demo": True}) and not visitor({}) and not visitor(None)
     print("demo OK")

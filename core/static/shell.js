@@ -1017,9 +1017,18 @@ function installOmniKeys() {
 /** The line under the product name: a portal may pass a function, so an edition can set it from the server. */
 const brandSub = () => (typeof config.brandSub === 'function' ? config.brandSub() : config.brandSub) || '';
 
+/** The demo banner's countdown to the nightly reset (core/demo.py next_reset); ticked every second below. */
+function demoLeft() {
+  const left = Math.max(0, Math.floor(state.demoResetAt - Date.now() / 1000));
+  if (!left) return dw('resetting');
+  return dw('left', { h: Math.floor(left / 3600), m: Math.floor(left / 60) % 60, s: left % 60 });
+}
+setInterval(() => { if (state.demo) document.querySelectorAll('.demo-left').forEach((el) => { el.textContent = demoLeft(); }); }, 1000);
+
 /** Banners a rule put up (a Rule Chip Builder outcome). The text is the rule's, escaped; × hides it for this person. */
 function ruleBanners() {
-  return (state.demo ? `<div class="note info rulebanner demobanner">${icon('info')}<div>${esc(dw('banner'))}</div></div>` : '') + state.banners.map((b) => `<div class="note ${esc(b.tone)} rulebanner" data-banner="${esc(b.id)}">${icon(b.tone === 'ok' ? 'check' : 'alert')}
+  return (state.demo ? `<div class="note warn rulebanner demobanner">${icon('clock')}<div>${esc(dw('banner', { when: new Date(state.demoResetAt * 1000).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) }))}
+    <b class="demo-left">${esc(demoLeft())}</b></div></div>` : '') + state.banners.map((b) => `<div class="note ${esc(b.tone)} rulebanner" data-banner="${esc(b.id)}">${icon(b.tone === 'ok' ? 'check' : 'alert')}
     <div>${esc(b.text).replace(/\n/g, '<br/>')}</div>
     <button type="button" class="ghost icon small" data-dismiss="${esc(b.id)}" aria-label="${esc(w('dismiss'))}" data-tip="${esc(w('dismiss'))}">${icon('close', 15)}</button></div>`).join('');
 }
@@ -1228,6 +1237,7 @@ function take(d) {
   state.canEmail = !!d.can_email;
   state.canSignup = !!d.can_signup;
   state.demo = !!d.demo;                           // a demo copy (core/demo.py): the card leads with Try the demo
+  state.demoResetAt = Number(d.demo_reset_at) || 0;
   state.verifyEmail = !!d.verify_email;
   state.signupDomains = d.signup_domains || '';
   state.noMailPolicy = d.no_mail_policy || 'verify_later';
