@@ -86,7 +86,7 @@ def api_check() -> None:
         # 2026-10-05 owner "more commercial": skin "ledger", how it works, who it's for, questions. SimplyFile fills the utility;
         # the CA uploads it - the pitch (showcase + sign-in words) must never promise a filed return
         js_, css_ = ((HERE / "static" / f"showcase.{x}").read_text(encoding="utf-8") for x in ("js", "css"))
-        for k_ in ("trust", "steps", "desks", "faq", "pillars", "checks", "modules", "features"):
+        for k_ in ("trust", "steps", "desks", "faq", "pillars", "checks", "modules", "features", "play"):
             assert k_ not in sc_ or f"d.{k_}" in js_, f"showcase chip has {k_} but showcase.js never draws it"
         assert not sc_.get("skin") or f'[data-skin="{sc_["skin"]}"]' in css_, f"showcase skin {sc_.get('skin')} has no styles"
         said_ = (json.dumps(sc_) + (HERE / "chips" / "ui.app.json").read_text(encoding="utf-8")).lower()

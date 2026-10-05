@@ -341,3 +341,41 @@ footer a { color: var(--on-night); text-decoration: none; font-weight: 600; disp
 [data-skin="ledger"] .b3 { background: linear-gradient(135deg, #b45309, #fbbf24); }
 [data-skin="ledger"] .marks button:hover, [data-skin="ledger"] .marks button.on { background: rgba(16, 185, 129, .25); border-color: #34d399; }
 [data-skin="ledger"] .pillars .card::after { background: radial-gradient(circle, rgba(16, 185, 129, .12), transparent 70%); }
+
+/* Try it live (chip showcase.page play): how to get into the demo, what to try, a look at the firm you get. */
+.play { background: radial-gradient(900px 480px at 100% 0%, rgba(109, 94, 252, .22), transparent 60%), linear-gradient(170deg, var(--night-2), var(--night)); color: var(--on-night); position: relative; overflow: hidden; }
+.play .lede, .play .fine { color: var(--on-night-2); }
+.play h2 em { font-style: normal; color: var(--brand-2); }
+.playgrid { display: grid; grid-template-columns: 1.05fr .95fr; gap: clamp(32px, 5vw, 64px); align-items: center; }
+.playsteps { list-style: none; padding: 0; margin: 28px 0 0; display: grid; gap: 14px; }
+.playsteps li { display: grid; grid-template-columns: 44px 1fr; gap: 14px; align-items: center; }
+.playsteps li > span:last-child { display: grid; gap: 2px; }
+.playsteps b { font-size: 17px; }
+.playsteps li > span > span { color: var(--on-night-2); font-size: 15px; }
+.play .acts { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 30px; }
+.play .fine { display: flex; gap: 8px; align-items: flex-start; font-size: 13.5px; margin-top: 18px; }
+.play .fine svg { flex: none; margin-top: 3px; }
+.playside { display: grid; gap: 18px; }
+.sandbox { margin: 0; border-radius: var(--radius); background: var(--night-3); box-shadow: 0 30px 60px -24px rgba(0, 0, 0, .7), inset 0 0 0 1px rgba(255, 255, 255, .08); overflow: hidden; transform: rotate(-1.2deg); }
+.sandbox .bar3 { display: flex; align-items: center; gap: 7px; padding: 12px 14px; background: rgba(255, 255, 255, .05); border-bottom: 1px solid rgba(255, 255, 255, .07); }
+.sandbox .bar3 i { width: 10px; height: 10px; border-radius: 50%; background: #ff6159; }
+.sandbox .bar3 i:nth-child(2) { background: #ffbd2e; } .sandbox .bar3 i:nth-child(3) { background: #28c941; }
+.sandbox .bar3 span { margin-left: 10px; flex: 1; min-width: 0; display: flex; gap: 6px; align-items: center; font-size: 12.5px; color: var(--on-night-2); background: rgba(0, 0, 0, .25); border-radius: 999px; padding: 5px 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sbody { padding: 20px; display: grid; gap: 16px; }
+.who { display: flex; gap: 12px; align-items: center; }
+.who svg { width: 38px; height: 38px; flex: none; }
+.who span { display: grid; } .who small { color: var(--on-night-2); font-size: 13px; }
+.tiles { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+.tile { border-radius: var(--radius-s); padding: 14px; background: rgba(255, 255, 255, .06); display: grid; gap: 2px; }
+.tile b { font-size: 28px; line-height: 1.1; } .tile span { font-size: 13px; color: var(--on-night-2); }
+.tile.t0 b { color: var(--brand-2); } .tile.t1 b { color: var(--saffron); } .tile.t2 b { color: var(--sky); } .tile.t3 b { color: var(--teal); }
+.sbody .reset { margin: 0; display: flex; gap: 8px; align-items: center; font-size: 13px; color: var(--on-night-2); border-top: 1px dashed rgba(255, 255, 255, .14); padding-top: 12px; }
+.tries { border-radius: var(--radius); padding: 18px 20px; background: rgba(255, 255, 255, .05); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .08); }
+.tries h3 { margin: 0 0 10px; font: 700 12.5px var(--sans); letter-spacing: .14em; text-transform: uppercase; color: var(--on-night-2); }
+.tries ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 8px 16px; }
+.tries li { display: grid; grid-template-columns: 18px 1fr; gap: 8px; font-size: 14.5px; line-height: 1.4; }
+.tries li svg { color: var(--brand-2); margin-top: 2px; }
+@media (max-width: 960px) { .playgrid { grid-template-columns: 1fr; } .sandbox { transform: none; } }
+@media (max-width: 560px) { .tries ul { grid-template-columns: 1fr; } .play .acts .btn { width: 100%; justify-content: center; } }
+[data-skin="ledger"] .play { background: radial-gradient(900px 480px at 100% 0%, rgba(16, 185, 129, .2), transparent 60%), linear-gradient(170deg, #0c1e38, #071426); }
+[data-skin="ledger"] .play h2 em { background: linear-gradient(100deg, #6ee7b7, #34d399 50%, #fbbf24); -webkit-background-clip: text; background-clip: text; color: transparent; }

@@ -205,6 +205,33 @@ ${d.steps ? `  <section class="steps" id="how"><div class="wrap">
     </div>
   </div></section>
 
+${d.play ? `  <section class="play" id="play"><div class="wrap">
+    <div class="playgrid">
+      <div class="playtext reveal">
+        <span class="eyebrow">${esc(d.play.eyebrow)}</span>
+        <h2>${headline(d.play.title)}</h2>
+        <p class="lede">${esc(d.play.sub)}</p>
+        <ol class="playsteps">${d.play.steps.map((r, i) => `<li>${badge(r.icon, i)}<span><b>${esc(r.title)}</b><span>${esc(r.line)}</span></span></li>`).join('')}</ol>
+        <div class="acts">
+          <a class="btn primary" href="${esc(d.play.href)}" target="_blank" rel="noopener">${icon('play', 17)} ${esc(d.play.button)} ${icon('external', 14)}</a>
+          <button type="button" class="btn ghost" data-play-all>${esc(d.play.watch)}</button>
+        </div>
+        <p class="fine">${icon('shield', 14)} <span>${esc(d.play.fine)}</span></p>
+      </div>
+      <div class="playside reveal">
+        <figure class="sandbox" aria-label="${esc(d.play.window.address)}">
+          <div class="bar3"><i></i><i></i><i></i><span>${icon('lock', 12)} ${esc(d.play.window.address)}</span></div>
+          <div class="sbody">
+            <div class="who">${LOGOS[d.nav.logo] || LOGO}<span><b>${esc(d.play.window.firm)}</b><small>${esc(d.play.window.role)}</small></span></div>
+            <div class="tiles">${d.play.window.rows.map(([k, v], i) => `<div class="tile t${i % 4}"><b>${esc(v)}</b><span>${esc(k)}</span></div>`).join('')}</div>
+            <p class="reset">${icon('refresh', 14)} ${esc(d.play.window.reset)}</p>
+          </div>
+        </figure>
+        <div class="tries"><h3>${esc(d.play.try_title)}</h3><ul>${d.play.tries.map((t) => `<li>${icon('check', 15)}<span>${esc(t)}</span></li>`).join('')}</ul></div>
+      </div>
+    </div>
+  </div></section>` : ''}
+
 ${d.pillars ? `  <section class="pillars" id="why"><div class="wrap">
     ${head(d.pillars, true)}
     <div class="grid3">${d.pillars.rows.map((r, i) => `<article class="card reveal">${badge(r.icon, i)}<h3>${esc(r.title)}</h3><p>${esc(r.line)}</p></article>`).join('')}</div>
@@ -275,6 +302,7 @@ ${d.faq ? `  <section class="faq" id="faq"><div class="wrap">
     <p class="lede">${esc(d.cta.sub)}</p>
     <div class="acts">
       <a class="btn primary" href="${esc(d.hero.start_href)}">${esc(d.cta.start)} ${icon('right', 16)}</a>
+      ${d.play ? `<a class="btn ghost" href="${esc(d.play.href)}" target="_blank" rel="noopener">${esc(d.cta.demo || d.play.button)} ${icon('external', 14)}</a>` : ''}
       <button type="button" class="btn ghost" data-play-all>${icon('play', 16)} ${esc(d.cta.watch)}</button>
     </div>
     <p class="fine">${esc(d.cta.fine)}</p>
