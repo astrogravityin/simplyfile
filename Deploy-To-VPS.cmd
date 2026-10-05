@@ -1,4 +1,5 @@
 @echo off
+title SimplyFile - Deploy to VPS - %~dp0
 REM Put the code GitHub has live on sf.valuestream.in: runs deploy.sh on the VPS over ssh.
 REM Options: -Server root@host -Key C:\Users\you\.ssh\key
 powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0Deploy-To-VPS.ps1" %*

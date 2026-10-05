@@ -12,6 +12,13 @@ param(
 $ErrorActionPreference = 'Stop'
 $RepoRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
 Set-Location $RepoRoot
+# Say where this runs before anything else: the product, this folder, its branch and where it pushes.
+Write-Host ''
+Write-Host '=== SimplyFile: Commit to GitHub ===' -ForegroundColor Cyan
+Write-Host "  Folder : $RepoRoot"
+Write-Host "  Branch : $(try { git -C $RepoRoot branch --show-current 2>&1 } catch { })"
+Write-Host "  GitHub : $(try { git -C $RepoRoot remote get-url origin 2>&1 } catch { })"
+Write-Host ''
 
 # `powershell -File` (the .cmd wrapper) hands a [string[]] ONE string: "-Paths a,b" arrives as "a,b". Split it.
 if ($Paths) {

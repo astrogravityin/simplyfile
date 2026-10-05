@@ -10,6 +10,11 @@ $ErrorActionPreference = 'Stop'
 
 # What deploy.sh pulls is what GitHub has - warn if this machine has commits GitHub has not seen.
 Set-Location (Split-Path -Parent $MyInvocation.MyCommand.Path)
+Write-Host ''
+Write-Host '=== SimplyFile: Deploy to VPS ===' -ForegroundColor Cyan
+Write-Host "  From   : $((Get-Location).Path)  (GitHub: $(try { git remote get-url origin 2>&1 } catch { }))"
+Write-Host "  To     : ${Server}:$Dir  (runs $Dir/deploy.sh there)"
+Write-Host ''
 try { git fetch -q origin 2>&1 | Out-Null } catch { }
 # Windows PowerShell 5.1 with 'Stop' turns git's stderr into a crash - ask quietly, decide here.
 $ahead = $null

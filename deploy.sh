@@ -5,6 +5,7 @@
 # replaced by code that does not pass.
 set -euo pipefail
 cd "$(dirname "$0")"
+[ -n "${DEPLOY_PULLED:-}" ] || echo "=== SimplyFile deploy on $(hostname) in $(pwd) ==="
 SERVICE=${SF_SERVICE:-simplyfile}
 # The port the service really listens on (VPS Console's New site writes Environment=PORT= into the unit), else 8830.
 PORT=${SF_PORT:-$(grep -oP '^Environment=PORT=\K[0-9]+' "/etc/systemd/system/$SERVICE.service" 2>/dev/null || echo 8830)}
