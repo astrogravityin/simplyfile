@@ -76,6 +76,12 @@ def api_check() -> None:
                 assert (HERE / "static" / "showcase" / f"{ch_['key']}.{ext_}").is_file(), f"showcase {ch_['key']}.{ext_} is missing"
         assert c.get(f"/showcase/media/{sc_['chapters'][0]['key']}.mp4", headers={"Range": "bytes=0-9"}).status_code == 206, "showcase films seek"
         assert c.get("/showcase/media/nope.mp4").status_code == 404, "only the chip's chapters are served"
+        # 2026-10-05 owner: a browser that has signed in here before skips the landing (landing.py, chip showcase.settings
+        # returning_skip); the landing stays at /showcase and the sign-in pitch links to it (bootstrap showcase)
+        r_ = TestClient(app.app)
+        r_.cookies.set(app.auth.KNOWN, "1")
+        assert "showcase.js" not in r_.get("/").text and "showcase.js" in r_.get("/showcase").text, "a returning visitor opens on sign-in"
+        assert boot.get("showcase") is True, "the sign-in pitch knows this site has a showcase"
         assert "Make anything" not in (HERE / "static" / "showcase.js").read_text(encoding="utf-8"), "the showcase page holds no words of its own"
         # 2026-10-05 owner "more commercial": skin "ledger", how it works, who it's for, questions. SimplyFile fills the utility;
         # the CA uploads it - the pitch (showcase + sign-in words) must never promise a filed return
