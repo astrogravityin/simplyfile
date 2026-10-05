@@ -1,0 +1,769 @@
+{
+  "chip_id": "audit.as_list",
+  "kind": "accessor",
+  "set": "audit",
+  "label": "Accounting Standards: the list, and how each applies by level",
+  "aliases": [
+    "accounting standards: the list, and how "
+  ],
+  "params": [
+    {
+      "name": "rows",
+      "type": "json",
+      "default": [
+        {
+          "id": "as1",
+          "std": "AS 1",
+          "title": "Disclosure of accounting policies",
+          "hint": "",
+          "applies": {
+            "I": "full",
+            "II": "full",
+            "III": "full",
+            "IV": "full"
+          },
+          "any": []
+        },
+        {
+          "id": "as2",
+          "std": "AS 2",
+          "title": "Valuation of inventories",
+          "hint": "Cost or net realisable value, whichever is lower; cost formula.",
+          "applies": {
+            "I": "full",
+            "II": "full",
+            "III": "full",
+            "IV": "full"
+          },
+          "any": [
+            "has_stock",
+            "has_closing_stock"
+          ]
+        },
+        {
+          "id": "as3",
+          "std": "AS 3",
+          "title": "Cash flow statements",
+          "hint": "",
+          "applies": {
+            "I": "full",
+            "II": "no",
+            "III": "no",
+            "IV": "no"
+          },
+          "any": []
+        },
+        {
+          "id": "as4",
+          "std": "AS 4",
+          "title": "Contingencies and events after the balance sheet date",
+          "hint": "",
+          "applies": {
+            "I": "full",
+            "II": "full",
+            "III": "full",
+            "IV": "full"
+          },
+          "any": []
+        },
+        {
+          "id": "as5",
+          "std": "AS 5",
+          "title": "Net profit for the period, prior period items, changes in policies",
+          "hint": "",
+          "applies": {
+            "I": "full",
+            "II": "full",
+            "III": "full",
+            "IV": "full"
+          },
+          "any": []
+        },
+        {
+          "id": "as7",
+          "std": "AS 7",
+          "title": "Construction contracts",
+          "hint": "Percentage of completion; contract revenue and costs.",
+          "applies": {
+            "I": "full",
+            "II": "full",
+            "III": "full",
+            "IV": "full"
+          },
+          "any": [
+            "has_services"
+          ]
+        },
+        {
+          "id": "as9",
+          "std": "AS 9",
+          "title": "Revenue recognition",
+          "hint": "",
+          "applies": {
+            "I": "full",
+            "II": "full",
+            "III": "full",
+            "IV": "full"
+          },
+          "any": []
+        },
+        {
+          "id": "as10",
+          "std": "AS 10",
+          "title": "Property, plant and equipment",
+          "hint": "Cost, componentisation, revaluation, disposal.",
+          "applies": {
+            "I": "full",
+            "II": "full",
+            "III": "full",
+            "IV": "full"
+          },
+          "any": [
+            "has_gross_block",
+            "has_depreciation"
+          ]
+        },
+        {
+          "id": "as11",
+          "std": "AS 11",
+          "title": "Effects of changes in foreign exchange rates",
+          "hint": "Only if there are foreign-currency transactions.",
+          "applies": {
+            "I": "full",
+            "II": "full",
+            "III": "full",
+            "IV": "full"
+          },
+          "any": []
+        },
+        {
+          "id": "as12",
+          "std": "AS 12",
+          "title": "Government grants",
+          "hint": "Only if a grant or subsidy was received.",
+          "applies": {
+            "I": "full",
+            "II": "full",
+            "III": "full",
+            "IV": "full"
+          },
+          "any": []
+        },
+        {
+          "id": "as13",
+          "std": "AS 13",
+          "title": "Investments",
+          "hint": "Current at lower of cost and fair value; long-term at cost less permanent fall.",
+          "applies": {
+            "I": "full",
+            "II": "full",
+            "III": "full",
+            "IV": "full"
+          },
+          "any": [
+            "has_investments"
+          ]
+        },
+        {
+          "id": "as15",
+          "std": "AS 15",
+          "title": "Employee benefits",
+          "hint": "Gratuity and leave: smaller entities may use a reasonable estimate instead of an actuarial valuation.",
+          "applies": {
+            "I": "full",
+            "II": "relaxed",
+            "III": "relaxed",
+            "IV": "relaxed"
+          },
+          "any": [
+            "has_salaries",
+            "has_bonus",
+            "has_pf"
+          ]
+        },
+        {
+          "id": "as16",
+          "std": "AS 16",
+          "title": "Borrowing costs",
+          "hint": "Interest on a qualifying asset (e.g. work in progress) is capitalised.",
+          "applies": {
+            "I": "full",
+            "II": "full",
+            "III": "full",
+            "IV": "full"
+          },
+          "any": [
+            "has_interest",
+            "has_cwip"
+          ]
+        },
+        {
+          "id": "as17",
+          "std": "AS 17",
+          "title": "Segment reporting",
+          "hint": "",
+          "applies": {
+            "I": "full",
+            "II": "no",
+            "III": "no",
+            "IV": "no"
+          },
+          "any": []
+        },
+        {
+          "id": "as18",
+          "std": "AS 18",
+          "title": "Related party disclosures",
+          "hint": "Partners, relatives and entities they control (also 3CD clause 23).",
+          "applies": {
+            "I": "full",
+            "II": "full",
+            "III": "full",
+            "IV": "no"
+          },
+          "any": []
+        },
+        {
+          "id": "as19",
+          "std": "AS 19",
+          "title": "Leases",
+          "hint": "Smaller entities give fewer disclosures.",
+          "applies": {
+            "I": "full",
+            "II": "relaxed",
+            "III": "relaxed",
+            "IV": "relaxed"
+          },
+          "any": [
+            "has_rent",
+            "has_rent_income"
+          ]
+        },
+        {
+          "id": "as20",
+          "std": "AS 20",
+          "title": "Earnings per share",
+          "hint": "Only for an entity with equity shares.",
+          "applies": {
+            "I": "full",
+            "II": "no",
+            "III": "no",
+            "IV": "no"
+          },
+          "any": []
+        },
+        {
+          "id": "as21",
+          "std": "AS 21",
+          "title": "Consolidated financial statements",
+          "hint": "Only if consolidated statements are prepared.",
+          "applies": {
+            "I": "full",
+            "II": "full",
+            "III": "full",
+            "IV": "full"
+          },
+          "any": []
+        },
+        {
+          "id": "as22",
+          "std": "AS 22",
+          "title": "Accounting for taxes on income",
+          "hint": "Deferred tax on timing differences.",
+          "applies": {
+            "I": "full",
+            "II": "full",
+            "III": "full",
+            "IV": "relaxed"
+          },
+          "any": [
+            "has_tax_provision",
+            "has_tax_provision_pl",
+            "has_depreciation"
+          ]
+        },
+        {
+          "id": "as23",
+          "std": "AS 23",
+          "title": "Associates in consolidated statements",
+          "hint": "Only with consolidated statements.",
+          "applies": {
+            "I": "full",
+            "II": "full",
+            "III": "full",
+            "IV": "full"
+          },
+          "any": []
+        },
+        {
+          "id": "as24",
+          "std": "AS 24",
+          "title": "Discontinuing operations",
+          "hint": "",
+          "applies": {
+            "I": "full",
+            "II": "full",
+            "III": "no",
+            "IV": "no"
+          },
+          "any": []
+        },
+        {
+          "id": "as25",
+          "std": "AS 25",
+          "title": "Interim financial reporting",
+          "hint": "Only if interim statements are prepared.",
+          "applies": {
+            "I": "full",
+            "II": "full",
+            "III": "full",
+            "IV": "full"
+          },
+          "any": []
+        },
+        {
+          "id": "as26",
+          "std": "AS 26",
+          "title": "Intangible assets",
+          "hint": "",
+          "applies": {
+            "I": "full",
+            "II": "full",
+            "III": "full",
+            "IV": "full"
+          },
+          "any": [
+            "has_gross_block"
+          ]
+        },
+        {
+          "id": "as27",
+          "std": "AS 27",
+          "title": "Interests in joint ventures",
+          "hint": "Only with a joint venture.",
+          "applies": {
+            "I": "full",
+            "II": "full",
+            "III": "full",
+            "IV": "full"
+          },
+          "any": []
+        },
+        {
+          "id": "as28",
+          "std": "AS 28",
+          "title": "Impairment of assets",
+          "hint": "Smaller entities may estimate value in use more simply.",
+          "applies": {
+            "I": "full",
+            "II": "relaxed",
+            "III": "relaxed",
+            "IV": "relaxed"
+          },
+          "any": [
+            "has_gross_block"
+          ]
+        },
+        {
+          "id": "as29",
+          "std": "AS 29",
+          "title": "Provisions, contingent liabilities and contingent assets",
+          "hint": "Smaller entities give fewer disclosures.",
+          "applies": {
+            "I": "full",
+            "II": "relaxed",
+            "III": "relaxed",
+            "IV": "relaxed"
+          },
+          "any": []
+        }
+      ],
+      "label": "the standards"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "rows": "$rows"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-05: the Accounting Standards a non-company entity's accounts are checked against, each marked full / relaxed / no at Levels I-IV after ICAI's 2020 announcement (AS 3 and 17 for Level I only; AS 24 not at Levels III-IV; AS 18 not at Level IV; relaxations in AS 15, 19, 22, 28 and 29), and the mapped lines that bring it in. To be confirmed by the firm's auditor - every cell here is the place to correct it.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "rows": [
+          {
+            "id": "as1",
+            "std": "AS 1",
+            "title": "Disclosure of accounting policies",
+            "hint": "",
+            "applies": {
+              "I": "full",
+              "II": "full",
+              "III": "full",
+              "IV": "full"
+            },
+            "any": []
+          },
+          {
+            "id": "as2",
+            "std": "AS 2",
+            "title": "Valuation of inventories",
+            "hint": "Cost or net realisable value, whichever is lower; cost formula.",
+            "applies": {
+              "I": "full",
+              "II": "full",
+              "III": "full",
+              "IV": "full"
+            },
+            "any": [
+              "has_stock",
+              "has_closing_stock"
+            ]
+          },
+          {
+            "id": "as3",
+            "std": "AS 3",
+            "title": "Cash flow statements",
+            "hint": "",
+            "applies": {
+              "I": "full",
+              "II": "no",
+              "III": "no",
+              "IV": "no"
+            },
+            "any": []
+          },
+          {
+            "id": "as4",
+            "std": "AS 4",
+            "title": "Contingencies and events after the balance sheet date",
+            "hint": "",
+            "applies": {
+              "I": "full",
+              "II": "full",
+              "III": "full",
+              "IV": "full"
+            },
+            "any": []
+          },
+          {
+            "id": "as5",
+            "std": "AS 5",
+            "title": "Net profit for the period, prior period items, changes in policies",
+            "hint": "",
+            "applies": {
+              "I": "full",
+              "II": "full",
+              "III": "full",
+              "IV": "full"
+            },
+            "any": []
+          },
+          {
+            "id": "as7",
+            "std": "AS 7",
+            "title": "Construction contracts",
+            "hint": "Percentage of completion; contract revenue and costs.",
+            "applies": {
+              "I": "full",
+              "II": "full",
+              "III": "full",
+              "IV": "full"
+            },
+            "any": [
+              "has_services"
+            ]
+          },
+          {
+            "id": "as9",
+            "std": "AS 9",
+            "title": "Revenue recognition",
+            "hint": "",
+            "applies": {
+              "I": "full",
+              "II": "full",
+              "III": "full",
+              "IV": "full"
+            },
+            "any": []
+          },
+          {
+            "id": "as10",
+            "std": "AS 10",
+            "title": "Property, plant and equipment",
+            "hint": "Cost, componentisation, revaluation, disposal.",
+            "applies": {
+              "I": "full",
+              "II": "full",
+              "III": "full",
+              "IV": "full"
+            },
+            "any": [
+              "has_gross_block",
+              "has_depreciation"
+            ]
+          },
+          {
+            "id": "as11",
+            "std": "AS 11",
+            "title": "Effects of changes in foreign exchange rates",
+            "hint": "Only if there are foreign-currency transactions.",
+            "applies": {
+              "I": "full",
+              "II": "full",
+              "III": "full",
+              "IV": "full"
+            },
+            "any": []
+          },
+          {
+            "id": "as12",
+            "std": "AS 12",
+            "title": "Government grants",
+            "hint": "Only if a grant or subsidy was received.",
+            "applies": {
+              "I": "full",
+              "II": "full",
+              "III": "full",
+              "IV": "full"
+            },
+            "any": []
+          },
+          {
+            "id": "as13",
+            "std": "AS 13",
+            "title": "Investments",
+            "hint": "Current at lower of cost and fair value; long-term at cost less permanent fall.",
+            "applies": {
+              "I": "full",
+              "II": "full",
+              "III": "full",
+              "IV": "full"
+            },
+            "any": [
+              "has_investments"
+            ]
+          },
+          {
+            "id": "as15",
+            "std": "AS 15",
+            "title": "Employee benefits",
+            "hint": "Gratuity and leave: smaller entities may use a reasonable estimate instead of an actuarial valuation.",
+            "applies": {
+              "I": "full",
+              "II": "relaxed",
+              "III": "relaxed",
+              "IV": "relaxed"
+            },
+            "any": [
+              "has_salaries",
+              "has_bonus",
+              "has_pf"
+            ]
+          },
+          {
+            "id": "as16",
+            "std": "AS 16",
+            "title": "Borrowing costs",
+            "hint": "Interest on a qualifying asset (e.g. work in progress) is capitalised.",
+            "applies": {
+              "I": "full",
+              "II": "full",
+              "III": "full",
+              "IV": "full"
+            },
+            "any": [
+              "has_interest",
+              "has_cwip"
+            ]
+          },
+          {
+            "id": "as17",
+            "std": "AS 17",
+            "title": "Segment reporting",
+            "hint": "",
+            "applies": {
+              "I": "full",
+              "II": "no",
+              "III": "no",
+              "IV": "no"
+            },
+            "any": []
+          },
+          {
+            "id": "as18",
+            "std": "AS 18",
+            "title": "Related party disclosures",
+            "hint": "Partners, relatives and entities they control (also 3CD clause 23).",
+            "applies": {
+              "I": "full",
+              "II": "full",
+              "III": "full",
+              "IV": "no"
+            },
+            "any": []
+          },
+          {
+            "id": "as19",
+            "std": "AS 19",
+            "title": "Leases",
+            "hint": "Smaller entities give fewer disclosures.",
+            "applies": {
+              "I": "full",
+              "II": "relaxed",
+              "III": "relaxed",
+              "IV": "relaxed"
+            },
+            "any": [
+              "has_rent",
+              "has_rent_income"
+            ]
+          },
+          {
+            "id": "as20",
+            "std": "AS 20",
+            "title": "Earnings per share",
+            "hint": "Only for an entity with equity shares.",
+            "applies": {
+              "I": "full",
+              "II": "no",
+              "III": "no",
+              "IV": "no"
+            },
+            "any": []
+          },
+          {
+            "id": "as21",
+            "std": "AS 21",
+            "title": "Consolidated financial statements",
+            "hint": "Only if consolidated statements are prepared.",
+            "applies": {
+              "I": "full",
+              "II": "full",
+              "III": "full",
+              "IV": "full"
+            },
+            "any": []
+          },
+          {
+            "id": "as22",
+            "std": "AS 22",
+            "title": "Accounting for taxes on income",
+            "hint": "Deferred tax on timing differences.",
+            "applies": {
+              "I": "full",
+              "II": "full",
+              "III": "full",
+              "IV": "relaxed"
+            },
+            "any": [
+              "has_tax_provision",
+              "has_tax_provision_pl",
+              "has_depreciation"
+            ]
+          },
+          {
+            "id": "as23",
+            "std": "AS 23",
+            "title": "Associates in consolidated statements",
+            "hint": "Only with consolidated statements.",
+            "applies": {
+              "I": "full",
+              "II": "full",
+              "III": "full",
+              "IV": "full"
+            },
+            "any": []
+          },
+          {
+            "id": "as24",
+            "std": "AS 24",
+            "title": "Discontinuing operations",
+            "hint": "",
+            "applies": {
+              "I": "full",
+              "II": "full",
+              "III": "no",
+              "IV": "no"
+            },
+            "any": []
+          },
+          {
+            "id": "as25",
+            "std": "AS 25",
+            "title": "Interim financial reporting",
+            "hint": "Only if interim statements are prepared.",
+            "applies": {
+              "I": "full",
+              "II": "full",
+              "III": "full",
+              "IV": "full"
+            },
+            "any": []
+          },
+          {
+            "id": "as26",
+            "std": "AS 26",
+            "title": "Intangible assets",
+            "hint": "",
+            "applies": {
+              "I": "full",
+              "II": "full",
+              "III": "full",
+              "IV": "full"
+            },
+            "any": [
+              "has_gross_block"
+            ]
+          },
+          {
+            "id": "as27",
+            "std": "AS 27",
+            "title": "Interests in joint ventures",
+            "hint": "Only with a joint venture.",
+            "applies": {
+              "I": "full",
+              "II": "full",
+              "III": "full",
+              "IV": "full"
+            },
+            "any": []
+          },
+          {
+            "id": "as28",
+            "std": "AS 28",
+            "title": "Impairment of assets",
+            "hint": "Smaller entities may estimate value in use more simply.",
+            "applies": {
+              "I": "full",
+              "II": "relaxed",
+              "III": "relaxed",
+              "IV": "relaxed"
+            },
+            "any": [
+              "has_gross_block"
+            ]
+          },
+          {
+            "id": "as29",
+            "std": "AS 29",
+            "title": "Provisions, contingent liabilities and contingent assets",
+            "hint": "Smaller entities give fewer disclosures.",
+            "applies": {
+              "I": "full",
+              "II": "relaxed",
+              "III": "relaxed",
+              "IV": "relaxed"
+            },
+            "any": []
+          }
+        ]
+      }
+    }
+  ]
+}

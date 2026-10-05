@@ -36,7 +36,7 @@ from pathlib import Path
 
 from fastapi.staticfiles import StaticFiles
 
-from core import access, auth, bell, builder, engine, find, geo, guide, howto, issues, jobs, ledger, lists, memwatch, rules, storage, store, words
+from core import access, auth, bell, builder, demo, engine, find, geo, guide, howto, issues, jobs, ledger, lists, memwatch, rules, storage, store, words
 
 screen = access.screen
 signed_in, owner, current_user = auth.signed_in, auth.owner, auth.current_user
@@ -123,7 +123,8 @@ def install(app, *, catalog, chips=None, rules_dir=None, scenarios=None) -> None
         print("[chips] certification problems:\n  " + "\n  ".join(problems), file=sys.stderr, flush=True)
     access.load(catalog)
     auth.BOOTSTRAP_EXTRAS.extend([access.bootstrap_extra, storage.bootstrap_extra, rules.bootstrap_extra,
-                                  find.bootstrap_extra, guide.bootstrap_extra, issues.bootstrap_extra, bell.bootstrap_extra])
+                                  find.bootstrap_extra, guide.bootstrap_extra, issues.bootstrap_extra, bell.bootstrap_extra,
+                                  demo.bootstrap_extra])
     # Added last = runs first: the ledger times everything, including a request the limiter refuses.
     app.middleware("http")(_stamp_build)
     app.middleware("http")(auth.limit_auth)
@@ -131,7 +132,7 @@ def install(app, *, catalog, chips=None, rules_dir=None, scenarios=None) -> None
     app.middleware("http")(ledger.track)
     app.middleware("http")(_no_nul)
     app.middleware("http")(_json_cap)
-    for module in (auth, access, ledger, memwatch, howto, guide, storage, builder, find, jobs, words, lists, issues, bell):
+    for module in (auth, access, ledger, memwatch, howto, guide, storage, builder, find, jobs, words, lists, issues, bell, demo):
         app.include_router(module.router)
     app.mount("/core-static", StaticFiles(directory=str(HERE / "static")), name="core-static")
     memwatch.start()

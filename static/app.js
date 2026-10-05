@@ -28,7 +28,14 @@ import { delegatePage } from './page-delegate.js';
 import { syncDock } from './dock.js';
 import { itrImportPage } from './page-itrimport.js';
 import { api, BASE, esc, t, ps, loadWords, keep, kept, uploadBox, confirmDialog, setCurrency, shownMoney } from '../core-static/ui.js';
-import { icon, logo } from './icons.js';
+import { icon } from './icons.js';
+
+/** SimplyFile's mark (2026-10-05, the showcase's too): a page with a tick on it, emerald - not the framework's play mark. */
+const logo = (size = 28) => `<svg width="${size}" height="${size}" viewBox="0 0 32 32" aria-hidden="true">
+  <defs><linearGradient id="sfl${size}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#34d399"/><stop offset="1" stop-color="#059669"/></linearGradient></defs>
+  <rect width="32" height="32" rx="8" fill="url(#sfl${size})"/><path d="M10 7h9l4 4v14H10z" fill="#fff"/>
+  <path d="M13.5 18l2.6 2.6 5-5.2" fill="none" stroke="#059669" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M13 11.5h5M13 14.5h7" stroke="#a7f3d0" stroke-width="1.8" stroke-linecap="round"/></svg>`;
 
 // Every word here is chip ui.app (core/words.py) - none is written here. Fetched before anything is
 // drawn: the pitch is shown before sign-in (the words endpoint needs none), and the menu foot and user
@@ -149,7 +156,8 @@ const pitch = () => `
   <ol class="pitchsteps n${SELLING().length}">${SELLING().map(([ic, title, line]) => `<li>
     <span class="i">${icon(ic, 17)}</span>
     <span><b>${esc(pw(title))}</b><span>${esc(pw(line))}</span></span></li>`).join('')}</ol>
-  <p class="fine">${icon('shield', 14)} ${pw('pitch_fine')}</p>`;
+  <p class="fine">${icon('shield', 14)} ${pw('pitch_fine')}</p>
+  ${state.showcase ? `<p class="fine"><a class="seeshow" href="${BASE}/showcase">${icon('play', 14)} ${w('see_showcase')}</a></p>` : ''}`;   // landing.py: a returning visitor skips the landing - it stays one click away
 
 // --- start ---------------------------------------------------------------------------------------
 
@@ -169,6 +177,7 @@ startPortal({
   onBoot: async (d) => {
     await loadWords('app');      // already there from the start; a no-op unless that first fetch failed
     state.edition = d.edition || null;
+    state.showcase = !!d.showcase;                      // this site has a public showcase (landing.py bootstrap_extra)
     document.title = state.productName;                 // SteadyMove's tab says SteadyMove, not the HTML's default
     const aside = document.querySelector('aside.pitch');   // signed out: the pitch was drawn before the edition was known
     if (aside) aside.innerHTML = (aside.querySelector('.mark') || { outerHTML: '' }).outerHTML + pitch();

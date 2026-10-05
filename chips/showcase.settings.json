@@ -1,0 +1,77 @@
+{
+ "chip_id": "showcase.settings",
+ "kind": "accessor",
+ "set": "showcase",
+ "audience": "admin",
+ "label": "Which sites have a public showcase, and which chip holds its words",
+ "aliases": [
+  "showcase settings"
+ ],
+ "params": [
+  {
+   "name": "editions",
+   "type": "any",
+   "default": [
+    "simplyfile"
+   ],
+   "label": "editions"
+  },
+  {
+   "name": "sites",
+   "type": "any",
+   "default": [
+    {
+     "edition": "simplyfile",
+     "door": "",
+     "page": "showcase.page"
+    }
+   ],
+   "label": "sites"
+  },
+  {
+   "name": "path",
+   "type": "any",
+   "default": "/showcase",
+   "label": "path"
+  },
+  {
+   "name": "returning_skip",
+   "type": "boolean",
+   "default": true,
+   "label": "A browser that has signed in here before goes straight to sign-in, not the landing page (the landing stays at its path)"
+  }
+ ],
+ "expr": {
+  "vop": "record",
+  "fields": {
+   "editions": "$editions",
+   "sites": "$sites",
+   "path": "$path",
+   "returning_skip": "$returning_skip"
+  }
+ },
+ "returns": "record",
+ "version": 2,
+ "status": "published",
+ "description_nl": "2026-10-05 owner: the showcase is the landing; Start here -> /start.",
+ "test_cases": [
+  {
+   "args": {},
+   "expect_value": {
+    "editions": [
+     "simplyfile"
+    ],
+    "sites": [
+     {
+      "edition": "simplyfile",
+      "door": "",
+      "page": "showcase.page"
+     }
+    ],
+    "path": "/showcase",
+    "returning_skip": true
+   }
+  }
+ ],
+ "weight_basis": "Words and lists only. Edit them here, never in the page."
+}

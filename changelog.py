@@ -17,7 +17,7 @@ from contextvars import ContextVar
 
 from fastapi import HTTPException
 
-from core import engine, lists, store
+from core import demo, engine, lists, store
 
 WHO: ContextVar = ContextVar("changes_who", default="")
 _LOCK = threading.Lock()
@@ -142,10 +142,16 @@ def on_write(name: str, old, new) -> None:
                 if not owner:
                     continue
                 item = ((b.get(rid) or a.get(rid) or {}).get(w["item_field"]) or "") if w.get("item_field") else ""
+                cid = owner if w["scope"] == "client" else ""
+                if w.get("named_by") and not (rid in a and rid in b):     # a whole record added or removed: one line, by its name
+                    born = rid in b
+                    name = next((str(r.get(f)) for f in w["named_by"] for r in (y if born else x,) if r.get(f)), "")
+                    e = _entry(w, f"{w['scope']}-{owner}", "", "" if born else name, name if born else "", cid)
+                    entries.append(e | {"field": say(f"{'add' if born else 'del'}_{w['id']}")})
+                    continue
                 for p, o, n in _diff(x, y):
                     yr = re.match(w["year_path"], p) if w.get("year_path") else None
                     rest, ay = (yr["rest"], yr["ay"]) if yr else (p, "")
-                    cid = owner if w["scope"] == "client" else ""
                     e = _entry(w, f"{w['scope']}-{owner}", p, o, n, cid, ay, None, rest)
                     entries.append(e | {"field": say("field_of", field=e["field"], item=item)} if item else e)
         else:
@@ -192,6 +198,8 @@ def listed(u: dict, args: dict) -> list[dict]:
 
 
 def who_of(u: dict) -> str:
+    if demo.visitor(u):                    # visitors on a demo site never see each other's names
+        return engine.say("ui.demo", "visitor")
     return next((str(u[f]) for f in settings()["who_fields"] if u.get(f)), "")
 
 
@@ -223,4 +231,8 @@ if __name__ == "__main__":  # ponytail: a client edit and a replaced statement c
     on_write("users", [{"id": "u1", "firm_id": "f1", "firm_role": "preparer", "password": "x"}],
              [{"id": "u1", "firm_id": "f1", "firm_role": "reviewer", "password": "y"}])
     assert [(e["scope"], e["field"], e["old"], e["new"]) for e in got] == [("firm-f1", "Role", "Tax preparer", "Reviewer")], got   # never the password
+    got.clear()
+    on_write("sf_clients.json", [], [{"id": "c9", "name": "Ramesh Iyer", "pan": "ABCPI1234K", "phone": "98400", "years": {"2026-27": {"form": "ITR-1"}}}])
+    assert [(e["field"], e["old"], e["new"]) for e in got] == [("Client added", "", "Ramesh Iyer")], got           # one line, not one per field
+    assert who_of({"demo": True, "name": "Anita Rao", "email": "a@x"}) == engine.say("ui.demo", "visitor")   # visitors never see each other
     print("changelog OK")

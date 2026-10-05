@@ -20,6 +20,10 @@ systemctl restart "$SERVICE"
 for i in $(seq 1 30); do
   if curl -sf -o /dev/null "http://127.0.0.1:$PORT/health"; then
     echo "DEPLOY OK - $after is live on port $PORT"
+    # the product demos (deploy/demo/setup.sh) run the same code: restart them onto it too
+    for d in $(systemctl list-units --type=service --all --no-legend 'simplyfile-demo-*' | awk '{print $1}'); do
+      systemctl restart "$d" && echo "restarted demo $d"
+    done
     exit 0
   fi
   sleep 1

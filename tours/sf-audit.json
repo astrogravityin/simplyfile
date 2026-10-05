@@ -15,14 +15,16 @@
   "start_url": "/#/audit",
   "covers": [
     "is a tax audit needed (44AB)",
-    "this year against last, with flags",
-    "the Form 3CD checklist for this client",
+    "this year against earlier years, with flags",
+    "GST returns against the books",
+    "the Form 3CD checklist, riskiest first",
+    "statutory audit and Accounting Standards",
     "audit points and who clears them"
   ],
   "steps": [
     {
       "chapter": "Tax audit",
-      "say": "Work through a tax audit in SimplyFile: is one needed, what moved since last year, the Form 3CD clauses that apply, and the points still open.",
+      "say": "Work through an audit in SimplyFile: is one needed, what moved against earlier years, GST against the books, the Form 3CD clauses and the Accounting Standards that apply, and the points still open.",
       "do": [
         {
           "wait": 1
@@ -58,8 +60,8 @@
       ]
     },
     {
-      "chapter": "This year against last",
-      "say": "Every mapped P&L and balance-sheet line against last year - from last year's statements, last year's filed return, or this year's previous-year column. New, gone, sharp moves and lines growing faster than turnover are flagged.",
+      "chapter": "Against earlier years",
+      "say": "Every mapped P&L and balance-sheet line against last year and up to four years before - from each year's statements, its filed return, or this year's previous-year column. Sharp moves are flagged, and so is a line that breaks its own history while turnover does not.",
       "do": [
         {
           "highlight_target": "#au-trend",
@@ -80,11 +82,33 @@
       ]
     },
     {
+      "chapter": "GST against the books",
+      "say": "Add the GSTR-3B and GSTR-1 JSON from the GST portal - or the zip it downloads as. Month by month GSTR-3B against GSTR-1, and the year against the turnover in the books; a difference becomes an audit point.",
+      "do": [
+        {
+          "highlight_target": "#au-gst-card",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
       "chapter": "Form 3CD checklist",
-      "say": "Only the clauses that apply to this client - partners, TDS, loans, stock and more. Mark each one with a note; an issue opens an audit point.",
+      "say": "Only the clauses that apply to this client, the riskiest first: pick the line of business, and clauses watching a flagged line rise to the top. Mark each one with a note; an issue opens an audit point.",
       "do": [
         {
           "highlight_target": "#au-checks",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Statutory audit",
+      "say": "For a firm, LLP, AOP or proprietor: whether an LLP's accounts must be audited, the ICAI level from turnover and borrowings, and the Accounting Standards that apply at that level - each worked through like a clause.",
+      "do": [
+        {
+          "highlight_target": "#au-stat-card",
           "optional": true,
           "timeout": 5
         }

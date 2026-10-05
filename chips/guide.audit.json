@@ -16,7 +16,7 @@
     {
       "name": "lede",
       "type": "long",
-      "default": "Work through a tax audit in {product}: is one needed, what moved since last year, the Form 3CD clauses that apply, and the points still open.",
+      "default": "Work through an audit in {product}: is one needed, what moved against earlier years, GST against the books, the Form 3CD clauses and the Accounting Standards that apply, and the points still open.",
       "label": "lede"
     },
     {
@@ -28,7 +28,7 @@
     {
       "name": "minutes",
       "type": "number",
-      "default": 3,
+      "default": 4,
       "label": "minutes"
     },
     {
@@ -47,8 +47,8 @@
           "open": ".in-pick-row"
         },
         {
-          "title": "This year against last",
-          "say": "Every mapped P&L and balance-sheet line against last year - from last year's statements, last year's filed return, or this year's previous-year column. New, gone, sharp moves and lines growing faster than turnover are flagged.",
+          "title": "Against earlier years",
+          "say": "Every mapped P&L and balance-sheet line against last year and up to four years before - from each year's statements, its filed return, or this year's previous-year column. Sharp moves are flagged, and so is a line that breaks its own history while turnover does not.",
           "target": "#au-trend"
         },
         {
@@ -57,9 +57,19 @@
           "target": "#au-trend"
         },
         {
+          "title": "GST against the books",
+          "say": "Add the GSTR-3B and GSTR-1 JSON from the GST portal - or the zip it downloads as. Month by month GSTR-3B against GSTR-1, and the year against the turnover in the books; a difference becomes an audit point.",
+          "target": "#au-gst-card"
+        },
+        {
           "title": "Form 3CD checklist",
-          "say": "Only the clauses that apply to this client - partners, TDS, loans, stock and more. Mark each one with a note; an issue opens an audit point.",
+          "say": "Only the clauses that apply to this client, the riskiest first: pick the line of business, and clauses watching a flagged line rise to the top. Mark each one with a note; an issue opens an audit point.",
           "target": "#au-checks"
+        },
+        {
+          "title": "Statutory audit",
+          "say": "For a firm, LLP, AOP or proprietor: whether an LLP's accounts must be audited, the ICAI level from turnover and borrowings, and the Accounting Standards that apply at that level - each worked through like a clause.",
+          "target": "#au-stat-card"
         },
         {
           "title": "Audit points",
@@ -81,7 +91,7 @@
     }
   },
   "returns": "record",
-  "version": 1,
+  "version": 2,
   "status": "published",
   "description_nl": "2026-10-04: the Tax audit walk, up to date with the screen; tours/sf-audit.json is made from it.",
   "test_cases": [
@@ -89,9 +99,9 @@
       "args": {},
       "expect_value": {
         "title": "Tax audit",
-        "lede": "Work through a tax audit in {product}: is one needed, what moved since last year, the Form 3CD clauses that apply, and the points still open.",
+        "lede": "Work through an audit in {product}: is one needed, what moved against earlier years, GST against the books, the Form 3CD clauses and the Accounting Standards that apply, and the points still open.",
         "icon": "shield",
-        "minutes": 3,
+        "minutes": 4,
         "steps": [
           {
             "title": "Pick the client",
@@ -105,8 +115,8 @@
             "open": ".in-pick-row"
           },
           {
-            "title": "This year against last",
-            "say": "Every mapped P&L and balance-sheet line against last year - from last year's statements, last year's filed return, or this year's previous-year column. New, gone, sharp moves and lines growing faster than turnover are flagged.",
+            "title": "Against earlier years",
+            "say": "Every mapped P&L and balance-sheet line against last year and up to four years before - from each year's statements, its filed return, or this year's previous-year column. Sharp moves are flagged, and so is a line that breaks its own history while turnover does not.",
             "target": "#au-trend"
           },
           {
@@ -115,9 +125,19 @@
             "target": "#au-trend"
           },
           {
+            "title": "GST against the books",
+            "say": "Add the GSTR-3B and GSTR-1 JSON from the GST portal - or the zip it downloads as. Month by month GSTR-3B against GSTR-1, and the year against the turnover in the books; a difference becomes an audit point.",
+            "target": "#au-gst-card"
+          },
+          {
             "title": "Form 3CD checklist",
-            "say": "Only the clauses that apply to this client - partners, TDS, loans, stock and more. Mark each one with a note; an issue opens an audit point.",
+            "say": "Only the clauses that apply to this client, the riskiest first: pick the line of business, and clauses watching a flagged line rise to the top. Mark each one with a note; an issue opens an audit point.",
             "target": "#au-checks"
+          },
+          {
+            "title": "Statutory audit",
+            "say": "For a firm, LLP, AOP or proprietor: whether an LLP's accounts must be audited, the ICAI level from turnover and borrowings, and the Accounting Standards that apply at that level - each worked through like a clause.",
+            "target": "#au-stat-card"
           },
           {
             "title": "Audit points",

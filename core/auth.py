@@ -32,6 +32,7 @@ rules.trigger("signup.submit", "signup", "A sign-up is submitted", ["refuse", "b
 
 BASE = os.getenv("PORTAL_BASE", "").rstrip("/")          # "/tv" when hosted under a path
 COOKIE = os.getenv("PORTAL_COOKIE", "portal_session")
+KNOWN = COOKIE + "_known"                                 # "this browser has signed in here before" (see known())
 #: Reserve the owner seat for one address, so "whoever opens it first owns it" is not a race.
 OWNER_EMAIL = os.getenv("PORTAL_OWNER_EMAIL", "").strip().lower()
 HTTPS = os.getenv("PORTAL_HTTPS", "").lower() in {"1", "true", "yes"}
@@ -227,7 +228,16 @@ def _sign_in(response: Response, u: dict) -> dict:
     ttl = int(limits()["session_days"]) * 86400
     response.set_cookie(COOKIE, store.start_session(u, ttl), httponly=True, samesite="lax",
                         max_age=ttl, path=BASE or "/", secure=HTTPS)
+    # 2026-10-05 owner: a returning visitor skips the landing page. Only "this browser has signed in here" - no one's
+    # identity; sign-out leaves it, so the next visit opens on sign-in.
+    response.set_cookie(KNOWN, "1", httponly=True, samesite="lax", max_age=int(limits()["known_days"]) * 86400,
+                        path=BASE or "/", secure=HTTPS)
     return {"user": store.public_user(u)}
+
+
+def known(request: Request) -> bool:
+    """This browser has signed in to this portal before (cookie set by _sign_in)."""
+    return request.cookies.get(KNOWN) == "1"
 
 
 # --- field checks (all chips) ---------------------------------------------------------------------

@@ -1,0 +1,75 @@
+{
+  "chip_id": "audit.risk_level",
+  "kind": "accessor",
+  "set": "audit",
+  "label": "Tax audit: a clause's score as high, medium or low",
+  "aliases": [
+    "tax audit: a clause's score as high, med"
+  ],
+  "params": [
+    {
+      "name": "score",
+      "type": "number",
+      "default": 0,
+      "label": "from audit.risk"
+    },
+    {
+      "name": "high_at",
+      "type": "number",
+      "default": 4,
+      "label": "this score or more is high"
+    },
+    {
+      "name": "medium_at",
+      "type": "number",
+      "default": 3,
+      "label": "this score or more is medium"
+    }
+  ],
+  "expr": {
+    "vop": "choose",
+    "cases": [
+      {
+        "when": {
+          "op": "ge",
+          "left": "$score",
+          "right": "$high_at"
+        },
+        "then": "high"
+      },
+      {
+        "when": {
+          "op": "ge",
+          "left": "$score",
+          "right": "$medium_at"
+        },
+        "then": "medium"
+      }
+    ],
+    "else": "low"
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-05: where the line falls between high, medium and low attention.",
+  "test_cases": [
+    {
+      "args": {
+        "score": 5
+      },
+      "expect_value": "high"
+    },
+    {
+      "args": {
+        "score": 3
+      },
+      "expect_value": "medium"
+    },
+    {
+      "args": {
+        "score": 1
+      },
+      "expect_value": "low"
+    }
+  ]
+}

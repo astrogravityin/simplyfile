@@ -1,0 +1,187 @@
+{
+  "chip_id": "ui.demo",
+  "kind": "accessor",
+  "set": "ui",
+  "label": "Demo mode words",
+  "aliases": [
+    "demo mode words"
+  ],
+  "params": [
+    {
+      "name": "tab",
+      "type": "text",
+      "default": "Try the demo",
+      "label": "tab"
+    },
+    {
+      "name": "title",
+      "type": "text",
+      "default": "Try {product}",
+      "label": "title"
+    },
+    {
+      "name": "lede",
+      "type": "text",
+      "default": "Your name and email - we send a 6-digit code, and you are in, with a full demo practice to explore. Everything here is sample data, and it is put back every night.",
+      "label": "lede"
+    },
+    {
+      "name": "name",
+      "type": "text",
+      "default": "Your name",
+      "label": "name"
+    },
+    {
+      "name": "name_ph",
+      "type": "text",
+      "default": "e.g. Anita Rao",
+      "label": "name ph"
+    },
+    {
+      "name": "email",
+      "type": "text",
+      "default": "Your email",
+      "label": "email"
+    },
+    {
+      "name": "email_ph",
+      "type": "text",
+      "default": "you@example.com",
+      "label": "email ph"
+    },
+    {
+      "name": "send",
+      "type": "text",
+      "default": "Send me a code",
+      "label": "send"
+    },
+    {
+      "name": "code",
+      "type": "text",
+      "default": "The code we emailed",
+      "label": "code"
+    },
+    {
+      "name": "enter",
+      "type": "text",
+      "default": "Open the demo",
+      "label": "enter"
+    },
+    {
+      "name": "other_email",
+      "type": "text",
+      "default": "Use another email",
+      "label": "other email"
+    },
+    {
+      "name": "code_sent",
+      "type": "text",
+      "default": "We have emailed a code to {email}. It may take a minute; check spam too.",
+      "label": "code sent"
+    },
+    {
+      "name": "code_wrong",
+      "type": "text",
+      "default": "That code is not right. Check the latest email and try again.",
+      "label": "code wrong"
+    },
+    {
+      "name": "code_burned",
+      "type": "text",
+      "default": "Too many tries with that code. Ask for a new one.",
+      "label": "code burned"
+    },
+    {
+      "name": "mail_subject",
+      "type": "text",
+      "default": "{code} - your {product} demo code",
+      "label": "mail subject"
+    },
+    {
+      "name": "mail_body",
+      "type": "text",
+      "default": "Hello {name},\n\nYour code for the {product} demo is {code}. It works for {minutes} minutes.\n\nOpen {url} and type it in. Everything in the demo is sample data, put back every night.\n\nIf you did not ask for this, ignore this email.",
+      "label": "mail body"
+    },
+    {
+      "name": "no_mail",
+      "type": "text",
+      "default": "The demo cannot send codes just now. Please try again in a little while.",
+      "label": "no mail"
+    },
+    {
+      "name": "not_demo",
+      "type": "text",
+      "default": "This is not a demo site.",
+      "label": "not demo"
+    },
+    {
+      "name": "banner",
+      "type": "text",
+      "default": "Demo - sample data, put back every night. Try anything.",
+      "label": "banner"
+    },
+    {
+      "name": "visitor",
+      "type": "text",
+      "default": "A demo visitor",
+      "label": "visitor"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "tab": "$tab",
+      "title": "$title",
+      "lede": "$lede",
+      "name": "$name",
+      "name_ph": "$name_ph",
+      "email": "$email",
+      "email_ph": "$email_ph",
+      "send": "$send",
+      "code": "$code",
+      "enter": "$enter",
+      "other_email": "$other_email",
+      "code_sent": "$code_sent",
+      "code_wrong": "$code_wrong",
+      "code_burned": "$code_burned",
+      "mail_subject": "$mail_subject",
+      "mail_body": "$mail_body",
+      "no_mail": "$no_mail",
+      "not_demo": "$not_demo",
+      "banner": "$banner",
+      "visitor": "$visitor"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-05: the words of the demo sign-in, its email and the demo banner.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "tab": "Try the demo",
+        "title": "Try {product}",
+        "lede": "Your name and email - we send a 6-digit code, and you are in, with a full demo practice to explore. Everything here is sample data, and it is put back every night.",
+        "name": "Your name",
+        "name_ph": "e.g. Anita Rao",
+        "email": "Your email",
+        "email_ph": "you@example.com",
+        "send": "Send me a code",
+        "code": "The code we emailed",
+        "enter": "Open the demo",
+        "other_email": "Use another email",
+        "code_sent": "We have emailed a code to {email}. It may take a minute; check spam too.",
+        "code_wrong": "That code is not right. Check the latest email and try again.",
+        "code_burned": "Too many tries with that code. Ask for a new one.",
+        "mail_subject": "{code} - your {product} demo code",
+        "mail_body": "Hello {name},\n\nYour code for the {product} demo is {code}. It works for {minutes} minutes.\n\nOpen {url} and type it in. Everything in the demo is sample data, put back every night.\n\nIf you did not ask for this, ignore this email.",
+        "no_mail": "The demo cannot send codes just now. Please try again in a little while.",
+        "not_demo": "This is not a demo site.",
+        "banner": "Demo - sample data, put back every night. Try anything.",
+        "visitor": "A demo visitor"
+      }
+    }
+  ]
+}

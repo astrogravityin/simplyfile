@@ -28,7 +28,7 @@
     {
       "name": "lede",
       "type": "text",
-      "default": "Form 3CD, worked through: is an audit needed, what moved since last year, the clauses that apply to this client, and the points still open.",
+      "default": "Form 3CD and the statutory audit, worked through: is an audit needed, what moved against earlier years, GST against the books, the clauses and standards that apply, and the points still open.",
       "label": "lede"
     },
     {
@@ -140,6 +140,12 @@
       "label": "trend title"
     },
     {
+      "name": "trend_title_years",
+      "type": "text",
+      "default": "This year against earlier years",
+      "label": "trend title years"
+    },
+    {
       "name": "trend_sub",
       "type": "text",
       "default": "Every mapped profit and loss and balance sheet line. Flagged lines deserve a look.",
@@ -180,6 +186,48 @@
       "type": "text",
       "default": "Last year",
       "label": "h before"
+    },
+    {
+      "name": "h_avg",
+      "type": "text",
+      "default": "vs average",
+      "label": "h avg"
+    },
+    {
+      "name": "h_avg_tip",
+      "type": "text",
+      "default": "This year against the average of the earlier years shown",
+      "label": "h avg tip"
+    },
+    {
+      "name": "src_years",
+      "type": "text",
+      "default": "Compared with {n} earlier years ({from} to {to}) - each line is also checked against its own history.",
+      "label": "src years"
+    },
+    {
+      "name": "flag_above_pattern",
+      "type": "text",
+      "default": "Above its usual range",
+      "label": "flag above pattern"
+    },
+    {
+      "name": "flag_below_pattern",
+      "type": "text",
+      "default": "Below its usual range",
+      "label": "flag below pattern"
+    },
+    {
+      "name": "point_from_pattern",
+      "type": "text",
+      "default": "{line}: {now} this year against an average of {avg} over {n} years ({flag})",
+      "label": "point from pattern"
+    },
+    {
+      "name": "from_pattern",
+      "type": "text",
+      "default": "Earlier years",
+      "label": "from pattern"
     },
     {
       "name": "h_now",
@@ -286,8 +334,410 @@
     {
       "name": "check_sub",
       "type": "text",
-      "default": "Only the clauses that apply to this client. Mark each one; an issue opens an audit point.",
+      "default": "Only the clauses that apply to this client, the riskiest first. Mark each one; an issue opens an audit point.",
       "label": "check sub"
+    },
+    {
+      "name": "gst_title",
+      "type": "text",
+      "default": "GST returns against the books",
+      "label": "gst title"
+    },
+    {
+      "name": "gst_sub",
+      "type": "text",
+      "default": "GSTR-3B and GSTR-1 for the year (the JSON from the GST portal, or the zip it downloads as), month by month, against the turnover in the books.",
+      "label": "gst sub"
+    },
+    {
+      "name": "gst_upload",
+      "type": "text",
+      "default": "Add GST returns",
+      "label": "gst upload"
+    },
+    {
+      "name": "gst_none",
+      "type": "text",
+      "default": "No GST returns added yet. Add the GSTR-3B and GSTR-1 JSON for each month of the year.",
+      "label": "gst none"
+    },
+    {
+      "name": "gst_remove",
+      "type": "text",
+      "default": "Remove",
+      "label": "gst remove"
+    },
+    {
+      "name": "gst_h_month",
+      "type": "text",
+      "default": "Month",
+      "label": "gst h month"
+    },
+    {
+      "name": "gst_h_3b",
+      "type": "text",
+      "default": "GSTR-3B taxable",
+      "label": "gst h 3b"
+    },
+    {
+      "name": "gst_h_r1",
+      "type": "text",
+      "default": "GSTR-1 taxable",
+      "label": "gst h r1"
+    },
+    {
+      "name": "gst_h_diff",
+      "type": "text",
+      "default": "Difference",
+      "label": "gst h diff"
+    },
+    {
+      "name": "gst_total",
+      "type": "text",
+      "default": "The year",
+      "label": "gst total"
+    },
+    {
+      "name": "gst_books",
+      "type": "text",
+      "default": "Turnover in the books",
+      "label": "gst books"
+    },
+    {
+      "name": "gst_missing",
+      "type": "text",
+      "default": "{n} months missing",
+      "label": "gst missing"
+    },
+    {
+      "name": "gst_missing_one",
+      "type": "text",
+      "default": "1 month missing",
+      "label": "gst missing one"
+    },
+    {
+      "name": "gst_match",
+      "type": "text",
+      "default": "Matches",
+      "label": "gst match"
+    },
+    {
+      "name": "gst_more_in_books",
+      "type": "text",
+      "default": "Books higher than GSTR-3B",
+      "label": "gst more in books"
+    },
+    {
+      "name": "gst_more_in_gst",
+      "type": "text",
+      "default": "GSTR-3B higher than the books",
+      "label": "gst more in gst"
+    },
+    {
+      "name": "gst_more_in_r1",
+      "type": "text",
+      "default": "GSTR-1 higher than GSTR-3B",
+      "label": "gst more in r1"
+    },
+    {
+      "name": "gst_more_in_3b",
+      "type": "text",
+      "default": "GSTR-3B higher than GSTR-1",
+      "label": "gst more in 3b"
+    },
+    {
+      "name": "gst_differs",
+      "type": "text",
+      "default": "Differs",
+      "label": "gst differs"
+    },
+    {
+      "name": "gst_no_3b",
+      "type": "text",
+      "default": "No GSTR-3B",
+      "label": "gst no 3b"
+    },
+    {
+      "name": "gst_no_r1",
+      "type": "text",
+      "default": "No GSTR-1",
+      "label": "gst no r1"
+    },
+    {
+      "name": "gst_bad_file",
+      "type": "text",
+      "default": "{name}: not a GSTR-3B or GSTR-1 JSON from the GST portal.",
+      "label": "gst bad file"
+    },
+    {
+      "name": "gst_bad_period",
+      "type": "text",
+      "default": "{name}: return period {period} is not in this year ({fy}).",
+      "label": "gst bad period"
+    },
+    {
+      "name": "gst_added",
+      "type": "text",
+      "default": "{n} returns added",
+      "label": "gst added"
+    },
+    {
+      "name": "gst_kind_gstr3b",
+      "type": "text",
+      "default": "GSTR-3B",
+      "label": "gst kind gstr3b"
+    },
+    {
+      "name": "gst_kind_gstr1",
+      "type": "text",
+      "default": "GSTR-1",
+      "label": "gst kind gstr1"
+    },
+    {
+      "name": "gst_files_title",
+      "type": "text",
+      "default": "Returns added",
+      "label": "gst files title"
+    },
+    {
+      "name": "point_from_gst",
+      "type": "text",
+      "default": "GST: {what} by {gap} for the year",
+      "label": "point from gst"
+    },
+    {
+      "name": "from_gst",
+      "type": "text",
+      "default": "GST returns",
+      "label": "from gst"
+    },
+    {
+      "name": "stat_title",
+      "type": "text",
+      "default": "Statutory audit and Accounting Standards",
+      "label": "stat title"
+    },
+    {
+      "name": "stat_sub",
+      "type": "text",
+      "default": "For a firm, LLP, AOP or proprietor: whether the accounts must be audited, the entity's level under ICAI's scheme, and the Accounting Standards that apply at that level.",
+      "label": "stat sub"
+    },
+    {
+      "name": "llp_title",
+      "type": "text",
+      "default": "LLP audit (LLP Act)",
+      "label": "llp title"
+    },
+    {
+      "name": "llp_yes",
+      "type": "text",
+      "default": "Accounts to be audited",
+      "label": "llp yes"
+    },
+    {
+      "name": "llp_no",
+      "type": "text",
+      "default": "No audit needed under the LLP Act",
+      "label": "llp no"
+    },
+    {
+      "name": "llp_why_turnover",
+      "type": "text",
+      "default": "Turnover {turnover} is above {limit}.",
+      "label": "llp why turnover"
+    },
+    {
+      "name": "llp_why_contribution",
+      "type": "text",
+      "default": "Contribution {contribution} is above {limit}.",
+      "label": "llp why contribution"
+    },
+    {
+      "name": "llp_why_below",
+      "type": "text",
+      "default": "Turnover {turnover} and contribution {contribution} are within the limits.",
+      "label": "llp why below"
+    },
+    {
+      "name": "level_title",
+      "type": "text",
+      "default": "Level for Accounting Standards",
+      "label": "level title"
+    },
+    {
+      "name": "level_I",
+      "type": "text",
+      "default": "Level I",
+      "label": "level I"
+    },
+    {
+      "name": "level_II",
+      "type": "text",
+      "default": "Level II (MSME)",
+      "label": "level II"
+    },
+    {
+      "name": "level_III",
+      "type": "text",
+      "default": "Level III (MSME)",
+      "label": "level III"
+    },
+    {
+      "name": "level_IV",
+      "type": "text",
+      "default": "Level IV (MSME)",
+      "label": "level IV"
+    },
+    {
+      "name": "level_why",
+      "type": "text",
+      "default": "Turnover {turnover} · borrowings {borrowings}",
+      "label": "level why"
+    },
+    {
+      "name": "fact_listed",
+      "type": "text",
+      "default": "Listed securities, or a bank, financial institution or insurer",
+      "label": "fact listed"
+    },
+    {
+      "name": "as_full",
+      "type": "text",
+      "default": "Applies",
+      "label": "as full"
+    },
+    {
+      "name": "as_relaxed",
+      "type": "text",
+      "default": "With relaxations",
+      "label": "as relaxed"
+    },
+    {
+      "name": "as_no",
+      "type": "text",
+      "default": "Not at this level",
+      "label": "as no"
+    },
+    {
+      "name": "as_not_here",
+      "type": "text",
+      "default": "Not at this level ({n})",
+      "label": "as not here"
+    },
+    {
+      "name": "as_done",
+      "type": "text",
+      "default": "{done} of {n} done",
+      "label": "as done"
+    },
+    {
+      "name": "as_confirm",
+      "type": "text",
+      "default": "How each standard applies at each level follows ICAI's announcement - confirm with your auditor; it is kept as chips.",
+      "label": "as confirm"
+    },
+    {
+      "name": "point_from_as",
+      "type": "text",
+      "default": "{std} - {title}",
+      "label": "point from as"
+    },
+    {
+      "name": "from_as",
+      "type": "text",
+      "default": "Accounting Standards",
+      "label": "from as"
+    },
+    {
+      "name": "sector",
+      "type": "text",
+      "default": "Line of business",
+      "label": "sector"
+    },
+    {
+      "name": "sector_none",
+      "type": "text",
+      "default": "Not chosen",
+      "label": "sector none"
+    },
+    {
+      "name": "sector_trading",
+      "type": "text",
+      "default": "Trading",
+      "label": "sector trading"
+    },
+    {
+      "name": "sector_manufacturing",
+      "type": "text",
+      "default": "Manufacturing",
+      "label": "sector manufacturing"
+    },
+    {
+      "name": "sector_services",
+      "type": "text",
+      "default": "Services",
+      "label": "sector services"
+    },
+    {
+      "name": "sector_contractor",
+      "type": "text",
+      "default": "Contractor / works",
+      "label": "sector contractor"
+    },
+    {
+      "name": "sector_profession",
+      "type": "text",
+      "default": "Profession",
+      "label": "sector profession"
+    },
+    {
+      "name": "sector_real_estate",
+      "type": "text",
+      "default": "Real estate",
+      "label": "sector real estate"
+    },
+    {
+      "name": "risk_high",
+      "type": "text",
+      "default": "High",
+      "label": "risk high"
+    },
+    {
+      "name": "risk_medium",
+      "type": "text",
+      "default": "Medium",
+      "label": "risk medium"
+    },
+    {
+      "name": "risk_low",
+      "type": "text",
+      "default": "Low",
+      "label": "risk low"
+    },
+    {
+      "name": "risk_tip",
+      "type": "text",
+      "default": "How much this clause deserves attention for this client",
+      "label": "risk tip"
+    },
+    {
+      "name": "why_flagged",
+      "type": "text",
+      "default": "{lines} flagged this year",
+      "label": "why flagged"
+    },
+    {
+      "name": "why_sector",
+      "type": "text",
+      "default": "often goes wrong in {sector}",
+      "label": "why sector"
+    },
+    {
+      "name": "why_big",
+      "type": "text",
+      "default": "large turnover",
+      "label": "why big"
     },
     {
       "name": "st_todo",
@@ -459,6 +909,7 @@
       "mark_audit": "$mark_audit",
       "marked": "$marked",
       "trend_title": "$trend_title",
+      "trend_title_years": "$trend_title_years",
       "trend_sub": "$trend_sub",
       "src_statements": "$src_statements",
       "src_return": "$src_return",
@@ -466,6 +917,13 @@
       "src_none": "$src_none",
       "h_line": "$h_line",
       "h_before": "$h_before",
+      "h_avg": "$h_avg",
+      "h_avg_tip": "$h_avg_tip",
+      "src_years": "$src_years",
+      "flag_above_pattern": "$flag_above_pattern",
+      "flag_below_pattern": "$flag_below_pattern",
+      "point_from_pattern": "$point_from_pattern",
+      "from_pattern": "$from_pattern",
       "h_now": "$h_now",
       "h_change": "$h_change",
       "h_share": "$h_share",
@@ -484,6 +942,73 @@
       "turnover_change": "$turnover_change",
       "check_title": "$check_title",
       "check_sub": "$check_sub",
+      "gst_title": "$gst_title",
+      "gst_sub": "$gst_sub",
+      "gst_upload": "$gst_upload",
+      "gst_none": "$gst_none",
+      "gst_remove": "$gst_remove",
+      "gst_h_month": "$gst_h_month",
+      "gst_h_3b": "$gst_h_3b",
+      "gst_h_r1": "$gst_h_r1",
+      "gst_h_diff": "$gst_h_diff",
+      "gst_total": "$gst_total",
+      "gst_books": "$gst_books",
+      "gst_missing": "$gst_missing",
+      "gst_missing_one": "$gst_missing_one",
+      "gst_match": "$gst_match",
+      "gst_more_in_books": "$gst_more_in_books",
+      "gst_more_in_gst": "$gst_more_in_gst",
+      "gst_more_in_r1": "$gst_more_in_r1",
+      "gst_more_in_3b": "$gst_more_in_3b",
+      "gst_differs": "$gst_differs",
+      "gst_no_3b": "$gst_no_3b",
+      "gst_no_r1": "$gst_no_r1",
+      "gst_bad_file": "$gst_bad_file",
+      "gst_bad_period": "$gst_bad_period",
+      "gst_added": "$gst_added",
+      "gst_kind_gstr3b": "$gst_kind_gstr3b",
+      "gst_kind_gstr1": "$gst_kind_gstr1",
+      "gst_files_title": "$gst_files_title",
+      "point_from_gst": "$point_from_gst",
+      "from_gst": "$from_gst",
+      "stat_title": "$stat_title",
+      "stat_sub": "$stat_sub",
+      "llp_title": "$llp_title",
+      "llp_yes": "$llp_yes",
+      "llp_no": "$llp_no",
+      "llp_why_turnover": "$llp_why_turnover",
+      "llp_why_contribution": "$llp_why_contribution",
+      "llp_why_below": "$llp_why_below",
+      "level_title": "$level_title",
+      "level_I": "$level_I",
+      "level_II": "$level_II",
+      "level_III": "$level_III",
+      "level_IV": "$level_IV",
+      "level_why": "$level_why",
+      "fact_listed": "$fact_listed",
+      "as_full": "$as_full",
+      "as_relaxed": "$as_relaxed",
+      "as_no": "$as_no",
+      "as_not_here": "$as_not_here",
+      "as_done": "$as_done",
+      "as_confirm": "$as_confirm",
+      "point_from_as": "$point_from_as",
+      "from_as": "$from_as",
+      "sector": "$sector",
+      "sector_none": "$sector_none",
+      "sector_trading": "$sector_trading",
+      "sector_manufacturing": "$sector_manufacturing",
+      "sector_services": "$sector_services",
+      "sector_contractor": "$sector_contractor",
+      "sector_profession": "$sector_profession",
+      "sector_real_estate": "$sector_real_estate",
+      "risk_high": "$risk_high",
+      "risk_medium": "$risk_medium",
+      "risk_low": "$risk_low",
+      "risk_tip": "$risk_tip",
+      "why_flagged": "$why_flagged",
+      "why_sector": "$why_sector",
+      "why_big": "$why_big",
       "st_todo": "$st_todo",
       "st_done": "$st_done",
       "st_na": "$st_na",
@@ -521,7 +1046,7 @@
         "t_PL": "P&L",
         "t_BS": "Balance sheet",
         "title": "Tax audit",
-        "lede": "Form 3CD, worked through: is an audit needed, what moved since last year, the clauses that apply to this client, and the points still open.",
+        "lede": "Form 3CD and the statutory audit, worked through: is an audit needed, what moved against earlier years, GST against the books, the clauses and standards that apply, and the points still open.",
         "ay": "Assessment year",
         "loading": "Reading the statements...",
         "need_title": "Is a tax audit needed?",
@@ -540,6 +1065,7 @@
         "mark_audit": "Mark this year as a tax audit",
         "marked": "This year is marked as a tax audit (Form 3CD).",
         "trend_title": "This year against last",
+        "trend_title_years": "This year against earlier years",
         "trend_sub": "Every mapped profit and loss and balance sheet line. Flagged lines deserve a look.",
         "src_statements": "Last year from {ay}'s statements.",
         "src_return": "Last year from the {ay} return as filed (imported).",
@@ -547,6 +1073,13 @@
         "src_none": "No figures for last year yet - upload last year's statements or keep the previous-year column in this year's file.",
         "h_line": "Line",
         "h_before": "Last year",
+        "h_avg": "vs average",
+        "h_avg_tip": "This year against the average of the earlier years shown",
+        "src_years": "Compared with {n} earlier years ({from} to {to}) - each line is also checked against its own history.",
+        "flag_above_pattern": "Above its usual range",
+        "flag_below_pattern": "Below its usual range",
+        "point_from_pattern": "{line}: {now} this year against an average of {avg} over {n} years ({flag})",
+        "from_pattern": "Earlier years",
         "h_now": "This year",
         "h_change": "Change",
         "h_share": "% of turnover",
@@ -564,7 +1097,74 @@
         "turnover": "Turnover",
         "turnover_change": "Turnover change",
         "check_title": "Form 3CD checklist",
-        "check_sub": "Only the clauses that apply to this client. Mark each one; an issue opens an audit point.",
+        "check_sub": "Only the clauses that apply to this client, the riskiest first. Mark each one; an issue opens an audit point.",
+        "gst_title": "GST returns against the books",
+        "gst_sub": "GSTR-3B and GSTR-1 for the year (the JSON from the GST portal, or the zip it downloads as), month by month, against the turnover in the books.",
+        "gst_upload": "Add GST returns",
+        "gst_none": "No GST returns added yet. Add the GSTR-3B and GSTR-1 JSON for each month of the year.",
+        "gst_remove": "Remove",
+        "gst_h_month": "Month",
+        "gst_h_3b": "GSTR-3B taxable",
+        "gst_h_r1": "GSTR-1 taxable",
+        "gst_h_diff": "Difference",
+        "gst_total": "The year",
+        "gst_books": "Turnover in the books",
+        "gst_missing": "{n} months missing",
+        "gst_missing_one": "1 month missing",
+        "gst_match": "Matches",
+        "gst_more_in_books": "Books higher than GSTR-3B",
+        "gst_more_in_gst": "GSTR-3B higher than the books",
+        "gst_more_in_r1": "GSTR-1 higher than GSTR-3B",
+        "gst_more_in_3b": "GSTR-3B higher than GSTR-1",
+        "gst_differs": "Differs",
+        "gst_no_3b": "No GSTR-3B",
+        "gst_no_r1": "No GSTR-1",
+        "gst_bad_file": "{name}: not a GSTR-3B or GSTR-1 JSON from the GST portal.",
+        "gst_bad_period": "{name}: return period {period} is not in this year ({fy}).",
+        "gst_added": "{n} returns added",
+        "gst_kind_gstr3b": "GSTR-3B",
+        "gst_kind_gstr1": "GSTR-1",
+        "gst_files_title": "Returns added",
+        "point_from_gst": "GST: {what} by {gap} for the year",
+        "from_gst": "GST returns",
+        "stat_title": "Statutory audit and Accounting Standards",
+        "stat_sub": "For a firm, LLP, AOP or proprietor: whether the accounts must be audited, the entity's level under ICAI's scheme, and the Accounting Standards that apply at that level.",
+        "llp_title": "LLP audit (LLP Act)",
+        "llp_yes": "Accounts to be audited",
+        "llp_no": "No audit needed under the LLP Act",
+        "llp_why_turnover": "Turnover {turnover} is above {limit}.",
+        "llp_why_contribution": "Contribution {contribution} is above {limit}.",
+        "llp_why_below": "Turnover {turnover} and contribution {contribution} are within the limits.",
+        "level_title": "Level for Accounting Standards",
+        "level_I": "Level I",
+        "level_II": "Level II (MSME)",
+        "level_III": "Level III (MSME)",
+        "level_IV": "Level IV (MSME)",
+        "level_why": "Turnover {turnover} · borrowings {borrowings}",
+        "fact_listed": "Listed securities, or a bank, financial institution or insurer",
+        "as_full": "Applies",
+        "as_relaxed": "With relaxations",
+        "as_no": "Not at this level",
+        "as_not_here": "Not at this level ({n})",
+        "as_done": "{done} of {n} done",
+        "as_confirm": "How each standard applies at each level follows ICAI's announcement - confirm with your auditor; it is kept as chips.",
+        "point_from_as": "{std} - {title}",
+        "from_as": "Accounting Standards",
+        "sector": "Line of business",
+        "sector_none": "Not chosen",
+        "sector_trading": "Trading",
+        "sector_manufacturing": "Manufacturing",
+        "sector_services": "Services",
+        "sector_contractor": "Contractor / works",
+        "sector_profession": "Profession",
+        "sector_real_estate": "Real estate",
+        "risk_high": "High",
+        "risk_medium": "Medium",
+        "risk_low": "Low",
+        "risk_tip": "How much this clause deserves attention for this client",
+        "why_flagged": "{lines} flagged this year",
+        "why_sector": "often goes wrong in {sector}",
+        "why_big": "large turnover",
         "st_todo": "To do",
         "st_done": "Done",
         "st_na": "Not applicable",

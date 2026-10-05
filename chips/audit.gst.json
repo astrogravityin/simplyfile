@@ -1,0 +1,280 @@
+{
+  "chip_id": "audit.gst",
+  "kind": "accessor",
+  "set": "audit",
+  "label": "GST returns against the books for the year",
+  "aliases": [
+    "gst returns against the books for the ye"
+  ],
+  "params": [
+    {
+      "name": "books",
+      "type": "number",
+      "default": 0,
+      "label": "turnover in the books"
+    },
+    {
+      "name": "r3b",
+      "type": "number",
+      "default": 0,
+      "label": "GSTR-3B taxable value, the year"
+    },
+    {
+      "name": "r1",
+      "type": "number",
+      "default": 0,
+      "label": "GSTR-1 taxable value, the year"
+    },
+    {
+      "name": "months_3b",
+      "type": "number",
+      "default": 0,
+      "label": "months of GSTR-3B given"
+    },
+    {
+      "name": "months_1",
+      "type": "number",
+      "default": 0,
+      "label": "months of GSTR-1 given"
+    },
+    {
+      "name": "months",
+      "type": "number",
+      "default": 12,
+      "label": "months in the year"
+    },
+    {
+      "name": "tolerance_pct",
+      "type": "number",
+      "default": 1,
+      "label": "a difference within this % is rounding"
+    },
+    {
+      "name": "tolerance_amt",
+      "type": "number",
+      "default": 10000,
+      "label": "or within this amount"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "gap_books_3b": {
+        "vop": "sub",
+        "a": "$books",
+        "b": "$r3b"
+      },
+      "gap_3b_1": {
+        "vop": "sub",
+        "a": "$r3b",
+        "b": "$r1"
+      },
+      "missing_3b": {
+        "vop": "sub",
+        "a": "$months",
+        "b": "$months_3b"
+      },
+      "missing_1": {
+        "vop": "sub",
+        "a": "$months",
+        "b": "$months_1"
+      },
+      "books_3b": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "eq",
+              "left": "$months_3b",
+              "right": 0
+            },
+            "then": ""
+          },
+          {
+            "when": {
+              "op": "le",
+              "left": {
+                "vop": "largest",
+                "values": [
+                  {
+                    "vop": "sub",
+                    "a": "$books",
+                    "b": "$r3b"
+                  },
+                  {
+                    "vop": "sub",
+                    "a": "$r3b",
+                    "b": "$books"
+                  }
+                ]
+              },
+              "right": {
+                "vop": "largest",
+                "values": [
+                  "$tolerance_amt",
+                  {
+                    "vop": "div",
+                    "a": {
+                      "vop": "mul",
+                      "a": "$books",
+                      "b": "$tolerance_pct"
+                    },
+                    "b": 100
+                  }
+                ]
+              }
+            },
+            "then": "match"
+          },
+          {
+            "when": {
+              "op": "gt",
+              "left": "$books",
+              "right": "$r3b"
+            },
+            "then": "more_in_books"
+          }
+        ],
+        "else": "more_in_gst"
+      },
+      "r3b_1": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "any",
+              "items": [
+                {
+                  "op": "eq",
+                  "left": "$months_3b",
+                  "right": 0
+                },
+                {
+                  "op": "eq",
+                  "left": "$months_1",
+                  "right": 0
+                }
+              ]
+            },
+            "then": ""
+          },
+          {
+            "when": {
+              "op": "le",
+              "left": {
+                "vop": "largest",
+                "values": [
+                  {
+                    "vop": "sub",
+                    "a": "$r3b",
+                    "b": "$r1"
+                  },
+                  {
+                    "vop": "sub",
+                    "a": "$r1",
+                    "b": "$r3b"
+                  }
+                ]
+              },
+              "right": {
+                "vop": "largest",
+                "values": [
+                  "$tolerance_amt",
+                  {
+                    "vop": "div",
+                    "a": {
+                      "vop": "mul",
+                      "a": "$r3b",
+                      "b": "$tolerance_pct"
+                    },
+                    "b": 100
+                  }
+                ]
+              }
+            },
+            "then": "match"
+          },
+          {
+            "when": {
+              "op": "gt",
+              "left": "$r1",
+              "right": "$r3b"
+            },
+            "then": "more_in_r1"
+          }
+        ],
+        "else": "more_in_3b"
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-05 (audit phase 2): turnover in the books against the taxable value declared in GSTR-3B, and GSTR-3B against GSTR-1, for the year. Within tolerance_pct or tolerance_amt (the larger) it is a match; otherwise which side is higher - books higher than GSTR-3B is sales not declared, or income outside GST. Missing months are counted.",
+  "test_cases": [
+    {
+      "args": {
+        "books": 32000000,
+        "r3b": 32004000,
+        "r1": 32004000,
+        "months_3b": 12,
+        "months_1": 12
+      },
+      "expect_value": {
+        "gap_books_3b": -4000,
+        "gap_3b_1": 0,
+        "missing_3b": 0,
+        "missing_1": 0,
+        "books_3b": "match",
+        "r3b_1": "match"
+      }
+    },
+    {
+      "args": {
+        "books": 32000000,
+        "r3b": 29000000,
+        "r1": 30500000,
+        "months_3b": 12,
+        "months_1": 12
+      },
+      "expect_value": {
+        "gap_books_3b": 3000000,
+        "gap_3b_1": -1500000,
+        "missing_3b": 0,
+        "missing_1": 0,
+        "books_3b": "more_in_books",
+        "r3b_1": "more_in_r1"
+      }
+    },
+    {
+      "args": {
+        "books": 32000000,
+        "r3b": 26000000,
+        "r1": 0,
+        "months_3b": 10,
+        "months_1": 0
+      },
+      "expect_value": {
+        "gap_books_3b": 6000000,
+        "gap_3b_1": 26000000,
+        "missing_3b": 2,
+        "missing_1": 12,
+        "books_3b": "more_in_books",
+        "r3b_1": ""
+      }
+    },
+    {
+      "args": {
+        "books": 32000000
+      },
+      "expect_value": {
+        "gap_books_3b": 32000000,
+        "gap_3b_1": 0,
+        "missing_3b": 12,
+        "missing_1": 12,
+        "books_3b": "",
+        "r3b_1": ""
+      }
+    }
+  ]
+}

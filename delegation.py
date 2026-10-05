@@ -14,7 +14,7 @@ import threading
 
 from fastapi import HTTPException
 
-from core import access, auth, engine, lists, store
+from core import access, auth, demo, engine, lists, store
 
 FILE = "sf_delegations"
 _LOCK = threading.Lock()
@@ -117,7 +117,7 @@ def page(u: dict) -> dict:
     fid = (u or {}).get("firm_id", "")
     rows = _all()
     people = [{"id": x["id"], "name": x.get("name") or x.get("email"), "email": x.get("email", ""), "role": x.get("firm_role", "")}
-              for x in store.users() if x["id"] != u["id"] and x.get("role") != "owner"
+              for x in store.users() if x["id"] != u["id"] and x.get("role") != "owner" and not demo.visitor(x)
               and ((not owner and x.get("firm_id") == fid and fid) or (owner and not x.get("firm_id")))]
     cs = clients.settings()
     return {"kinds": [k for k in settings()["kinds"] if k["portal"] == owner], "default_days": settings()["default_days"],

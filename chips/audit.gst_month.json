@@ -1,0 +1,145 @@
+{
+  "chip_id": "audit.gst_month",
+  "kind": "accessor",
+  "set": "audit",
+  "label": "GST returns: one month, GSTR-3B against GSTR-1",
+  "aliases": [
+    "gst returns: one month, gstr-3b against "
+  ],
+  "params": [
+    {
+      "name": "r3b",
+      "type": "number",
+      "default": 0,
+      "label": "GSTR-3B taxable value"
+    },
+    {
+      "name": "r1",
+      "type": "number",
+      "default": 0,
+      "label": "GSTR-1 taxable value"
+    },
+    {
+      "name": "has_3b",
+      "type": "boolean",
+      "default": false,
+      "label": "GSTR-3B given"
+    },
+    {
+      "name": "has_1",
+      "type": "boolean",
+      "default": false,
+      "label": "GSTR-1 given"
+    },
+    {
+      "name": "tolerance_amt",
+      "type": "number",
+      "default": 1000,
+      "label": "rounding"
+    }
+  ],
+  "expr": {
+    "vop": "choose",
+    "cases": [
+      {
+        "when": {
+          "op": "all",
+          "items": [
+            {
+              "op": "eq",
+              "left": "$has_3b",
+              "right": false
+            },
+            {
+              "op": "eq",
+              "left": "$has_1",
+              "right": false
+            }
+          ]
+        },
+        "then": "none"
+      },
+      {
+        "when": {
+          "op": "eq",
+          "left": "$has_3b",
+          "right": false
+        },
+        "then": "no_3b"
+      },
+      {
+        "when": {
+          "op": "eq",
+          "left": "$has_1",
+          "right": false
+        },
+        "then": "no_r1"
+      },
+      {
+        "when": {
+          "op": "le",
+          "left": {
+            "vop": "largest",
+            "values": [
+              {
+                "vop": "sub",
+                "a": "$r3b",
+                "b": "$r1"
+              },
+              {
+                "vop": "sub",
+                "a": "$r1",
+                "b": "$r3b"
+              }
+            ]
+          },
+          "right": "$tolerance_amt"
+        },
+        "then": "match"
+      }
+    ],
+    "else": "differs"
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-05: one month of the year - both returns given and alike, different, or one missing.",
+  "test_cases": [
+    {
+      "args": {
+        "r3b": 100,
+        "r1": 100,
+        "has_3b": true,
+        "has_1": true
+      },
+      "expect_value": "match"
+    },
+    {
+      "args": {
+        "r3b": 100000,
+        "r1": 150000,
+        "has_3b": true,
+        "has_1": true
+      },
+      "expect_value": "differs"
+    },
+    {
+      "args": {
+        "r3b": 100000,
+        "has_3b": true
+      },
+      "expect_value": "no_r1"
+    },
+    {
+      "args": {},
+      "expect_value": "none"
+    },
+    {
+      "args": {
+        "r1": 5,
+        "has_1": true
+      },
+      "expect_value": "no_3b"
+    }
+  ]
+}

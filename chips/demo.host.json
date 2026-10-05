@@ -1,0 +1,43 @@
+{
+  "chip_id": "demo.host",
+  "kind": "accessor",
+  "set": "demo",
+  "label": "SimplyFile demo: where a visitor sits",
+  "aliases": [
+    "simplyfile demo: where a visitor sits"
+  ],
+  "params": [
+    {
+      "name": "firm_name",
+      "type": "text",
+      "default": "Demo CA Filing Firm",
+      "label": "firm name"
+    },
+    {
+      "name": "firm_role",
+      "type": "text",
+      "default": "partner",
+      "label": "firm role"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "firm_name": "$firm_name",
+      "firm_role": "$firm_role"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-05: a demo visitor joins the demo firm as a Partner - clients, intake, reconcile, compute, filing and the audit, but not the firm's details or its team.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "firm_name": "Demo CA Filing Firm",
+        "firm_role": "partner"
+      }
+    }
+  ]
+}

@@ -1,0 +1,165 @@
+{
+  "chip_id": "audit.llp_audit",
+  "kind": "accessor",
+  "set": "audit",
+  "label": "LLP: are the accounts to be audited (LLP Act)",
+  "aliases": [
+    "llp: are the accounts to be audited (llp"
+  ],
+  "params": [
+    {
+      "name": "llp",
+      "type": "boolean",
+      "default": false,
+      "label": "the client is an LLP"
+    },
+    {
+      "name": "turnover",
+      "type": "number",
+      "default": 0,
+      "label": "turnover this year"
+    },
+    {
+      "name": "contribution",
+      "type": "number",
+      "default": 0,
+      "label": "partners' contribution (capital)"
+    },
+    {
+      "name": "turnover_limit",
+      "type": "number",
+      "default": 4000000,
+      "label": "audit above this turnover"
+    },
+    {
+      "name": "contribution_limit",
+      "type": "number",
+      "default": 2500000,
+      "label": "or above this contribution"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "need": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "eq",
+              "left": "$llp",
+              "right": false
+            },
+            "then": "na"
+          },
+          {
+            "when": {
+              "op": "any",
+              "items": [
+                {
+                  "op": "gt",
+                  "left": "$turnover",
+                  "right": "$turnover_limit"
+                },
+                {
+                  "op": "gt",
+                  "left": "$contribution",
+                  "right": "$contribution_limit"
+                }
+              ]
+            },
+            "then": "yes"
+          }
+        ],
+        "else": "no"
+      },
+      "why": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "eq",
+              "left": "$llp",
+              "right": false
+            },
+            "then": ""
+          },
+          {
+            "when": {
+              "op": "gt",
+              "left": "$turnover",
+              "right": "$turnover_limit"
+            },
+            "then": "llp_why_turnover"
+          },
+          {
+            "when": {
+              "op": "gt",
+              "left": "$contribution",
+              "right": "$contribution_limit"
+            },
+            "then": "llp_why_contribution"
+          }
+        ],
+        "else": "llp_why_below"
+      },
+      "turnover_limit": "$turnover_limit",
+      "contribution_limit": "$contribution_limit"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-05: an LLP's accounts are audited unless its turnover is within Rs 40 lakh and its contribution within Rs 25 lakh (LLP Act, s.34 with rule 24(8)). Firms, AOPs and proprietors have no such audit under their own law.",
+  "test_cases": [
+    {
+      "args": {
+        "llp": true,
+        "turnover": 5000000
+      },
+      "expect_value": {
+        "need": "yes",
+        "why": "llp_why_turnover",
+        "turnover_limit": 4000000,
+        "contribution_limit": 2500000
+      }
+    },
+    {
+      "args": {
+        "llp": true,
+        "turnover": 3000000,
+        "contribution": 3000000
+      },
+      "expect_value": {
+        "need": "yes",
+        "why": "llp_why_contribution",
+        "turnover_limit": 4000000,
+        "contribution_limit": 2500000
+      }
+    },
+    {
+      "args": {
+        "llp": true,
+        "turnover": 3000000,
+        "contribution": 1000000
+      },
+      "expect_value": {
+        "need": "no",
+        "why": "llp_why_below",
+        "turnover_limit": 4000000,
+        "contribution_limit": 2500000
+      }
+    },
+    {
+      "args": {
+        "turnover": 90000000
+      },
+      "expect_value": {
+        "need": "na",
+        "why": "",
+        "turnover_limit": 4000000,
+        "contribution_limit": 2500000
+      }
+    }
+  ]
+}

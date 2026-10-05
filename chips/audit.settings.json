@@ -77,6 +77,14 @@
       "label": "fact keys"
     },
     {
+      "name": "stat_fact_keys",
+      "type": "json",
+      "default": [
+        "listed"
+      ],
+      "label": "stat fact keys"
+    },
+    {
       "name": "last_year_from",
       "type": "json",
       "default": [
@@ -85,6 +93,51 @@
         "column"
       ],
       "label": "last year from"
+    },
+    {
+      "name": "sectors",
+      "type": "json",
+      "default": [
+        "trading",
+        "manufacturing",
+        "services",
+        "contractor",
+        "profession",
+        "real_estate"
+      ],
+      "label": "sectors"
+    },
+    {
+      "name": "borrowing_items",
+      "type": "json",
+      "default": [
+        "secured_bank",
+        "unsecured_other"
+      ],
+      "label": "borrowing items"
+    },
+    {
+      "name": "contribution_items",
+      "type": "json",
+      "default": [
+        "capital"
+      ],
+      "label": "contribution items"
+    },
+    {
+      "name": "history_years",
+      "type": "json",
+      "default": 4,
+      "label": "history years"
+    },
+    {
+      "name": "history_from",
+      "type": "json",
+      "default": [
+        "statements",
+        "return"
+      ],
+      "label": "history from"
     },
     {
       "name": "return_only_current",
@@ -130,10 +183,25 @@
       "type": "json",
       "default": [
         "trend",
+        "pattern",
+        "gst",
+        "as",
         "check",
         "hand"
       ],
       "label": "point sources"
+    },
+    {
+      "name": "gst_source",
+      "type": "text",
+      "default": "gst",
+      "label": "gst source"
+    },
+    {
+      "name": "as_source",
+      "type": "text",
+      "default": "as",
+      "label": "as source"
     },
     {
       "name": "hand_source",
@@ -152,6 +220,12 @@
       "type": "text",
       "default": "trend",
       "label": "trend source"
+    },
+    {
+      "name": "pattern_source",
+      "type": "text",
+      "default": "pattern",
+      "label": "pattern source"
     },
     {
       "name": "title_max",
@@ -177,7 +251,13 @@
       "point_states": "$point_states",
       "issue_raises_point": "$issue_raises_point",
       "fact_keys": "$fact_keys",
+      "stat_fact_keys": "$stat_fact_keys",
       "last_year_from": "$last_year_from",
+      "sectors": "$sectors",
+      "borrowing_items": "$borrowing_items",
+      "contribution_items": "$contribution_items",
+      "history_years": "$history_years",
+      "history_from": "$history_from",
       "return_only_current": "$return_only_current",
       "bs_prefix": "$bs_prefix",
       "issue_state": "$issue_state",
@@ -185,9 +265,12 @@
       "open_state": "$open_state",
       "cleared_state": "$cleared_state",
       "point_sources": "$point_sources",
+      "gst_source": "$gst_source",
+      "as_source": "$as_source",
       "hand_source": "$hand_source",
       "check_source": "$check_source",
       "trend_source": "$trend_source",
+      "pattern_source": "$pattern_source",
       "title_max": "$title_max",
       "note_max": "$note_max"
     }
@@ -229,10 +312,33 @@
           "presumptive_lower",
           "income_above_exempt"
         ],
+        "stat_fact_keys": [
+          "listed"
+        ],
         "last_year_from": [
           "statements",
           "return",
           "column"
+        ],
+        "sectors": [
+          "trading",
+          "manufacturing",
+          "services",
+          "contractor",
+          "profession",
+          "real_estate"
+        ],
+        "borrowing_items": [
+          "secured_bank",
+          "unsecured_other"
+        ],
+        "contribution_items": [
+          "capital"
+        ],
+        "history_years": 4,
+        "history_from": [
+          "statements",
+          "return"
         ],
         "return_only_current": true,
         "bs_prefix": "PARTA_BS",
@@ -245,12 +351,18 @@
         "cleared_state": "cleared",
         "point_sources": [
           "trend",
+          "pattern",
+          "gst",
+          "as",
           "check",
           "hand"
         ],
+        "gst_source": "gst",
+        "as_source": "as",
         "hand_source": "hand",
         "check_source": "check",
         "trend_source": "trend",
+        "pattern_source": "pattern",
         "title_max": 300,
         "note_max": 1000
       }

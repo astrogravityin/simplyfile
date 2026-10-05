@@ -68,6 +68,24 @@ def api_check() -> None:
         boot = c.get("/api/bootstrap").json()
         assert boot["needs_first_account"] is True
         assert "<title>SimplyFile" in c.get("/").text
+        # 2026-10-05 owner: the public showcase is the landing for a visitor (chip showcase.page); Start here -> /start
+        assert "showcase.js" in c.get("/").text and "showcase.js" not in c.get("/start").text, "a visitor lands on the showcase; /start is the portal"
+        sc_ = c.get("/api/showcase").json()
+        for ch_ in sc_["chapters"]:
+            for ext_ in ("mp4", "jpg", "vtt"):
+                assert (HERE / "static" / "showcase" / f"{ch_['key']}.{ext_}").is_file(), f"showcase {ch_['key']}.{ext_} is missing"
+        assert c.get(f"/showcase/media/{sc_['chapters'][0]['key']}.mp4", headers={"Range": "bytes=0-9"}).status_code == 206, "showcase films seek"
+        assert c.get("/showcase/media/nope.mp4").status_code == 404, "only the chip's chapters are served"
+        assert "Make anything" not in (HERE / "static" / "showcase.js").read_text(encoding="utf-8"), "the showcase page holds no words of its own"
+        # 2026-10-05 owner "more commercial": skin "ledger", how it works, who it's for, questions. SimplyFile fills the utility;
+        # the CA uploads it - the pitch (showcase + sign-in words) must never promise a filed return
+        js_, css_ = ((HERE / "static" / f"showcase.{x}").read_text(encoding="utf-8") for x in ("js", "css"))
+        for k_ in ("trust", "steps", "desks", "faq", "pillars", "checks", "modules", "features"):
+            assert k_ not in sc_ or f"d.{k_}" in js_, f"showcase chip has {k_} but showcase.js never draws it"
+        assert not sc_.get("skin") or f'[data-skin="{sc_["skin"]}"]' in css_, f"showcase skin {sc_.get('skin')} has no styles"
+        said_ = (json.dumps(sc_) + (HERE / "chips" / "ui.app.json").read_text(encoding="utf-8")).lower()
+        for over_ in ("filed return", "click to file", "files the return for you"):
+            assert over_ not in said_, f"the pitch promises '{over_}' - SimplyFile fills the utility, the CA files"
         assert c.get("/health").text == "ok"
         assert c.get("/api/clients/settings").status_code == 401, "signed-out callers get nothing"
         r = c.post("/api/auth/first-account", json={"email": "owner@example.com", "password": "a-good-password"})
@@ -181,19 +199,19 @@ def api_check() -> None:
 def firm_check(app, owner, house_cid: str) -> None:
     from fastapi.testclient import TestClient
     assert owner.post("/api/firm/start", json={"kind": "ca_firm"}).status_code == 409, "the portal admin keeps the house register"
-    r = owner.post("/api/users", json={"email": "ca@pvr.example", "password": "a-good-password-1", "display_name": "P V Rao"})
+    r = owner.post("/api/users", json={"email": "ca@demo.example", "password": "a-good-password-1", "display_name": "Demo Partner"})
     assert r.status_code == 200, r.text
     ca = TestClient(app.app)
-    assert ca.post("/api/auth/signin", json={"identity": "ca@pvr.example", "password": "a-good-password-1"}).status_code == 200
+    assert ca.post("/api/auth/signin", json={"identity": "ca@demo.example", "password": "a-good-password-1"}).status_code == 200
     assert ca.get("/api/clients/settings").status_code == 403, "no firm, no Filing"
     assert ca.get("/api/firm").json()["firm"] is None
     f = ca.post("/api/firm/start", json={"kind": "ca_firm"}).json()
-    good = {"name": "Prabhakar PVR & Co", "pan": "AAFFP1234C", "tan": "HYDP12345E", "gstin": "36AAFFP1234C1Z5", "frn": "012345S",
-            "owner_name": "P V Rao", "aadhaar_last4": "4821", "phone": "+91 98490 12345", "email": "ca@pvr.example", "consent": True}
+    good = {"name": "Demo CA Filing Firm", "pan": "AAFFP1234C", "tan": "HYDP12345E", "gstin": "36AAFFP1234C1Z5", "frn": "012345S",
+            "owner_name": "Demo Partner", "aadhaar_last4": "4821", "phone": "+91 90000 00001", "email": "ca@demo.example", "consent": True}
     assert ca.put("/api/firm", json=good | {"aadhaar_last4": "1234 5678 9012"}).status_code == 400, "a full Aadhaar is refused, never kept"
     assert ca.put("/api/firm", json=good | {"tan": "BAD"}).json()["ready"]["say"] == "bad_tan", "a draft keeps a half-typed field"
     me = ca.put("/api/firm", json=good).json()
-    assert me["phone"] == "9849012345" and me["ready"]["say"] == "need_docs"
+    assert me["phone"] == "9000000001" and me["ready"]["say"] == "need_docs"
     assert ca.post(f"/api/firm/{f['id']}/move", json={"action": "submit"}).status_code == 400, "papers first"
     assert ca.post("/api/firm/docs/pan_card", files={"file": ("pan.exe", b"x")}).status_code == 400
     for k in ("owner_aadhaar", "pan_card", "tan_letter", "gst_cert"):
@@ -216,10 +234,10 @@ def firm_check(app, owner, house_cid: str) -> None:
     assert owner.get(f"/api/clients/{mine['id']}").status_code == 404, "a firm's client is the firm's"
     assert [x["id"] for x in ca.get("/api/lists/clients").json()["rows"]] == [mine["id"]]
     # the team: a preparer works, but does not sign off
-    p = ca.post("/api/firm/team", json={"name": "Ravi", "email": "ravi@pvr.example", "role": "preparer"}).json()
+    p = ca.post("/api/firm/team", json={"name": "Ravi", "email": "ravi@demo.example", "role": "preparer"}).json()
     assert p["password"] and p["member"]["role"] == "preparer"
     prep = TestClient(app.app)
-    assert prep.post("/api/auth/signin", json={"identity": "ravi@pvr.example", "password": p["password"]}).status_code == 200
+    assert prep.post("/api/auth/signin", json={"identity": "ravi@demo.example", "password": p["password"]}).status_code == 200
     assert prep.post("/api/auth/password", json={"current": p["password"], "password": "ravi-own-password-2", "confirm": "ravi-own-password-2"}).status_code == 200
     assert prep.get(f"/api/compute/{mine['id']}/2026-27").status_code == 200
     assert prep.post(f"/api/compute/{mine['id']}/2026-27/signoff", json={"on": True}).status_code == 403, "a preparer does not sign off"
@@ -295,7 +313,7 @@ LEAKS = {
         ("['tds', 'tds_claim']", "which findings belong to which check -> chip page.recon checks"),
     ],
 }
-REQUIRED_CHIPS = ["audit.settings", "audit.applicable", "audit.trend", "audit.checklist", "ui.audit", "page.audit", "list.delegations", "list.firm_team", "list.due_radar", "list.firm_requests", "list.portal_firms", "list.chat_turns", "chat.examples", "chat.surprise", "chat.next", "chat.train", "notes.settings", "notes.list_view", "issues.mine_view", "chat.families", "chat.fee_234f", "chat.pan_kind", "chat.pick", "ui.chatfam", "chat.settings", "chat.faq", "chat.route", "ui.chipchat", "page.dock", "ui.dock", "delegation.settings", "delegation.check", "delegation.covers", "ui.delegate", "server.settings", "server.disk", "server.backup", "server.site", "server.trend", "ui.server", "page.server", "portalstats.settings", "portalstats.firm", "portalstats.rollup", "ui.portalstats", "itr.read", "itr.codes_in", "itr.import_ok", "itr.statement", "ui.itrimport", "analytics.settings", "analytics.client", "analytics.rollup", "ui.analytics", "page.analytics", "compute.settings", "compute.tax", "compute.tax_parts", "compute.balance", "compute.regime", "compute.total_income",
+REQUIRED_CHIPS = ["demo.host", "audit.settings", "audit.applicable", "audit.trend", "audit.checklist", "audit.pattern", "audit.risk", "audit.risk_level", "audit.gst_read", "audit.gst", "audit.gst_month", "audit.llp_audit", "audit.as_level", "audit.as_list", "ui.audit", "page.audit", "list.delegations", "list.firm_team", "list.due_radar", "list.firm_requests", "list.portal_firms", "list.chat_turns", "chat.examples", "chat.surprise", "chat.next", "chat.train", "notes.settings", "notes.list_view", "issues.mine_view", "chat.families", "chat.fee_234f", "chat.pan_kind", "chat.pick", "ui.chatfam", "chat.settings", "chat.faq", "chat.route", "ui.chipchat", "page.dock", "ui.dock", "delegation.settings", "delegation.check", "delegation.covers", "ui.delegate", "server.settings", "server.disk", "server.backup", "server.site", "server.trend", "ui.server", "page.server", "portalstats.settings", "portalstats.firm", "portalstats.rollup", "ui.portalstats", "itr.read", "itr.codes_in", "itr.import_ok", "itr.statement", "ui.itrimport", "analytics.settings", "analytics.client", "analytics.rollup", "ui.analytics", "page.analytics", "compute.settings", "compute.tax", "compute.tax_parts", "compute.balance", "compute.regime", "compute.total_income",
                   "compute.hp", "close.move", "close.settings", "close.signoff", "close.steps", "recon.settings", "page.recon",
                   "page.intake", "ui.compute",
                   "firm.settings", "firm.roles", "firm.problem", "firm.ready", "firm.move", "firm.may", "firm.sla", "firm.steps",

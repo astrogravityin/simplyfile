@@ -1,0 +1,114 @@
+"""Demo mode (2026-10-05 owner: one public demo link per product, "OTP based login that way we know who are seeing").
+
+A portal started with PORTAL_DEMO=1 is a demo copy: its sign-in card leads with "Try the demo" - a name and an email, a code
+mailed to that address, and the visitor is in, on a seat of their own (a real, named account: the owner sees who came and what
+they opened under People and Activity, as for anyone). What the seat may do is the host's business: each product appends a
+seater to SEATERS (SimplyFile: a Partner in the demo firm). The data is put back every night from a snapshot, outside this
+module (deploy/demo/reset.sh), so a visitor may try everything.
+
+Built the chip way: the lifetimes, tries and throttle are chip demo.settings; every sentence is ui.demo. This module gathers
+the facts and does the I/O (codes, mail, the account, the session) through auth and store.
+"""
+from __future__ import annotations
+
+import os
+import secrets
+
+from fastapi import APIRouter, Body, HTTPException, Request, Response
+
+from core import auth, engine, mailer, store
+
+ON = os.getenv("PORTAL_DEMO", "").lower() in {"1", "true", "yes"}
+PURPOSE = "demo"
+#: Callables (user) -> None run once when a visitor's seat is first made: the host puts it where the demo data is.
+SEATERS: list = []
+
+router = APIRouter()
+
+
+def settings() -> dict:
+    return engine.run("demo.settings")
+
+
+def say(key: str, **v) -> str:
+    return engine.say("ui.demo", key, **v)
+
+
+def bootstrap_extra(_request: Request, u: dict | None) -> dict:
+    return {"demo": ON, "demo_visitor": bool(u and u.get("demo"))}
+
+
+def _on() -> None:
+    if not ON:
+        raise HTTPException(404, say("not_demo"))
+
+
+@router.post("/api/demo/code/send")
+def send_code(request: Request, body: dict = Body(...)):
+    """Name and email: a code to that address. The same answer whether or not the address has been here before."""
+    _on()
+    if not auth.rate_ok(auth.client_ip(request)):
+        raise HTTPException(429, auth.msg("rate_limited"))
+    email = str(body.get("email") or "").strip().lower()
+    name = str(body.get("name") or "").strip()
+    auth.check_fields(email=email, name=name)
+    if not mailer.configured():
+        raise HTTPException(503, say("no_mail"))
+    k = settings()
+    if store.recent_codes(PURPOSE, email, 3600) < int(k["sends_per_hour"]):
+        code = "".join(secrets.choice("0123456789") for _ in range(int(k["digits"])))
+        store.put_code(PURPOSE, email, code, int(k["code_ttl_seconds"]))
+        store.log_code(PURPOSE, email)
+        product = auth.settings()["product_name"]
+        try:
+            mailer.send(email, say("mail_subject", product=product, code=code),
+                        say("mail_body", product=product, code=code, name=name, minutes=int(k["code_ttl_seconds"]) // 60,
+                            url=auth.portal_base(request)))
+        except RuntimeError as e:          # the owner sees mail trouble on Setup's Test button; a visitor learns nothing
+            print(f"[demo] could not send a code: {e}", flush=True)
+    return {"message": say("code_sent", email=email), "resend_after_seconds": int(k["resend_after_seconds"])}
+
+
+@router.post("/api/demo/code/check")
+def check_code(response: Response, body: dict = Body(...)):
+    """The right code signs the visitor in - on a seat made now, the first time, or the seat they had."""
+    _on()
+    email = str(body.get("email") or "").strip().lower()
+    name = str(body.get("name") or "").strip()
+    outcome = store.check_code(PURPOSE, email, str(body.get("code") or ""), int(settings()["max_attempts"]))
+    if outcome != "ok":
+        raise HTTPException(400, {"message": say("code_burned" if outcome == "burned" else "code_wrong"), "field": "code"})
+    u = store.find_user(email)
+    if not u:
+        auth.check_fields(email=email, name=name)
+        u = store.add_user(email, secrets.token_urlsafe(24), name, settings()["seat_role"] or "", verified=True)
+        _mark_visitor(u["id"])
+        for seat in SEATERS:
+            seat(u)
+        u = store.find_user(email)
+    return auth._sign_in(response, u) | {"signed_in": True}  # noqa: SLF001 - the one way a session starts
+
+
+def _mark_visitor(uid: str) -> None:
+    with store._LOCK:  # noqa: SLF001 - part of the store's own tooling
+        rows = store.users()
+        for x in rows:
+            if x["id"] == uid:
+                x["demo"] = True
+        store.write("users", rows)
+
+
+def visitor(u: dict | None) -> bool:
+    """A seat made by the demo sign-in (hosts keep these out of team lists and show them as 'a demo visitor')."""
+    return bool(u and u.get("demo"))
+
+
+if __name__ == "__main__":  # ponytail: the chip's numbers are sane and every sentence the card needs is there
+    import core  # noqa: F401 - registers core's chips
+    k = settings()
+    assert int(k["digits"]) >= 6 and int(k["max_attempts"]) >= 3 and int(k["code_ttl_seconds"]) >= 300, k
+    for key in ("tab", "title", "lede", "name", "email", "send", "code", "enter", "code_sent", "code_wrong", "code_burned",
+                "mail_subject", "mail_body", "no_mail", "not_demo", "banner", "visitor"):
+        assert say(key, product="P", code="123456", name="N", minutes=15, url="u", email="e"), key
+    assert visitor({"demo": True}) and not visitor({}) and not visitor(None)
+    print("demo OK")

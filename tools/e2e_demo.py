@@ -49,8 +49,8 @@ def session(email, pw):
 
 admin = TestClient(app.app)
 assert admin.post("/api/auth/first-account", json={"email": "admin@valuestream.test", "password": "Admin-pass-123"}).status_code == 200
-admin.post("/api/users", json={"email": "pvr@pvr.test", "password": "Pvr-pass-1234", "display_name": "P V Rao"})
-ca = session("pvr@pvr.test", "Pvr-pass-1234")
+admin.post("/api/users", json={"email": "demo@demo.test", "password": "Demo-pass-1234", "display_name": "Demo Partner"})
+ca = session("demo@demo.test", "Demo-pass-1234")
 S = {}
 
 
@@ -64,9 +64,9 @@ def _():
 
 @step("2 Firm details: full Aadhaar refused, bad GSTIN caught, good saved")
 def _():
-    good = {"name": "Prabhakar PVR & Co", "pan": "AAFFP1234C", "tan": "HYDP12345E", "gstin": "36AAFFP1234C1Z5", "frn": "012345S",
-            "membership_no": "212345", "owner_name": "P V Rao", "aadhaar_last4": "4821", "phone": "+91 98490 12345",
-            "email": "pvr@pvr.test", "address": "Banjara Hills, Hyderabad", "consent": True}
+    good = {"name": "Demo CA Filing Firm", "pan": "AAFFP1234C", "tan": "HYDP12345E", "gstin": "36AAFFP1234C1Z5", "frn": "012345S",
+            "membership_no": "212345", "owner_name": "Demo Partner", "aadhaar_last4": "4821", "phone": "+91 90000 00001",
+            "email": "demo@demo.test", "address": "Banjara Hills, Hyderabad", "consent": True}
     assert ca.put("/api/firm", json=good | {"aadhaar_last4": "482148214821"}).status_code == 400
     assert ca.put("/api/firm", json=good | {"gstin": "36AAFFX1234C1Z5"}).json()["ready"]["say"] == "gstin_pan"
     f = ca.put("/api/firm", json=good).json()
@@ -100,7 +100,7 @@ def _():
 
 @step("5 Team: partner + preparer added with one-time passwords")
 def _():
-    for email, role in (("partner@pvr.test", "partner"), ("ravi@pvr.test", "preparer")):
+    for email, role in (("partner@demo.test", "partner"), ("ravi@demo.test", "preparer")):
         r = ca.post("/api/firm/team", json={"name": email.split("@")[0], "email": email, "role": role}).json()
         s = TestClient(app.app)
         s.post("/api/auth/signin", json={"identity": email, "password": r["password"]})

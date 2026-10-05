@@ -1,0 +1,207 @@
+{
+  "chip_id": "audit.gst_read",
+  "kind": "accessor",
+  "set": "audit",
+  "label": "GST returns: where the figures are",
+  "aliases": [
+    "gst returns: where the figures are"
+  ],
+  "params": [
+    {
+      "name": "kinds",
+      "type": "json",
+      "default": [
+        {
+          "id": "gstr3b",
+          "has": "sup_details",
+          "gstin": "gstin",
+          "period": "ret_period",
+          "taxable": {
+            "plus": [
+              "sup_details.osup_det.txval",
+              "sup_details.osup_zero.txval",
+              "sup_details.osup_nil_exmp.txval",
+              "sup_details.osup_nongst.txval"
+            ],
+            "minus": []
+          },
+          "tax": {
+            "plus": [
+              "sup_details.osup_det.iamt",
+              "sup_details.osup_det.camt",
+              "sup_details.osup_det.samt",
+              "sup_details.osup_det.csamt",
+              "sup_details.osup_zero.iamt",
+              "sup_details.osup_zero.csamt"
+            ],
+            "minus": []
+          }
+        },
+        {
+          "id": "gstr1",
+          "has": "fp",
+          "gstin": "gstin",
+          "period": "fp",
+          "taxable": {
+            "plus": [
+              "b2b[].inv[].itms[].itm_det.txval",
+              "b2cl[].inv[].itms[].itm_det.txval",
+              "b2cs[].txval",
+              "exp[].inv[].itms[].txval",
+              "cdnr[].nt[ntty=D].itms[].itm_det.txval",
+              "cdnur[ntty=D].itms[].itm_det.txval",
+              "nil.inv[].nil_amt",
+              "nil.inv[].expt_amt",
+              "nil.inv[].ngsup_amt"
+            ],
+            "minus": [
+              "cdnr[].nt[ntty=C].itms[].itm_det.txval",
+              "cdnur[ntty=C].itms[].itm_det.txval"
+            ]
+          },
+          "tax": {
+            "plus": [
+              "b2b[].inv[].itms[].itm_det.iamt",
+              "b2b[].inv[].itms[].itm_det.camt",
+              "b2b[].inv[].itms[].itm_det.samt",
+              "b2cl[].inv[].itms[].itm_det.iamt",
+              "b2cs[].iamt",
+              "b2cs[].camt",
+              "b2cs[].samt",
+              "exp[].inv[].itms[].iamt"
+            ],
+            "minus": [
+              "cdnr[].nt[ntty=C].itms[].itm_det.iamt",
+              "cdnr[].nt[ntty=C].itms[].itm_det.camt",
+              "cdnr[].nt[ntty=C].itms[].itm_det.samt"
+            ]
+          }
+        }
+      ],
+      "label": "kinds"
+    },
+    {
+      "name": "period_pattern",
+      "type": "text",
+      "default": "^(0[1-9]|1[0-2])(20[0-9][0-9])$",
+      "label": "period pattern"
+    },
+    {
+      "name": "fy_start_month",
+      "type": "json",
+      "default": 4,
+      "label": "fy start month"
+    },
+    {
+      "name": "exts",
+      "type": "json",
+      "default": [
+        ".json",
+        ".zip"
+      ],
+      "label": "exts"
+    },
+    {
+      "name": "max_mb",
+      "type": "json",
+      "default": 20,
+      "label": "max mb"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "kinds": "$kinds",
+      "period_pattern": "$period_pattern",
+      "fy_start_month": "$fy_start_month",
+      "exts": "$exts",
+      "max_mb": "$max_mb"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-05 (audit phase 2): where the taxable value and the tax are in a GSTR-3B and a GSTR-1 JSON from the GST portal - outward supplies (taxable, zero-rated, nil / exempt, non-GST), less credit notes - so a change in the portal's format is a change here.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "kinds": [
+          {
+            "id": "gstr3b",
+            "has": "sup_details",
+            "gstin": "gstin",
+            "period": "ret_period",
+            "taxable": {
+              "plus": [
+                "sup_details.osup_det.txval",
+                "sup_details.osup_zero.txval",
+                "sup_details.osup_nil_exmp.txval",
+                "sup_details.osup_nongst.txval"
+              ],
+              "minus": []
+            },
+            "tax": {
+              "plus": [
+                "sup_details.osup_det.iamt",
+                "sup_details.osup_det.camt",
+                "sup_details.osup_det.samt",
+                "sup_details.osup_det.csamt",
+                "sup_details.osup_zero.iamt",
+                "sup_details.osup_zero.csamt"
+              ],
+              "minus": []
+            }
+          },
+          {
+            "id": "gstr1",
+            "has": "fp",
+            "gstin": "gstin",
+            "period": "fp",
+            "taxable": {
+              "plus": [
+                "b2b[].inv[].itms[].itm_det.txval",
+                "b2cl[].inv[].itms[].itm_det.txval",
+                "b2cs[].txval",
+                "exp[].inv[].itms[].txval",
+                "cdnr[].nt[ntty=D].itms[].itm_det.txval",
+                "cdnur[ntty=D].itms[].itm_det.txval",
+                "nil.inv[].nil_amt",
+                "nil.inv[].expt_amt",
+                "nil.inv[].ngsup_amt"
+              ],
+              "minus": [
+                "cdnr[].nt[ntty=C].itms[].itm_det.txval",
+                "cdnur[ntty=C].itms[].itm_det.txval"
+              ]
+            },
+            "tax": {
+              "plus": [
+                "b2b[].inv[].itms[].itm_det.iamt",
+                "b2b[].inv[].itms[].itm_det.camt",
+                "b2b[].inv[].itms[].itm_det.samt",
+                "b2cl[].inv[].itms[].itm_det.iamt",
+                "b2cs[].iamt",
+                "b2cs[].camt",
+                "b2cs[].samt",
+                "exp[].inv[].itms[].iamt"
+              ],
+              "minus": [
+                "cdnr[].nt[ntty=C].itms[].itm_det.iamt",
+                "cdnr[].nt[ntty=C].itms[].itm_det.camt",
+                "cdnr[].nt[ntty=C].itms[].itm_det.samt"
+              ]
+            }
+          }
+        ],
+        "period_pattern": "^(0[1-9]|1[0-2])(20[0-9][0-9])$",
+        "fy_start_month": 4,
+        "exts": [
+          ".json",
+          ".zip"
+        ],
+        "max_mb": 20
+      }
+    }
+  ]
+}

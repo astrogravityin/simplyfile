@@ -1,0 +1,617 @@
+{
+  "chip_id": "audit.pattern",
+  "kind": "accessor",
+  "set": "audit",
+  "label": "Tax audit: one line against its own history",
+  "aliases": [
+    "tax audit: one line against its own hist"
+  ],
+  "params": [
+    {
+      "name": "now",
+      "type": "number",
+      "default": 0,
+      "label": "this year"
+    },
+    {
+      "name": "history",
+      "type": "json",
+      "default": [],
+      "label": "the earlier years, oldest first"
+    },
+    {
+      "name": "rev_now",
+      "type": "number",
+      "default": 0,
+      "label": "this year's turnover"
+    },
+    {
+      "name": "rev_history",
+      "type": "json",
+      "default": [],
+      "label": "the earlier years' turnover"
+    },
+    {
+      "name": "min_years",
+      "type": "number",
+      "default": 2,
+      "label": "earlier years needed before a pattern means anything"
+    },
+    {
+      "name": "min_amount",
+      "type": "number",
+      "default": 50000,
+      "label": "smaller lines are not flagged"
+    },
+    {
+      "name": "band_pct",
+      "type": "number",
+      "default": 20,
+      "label": "beyond its highest (or lowest) earlier year by this much"
+    },
+    {
+      "name": "gap_pct",
+      "type": "number",
+      "default": 30,
+      "label": "and away from its average this much more than turnover is"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "avg": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "gt",
+              "left": {
+                "vop": "count",
+                "items": "$history"
+              },
+              "right": 0
+            },
+            "then": {
+              "vop": "div",
+              "a": {
+                "vop": "total",
+                "values": "$history"
+              },
+              "b": {
+                "vop": "count",
+                "items": "$history"
+              },
+              "digits": 0
+            }
+          }
+        ],
+        "else": 0
+      },
+      "vs_avg": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "gt",
+                  "left": {
+                    "vop": "count",
+                    "items": "$history"
+                  },
+                  "right": 0
+                },
+                {
+                  "op": "gt",
+                  "left": {
+                    "vop": "div",
+                    "a": {
+                      "vop": "total",
+                      "values": "$history"
+                    },
+                    "b": {
+                      "vop": "count",
+                      "items": "$history"
+                    },
+                    "digits": 0
+                  },
+                  "right": 0
+                }
+              ]
+            },
+            "then": {
+              "vop": "pct",
+              "part": {
+                "vop": "sub",
+                "a": "$now",
+                "b": {
+                  "vop": "div",
+                  "a": {
+                    "vop": "total",
+                    "values": "$history"
+                  },
+                  "b": {
+                    "vop": "count",
+                    "items": "$history"
+                  },
+                  "digits": 0
+                }
+              },
+              "whole": {
+                "vop": "div",
+                "a": {
+                  "vop": "total",
+                  "values": "$history"
+                },
+                "b": {
+                  "vop": "count",
+                  "items": "$history"
+                },
+                "digits": 0
+              },
+              "digits": 0
+            }
+          }
+        ],
+        "else": 0
+      },
+      "pattern": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "lt",
+              "left": {
+                "vop": "count",
+                "items": "$history"
+              },
+              "right": "$min_years"
+            },
+            "then": ""
+          },
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "lt",
+                  "left": "$now",
+                  "right": "$min_amount"
+                },
+                {
+                  "op": "lt",
+                  "left": {
+                    "vop": "largest",
+                    "values": "$history"
+                  },
+                  "right": "$min_amount"
+                }
+              ]
+            },
+            "then": ""
+          },
+          {
+            "when": {
+              "op": "le",
+              "left": {
+                "vop": "div",
+                "a": {
+                  "vop": "total",
+                  "values": "$history"
+                },
+                "b": {
+                  "vop": "count",
+                  "items": "$history"
+                },
+                "digits": 0
+              },
+              "right": 0
+            },
+            "then": ""
+          },
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "gt",
+                  "left": "$now",
+                  "right": {
+                    "vop": "mul",
+                    "a": {
+                      "vop": "largest",
+                      "values": "$history"
+                    },
+                    "b": {
+                      "vop": "add",
+                      "a": 1,
+                      "b": {
+                        "vop": "div",
+                        "a": {
+                          "vop": "mul",
+                          "a": "$band_pct",
+                          "b": 1
+                        },
+                        "b": 100
+                      }
+                    }
+                  }
+                },
+                {
+                  "op": "ge",
+                  "left": {
+                    "vop": "sub",
+                    "a": {
+                      "vop": "pct",
+                      "part": {
+                        "vop": "sub",
+                        "a": "$now",
+                        "b": {
+                          "vop": "div",
+                          "a": {
+                            "vop": "total",
+                            "values": "$history"
+                          },
+                          "b": {
+                            "vop": "count",
+                            "items": "$history"
+                          },
+                          "digits": 0
+                        }
+                      },
+                      "whole": {
+                        "vop": "div",
+                        "a": {
+                          "vop": "total",
+                          "values": "$history"
+                        },
+                        "b": {
+                          "vop": "count",
+                          "items": "$history"
+                        },
+                        "digits": 0
+                      },
+                      "digits": 0
+                    },
+                    "b": {
+                      "vop": "choose",
+                      "cases": [
+                        {
+                          "when": {
+                            "op": "gt",
+                            "left": {
+                              "vop": "div",
+                              "a": {
+                                "vop": "total",
+                                "values": "$rev_history"
+                              },
+                              "b": {
+                                "vop": "count",
+                                "items": "$rev_history"
+                              },
+                              "digits": 0
+                            },
+                            "right": 0
+                          },
+                          "then": {
+                            "vop": "pct",
+                            "part": {
+                              "vop": "sub",
+                              "a": "$rev_now",
+                              "b": {
+                                "vop": "div",
+                                "a": {
+                                  "vop": "total",
+                                  "values": "$rev_history"
+                                },
+                                "b": {
+                                  "vop": "count",
+                                  "items": "$rev_history"
+                                },
+                                "digits": 0
+                              }
+                            },
+                            "whole": {
+                              "vop": "div",
+                              "a": {
+                                "vop": "total",
+                                "values": "$rev_history"
+                              },
+                              "b": {
+                                "vop": "count",
+                                "items": "$rev_history"
+                              },
+                              "digits": 0
+                            },
+                            "digits": 0
+                          }
+                        }
+                      ],
+                      "else": 0
+                    }
+                  },
+                  "right": "$gap_pct"
+                }
+              ]
+            },
+            "then": "above_pattern"
+          },
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "lt",
+                  "left": "$now",
+                  "right": {
+                    "vop": "mul",
+                    "a": {
+                      "vop": "smallest",
+                      "values": "$history"
+                    },
+                    "b": {
+                      "vop": "add",
+                      "a": 1,
+                      "b": {
+                        "vop": "div",
+                        "a": {
+                          "vop": "mul",
+                          "a": "$band_pct",
+                          "b": -1
+                        },
+                        "b": 100
+                      }
+                    }
+                  }
+                },
+                {
+                  "op": "le",
+                  "left": {
+                    "vop": "sub",
+                    "a": {
+                      "vop": "pct",
+                      "part": {
+                        "vop": "sub",
+                        "a": "$now",
+                        "b": {
+                          "vop": "div",
+                          "a": {
+                            "vop": "total",
+                            "values": "$history"
+                          },
+                          "b": {
+                            "vop": "count",
+                            "items": "$history"
+                          },
+                          "digits": 0
+                        }
+                      },
+                      "whole": {
+                        "vop": "div",
+                        "a": {
+                          "vop": "total",
+                          "values": "$history"
+                        },
+                        "b": {
+                          "vop": "count",
+                          "items": "$history"
+                        },
+                        "digits": 0
+                      },
+                      "digits": 0
+                    },
+                    "b": {
+                      "vop": "choose",
+                      "cases": [
+                        {
+                          "when": {
+                            "op": "gt",
+                            "left": {
+                              "vop": "div",
+                              "a": {
+                                "vop": "total",
+                                "values": "$rev_history"
+                              },
+                              "b": {
+                                "vop": "count",
+                                "items": "$rev_history"
+                              },
+                              "digits": 0
+                            },
+                            "right": 0
+                          },
+                          "then": {
+                            "vop": "pct",
+                            "part": {
+                              "vop": "sub",
+                              "a": "$rev_now",
+                              "b": {
+                                "vop": "div",
+                                "a": {
+                                  "vop": "total",
+                                  "values": "$rev_history"
+                                },
+                                "b": {
+                                  "vop": "count",
+                                  "items": "$rev_history"
+                                },
+                                "digits": 0
+                              }
+                            },
+                            "whole": {
+                              "vop": "div",
+                              "a": {
+                                "vop": "total",
+                                "values": "$rev_history"
+                              },
+                              "b": {
+                                "vop": "count",
+                                "items": "$rev_history"
+                              },
+                              "digits": 0
+                            },
+                            "digits": 0
+                          }
+                        }
+                      ],
+                      "else": 0
+                    }
+                  },
+                  "right": {
+                    "vop": "mul",
+                    "a": "$gap_pct",
+                    "b": -1
+                  }
+                }
+              ]
+            },
+            "then": "below_pattern"
+          }
+        ],
+        "else": ""
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-05 (audit phase 2, the brief's 'predictive baseline'): a line breaks its own pattern when, with at least min_years earlier years, it is beyond its highest (or below its lowest) earlier year by band_pct AND has moved from its average gap_pct more than turnover has from its own - an 80% jump in an expense while sales are flat. A line that grows every year with the business is following its pattern, not breaking it.",
+  "test_cases": [
+    {
+      "args": {
+        "now": 900000,
+        "history": [
+          480000,
+          500000,
+          520000
+        ],
+        "rev_now": 10000000,
+        "rev_history": [
+          9500000,
+          9800000,
+          10000000
+        ]
+      },
+      "expect_value": {
+        "avg": 500000,
+        "vs_avg": 80,
+        "pattern": "above_pattern"
+      }
+    },
+    {
+      "args": {
+        "now": 900000,
+        "history": [
+          300000,
+          600000,
+          900000
+        ],
+        "rev_now": 10000000,
+        "rev_history": [
+          5000000,
+          7500000,
+          10000000
+        ]
+      },
+      "expect_value": {
+        "avg": 600000,
+        "vs_avg": 50,
+        "pattern": ""
+      }
+    },
+    {
+      "args": {
+        "now": 900000,
+        "history": [
+          500000,
+          520000,
+          540000
+        ],
+        "rev_now": 18000000,
+        "rev_history": [
+          10000000,
+          10000000,
+          10000000
+        ]
+      },
+      "expect_value": {
+        "avg": 520000,
+        "vs_avg": 73,
+        "pattern": ""
+      }
+    },
+    {
+      "args": {
+        "now": 150000,
+        "history": [
+          480000,
+          500000,
+          520000
+        ],
+        "rev_now": 10000000,
+        "rev_history": [
+          10000000,
+          10000000,
+          10000000
+        ]
+      },
+      "expect_value": {
+        "avg": 500000,
+        "vs_avg": -70,
+        "pattern": "below_pattern"
+      }
+    },
+    {
+      "args": {
+        "now": 900000,
+        "history": [
+          500000
+        ],
+        "rev_now": 10000000,
+        "rev_history": [
+          10000000
+        ]
+      },
+      "expect_value": {
+        "avg": 500000,
+        "vs_avg": 80,
+        "pattern": ""
+      }
+    },
+    {
+      "args": {
+        "now": 40000,
+        "history": [
+          10000,
+          12000,
+          11000
+        ],
+        "rev_now": 10000000,
+        "rev_history": [
+          10000000,
+          10000000,
+          10000000
+        ]
+      },
+      "expect_value": {
+        "avg": 11000,
+        "vs_avg": 264,
+        "pattern": ""
+      }
+    },
+    {
+      "args": {
+        "now": 300000,
+        "history": [],
+        "rev_now": 10000000,
+        "rev_history": []
+      },
+      "expect_value": {
+        "avg": 0,
+        "vs_avg": 0,
+        "pattern": ""
+      }
+    }
+  ]
+}

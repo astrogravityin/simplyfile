@@ -20,7 +20,7 @@ from pathlib import Path
 from fastapi import HTTPException, Request
 
 import delegation
-from core import access, auth, engine, lists, mailer, ops, store
+from core import access, auth, demo, engine, lists, mailer, ops, store
 
 FILE = "sf_firms"
 _LOCK = threading.Lock()  # ponytail: one lock for every firm; per-firm locks if sign-ups ever queue
@@ -343,7 +343,7 @@ def _public(f: dict, admin: bool = False) -> dict:
         waited = store.seconds_since(sub) / 3600
         out |= {"waited_hours": round(waited, 1), "sla": engine.run("firm.sla", {"waited_hours": waited, "review_hours": k["review_hours"]})}
     if admin:
-        out["members"] = len([x for x in store.users() if x.get("firm_id") == f["id"]])
+        out["members"] = len([x for x in store.users() if x.get("firm_id") == f["id"] and not demo.visitor(x)])
     return out
 
 
@@ -381,7 +381,15 @@ def team(u: dict) -> list[dict]:
     fid = tenant(u)
     return [{"id": x["id"], "name": x.get("name", ""), "email": x["email"], "role": x.get("firm_role", ""),
              "last_seen": x.get("last_seen", ""), "must_change": bool(x.get("must_change_password"))}
-            for x in store.users() if x.get("firm_id") == fid]
+            for x in store.users() if x.get("firm_id") == fid and not demo.visitor(x)]   # demo visitors never see each other
+
+
+def seat_demo(u: dict) -> None:
+    """A demo visitor's new account joins the demo firm (chip demo.host) - core/demo.py calls this once per visitor."""
+    k = engine.run("demo.host")
+    f = next((x for x in _all() if x.get("name") == k["firm_name"]), None)
+    if f:
+        _set_user(u["id"], firm_id=f["id"], firm_role=k["firm_role"])
 
 
 lists.source("firm_team", lambda u, args: team(u) if "team" in role_of(u.get("firm_role", ""))["grants"] and firm_of(u) else [], screen="firm")
@@ -447,12 +455,12 @@ if __name__ == "__main__":  # ponytail: the chips this module leans on, asked di
     import store as _portal_store  # noqa: F401 - registers this portal's chips, as the app does
     k = settings()
     assert {x["id"] for x in k["kinds"]} == {"ca_firm", "self"}
-    f = {"kind": "ca_firm", "name": "Prabhakar PVR & Co", "pan": "AAFFP1234C", "tan": "HYDP12345E", "gstin": "36AAFFP1234C1Z5",
-         "frn": "012345S", "owner_name": "P V Rao", "aadhaar_last4": "4821", "phone": "9849012345", "email": "o@pvr.in",
+    f = {"kind": "ca_firm", "name": "Demo CA Filing Firm", "pan": "AAFFP1234C", "tan": "HYDP12345E", "gstin": "36AAFFP1234C1Z5",
+         "frn": "012345S", "owner_name": "Demo Partner", "aadhaar_last4": "4821", "phone": "9000000001", "email": "o@demo.example",
          "consent_at": "x", "docs": [{"kind": "pan_card"}]}
     assert problem(f) == "" and ready(f)["say"] == "need_docs" and "tan_letter" in ready(f)["missing"]
-    assert _clean({"kind": "ca_firm"}, {"phone": "+91 98490 12345", "pan": "aaffp 1234c", "aadhaar_last4": "48-21", "x": 1}) == \
-        {"phone": "9849012345", "pan": "AAFFP1234C", "aadhaar_last4": "4821"}
+    assert _clean({"kind": "ca_firm"}, {"phone": "+91 90000 00001", "pan": "aaffp 1234c", "aadhaar_last4": "48-21", "x": 1}) == \
+        {"phone": "9000000001", "pan": "AAFFP1234C", "aadhaar_last4": "4821"}
     v = engine.run("firm.may", {"has_firm": True, "state": "approved", "grants": role_of("preparer")["grants"],
                                 "want": "compute", "want_fn": "compute.signoff"})
     assert v["say"] == "role_no", "a preparer does not sign off"

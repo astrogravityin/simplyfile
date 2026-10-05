@@ -35,9 +35,75 @@
         "gone": "--muted",
         "spike": "--bad",
         "drop": "--warn",
-        "outpaced": "--bad"
+        "outpaced": "--bad",
+        "above_pattern": "--bad",
+        "below_pattern": "--warn"
       },
       "label": "flag tone"
+    },
+    {
+      "name": "gst_tone",
+      "type": "json",
+      "default": {
+        "match": "--ok",
+        "more_in_books": "--bad",
+        "more_in_gst": "--warn",
+        "more_in_r1": "--bad",
+        "more_in_3b": "--warn",
+        "differs": "--bad",
+        "no_3b": "--muted",
+        "no_r1": "--muted",
+        "none": "--muted"
+      },
+      "label": "gst tone"
+    },
+    {
+      "name": "gst_months",
+      "type": "json",
+      "default": [
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
+        "Jan",
+        "Feb",
+        "Mar"
+      ],
+      "label": "gst months"
+    },
+    {
+      "name": "as_tone",
+      "type": "json",
+      "default": {
+        "full": "--brand",
+        "relaxed": "--warn",
+        "no": "--muted"
+      },
+      "label": "as tone"
+    },
+    {
+      "name": "llp_tone",
+      "type": "json",
+      "default": {
+        "yes": "--warn",
+        "no": "--ok"
+      },
+      "label": "llp tone"
+    },
+    {
+      "name": "risk_tone",
+      "type": "json",
+      "default": {
+        "high": "--bad",
+        "medium": "--warn",
+        "low": "--muted"
+      },
+      "label": "risk tone"
     },
     {
       "name": "state_tone",
@@ -170,6 +236,11 @@
       "need_tone": "$need_tone",
       "need_icon": "$need_icon",
       "flag_tone": "$flag_tone",
+      "gst_tone": "$gst_tone",
+      "gst_months": "$gst_months",
+      "as_tone": "$as_tone",
+      "llp_tone": "$llp_tone",
+      "risk_tone": "$risk_tone",
       "state_tone": "$state_tone",
       "point_tone": "$point_tone",
       "point_order": "$point_order",
@@ -203,7 +274,48 @@
           "gone": "--muted",
           "spike": "--bad",
           "drop": "--warn",
-          "outpaced": "--bad"
+          "outpaced": "--bad",
+          "above_pattern": "--bad",
+          "below_pattern": "--warn"
+        },
+        "gst_tone": {
+          "match": "--ok",
+          "more_in_books": "--bad",
+          "more_in_gst": "--warn",
+          "more_in_r1": "--bad",
+          "more_in_3b": "--warn",
+          "differs": "--bad",
+          "no_3b": "--muted",
+          "no_r1": "--muted",
+          "none": "--muted"
+        },
+        "gst_months": [
+          "Apr",
+          "May",
+          "Jun",
+          "Jul",
+          "Aug",
+          "Sep",
+          "Oct",
+          "Nov",
+          "Dec",
+          "Jan",
+          "Feb",
+          "Mar"
+        ],
+        "as_tone": {
+          "full": "--brand",
+          "relaxed": "--warn",
+          "no": "--muted"
+        },
+        "llp_tone": {
+          "yes": "--warn",
+          "no": "--ok"
+        },
+        "risk_tone": {
+          "high": "--bad",
+          "medium": "--warn",
+          "low": "--muted"
         },
         "state_tone": {
           "todo": "--muted",

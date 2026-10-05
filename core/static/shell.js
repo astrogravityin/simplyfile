@@ -169,7 +169,8 @@ const flow = {
   resendAt: 0,       // when "Send a new code" wakes up (ms since epoch)
   focus: false,      // put the cursor in the step's first empty box after the redraw
 };
-const STEPS = { signin: ['form'], signup: ['details', 'code', 'password'], forgot: ['account', 'code', 'password', 'done'] };
+const STEPS = { signin: ['form'], signup: ['details', 'code', 'password'], forgot: ['account', 'code', 'password', 'done'], demo: ['details', 'code'] };
+const dw = (k, v) => t('demo', k, v);   // demo mode's words (chip ui.demo, core/demo.py)
 const SECRET_BOXES = ['au-pass', 'au-confirm', 'au-current', 'au-code'];
 let resendTimer = 0;
 
@@ -289,7 +290,8 @@ export function wireFieldErrors(scope) {
 }
 
 function tabs() {
-  const list = [['signin', w('tab_signin')], ...(state.canSignup ? [['signup', w('tab_signup')]] : []), ['forgot', w('tab_forgot')]];
+  const list = [...(state.demo ? [['demo', dw('tab')]] : []), ['signin', w('tab_signin')],
+    ...(state.canSignup && !state.demo ? [['signup', w('tab_signup')]] : []), ['forgot', w('tab_forgot')]];
   return `<div class="tabs authtabs n${list.length}" role="tablist">${list.map(([m, label]) => `<button type="button" role="tab"
     data-mode="${m}" aria-selected="${state.authMode === m}" class="${state.authMode === m ? 'on' : ''}">${label}</button>`).join('')}</div>`;
 }
@@ -311,6 +313,7 @@ function signinView() {
   const head = `${tabs()}<h1>${state.authMode === 'signup' ? w('tab_signup') : w('signin_title', { product: esc(state.productName) })}</h1>`;
   if (state.authMode === 'signup') return authShell(head + signupStep(step));
   if (state.authMode === 'forgot') return authShell(head + forgotStep(step));
+  if (state.authMode === 'demo') return authShell(`${tabs()}<h1>${esc(dw('title', { product: state.productName }))}</h1>${demoStep(step)}`);
   return authShell(`${head}
     <p class="lede">${w('signin_lede')}</p>
     <div id="auth-msg"></div>
@@ -320,6 +323,23 @@ function signinView() {
     <button class="primary" type="submit">${icon('right')} ${w('tab_signin')}</button>
     <p class="alt"><button type="button" class="link" data-mode="forgot">${w('forgot_link')}</button>
       ${state.canSignup ? '' : `<br/><span class="small muted">${w('signup_closed')}</span>`}</p>`);
+}
+
+/** Demo mode: name + email, then the emailed code - and the visitor is in, on a seat of their own (core/demo.py). */
+function demoStep(step) {
+  if (step === 'code') {
+    return `<p class="lede">${esc(dw('lede'))}</p><div id="auth-msg"></div>
+      ${authField('au-email', dw('email'), { readonly: true, auto: 'email' })}
+      ${authField('au-code', dw('code'), { name: 'code', auto: 'one-time-code', placeholder: '0'.repeat(state.code.digits),
+        extra: `inputmode="numeric" maxlength="${state.code.digits}" data-digits` })}
+      <button class="primary" type="submit">${icon('right')} ${esc(dw('enter'))}</button>
+      <p class="alt">${resendButton()} · <button type="button" class="link" data-act="details">${esc(dw('other_email'))}</button></p>`;
+  }
+  return `<p class="lede">${esc(dw('lede'))}</p><div id="auth-msg"></div>
+    ${authField('au-name', dw('name'), { name: 'name', placeholder: dw('name_ph'), auto: 'name' })}
+    ${authField('au-email', dw('email'), { name: 'email', type: 'email', placeholder: dw('email_ph'), auto: 'email',
+      extra: 'autocapitalize="off" spellcheck="false" data-lower' })}
+    <button class="primary" type="submit">${icon('mail')} ${esc(dw('send'))}</button>`;
 }
 
 function signupStep(step) {
@@ -472,6 +492,20 @@ async function submitStep(form, msg) {
   }
   const step = currentStep();
 
+  if (state.authMode === 'demo') {
+    if (step === 'details') {
+      if (missing(form, ['au-name', 'au-email'])) return;
+      const d = await post('/api/demo/code/send', { name: v('au-name').trim(), email: v('au-email').trim() });
+      delete flow.values['au-code'];
+      goStep('code', { resendAt: Date.now() + waitMs(d), note: { kind: 'ok', text: d.message } });
+      return;
+    }
+    const d = await post('/api/demo/code/check', { name: v('au-name').trim(), email: v('au-email').trim(), code: v('au-code').trim() });
+    forgetFlow();
+    await landed(d.user);
+    return;
+  }
+
   if (state.authMode === 'signin') {
     const d = await post('/api/auth/signin', { identity: v('au-ident').trim(), password: v('au-pass') });
     forgetFlow();
@@ -594,8 +628,10 @@ function wireSignin(root) {
     resend.onclick = () => busy(resend, async () => {
       const signup = state.authMode === 'signup';
       try {
-        const d = await api('/api/auth/code/send', { method: 'POST', body: { purpose: signup ? 'signup' : 'reset',
-          identity: ((signup ? flow.values['au-email'] : flow.values['au-ident']) || '').trim() } });
+        const d = state.authMode === 'demo'
+          ? await api('/api/demo/code/send', { method: 'POST', body: { name: (flow.values['au-name'] || '').trim(), email: (flow.values['au-email'] || '').trim() } })
+          : await api('/api/auth/code/send', { method: 'POST', body: { purpose: signup ? 'signup' : 'reset',
+            identity: ((signup ? flow.values['au-email'] : flow.values['au-ident']) || '').trim() } });
         flow.resendAt = Date.now() + waitMs(d);
         clearFieldErrors(form);
         say(msg, d.mail === false ? 'info' : 'ok', esc(d.message));
@@ -983,7 +1019,7 @@ const brandSub = () => (typeof config.brandSub === 'function' ? config.brandSub(
 
 /** Banners a rule put up (a Rule Chip Builder outcome). The text is the rule's, escaped; × hides it for this person. */
 function ruleBanners() {
-  return state.banners.map((b) => `<div class="note ${esc(b.tone)} rulebanner" data-banner="${esc(b.id)}">${icon(b.tone === 'ok' ? 'check' : 'alert')}
+  return (state.demo ? `<div class="note info rulebanner demobanner">${icon('info')}<div>${esc(dw('banner'))}</div></div>` : '') + state.banners.map((b) => `<div class="note ${esc(b.tone)} rulebanner" data-banner="${esc(b.id)}">${icon(b.tone === 'ok' ? 'check' : 'alert')}
     <div>${esc(b.text).replace(/\n/g, '<br/>')}</div>
     <button type="button" class="ghost icon small" data-dismiss="${esc(b.id)}" aria-label="${esc(w('dismiss'))}" data-tip="${esc(w('dismiss'))}">${icon('close', 15)}</button></div>`).join('');
 }
@@ -1191,6 +1227,7 @@ function take(d) {
   state.reservedOwner = d.reserved_owner || '';
   state.canEmail = !!d.can_email;
   state.canSignup = !!d.can_signup;
+  state.demo = !!d.demo;                           // a demo copy (core/demo.py): the card leads with Try the demo
   state.verifyEmail = !!d.verify_email;
   state.signupDomains = d.signup_domains || '';
   state.noMailPolicy = d.no_mail_policy || 'verify_later';
@@ -1401,14 +1438,15 @@ export async function startPortal(options) {
     // The shell's words (chip ui.shell) come with the bootstrap: the sign-in card needs them before anyone
     // signs in. A words failure is not a dead portal - a missing word shows as [shell.key], never silently.
     const [d, h] = await Promise.all([api('/api/bootstrap'), api('/api/core/howto').catch(() => ({ pages: {} })),
-      loadWords('shell', 'work', 'guide').catch(() => {})]);
+      loadWords('shell', 'work', 'guide', 'demo').catch(() => {})]);
     take(d);
+    if (state.demo && !state.user && !state.needsFirstAccount) setMode('demo');
     state.howto = h.pages || {};
     // Somebody arriving with no account should land on the half of the screen that makes them one.
     if (state.user) { try { localStorage.setItem('portal.signed_in_before', '1'); } catch { /* nicety */ } }   // already signed in counts too
     // 2026-09-28 owner: "always opens with Create account - remember, and open the Sign in tab next time". A browser
     // that has signed in here before gets Sign in; a first visit still lands on Sign up (per-browser nicety, not state).
-    if (!state.user && state.canSignup && !state.needsFirstAccount && !signedInBefore()) setMode('signup');
+    if (!state.user && state.canSignup && !state.demo && !state.needsFirstAccount && !signedInBefore()) setMode('signup');
     flow.focus = false;
     if (!mustChange()) await config.onBoot(d);
   } catch (e) {

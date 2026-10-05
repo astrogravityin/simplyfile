@@ -1,0 +1,149 @@
+{
+  "chip_id": "audit.risk",
+  "kind": "accessor",
+  "set": "audit",
+  "label": "Tax audit: how much a 3CD clause deserves attention for this client",
+  "aliases": [
+    "tax audit: how much a 3cd clause deserve"
+  ],
+  "params": [
+    {
+      "name": "base",
+      "type": "number",
+      "default": 1,
+      "label": "the clause's own risk, 1 low - 3 high"
+    },
+    {
+      "name": "sector_hit",
+      "type": "boolean",
+      "default": false,
+      "label": "matters more in this line of business"
+    },
+    {
+      "name": "flagged",
+      "type": "number",
+      "default": 0,
+      "label": "lines it watches that are flagged this year"
+    },
+    {
+      "name": "turnover",
+      "type": "number",
+      "default": 0,
+      "label": "this year's turnover"
+    },
+    {
+      "name": "big_turnover",
+      "type": "number",
+      "default": 100000000,
+      "label": "a bigger client: more to test"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "score": {
+        "vop": "add",
+        "a": {
+          "vop": "add",
+          "a": "$base",
+          "b": {
+            "vop": "choose",
+            "cases": [
+              {
+                "when": {
+                  "op": "eq",
+                  "left": "$sector_hit",
+                  "right": true
+                },
+                "then": 1
+              }
+            ],
+            "else": 0
+          }
+        },
+        "b": {
+          "vop": "add",
+          "a": {
+            "vop": "choose",
+            "cases": [
+              {
+                "when": {
+                  "op": "gt",
+                  "left": "$flagged",
+                  "right": 0
+                },
+                "then": 2
+              }
+            ],
+            "else": 0
+          },
+          "b": {
+            "vop": "choose",
+            "cases": [
+              {
+                "when": {
+                  "op": "ge",
+                  "left": "$turnover",
+                  "right": "$big_turnover"
+                },
+                "then": 1
+              }
+            ],
+            "else": 0
+          }
+        }
+      },
+      "big": {
+        "op": "ge",
+        "left": "$turnover",
+        "right": "$big_turnover"
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-05 (audit phase 2, the brief's 'context-aware scoping'): a clause's score = its own risk, +1 in a line of business where it often goes wrong, +2 when a line it watches is flagged this year (year on year or against its history), +1 for a client with turnover of big_turnover or more. The checklist is shown highest first, and changes as soon as new statements change the flags.",
+  "test_cases": [
+    {
+      "args": {
+        "base": 3
+      },
+      "expect_value": {
+        "score": 3,
+        "big": false
+      }
+    },
+    {
+      "args": {
+        "base": 1,
+        "sector_hit": true,
+        "flagged": 1
+      },
+      "expect_value": {
+        "score": 4,
+        "big": false
+      }
+    },
+    {
+      "args": {
+        "base": 2,
+        "flagged": 2,
+        "turnover": 150000000
+      },
+      "expect_value": {
+        "score": 5,
+        "big": true
+      }
+    },
+    {
+      "args": {
+        "base": 1
+      },
+      "expect_value": {
+        "score": 1,
+        "big": false
+      }
+    }
+  ]
+}

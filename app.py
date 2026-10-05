@@ -26,7 +26,7 @@ from starlette.concurrency import run_in_threadpool
 
 import store  # first: maps TV_* settings onto PORTAL_* before core reads them
 import core
-from core import auth, engine, lists, rules
+from core import auth, demo, engine, lists, rules
 
 _UR = engine.run("portal.upload_rule")                   # 2026-09-26: the labels are a chip, not code
 rules.subject("upload", _UR["subject_label"], _UR["fields"])
@@ -55,6 +55,7 @@ import manuals
 import narrator
 import edition
 import guideme
+import landing
 import clients
 import firms
 import intake
@@ -98,6 +99,8 @@ STORAGE_LIMITS = ("max_upload_mb", "quota_gb", "keep_source_days")
 access.register_available("buykey", keysales.anything_to_buy)
 firms.install()
 changelog.install()
+if demo.ON:
+    demo.SEATERS.append(firms.seat_demo)
 
 
 @app.middleware("http")
@@ -1254,6 +1257,23 @@ def api_audit_facts(cid: str, ay: str, body: dict = Body(...), u: dict = Depends
     return audit.set_facts(u, cid, ay, body)
 
 
+@app.post("/api/audit/{cid}/{ay}/gst")
+async def api_audit_gst(cid: str, ay: str, files: list[UploadFile] = File(...), u: dict = Depends(firms.gate("audit"))):
+    cap = int(engine.run("audit.gst_read")["max_mb"]) * 1024 * 1024 + 1
+    got = [(f.filename or "", await upload_bytes(u, f, cap)) for f in files]
+    return await run_in_threadpool(audit.add_gst, u, cid, ay, got)
+
+
+@app.delete("/api/audit/{cid}/{ay}/gst/{gid}")
+def api_audit_gst_remove(cid: str, ay: str, gid: str, u: dict = Depends(firms.gate("audit"))):
+    return audit.remove_gst(u, cid, ay, gid)
+
+
+@app.put("/api/audit/{cid}/{ay}/standards/{sid}")
+def api_audit_standard(cid: str, ay: str, sid: str, body: dict = Body(...), u: dict = Depends(firms.gate("audit"))):
+    return audit.set_as(u, cid, ay, sid, body)
+
+
 @app.put("/api/audit/{cid}/{ay}/checks/{iid}")
 def api_audit_check(cid: str, ay: str, iid: str, body: dict = Body(...), u: dict = Depends(firms.gate("audit"))):
     return audit.set_check(u, cid, ay, iid, body)
@@ -1424,9 +1444,8 @@ def _ui_sizes(html_: str) -> str:
 # 2026-09-28 owner: "make Katha standard as tv and sm". katha.valuestream.in is a DOOR of the same shell (chip
 # edition.settings doors: its name, pitch and first screen) - the same sign-in card, menu and screens, never a page of
 # its own. /k stays the public reader for a shared link, for someone with no account.
-@app.get("/", response_class=HTMLResponse)
-def index(request: Request):
-    return HTMLResponse(page(request.headers.get("host") or ""))
+# The landing page (public showcase, returning visitors skip it), / and /start: landing.py (boilerplate).
+landing.install(app, page=page, ui_sizes=_ui_sizes, named=named)
 
 
 app.mount("/static", StaticFiles(directory=str(ROOT / "static")), name="static")
@@ -1458,6 +1477,6 @@ async def revalidate_static(request: Request, call_next):
 @app.exception_handler(404)
 def not_found(request: Request, exc):
     # The portal is one page with a hash router, so any unknown non-API address is still the portal.
-    if request.url.path.startswith(("/api/", "/static/", "/core-static/", "/m/", "/embed/", "/w/", "/k/art/", "/k/cover/", "/k/media/")):
+    if request.url.path.startswith(("/api/", "/static/", "/core-static/", "/m/", "/embed/", "/w/", "/k/art/", "/k/cover/", "/k/media/", "/showcase/media/")):
         return JSONResponse({"detail": exc.detail if hasattr(exc, "detail") else say("not_found")}, status_code=404)
     return HTMLResponse(page(request.headers.get("host") or ""))

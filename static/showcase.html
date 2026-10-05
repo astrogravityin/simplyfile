@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>{{title}}</title>
+  <meta name="description" content="{{description}}"/>
+  <link rel="icon" href="data:,"/>
+  <!-- an old portal link (/#/invite..., /#/reset...) that lands here goes on to the portal at start -->
+  <script>if (location.hash.indexOf('#/') === 0) location.replace('start' + location.hash);</script>
+  <link rel="stylesheet" href="static/showcase.css"/>
+</head>
+<body>
+  <div id="sc-root" aria-busy="true"><p class="sc-loading">{{brand}}</p></div>
+  <script type="module" src="static/showcase.js"></script>
+</body>
+</html>

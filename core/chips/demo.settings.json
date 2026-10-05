@@ -1,0 +1,75 @@
+{
+  "chip_id": "demo.settings",
+  "kind": "accessor",
+  "set": "demo",
+  "label": "Demo mode: the visitor's code",
+  "aliases": [
+    "demo mode: the visitor's code"
+  ],
+  "params": [
+    {
+      "name": "digits",
+      "type": "json",
+      "default": 6,
+      "label": "digits"
+    },
+    {
+      "name": "code_ttl_seconds",
+      "type": "json",
+      "default": 900,
+      "label": "code ttl seconds"
+    },
+    {
+      "name": "max_attempts",
+      "type": "json",
+      "default": 5,
+      "label": "max attempts"
+    },
+    {
+      "name": "resend_after_seconds",
+      "type": "json",
+      "default": 60,
+      "label": "resend after seconds"
+    },
+    {
+      "name": "sends_per_hour",
+      "type": "json",
+      "default": 5,
+      "label": "sends per hour"
+    },
+    {
+      "name": "seat_role",
+      "type": "text",
+      "default": "",
+      "label": "seat role"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "digits": "$digits",
+      "code_ttl_seconds": "$code_ttl_seconds",
+      "max_attempts": "$max_attempts",
+      "resend_after_seconds": "$resend_after_seconds",
+      "sends_per_hour": "$sends_per_hour",
+      "seat_role": "$seat_role"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-05: a demo visitor signs in with a code mailed to them: how long it is, how long it lives, how many tries, and how often one address may ask.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "digits": 6,
+        "code_ttl_seconds": 900,
+        "max_attempts": 5,
+        "resend_after_seconds": 60,
+        "sends_per_hour": 5,
+        "seat_role": ""
+      }
+    }
+  ]
+}

@@ -1,0 +1,186 @@
+{
+  "chip_id": "audit.as_level",
+  "kind": "accessor",
+  "set": "audit",
+  "label": "Accounting Standards: the entity's level (non-company entities)",
+  "aliases": [
+    "accounting standards: the entity's level"
+  ],
+  "params": [
+    {
+      "name": "turnover",
+      "type": "number",
+      "default": 0,
+      "label": "turnover (excluding other income), this year"
+    },
+    {
+      "name": "borrowings",
+      "type": "number",
+      "default": 0,
+      "label": "borrowings at any time in the year"
+    },
+    {
+      "name": "listed",
+      "type": "boolean",
+      "default": false,
+      "label": "listed securities, or a bank, financial institution or insurer"
+    },
+    {
+      "name": "l1_turnover",
+      "type": "number",
+      "default": 2500000000,
+      "label": "Level I above this turnover"
+    },
+    {
+      "name": "l1_borrowings",
+      "type": "number",
+      "default": 500000000,
+      "label": "or these borrowings"
+    },
+    {
+      "name": "l2_turnover",
+      "type": "number",
+      "default": 500000000,
+      "label": "Level II above this turnover"
+    },
+    {
+      "name": "l2_borrowings",
+      "type": "number",
+      "default": 100000000,
+      "label": "or these borrowings"
+    },
+    {
+      "name": "l3_turnover",
+      "type": "number",
+      "default": 100000000,
+      "label": "Level III above this turnover"
+    },
+    {
+      "name": "l3_borrowings",
+      "type": "number",
+      "default": 20000000,
+      "label": "or these borrowings"
+    }
+  ],
+  "expr": {
+    "vop": "choose",
+    "cases": [
+      {
+        "when": {
+          "op": "any",
+          "items": [
+            {
+              "op": "eq",
+              "left": "$listed",
+              "right": true
+            },
+            {
+              "op": "gt",
+              "left": "$turnover",
+              "right": "$l1_turnover"
+            },
+            {
+              "op": "gt",
+              "left": "$borrowings",
+              "right": "$l1_borrowings"
+            }
+          ]
+        },
+        "then": "I"
+      },
+      {
+        "when": {
+          "op": "any",
+          "items": [
+            {
+              "op": "gt",
+              "left": "$turnover",
+              "right": "$l2_turnover"
+            },
+            {
+              "op": "gt",
+              "left": "$borrowings",
+              "right": "$l2_borrowings"
+            }
+          ]
+        },
+        "then": "II"
+      },
+      {
+        "when": {
+          "op": "any",
+          "items": [
+            {
+              "op": "gt",
+              "left": "$turnover",
+              "right": "$l3_turnover"
+            },
+            {
+              "op": "gt",
+              "left": "$borrowings",
+              "right": "$l3_borrowings"
+            }
+          ]
+        },
+        "then": "III"
+      }
+    ],
+    "else": "IV"
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-05: ICAI's classification of non-company entities for Accounting Standards (applicable from 1 April 2020): Level I above Rs 250 crore turnover or Rs 50 crore borrowings, or listed / a bank, FI or insurer; Level II above Rs 50 crore or Rs 10 crore; Level III above Rs 10 crore or Rs 2 crore; Level IV the rest (MSMEs are Levels II-IV). A level, once reached, is kept for the year - confirm the holding / subsidiary position by hand.",
+  "test_cases": [
+    {
+      "args": {
+        "turnover": 3000000000
+      },
+      "expect_value": "I"
+    },
+    {
+      "args": {
+        "listed": true
+      },
+      "expect_value": "I"
+    },
+    {
+      "args": {
+        "turnover": 600000000
+      },
+      "expect_value": "II"
+    },
+    {
+      "args": {
+        "borrowings": 150000000
+      },
+      "expect_value": "II"
+    },
+    {
+      "args": {
+        "turnover": 320000000
+      },
+      "expect_value": "III"
+    },
+    {
+      "args": {
+        "turnover": 120000000
+      },
+      "expect_value": "III"
+    },
+    {
+      "args": {
+        "turnover": 50000000,
+        "borrowings": 30000000
+      },
+      "expect_value": "III"
+    },
+    {
+      "args": {
+        "turnover": 50000000,
+        "borrowings": 5000000
+      },
+      "expect_value": "IV"
+    }
+  ]
+}
