@@ -10,9 +10,14 @@ $ErrorActionPreference = 'Stop'
 
 # What deploy.sh pulls is what GitHub has - warn if this machine has commits GitHub has not seen.
 Set-Location (Split-Path -Parent $MyInvocation.MyCommand.Path)
-git fetch -q origin 2>$null
-$ahead = (git rev-list --count '@{u}..HEAD' 2>$null)
-if ($ahead -and [int]$ahead -gt 0) {
+try { git fetch -q origin 2>&1 | Out-Null } catch { }
+# Windows PowerShell 5.1 with 'Stop' turns git's stderr into a crash - ask quietly, decide here.
+$ahead = $null
+try { $ahead = (git rev-list --count '@{u}..HEAD' 2>&1 | Where-Object { $_ -is [string] }) } catch { }
+if ($LASTEXITCODE -ne 0 -or -not $ahead) {
+    throw 'This branch has never been pushed to GitHub, so the VPS has nothing to pull. Run Commit-To-GitHub.cmd first.'
+}
+if ([int]$ahead -gt 0) {
     Write-Host "Note: $ahead local commit(s) are not pushed - the VPS will NOT get them. Run Commit-To-GitHub.cmd first." -ForegroundColor Yellow
 }
 

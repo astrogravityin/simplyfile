@@ -13,21 +13,18 @@
   "page_key": "sf-issues",
   "title": "Report an issue",
   "start_url": "/#/issues",
-  "vars": {
-    "katha": "http://katha.localhost:8820"
-  },
   "covers": [
     "Report an issue from any screen",
     "header, what is wrong, screenshot",
-    "Reported issues queue and balloon",
+    "Reported issues queue",
     "resolve with a reply",
     "the reply as a banner",
     "My reports and feedback"
   ],
   "steps": [
     {
-      "chapter": "Welcome",
-      "say": "When something is wrong, anyone signed in can report it from any screen. No email - the report and its answer stay inside the portal. This is the Reported issues screen, where the answer comes from.",
+      "chapter": "Report an issue",
+      "say": "When something is wrong in SimplyFile, anyone signed in - a partner, a manager, an article - reports it from any screen. No email: the report and its answer stay inside the portal. This is Reported issues, where they are answered.",
       "do": [
         {
           "wait_for": "#is-list",
@@ -41,11 +38,10 @@
       ]
     },
     {
-      "chapter": "Report it",
-      "say": "A reader on Katha opens their account menu and picks Report an issue. It works the same on every screen of every portal.",
+      "say": "Open the account menu and pick Report an issue. It works the same on every screen.",
       "do": [
         {
-          "goto": "${katha}/#/home"
+          "goto": "/#/approvals"
         },
         {
           "click": "#whoami",
@@ -62,17 +58,16 @@
       ]
     },
     {
-      "chapter": "What is wrong",
       "say": "A short header, what went wrong, and a screenshot if it helps - browse, drop or paste. The screen it came from is attached on its own.",
       "do": [
         {
           "fill": "#ri-title",
-          "text": "Listen does not start on one chapter",
+          "text": "Reconcile does not open for one client",
           "timeout": 90
         },
         {
           "fill": "#ri-body",
-          "text": "On The Kite Seller, pressing Listen on chapter two shows the spinner but no sound plays.",
+          "text": "On Reconcile, Ramesh Iyer's 26AS shows the spinner and never loads.",
           "timeout": 90
         },
         {
@@ -83,21 +78,20 @@
       ]
     },
     {
-      "chapter": "Send",
-      "say": "Send report. It lands in Reported issues, under the reader's own account, and the menu shows a count for whoever answers reports.",
+      "say": "Send report, and it lands in Reported issues with a count in the menu for whoever answers. Here one is already waiting - sent by someone in a firm.",
       "do": [
         {
-          "click": "#ri-go",
+          "click": "[data-cancel]",
           "timeout": 90
         },
         {
-          "wait": 1.5
+          "wait": 1
         }
       ]
     },
     {
-      "chapter": "The queue",
-      "say": "Back in SimplyFile, the portal admin sees the new report at the top of Reported issues - who sent it, from where, and what is wrong.",
+      "chapter": "Answer it",
+      "say": "In Reported issues it sits at the top - who sent it, from where, and what is wrong.",
       "do": [
         {
           "goto": "/#/issues"
@@ -113,8 +107,7 @@
       ]
     },
     {
-      "chapter": "Resolve",
-      "say": "They open it, read it with its screenshot, write a reply the reader will see, and resolve it.",
+      "say": "Open it, read it with its screenshot, write a reply the sender will see, and resolve it.",
       "do": [
         {
           "click": "#is-list [data-open]",
@@ -122,7 +115,7 @@
         },
         {
           "fill": "#is-reply",
-          "text": "Thank you - chapter two had a broken voice file. It plays now.",
+          "text": "Thank you - his 26AS file was cut short. Upload it again and it opens.",
           "timeout": 90
         },
         {
@@ -135,30 +128,20 @@
       ]
     },
     {
-      "chapter": "The answer",
-      "say": "The next time the reader opens the portal, the answer is waiting as a banner at the top. No email, nothing to look for.",
+      "chapter": "The reply",
+      "say": "The next time the sender opens the portal, the answer waits as a banner at the top - and every report, with its status and answer, stays in the account menu under My reports and feedback.",
       "do": [
         {
-          "goto": "${katha}/#/home"
+          "goto": "/#/approvals"
         },
         {
-          "wait_for": "[data-reply-seen]",
-          "timeout": 90
+          "wait": 1.5
         },
         {
           "highlight": ".note.ok",
-          "timeout": 90,
+          "timeout": 8,
           "optional": true
         },
-        {
-          "wait": 1
-        }
-      ]
-    },
-    {
-      "chapter": "My reports",
-      "say": "And every report, with its status and answer, stays in the account menu under My reports and feedback - next to the feedback they sent on any work.",
-      "do": [
         {
           "click": "#whoami",
           "timeout": 90
@@ -173,8 +156,7 @@
       ]
     },
     {
-      "chapter": "Summary",
-      "say": "Report an issue and work feedback are one framework. Every limit, every status and who may answer live in chips the owner can change.",
+      "say": "Every limit, every status and who may answer live in chips the owner can change.",
       "do": [
         {
           "press": "Escape"

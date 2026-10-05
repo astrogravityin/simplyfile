@@ -6,7 +6,8 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 SERVICE=${SF_SERVICE:-simplyfile}
-PORT=${SF_PORT:-8830}
+# The port the service really listens on (VPS Console's New site writes Environment=PORT= into the unit), else 8830.
+PORT=${SF_PORT:-$(grep -oP '^Environment=PORT=\K[0-9]+' "/etc/systemd/system/$SERVICE.service" 2>/dev/null || echo 8830)}
 
 before=$(git rev-parse --short HEAD)
 git pull --ff-only

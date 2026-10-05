@@ -29,11 +29,22 @@ $branch = (git branch --show-current).Trim()
 if (-not $branch) { throw 'Could not detect the current git branch.' }
 
 $status = if ($Paths) { git status --short -- $Paths } else { git status --short }
-if (-not $status) {
+$commit = [bool]$status
+if (-not $commit) {
     Write-Host 'No changes to commit.' -ForegroundColor Yellow
-    if ($Deploy) { & "$RepoRoot\Deploy-To-VPS.ps1"; Assert-Ok 'Deploy' }
-    exit 0
+    # Commits made here that GitHub has not got (a push that failed last time) still go up.
+    $ErrorActionPreference = 'Continue'
+    git fetch -q origin 2>&1 | Out-Null
+    $ahead = git rev-list --count '@{u}..HEAD' 2>&1
+    $unpushed = ($LASTEXITCODE -ne 0) -or ([int]"$ahead" -gt 0)
+    $ErrorActionPreference = 'Stop'
+    if (-not $unpushed -or $NoPush) {
+        if ($Deploy) { & "$RepoRoot\Deploy-To-VPS.ps1"; Assert-Ok 'Deploy' }
+        exit 0
+    }
+    Write-Host 'Commits here are not on GitHub yet - pushing them.' -ForegroundColor Yellow
 }
+if ($commit) {
 
 Write-Host ($(if ($Paths) { 'Changes in the given paths:' } else { 'Current changes (ALL of them):' })) -ForegroundColor Cyan
 $status
@@ -66,12 +77,27 @@ Assert-Ok 'git add'
 Assert-Ok 'Staged file check (files are staged but NOT committed - fix them, or unstage with: git restore --staged <file>)'
 git commit -m $Message
 Assert-Ok 'git commit'
+}
 
 if ($NoPush) {
     Write-Host 'Commit created. Push skipped (-NoPush).' -ForegroundColor Yellow
     exit 0
 }
 Write-Host "Pushing $branch to origin..." -ForegroundColor Cyan
+# A repo GitHub created with its own first commit (a README) shares no history with this folder: merge it in once,
+# this folder's files winning, then push. Anything else (someone else pushed) still stops below with git's message.
+$ErrorActionPreference = 'Continue'
+git fetch -q origin 2>&1 | Out-Null
+$remote = git rev-parse -q --verify "origin/$branch" 2>&1
+if ($LASTEXITCODE -eq 0) {
+    git merge-base HEAD "origin/$branch" 2>&1 | Out-Null
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host "GitHub has its own first commit - merging it in (this folder's files win)..." -ForegroundColor Yellow
+        git merge "origin/$branch" --allow-unrelated-histories -X ours --no-edit
+        Assert-Ok 'Merging GitHub''s first commit'
+    }
+}
+$ErrorActionPreference = 'Stop'
 git push -u origin $branch
 Assert-Ok 'git push (the commit exists locally; push again once the cause is fixed)'
 Write-Host "Pushed $(git rev-parse --short HEAD)." -ForegroundColor Green

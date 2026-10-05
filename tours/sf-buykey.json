@@ -29,7 +29,12 @@
       "say": "Buy a key: use AI on somebody else's key, paid in advance. Every key on sale is listed here with its seller.",
       "do": [
         {
-          "wait_for": "#bk-offers"
+          "wait_for": "main h1"
+        },
+        {
+          "highlight": "#bk-offers",
+          "optional": true,
+          "timeout": 4
         }
       ]
     },
