@@ -145,7 +145,7 @@ def live(u: dict, kind: str, q: str) -> dict:
         r = firms.role_of(u.get("firm_role", ""))
         return {"text": say("access_head", role=r["label"]), "rows": [{"text": delegation._label(g)} for g in r["grants"]]}  # noqa: SLF001
     if kind == "lent_me":
-        rows = [d for d in delegation.page(u)["received"] if d["state"] == "active"]
+        rows = [d for d in delegation.listed(u, {"side": "received"}) if d["state"] == "active"]
         return {"text": say("lent_head") if rows else say("lent_none"),
                 "rows": [{"text": say("lent_row", what=", ".join(d["grant_labels"]), scope=", ".join(d.get("client_names") or []) + (f" {d['ay']}" if d.get("ay") else ""),
                                       lender=d["from_label"], until=_dmy(d["ends"])), "go": "#/delegate"} for d in rows]}
@@ -444,4 +444,8 @@ if __name__ == "__main__":  # ponytail: the words that matter match, and a near-
         got = _rank(q, rows, k)[0][1]["id"]
         assert got == want, (q, got)
     assert engine.run("chat.route", {"top": 0.1, "second": 0, "min_score": k["min_score"], "gap_min": k["gap_min"]}) == "no_match"
+    for who in [{"id": "x", "email": "x@x", "role": "user"}, {"id": "y", "email": "y@y", "role": "user", "firm_id": "f", "firm_role": "preparer"}]:
+        for e in rows:      # every live answer still runs on what its module returns now (2026-10-05: 'delegated to me' broke)
+            if e.get("live"):
+                assert "text" in live(who, e["live"], e["q"]), e["live"]
     print("chipchat OK")
