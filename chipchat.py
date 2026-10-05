@@ -176,15 +176,22 @@ def live(u: dict, kind: str, q: str) -> dict:
     return {"text": ""}
 
 
+def dated(text: str) -> str:
+    """A question or answer written for 'this year' ({ay} the assessment year being worked, {y} its first calendar year) - it
+    follows clients.settings current_ay, so next year's suggestions move on by themselves instead of asking about a closed year."""
+    ay = clients.settings()["current_ay"]
+    return str(text).replace("{ay}", ay).replace("{y}", ay[:4])
+
+
 def _answer(u: dict, e: dict, q: str) -> dict:
     body = live(u, e["live"], q) if e.get("live") else {"text": e["a"]}
-    return {"id": e["id"], "q": e["q"], "go": e.get("go", ""), **body}
+    return {"id": e["id"], "q": dated(e["q"]), "go": e.get("go", ""), **body, "text": dated(body.get("text", ""))}
 
 
 def _next(aid: str) -> list[str]:
     """What to ask after this answer (chip chat.next), by the prepared question's id or the question family."""
     nx = engine.run("chat.next", {})
-    return list(nx["after"].get(aid.removeprefix("fam:"), []))[: int(nx["n"])]
+    return [dated(q) for q in nx["after"].get(aid.removeprefix("fam:"), [])][: int(nx["n"])]
 
 
 def _log(u: dict, q: str, route: str, aid: str, method: str) -> None:
@@ -215,7 +222,7 @@ def ask(u: dict, q: str) -> dict:
         return {"route": "answer", "family": fm["id"], "answer": {"id": f"fam:{fm['id']}", "go": "", **chatfam.answer(u, fm)}, "next": _next(fm["id"])}
     if route == "ask":
         _log(u, q, "ask_blank", f"fam:{fm['id']}", "family")
-        return {"route": "pick_one", "family": fm["id"], "say": chatfam.ask_for(fm["missing"]), "options": []}
+        return {"route": "pick_one", "family": fm["id"], "say": dated(chatfam.ask_for(fm["missing"])), "options": []}
     if route == "answer":
         e = ranked[0][1]
         _log(u, q, "answer", e["id"], "taught" if any(t["phrase"].lower() == q.lower() for t in store.read(TAUGHT, [])) else "own" if e.get("own") else "prepared")
@@ -259,7 +266,7 @@ def examples(u: dict, screen: str = "") -> dict:
     rnd = random.Random()
     pick = rnd.sample(own, min(int(k["live_share"]), len(own)))
     pick += [q for q in rnd.sample(_pool(), int(k["n"]) * 2) if q not in pick][: int(k["n"]) - len(pick)]
-    return {"examples": pick, "placeholder": rnd.choice(k["placeholders"]), "teach": _teacher(u) is not None}
+    return {"examples": [dated(q) for q in pick], "placeholder": dated(rnd.choice(k["placeholders"])), "teach": _teacher(u) is not None}
 
 
 def surprise(u: dict, n: int = 0) -> dict:
@@ -276,7 +283,7 @@ def surprise(u: dict, n: int = 0) -> dict:
     rnd = random.Random(f"{u.get('id')}|{datetime.datetime.utcnow():%Y%m%d%H}|{n}")
     live = [s for s in sources if sources[s]]
     src = rnd.choices(live, weights=[k["weights"][s] for s in live])[0]
-    return {"question": rnd.choice(sources[src])}
+    return {"question": dated(rnd.choice(sources[src]))}
 
 
 # --- the Train tab: the firm admin (their firm's questions) and the portal owner (every firm's) ----------------------------
@@ -448,4 +455,5 @@ if __name__ == "__main__":  # ponytail: the words that matter match, and a near-
         for e in rows:      # every live answer still runs on what its module returns now (2026-10-05: 'delegated to me' broke)
             if e.get("live"):
                 assert "text" in live(who, e["live"], e["q"]), e["live"]
+    assert dated("Due date for ITR-3 for AY {ay}, filed 15/11/{y}") == f"Due date for ITR-3 for AY {clients.settings()['current_ay']}, filed 15/11/{clients.settings()['current_ay'][:4]}"
     print("chipchat OK")
