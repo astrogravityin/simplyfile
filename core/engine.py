@@ -332,6 +332,19 @@ def problems(chip: dict, lib: dict | None = None, disabled_ops: set | None = Non
     return out
 
 
+def same(got, want) -> bool:
+    """Test equality that forgives float noise: a sum of floats lands on 92.27000000000001 or 92.27 depending on the
+    order it was added in, and a chip's answer is not wrong for that."""
+    if isinstance(got, float) or isinstance(want, float):
+        return (isinstance(got, (int, float)) and isinstance(want, (int, float)) and not isinstance(got, bool)
+                and not isinstance(want, bool) and math.isclose(got, want, rel_tol=1e-9, abs_tol=1e-9))
+    if isinstance(got, dict) and isinstance(want, dict):
+        return got.keys() == want.keys() and all(same(got[k], want[k]) for k in got)
+    if isinstance(got, (list, tuple)) and isinstance(want, (list, tuple)):
+        return len(got) == len(want) and all(same(g, w) for g, w in zip(got, want))
+    return got == want
+
+
 def run_tests(chip: dict, lib: dict, scenarios: dict | None = None) -> list[dict]:
     """Every test case of a chip: {n, args, want, got, ok, error}."""
     results = []
@@ -341,7 +354,7 @@ def run_tests(chip: dict, lib: dict, scenarios: dict | None = None) -> list[dict
         row = {"n": i + 1, "scenario": case.get("scenario", ""), "args": args, "want": case.get(want_key)}
         try:
             row["got"] = run(chip["chip_id"], args, lib)
-            row["ok"] = row["got"] == row["want"]
+            row["ok"] = same(row["got"], row["want"])
         except Exception as e:  # noqa: BLE001 - reported, the rest still run
             row.update(got=None, ok=False, error=str(e))
         results.append(row)
@@ -367,6 +380,13 @@ def public(chip: dict) -> dict:
 
 
 if __name__ == "__main__":
+    # 2026-10-06 the VPS (Python 3.12 compensated sum) logged assess.by/assess.estimate as failing on 92.27 vs
+    # 92.27000000000001: a test answer is compared with float tolerance, never exact ==
+    assert same({"a": [92.27000000000001, 1]}, {"a": [92.27, 1]}) and not same(92.28, 92.27) and not same(True, 1.0)
+    _run = run
+    globals()["run"] = lambda *a, **k: 0.1 + 0.2
+    assert run_tests({"chip_id": "x.float", "test_cases": [{"expect_value": 0.3}]}, {})[0]["ok"], "float noise failed a test"
+    globals()["run"] = _run
     _m = {}
     assert run_memo(_m, "find.score", {}) == run("find.score") and len(_m) == 1 and run_memo(None, "find.score") == run("find.score")
     if len(sys.argv) > 1:

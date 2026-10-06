@@ -126,6 +126,33 @@ def api_check() -> None:
                 if code >= 500:
                     bad.append(f"{path} {code}")
         assert not bad, f"server errors: {bad}"
+        # 2026-10-06 owner "Can we have this process of trouble shooting in UI" (from SteadyMove: a reset code that "never
+        # came" took an SSH session - it had been sent, Gmail filed it under a label). Every code / notice attempt is on
+        # People & access -> Email (SMTP) -> Recent mail with what became of it (core/auth.py _mail, chip mail.outcomes).
+        st_, au_ = app.auth.store, app.auth
+        kept_smtp_, kept_log_, sent_ = st_.read("smtp", {}), st_.read("code_log", []), []
+        au_.mailer.save({"host": "smtp.example.com", "from_email": "portal@example.com"})
+        real_send_ = au_.mailer.send
+        def refuse_(*_a, **_k):
+            raise RuntimeError("the mail server said no")
+        au_.mailer.send = refuse_
+        c.post("/api/auth/code/send", json={"purpose": "reset", "identity": "owner@example.com"})
+        au_.mailer.send = lambda to, subject, text: sent_.append(to)   # noqa: ARG005
+        for _ in range(au_.limits()["sends_per_hour"]):
+            c.post("/api/auth/code/send", json={"purpose": "reset", "identity": "owner@example.com"})
+        c.post("/api/auth/code/send", json={"purpose": "reset", "identity": "ghost@nowhere.com"})
+        ml_ = c.get("/api/smtp/log").json()
+        got_ = {(r["purpose"], r["to"], r["outcome"]) for r in ml_["rows"]}
+        assert {("reset", "owner@example.com", "failed"), ("reset", "owner@example.com", "sent"),
+                ("reset", "owner@example.com", "throttled"), ("reset", "ghost@nowhere.com", "no_account")} <= got_, got_
+        assert "the mail server said no" in next(r for r in ml_["rows"] if r["outcome"] == "failed")["error"]
+        assert all(r.get("next_at") for r in ml_["rows"] if r["outcome"] == "throttled"), "a held send says when the next may go"
+        assert set(ml_["tones"]) >= {r["outcome"] for r in ml_["rows"]}, "an outcome with no tone in chip mail.outcomes"
+        assert all("code" not in r for r in ml_["rows"]) and ml_["rows"][0]["to"] == "ghost@nowhere.com", "no codes kept; newest first"
+        assert TestClient(app.app).get("/api/smtp/log").status_code in (401, 403), "Recent mail is the owner's alone"
+        au_.mailer.send = real_send_
+        st_.write("smtp", kept_smtp_)
+        st_.write("code_log", kept_log_)
         # Clients -> Intake & map -> Reconcile
         cl = c.post("/api/clients", json={"name": "Sample HUF", "status": "huf", "pan": "AAAHS1234K"}).json()
         assert c.post("/api/clients", json={"name": "X", "status": "individual", "pan": "AAAHS1234K"}).status_code == 400
