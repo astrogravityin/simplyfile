@@ -389,7 +389,8 @@
           "targets": [
             {
               "chip": "close.dates",
-              "path": "due_mmdd"
+              "path": "due_mmdd",
+              "extend": "extensions"
             }
           ]
         },
@@ -401,7 +402,8 @@
           "targets": [
             {
               "chip": "close.dates",
-              "path": "due_business_mmdd"
+              "path": "due_business_mmdd",
+              "extend": "extensions"
             }
           ]
         },
@@ -413,7 +415,8 @@
           "targets": [
             {
               "chip": "close.dates",
-              "path": "due_audit_mmdd"
+              "path": "due_audit_mmdd",
+              "extend": "extensions"
             }
           ]
         },
@@ -425,7 +428,8 @@
           "targets": [
             {
               "chip": "close.dates",
-              "path": "due_tp_mmdd"
+              "path": "due_tp_mmdd",
+              "extend": "extensions"
             }
           ]
         },
@@ -576,9 +580,9 @@
     }
   },
   "returns": "record",
-  "version": 2,
+  "version": 3,
   "status": "published",
-  "description_nl": "2026-10-06: every figure Fetch asks for, its shape (kind) and where it lives (targets: chip + path; pick = take that part of the value; archive = before the first change, keep last year's whole param under that param's AY key, as compute.settings regimes_by_ay already does for the CA portal's past years). 2026-10-06: the presumptive-income rules (44ADA / 44AD rates and limits, chip myreturn.business) are fetched and compared too.",
+  "description_nl": "2026-10-06: every figure Fetch asks for, its shape (kind) and where it lives (targets: chip + path; pick = take that part of the value; archive = before the first change, keep last year's whole param under that param's AY key, as compute.settings regimes_by_ay already does for the CA portal's past years). 2026-10-06: the presumptive-income rules (44ADA / 44AD rates and limits, chip myreturn.business) are fetched and compared too. 2026-10-07: extend - the four due dates take a live-year re-check into close.dates extensions (that year only).",
   "test_cases": [
     {
       "args": {},
@@ -962,7 +966,8 @@
             "targets": [
               {
                 "chip": "close.dates",
-                "path": "due_mmdd"
+                "path": "due_mmdd",
+                "extend": "extensions"
               }
             ]
           },
@@ -974,7 +979,8 @@
             "targets": [
               {
                 "chip": "close.dates",
-                "path": "due_business_mmdd"
+                "path": "due_business_mmdd",
+                "extend": "extensions"
               }
             ]
           },
@@ -986,7 +992,8 @@
             "targets": [
               {
                 "chip": "close.dates",
-                "path": "due_audit_mmdd"
+                "path": "due_audit_mmdd",
+                "extend": "extensions"
               }
             ]
           },
@@ -998,7 +1005,8 @@
             "targets": [
               {
                 "chip": "close.dates",
-                "path": "due_tp_mmdd"
+                "path": "due_tp_mmdd",
+                "extend": "extensions"
               }
             ]
           },

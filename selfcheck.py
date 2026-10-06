@@ -21,7 +21,7 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 PY = sys.executable
-MODULES = ["firms", "itr_json", "myreturn", "myreturn_read", "taxwatch", "rulebook", "analytics", "portal_stats", "server", "delegation", "chipchat", "chatfam", "notes", "dock_issues", "itr_import", "clients", "intake", "recon", "compute", "audit", "changelog", "edition", "tourvideo", "manuals", "projects", "scan", "source", "keyshare",
+MODULES = ["firms", "itr_json", "myreturn", "myreturn_read", "rulewatch", "taxwatch", "rulebook", "analytics", "portal_stats", "server", "delegation", "chipchat", "chatfam", "notes", "dock_issues", "itr_import", "clients", "intake", "recon", "compute", "audit", "changelog", "edition", "tourvideo", "manuals", "projects", "scan", "source", "keyshare",
            "keysales", "wallet", "guideme"]
 SCREENS = ["firm", "analytics", "delegate", "clients", "myreturn", "itrimport", "intake", "recon", "compute", "audit", "manuals", "howto", "guideme", "tourvideo", "setup", "keys", "buykey", "keysales", "approvals", "portalstats", "server", "taxwatch"]
 

@@ -2059,6 +2059,11 @@ table.ap-facts{display:table;width:100%;border-collapse:collapse;table-layout:fi
 .mr-how ol li{counter-increment:mrh;display:grid;grid-template-columns:1.9em minmax(0,1fr);align-items:baseline;margin:0 0 6px;line-height:1.55}
 .mr-how ol li::before{content:counter(mrh) ".";color:var(--muted);font-variant-numeric:tabular-nums;text-align:right;padding-right:.55em}
 .mr-next{justify-content:space-between;margin:6px 0 24px}
+.mr-next button{min-height:40px;padding:9px 18px}
+.mr-next .mr-back{color:var(--ink-2)}
+.mr-next .mr-back:hover{color:var(--brand);border-color:var(--brand);background:var(--panel)}
+.mr-next .mr-back:hover .ico{transform:translateX(-2px)}
+.mr-next .mr-back .ico{transition:transform var(--ease)}
 .mr-chk{display:grid;grid-template-columns:28px 1fr auto;gap:10px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
 .mr-chk-dot{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--ok-soft);color:var(--ok)}
 .mr-chk.lv-red .mr-chk-dot{background:var(--bad-soft);color:var(--bad)}

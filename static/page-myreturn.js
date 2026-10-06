@@ -181,7 +181,7 @@ export async function myReturnPage(host) {
       <h4>${esc(w('upload_h'))}</h4><ol class="mr-up">${w('upload_steps').split('|').map((s) => `<li>${esc(s)}</li>`).join('')}</ol>
       <p class="small muted">${esc(w('file_note'))}</p></section><div class="row tight mr-next">${back('file')}<span></span></div>`;
 
-  const back = (at) => { const prev = STEPS[STEPS.indexOf(at) - 1]; return prev ? `<button type="button" class="ghost" data-back="${prev}">${icon('left', 14)} ${esc(w('back_to', { step: w(`s_${prev}`) }))}</button>` : '<span></span>'; };
+  const back = (at) => { const prev = STEPS[STEPS.indexOf(at) - 1]; return prev ? `<button type="button" class="mr-back" data-back="${prev}">${icon('left', 14)} ${esc(w('back_to', { step: w(`s_${prev}`) }))}</button>` : '<span></span>'; };
   const next = (to, flags) => `<div class="row tight mr-next">${back(STEPS[STEPS.indexOf(to) - 1])}<button type="button" class="primary" data-next="${to}" data-flags='${flags ? esc(JSON.stringify(flags)) : ''}'>${esc(w(`go_${to}`))} ${icon('right', 14)}</button></div>`;
 
   const wire = (step) => {
