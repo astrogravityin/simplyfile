@@ -18,25 +18,33 @@
       "type": "text",
       "default": "partner",
       "label": "firm role"
+    },
+    {
+      "name": "move_dates",
+      "type": "json",
+      "default": false,
+      "label": "move dates"
     }
   ],
   "expr": {
     "vop": "record",
     "fields": {
       "firm_name": "$firm_name",
-      "firm_role": "$firm_role"
+      "firm_role": "$firm_role",
+      "move_dates": "$move_dates"
     }
   },
   "returns": "record",
-  "version": 2,
+  "version": 3,
   "status": "published",
-  "description_nl": "2026-10-05: a demo visitor joins the demo firm as a Partner - clients, intake, reconcile, compute, filing and the audit, but not the firm's details or its team.",
+  "description_nl": "2026-10-05: a demo visitor joins the demo firm as a Partner - clients, intake, reconcile, compute, filing and the audit, but not the firm's details or its team. 2026-10-06: move_dates - the nightly reset moves every date forward by the days since the snapshot was packed, so the demo's diary stays current (off where dates belong to a fixed period, as a tax year's do).",
   "test_cases": [
     {
       "args": {},
       "expect_value": {
         "firm_name": "Demo CA Filing Firm",
-        "firm_role": "partner"
+        "firm_role": "partner",
+        "move_dates": false
       }
     }
   ]

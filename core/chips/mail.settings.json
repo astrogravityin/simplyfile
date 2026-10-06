@@ -33,6 +33,11 @@
       "name": "starttls_port",
       "type": "number",
       "default": 587
+    },
+    {
+      "name": "log_shown",
+      "type": "number",
+      "default": 50
     }
   ],
   "expr": {
@@ -42,11 +47,12 @@
       "default_security": "$default_security",
       "timeout_seconds": "$timeout_seconds",
       "ssl_port": "$ssl_port",
-      "starttls_port": "$starttls_port"
+      "starttls_port": "$starttls_port",
+      "log_shown": "$log_shown"
     }
   },
   "returns": "record",
-  "version": 1,
+  "version": 2,
   "status": "published",
   "description_nl": "default_port / default_security: what a new SMTP setup starts with. timeout_seconds: how long one connection may wait. ssl_port / starttls_port: the port used when none is set, by security.",
   "test_cases": [
@@ -57,7 +63,8 @@
         "default_security": "starttls",
         "timeout_seconds": 20,
         "ssl_port": 465,
-        "starttls_port": 587
+        "starttls_port": 587,
+        "log_shown": 50
       }
     }
   ],

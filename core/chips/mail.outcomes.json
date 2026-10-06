@@ -1,0 +1,66 @@
+{
+  "chip_id": "mail.outcomes",
+  "kind": "accessor",
+  "set": "mail",
+  "audience": "admin",
+  "label": "How each outcome of a portal mail is shown on Recent mail",
+  "aliases": [
+    "recent mail",
+    "mail log",
+    "reset code not received"
+  ],
+  "params": [
+    {
+      "name": "sent",
+      "type": "text",
+      "default": "ok"
+    },
+    {
+      "name": "failed",
+      "type": "text",
+      "default": "bad"
+    },
+    {
+      "name": "throttled",
+      "type": "text",
+      "default": "warn"
+    },
+    {
+      "name": "no_account",
+      "type": "text",
+      "default": "warn"
+    },
+    {
+      "name": "no_email",
+      "type": "text",
+      "default": "warn"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "sent": "$sent",
+      "failed": "$failed",
+      "throttled": "$throttled",
+      "no_account": "$no_account",
+      "no_email": "$no_email"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "One tone per outcome (ok | warn | bad) for the rows of Setup -> Email -> Recent mail. Python only records which outcome happened; the words are ui.access ml_o_* / ml_h_*.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "sent": "ok",
+        "failed": "bad",
+        "throttled": "warn",
+        "no_account": "warn",
+        "no_email": "warn"
+      }
+    }
+  ],
+  "weight_basis": "Platform mail primitive, no business content. The knobs ARE the policy - edit them here, never in Python."
+}

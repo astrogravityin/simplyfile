@@ -748,6 +748,111 @@
       "type": "text",
       "default": "Save the email settings first, then send a test.",
       "label": "smtp need"
+    },
+    {
+      "name": "ml_title",
+      "type": "text",
+      "default": "Recent mail"
+    },
+    {
+      "name": "ml_note",
+      "type": "text",
+      "default": "Every code and notice the portal tried to send, newest first, and what became of it. The codes themselves are never kept."
+    },
+    {
+      "name": "ml_empty",
+      "type": "text",
+      "default": "Nothing sent yet."
+    },
+    {
+      "name": "ml_refresh",
+      "type": "text",
+      "default": "Refresh"
+    },
+    {
+      "name": "ml_col_when",
+      "type": "text",
+      "default": "When"
+    },
+    {
+      "name": "ml_col_what",
+      "type": "text",
+      "default": "What"
+    },
+    {
+      "name": "ml_col_to",
+      "type": "text",
+      "default": "To"
+    },
+    {
+      "name": "ml_col_result",
+      "type": "text",
+      "default": "Result"
+    },
+    {
+      "name": "ml_p_signup",
+      "type": "text",
+      "default": "Sign-up code"
+    },
+    {
+      "name": "ml_p_reset",
+      "type": "text",
+      "default": "Password reset code"
+    },
+    {
+      "name": "ml_p_signup_exists",
+      "type": "text",
+      "default": "\"You already have an account\" notice"
+    },
+    {
+      "name": "ml_o_sent",
+      "type": "text",
+      "default": "Sent"
+    },
+    {
+      "name": "ml_o_failed",
+      "type": "text",
+      "default": "Failed"
+    },
+    {
+      "name": "ml_o_throttled",
+      "type": "text",
+      "default": "Held back"
+    },
+    {
+      "name": "ml_o_no_account",
+      "type": "text",
+      "default": "No such account"
+    },
+    {
+      "name": "ml_o_no_email",
+      "type": "text",
+      "default": "Account has no email"
+    },
+    {
+      "name": "ml_h_sent",
+      "type": "text",
+      "default": "The mail server took it. Not in their inbox? In Gmail search <code>in:anywhere from:{sender}</code> - it may be in Spam, under a label, or moved by a filter or a mail-sorting app. Only the newest code works."
+    },
+    {
+      "name": "ml_h_failed",
+      "type": "text",
+      "default": "{error}"
+    },
+    {
+      "name": "ml_h_throttled",
+      "type": "text",
+      "default": "{per_hour} codes an hour to one address, so this one was not sent. The next can go after {next}."
+    },
+    {
+      "name": "ml_h_no_account",
+      "type": "text",
+      "default": "Nobody here signs in as \"{to}\", so nothing was sent. Check the spelling, or look the person up in People."
+    },
+    {
+      "name": "ml_h_no_email",
+      "type": "text",
+      "default": "The account \"{to}\" has no email address, so no code can reach it. Add one, or set a password from People."
     }
   ],
   "expr": {
@@ -900,11 +1005,32 @@
       "smtp_saved": "$smtp_saved",
       "smtp_sent": "$smtp_sent",
       "nothing_to_copy": "$nothing_to_copy",
-      "smtp_need": "$smtp_need"
+      "smtp_need": "$smtp_need",
+      "ml_title": "$ml_title",
+      "ml_note": "$ml_note",
+      "ml_empty": "$ml_empty",
+      "ml_refresh": "$ml_refresh",
+      "ml_col_when": "$ml_col_when",
+      "ml_col_what": "$ml_col_what",
+      "ml_col_to": "$ml_col_to",
+      "ml_col_result": "$ml_col_result",
+      "ml_p_signup": "$ml_p_signup",
+      "ml_p_reset": "$ml_p_reset",
+      "ml_p_signup_exists": "$ml_p_signup_exists",
+      "ml_o_sent": "$ml_o_sent",
+      "ml_o_failed": "$ml_o_failed",
+      "ml_o_throttled": "$ml_o_throttled",
+      "ml_o_no_account": "$ml_o_no_account",
+      "ml_o_no_email": "$ml_o_no_email",
+      "ml_h_sent": "$ml_h_sent",
+      "ml_h_failed": "$ml_h_failed",
+      "ml_h_throttled": "$ml_h_throttled",
+      "ml_h_no_account": "$ml_h_no_account",
+      "ml_h_no_email": "$ml_h_no_email"
     }
   },
   "returns": "record",
-  "version": 3,
+  "version": 4,
   "status": "published",
   "description_nl": "The words of one screen. {placeholders} are filled on the page. A language overrides any of them with chip ui.access.<lang> (for example ui.access.hi).",
   "test_cases": [
@@ -1058,7 +1184,28 @@
         "smtp_saved": "Mail settings saved. Send a test to prove them.",
         "smtp_sent": "Sent to {to}. Not there in a minute? Check spam.",
         "nothing_to_copy": "Type or generate a password first.",
-        "smtp_need": "Save the email settings first, then send a test."
+        "smtp_need": "Save the email settings first, then send a test.",
+        "ml_title": "Recent mail",
+        "ml_note": "Every code and notice the portal tried to send, newest first, and what became of it. The codes themselves are never kept.",
+        "ml_empty": "Nothing sent yet.",
+        "ml_refresh": "Refresh",
+        "ml_col_when": "When",
+        "ml_col_what": "What",
+        "ml_col_to": "To",
+        "ml_col_result": "Result",
+        "ml_p_signup": "Sign-up code",
+        "ml_p_reset": "Password reset code",
+        "ml_p_signup_exists": "\"You already have an account\" notice",
+        "ml_o_sent": "Sent",
+        "ml_o_failed": "Failed",
+        "ml_o_throttled": "Held back",
+        "ml_o_no_account": "No such account",
+        "ml_o_no_email": "Account has no email",
+        "ml_h_sent": "The mail server took it. Not in their inbox? In Gmail search <code>in:anywhere from:{sender}</code> - it may be in Spam, under a label, or moved by a filter or a mail-sorting app. Only the newest code works.",
+        "ml_h_failed": "{error}",
+        "ml_h_throttled": "{per_hour} codes an hour to one address, so this one was not sent. The next can go after {next}.",
+        "ml_h_no_account": "Nobody here signs in as \"{to}\", so nothing was sent. Check the spelling, or look the person up in People.",
+        "ml_h_no_email": "The account \"{to}\" has no email address, so no code can reach it. Add one, or set a password from People."
       }
     }
   ],

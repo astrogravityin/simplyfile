@@ -11,9 +11,13 @@ the facts and does the I/O (codes, mail, the account, the session) through auth 
 """
 from __future__ import annotations
 
+import json
 import os
+import re
 import secrets
-from datetime import datetime, timedelta, timezone
+import sys
+from datetime import date, datetime, timedelta, timezone
+from pathlib import Path
 
 from fastapi import APIRouter, Body, HTTPException, Request, Response
 
@@ -112,7 +116,43 @@ def visitor(u: dict | None) -> bool:
     return bool(u and u.get("demo"))
 
 
-if __name__ == "__main__":  # ponytail: the chip's numbers are sane and every sentence the card needs is there
+_DAY = re.compile(r"(\d{4}-\d{2}-\d{2})(T[\d:.]+(?:Z|[+-]\d{2}:\d{2})?)?")
+
+
+def _moved(v, days: int):
+    """Every value that is a date or a timestamp, moved by days; the rest as it was."""
+    if isinstance(v, dict):
+        return {k: _moved(x, days) for k, x in v.items()}
+    if isinstance(v, list):
+        return [_moved(x, days) for x in v]
+    if isinstance(v, str) and (m := _DAY.fullmatch(v)):
+        try:
+            return (date.fromisoformat(m[1]) + timedelta(days=days)).isoformat() + (m[2] or "")
+        except ValueError:
+            return v
+    return v
+
+
+def freshen(data: Path, packed_at: float, now: datetime | None = None) -> int:
+    """After the nightly reset: move every date in the restored data forward by the days since the snapshot was packed
+    (chip demo.host move_dates), so the demo's tomorrow is tomorrow. Returns the days moved.
+    ponytail: free text ("heard on 28 Oct") and period folders (jf_docs/<cid>/2026) stay as packed - repack yearly."""
+    if not engine.run("demo.host").get("move_dates"):
+        return 0
+    tz = timezone(timedelta(minutes=int(settings()["local_offset_minutes"])))
+    days = ((now or datetime.now(timezone.utc)).astimezone(tz).date() - datetime.fromtimestamp(packed_at, tz).date()).days
+    if days > 0:
+        for p in data.rglob("*.json"):
+            p.write_text(json.dumps(_moved(json.loads(p.read_text(encoding="utf-8")), days), indent=2, ensure_ascii=False),
+                         encoding="utf-8")
+    return days
+
+
+if __name__ == "__main__" and sys.argv[1:2] == ["freshen"]:   # deploy/demo/reset.sh: python -m core.demo freshen <data> <snapshot>
+    import core  # noqa: F401 - registers core's chips
+    engine.register_dir(Path("chips"))
+    print("dates moved", freshen(Path(sys.argv[2]), (Path(sys.argv[3]) / "users.json").stat().st_mtime), "days")
+elif __name__ == "__main__":  # ponytail: the chip's numbers are sane and every sentence the card needs is there
     import core  # noqa: F401 - registers core's chips
     k = settings()
     assert int(k["digits"]) >= 6 and int(k["max_attempts"]) >= 3 and int(k["code_ttl_seconds"]) >= 300, k
@@ -122,4 +162,7 @@ if __name__ == "__main__":  # ponytail: the chip's numbers are sane and every se
     t0 = datetime(2026, 10, 5, 21, 29, tzinfo=timezone.utc)
     assert next_reset(t0) - int(t0.timestamp()) == 60 and next_reset(t0 + timedelta(minutes=1)) - int(t0.timestamp()) == 86460
     assert visitor({"demo": True}) and not visitor({}) and not visitor(None)
+    assert _moved({"a": ["2026-10-06", "2026-10-06T03:34:11+00:00", "2025-26", "28 Oct", 9000000001]}, 26) == \
+        {"a": ["2026-11-01", "2026-11-01T03:34:11+00:00", "2025-26", "28 Oct", 9000000001]}
+    assert _moved("2026-02-31", 1) == "2026-02-31"
     print("demo OK")

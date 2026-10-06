@@ -329,31 +329,44 @@ def first_account(response: Response, body: dict = Body(...)):
 
 # --- emailed codes ------------------------------------------------------------------------------
 
+def _held(purpose: str, email: str, logged_as: str) -> bool:
+    """The throttle: too many codes to one address this hour. A held send is logged, not mailed."""
+    if store.recent_codes(purpose, email, 3600) < limits()["sends_per_hour"]:
+        return False
+    store.log_mail(logged_as, email, "throttled", next_at=store.code_free_at(purpose, email, 3600))
+    return True
+
+
+def _mail(purpose: str, email: str, subject: str, text: str) -> None:
+    """Sends, and records what happened for the owner's Recent mail (Setup -> Email). A stranger learns nothing."""
+    try:
+        mailer.send(email, subject, text)
+    except RuntimeError as e:  # the owner sees the reason on Recent mail and on the Test button
+        print(f"[auth] could not send a {purpose} mail: {e}", flush=True)
+        store.log_mail(purpose, email, "failed", error=str(e))
+        return
+    store.log_mail(purpose, email, "sent")
+
+
 def _send_code(purpose: str, email: str) -> None:
     c = codes()
-    if store.recent_codes(purpose, email, 3600) >= limits()["sends_per_hour"]:
+    if _held(purpose, email, purpose):
         return
     code = "".join(secrets.choice("0123456789") for _ in range(int(c["digits"])))
     ttl = int(c[f"{purpose}_ttl_seconds"])
     store.put_code(purpose, email, code, ttl)
     store.log_code(purpose, email)
     subject, text = mailer.compose(f"code_{purpose}", product=settings()["product_name"], code=code, minutes=ttl // 60)
-    try:
-        mailer.send(email, subject, text)
-    except RuntimeError as e:  # the owner sees mail trouble on the Test button; a stranger learns nothing
-        print(f"[auth] could not send a {purpose} code: {e}", flush=True)
+    _mail(purpose, email, subject, text)
 
 
 def _send_notice(kind: str, email: str) -> None:
     """A letter instead of a code, under the same throttle (someone typed an address that has an account)."""
-    if store.recent_codes("signup", email, 3600) >= limits()["sends_per_hour"]:
+    if _held("signup", email, kind):
         return
     store.log_code("signup", email)
     subject, text = mailer.compose(kind, product=settings()["product_name"])
-    try:
-        mailer.send(email, subject, text)
-    except RuntimeError as e:
-        print(f"[auth] could not send a {kind} notice: {e}", flush=True)
+    _mail(kind, email, subject, text)
 
 
 @router.post("/api/auth/code/send")
@@ -385,6 +398,8 @@ def send_code(body: dict = Body(...)):
         u = store.find_user(identity)
         if u and u.get("email"):
             _send_code("reset", u["email"])
+        else:   # the owner's Recent mail says why nothing went; the answer below stays the same for everyone
+            store.log_mail("reset", identity, "no_email" if u else "no_account")
     return {"mail": True, "message": msg("code_sent"), "resend_after_seconds": codes()["resend_after_seconds"]}
 
 
@@ -542,3 +557,12 @@ def test_smtp(body: dict = Body(default={}), me: dict = Depends(owner)):
     except RuntimeError as e:
         raise HTTPException(400, str(e))
     return {"sent_to": to}
+
+
+@router.get("/api/smtp/log")
+def smtp_log(_: dict = Depends(owner)):
+    """Recent mail: every code and notice the portal tried to send, newest first, and what became of it.
+    How a row is shown (its tone) is chip mail.outcomes; its words are ui.access."""
+    shown = int(engine.setting("mail.settings", "log_shown"))
+    return {"rows": list(reversed(store.mail_log()))[:shown], "tones": engine.run("mail.outcomes"),
+            "sender": mailer.config().get("from_email", ""), "per_hour": limits()["sends_per_hour"]}

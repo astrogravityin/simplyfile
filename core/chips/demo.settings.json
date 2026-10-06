@@ -48,6 +48,12 @@
       "type": "text",
       "default": "21:30",
       "label": "reset utc"
+    },
+    {
+      "name": "local_offset_minutes",
+      "type": "json",
+      "default": 330,
+      "label": "local offset minutes"
     }
   ],
   "expr": {
@@ -59,13 +65,14 @@
       "resend_after_seconds": "$resend_after_seconds",
       "sends_per_hour": "$sends_per_hour",
       "seat_role": "$seat_role",
-      "reset_utc": "$reset_utc"
+      "reset_utc": "$reset_utc",
+      "local_offset_minutes": "$local_offset_minutes"
     }
   },
   "returns": "record",
-  "version": 1,
+  "version": 2,
   "status": "published",
-  "description_nl": "2026-10-05: a demo visitor signs in with a code mailed to them: how long it is, how long it lives, how many tries, and how often one address may ask. reset_utc: when the nightly reset runs (HH:MM UTC) - keep it the same as the cron line deploy/demo/setup.sh writes; the banner counts down to it.",
+  "description_nl": "2026-10-05: a demo visitor signs in with a code mailed to them: how long it is, how long it lives, how many tries, and how often one address may ask. reset_utc: when the nightly reset runs (HH:MM UTC) - keep it the same as the cron line deploy/demo/setup.sh writes; the banner counts down to it. 2026-10-06: local_offset_minutes - the demo's own clock (IST = 330) for counting the days since the snapshot was packed.",
   "test_cases": [
     {
       "args": {},
@@ -76,7 +83,8 @@
         "resend_after_seconds": 60,
         "sends_per_hour": 5,
         "seat_role": "",
-        "reset_utc": "21:30"
+        "reset_utc": "21:30",
+        "local_offset_minutes": 330
       }
     }
   ]

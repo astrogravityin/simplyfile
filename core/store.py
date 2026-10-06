@@ -560,6 +560,27 @@ def log_code(purpose: str, email: str) -> None:
         write("code_log", rows[-_limit("code_log_kept"):])
 
 
+def code_free_at(purpose: str, email: str, within_seconds: int) -> str:
+    """When the oldest code inside the throttle window leaves it - the next send may go then."""
+    email = (email or "").strip().lower()
+    stamps = [_stamp(t["at"]) for t in read("code_log", []) if t["email"] == email and t["purpose"] == purpose
+              and _stamp(t["at"]) > _epoch() - within_seconds]
+    return datetime.fromtimestamp(min(stamps) + within_seconds, timezone.utc).isoformat(timespec="seconds") if stamps else ""
+
+
+def log_mail(purpose: str, to: str, outcome: str, **extra) -> None:
+    """Every code or notice the portal tried to send and what became of it (Setup -> Email -> Recent mail).
+    Never the code itself. Kept as long as code_log."""
+    with _LOCK:
+        rows = [t for t in read("mail_log", []) if _stamp(t["at"]) > _epoch() - _limit("code_log_seconds")]
+        rows.append({"at": now(), "purpose": purpose, "to": (to or "").strip().lower(), "outcome": outcome} | extra)
+        write("mail_log", rows[-_limit("code_log_kept"):])
+
+
+def mail_log() -> list[dict]:
+    return read("mail_log", [])
+
+
 def verify_user(email: str) -> None:
     with _LOCK:
         rows = users()

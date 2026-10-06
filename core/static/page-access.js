@@ -530,7 +530,9 @@ async function drawSmtp(box) {
       <button class="primary" id="sm-save" type="button">${icon('save')} ${w('smtp_save')}</button>
       <button id="sm-test" type="button"${offAttr(m.configured ? '' : w('smtp_need'))}>${icon('send')} ${w('smtp_test')}</button>
       ${m.configured ? `<span class="tag ok">${w('set_up')}</span>` : `<span class="tag warn">${w('not_set_up')}</span>`}</div>
-    <div id="sm-msg" style="margin-top:10px"></div>`;
+    <div id="sm-msg" style="margin-top:10px"></div>
+    <div id="sm-log" style="margin-top:18px"></div>`;
+  drawMailLog(box.querySelector('#sm-log'));
   wireSecrets(box, { 'sm-password': 16 });       // Gmail App Passwords are always 16 characters
   const out = box.querySelector('#sm-msg');
   box.querySelector('#sm-save').onclick = (e) => busy(e.currentTarget, async () => {
@@ -543,4 +545,26 @@ async function drawSmtp(box) {
     try { const r = await api('/api/smtp/test', { method: 'POST', body: {} }); say(out, 'ok', w('smtp_sent', { to: esc(r.sent_to) })); }
     catch (err) { say(out, 'bad', esc(err.message)); }
   });
+}
+
+// 2026-10-06 owner "Can we have this process of trouble shooting in UI": a reset code that never arrived took an SSH
+// session to explain. Recent mail shows every code and notice the portal tried to send and what became of it.
+async function drawMailLog(el) {
+  const d = await api('/api/smtp/log').catch(() => null);
+  if (!d) { el.innerHTML = ''; return; }
+  const rows = d.rows.map((r) => {
+    const hint = w(`ml_h_${r.outcome}`, { sender: esc(d.sender), error: esc(r.error || ''), per_hour: d.per_hour,
+      next: esc(when(r.next_at)), to: esc(r.to) });
+    return `<tr><td class="small">${esc(when(r.at))}</td><td>${w(`ml_p_${r.purpose}`)}</td><td>${esc(r.to)}</td>
+      <td><span class="tag ${esc(d.tones[r.outcome] || '')}">${w(`ml_o_${r.outcome}`)}</span>
+      <div class="small muted">${hint}</div></td></tr>`;
+  }).join('');
+  el.innerHTML = `<div class="row" style="justify-content:space-between;align-items:center">
+      <h3 style="margin:0">${icon('send', 14)} ${w('ml_title')}</h3>
+      <button type="button" class="small" id="ml-refresh">${icon('refresh', 12)} ${w('ml_refresh')}</button></div>
+    <p class="muted small">${w('ml_note')}</p>
+    ${rows ? `<table class="rules"><thead><tr><th>${w('ml_col_when')}</th><th>${w('ml_col_what')}</th><th>${w('ml_col_to')}</th>
+      <th>${w('ml_col_result')}</th></tr></thead><tbody>${rows}</tbody></table>`
+    : `<p class="muted small">${w('ml_empty')}</p>`}`;
+  el.querySelector('#ml-refresh').onclick = (e) => busy(e.currentTarget, () => drawMailLog(el));
 }
