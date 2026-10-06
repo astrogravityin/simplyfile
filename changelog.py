@@ -112,14 +112,17 @@ def _docs(w: dict, g: dict, old: list, new: list) -> list[dict]:
     scope, out = f"client-{g['cid']}", []
     name = lambda x: f"{x.get(w['name_field'], '')}" + (f" (v{x.get(w['version_field'], 1)})" if w.get("version_field") else "")  # noqa: E731
     kept = lambda x: {"kept_in": w["kept_in"], "fid": x[k], "v": int(x.get(w["version_field"], 1) or 1)}  # noqa: E731
+    titled = lambda e, r: e | ({"field": str(r[w["title_field"]])} if w.get("title_field") and r.get(w["title_field"]) else {})  # noqa: E731
     for fid in sorted(set(a) | set(b)):
         x, y = a.get(fid), b.get(fid)
+        n = len(out)
         if x and not y:
             out.append(_entry(w, scope, fid, name(x), "", g["cid"], g["ay"], kept(x), "*"))
         elif y and not x:
-            out.append(_entry(w, scope, fid, "", name(y), g["cid"], g["ay"], None, "*"))
+            out.append(_entry(w, scope, fid, "", name(y), g["cid"], g["ay"], None, "*") | {"file_new": kept(y)})
         elif x and y and x.get(w.get("version_field", ""), 1) != y.get(w.get("version_field", ""), 1):
-            out.append(_entry(w, scope, fid, name(x), name(y), g["cid"], g["ay"], kept(x), "*"))
+            out.append(_entry(w, scope, fid, name(x), name(y), g["cid"], g["ay"], kept(x), "*") | {"file_new": kept(y)})
+        out[n:] = [titled(e, y or x) for e in out[n:]]      # the line is named by the document's own title, when the row has one
     return out
 
 
@@ -211,10 +214,13 @@ def who_of(u: dict) -> str:
 
 
 def kept_file(cid: str, ay: str, kept_in: str, fid: str, v: int):
-    """An earlier version of a document, as kept beside the current one."""
+    """A version of a document: an earlier one as kept beside the current one (<fid>.v<n><ext>), else - the version asked is
+    the one in use - the current file (<fid><ext>), so History can offer the new version too."""
     if kept_in not in {w.get("kept_in") for w in _watch()} or not re.fullmatch(r"[0-9a-f]+", fid):
         raise HTTPException(404, say("none"))
-    hit = sorted((store.DATA / kept_in / cid / ay).glob(f"{fid}.v{int(v)}.*"))
+    folder = store.DATA / kept_in / cid / ay
+    hit = sorted(folder.glob(f"{fid}.v{int(v)}.*")) or [p for p in sorted(folder.glob(f"{fid}.*")) if not re.match(rf"{fid}\.v\d+\.", p.name)
+                                                       and p.suffix != ".json"]
     if not hit:
         raise HTTPException(404, say("none"))
     return hit[0]
@@ -233,6 +239,7 @@ if __name__ == "__main__":  # ponytail: a client edit and a replaced statement c
     ws = next(x for x in _watch() if x["id"] == "statements")
     es = _docs(ws, {"cid": "c1", "ay": "2026-27"}, [{"id": "f1", "name": "books.xlsx", "version": 1}], [{"id": "f1", "name": "books.xlsx", "version": 2}])
     assert len(es) == 1 and es[0]["old"] == "books.xlsx (v1)" and es[0]["file"] == {"kept_in": "sf_files", "fid": "f1", "v": 1}, es
+    assert es[0]["file_new"]["v"] == 2, "the new version is offered too"
     got = []
     _keep = lambda es: got.extend(es)  # noqa: E731 - catch what would be kept
     on_write("users", [{"id": "u1", "firm_id": "f1", "firm_role": "preparer", "password": "x"}],

@@ -44,9 +44,12 @@ function eventHtml(e) {
   const r0 = e.rows[0];
   const head = doc ? w(!r0.old ? 'ev_doc_added' : !r0.new ? 'ev_doc_removed' : 'ev_doc_replaced', { who: e.by })
     : w(e.rows.length === 1 ? 'ev_info_one' : 'ev_info', { who: e.by, n: e.rows.length });
+  // 2026-10-06: a replaced document offers both versions - the one it was and the one it became
+  const link = (r, f, name) => `<a class="ch-dl" href="${BASE}/api/changes/file/${encodeURIComponent(r.cid)}/${encodeURIComponent(r.ay)}/${encodeURIComponent(f.kept_in)}/${encodeURIComponent(f.fid)}/${f.v}?name=${encodeURIComponent(name)}">
+        ${icon('download', 13)} ${esc(w('download', { name }))}</a>`;
   const lines = e.rows.map((r) => {
-    const dl = r.file ? `<a class="ch-dl" href="${BASE}/api/changes/file/${encodeURIComponent(r.cid)}/${encodeURIComponent(r.ay)}/${encodeURIComponent(r.file.kept_in)}/${encodeURIComponent(r.file.fid)}/${r.file.v}?name=${encodeURIComponent(r.old)}">
-        ${icon('download', 13)} ${esc(w('download', { name: r.old }))}</a>` : '';
+    const dls = [r.file ? link(r, r.file, r.old) : '', r.file_new ? link(r, r.file_new, r.new) : ''].filter(Boolean).join('');
+    const dl = dls ? `<div class="ch-dls">${dls}</div>` : '';
     return `<div class="ch-line"><div class="ch-field">${doc ? icon('folder', 14) : ''}${esc(r.field)}</div>
       <div class="ch-vals"><span class="ch-old" title="${esc(w('was'))}">${val(r.old)}</span><span class="ch-arrow" aria-hidden="true">${icon('right', 13)}</span>
         <span class="ch-new" title="${esc(w('now'))}">${val(r.new)}</span></div>${dl}</div>`;
