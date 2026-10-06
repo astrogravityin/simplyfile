@@ -53,6 +53,18 @@ def static_checks() -> None:
             assert target.exists(), f"{f.name} imports {imp}, which is not here"
     views = re.search(r"views: \{([^}]*)\}", app_js).group(1)
     assert sorted(x.split(":")[0].strip() for x in views.split(",") if x.strip()) == sorted(SCREENS), views
+    # 2026-10-06 the marketing film (chip promo.film, tools/showcase/promo_film.py) plays on the login pitch (edition.settings
+    # tour): the pitch never points at a missing file, and the film's chip never names footage that is not here (from Justify)
+    ed = json.loads((HERE / "chips" / "edition.settings.json").read_text(encoding="utf-8"))["test_cases"][0]["expect_value"]
+    for row in ed["rows"]:
+        for k in ("video", "captions", "poster") if row.get("tour") else ():
+            assert (HERE / "static" / "tour" / row["tour"][k]).exists(), f"edition {row['id']}: tour {k} {row['tour'][k]} is not in static/tour"
+    promo = HERE / "chips" / "promo.film.json"
+    if promo.exists():
+        pf = json.loads(promo.read_text(encoding="utf-8"))["test_cases"][0]["expect_value"]
+        for sc in pf["scenes"]:
+            assert sc["kind"] == "card" or (HERE / pf["sources_dir"] / sc["source"]).exists(), f"promo.film: {sc.get('source')} is not in {pf['sources_dir']}"
+        assert (HERE / pf["out_dir"] / f"{pf['out']}.mp4").exists(), "promo.film is not built - python tools/showcase/promo_film.py"
     # 2026-10-05 owner: "Copy the prompt" barely visible on white - controls were drawn with --line-2 (1.4:1). A control's
     # edge is --edge (>= 3:1) and quiet text --muted (>= 4.5:1) on every surface, light and dark (same guard as tv).
     css = (HERE / "core" / "static" / "portal.css").read_text(encoding="utf-8")
