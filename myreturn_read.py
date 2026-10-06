@@ -374,7 +374,8 @@ def _pdf(data: bytes, password: str, pan: str, dob: str, ay: str, user: dict | N
 
 
 def _amounts(line: str) -> list[float]:
-    return [_num(x) for x in re.findall(settings()["amount_pattern"], line)]
+    k = settings()
+    return [_num(x) for x in re.findall(k["amount_pattern"], re.sub(k["glued_split"], lambda m: m.group(1) + " ", line))]
 
 
 def form16(text: str, data: bytes, user: dict | None, ai_ok: bool, pan: str, ay: str) -> dict:
@@ -481,6 +482,8 @@ def _ai_form16(data: bytes, user: dict) -> dict:
 
 
 if __name__ == "__main__":  # ponytail: each reader on a few hand-made lines
+    import store as _st  # noqa: F401
+    assert _amounts("Total (Rs.) 5489709.00 1311485.001311485.00") == [5489709.0, 1311485.0, 1311485.0], _amounts("Total (Rs.) 5489709.00 1311485.001311485.00")
     import store as _portal_store  # noqa: F401 - registers this portal's chips, as the app does
     assert _inr(1234567) == "₹12,34,567" and _inr(999) == "₹999" and _inr(-150000) == "-₹1,50,000"
     assert _passwords("", "ABCDE1234F", "1990-01-31")[:2] == ["abcde1234f31011990", "ABCDE1234F31011990"]

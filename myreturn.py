@@ -491,12 +491,13 @@ def compare(cid: str, ay: str) -> dict:
     rows_map = [r for r in engine.run("itr.map")["forms"].get(their_form) or [] if "from" in r]
     out = []
     for row in k["rows"]:
-        path = next((r["path"] for r in rows_map if r["from"] == row["key"]), "")
-        cur = filed.get("ITR", filed)
+        # the figure where this form keeps it - ITR-2 fills TotalIncome from total_gross, so a row may name others (also)
+        key, path = next(((x, r["path"]) for x in [row["key"]] + list(row.get("also") or []) for r in rows_map if r["from"] == x), (row["key"], ""))
+        cur = filed.get("ITR", filed) if path else None
         for part in path.split(".") if path else []:
             cur = cur.get(part) if isinstance(cur, dict) else None
-        theirs = cur if isinstance(cur, (int, float)) else (_num(cur) if cur not in (None, "") else None)
-        ours = itr_json._get(f, row["key"])  # noqa: SLF001
+        theirs = cur if isinstance(cur, (int, float)) else (_num(cur) if isinstance(cur, str) and cur else None)
+        ours = itr_json._get(f, key)  # noqa: SLF001
         if theirs is None and not ours:
             continue
         chk = engine.run("myreturn.checks", {"what": "compare", "a": _num(ours), "b": theirs or 0, "tolerance": {"compare": k["tolerance"]}})

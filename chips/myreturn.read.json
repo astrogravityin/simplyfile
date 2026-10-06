@@ -425,6 +425,12 @@
         ]
       },
       "label": "filed found"
+    },
+    {
+      "name": "glued_split",
+      "type": "text",
+      "default": "(\\.\\d{2})(?=\\d)",
+      "label": "where two amounts printed with no space are cut apart (2026-10-06: a TRACES Form 16 prints tax deducted and deposited as 1311485.001311485.00)"
     }
   ],
   "expr": {
@@ -456,11 +462,12 @@
       "ai_prompt": "$ai_prompt",
       "exempt_codes": "$exempt_codes",
       "filed_roots": "$filed_roots",
-      "filed_found": "$filed_found"
+      "filed_found": "$filed_found",
+      "glued_split": "$glued_split"
     }
   },
   "returns": "record",
-  "version": 3,
+  "version": 4,
   "status": "published",
   "description_nl": "2026-10-06: the pre-filled JSON's keys (camelCase, e-filing portal), the words that tell a Form 16, an AIS and a 26AS apart, the AIS JSON's encryption (PBKDF2-SHA256 over PAN + pepper + DDMMYYYY, AES-256-CBC), AIS information codes -> fields (SFT-016 SB/TD interest, SFT-015 dividend, TDS-192 salary; TDS-194/194A are the same income again and are left out), Form 16's line anchors (the figure is the last amount on the line), and the AI fallback's model, fields and prompt.",
   "test_cases": [
@@ -750,7 +757,8 @@
               "path": "ITR2.PartB_TTI.Refund.RefundDue"
             }
           ]
-        }
+        },
+        "glued_split": "(\\.\\d{2})(?=\\d)"
       }
     }
   ]

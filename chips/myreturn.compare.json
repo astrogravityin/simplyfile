@@ -37,7 +37,10 @@
         },
         {
           "key": "total_income",
-          "word": "cm_total"
+          "word": "cm_total",
+          "also": [
+            "total_gross"
+          ]
         },
         {
           "key": "tax2.slab",
@@ -93,9 +96,9 @@
     }
   },
   "returns": "record",
-  "version": 1,
+  "version": 2,
   "status": "published",
-  "description_nl": "2026-10-06: which figures of the filed return are set beside SimplyFile's (each found in the filed JSON where chip itr.map puts it), and the rupees of difference that do not matter (rounding).",
+  "description_nl": "2026-10-06: which figures of the filed return are set beside SimplyFile's (each found in the filed JSON where chip itr.map puts it), and the rupees of difference that do not matter (rounding). 2026-10-06: a row may name `also` - the figure the form keeps instead (ITR-2's TotalIncome is total_gross).",
   "test_cases": [
     {
       "args": {},
@@ -127,7 +130,10 @@
           },
           {
             "key": "total_income",
-            "word": "cm_total"
+            "word": "cm_total",
+            "also": [
+              "total_gross"
+            ]
           },
           {
             "key": "tax2.slab",
