@@ -99,7 +99,7 @@ bash /opt/simplyfile/tools/backup.sh && rclone ls sfcrypt:    # try it
 ```
 
 Keep the crypt password somewhere other than the VPS - without it the off-site copies cannot be opened.
-`SF_OFFSITE=` in `/etc/cron.d/simplyfile-backup` names the remote; empty = local copies only.
+`SF_OFFSITE=` in `/etc/cron.d/simplyfile-backup` names the remote; for local copies only write `SF_OFFSITE=""` - a bare `SF_OFFSITE=` makes cron reject the whole file ("bad minute ... this crontab file will be ignored", 2026-10-06: no backup ran for 44 hours).
 
 Restore (stops the portal for a moment):
 
