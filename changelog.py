@@ -136,6 +136,8 @@ def on_write(name: str, old, new) -> None:
         if not m:
             continue
         g = m.groupdict()
+        if w.get("list_path"):                                 # the list sits inside a record (My return: {"docs": [...]})
+            old, new = ((x or {}).get(w["list_path"]) if isinstance(x, dict) else x for x in (old, new))
         if w["kind"] == "doc":
             entries = _docs(w, g, old, new)
         elif w.get("list_key"):

@@ -1,0 +1,610 @@
+{
+  "chip_id": "myreturn.business",
+  "kind": "accessor",
+  "set": "myreturn",
+  "label": "My return: presumptive business or profession income",
+  "aliases": [
+    "44ada",
+    "44ad",
+    "presumptive income"
+  ],
+  "params": [
+    {
+      "name": "kind",
+      "type": "text",
+      "default": "",
+      "label": "44ADA (profession) / 44AD (business) / empty"
+    },
+    {
+      "name": "digital",
+      "type": "number",
+      "default": 0,
+      "label": "receipts by bank / digital modes"
+    },
+    {
+      "name": "cash",
+      "type": "number",
+      "default": 0,
+      "label": "receipts in cash"
+    },
+    {
+      "name": "declared",
+      "type": "number",
+      "default": 0,
+      "label": "income the person declares (may be more than the deemed)"
+    },
+    {
+      "name": "ada_pct",
+      "type": "number",
+      "default": 50,
+      "label": "44ADA: deemed income, percent of receipts"
+    },
+    {
+      "name": "ad_digital_pct",
+      "type": "number",
+      "default": 6,
+      "label": "44AD: percent of digital turnover"
+    },
+    {
+      "name": "ad_cash_pct",
+      "type": "number",
+      "default": 8,
+      "label": "44AD: percent of cash turnover"
+    },
+    {
+      "name": "cash_pct_max",
+      "type": "number",
+      "default": 5,
+      "label": "cash at most this percent of receipts lifts the limit"
+    },
+    {
+      "name": "ada_limit",
+      "type": "number",
+      "default": 5000000,
+      "label": "44ADA: receipts limit"
+    },
+    {
+      "name": "ada_limit_low_cash",
+      "type": "number",
+      "default": 7500000,
+      "label": "44ADA: receipts limit when cash is low"
+    },
+    {
+      "name": "ad_limit",
+      "type": "number",
+      "default": 20000000,
+      "label": "44AD: turnover limit"
+    },
+    {
+      "name": "ad_limit_low_cash",
+      "type": "number",
+      "default": 30000000,
+      "label": "44AD: turnover limit when cash is low"
+    },
+    {
+      "name": "seen",
+      "type": "number",
+      "default": 0,
+      "label": "receipts the department saw (TDS 194J, 194C ...)"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "receipts": {
+        "vop": "add",
+        "a": "$digital",
+        "b": "$cash"
+      },
+      "deemed": {
+        "vop": "round_to",
+        "value": {
+          "vop": "choose",
+          "cases": [
+            {
+              "when": {
+                "op": "eq",
+                "left": "$kind",
+                "right": "44ADA"
+              },
+              "then": {
+                "vop": "div",
+                "a": {
+                  "vop": "mul",
+                  "a": {
+                    "vop": "add",
+                    "a": "$digital",
+                    "b": "$cash"
+                  },
+                  "b": "$ada_pct"
+                },
+                "b": 100
+              }
+            },
+            {
+              "when": {
+                "op": "eq",
+                "left": "$kind",
+                "right": "44AD"
+              },
+              "then": {
+                "vop": "add",
+                "a": {
+                  "vop": "div",
+                  "a": {
+                    "vop": "mul",
+                    "a": "$digital",
+                    "b": "$ad_digital_pct"
+                  },
+                  "b": 100
+                },
+                "b": {
+                  "vop": "div",
+                  "a": {
+                    "vop": "mul",
+                    "a": "$cash",
+                    "b": "$ad_cash_pct"
+                  },
+                  "b": 100
+                }
+              }
+            }
+          ],
+          "else": 0
+        }
+      },
+      "income": {
+        "vop": "round_to",
+        "value": {
+          "vop": "largest",
+          "values": [
+            {
+              "vop": "choose",
+              "cases": [
+                {
+                  "when": {
+                    "op": "eq",
+                    "left": "$kind",
+                    "right": "44ADA"
+                  },
+                  "then": {
+                    "vop": "div",
+                    "a": {
+                      "vop": "mul",
+                      "a": {
+                        "vop": "add",
+                        "a": "$digital",
+                        "b": "$cash"
+                      },
+                      "b": "$ada_pct"
+                    },
+                    "b": 100
+                  }
+                },
+                {
+                  "when": {
+                    "op": "eq",
+                    "left": "$kind",
+                    "right": "44AD"
+                  },
+                  "then": {
+                    "vop": "add",
+                    "a": {
+                      "vop": "div",
+                      "a": {
+                        "vop": "mul",
+                        "a": "$digital",
+                        "b": "$ad_digital_pct"
+                      },
+                      "b": 100
+                    },
+                    "b": {
+                      "vop": "div",
+                      "a": {
+                        "vop": "mul",
+                        "a": "$cash",
+                        "b": "$ad_cash_pct"
+                      },
+                      "b": 100
+                    }
+                  }
+                }
+              ],
+              "else": 0
+            },
+            "$declared"
+          ]
+        }
+      },
+      "limit": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "eq",
+              "left": "$kind",
+              "right": "44ADA"
+            },
+            "then": {
+              "vop": "choose",
+              "cases": [
+                {
+                  "when": {
+                    "op": "le",
+                    "left": {
+                      "vop": "choose",
+                      "cases": [
+                        {
+                          "when": {
+                            "op": "gt",
+                            "left": {
+                              "vop": "add",
+                              "a": "$digital",
+                              "b": "$cash"
+                            },
+                            "right": 0
+                          },
+                          "then": {
+                            "vop": "div",
+                            "a": {
+                              "vop": "mul",
+                              "a": "$cash",
+                              "b": 100
+                            },
+                            "b": {
+                              "vop": "add",
+                              "a": "$digital",
+                              "b": "$cash"
+                            }
+                          }
+                        }
+                      ],
+                      "else": 0
+                    },
+                    "right": "$cash_pct_max"
+                  },
+                  "then": "$ada_limit_low_cash"
+                }
+              ],
+              "else": "$ada_limit"
+            }
+          },
+          {
+            "when": {
+              "op": "eq",
+              "left": "$kind",
+              "right": "44AD"
+            },
+            "then": {
+              "vop": "choose",
+              "cases": [
+                {
+                  "when": {
+                    "op": "le",
+                    "left": {
+                      "vop": "choose",
+                      "cases": [
+                        {
+                          "when": {
+                            "op": "gt",
+                            "left": {
+                              "vop": "add",
+                              "a": "$digital",
+                              "b": "$cash"
+                            },
+                            "right": 0
+                          },
+                          "then": {
+                            "vop": "div",
+                            "a": {
+                              "vop": "mul",
+                              "a": "$cash",
+                              "b": 100
+                            },
+                            "b": {
+                              "vop": "add",
+                              "a": "$digital",
+                              "b": "$cash"
+                            }
+                          }
+                        }
+                      ],
+                      "else": 0
+                    },
+                    "right": "$cash_pct_max"
+                  },
+                  "then": "$ad_limit_low_cash"
+                }
+              ],
+              "else": "$ad_limit"
+            }
+          }
+        ],
+        "else": 0
+      },
+      "over_limit": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "gt",
+              "left": {
+                "vop": "add",
+                "a": "$digital",
+                "b": "$cash"
+              },
+              "right": {
+                "vop": "choose",
+                "cases": [
+                  {
+                    "when": {
+                      "op": "eq",
+                      "left": "$kind",
+                      "right": "44ADA"
+                    },
+                    "then": {
+                      "vop": "choose",
+                      "cases": [
+                        {
+                          "when": {
+                            "op": "le",
+                            "left": {
+                              "vop": "choose",
+                              "cases": [
+                                {
+                                  "when": {
+                                    "op": "gt",
+                                    "left": {
+                                      "vop": "add",
+                                      "a": "$digital",
+                                      "b": "$cash"
+                                    },
+                                    "right": 0
+                                  },
+                                  "then": {
+                                    "vop": "div",
+                                    "a": {
+                                      "vop": "mul",
+                                      "a": "$cash",
+                                      "b": 100
+                                    },
+                                    "b": {
+                                      "vop": "add",
+                                      "a": "$digital",
+                                      "b": "$cash"
+                                    }
+                                  }
+                                }
+                              ],
+                              "else": 0
+                            },
+                            "right": "$cash_pct_max"
+                          },
+                          "then": "$ada_limit_low_cash"
+                        }
+                      ],
+                      "else": "$ada_limit"
+                    }
+                  },
+                  {
+                    "when": {
+                      "op": "eq",
+                      "left": "$kind",
+                      "right": "44AD"
+                    },
+                    "then": {
+                      "vop": "choose",
+                      "cases": [
+                        {
+                          "when": {
+                            "op": "le",
+                            "left": {
+                              "vop": "choose",
+                              "cases": [
+                                {
+                                  "when": {
+                                    "op": "gt",
+                                    "left": {
+                                      "vop": "add",
+                                      "a": "$digital",
+                                      "b": "$cash"
+                                    },
+                                    "right": 0
+                                  },
+                                  "then": {
+                                    "vop": "div",
+                                    "a": {
+                                      "vop": "mul",
+                                      "a": "$cash",
+                                      "b": 100
+                                    },
+                                    "b": {
+                                      "vop": "add",
+                                      "a": "$digital",
+                                      "b": "$cash"
+                                    }
+                                  }
+                                }
+                              ],
+                              "else": 0
+                            },
+                            "right": "$cash_pct_max"
+                          },
+                          "then": "$ad_limit_low_cash"
+                        }
+                      ],
+                      "else": "$ad_limit"
+                    }
+                  }
+                ],
+                "else": 0
+              }
+            },
+            "then": true
+          }
+        ],
+        "else": false
+      },
+      "cash_share": {
+        "vop": "round_to",
+        "value": {
+          "vop": "choose",
+          "cases": [
+            {
+              "when": {
+                "op": "gt",
+                "left": {
+                  "vop": "add",
+                  "a": "$digital",
+                  "b": "$cash"
+                },
+                "right": 0
+              },
+              "then": {
+                "vop": "div",
+                "a": {
+                  "vop": "mul",
+                  "a": "$cash",
+                  "b": 100
+                },
+                "b": {
+                  "vop": "add",
+                  "a": "$digital",
+                  "b": "$cash"
+                }
+              }
+            }
+          ],
+          "else": 0
+        },
+        "digits": 1
+      },
+      "short": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "gt",
+                  "left": "$seen",
+                  "right": 0
+                },
+                {
+                  "op": "lt",
+                  "left": {
+                    "vop": "add",
+                    "a": "$digital",
+                    "b": "$cash"
+                  },
+                  "right": "$seen"
+                }
+              ]
+            },
+            "then": true
+          }
+        ],
+        "else": false
+      }
+    }
+  },
+  "returns": "record",
+  "version": 2,
+  "status": "published",
+  "description_nl": "2026-10-06: presumptive income of a profession (44ADA: 50% of receipts) or a business (44AD: 6% of digital, 8% of cash turnover), or what the person declares if more. The limit: 44ADA 50 lakh (75 lakh when cash is 5% or less), 44AD 2 crore (3 crore). Over the limit, presumptive income is not open - books and ITR-3. short: receipts typed below what the department saw paid (TDS 194J / 194C ...) - the bank statement is the check.",
+  "test_cases": [
+    {
+      "args": {
+        "kind": "44ADA",
+        "digital": 1800000,
+        "cash": 0
+      },
+      "expect_value": {
+        "receipts": 1800000,
+        "deemed": 900000,
+        "income": 900000,
+        "limit": 7500000,
+        "over_limit": false,
+        "cash_share": 0,
+        "short": false
+      }
+    },
+    {
+      "args": {
+        "kind": "44ADA",
+        "digital": 1800000,
+        "declared": 1000000
+      },
+      "expect_value": {
+        "receipts": 1800000,
+        "deemed": 900000,
+        "income": 1000000,
+        "limit": 7500000,
+        "over_limit": false,
+        "cash_share": 0,
+        "short": false
+      }
+    },
+    {
+      "args": {
+        "kind": "44AD",
+        "digital": 1000000,
+        "cash": 100000
+      },
+      "expect_value": {
+        "receipts": 1100000,
+        "deemed": 68000,
+        "income": 68000,
+        "limit": 20000000,
+        "over_limit": false,
+        "cash_share": 9.1,
+        "short": false
+      }
+    },
+    {
+      "args": {
+        "kind": "44ADA",
+        "digital": 5000000,
+        "cash": 1000000
+      },
+      "expect_value": {
+        "receipts": 6000000,
+        "deemed": 3000000,
+        "income": 3000000,
+        "limit": 5000000,
+        "over_limit": true,
+        "cash_share": 16.7,
+        "short": false
+      }
+    },
+    {
+      "args": {},
+      "expect_value": {
+        "receipts": 0,
+        "deemed": 0,
+        "income": 0,
+        "limit": 0,
+        "over_limit": false,
+        "cash_share": 0,
+        "short": false
+      }
+    },
+    {
+      "args": {
+        "kind": "44ADA",
+        "digital": 500000,
+        "seen": 800000
+      },
+      "expect_value": {
+        "receipts": 500000,
+        "deemed": 250000,
+        "income": 250000,
+        "limit": 7500000,
+        "over_limit": false,
+        "cash_share": 0,
+        "short": true
+      }
+    }
+  ]
+}

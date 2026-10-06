@@ -452,6 +452,102 @@
               "path": "updated_years_after"
             }
           ]
+        },
+        {
+          "id": "ada_pct",
+          "group": "business",
+          "kind": "pct",
+          "label": "44ADA - presumptive income, % of receipts (profession)",
+          "targets": [
+            {
+              "chip": "myreturn.business",
+              "path": "ada_pct"
+            }
+          ]
+        },
+        {
+          "id": "ad_digital_pct",
+          "group": "business",
+          "kind": "pct",
+          "label": "44AD - presumptive income, % of bank / digital turnover",
+          "targets": [
+            {
+              "chip": "myreturn.business",
+              "path": "ad_digital_pct"
+            }
+          ]
+        },
+        {
+          "id": "ad_cash_pct",
+          "group": "business",
+          "kind": "pct",
+          "label": "44AD - presumptive income, % of cash turnover",
+          "targets": [
+            {
+              "chip": "myreturn.business",
+              "path": "ad_cash_pct"
+            }
+          ]
+        },
+        {
+          "id": "cash_pct_max",
+          "group": "business",
+          "kind": "pct",
+          "label": "44AD / 44ADA - cash at most this % of receipts lifts the limit",
+          "targets": [
+            {
+              "chip": "myreturn.business",
+              "path": "cash_pct_max"
+            }
+          ]
+        },
+        {
+          "id": "ada_limit",
+          "group": "business",
+          "kind": "money",
+          "label": "44ADA - receipts limit",
+          "targets": [
+            {
+              "chip": "myreturn.business",
+              "path": "ada_limit"
+            }
+          ]
+        },
+        {
+          "id": "ada_limit_low_cash",
+          "group": "business",
+          "kind": "money",
+          "label": "44ADA - receipts limit when cash is low",
+          "targets": [
+            {
+              "chip": "myreturn.business",
+              "path": "ada_limit_low_cash"
+            }
+          ]
+        },
+        {
+          "id": "ad_limit",
+          "group": "business",
+          "kind": "money",
+          "label": "44AD - turnover limit",
+          "targets": [
+            {
+              "chip": "myreturn.business",
+              "path": "ad_limit"
+            }
+          ]
+        },
+        {
+          "id": "ad_limit_low_cash",
+          "group": "business",
+          "kind": "money",
+          "label": "44AD - turnover limit when cash is low",
+          "targets": [
+            {
+              "chip": "myreturn.business",
+              "path": "ad_limit_low_cash"
+            }
+          ]
         }
       ],
       "label": "items"
@@ -466,7 +562,8 @@
         "cg": "Capital gains",
         "via": "Deductions",
         "forms": "Which form",
-        "dates": "Due dates"
+        "dates": "Due dates",
+        "business": "Business and profession (presumptive)"
       },
       "label": "groups"
     }
@@ -479,9 +576,9 @@
     }
   },
   "returns": "record",
-  "version": 1,
+  "version": 2,
   "status": "published",
-  "description_nl": "2026-10-06: every figure Fetch asks for, its shape (kind) and where it lives (targets: chip + path; pick = take that part of the value; archive = before the first change, keep last year's whole param under that param's AY key, as compute.settings regimes_by_ay already does for the CA portal's past years).",
+  "description_nl": "2026-10-06: every figure Fetch asks for, its shape (kind) and where it lives (targets: chip + path; pick = take that part of the value; archive = before the first change, keep last year's whole param under that param's AY key, as compute.settings regimes_by_ay already does for the CA portal's past years). 2026-10-06: the presumptive-income rules (44ADA / 44AD rates and limits, chip myreturn.business) are fetched and compared too.",
   "test_cases": [
     {
       "args": {},
@@ -928,6 +1025,102 @@
                 "path": "updated_years_after"
               }
             ]
+          },
+          {
+            "id": "ada_pct",
+            "group": "business",
+            "kind": "pct",
+            "label": "44ADA - presumptive income, % of receipts (profession)",
+            "targets": [
+              {
+                "chip": "myreturn.business",
+                "path": "ada_pct"
+              }
+            ]
+          },
+          {
+            "id": "ad_digital_pct",
+            "group": "business",
+            "kind": "pct",
+            "label": "44AD - presumptive income, % of bank / digital turnover",
+            "targets": [
+              {
+                "chip": "myreturn.business",
+                "path": "ad_digital_pct"
+              }
+            ]
+          },
+          {
+            "id": "ad_cash_pct",
+            "group": "business",
+            "kind": "pct",
+            "label": "44AD - presumptive income, % of cash turnover",
+            "targets": [
+              {
+                "chip": "myreturn.business",
+                "path": "ad_cash_pct"
+              }
+            ]
+          },
+          {
+            "id": "cash_pct_max",
+            "group": "business",
+            "kind": "pct",
+            "label": "44AD / 44ADA - cash at most this % of receipts lifts the limit",
+            "targets": [
+              {
+                "chip": "myreturn.business",
+                "path": "cash_pct_max"
+              }
+            ]
+          },
+          {
+            "id": "ada_limit",
+            "group": "business",
+            "kind": "money",
+            "label": "44ADA - receipts limit",
+            "targets": [
+              {
+                "chip": "myreturn.business",
+                "path": "ada_limit"
+              }
+            ]
+          },
+          {
+            "id": "ada_limit_low_cash",
+            "group": "business",
+            "kind": "money",
+            "label": "44ADA - receipts limit when cash is low",
+            "targets": [
+              {
+                "chip": "myreturn.business",
+                "path": "ada_limit_low_cash"
+              }
+            ]
+          },
+          {
+            "id": "ad_limit",
+            "group": "business",
+            "kind": "money",
+            "label": "44AD - turnover limit",
+            "targets": [
+              {
+                "chip": "myreturn.business",
+                "path": "ad_limit"
+              }
+            ]
+          },
+          {
+            "id": "ad_limit_low_cash",
+            "group": "business",
+            "kind": "money",
+            "label": "44AD - turnover limit when cash is low",
+            "targets": [
+              {
+                "chip": "myreturn.business",
+                "path": "ad_limit_low_cash"
+              }
+            ]
           }
         ],
         "groups": {
@@ -937,7 +1130,8 @@
           "cg": "Capital gains",
           "via": "Deductions",
           "forms": "Which form",
-          "dates": "Due dates"
+          "dates": "Due dates",
+          "business": "Business and profession (presumptive)"
         }
       }
     }

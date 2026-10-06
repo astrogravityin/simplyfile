@@ -95,12 +95,16 @@ def read(name: str, data: bytes, password: str = "", user: dict | None = None, a
         return _ais_encrypted(data, password, pan, dob)
     if head[:5] == b"%PDF-":
         return _pdf(data, password, pan, dob, ay, user, ai_ok)
+    if head[:8] == b"\xd0\xcf\x11\xe0\xa1\xb1\x1a\xe1":     # an old .xls
+        return bank_book(data, ".xls")
     text = data.decode("utf-8-sig", errors="replace")
     low = text[:6000].lower()
     if any(w in low for w in k["words_26as"]):
         return form26as(data, ".txt" if "^" in text[:6000] else ".csv")
     if any(w in low for w in k["words_ais"]):
         return ais_rows(text)
+    if any(w in low for w in k["words_bank"]) or any(w in low[:3000] for w in k["bank"]["credit_words"][:2]):
+        return bank_book(data, ".csv")
     return _unknown()
 
 
@@ -110,6 +114,8 @@ def _unknown() -> dict:
 
 def _zip(data: bytes, password: str, pan: str, dob: str, ay: str) -> dict:
     z = zipfile.ZipFile(io.BytesIO(data))
+    if "xl/workbook.xml" in z.namelist():              # an Excel workbook is a zip too - a bank statement, here
+        return bank_book(data, ".xlsx")
     inner = next((n for n in z.namelist() if n.lower().endswith((".txt", ".csv", ".pdf", ".json"))), None)
     if not inner:
         return _unknown()
@@ -301,15 +307,138 @@ def ais_json(doc: dict) -> dict:
     return _ais_result(facts, "json")
 
 
-def ais_rows(text: str) -> dict:
-    """AIS as CSV or as the text of its PDF: each line with an information code and amounts."""
+# --- bank statement ------------------------------------------------------------------------------------------------------
+
+def bank_book(data: bytes, ext: str) -> dict:
+    import intake  # noqa: PLC0415
+    try:
+        return bank(intake.read_book(data, ext))
+    except Exception:  # noqa: BLE001 - a file that is not a readable statement is one answer
+        return _unknown()
+
+
+def bank_pdf_rows(text: str) -> list[list]:
+    """A statement PDF's layout text -> rows [date, narration, debit, credit, balance]: each amount goes to the column whose
+    heading it sits nearest under (the page keeps its columns as character positions), so an empty debit never shifts a credit."""
+    import intake  # noqa: PLC0415
+    k, ik = settings()["bank"], intake.settings()
+    num = re.compile(r"-?\d[\d,]*\.\d{2}(?:\s?(?:cr|dr)\b)?", re.I)
+
+    def at(line: str, words: list) -> float | None:
+        for w in sorted(words, key=len, reverse=True):
+            if m := re.search(r"(?<![a-z])" + re.escape(w) + r"(?![a-z])", line):
+                return (m.start() + m.end()) / 2
+        return None
+    head, out = None, [["Date", "Narration", "Debit", "Credit", "Balance"]]
+    for ln in text.splitlines():
+        lw = ln.lower()
+        if head is None:
+            if at(lw, k["date_words"]) is not None and at(lw, k["credit_words"]) is not None:
+                head = {c: v for c, v in (("dr", at(lw, k["debit_words"])), ("cr", at(lw, k["credit_words"])), ("bal", at(lw, k["balance_words"]))) if v is not None}
+            continue
+        if not (d := re.match(k["date_pattern"], ln)):
+            continue
+        row = {"dr": None, "cr": None, "bal": None}
+        for m in num.finditer(ln):
+            mid = (m.start() + m.end()) / 2
+            row[min(head, key=lambda c: abs(head[c] - mid))] = intake.text_amount(m.group(0), ik)
+        out.append([d.group(0).strip(), re.sub(r"\s+", " ", num.sub(" ", ln[d.end():])).strip(), row["dr"], row["cr"], row["bal"]])
+    return out if head else []
+
+
+def bank(book: dict) -> dict:
+    """A bank statement's credits for the year, each sorted by what it is (chip myreturn.read bank): receipts, cash, interest,
+    tax refunds, salary, reversals, own transfers. Columns by their heading words; where a row's cells ran together (a PDF),
+    the change in the running balance says what came in."""
+    k = settings()["bank"]
+    low = lambda c: re.sub(r"\s+", " ", c).strip().lower() if isinstance(c, str) else ""  # noqa: E731
+    col = lambda cells, words: next((i for i, c in enumerate(cells) if c and any(c == w or c.startswith(w + " ") or c.startswith(w + "(") for w in words)), None)  # noqa: E731
+    is_date = lambda c: isinstance(c, str) and re.match(k["date_pattern"], c) is not None or hasattr(c, "year")  # noqa: E731
+    sums: dict = {}
+    top: list = []
+    n, first, last = 0, "", ""
+    for rows in book.values():
+        head = None
+        prev_bal = None
+        for r in rows:
+            cells = [low(c) for c in r]
+            if head is None:
+                cr, amt, typ = col(cells, k["credit_words"]), col(cells, k["amount_words"]), col(cells, k["type_words"])
+                if col(cells, k["date_words"]) is not None and (cr is not None or (amt is not None and typ is not None)):
+                    head = {"cr": cr, "dr": col(cells, k["debit_words"]), "nar": col(cells, k["narration_words"]),
+                            "bal": col(cells, k["balance_words"]), "amt": amt, "typ": typ, "width": len(r)}
+                continue
+            if not r or not any(is_date(c) for c in r[:2]):
+                continue
+            nums = [c for c in r if isinstance(c, (int, float)) and not isinstance(c, bool)]
+            bal = nums[-1] if nums and head["bal"] is not None else None
+            amount = None
+            if len(r) == head["width"] and head["cr"] is not None and head["cr"] < len(r):
+                v = r[head["cr"]]
+                amount = float(v) if isinstance(v, (int, float)) and v > 0 else 0.0
+            elif len(r) == head["width"] and head["cr"] is None and head["amt"] is not None:      # one Amount column, a Dr / Cr beside it
+                v, t = r[head["amt"]], low(r[head["typ"]])
+                amount = abs(float(v)) if isinstance(v, (int, float)) and t in k["credit_marks"] else 0.0
+            elif bal is not None and prev_bal is not None:
+                amount = max(round(bal - prev_bal, 2), 0.0)
+            prev_bal = bal if bal is not None else prev_bal
+            if not amount:
+                continue
+            text = " ".join(c for c in (low(x) for x in r) if c and not re.fullmatch(r"[\d,./:-]+", c))
+            nar = low(r[head["nar"]]) if head["nar"] is not None and head["nar"] < len(r) and isinstance(r[head["nar"]], str) else text
+            kind = next((x["kind"] for x in k["kinds"] if any(w in f" {nar} " for w in x["words"])), k["receipt_kind"])
+            sums[kind] = sums.get(kind, 0.0) + amount
+            n += 1
+            d = next((c for c in r[:2] if is_date(c)), "")
+            first, last = first or str(d)[:10], str(d)[:10]
+            if kind == k["receipt_kind"]:
+                top.append({"name": nar[:60], "amount": amount})
+    if not n:
+        return {"kind": "bank", "method": "text", "facts": {}, "found": [], "problems": [say("no_bank_table")]}
+    total = sum(sums.values())
+    facts = {"bank": {"credits": round(total, 2), "receipts": round(sums.get(k["receipt_kind"], 0.0), 2), "cash": round(sums.get("cash", 0.0), 2),
+                      "interest": round(sums.get("interest", 0.0), 2), "by_kind": {x: round(v, 2) for x, v in sums.items()}, "rows": n,
+                      "from": first, "to": last, "top": sorted(top, key=lambda x: -x["amount"])[: int(k["top_most"])]}}
+    b = facts["bank"]
+    found = [{"label": say("fd_bank_period"), "value": f"{first} - {last}"}, {"label": say("fd_bank_credits"), "value": _inr(total)},
+             {"label": say("fd_bank_receipts"), "value": _inr(b["receipts"])}]
+    found += [{"label": say("fd_bank_cash"), "value": _inr(b["cash"])}] if b["cash"] else []
+    found += [{"label": say("fd_bank_interest"), "value": _inr(b["interest"])}] if b["interest"] else []
+    return {"kind": "bank", "method": "text", "facts": facts, "found": found, "problems": []}
+
+
+def ais_paid(text: str, ay: str = "") -> list[dict]:
+    """AIS Part B3: tax the person paid - advance or self-assessment - with its BSR, date and challan (chip myreturn.read
+    ais_paid). Only the return's own financial year counts: a payment for an earlier year (paid this year) is not this return's."""
+    k = settings()["ais_paid"]
+    if k["start"] not in text:
+        return []
+    part = re.sub(r"\s+", " ", text.split(k["start"], 1)[1].split(k["end"], 1)[0])
+    fy = f"{int(ay[:4]) - 1}-{ay[2:4]}" if ay else ""
+    out = []
+    for m in re.finditer(k["row"], part):
+        words = m.group(2).lower()
+        minor = next((v for w, v in k["minor"].items() if w in words), "")
+        if fy and m.group(1) != fy:
+            continue
+        out.append({"bsr": m.group(8), "date": f"{m.group(11)}-{m.group(10)}-{m.group(9)}", "challan": m.group(12),
+                    "amount": _num(m.group(7)), "minor": minor, "fy": m.group(1)})
+    return out
+
+
+def ais_rows(text: str, ay: str = "") -> dict:
+    """AIS as CSV or as the text of its PDF: each line with an information code and amounts; Part B3, the tax paid."""
     facts: dict = {}
+    if paid := ais_paid(text, ay):
+        facts["paid"] = paid
     k = settings()
     for line in text.splitlines():
         m = re.search(k["ais_code_pattern"], line)
         if not m:
             continue
         nums = [_num(x) for x in re.findall(k["amount_pattern"], line[m.end():])]
+        if not nums and (t := re.search(k["ais_amount_tail"], line[m.end():])):   # a small amount has no comma (654)
+            nums = [_num(t.group(1))]
         nums = [n for n in nums if n >= 1]
         if not nums:
             continue
@@ -319,11 +448,22 @@ def ais_rows(text: str) -> dict:
     return _ais_result(facts, "text")
 
 
+def tis_rows(text: str) -> dict:
+    """The TIS PDF: its first table, a line per category with the amount processed and the one accepted (the last) - read as the AIS."""
+    k = settings()["tis"]
+    facts: dict = {}
+    for ln in text.split(k["start"], 1)[-1].split(k["end"], 1)[0].splitlines():
+        if (m := re.match(k["row"], re.sub(r"\s+", " ", ln).strip())) and (f := _code_field("", m.group(1))):
+            _ais_add(facts, f, _num(m.group(3)))
+    return _ais_result(facts, "tis")
+
+
 def _ais_result(facts: dict, method: str) -> dict:
     o = facts.get("other") or {}
     found = [{"label": say(f"f_{f}"), "value": _inr(v)} for f, v in o.items() if v]
     if (facts.get("salary") or {}).get("gross"):
         found.insert(0, {"label": say("fd_salary"), "value": _inr(facts["salary"]["gross"])})
+    found += [{"label": say("fd_paid"), "value": _inr(sum(p["amount"] for p in facts["paid"]))}] if facts.get("paid") else []
     problems = [say("rv_cg_p")] if facts.get("sales") else []
     return {"kind": "ais", "method": method, "facts": facts, "found": found, "problems": problems}
 
@@ -345,8 +485,33 @@ def form26as(data: bytes, ext: str) -> dict:
     rows = list(tds.values())
     found = [{"label": f"{r['name'] or r['tan']}", "value": _inr(r["tds"])} for r in rows]
     found += [{"label": say("fd_paid"), "value": _inr(sum(p["amount"] for p in paid))}] if paid else []
-    return {"kind": "26as", "method": "text", "facts": {"tds": rows, "paid": paid}, "found": found,
+    return {"kind": "26as", "method": "text", "facts": {"tds": rows, "paid": paid, "other": _income_of(rows)}, "found": found,
             "problems": [] if rows or paid else [say("unknown_doc")]}
+
+
+def form26as_pdf(text: str) -> dict:
+    """The TRACES Annual Tax Statement PDF, Part I: a deductor's total line, then its entries (whose section says salary or not)."""
+    k = settings()["pdf26as"]
+    part = text.split(k["start"], 1)[-1].split(k["end"], 1)[0]
+    rows = []
+    for ln in (re.sub(r"\s+", " ", x).strip() for x in part.splitlines()):
+        if m := re.match(k["deductor"], ln):
+            rows.append({"kind": "other", "tan": m.group(2), "name": m.group(1), "income": _num(m.group(3)), "tds": _num(m.group(5)), "section": ""})
+        elif rows and not rows[-1]["section"] and (m := re.match(k["entry"], ln)):
+            rows[-1]["section"] = m.group(1)
+            rows[-1]["kind"] = "salary" if m.group(1).startswith("192") else "other"
+    found = [{"label": r["name"] or r["tan"], "value": _inr(r["tds"])} for r in rows]
+    return {"kind": "26as", "method": "text", "facts": {"tds": rows, "paid": [], "other": _income_of(rows)}, "found": found,
+            "problems": [] if rows else [say("unknown_doc")]}
+
+
+def _income_of(rows: list[dict]) -> dict:
+    """Other income a 26AS shows as paid to the person (chip myreturn.read income_of: 194A interest, 194 dividend)."""
+    out: dict = {}
+    for r in rows:
+        if f := settings()["income_of"].get(str(r["section"])):
+            out[f] = out.get(f, 0.0) + r["income"]
+    return out
 
 
 # --- PDFs: Form 16, AIS, 26AS ----------------------------------------------------------------------------------------------
@@ -361,11 +526,19 @@ def _pdf(data: bytes, password: str, pan: str, dob: str, ay: str, user: dict | N
     low = text.lower()
     k = settings()
     if any(w in low for w in k["words_form16"]):
-        return form16(text, data, user, ai_ok, pan, ay)
+        laid = "\n".join((p.extract_text(extraction_mode="layout") or "") for p in r.pages[: int(k["pdf_pages_max"])])
+        got = form16(laid, data, None, False, pan, ay, layout=True)       # columns kept in rows: a label beside its amount
+        return got if got["facts"]["employers"][0]["gross_17_1"] else form16(text, data, user, ai_ok, pan, ay)
     if any(w in low for w in k["words_ais"]):
-        return ais_rows(text)
+        return ais_rows(text, ay)
+    if any(w in low for w in k["tis"]["words"]):
+        return tis_rows(text)
+    if any(w in low for w in k["words_bank"]):
+        laid = "\n".join((p.extract_text(extraction_mode="layout") or "") for p in r.pages)
+        return bank({"PDF": bank_pdf_rows(laid)})
     if any(w in low for w in k["words_26as"]):
-        return form26as(text.replace("\t", "^").encode(), ".txt")
+        got =form26as(text.replace("\t", "^").encode(), ".txt")
+        return got if got["facts"]["tds"] or got["facts"]["paid"] else form26as_pdf(text)
     if len(text.strip()) < int(k["scan_chars"]):
         if ai_ok and user:
             return form16("", data, user, True, pan, ay)
@@ -378,7 +551,7 @@ def _amounts(line: str) -> list[float]:
     return [_num(x) for x in re.findall(k["amount_pattern"], re.sub(k["glued_split"], lambda m: m.group(1) + " ", line))]
 
 
-def form16(text: str, data: bytes, user: dict | None, ai_ok: bool, pan: str, ay: str) -> dict:
+def form16(text: str, data: bytes, user: dict | None, ai_ok: bool, pan: str, ay: str, layout: bool = False) -> dict:
     """Part A: the employer, its TAN, the AY and the quarters' TDS. Part B: each line found by its anchor (chip myreturn.read
     form16_anchors), its figure the last amount on the line (or the next line when the line has none)."""
     k = settings()
@@ -393,6 +566,8 @@ def form16(text: str, data: bytes, user: dict | None, ai_ok: bool, pan: str, ay:
                 e["employee_pan"] = pans[-1]
         if not e["name"] and re.search(k["employer_anchor"], ln, re.I) and i + 1 < len(lines):
             e["name"] = re.split(r",|\s{2,}|\s(?=Name and address)", lines[i + 1])[0].strip()[:120]
+    if not e.get("employee_pan") and (m := re.search(k["employee_pan_pattern"], text, re.I)):
+        e["employee_pan"] = m.group(1).upper()
     if m := re.search(r"Assessment Year\D{0,20}(20\d\d-\d\d)", text, re.I):
         e["ay"] = m.group(1)
     for ln in lines:
@@ -407,6 +582,8 @@ def form16(text: str, data: bytes, user: dict | None, ai_ok: bool, pan: str, ay:
         for i, ln in enumerate(lines):
             if re.search(row["pattern"], ln, re.I):
                 a = _amounts(re.sub(row["pattern"], " ", ln, flags=re.I))
+                if not a and layout and i > 0:                      # a wrapped label: its amount sits on the row above
+                    a = _amounts(lines[i - 1])
                 if not a and i + 1 < len(lines):
                     a = _amounts(lines[i + 1])
                 if a:
@@ -454,7 +631,8 @@ def form16(text: str, data: bytes, user: dict | None, ai_ok: bool, pan: str, ay:
         {"label": say("fd_tds"), "value": _inr(emp["tds"])} if emp["tds"] else None,
         {"label": say("fd_via"), "value": _inr(sum(via.values()))} if via else None,
         {"label": say("fd_regime"), "value": say(f"r_{regime}")} if regime else None) if x]
-    return {"kind": "form16", "method": method, "facts": {"employers": [emp], "via": via, "tds": tds}, "found": found, "problems": problems}
+    person = {"person": {"pan": e["employee_pan"], "name": "", "dob": ""}} if e.get("employee_pan") else {}  # lets a return start from it
+    return {"kind": "form16", "method": method, "facts": {"employers": [emp], "via": via, "tds": tds} | person, "found": found, "problems": problems}
 
 
 def _ai_form16(data: bytes, user: dict) -> dict:
@@ -497,8 +675,33 @@ if __name__ == "__main__":  # ponytail: each reader on a few hand-made lines
     assert e["tan"] == "HYDD00042E" and e["gross_17_1"] == 1440000 and e["tds"] == 132000 and e["hra"] == 120000, e
     assert e["exempt_rows"] == [{"code": "10(13A)", "amount": 120000.0}] and e["regime_used"] == "old" and f["facts"]["via"]["c80c"] == 150000, f
     a = ais_rows("\n".join(["1 SFT-016(SB) Interest income Savings bank DEMO BANK 1 18,400", "2 SFT-015 Dividend DEMO LTD 1 9,500",
-                            "3 TDS-194A Interest 1 62,000"]))
-    assert a["facts"]["other"] == {"savings": 18400.0, "dividend": 9500.0}, a
+                            "3 TDS-194A Interest 1 62,000", "4 SFT-015 Dividend DEMO TWO LTD (ZZZZZ0000Z.AZ1) 1 654"]))
+    assert a["facts"]["other"] == {"savings": 18400.0, "dividend": 10154.0}, a
+    b3 = "Part B3-Information relating to payment of taxes\n1 2025-26 Income Tax \n(Other than \nCompanies)\nAdvance \nTax\n50,000 0 0 0 50,000 0510002 14/03/2026 11 2603\n2 2024-25 Income Tax \n(Other than \nCompanies)\nSelf \nAssessment\n9,000 0 0 0 9,000 0510002 30/08/2025 12 2508\nPart B4"
+    assert ais_paid(b3, "2026-27") == [{"bsr": "0510002", "date": "2026-03-14", "challan": "11", "amount": 50000.0, "minor": "100", "fy": "2025-26"}], ais_paid(b3, "2026-27")
+    st = bank({"CSV": [["Date", "Narration", "Chq/Ref No", "Withdrawal Amt", "Deposit Amt", "Closing Balance"],
+                       ["01/04/2025", "NEFT CR-DEMO CLIENT ONE-INV 101", "N1", None, 150000.0, 150000.0],
+                       ["15/04/2025", "UPI-DEMO GROCER", "U1", 2000.0, None, 148000.0],
+                       ["30/06/2025", "INT.PD:0000000000:01-04-2025 TO 30-06-2025", "", None, 812.0, 148812.0],
+                       ["05/07/2025", "BY CASH DEPOSIT CDM", "", None, 20000.0, 168812.0],
+                       ["10/07/2025", "TRF FROM SELF A/C DEMO", "", None, 50000.0, 218812.0]]})["facts"]["bank"]
+    assert (st["receipts"], st["cash"], st["interest"], st["by_kind"]["own"]) == (150000.0, 20000.0, 812.0, 50000.0), st
+    one = bank({"CSV": [["Tran Date", "Particulars", "Amount", "Dr/Cr", "Balance"], ["02-04-2025", "NEFT DEMO CLIENT", 25000.0, "CR", 25000.0],
+                        ["03-04-2025", "ATM WDL", 5000.0, "DR", 20000.0]]})["facts"]["bank"]
+    assert one["receipts"] == 25000.0 and one["rows"] == 1, one
+    pdf_like = bank({"Page 1": [["Txn Date", "Description", "Debit", "Credit", "Balance"],
+                                ["01-Apr-2025", "Opening", 10000.0], ["02-Apr-2025", "IMPS DEMO CLIENT TWO", 70000.0, 80000.0],
+                                ["03-Apr-2025", "POS DEMO SHOP", 5000.0, 75000.0]]})["facts"]["bank"]
+    assert pdf_like["receipts"] == 70000.0 and pdf_like["rows"] == 1, pdf_like     # cells ran together: the balance says 70,000 came in
+    ti = tis_rows("\n".join(["Taxpayer Information Summary (TIS)", "SR. NO. INFORMATION CATEGORY PROCESSED BY", "1 Salary 9,00,000 9,00,000",
+                             "2 Dividend 4,540 4,000", "3 Interest from savings bank 398 398", "The information details under each category"]))
+    assert ti["facts"]["other"] == {"dividend": 4000.0, "savings": 398.0} and ti["facts"]["salary"]["gross"] == 900000, ti
+    t26 = form26as_pdf("\n".join([
+        "PART-I - Details of Tax Deducted at Source", "1 DEMO BANK LIMITED ZZZZ12345Z 1126456.00 112645.60 112645.60",
+        "1 194A 31-Mar-2026 F 10-May-2026 - 224428.00 22442.80 22442.80", "2 DEMO EMPLOYER ZZZZ54321Z 900.00 90.00 90.00",
+        "1 192 31-Mar-2026 F 01-Jun-2026 - 900.00 90.00 90.00", "PART-II"]))["facts"]["tds"]
+    assert [(r["kind"], r["section"], r["tds"]) for r in t26] == [("other", "194A", 112645.6), ("salary", "192", 90.0)], t26
+    assert _income_of(t26) == {"deposits": 1126456.0}, _income_of(t26)
     pf = prefill({"personalInfo": {"pan": "ABCPD1234F", "dob": "1990-01-31", "assesseeName": {"surNameOrOrgName": "Demo"}},
                   "insights": {"intrstFrmSavingBank": 500}}, "ABCPD1234F", "2026-27")
     assert pf["kind"] == "prefill" and pf["facts"]["other"]["savings"] == 500 and not pf["problems"], pf

@@ -1,0 +1,68 @@
+{
+  "chip_id": "compute.fee_234i",
+  "kind": "accessor",
+  "set": "compute",
+  "label": "Compute: fee for revising a return late (s.234I)",
+  "aliases": [
+    "234i",
+    "revised return fee"
+  ],
+  "params": [
+    {
+      "name": "income",
+      "type": "number",
+      "default": 0,
+      "label": "total income"
+    },
+    {
+      "name": "low_income",
+      "type": "number",
+      "default": 500000,
+      "label": "income up to this pays the lower fee"
+    },
+    {
+      "name": "fee_low",
+      "type": "number",
+      "default": 1000,
+      "label": "the lower fee"
+    },
+    {
+      "name": "fee_high",
+      "type": "number",
+      "default": 5000,
+      "label": "the fee otherwise"
+    }
+  ],
+  "expr": {
+    "vop": "choose",
+    "cases": [
+      {
+        "when": {
+          "op": "le",
+          "left": "$income",
+          "right": "$low_income"
+        },
+        "then": "$fee_low"
+      }
+    ],
+    "else": "$fee_high"
+  },
+  "returns": "number",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-06: s.234I (Finance Act 2026) - a return revised after 31 December of the AY (and by 31 March) pays 1,000 when total income is up to 5 lakh, 5,000 otherwise.",
+  "test_cases": [
+    {
+      "args": {
+        "income": 400000
+      },
+      "expect_value": 1000
+    },
+    {
+      "args": {
+        "income": 900000
+      },
+      "expect_value": 5000
+    }
+  ]
+}

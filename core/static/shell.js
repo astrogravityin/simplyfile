@@ -1349,9 +1349,13 @@ export function render() {
   // 2026-09-22 (owner: "why am I getting this message every time"): a TICK, a dropdown pick or a chosen file
   // is not typed work either - those save the moment they change, and they were raising a leave warning on
   // pages with nothing at all to lose. Only fields that HOLD TEXT count.
+  // 2026-10-06 (owner: "I did not edit anything"): the browser's own autofill of a saved password or key fires `input`
+  // too - only a field the person has touched (a key, a paste, a drop) counts as edited.
+  const touched = new WeakSet();
+  ['keydown', 'paste', 'drop', 'cut'].forEach((t) => page.addEventListener(t, (e) => { if (e.target instanceof Element) touched.add(e.target); }, true));
   page.addEventListener('input', (e) => {
     const el = e.target instanceof Element ? e.target : null;
-    if (!el || el.closest('[data-nodirty]')) return;
+    if (!el || el.closest('[data-nodirty]') || !touched.has(el)) return;
     if (el.matches('input[type="search"], input[type="checkbox"], input[type="radio"], input[type="file"], input[type="range"], select')) return;
     pageDirty = true;
   });

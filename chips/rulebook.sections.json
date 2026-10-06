@@ -1,0 +1,738 @@
+{
+  "chip_id": "rulebook.sections",
+  "kind": "accessor",
+  "set": "rulebook",
+  "label": "Rule book: the law and a plain sentence for each rule",
+  "aliases": [
+    "rule book",
+    "rulebook"
+  ],
+  "params": [
+    {
+      "name": "areas",
+      "type": "json",
+      "default": [
+        {
+          "id": "form",
+          "label": "Which return, and by when"
+        },
+        {
+          "id": "salary",
+          "label": "Salary"
+        },
+        {
+          "id": "house",
+          "label": "House property"
+        },
+        {
+          "id": "other",
+          "label": "Other sources"
+        },
+        {
+          "id": "business",
+          "label": "Business and profession (presumptive)"
+        },
+        {
+          "id": "via",
+          "label": "Deductions (Chapter VI-A)"
+        },
+        {
+          "id": "tax",
+          "label": "Tax on total income"
+        },
+        {
+          "id": "interest",
+          "label": "Interest, fees and the balance"
+        },
+        {
+          "id": "huf",
+          "label": "Hindu undivided family (HUF)"
+        },
+        {
+          "id": "ca",
+          "label": "On the CA side: firms, LLPs, companies, HUFs and traders with books"
+        },
+        {
+          "id": "reading",
+          "label": "Reading the documents"
+        }
+      ],
+      "label": "the book's parts, in order"
+    },
+    {
+      "name": "rules",
+      "type": "json",
+      "default": [
+        {
+          "chip": "myreturn.form",
+          "area": "form",
+          "law": "Rule 12, Income-tax Rules 1962; the ITR forms notified for AY 2026-27",
+          "plain": "Picks ITR-1, ITR-2, ITR-3 or ITR-4 from what the return holds: residence, total income, houses, capital gains, farm income, directorship, unlisted shares, foreign assets, losses carried, and presumptive business income. The first reason that applies is shown to the person.",
+          "gaps": "Agricultural income is a typed answer; ITR-3 with books is only chosen, not built, in My return."
+        },
+        {
+          "chip": "close.dates",
+          "area": "form",
+          "law": "s.139(1) as amended by the Finance Act 2026; s.139(4) belated; s.139(5) revised; s.139(8A) updated",
+          "plain": "The due date for the form (non-business 31 July; ITR-3 / ITR-4 without audit 31 August; audit 31 October; transfer pricing 30 November), any date CBDT extended for that year by circular (AY 2026-27: Circular 07/2026 - audit cases 21 November, audit report 21 October), and what a return filed on a given day is: on time, belated, revised (free to 31 December, then to 31 March with the s.234I fee) or updated.",
+          "gaps": ""
+        },
+        {
+          "chip": "compute.fee_234i",
+          "area": "interest",
+          "law": "s.234I (Finance Act 2026)",
+          "plain": "The fee on a return revised after 31 December of the assessment year: 1,000 when total income is up to five lakh, 5,000 otherwise.",
+          "gaps": ""
+        },
+        {
+          "chip": "myreturn.age_band",
+          "area": "form",
+          "law": "First Schedule, Part I (age bands for the old-regime slabs); s.80TTB; s.207(2)",
+          "plain": "Below 60, 60 to 80, or 80 and above, on the last day of the previous year - decides the old-regime basic exemption, 80TTB and freedom from advance tax.",
+          "gaps": ""
+        },
+        {
+          "chip": "myreturn.salary",
+          "area": "salary",
+          "law": "ss.15-17; s.16(ia) standard deduction; s.16(iii) professional tax; s.10 exemptions; s.115BAC(2)",
+          "plain": "Income from salary: gross salary less exempt allowances (only those the new regime keeps), the standard deduction for the regime, and professional tax (old regime).",
+          "gaps": "Relief u/s 89 for arrears (Form 10E) is not worked out."
+        },
+        {
+          "chip": "myreturn.hra",
+          "area": "salary",
+          "law": "s.10(13A); Rule 2A",
+          "plain": "HRA exempt in the old regime: the least of HRA received, rent paid less 10% of salary, and 50% (metro) or 40% of salary.",
+          "gaps": ""
+        },
+        {
+          "chip": "myreturn.house",
+          "area": "house",
+          "law": "ss.22-24; s.23(2) self-occupied; s.24(a) 30%; s.24(b) interest; s.115BAC(2)",
+          "plain": "One house: annual value (rent less municipal tax; nil when self-occupied), 30% standard deduction, and interest on the loan - capped for a self-occupied house in the old regime, not allowed for one in the new regime.",
+          "gaps": "Co-ownership share is taken as 100%; pre-construction interest (1/5 for 5 years) is not split out."
+        },
+        {
+          "chip": "myreturn.hp_total",
+          "area": "house",
+          "law": "s.71(3A); s.115BAC(2)",
+          "plain": "All houses together; a loss from house property set off against other heads only up to the cap, and not at all in the new regime.",
+          "gaps": ""
+        },
+        {
+          "chip": "myreturn.cyla",
+          "area": "house",
+          "law": "s.71 (set-off of a loss in the same year)",
+          "plain": "Where the house loss goes this year: against salary first, then other sources, up to the cap; the rest is carried forward.",
+          "gaps": "Set-off against business income is not yet done; carried-forward losses (Schedule CFL) are not built."
+        },
+        {
+          "chip": "myreturn.family_pension",
+          "area": "other",
+          "law": "s.57(iia)",
+          "plain": "Family pension after its deduction: one-third, up to the regime's cap.",
+          "gaps": ""
+        },
+        {
+          "chip": "myreturn.business",
+          "area": "business",
+          "law": "s.44AD (business), s.44ADA (profession), with their turnover / receipts limits",
+          "plain": "Presumptive income: 44ADA 50% of receipts; 44AD 6% of bank / digital turnover and 8% of cash - or more, if the person declares more. The limit rises when cash is at most 5% of receipts. Over the limit the presumptive basis is closed and the return needs books (ITR-3).",
+          "gaps": "44AE (goods carriages) is not built. A lower income than presumptive with books and audit is the CA side's work."
+        },
+        {
+          "chip": "myreturn.deductions",
+          "area": "via",
+          "law": "Chapter VI-A: ss.80C, 80CCC, 80CCD(1), 80CCD(1B), 80CCD(2), 80CCE, 80D, 80DD, 80DDB, 80E, 80EE, 80EEA, 80EEB, 80G, 80GGC, 80TTA, 80TTB, 80U; s.115BAC(2)",
+          "plain": "Each deduction capped by its own section and by the overall 80CCE cap for 80C + 80CCC + 80CCD(1); in the new regime only the employer's NPS contribution 80CCD(2) (and 80CCH) is allowed.",
+          "gaps": "80G takes the amount as eligible (no 50% / qualifying-limit split); 80EE and 80EEA cannot both be claimed - the person is warned only in the rule book for now."
+        },
+        {
+          "chip": "myreturn.d80gg",
+          "area": "via",
+          "law": "s.80GG; rule 11B; Form 10BA",
+          "plain": "Rent paid by an individual with no HRA from an employer, old regime: the least of 5,000 a month, 25% of total income and rent less 10% of total income - total income here being what is left after every other deduction.",
+          "gaps": ""
+        },
+        {
+          "chip": "myreturn.tax",
+          "area": "tax",
+          "law": "First Schedule Part I (Finance Act 2025); s.115BAC(1A) new slabs; ss.111A, 112A, 112; s.87A rebate and marginal relief; surcharge and marginal relief; 4% health and education cess",
+          "plain": "Tax at the regime's slabs on normal income, special rates on capital gains (111A, 112A above its exemption, 112), the 87A rebate with its marginal relief in the new regime, surcharge with marginal relief, then cess.",
+          "gaps": ""
+        },
+        {
+          "chip": "myreturn.better",
+          "area": "tax",
+          "law": "s.115BAC(1A) and (6)",
+          "plain": "Which regime costs less; the old regime is open only to a return filed by the due date (and, with business income, a Form 10-IEA by then).",
+          "gaps": ""
+        },
+        {
+          "chip": "compute.total_income",
+          "area": "tax",
+          "law": "s.288A",
+          "plain": "Total income: gross total income less deductions, rounded to the nearest ten rupees.",
+          "gaps": ""
+        },
+        {
+          "chip": "myreturn.rates",
+          "area": "tax",
+          "law": "Finance Act 2025 (rates for AY 2026-27); the Act's caps and limits",
+          "plain": "Every figure the calculation uses for the year: slabs, rebate, surcharge bands, cess, standard deduction, caps, rates and the ITR-1 limits. The Tax rules screen fetches and applies each new year's.",
+          "gaps": ""
+        },
+        {
+          "chip": "compute.interest",
+          "area": "interest",
+          "law": "ss.234A, 234B, 234C; Rule 119A (amounts rounded down to 100); s.211(1)(b) single instalment for 44AD / 44ADA",
+          "plain": "Interest for filing late (234A), for advance tax short of 90% (234B) and for each instalment short (234C), counted in months as the Act counts them.",
+          "gaps": ""
+        },
+        {
+          "chip": "compute.no_advance",
+          "area": "interest",
+          "law": "s.207(2)",
+          "plain": "A resident senior citizen with no business or profession income owes no advance tax - so no 234B / 234C.",
+          "gaps": ""
+        },
+        {
+          "chip": "compute.paid_kind",
+          "area": "interest",
+          "law": "Challan 280 minor heads (100 advance tax, 300 self-assessment, 400 regular assessment)",
+          "plain": "Whether a challan is advance tax or self-assessment tax: by its minor head, and anything paid after the year ended is self-assessment.",
+          "gaps": ""
+        },
+        {
+          "chip": "chat.fee_234f",
+          "area": "interest",
+          "law": "s.234F",
+          "plain": "The late fee on a return filed after the due date - lower when total income is up to five lakh.",
+          "gaps": ""
+        },
+        {
+          "chip": "compute.balance",
+          "area": "interest",
+          "law": "ss.140A (self-assessment), 244A context",
+          "plain": "Tax payable or refund: tax with interest and fee, less TDS, TCS and tax paid.",
+          "gaps": ""
+        },
+        {
+          "chip": "myreturn.tax",
+          "area": "huf",
+          "law": "s.87A (a resident individual only); First Schedule Part I",
+          "plain": "An HUF is taxed at the same slabs as an individual below 60, in either regime, but gets no 87A rebate and no marginal relief under it: 12 lakh of income pays tax plus cess.",
+          "gaps": ""
+        },
+        {
+          "chip": "myreturn.deductions",
+          "area": "huf",
+          "law": "Chapter VI-A as it applies to an HUF: ss.80C, 80D (premium for any member), 80G, 80TTA",
+          "plain": "An HUF claims 80C, 80D, 80G and 80TTA. 80CCC, 80CCD, 80E, 80TTB and 80U are for individuals and are refused (the list is chip myreturn.rates via_status).",
+          "gaps": ""
+        },
+        {
+          "chip": "myreturn.age_band",
+          "area": "huf",
+          "law": "First Schedule Part I (age bands are for individuals)",
+          "plain": "An HUF has no age: it always uses the below-60 slabs, whatever its date of formation.",
+          "gaps": ""
+        },
+        {
+          "chip": "myreturn.form",
+          "area": "huf",
+          "law": "Rule 12 (ITR-1 is for individuals)",
+          "plain": "An HUF never files ITR-1: ITR-2 without business, ITR-4 with presumptive business income, ITR-3 otherwise.",
+          "gaps": ""
+        },
+        {
+          "chip": "myreturn.json",
+          "area": "huf",
+          "law": "The ITR schema: PersonalInfo.Status, Verification.Capacity",
+          "plain": "The return says status H, carries the date of formation where a person's birth date would be, and is verified by the Karta - the Karta's name, own PAN and father's name, capacity K.",
+          "gaps": ""
+        },
+        {
+          "chip": "compute.no_advance",
+          "area": "huf",
+          "law": "s.207(2) (resident senior individuals only)",
+          "plain": "The senior citizen's freedom from advance tax is for individuals; an HUF owes advance tax once it is over the threshold, so 234B / 234C apply.",
+          "gaps": ""
+        },
+        {
+          "chip": "compute.regime",
+          "area": "ca",
+          "law": "s.115BAC (individuals, HUFs, AOPs, BOIs); First Schedule Part I",
+          "plain": "Which regime a status is taxed under: individuals, HUFs, AOPs and BOIs choose new or old; a firm or LLP has its single rate.",
+          "gaps": ""
+        },
+        {
+          "chip": "compute.tax",
+          "area": "ca",
+          "law": "First Schedule Part I (each status's rates); surcharge with marginal relief; cess",
+          "plain": "The CA side's tax on total income for every status - slabs or flat rate, rebate where the status has it, surcharge with marginal relief, cess.",
+          "gaps": ""
+        },
+        {
+          "chip": "compute.tax_parts",
+          "area": "ca",
+          "law": "First Schedule Part I",
+          "plain": "Slab tax and surcharge at one income; the tax rule asks it twice to work out marginal relief.",
+          "gaps": ""
+        },
+        {
+          "chip": "compute.settings",
+          "area": "ca",
+          "law": "Finance Act 2025 rates; the export formats of the department's utility",
+          "plain": "Every rate table the CA side uses, by status and by year (earlier years keep their own slabs and rebate).",
+          "gaps": ""
+        },
+        {
+          "chip": "compute.hp",
+          "area": "ca",
+          "law": "ss.22-24; s.71(3A)",
+          "plain": "House property from the books: 30% off a positive annual value; a loss counts only up to the set-off cap.",
+          "gaps": ""
+        },
+        {
+          "chip": "compute.refund_interest",
+          "area": "ca",
+          "law": "s.244A",
+          "plain": "Interest on a refund: 0.5% a month from 1 April of the assessment year when filed by the due date, else from the filing date.",
+          "gaps": ""
+        },
+        {
+          "chip": "audit.applicable",
+          "area": "ca",
+          "law": "s.44AB (turnover / receipts limits; 44AD and 44ADA declared below the presumptive rate)",
+          "plain": "Whether a tax audit is needed: business turnover above 1 crore (10 crore when cash receipts and payments are each within 5%), professional receipts above 50 lakh, or presumptive income declared lower than the presumptive rate with income above the basic exemption.",
+          "gaps": ""
+        },
+        {
+          "chip": "audit.kind",
+          "area": "ca",
+          "law": "s.44AB(a) business, (b) profession",
+          "plain": "Only professional receipts make it a profession (the 50 lakh limit); any sales or services make it a business.",
+          "gaps": ""
+        },
+        {
+          "chip": "audit.llp_audit",
+          "area": "ca",
+          "law": "LLP Act 2008 s.34 with rule 24(8)",
+          "plain": "An LLP's accounts are audited unless turnover is within 40 lakh and contribution within 25 lakh; firms, AOPs and proprietors have no such audit.",
+          "gaps": ""
+        },
+        {
+          "chip": "audit.gst",
+          "area": "ca",
+          "law": "CGST Act returns (GSTR-1, GSTR-3B) against the books",
+          "plain": "The turnover in the books against the taxable value in GSTR-3B, and GSTR-3B against GSTR-1, for the year - a gap beyond the tolerance is a point for the audit.",
+          "gaps": ""
+        },
+        {
+          "chip": "audit.as_level",
+          "area": "ca",
+          "law": "ICAI announcement on Accounting Standards for non-company entities (from 1 April 2020)",
+          "plain": "The entity's level (I to IV) by turnover, borrowings and listing - it decides which Accounting Standards apply in full.",
+          "gaps": ""
+        },
+        {
+          "chip": "audit.checklist",
+          "area": "ca",
+          "law": "Form 3CD (the tax audit report)",
+          "plain": "The Form 3CD clauses that apply to this client, each shown only when its facts hold.",
+          "gaps": ""
+        },
+        {
+          "chip": "myreturn.sources",
+          "area": "reading",
+          "law": "-",
+          "plain": "Which document a figure is taken from when several give it (salary from Form 16, TDS from 26AS, other income from AIS ...). What the person types wins over every document.",
+          "gaps": ""
+        },
+        {
+          "chip": "myreturn.checks",
+          "area": "reading",
+          "law": "-",
+          "plain": "Whether a figure agrees with another document (Form 16 TDS against 26AS, salary against AIS ...) - a gap is shown before filing.",
+          "gaps": ""
+        },
+        {
+          "chip": "myreturn.read",
+          "area": "reading",
+          "law": "-",
+          "plain": "How each document is recognised and read: Form 16, 26AS (text or PDF), AIS / TIS (JSON, CSV or PDF), the pre-filled JSON, a filed return, a bank statement (PDF, Excel, CSV).",
+          "gaps": ""
+        }
+      ],
+      "label": "each rule chip: area, law, plain sentence, what is not covered"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "areas": "$areas",
+      "rules": "$rules"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-06 owner: the rule book a CA reviews - for each rule chip the section of the Act it follows, what it does in plain words and what it does not cover yet. Figures, worked examples and the chip's own wording are read from the rule chips by tools/rulebook.py, so the book cannot drift from the engine.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "areas": [
+          {
+            "id": "form",
+            "label": "Which return, and by when"
+          },
+          {
+            "id": "salary",
+            "label": "Salary"
+          },
+          {
+            "id": "house",
+            "label": "House property"
+          },
+          {
+            "id": "other",
+            "label": "Other sources"
+          },
+          {
+            "id": "business",
+            "label": "Business and profession (presumptive)"
+          },
+          {
+            "id": "via",
+            "label": "Deductions (Chapter VI-A)"
+          },
+          {
+            "id": "tax",
+            "label": "Tax on total income"
+          },
+          {
+            "id": "interest",
+            "label": "Interest, fees and the balance"
+          },
+          {
+            "id": "huf",
+            "label": "Hindu undivided family (HUF)"
+          },
+          {
+            "id": "ca",
+            "label": "On the CA side: firms, LLPs, companies, HUFs and traders with books"
+          },
+          {
+            "id": "reading",
+            "label": "Reading the documents"
+          }
+        ],
+        "rules": [
+          {
+            "chip": "myreturn.form",
+            "area": "form",
+            "law": "Rule 12, Income-tax Rules 1962; the ITR forms notified for AY 2026-27",
+            "plain": "Picks ITR-1, ITR-2, ITR-3 or ITR-4 from what the return holds: residence, total income, houses, capital gains, farm income, directorship, unlisted shares, foreign assets, losses carried, and presumptive business income. The first reason that applies is shown to the person.",
+            "gaps": "Agricultural income is a typed answer; ITR-3 with books is only chosen, not built, in My return."
+          },
+          {
+            "chip": "close.dates",
+            "area": "form",
+            "law": "s.139(1) as amended by the Finance Act 2026; s.139(4) belated; s.139(5) revised; s.139(8A) updated",
+            "plain": "The due date for the form (non-business 31 July; ITR-3 / ITR-4 without audit 31 August; audit 31 October; transfer pricing 30 November), any date CBDT extended for that year by circular (AY 2026-27: Circular 07/2026 - audit cases 21 November, audit report 21 October), and what a return filed on a given day is: on time, belated, revised (free to 31 December, then to 31 March with the s.234I fee) or updated.",
+            "gaps": ""
+          },
+          {
+            "chip": "compute.fee_234i",
+            "area": "interest",
+            "law": "s.234I (Finance Act 2026)",
+            "plain": "The fee on a return revised after 31 December of the assessment year: 1,000 when total income is up to five lakh, 5,000 otherwise.",
+            "gaps": ""
+          },
+          {
+            "chip": "myreturn.age_band",
+            "area": "form",
+            "law": "First Schedule, Part I (age bands for the old-regime slabs); s.80TTB; s.207(2)",
+            "plain": "Below 60, 60 to 80, or 80 and above, on the last day of the previous year - decides the old-regime basic exemption, 80TTB and freedom from advance tax.",
+            "gaps": ""
+          },
+          {
+            "chip": "myreturn.salary",
+            "area": "salary",
+            "law": "ss.15-17; s.16(ia) standard deduction; s.16(iii) professional tax; s.10 exemptions; s.115BAC(2)",
+            "plain": "Income from salary: gross salary less exempt allowances (only those the new regime keeps), the standard deduction for the regime, and professional tax (old regime).",
+            "gaps": "Relief u/s 89 for arrears (Form 10E) is not worked out."
+          },
+          {
+            "chip": "myreturn.hra",
+            "area": "salary",
+            "law": "s.10(13A); Rule 2A",
+            "plain": "HRA exempt in the old regime: the least of HRA received, rent paid less 10% of salary, and 50% (metro) or 40% of salary.",
+            "gaps": ""
+          },
+          {
+            "chip": "myreturn.house",
+            "area": "house",
+            "law": "ss.22-24; s.23(2) self-occupied; s.24(a) 30%; s.24(b) interest; s.115BAC(2)",
+            "plain": "One house: annual value (rent less municipal tax; nil when self-occupied), 30% standard deduction, and interest on the loan - capped for a self-occupied house in the old regime, not allowed for one in the new regime.",
+            "gaps": "Co-ownership share is taken as 100%; pre-construction interest (1/5 for 5 years) is not split out."
+          },
+          {
+            "chip": "myreturn.hp_total",
+            "area": "house",
+            "law": "s.71(3A); s.115BAC(2)",
+            "plain": "All houses together; a loss from house property set off against other heads only up to the cap, and not at all in the new regime.",
+            "gaps": ""
+          },
+          {
+            "chip": "myreturn.cyla",
+            "area": "house",
+            "law": "s.71 (set-off of a loss in the same year)",
+            "plain": "Where the house loss goes this year: against salary first, then other sources, up to the cap; the rest is carried forward.",
+            "gaps": "Set-off against business income is not yet done; carried-forward losses (Schedule CFL) are not built."
+          },
+          {
+            "chip": "myreturn.family_pension",
+            "area": "other",
+            "law": "s.57(iia)",
+            "plain": "Family pension after its deduction: one-third, up to the regime's cap.",
+            "gaps": ""
+          },
+          {
+            "chip": "myreturn.business",
+            "area": "business",
+            "law": "s.44AD (business), s.44ADA (profession), with their turnover / receipts limits",
+            "plain": "Presumptive income: 44ADA 50% of receipts; 44AD 6% of bank / digital turnover and 8% of cash - or more, if the person declares more. The limit rises when cash is at most 5% of receipts. Over the limit the presumptive basis is closed and the return needs books (ITR-3).",
+            "gaps": "44AE (goods carriages) is not built. A lower income than presumptive with books and audit is the CA side's work."
+          },
+          {
+            "chip": "myreturn.deductions",
+            "area": "via",
+            "law": "Chapter VI-A: ss.80C, 80CCC, 80CCD(1), 80CCD(1B), 80CCD(2), 80CCE, 80D, 80DD, 80DDB, 80E, 80EE, 80EEA, 80EEB, 80G, 80GGC, 80TTA, 80TTB, 80U; s.115BAC(2)",
+            "plain": "Each deduction capped by its own section and by the overall 80CCE cap for 80C + 80CCC + 80CCD(1); in the new regime only the employer's NPS contribution 80CCD(2) (and 80CCH) is allowed.",
+            "gaps": "80G takes the amount as eligible (no 50% / qualifying-limit split); 80EE and 80EEA cannot both be claimed - the person is warned only in the rule book for now."
+          },
+          {
+            "chip": "myreturn.d80gg",
+            "area": "via",
+            "law": "s.80GG; rule 11B; Form 10BA",
+            "plain": "Rent paid by an individual with no HRA from an employer, old regime: the least of 5,000 a month, 25% of total income and rent less 10% of total income - total income here being what is left after every other deduction.",
+            "gaps": ""
+          },
+          {
+            "chip": "myreturn.tax",
+            "area": "tax",
+            "law": "First Schedule Part I (Finance Act 2025); s.115BAC(1A) new slabs; ss.111A, 112A, 112; s.87A rebate and marginal relief; surcharge and marginal relief; 4% health and education cess",
+            "plain": "Tax at the regime's slabs on normal income, special rates on capital gains (111A, 112A above its exemption, 112), the 87A rebate with its marginal relief in the new regime, surcharge with marginal relief, then cess.",
+            "gaps": ""
+          },
+          {
+            "chip": "myreturn.better",
+            "area": "tax",
+            "law": "s.115BAC(1A) and (6)",
+            "plain": "Which regime costs less; the old regime is open only to a return filed by the due date (and, with business income, a Form 10-IEA by then).",
+            "gaps": ""
+          },
+          {
+            "chip": "compute.total_income",
+            "area": "tax",
+            "law": "s.288A",
+            "plain": "Total income: gross total income less deductions, rounded to the nearest ten rupees.",
+            "gaps": ""
+          },
+          {
+            "chip": "myreturn.rates",
+            "area": "tax",
+            "law": "Finance Act 2025 (rates for AY 2026-27); the Act's caps and limits",
+            "plain": "Every figure the calculation uses for the year: slabs, rebate, surcharge bands, cess, standard deduction, caps, rates and the ITR-1 limits. The Tax rules screen fetches and applies each new year's.",
+            "gaps": ""
+          },
+          {
+            "chip": "compute.interest",
+            "area": "interest",
+            "law": "ss.234A, 234B, 234C; Rule 119A (amounts rounded down to 100); s.211(1)(b) single instalment for 44AD / 44ADA",
+            "plain": "Interest for filing late (234A), for advance tax short of 90% (234B) and for each instalment short (234C), counted in months as the Act counts them.",
+            "gaps": ""
+          },
+          {
+            "chip": "compute.no_advance",
+            "area": "interest",
+            "law": "s.207(2)",
+            "plain": "A resident senior citizen with no business or profession income owes no advance tax - so no 234B / 234C.",
+            "gaps": ""
+          },
+          {
+            "chip": "compute.paid_kind",
+            "area": "interest",
+            "law": "Challan 280 minor heads (100 advance tax, 300 self-assessment, 400 regular assessment)",
+            "plain": "Whether a challan is advance tax or self-assessment tax: by its minor head, and anything paid after the year ended is self-assessment.",
+            "gaps": ""
+          },
+          {
+            "chip": "chat.fee_234f",
+            "area": "interest",
+            "law": "s.234F",
+            "plain": "The late fee on a return filed after the due date - lower when total income is up to five lakh.",
+            "gaps": ""
+          },
+          {
+            "chip": "compute.balance",
+            "area": "interest",
+            "law": "ss.140A (self-assessment), 244A context",
+            "plain": "Tax payable or refund: tax with interest and fee, less TDS, TCS and tax paid.",
+            "gaps": ""
+          },
+          {
+            "chip": "myreturn.tax",
+            "area": "huf",
+            "law": "s.87A (a resident individual only); First Schedule Part I",
+            "plain": "An HUF is taxed at the same slabs as an individual below 60, in either regime, but gets no 87A rebate and no marginal relief under it: 12 lakh of income pays tax plus cess.",
+            "gaps": ""
+          },
+          {
+            "chip": "myreturn.deductions",
+            "area": "huf",
+            "law": "Chapter VI-A as it applies to an HUF: ss.80C, 80D (premium for any member), 80G, 80TTA",
+            "plain": "An HUF claims 80C, 80D, 80G and 80TTA. 80CCC, 80CCD, 80E, 80TTB and 80U are for individuals and are refused (the list is chip myreturn.rates via_status).",
+            "gaps": ""
+          },
+          {
+            "chip": "myreturn.age_band",
+            "area": "huf",
+            "law": "First Schedule Part I (age bands are for individuals)",
+            "plain": "An HUF has no age: it always uses the below-60 slabs, whatever its date of formation.",
+            "gaps": ""
+          },
+          {
+            "chip": "myreturn.form",
+            "area": "huf",
+            "law": "Rule 12 (ITR-1 is for individuals)",
+            "plain": "An HUF never files ITR-1: ITR-2 without business, ITR-4 with presumptive business income, ITR-3 otherwise.",
+            "gaps": ""
+          },
+          {
+            "chip": "myreturn.json",
+            "area": "huf",
+            "law": "The ITR schema: PersonalInfo.Status, Verification.Capacity",
+            "plain": "The return says status H, carries the date of formation where a person's birth date would be, and is verified by the Karta - the Karta's name, own PAN and father's name, capacity K.",
+            "gaps": ""
+          },
+          {
+            "chip": "compute.no_advance",
+            "area": "huf",
+            "law": "s.207(2) (resident senior individuals only)",
+            "plain": "The senior citizen's freedom from advance tax is for individuals; an HUF owes advance tax once it is over the threshold, so 234B / 234C apply.",
+            "gaps": ""
+          },
+          {
+            "chip": "compute.regime",
+            "area": "ca",
+            "law": "s.115BAC (individuals, HUFs, AOPs, BOIs); First Schedule Part I",
+            "plain": "Which regime a status is taxed under: individuals, HUFs, AOPs and BOIs choose new or old; a firm or LLP has its single rate.",
+            "gaps": ""
+          },
+          {
+            "chip": "compute.tax",
+            "area": "ca",
+            "law": "First Schedule Part I (each status's rates); surcharge with marginal relief; cess",
+            "plain": "The CA side's tax on total income for every status - slabs or flat rate, rebate where the status has it, surcharge with marginal relief, cess.",
+            "gaps": ""
+          },
+          {
+            "chip": "compute.tax_parts",
+            "area": "ca",
+            "law": "First Schedule Part I",
+            "plain": "Slab tax and surcharge at one income; the tax rule asks it twice to work out marginal relief.",
+            "gaps": ""
+          },
+          {
+            "chip": "compute.settings",
+            "area": "ca",
+            "law": "Finance Act 2025 rates; the export formats of the department's utility",
+            "plain": "Every rate table the CA side uses, by status and by year (earlier years keep their own slabs and rebate).",
+            "gaps": ""
+          },
+          {
+            "chip": "compute.hp",
+            "area": "ca",
+            "law": "ss.22-24; s.71(3A)",
+            "plain": "House property from the books: 30% off a positive annual value; a loss counts only up to the set-off cap.",
+            "gaps": ""
+          },
+          {
+            "chip": "compute.refund_interest",
+            "area": "ca",
+            "law": "s.244A",
+            "plain": "Interest on a refund: 0.5% a month from 1 April of the assessment year when filed by the due date, else from the filing date.",
+            "gaps": ""
+          },
+          {
+            "chip": "audit.applicable",
+            "area": "ca",
+            "law": "s.44AB (turnover / receipts limits; 44AD and 44ADA declared below the presumptive rate)",
+            "plain": "Whether a tax audit is needed: business turnover above 1 crore (10 crore when cash receipts and payments are each within 5%), professional receipts above 50 lakh, or presumptive income declared lower than the presumptive rate with income above the basic exemption.",
+            "gaps": ""
+          },
+          {
+            "chip": "audit.kind",
+            "area": "ca",
+            "law": "s.44AB(a) business, (b) profession",
+            "plain": "Only professional receipts make it a profession (the 50 lakh limit); any sales or services make it a business.",
+            "gaps": ""
+          },
+          {
+            "chip": "audit.llp_audit",
+            "area": "ca",
+            "law": "LLP Act 2008 s.34 with rule 24(8)",
+            "plain": "An LLP's accounts are audited unless turnover is within 40 lakh and contribution within 25 lakh; firms, AOPs and proprietors have no such audit.",
+            "gaps": ""
+          },
+          {
+            "chip": "audit.gst",
+            "area": "ca",
+            "law": "CGST Act returns (GSTR-1, GSTR-3B) against the books",
+            "plain": "The turnover in the books against the taxable value in GSTR-3B, and GSTR-3B against GSTR-1, for the year - a gap beyond the tolerance is a point for the audit.",
+            "gaps": ""
+          },
+          {
+            "chip": "audit.as_level",
+            "area": "ca",
+            "law": "ICAI announcement on Accounting Standards for non-company entities (from 1 April 2020)",
+            "plain": "The entity's level (I to IV) by turnover, borrowings and listing - it decides which Accounting Standards apply in full.",
+            "gaps": ""
+          },
+          {
+            "chip": "audit.checklist",
+            "area": "ca",
+            "law": "Form 3CD (the tax audit report)",
+            "plain": "The Form 3CD clauses that apply to this client, each shown only when its facts hold.",
+            "gaps": ""
+          },
+          {
+            "chip": "myreturn.sources",
+            "area": "reading",
+            "law": "-",
+            "plain": "Which document a figure is taken from when several give it (salary from Form 16, TDS from 26AS, other income from AIS ...). What the person types wins over every document.",
+            "gaps": ""
+          },
+          {
+            "chip": "myreturn.checks",
+            "area": "reading",
+            "law": "-",
+            "plain": "Whether a figure agrees with another document (Form 16 TDS against 26AS, salary against AIS ...) - a gap is shown before filing.",
+            "gaps": ""
+          },
+          {
+            "chip": "myreturn.read",
+            "area": "reading",
+            "law": "-",
+            "plain": "How each document is recognised and read: Form 16, 26AS (text or PDF), AIS / TIS (JSON, CSV or PDF), the pre-filled JSON, a filed return, a bank statement (PDF, Excel, CSV).",
+            "gaps": ""
+          }
+        ]
+      }
+    }
+  ]
+}

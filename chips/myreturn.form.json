@@ -2,7 +2,7 @@
   "chip_id": "myreturn.form",
   "kind": "accessor",
   "set": "myreturn",
-  "label": "My return: ITR-1 or ITR-2, and why",
+  "label": "My return: which ITR form (1, 2, 3 or 4), and why",
   "aliases": [
     "my return: itr-1 or itr-2, and why"
   ],
@@ -72,6 +72,24 @@
       "type": "boolean",
       "default": false,
       "label": "lottery, ESOP deferral, a second set of specials"
+    },
+    {
+      "name": "business",
+      "type": "boolean",
+      "default": false,
+      "label": "presumptive business / profession income (44AD, 44ADA)"
+    },
+    {
+      "name": "over_limit",
+      "type": "boolean",
+      "default": false,
+      "label": "receipts over the presumptive limit"
+    },
+    {
+      "name": "huf",
+      "type": "boolean",
+      "default": false,
+      "label": "a Hindu undivided family"
     }
   ],
   "expr": {
@@ -79,166 +97,455 @@
     "cases": [
       {
         "when": {
-          "op": "not",
-          "item": {
-            "op": "eq",
-            "left": "$resident",
-            "right": true
-          }
-        },
-        "then": {
-          "vop": "record",
-          "fields": {
-            "form": "ITR-2",
-            "why": "why_nonres"
-          }
-        }
-      },
-      {
-        "when": {
-          "op": "gt",
-          "left": "$total",
-          "right": {
-            "vop": "get",
-            "value": {
-              "chip": "myreturn.rates",
-              "args": {}
-            },
-            "path": "itr1_income_max"
-          }
-        },
-        "then": {
-          "vop": "record",
-          "fields": {
-            "form": "ITR-2",
-            "why": "why_income"
-          }
-        }
-      },
-      {
-        "when": {
-          "op": "gt",
-          "left": "$houses",
-          "right": {
-            "vop": "get",
-            "value": {
-              "chip": "myreturn.rates",
-              "args": {}
-            },
-            "path": "itr1_houses_max"
-          }
-        },
-        "then": {
-          "vop": "record",
-          "fields": {
-            "form": "ITR-2",
-            "why": "why_houses"
-          }
-        }
-      },
-      {
-        "when": {
-          "op": "any",
+          "op": "all",
           "items": [
             {
-              "op": "gt",
-              "left": "$ltcg_112a",
-              "right": {
+              "op": "eq",
+              "left": "$business",
+              "right": true
+            },
+            {
+              "op": "eq",
+              "left": "$over_limit",
+              "right": true
+            }
+          ]
+        },
+        "then": {
+          "vop": "record",
+          "fields": {
+            "form": "ITR-3",
+            "why": "why_biz_limit"
+          }
+        }
+      },
+      {
+        "when": {
+          "op": "all",
+          "items": [
+            {
+              "op": "eq",
+              "left": "$business",
+              "right": true
+            },
+            {
+              "op": "eq",
+              "left": {
                 "vop": "get",
                 "value": {
-                  "chip": "myreturn.rates",
-                  "args": {}
+                  "vop": "choose",
+                  "cases": [
+                    {
+                      "when": {
+                        "op": "not",
+                        "item": {
+                          "op": "eq",
+                          "left": "$resident",
+                          "right": true
+                        }
+                      },
+                      "then": {
+                        "vop": "record",
+                        "fields": {
+                          "form": "ITR-2",
+                          "why": "why_nonres"
+                        }
+                      }
+                    },
+                    {
+                      "when": {
+                        "op": "gt",
+                        "left": "$total",
+                        "right": {
+                          "vop": "get",
+                          "value": {
+                            "chip": "myreturn.rates",
+                            "args": {}
+                          },
+                          "path": "itr1_income_max"
+                        }
+                      },
+                      "then": {
+                        "vop": "record",
+                        "fields": {
+                          "form": "ITR-2",
+                          "why": "why_income"
+                        }
+                      }
+                    },
+                    {
+                      "when": {
+                        "op": "gt",
+                        "left": "$houses",
+                        "right": {
+                          "vop": "get",
+                          "value": {
+                            "chip": "myreturn.rates",
+                            "args": {}
+                          },
+                          "path": "itr1_houses_max"
+                        }
+                      },
+                      "then": {
+                        "vop": "record",
+                        "fields": {
+                          "form": "ITR-2",
+                          "why": "why_houses"
+                        }
+                      }
+                    },
+                    {
+                      "when": {
+                        "op": "any",
+                        "items": [
+                          {
+                            "op": "gt",
+                            "left": "$ltcg_112a",
+                            "right": {
+                              "vop": "get",
+                              "value": {
+                                "chip": "myreturn.rates",
+                                "args": {}
+                              },
+                              "path": "itr1_ltcg112a_max"
+                            }
+                          },
+                          {
+                            "op": "eq",
+                            "left": "$other_cg",
+                            "right": true
+                          }
+                        ]
+                      },
+                      "then": {
+                        "vop": "record",
+                        "fields": {
+                          "form": "ITR-2",
+                          "why": "why_cg"
+                        }
+                      }
+                    },
+                    {
+                      "when": {
+                        "op": "gt",
+                        "left": "$agri",
+                        "right": {
+                          "vop": "get",
+                          "value": {
+                            "chip": "myreturn.rates",
+                            "args": {}
+                          },
+                          "path": "itr1_agri_max"
+                        }
+                      },
+                      "then": {
+                        "vop": "record",
+                        "fields": {
+                          "form": "ITR-2",
+                          "why": "why_agri"
+                        }
+                      }
+                    },
+                    {
+                      "when": {
+                        "op": "any",
+                        "items": [
+                          {
+                            "op": "eq",
+                            "left": "$director",
+                            "right": true
+                          },
+                          {
+                            "op": "eq",
+                            "left": "$unlisted",
+                            "right": true
+                          }
+                        ]
+                      },
+                      "then": {
+                        "vop": "record",
+                        "fields": {
+                          "form": "ITR-2",
+                          "why": "why_director"
+                        }
+                      }
+                    },
+                    {
+                      "when": {
+                        "op": "eq",
+                        "left": "$foreign",
+                        "right": true
+                      },
+                      "then": {
+                        "vop": "record",
+                        "fields": {
+                          "form": "ITR-2",
+                          "why": "why_foreign"
+                        }
+                      }
+                    },
+                    {
+                      "when": {
+                        "op": "any",
+                        "items": [
+                          {
+                            "op": "eq",
+                            "left": "$loss_cf",
+                            "right": true
+                          },
+                          {
+                            "op": "eq",
+                            "left": "$other",
+                            "right": true
+                          }
+                        ]
+                      },
+                      "then": {
+                        "vop": "record",
+                        "fields": {
+                          "form": "ITR-2",
+                          "why": "why_other"
+                        }
+                      }
+                    }
+                  ],
+                  "else": {
+                    "vop": "record",
+                    "fields": {
+                      "form": "ITR-1",
+                      "why": "why_simple"
+                    }
+                  }
                 },
-                "path": "itr1_ltcg112a_max"
-              }
-            },
-            {
-              "op": "eq",
-              "left": "$other_cg",
-              "right": true
+                "path": "form"
+              },
+              "right": "ITR-1"
             }
           ]
         },
         "then": {
           "vop": "record",
           "fields": {
-            "form": "ITR-2",
-            "why": "why_cg"
-          }
-        }
-      },
-      {
-        "when": {
-          "op": "gt",
-          "left": "$agri",
-          "right": {
-            "vop": "get",
-            "value": {
-              "chip": "myreturn.rates",
-              "args": {}
-            },
-            "path": "itr1_agri_max"
-          }
-        },
-        "then": {
-          "vop": "record",
-          "fields": {
-            "form": "ITR-2",
-            "why": "why_agri"
-          }
-        }
-      },
-      {
-        "when": {
-          "op": "any",
-          "items": [
-            {
-              "op": "eq",
-              "left": "$director",
-              "right": true
-            },
-            {
-              "op": "eq",
-              "left": "$unlisted",
-              "right": true
-            }
-          ]
-        },
-        "then": {
-          "vop": "record",
-          "fields": {
-            "form": "ITR-2",
-            "why": "why_director"
+            "form": "ITR-4",
+            "why": "why_presumptive"
           }
         }
       },
       {
         "when": {
           "op": "eq",
-          "left": "$foreign",
+          "left": "$business",
           "right": true
         },
         "then": {
           "vop": "record",
           "fields": {
-            "form": "ITR-2",
-            "why": "why_foreign"
+            "form": "ITR-3",
+            "why": "why_biz_more"
           }
         }
       },
       {
         "when": {
-          "op": "any",
+          "op": "all",
           "items": [
             {
               "op": "eq",
-              "left": "$loss_cf",
+              "left": "$huf",
               "right": true
             },
             {
               "op": "eq",
-              "left": "$other",
-              "right": true
+              "left": {
+                "vop": "get",
+                "value": {
+                  "vop": "choose",
+                  "cases": [
+                    {
+                      "when": {
+                        "op": "not",
+                        "item": {
+                          "op": "eq",
+                          "left": "$resident",
+                          "right": true
+                        }
+                      },
+                      "then": {
+                        "vop": "record",
+                        "fields": {
+                          "form": "ITR-2",
+                          "why": "why_nonres"
+                        }
+                      }
+                    },
+                    {
+                      "when": {
+                        "op": "gt",
+                        "left": "$total",
+                        "right": {
+                          "vop": "get",
+                          "value": {
+                            "chip": "myreturn.rates",
+                            "args": {}
+                          },
+                          "path": "itr1_income_max"
+                        }
+                      },
+                      "then": {
+                        "vop": "record",
+                        "fields": {
+                          "form": "ITR-2",
+                          "why": "why_income"
+                        }
+                      }
+                    },
+                    {
+                      "when": {
+                        "op": "gt",
+                        "left": "$houses",
+                        "right": {
+                          "vop": "get",
+                          "value": {
+                            "chip": "myreturn.rates",
+                            "args": {}
+                          },
+                          "path": "itr1_houses_max"
+                        }
+                      },
+                      "then": {
+                        "vop": "record",
+                        "fields": {
+                          "form": "ITR-2",
+                          "why": "why_houses"
+                        }
+                      }
+                    },
+                    {
+                      "when": {
+                        "op": "any",
+                        "items": [
+                          {
+                            "op": "gt",
+                            "left": "$ltcg_112a",
+                            "right": {
+                              "vop": "get",
+                              "value": {
+                                "chip": "myreturn.rates",
+                                "args": {}
+                              },
+                              "path": "itr1_ltcg112a_max"
+                            }
+                          },
+                          {
+                            "op": "eq",
+                            "left": "$other_cg",
+                            "right": true
+                          }
+                        ]
+                      },
+                      "then": {
+                        "vop": "record",
+                        "fields": {
+                          "form": "ITR-2",
+                          "why": "why_cg"
+                        }
+                      }
+                    },
+                    {
+                      "when": {
+                        "op": "gt",
+                        "left": "$agri",
+                        "right": {
+                          "vop": "get",
+                          "value": {
+                            "chip": "myreturn.rates",
+                            "args": {}
+                          },
+                          "path": "itr1_agri_max"
+                        }
+                      },
+                      "then": {
+                        "vop": "record",
+                        "fields": {
+                          "form": "ITR-2",
+                          "why": "why_agri"
+                        }
+                      }
+                    },
+                    {
+                      "when": {
+                        "op": "any",
+                        "items": [
+                          {
+                            "op": "eq",
+                            "left": "$director",
+                            "right": true
+                          },
+                          {
+                            "op": "eq",
+                            "left": "$unlisted",
+                            "right": true
+                          }
+                        ]
+                      },
+                      "then": {
+                        "vop": "record",
+                        "fields": {
+                          "form": "ITR-2",
+                          "why": "why_director"
+                        }
+                      }
+                    },
+                    {
+                      "when": {
+                        "op": "eq",
+                        "left": "$foreign",
+                        "right": true
+                      },
+                      "then": {
+                        "vop": "record",
+                        "fields": {
+                          "form": "ITR-2",
+                          "why": "why_foreign"
+                        }
+                      }
+                    },
+                    {
+                      "when": {
+                        "op": "any",
+                        "items": [
+                          {
+                            "op": "eq",
+                            "left": "$loss_cf",
+                            "right": true
+                          },
+                          {
+                            "op": "eq",
+                            "left": "$other",
+                            "right": true
+                          }
+                        ]
+                      },
+                      "then": {
+                        "vop": "record",
+                        "fields": {
+                          "form": "ITR-2",
+                          "why": "why_other"
+                        }
+                      }
+                    }
+                  ],
+                  "else": {
+                    "vop": "record",
+                    "fields": {
+                      "form": "ITR-1",
+                      "why": "why_simple"
+                    }
+                  }
+                },
+                "path": "form"
+              },
+              "right": "ITR-1"
             }
           ]
         },
@@ -246,23 +553,201 @@
           "vop": "record",
           "fields": {
             "form": "ITR-2",
-            "why": "why_other"
+            "why": "why_huf"
           }
         }
       }
     ],
     "else": {
-      "vop": "record",
-      "fields": {
-        "form": "ITR-1",
-        "why": "why_simple"
+      "vop": "choose",
+      "cases": [
+        {
+          "when": {
+            "op": "not",
+            "item": {
+              "op": "eq",
+              "left": "$resident",
+              "right": true
+            }
+          },
+          "then": {
+            "vop": "record",
+            "fields": {
+              "form": "ITR-2",
+              "why": "why_nonres"
+            }
+          }
+        },
+        {
+          "when": {
+            "op": "gt",
+            "left": "$total",
+            "right": {
+              "vop": "get",
+              "value": {
+                "chip": "myreturn.rates",
+                "args": {}
+              },
+              "path": "itr1_income_max"
+            }
+          },
+          "then": {
+            "vop": "record",
+            "fields": {
+              "form": "ITR-2",
+              "why": "why_income"
+            }
+          }
+        },
+        {
+          "when": {
+            "op": "gt",
+            "left": "$houses",
+            "right": {
+              "vop": "get",
+              "value": {
+                "chip": "myreturn.rates",
+                "args": {}
+              },
+              "path": "itr1_houses_max"
+            }
+          },
+          "then": {
+            "vop": "record",
+            "fields": {
+              "form": "ITR-2",
+              "why": "why_houses"
+            }
+          }
+        },
+        {
+          "when": {
+            "op": "any",
+            "items": [
+              {
+                "op": "gt",
+                "left": "$ltcg_112a",
+                "right": {
+                  "vop": "get",
+                  "value": {
+                    "chip": "myreturn.rates",
+                    "args": {}
+                  },
+                  "path": "itr1_ltcg112a_max"
+                }
+              },
+              {
+                "op": "eq",
+                "left": "$other_cg",
+                "right": true
+              }
+            ]
+          },
+          "then": {
+            "vop": "record",
+            "fields": {
+              "form": "ITR-2",
+              "why": "why_cg"
+            }
+          }
+        },
+        {
+          "when": {
+            "op": "gt",
+            "left": "$agri",
+            "right": {
+              "vop": "get",
+              "value": {
+                "chip": "myreturn.rates",
+                "args": {}
+              },
+              "path": "itr1_agri_max"
+            }
+          },
+          "then": {
+            "vop": "record",
+            "fields": {
+              "form": "ITR-2",
+              "why": "why_agri"
+            }
+          }
+        },
+        {
+          "when": {
+            "op": "any",
+            "items": [
+              {
+                "op": "eq",
+                "left": "$director",
+                "right": true
+              },
+              {
+                "op": "eq",
+                "left": "$unlisted",
+                "right": true
+              }
+            ]
+          },
+          "then": {
+            "vop": "record",
+            "fields": {
+              "form": "ITR-2",
+              "why": "why_director"
+            }
+          }
+        },
+        {
+          "when": {
+            "op": "eq",
+            "left": "$foreign",
+            "right": true
+          },
+          "then": {
+            "vop": "record",
+            "fields": {
+              "form": "ITR-2",
+              "why": "why_foreign"
+            }
+          }
+        },
+        {
+          "when": {
+            "op": "any",
+            "items": [
+              {
+                "op": "eq",
+                "left": "$loss_cf",
+                "right": true
+              },
+              {
+                "op": "eq",
+                "left": "$other",
+                "right": true
+              }
+            ]
+          },
+          "then": {
+            "vop": "record",
+            "fields": {
+              "form": "ITR-2",
+              "why": "why_other"
+            }
+          }
+        }
+      ],
+      "else": {
+        "vop": "record",
+        "fields": {
+          "form": "ITR-1",
+          "why": "why_simple"
+        }
       }
     }
   },
   "returns": "record",
-  "version": 1,
+  "version": 4,
   "status": "published",
-  "description_nl": "2026-10-06: ITR-1 (Sahaj): a resident with total income up to 50 lakh from salary or pension, up to two houses, other sources, 112A gains up to 1.25 lakh and farm income up to 5,000; anything else - not resident, more income, other gains or losses, a directorship, unlisted shares, foreign assets, losses carried - is ITR-2. The first reason that applies is the one shown.",
+  "description_nl": "2026-10-06: ITR-1 (Sahaj): a resident with total income up to 50 lakh from salary or pension, up to two houses, other sources, 112A gains up to 1.25 lakh and farm income up to 5,000; anything else - not resident, more income, other gains or losses, a directorship, unlisted shares, foreign assets, losses carried - is ITR-2. The first reason that applies is the one shown. 2026-10-06: presumptive business or profession income (44AD / 44ADA) with nothing ITR-1 would refuse is ITR-4 (Sugam); with more (other gains, a third house, foreign assets ...) or receipts over the limit it is ITR-3. 2026-10-06: huf - ITR-1 is for individuals; an HUF without business files ITR-2 (with presumptive business, ITR-4).",
   "test_cases": [
     {
       "args": {
@@ -319,6 +804,59 @@
       "expect_value": {
         "form": "ITR-2",
         "why": "why_director"
+      }
+    },
+    {
+      "args": {
+        "total": 900000,
+        "business": true
+      },
+      "expect_value": {
+        "form": "ITR-4",
+        "why": "why_presumptive"
+      }
+    },
+    {
+      "args": {
+        "total": 900000,
+        "business": true,
+        "ltcg_112a": 300000
+      },
+      "expect_value": {
+        "form": "ITR-3",
+        "why": "why_biz_more"
+      }
+    },
+    {
+      "args": {
+        "total": 900000,
+        "business": true,
+        "over_limit": true
+      },
+      "expect_value": {
+        "form": "ITR-3",
+        "why": "why_biz_limit"
+      }
+    },
+    {
+      "args": {
+        "total": 900000,
+        "huf": true
+      },
+      "expect_value": {
+        "form": "ITR-2",
+        "why": "why_huf"
+      }
+    },
+    {
+      "args": {
+        "total": 900000,
+        "huf": true,
+        "business": true
+      },
+      "expect_value": {
+        "form": "ITR-4",
+        "why": "why_presumptive"
       }
     }
   ]

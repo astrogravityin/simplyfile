@@ -14,6 +14,12 @@
       "default": ""
     },
     {
+      "name": "email",
+      "type": "text",
+      "default": "",
+      "label": "the account's own email (a user name with @ must be it)"
+    },
+    {
       "name": "min_length",
       "type": "number",
       "default": 3
@@ -21,12 +27,12 @@
     {
       "name": "max_length",
       "type": "number",
-      "default": 30
+      "default": 64
     },
     {
       "name": "pattern",
       "type": "text",
-      "default": "^[a-z0-9][a-z0-9._-]*$"
+      "default": "^[a-z0-9][a-z0-9._@+-]*$"
     },
     {
       "name": "reserved",
@@ -62,12 +68,18 @@
     {
       "name": "msg_chars",
       "type": "text",
-      "default": "Use lower-case letters, digits and . _ - only, starting with a letter or digit."
+      "default": "Use lower-case letters, digits and . _ - @ + only, starting with a letter or digit."
     },
     {
       "name": "msg_reserved",
       "type": "text",
       "default": "That user name is kept for the portal. Choose another."
+    },
+    {
+      "name": "msg_email_own",
+      "type": "text",
+      "default": "A user name with @ must be your own email address.",
+      "label": "msg email own"
     }
   ],
   "expr": {
@@ -135,6 +147,28 @@
       },
       {
         "when": {
+          "op": "all",
+          "items": [
+            {
+              "op": "eq",
+              "left": {
+                "vop": "contains",
+                "text": "$username",
+                "part": "@"
+              },
+              "right": true
+            },
+            {
+              "op": "ne",
+              "left": "$username",
+              "right": "$email"
+            }
+          ]
+        },
+        "then": "$msg_email_own"
+      },
+      {
+        "when": {
           "op": "in_set",
           "value": "$username",
           "set": "$reserved"
@@ -145,9 +179,9 @@
     "else": ""
   },
   "returns": "text",
-  "version": 1,
+  "version": 2,
   "status": "published",
-  "description_nl": "The server lower-cases and trims first. Blank answer = the user name is fine.",
+  "description_nl": "The server lower-cases and trims first. Blank answer = the user name is fine. 2026-10-06 owner: an email may be the user name (@ and + allowed, up to 64) - but only the account's own email, so nobody takes another person's address as a name.",
   "test_cases": [
     {
       "args": {
@@ -165,7 +199,7 @@
       "args": {
         "username": "Ravi K"
       },
-      "expect_value": "Use lower-case letters, digits and . _ - only, starting with a letter or digit."
+      "expect_value": "Use lower-case letters, digits and . _ - @ + only, starting with a letter or digit."
     },
     {
       "args": {
@@ -178,6 +212,26 @@
         "username": ""
       },
       "expect_value": "Choose a user name."
+    },
+    {
+      "args": {
+        "username": "ideapro.studio@demo.example",
+        "email": "ideapro.studio@demo.example"
+      },
+      "expect_value": ""
+    },
+    {
+      "args": {
+        "username": "someone.else@demo.example",
+        "email": "ideapro.studio@demo.example"
+      },
+      "expect_value": "A user name with @ must be your own email address."
+    },
+    {
+      "args": {
+        "username": "ravi+tax"
+      },
+      "expect_value": ""
     }
   ],
   "weight_basis": "Platform access primitive, no business content. The knobs ARE the policy — edit them here, never in Python."

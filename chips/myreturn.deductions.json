@@ -108,6 +108,54 @@
       "type": "text",
       "default": "",
       "label": "80U: '' / normal / severe"
+    },
+    {
+      "name": "status",
+      "type": "text",
+      "default": "individual",
+      "label": "individual / huf"
+    },
+    {
+      "name": "dd_nature",
+      "type": "text",
+      "default": "",
+      "label": "80DD: 1 disability, 2 severe disability of a dependant (blank: none)"
+    },
+    {
+      "name": "c80ddb",
+      "type": "number",
+      "default": 0,
+      "label": "80DDB: spent on treating a specified disease"
+    },
+    {
+      "name": "ddb_senior",
+      "type": "boolean",
+      "default": false,
+      "label": "80DDB: the patient is a senior citizen"
+    },
+    {
+      "name": "c80ee",
+      "type": "number",
+      "default": 0,
+      "label": "80EE: interest paid"
+    },
+    {
+      "name": "c80eea",
+      "type": "number",
+      "default": 0,
+      "label": "80EEA: interest paid"
+    },
+    {
+      "name": "c80eeb",
+      "type": "number",
+      "default": 0,
+      "label": "80EEB: interest paid"
+    },
+    {
+      "name": "c80ggc",
+      "type": "number",
+      "default": 0,
+      "label": "80GGC: given to a political party, not in cash"
     }
   ],
   "expr": {
@@ -118,25 +166,51 @@
         "cases": [
           {
             "when": {
-              "op": "in_set",
-              "value": "80C",
-              "set": {
-                "vop": "get",
-                "value": {
-                  "chip": "myreturn.rates",
-                  "args": {}
+              "op": "all",
+              "items": [
+                {
+                  "op": "in_set",
+                  "value": "80C",
+                  "set": {
+                    "vop": "get",
+                    "value": {
+                      "chip": "myreturn.rates",
+                      "args": {}
+                    },
+                    "path": {
+                      "vop": "template",
+                      "text": "via_regimes.{r}",
+                      "values": {
+                        "vop": "record",
+                        "fields": {
+                          "r": "$regime"
+                        }
+                      }
+                    }
+                  }
                 },
-                "path": {
-                  "vop": "template",
-                  "text": "via_regimes.{r}",
-                  "values": {
-                    "vop": "record",
-                    "fields": {
-                      "r": "$regime"
+                {
+                  "op": "in_set",
+                  "value": "80C",
+                  "set": {
+                    "vop": "get",
+                    "value": {
+                      "chip": "myreturn.rates",
+                      "args": {}
+                    },
+                    "path": {
+                      "vop": "template",
+                      "text": "via_status.{s}",
+                      "values": {
+                        "vop": "record",
+                        "fields": {
+                          "s": "$status"
+                        }
+                      }
                     }
                   }
                 }
-              }
+              ]
             },
             "then": {
               "vop": "smallest",
@@ -168,25 +242,51 @@
         "cases": [
           {
             "when": {
-              "op": "in_set",
-              "value": "80CCD1B",
-              "set": {
-                "vop": "get",
-                "value": {
-                  "chip": "myreturn.rates",
-                  "args": {}
+              "op": "all",
+              "items": [
+                {
+                  "op": "in_set",
+                  "value": "80CCD1B",
+                  "set": {
+                    "vop": "get",
+                    "value": {
+                      "chip": "myreturn.rates",
+                      "args": {}
+                    },
+                    "path": {
+                      "vop": "template",
+                      "text": "via_regimes.{r}",
+                      "values": {
+                        "vop": "record",
+                        "fields": {
+                          "r": "$regime"
+                        }
+                      }
+                    }
+                  }
                 },
-                "path": {
-                  "vop": "template",
-                  "text": "via_regimes.{r}",
-                  "values": {
-                    "vop": "record",
-                    "fields": {
-                      "r": "$regime"
+                {
+                  "op": "in_set",
+                  "value": "80CCD1B",
+                  "set": {
+                    "vop": "get",
+                    "value": {
+                      "chip": "myreturn.rates",
+                      "args": {}
+                    },
+                    "path": {
+                      "vop": "template",
+                      "text": "via_status.{s}",
+                      "values": {
+                        "vop": "record",
+                        "fields": {
+                          "s": "$status"
+                        }
+                      }
                     }
                   }
                 }
-              }
+              ]
             },
             "then": {
               "vop": "smallest",
@@ -211,25 +311,51 @@
         "cases": [
           {
             "when": {
-              "op": "in_set",
-              "value": "80CCD2",
-              "set": {
-                "vop": "get",
-                "value": {
-                  "chip": "myreturn.rates",
-                  "args": {}
+              "op": "all",
+              "items": [
+                {
+                  "op": "in_set",
+                  "value": "80CCD2",
+                  "set": {
+                    "vop": "get",
+                    "value": {
+                      "chip": "myreturn.rates",
+                      "args": {}
+                    },
+                    "path": {
+                      "vop": "template",
+                      "text": "via_regimes.{r}",
+                      "values": {
+                        "vop": "record",
+                        "fields": {
+                          "r": "$regime"
+                        }
+                      }
+                    }
+                  }
                 },
-                "path": {
-                  "vop": "template",
-                  "text": "via_regimes.{r}",
-                  "values": {
-                    "vop": "record",
-                    "fields": {
-                      "r": "$regime"
+                {
+                  "op": "in_set",
+                  "value": "80CCD2",
+                  "set": {
+                    "vop": "get",
+                    "value": {
+                      "chip": "myreturn.rates",
+                      "args": {}
+                    },
+                    "path": {
+                      "vop": "template",
+                      "text": "via_status.{s}",
+                      "values": {
+                        "vop": "record",
+                        "fields": {
+                          "s": "$status"
+                        }
+                      }
                     }
                   }
                 }
-              }
+              ]
             },
             "then": {
               "vop": "smallest",
@@ -274,25 +400,51 @@
         "cases": [
           {
             "when": {
-              "op": "in_set",
-              "value": "80D",
-              "set": {
-                "vop": "get",
-                "value": {
-                  "chip": "myreturn.rates",
-                  "args": {}
+              "op": "all",
+              "items": [
+                {
+                  "op": "in_set",
+                  "value": "80D",
+                  "set": {
+                    "vop": "get",
+                    "value": {
+                      "chip": "myreturn.rates",
+                      "args": {}
+                    },
+                    "path": {
+                      "vop": "template",
+                      "text": "via_regimes.{r}",
+                      "values": {
+                        "vop": "record",
+                        "fields": {
+                          "r": "$regime"
+                        }
+                      }
+                    }
+                  }
                 },
-                "path": {
-                  "vop": "template",
-                  "text": "via_regimes.{r}",
-                  "values": {
-                    "vop": "record",
-                    "fields": {
-                      "r": "$regime"
+                {
+                  "op": "in_set",
+                  "value": "80D",
+                  "set": {
+                    "vop": "get",
+                    "value": {
+                      "chip": "myreturn.rates",
+                      "args": {}
+                    },
+                    "path": {
+                      "vop": "template",
+                      "text": "via_status.{s}",
+                      "values": {
+                        "vop": "record",
+                        "fields": {
+                          "s": "$status"
+                        }
+                      }
                     }
                   }
                 }
-              }
+              ]
             },
             "then": {
               "vop": "total",
@@ -392,25 +544,51 @@
         "cases": [
           {
             "when": {
-              "op": "in_set",
-              "value": "80E",
-              "set": {
-                "vop": "get",
-                "value": {
-                  "chip": "myreturn.rates",
-                  "args": {}
+              "op": "all",
+              "items": [
+                {
+                  "op": "in_set",
+                  "value": "80E",
+                  "set": {
+                    "vop": "get",
+                    "value": {
+                      "chip": "myreturn.rates",
+                      "args": {}
+                    },
+                    "path": {
+                      "vop": "template",
+                      "text": "via_regimes.{r}",
+                      "values": {
+                        "vop": "record",
+                        "fields": {
+                          "r": "$regime"
+                        }
+                      }
+                    }
+                  }
                 },
-                "path": {
-                  "vop": "template",
-                  "text": "via_regimes.{r}",
-                  "values": {
-                    "vop": "record",
-                    "fields": {
-                      "r": "$regime"
+                {
+                  "op": "in_set",
+                  "value": "80E",
+                  "set": {
+                    "vop": "get",
+                    "value": {
+                      "chip": "myreturn.rates",
+                      "args": {}
+                    },
+                    "path": {
+                      "vop": "template",
+                      "text": "via_status.{s}",
+                      "values": {
+                        "vop": "record",
+                        "fields": {
+                          "s": "$status"
+                        }
+                      }
                     }
                   }
                 }
-              }
+              ]
             },
             "then": "$c80e"
           }
@@ -422,25 +600,51 @@
         "cases": [
           {
             "when": {
-              "op": "in_set",
-              "value": "80G",
-              "set": {
-                "vop": "get",
-                "value": {
-                  "chip": "myreturn.rates",
-                  "args": {}
+              "op": "all",
+              "items": [
+                {
+                  "op": "in_set",
+                  "value": "80G",
+                  "set": {
+                    "vop": "get",
+                    "value": {
+                      "chip": "myreturn.rates",
+                      "args": {}
+                    },
+                    "path": {
+                      "vop": "template",
+                      "text": "via_regimes.{r}",
+                      "values": {
+                        "vop": "record",
+                        "fields": {
+                          "r": "$regime"
+                        }
+                      }
+                    }
+                  }
                 },
-                "path": {
-                  "vop": "template",
-                  "text": "via_regimes.{r}",
-                  "values": {
-                    "vop": "record",
-                    "fields": {
-                      "r": "$regime"
+                {
+                  "op": "in_set",
+                  "value": "80G",
+                  "set": {
+                    "vop": "get",
+                    "value": {
+                      "chip": "myreturn.rates",
+                      "args": {}
+                    },
+                    "path": {
+                      "vop": "template",
+                      "text": "via_status.{s}",
+                      "values": {
+                        "vop": "record",
+                        "fields": {
+                          "s": "$status"
+                        }
+                      }
                     }
                   }
                 }
-              }
+              ]
             },
             "then": "$c80g"
           }
@@ -452,25 +656,51 @@
         "cases": [
           {
             "when": {
-              "op": "in_set",
-              "value": "80TTA",
-              "set": {
-                "vop": "get",
-                "value": {
-                  "chip": "myreturn.rates",
-                  "args": {}
+              "op": "all",
+              "items": [
+                {
+                  "op": "in_set",
+                  "value": "80TTA",
+                  "set": {
+                    "vop": "get",
+                    "value": {
+                      "chip": "myreturn.rates",
+                      "args": {}
+                    },
+                    "path": {
+                      "vop": "template",
+                      "text": "via_regimes.{r}",
+                      "values": {
+                        "vop": "record",
+                        "fields": {
+                          "r": "$regime"
+                        }
+                      }
+                    }
+                  }
                 },
-                "path": {
-                  "vop": "template",
-                  "text": "via_regimes.{r}",
-                  "values": {
-                    "vop": "record",
-                    "fields": {
-                      "r": "$regime"
+                {
+                  "op": "in_set",
+                  "value": "80TTA",
+                  "set": {
+                    "vop": "get",
+                    "value": {
+                      "chip": "myreturn.rates",
+                      "args": {}
+                    },
+                    "path": {
+                      "vop": "template",
+                      "text": "via_status.{s}",
+                      "values": {
+                        "vop": "record",
+                        "fields": {
+                          "s": "$status"
+                        }
+                      }
                     }
                   }
                 }
-              }
+              ]
             },
             "then": {
               "vop": "choose",
@@ -508,25 +738,51 @@
         "cases": [
           {
             "when": {
-              "op": "in_set",
-              "value": "80TTB",
-              "set": {
-                "vop": "get",
-                "value": {
-                  "chip": "myreturn.rates",
-                  "args": {}
+              "op": "all",
+              "items": [
+                {
+                  "op": "in_set",
+                  "value": "80TTB",
+                  "set": {
+                    "vop": "get",
+                    "value": {
+                      "chip": "myreturn.rates",
+                      "args": {}
+                    },
+                    "path": {
+                      "vop": "template",
+                      "text": "via_regimes.{r}",
+                      "values": {
+                        "vop": "record",
+                        "fields": {
+                          "r": "$regime"
+                        }
+                      }
+                    }
+                  }
                 },
-                "path": {
-                  "vop": "template",
-                  "text": "via_regimes.{r}",
-                  "values": {
-                    "vop": "record",
-                    "fields": {
-                      "r": "$regime"
+                {
+                  "op": "in_set",
+                  "value": "80TTB",
+                  "set": {
+                    "vop": "get",
+                    "value": {
+                      "chip": "myreturn.rates",
+                      "args": {}
+                    },
+                    "path": {
+                      "vop": "template",
+                      "text": "via_status.{s}",
+                      "values": {
+                        "vop": "record",
+                        "fields": {
+                          "s": "$status"
+                        }
+                      }
                     }
                   }
                 }
-              }
+              ]
             },
             "then": {
               "vop": "choose",
@@ -570,25 +826,51 @@
         "cases": [
           {
             "when": {
-              "op": "in_set",
-              "value": "80U",
-              "set": {
-                "vop": "get",
-                "value": {
-                  "chip": "myreturn.rates",
-                  "args": {}
+              "op": "all",
+              "items": [
+                {
+                  "op": "in_set",
+                  "value": "80U",
+                  "set": {
+                    "vop": "get",
+                    "value": {
+                      "chip": "myreturn.rates",
+                      "args": {}
+                    },
+                    "path": {
+                      "vop": "template",
+                      "text": "via_regimes.{r}",
+                      "values": {
+                        "vop": "record",
+                        "fields": {
+                          "r": "$regime"
+                        }
+                      }
+                    }
+                  }
                 },
-                "path": {
-                  "vop": "template",
-                  "text": "via_regimes.{r}",
-                  "values": {
-                    "vop": "record",
-                    "fields": {
-                      "r": "$regime"
+                {
+                  "op": "in_set",
+                  "value": "80U",
+                  "set": {
+                    "vop": "get",
+                    "value": {
+                      "chip": "myreturn.rates",
+                      "args": {}
+                    },
+                    "path": {
+                      "vop": "template",
+                      "text": "via_status.{s}",
+                      "values": {
+                        "vop": "record",
+                        "fields": {
+                          "s": "$status"
+                        }
+                      }
                     }
                   }
                 }
-              }
+              ]
             },
             "then": {
               "vop": "choose",
@@ -649,25 +931,51 @@
                 "cases": [
                   {
                     "when": {
-                      "op": "in_set",
-                      "value": "80C",
-                      "set": {
-                        "vop": "get",
-                        "value": {
-                          "chip": "myreturn.rates",
-                          "args": {}
+                      "op": "all",
+                      "items": [
+                        {
+                          "op": "in_set",
+                          "value": "80C",
+                          "set": {
+                            "vop": "get",
+                            "value": {
+                              "chip": "myreturn.rates",
+                              "args": {}
+                            },
+                            "path": {
+                              "vop": "template",
+                              "text": "via_regimes.{r}",
+                              "values": {
+                                "vop": "record",
+                                "fields": {
+                                  "r": "$regime"
+                                }
+                              }
+                            }
+                          }
                         },
-                        "path": {
-                          "vop": "template",
-                          "text": "via_regimes.{r}",
-                          "values": {
-                            "vop": "record",
-                            "fields": {
-                              "r": "$regime"
+                        {
+                          "op": "in_set",
+                          "value": "80C",
+                          "set": {
+                            "vop": "get",
+                            "value": {
+                              "chip": "myreturn.rates",
+                              "args": {}
+                            },
+                            "path": {
+                              "vop": "template",
+                              "text": "via_status.{s}",
+                              "values": {
+                                "vop": "record",
+                                "fields": {
+                                  "s": "$status"
+                                }
+                              }
                             }
                           }
                         }
-                      }
+                      ]
                     },
                     "then": {
                       "vop": "smallest",
@@ -699,25 +1007,51 @@
                 "cases": [
                   {
                     "when": {
-                      "op": "in_set",
-                      "value": "80CCD1B",
-                      "set": {
-                        "vop": "get",
-                        "value": {
-                          "chip": "myreturn.rates",
-                          "args": {}
+                      "op": "all",
+                      "items": [
+                        {
+                          "op": "in_set",
+                          "value": "80CCD1B",
+                          "set": {
+                            "vop": "get",
+                            "value": {
+                              "chip": "myreturn.rates",
+                              "args": {}
+                            },
+                            "path": {
+                              "vop": "template",
+                              "text": "via_regimes.{r}",
+                              "values": {
+                                "vop": "record",
+                                "fields": {
+                                  "r": "$regime"
+                                }
+                              }
+                            }
+                          }
                         },
-                        "path": {
-                          "vop": "template",
-                          "text": "via_regimes.{r}",
-                          "values": {
-                            "vop": "record",
-                            "fields": {
-                              "r": "$regime"
+                        {
+                          "op": "in_set",
+                          "value": "80CCD1B",
+                          "set": {
+                            "vop": "get",
+                            "value": {
+                              "chip": "myreturn.rates",
+                              "args": {}
+                            },
+                            "path": {
+                              "vop": "template",
+                              "text": "via_status.{s}",
+                              "values": {
+                                "vop": "record",
+                                "fields": {
+                                  "s": "$status"
+                                }
+                              }
                             }
                           }
                         }
-                      }
+                      ]
                     },
                     "then": {
                       "vop": "smallest",
@@ -742,25 +1076,51 @@
                 "cases": [
                   {
                     "when": {
-                      "op": "in_set",
-                      "value": "80CCD2",
-                      "set": {
-                        "vop": "get",
-                        "value": {
-                          "chip": "myreturn.rates",
-                          "args": {}
+                      "op": "all",
+                      "items": [
+                        {
+                          "op": "in_set",
+                          "value": "80CCD2",
+                          "set": {
+                            "vop": "get",
+                            "value": {
+                              "chip": "myreturn.rates",
+                              "args": {}
+                            },
+                            "path": {
+                              "vop": "template",
+                              "text": "via_regimes.{r}",
+                              "values": {
+                                "vop": "record",
+                                "fields": {
+                                  "r": "$regime"
+                                }
+                              }
+                            }
+                          }
                         },
-                        "path": {
-                          "vop": "template",
-                          "text": "via_regimes.{r}",
-                          "values": {
-                            "vop": "record",
-                            "fields": {
-                              "r": "$regime"
+                        {
+                          "op": "in_set",
+                          "value": "80CCD2",
+                          "set": {
+                            "vop": "get",
+                            "value": {
+                              "chip": "myreturn.rates",
+                              "args": {}
+                            },
+                            "path": {
+                              "vop": "template",
+                              "text": "via_status.{s}",
+                              "values": {
+                                "vop": "record",
+                                "fields": {
+                                  "s": "$status"
+                                }
+                              }
                             }
                           }
                         }
-                      }
+                      ]
                     },
                     "then": {
                       "vop": "smallest",
@@ -805,25 +1165,51 @@
                 "cases": [
                   {
                     "when": {
-                      "op": "in_set",
-                      "value": "80D",
-                      "set": {
-                        "vop": "get",
-                        "value": {
-                          "chip": "myreturn.rates",
-                          "args": {}
+                      "op": "all",
+                      "items": [
+                        {
+                          "op": "in_set",
+                          "value": "80D",
+                          "set": {
+                            "vop": "get",
+                            "value": {
+                              "chip": "myreturn.rates",
+                              "args": {}
+                            },
+                            "path": {
+                              "vop": "template",
+                              "text": "via_regimes.{r}",
+                              "values": {
+                                "vop": "record",
+                                "fields": {
+                                  "r": "$regime"
+                                }
+                              }
+                            }
+                          }
                         },
-                        "path": {
-                          "vop": "template",
-                          "text": "via_regimes.{r}",
-                          "values": {
-                            "vop": "record",
-                            "fields": {
-                              "r": "$regime"
+                        {
+                          "op": "in_set",
+                          "value": "80D",
+                          "set": {
+                            "vop": "get",
+                            "value": {
+                              "chip": "myreturn.rates",
+                              "args": {}
+                            },
+                            "path": {
+                              "vop": "template",
+                              "text": "via_status.{s}",
+                              "values": {
+                                "vop": "record",
+                                "fields": {
+                                  "s": "$status"
+                                }
+                              }
                             }
                           }
                         }
-                      }
+                      ]
                     },
                     "then": {
                       "vop": "total",
@@ -923,25 +1309,51 @@
                 "cases": [
                   {
                     "when": {
-                      "op": "in_set",
-                      "value": "80E",
-                      "set": {
-                        "vop": "get",
-                        "value": {
-                          "chip": "myreturn.rates",
-                          "args": {}
+                      "op": "all",
+                      "items": [
+                        {
+                          "op": "in_set",
+                          "value": "80E",
+                          "set": {
+                            "vop": "get",
+                            "value": {
+                              "chip": "myreturn.rates",
+                              "args": {}
+                            },
+                            "path": {
+                              "vop": "template",
+                              "text": "via_regimes.{r}",
+                              "values": {
+                                "vop": "record",
+                                "fields": {
+                                  "r": "$regime"
+                                }
+                              }
+                            }
+                          }
                         },
-                        "path": {
-                          "vop": "template",
-                          "text": "via_regimes.{r}",
-                          "values": {
-                            "vop": "record",
-                            "fields": {
-                              "r": "$regime"
+                        {
+                          "op": "in_set",
+                          "value": "80E",
+                          "set": {
+                            "vop": "get",
+                            "value": {
+                              "chip": "myreturn.rates",
+                              "args": {}
+                            },
+                            "path": {
+                              "vop": "template",
+                              "text": "via_status.{s}",
+                              "values": {
+                                "vop": "record",
+                                "fields": {
+                                  "s": "$status"
+                                }
+                              }
                             }
                           }
                         }
-                      }
+                      ]
                     },
                     "then": "$c80e"
                   }
@@ -953,25 +1365,51 @@
                 "cases": [
                   {
                     "when": {
-                      "op": "in_set",
-                      "value": "80G",
-                      "set": {
-                        "vop": "get",
-                        "value": {
-                          "chip": "myreturn.rates",
-                          "args": {}
+                      "op": "all",
+                      "items": [
+                        {
+                          "op": "in_set",
+                          "value": "80G",
+                          "set": {
+                            "vop": "get",
+                            "value": {
+                              "chip": "myreturn.rates",
+                              "args": {}
+                            },
+                            "path": {
+                              "vop": "template",
+                              "text": "via_regimes.{r}",
+                              "values": {
+                                "vop": "record",
+                                "fields": {
+                                  "r": "$regime"
+                                }
+                              }
+                            }
+                          }
                         },
-                        "path": {
-                          "vop": "template",
-                          "text": "via_regimes.{r}",
-                          "values": {
-                            "vop": "record",
-                            "fields": {
-                              "r": "$regime"
+                        {
+                          "op": "in_set",
+                          "value": "80G",
+                          "set": {
+                            "vop": "get",
+                            "value": {
+                              "chip": "myreturn.rates",
+                              "args": {}
+                            },
+                            "path": {
+                              "vop": "template",
+                              "text": "via_status.{s}",
+                              "values": {
+                                "vop": "record",
+                                "fields": {
+                                  "s": "$status"
+                                }
+                              }
                             }
                           }
                         }
-                      }
+                      ]
                     },
                     "then": "$c80g"
                   }
@@ -983,25 +1421,51 @@
                 "cases": [
                   {
                     "when": {
-                      "op": "in_set",
-                      "value": "80TTA",
-                      "set": {
-                        "vop": "get",
-                        "value": {
-                          "chip": "myreturn.rates",
-                          "args": {}
+                      "op": "all",
+                      "items": [
+                        {
+                          "op": "in_set",
+                          "value": "80TTA",
+                          "set": {
+                            "vop": "get",
+                            "value": {
+                              "chip": "myreturn.rates",
+                              "args": {}
+                            },
+                            "path": {
+                              "vop": "template",
+                              "text": "via_regimes.{r}",
+                              "values": {
+                                "vop": "record",
+                                "fields": {
+                                  "r": "$regime"
+                                }
+                              }
+                            }
+                          }
                         },
-                        "path": {
-                          "vop": "template",
-                          "text": "via_regimes.{r}",
-                          "values": {
-                            "vop": "record",
-                            "fields": {
-                              "r": "$regime"
+                        {
+                          "op": "in_set",
+                          "value": "80TTA",
+                          "set": {
+                            "vop": "get",
+                            "value": {
+                              "chip": "myreturn.rates",
+                              "args": {}
+                            },
+                            "path": {
+                              "vop": "template",
+                              "text": "via_status.{s}",
+                              "values": {
+                                "vop": "record",
+                                "fields": {
+                                  "s": "$status"
+                                }
+                              }
                             }
                           }
                         }
-                      }
+                      ]
                     },
                     "then": {
                       "vop": "choose",
@@ -1039,25 +1503,51 @@
                 "cases": [
                   {
                     "when": {
-                      "op": "in_set",
-                      "value": "80TTB",
-                      "set": {
-                        "vop": "get",
-                        "value": {
-                          "chip": "myreturn.rates",
-                          "args": {}
+                      "op": "all",
+                      "items": [
+                        {
+                          "op": "in_set",
+                          "value": "80TTB",
+                          "set": {
+                            "vop": "get",
+                            "value": {
+                              "chip": "myreturn.rates",
+                              "args": {}
+                            },
+                            "path": {
+                              "vop": "template",
+                              "text": "via_regimes.{r}",
+                              "values": {
+                                "vop": "record",
+                                "fields": {
+                                  "r": "$regime"
+                                }
+                              }
+                            }
+                          }
                         },
-                        "path": {
-                          "vop": "template",
-                          "text": "via_regimes.{r}",
-                          "values": {
-                            "vop": "record",
-                            "fields": {
-                              "r": "$regime"
+                        {
+                          "op": "in_set",
+                          "value": "80TTB",
+                          "set": {
+                            "vop": "get",
+                            "value": {
+                              "chip": "myreturn.rates",
+                              "args": {}
+                            },
+                            "path": {
+                              "vop": "template",
+                              "text": "via_status.{s}",
+                              "values": {
+                                "vop": "record",
+                                "fields": {
+                                  "s": "$status"
+                                }
+                              }
                             }
                           }
                         }
-                      }
+                      ]
                     },
                     "then": {
                       "vop": "choose",
@@ -1101,25 +1591,51 @@
                 "cases": [
                   {
                     "when": {
-                      "op": "in_set",
-                      "value": "80U",
-                      "set": {
-                        "vop": "get",
-                        "value": {
-                          "chip": "myreturn.rates",
-                          "args": {}
+                      "op": "all",
+                      "items": [
+                        {
+                          "op": "in_set",
+                          "value": "80U",
+                          "set": {
+                            "vop": "get",
+                            "value": {
+                              "chip": "myreturn.rates",
+                              "args": {}
+                            },
+                            "path": {
+                              "vop": "template",
+                              "text": "via_regimes.{r}",
+                              "values": {
+                                "vop": "record",
+                                "fields": {
+                                  "r": "$regime"
+                                }
+                              }
+                            }
+                          }
                         },
-                        "path": {
-                          "vop": "template",
-                          "text": "via_regimes.{r}",
-                          "values": {
-                            "vop": "record",
-                            "fields": {
-                              "r": "$regime"
+                        {
+                          "op": "in_set",
+                          "value": "80U",
+                          "set": {
+                            "vop": "get",
+                            "value": {
+                              "chip": "myreturn.rates",
+                              "args": {}
+                            },
+                            "path": {
+                              "vop": "template",
+                              "text": "via_status.{s}",
+                              "values": {
+                                "vop": "record",
+                                "fields": {
+                                  "s": "$status"
+                                }
+                              }
                             }
                           }
                         }
-                      }
+                      ]
                     },
                     "then": {
                       "vop": "choose",
@@ -1168,6 +1684,446 @@
                   }
                 ],
                 "else": 0
+              },
+              {
+                "vop": "choose",
+                "cases": [
+                  {
+                    "when": {
+                      "op": "all",
+                      "items": [
+                        {
+                          "op": "all",
+                          "items": [
+                            {
+                              "op": "in_set",
+                              "value": "80DD",
+                              "set": {
+                                "vop": "get",
+                                "value": {
+                                  "chip": "myreturn.rates",
+                                  "args": {}
+                                },
+                                "path": {
+                                  "vop": "template",
+                                  "text": "via_regimes.{x}",
+                                  "values": {
+                                    "vop": "record",
+                                    "fields": {
+                                      "x": "$regime"
+                                    }
+                                  }
+                                }
+                              }
+                            },
+                            {
+                              "op": "in_set",
+                              "value": "80DD",
+                              "set": {
+                                "vop": "get",
+                                "value": {
+                                  "chip": "myreturn.rates",
+                                  "args": {}
+                                },
+                                "path": {
+                                  "vop": "template",
+                                  "text": "via_status.{x}",
+                                  "values": {
+                                    "vop": "record",
+                                    "fields": {
+                                      "x": "$status"
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "op": "in_set",
+                          "value": "$dd_nature",
+                          "set": [
+                            "1",
+                            "2"
+                          ]
+                        }
+                      ]
+                    },
+                    "then": {
+                      "vop": "get",
+                      "value": {
+                        "vop": "get",
+                        "value": {
+                          "chip": "myreturn.rates",
+                          "args": {}
+                        },
+                        "path": "cap_80dd"
+                      },
+                      "path": "$dd_nature"
+                    }
+                  }
+                ],
+                "else": 0
+              },
+              {
+                "vop": "choose",
+                "cases": [
+                  {
+                    "when": {
+                      "op": "all",
+                      "items": [
+                        {
+                          "op": "in_set",
+                          "value": "80DDB",
+                          "set": {
+                            "vop": "get",
+                            "value": {
+                              "chip": "myreturn.rates",
+                              "args": {}
+                            },
+                            "path": {
+                              "vop": "template",
+                              "text": "via_regimes.{x}",
+                              "values": {
+                                "vop": "record",
+                                "fields": {
+                                  "x": "$regime"
+                                }
+                              }
+                            }
+                          }
+                        },
+                        {
+                          "op": "in_set",
+                          "value": "80DDB",
+                          "set": {
+                            "vop": "get",
+                            "value": {
+                              "chip": "myreturn.rates",
+                              "args": {}
+                            },
+                            "path": {
+                              "vop": "template",
+                              "text": "via_status.{x}",
+                              "values": {
+                                "vop": "record",
+                                "fields": {
+                                  "x": "$status"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    "then": {
+                      "vop": "smallest",
+                      "values": [
+                        "$c80ddb",
+                        {
+                          "vop": "choose",
+                          "cases": [
+                            {
+                              "when": {
+                                "op": "eq",
+                                "left": "$ddb_senior",
+                                "right": true
+                              },
+                              "then": {
+                                "vop": "get",
+                                "value": {
+                                  "vop": "get",
+                                  "value": {
+                                    "chip": "myreturn.rates",
+                                    "args": {}
+                                  },
+                                  "path": "cap_80ddb"
+                                },
+                                "path": "senior"
+                              }
+                            }
+                          ],
+                          "else": {
+                            "vop": "get",
+                            "value": {
+                              "vop": "get",
+                              "value": {
+                                "chip": "myreturn.rates",
+                                "args": {}
+                              },
+                              "path": "cap_80ddb"
+                            },
+                            "path": "below60"
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ],
+                "else": 0
+              },
+              {
+                "vop": "choose",
+                "cases": [
+                  {
+                    "when": {
+                      "op": "all",
+                      "items": [
+                        {
+                          "op": "in_set",
+                          "value": "80EE",
+                          "set": {
+                            "vop": "get",
+                            "value": {
+                              "chip": "myreturn.rates",
+                              "args": {}
+                            },
+                            "path": {
+                              "vop": "template",
+                              "text": "via_regimes.{x}",
+                              "values": {
+                                "vop": "record",
+                                "fields": {
+                                  "x": "$regime"
+                                }
+                              }
+                            }
+                          }
+                        },
+                        {
+                          "op": "in_set",
+                          "value": "80EE",
+                          "set": {
+                            "vop": "get",
+                            "value": {
+                              "chip": "myreturn.rates",
+                              "args": {}
+                            },
+                            "path": {
+                              "vop": "template",
+                              "text": "via_status.{x}",
+                              "values": {
+                                "vop": "record",
+                                "fields": {
+                                  "x": "$status"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    "then": {
+                      "vop": "smallest",
+                      "values": [
+                        "$c80ee",
+                        {
+                          "vop": "get",
+                          "value": {
+                            "chip": "myreturn.rates",
+                            "args": {}
+                          },
+                          "path": "cap_80ee"
+                        }
+                      ]
+                    }
+                  }
+                ],
+                "else": 0
+              },
+              {
+                "vop": "choose",
+                "cases": [
+                  {
+                    "when": {
+                      "op": "all",
+                      "items": [
+                        {
+                          "op": "in_set",
+                          "value": "80EEA",
+                          "set": {
+                            "vop": "get",
+                            "value": {
+                              "chip": "myreturn.rates",
+                              "args": {}
+                            },
+                            "path": {
+                              "vop": "template",
+                              "text": "via_regimes.{x}",
+                              "values": {
+                                "vop": "record",
+                                "fields": {
+                                  "x": "$regime"
+                                }
+                              }
+                            }
+                          }
+                        },
+                        {
+                          "op": "in_set",
+                          "value": "80EEA",
+                          "set": {
+                            "vop": "get",
+                            "value": {
+                              "chip": "myreturn.rates",
+                              "args": {}
+                            },
+                            "path": {
+                              "vop": "template",
+                              "text": "via_status.{x}",
+                              "values": {
+                                "vop": "record",
+                                "fields": {
+                                  "x": "$status"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    "then": {
+                      "vop": "smallest",
+                      "values": [
+                        "$c80eea",
+                        {
+                          "vop": "get",
+                          "value": {
+                            "chip": "myreturn.rates",
+                            "args": {}
+                          },
+                          "path": "cap_80eea"
+                        }
+                      ]
+                    }
+                  }
+                ],
+                "else": 0
+              },
+              {
+                "vop": "choose",
+                "cases": [
+                  {
+                    "when": {
+                      "op": "all",
+                      "items": [
+                        {
+                          "op": "in_set",
+                          "value": "80EEB",
+                          "set": {
+                            "vop": "get",
+                            "value": {
+                              "chip": "myreturn.rates",
+                              "args": {}
+                            },
+                            "path": {
+                              "vop": "template",
+                              "text": "via_regimes.{x}",
+                              "values": {
+                                "vop": "record",
+                                "fields": {
+                                  "x": "$regime"
+                                }
+                              }
+                            }
+                          }
+                        },
+                        {
+                          "op": "in_set",
+                          "value": "80EEB",
+                          "set": {
+                            "vop": "get",
+                            "value": {
+                              "chip": "myreturn.rates",
+                              "args": {}
+                            },
+                            "path": {
+                              "vop": "template",
+                              "text": "via_status.{x}",
+                              "values": {
+                                "vop": "record",
+                                "fields": {
+                                  "x": "$status"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    "then": {
+                      "vop": "smallest",
+                      "values": [
+                        "$c80eeb",
+                        {
+                          "vop": "get",
+                          "value": {
+                            "chip": "myreturn.rates",
+                            "args": {}
+                          },
+                          "path": "cap_80eeb"
+                        }
+                      ]
+                    }
+                  }
+                ],
+                "else": 0
+              },
+              {
+                "vop": "choose",
+                "cases": [
+                  {
+                    "when": {
+                      "op": "all",
+                      "items": [
+                        {
+                          "op": "in_set",
+                          "value": "80GGC",
+                          "set": {
+                            "vop": "get",
+                            "value": {
+                              "chip": "myreturn.rates",
+                              "args": {}
+                            },
+                            "path": {
+                              "vop": "template",
+                              "text": "via_regimes.{x}",
+                              "values": {
+                                "vop": "record",
+                                "fields": {
+                                  "x": "$regime"
+                                }
+                              }
+                            }
+                          }
+                        },
+                        {
+                          "op": "in_set",
+                          "value": "80GGC",
+                          "set": {
+                            "vop": "get",
+                            "value": {
+                              "chip": "myreturn.rates",
+                              "args": {}
+                            },
+                            "path": {
+                              "vop": "template",
+                              "text": "via_status.{x}",
+                              "values": {
+                                "vop": "record",
+                                "fields": {
+                                  "x": "$status"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    "then": "$c80ggc"
+                  }
+                ],
+                "else": 0
               }
             ]
           },
@@ -1185,25 +2141,51 @@
         "cases": [
           {
             "when": {
-              "op": "in_set",
-              "value": "80D",
-              "set": {
-                "vop": "get",
-                "value": {
-                  "chip": "myreturn.rates",
-                  "args": {}
+              "op": "all",
+              "items": [
+                {
+                  "op": "in_set",
+                  "value": "80D",
+                  "set": {
+                    "vop": "get",
+                    "value": {
+                      "chip": "myreturn.rates",
+                      "args": {}
+                    },
+                    "path": {
+                      "vop": "template",
+                      "text": "via_regimes.{r}",
+                      "values": {
+                        "vop": "record",
+                        "fields": {
+                          "r": "$regime"
+                        }
+                      }
+                    }
+                  }
                 },
-                "path": {
-                  "vop": "template",
-                  "text": "via_regimes.{r}",
-                  "values": {
-                    "vop": "record",
-                    "fields": {
-                      "r": "$regime"
+                {
+                  "op": "in_set",
+                  "value": "80D",
+                  "set": {
+                    "vop": "get",
+                    "value": {
+                      "chip": "myreturn.rates",
+                      "args": {}
+                    },
+                    "path": {
+                      "vop": "template",
+                      "text": "via_status.{s}",
+                      "values": {
+                        "vop": "record",
+                        "fields": {
+                          "s": "$status"
+                        }
+                      }
                     }
                   }
                 }
-              }
+              ]
             },
             "then": {
               "vop": "smallest",
@@ -1256,25 +2238,51 @@
         "cases": [
           {
             "when": {
-              "op": "in_set",
-              "value": "80D",
-              "set": {
-                "vop": "get",
-                "value": {
-                  "chip": "myreturn.rates",
-                  "args": {}
+              "op": "all",
+              "items": [
+                {
+                  "op": "in_set",
+                  "value": "80D",
+                  "set": {
+                    "vop": "get",
+                    "value": {
+                      "chip": "myreturn.rates",
+                      "args": {}
+                    },
+                    "path": {
+                      "vop": "template",
+                      "text": "via_regimes.{r}",
+                      "values": {
+                        "vop": "record",
+                        "fields": {
+                          "r": "$regime"
+                        }
+                      }
+                    }
+                  }
                 },
-                "path": {
-                  "vop": "template",
-                  "text": "via_regimes.{r}",
-                  "values": {
-                    "vop": "record",
-                    "fields": {
-                      "r": "$regime"
+                {
+                  "op": "in_set",
+                  "value": "80D",
+                  "set": {
+                    "vop": "get",
+                    "value": {
+                      "chip": "myreturn.rates",
+                      "args": {}
+                    },
+                    "path": {
+                      "vop": "template",
+                      "text": "via_status.{s}",
+                      "values": {
+                        "vop": "record",
+                        "fields": {
+                          "s": "$status"
+                        }
+                      }
                     }
                   }
                 }
-              }
+              ]
             },
             "then": {
               "vop": "smallest",
@@ -1321,13 +2329,453 @@
           }
         ],
         "else": 0
+      },
+      "d80DD": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "all",
+                  "items": [
+                    {
+                      "op": "in_set",
+                      "value": "80DD",
+                      "set": {
+                        "vop": "get",
+                        "value": {
+                          "chip": "myreturn.rates",
+                          "args": {}
+                        },
+                        "path": {
+                          "vop": "template",
+                          "text": "via_regimes.{x}",
+                          "values": {
+                            "vop": "record",
+                            "fields": {
+                              "x": "$regime"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "op": "in_set",
+                      "value": "80DD",
+                      "set": {
+                        "vop": "get",
+                        "value": {
+                          "chip": "myreturn.rates",
+                          "args": {}
+                        },
+                        "path": {
+                          "vop": "template",
+                          "text": "via_status.{x}",
+                          "values": {
+                            "vop": "record",
+                            "fields": {
+                              "x": "$status"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "op": "in_set",
+                  "value": "$dd_nature",
+                  "set": [
+                    "1",
+                    "2"
+                  ]
+                }
+              ]
+            },
+            "then": {
+              "vop": "get",
+              "value": {
+                "vop": "get",
+                "value": {
+                  "chip": "myreturn.rates",
+                  "args": {}
+                },
+                "path": "cap_80dd"
+              },
+              "path": "$dd_nature"
+            }
+          }
+        ],
+        "else": 0
+      },
+      "d80DDB": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "in_set",
+                  "value": "80DDB",
+                  "set": {
+                    "vop": "get",
+                    "value": {
+                      "chip": "myreturn.rates",
+                      "args": {}
+                    },
+                    "path": {
+                      "vop": "template",
+                      "text": "via_regimes.{x}",
+                      "values": {
+                        "vop": "record",
+                        "fields": {
+                          "x": "$regime"
+                        }
+                      }
+                    }
+                  }
+                },
+                {
+                  "op": "in_set",
+                  "value": "80DDB",
+                  "set": {
+                    "vop": "get",
+                    "value": {
+                      "chip": "myreturn.rates",
+                      "args": {}
+                    },
+                    "path": {
+                      "vop": "template",
+                      "text": "via_status.{x}",
+                      "values": {
+                        "vop": "record",
+                        "fields": {
+                          "x": "$status"
+                        }
+                      }
+                    }
+                  }
+                }
+              ]
+            },
+            "then": {
+              "vop": "smallest",
+              "values": [
+                "$c80ddb",
+                {
+                  "vop": "choose",
+                  "cases": [
+                    {
+                      "when": {
+                        "op": "eq",
+                        "left": "$ddb_senior",
+                        "right": true
+                      },
+                      "then": {
+                        "vop": "get",
+                        "value": {
+                          "vop": "get",
+                          "value": {
+                            "chip": "myreturn.rates",
+                            "args": {}
+                          },
+                          "path": "cap_80ddb"
+                        },
+                        "path": "senior"
+                      }
+                    }
+                  ],
+                  "else": {
+                    "vop": "get",
+                    "value": {
+                      "vop": "get",
+                      "value": {
+                        "chip": "myreturn.rates",
+                        "args": {}
+                      },
+                      "path": "cap_80ddb"
+                    },
+                    "path": "below60"
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "else": 0
+      },
+      "d80EE": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "in_set",
+                  "value": "80EE",
+                  "set": {
+                    "vop": "get",
+                    "value": {
+                      "chip": "myreturn.rates",
+                      "args": {}
+                    },
+                    "path": {
+                      "vop": "template",
+                      "text": "via_regimes.{x}",
+                      "values": {
+                        "vop": "record",
+                        "fields": {
+                          "x": "$regime"
+                        }
+                      }
+                    }
+                  }
+                },
+                {
+                  "op": "in_set",
+                  "value": "80EE",
+                  "set": {
+                    "vop": "get",
+                    "value": {
+                      "chip": "myreturn.rates",
+                      "args": {}
+                    },
+                    "path": {
+                      "vop": "template",
+                      "text": "via_status.{x}",
+                      "values": {
+                        "vop": "record",
+                        "fields": {
+                          "x": "$status"
+                        }
+                      }
+                    }
+                  }
+                }
+              ]
+            },
+            "then": {
+              "vop": "smallest",
+              "values": [
+                "$c80ee",
+                {
+                  "vop": "get",
+                  "value": {
+                    "chip": "myreturn.rates",
+                    "args": {}
+                  },
+                  "path": "cap_80ee"
+                }
+              ]
+            }
+          }
+        ],
+        "else": 0
+      },
+      "d80EEA": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "in_set",
+                  "value": "80EEA",
+                  "set": {
+                    "vop": "get",
+                    "value": {
+                      "chip": "myreturn.rates",
+                      "args": {}
+                    },
+                    "path": {
+                      "vop": "template",
+                      "text": "via_regimes.{x}",
+                      "values": {
+                        "vop": "record",
+                        "fields": {
+                          "x": "$regime"
+                        }
+                      }
+                    }
+                  }
+                },
+                {
+                  "op": "in_set",
+                  "value": "80EEA",
+                  "set": {
+                    "vop": "get",
+                    "value": {
+                      "chip": "myreturn.rates",
+                      "args": {}
+                    },
+                    "path": {
+                      "vop": "template",
+                      "text": "via_status.{x}",
+                      "values": {
+                        "vop": "record",
+                        "fields": {
+                          "x": "$status"
+                        }
+                      }
+                    }
+                  }
+                }
+              ]
+            },
+            "then": {
+              "vop": "smallest",
+              "values": [
+                "$c80eea",
+                {
+                  "vop": "get",
+                  "value": {
+                    "chip": "myreturn.rates",
+                    "args": {}
+                  },
+                  "path": "cap_80eea"
+                }
+              ]
+            }
+          }
+        ],
+        "else": 0
+      },
+      "d80EEB": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "in_set",
+                  "value": "80EEB",
+                  "set": {
+                    "vop": "get",
+                    "value": {
+                      "chip": "myreturn.rates",
+                      "args": {}
+                    },
+                    "path": {
+                      "vop": "template",
+                      "text": "via_regimes.{x}",
+                      "values": {
+                        "vop": "record",
+                        "fields": {
+                          "x": "$regime"
+                        }
+                      }
+                    }
+                  }
+                },
+                {
+                  "op": "in_set",
+                  "value": "80EEB",
+                  "set": {
+                    "vop": "get",
+                    "value": {
+                      "chip": "myreturn.rates",
+                      "args": {}
+                    },
+                    "path": {
+                      "vop": "template",
+                      "text": "via_status.{x}",
+                      "values": {
+                        "vop": "record",
+                        "fields": {
+                          "x": "$status"
+                        }
+                      }
+                    }
+                  }
+                }
+              ]
+            },
+            "then": {
+              "vop": "smallest",
+              "values": [
+                "$c80eeb",
+                {
+                  "vop": "get",
+                  "value": {
+                    "chip": "myreturn.rates",
+                    "args": {}
+                  },
+                  "path": "cap_80eeb"
+                }
+              ]
+            }
+          }
+        ],
+        "else": 0
+      },
+      "d80GGC": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "in_set",
+                  "value": "80GGC",
+                  "set": {
+                    "vop": "get",
+                    "value": {
+                      "chip": "myreturn.rates",
+                      "args": {}
+                    },
+                    "path": {
+                      "vop": "template",
+                      "text": "via_regimes.{x}",
+                      "values": {
+                        "vop": "record",
+                        "fields": {
+                          "x": "$regime"
+                        }
+                      }
+                    }
+                  }
+                },
+                {
+                  "op": "in_set",
+                  "value": "80GGC",
+                  "set": {
+                    "vop": "get",
+                    "value": {
+                      "chip": "myreturn.rates",
+                      "args": {}
+                    },
+                    "path": {
+                      "vop": "template",
+                      "text": "via_status.{x}",
+                      "values": {
+                        "vop": "record",
+                        "fields": {
+                          "x": "$status"
+                        }
+                      }
+                    }
+                  }
+                }
+              ]
+            },
+            "then": "$c80ggc"
+          }
+        ],
+        "else": 0
       }
     }
   },
   "returns": "record",
-  "version": 2,
+  "version": 4,
   "status": "published",
-  "description_nl": "2026-10-06: each claim to its own cap: 80C+80CCC+80CCD(1) together 1.5 lakh; 80CCD(1B) 50,000; 80CCD(2) 14% (new) / 10% (old) of basic+DA; 80D 25,000 each for self and parents (50,000 if 60+); 80TTA 10,000 (below 60) or 80TTB 50,000 (60+); 80U 75,000 / 1.25 lakh. The new regime allows only 80CCD(2). Never more than the gross total income at normal rates. 80G is the qualifying amount as worked out. d80D_self / d80D_parents are the two parts of d80D (Schedule80D shows them apart).",
+  "description_nl": "2026-10-06: each claim to its own cap: 80C+80CCC+80CCD(1) together 1.5 lakh; 80CCD(1B) 50,000; 80CCD(2) 14% (new) / 10% (old) of basic+DA; 80D 25,000 each for self and parents (50,000 if 60+); 80TTA 10,000 (below 60) or 80TTB 50,000 (60+); 80U 75,000 / 1.25 lakh. The new regime allows only 80CCD(2). Never more than the gross total income at normal rates. 80G is the qualifying amount as worked out. d80D_self / d80D_parents are the two parts of d80D (Schedule80D shows them apart). 2026-10-06: status - each section is allowed by the regime AND by the status (chip myreturn.rates via_status): an HUF gets no 80CCD(1B), 80E ... 2026-10-06: 80DD (a fixed sum by the dependant's disability), 80DDB (spent, up to the cap by age), 80EE / 80EEA / 80EEB (interest, up to each cap), 80GGC (non-cash gifts to a party) - all gated by regime and status like the rest.",
   "test_cases": [
     {
       "args": {
@@ -1345,7 +2793,7 @@
         "d80C": 150000,
         "d80CCD1B": 50000,
         "d80CCD2": 0,
-        "d80D": 65000,
+        "d80D": 65000.0,
         "d80E": 0,
         "d80G": 0,
         "d80TTA": 10000,
@@ -1353,7 +2801,13 @@
         "d80U": 0,
         "total": 275000,
         "d80D_self": 25000,
-        "d80D_parents": 40000
+        "d80D_parents": 40000,
+        "d80DD": 0,
+        "d80DDB": 0,
+        "d80EE": 0,
+        "d80EEA": 0,
+        "d80EEB": 0,
+        "d80GGC": 0
       }
     },
     {
@@ -1376,7 +2830,13 @@
         "d80U": 0,
         "total": 84000,
         "d80D_self": 0,
-        "d80D_parents": 0
+        "d80D_parents": 0,
+        "d80DD": 0,
+        "d80DDB": 0,
+        "d80EE": 0,
+        "d80EEA": 0,
+        "d80EEB": 0,
+        "d80GGC": 0
       }
     },
     {
@@ -1392,7 +2852,7 @@
         "d80C": 0,
         "d80CCD1B": 0,
         "d80CCD2": 0,
-        "d80D": 50000,
+        "d80D": 50000.0,
         "d80E": 0,
         "d80G": 0,
         "d80TTA": 0,
@@ -1400,7 +2860,132 @@
         "d80U": 0,
         "total": 100000,
         "d80D_self": 50000,
-        "d80D_parents": 0
+        "d80D_parents": 0,
+        "d80DD": 0,
+        "d80DDB": 0,
+        "d80EE": 0,
+        "d80EEA": 0,
+        "d80EEB": 0,
+        "d80GGC": 0
+      }
+    },
+    {
+      "args": {
+        "regime": "old",
+        "status": "huf",
+        "gross_total": 1000000,
+        "c80c": 150000,
+        "c80e": 40000,
+        "c80ccd1b": 50000
+      },
+      "expect_value": {
+        "d80C": 150000,
+        "d80CCD1B": 0,
+        "d80CCD2": 0,
+        "d80D": 0.0,
+        "d80E": 0,
+        "d80G": 0,
+        "d80TTA": 0,
+        "d80TTB": 0,
+        "d80U": 0,
+        "total": 150000,
+        "d80D_self": 0,
+        "d80D_parents": 0,
+        "d80DD": 0,
+        "d80DDB": 0,
+        "d80EE": 0,
+        "d80EEA": 0,
+        "d80EEB": 0,
+        "d80GGC": 0
+      }
+    },
+    {
+      "args": {
+        "regime": "old",
+        "gross_total": 2000000,
+        "dd_nature": "2",
+        "c80ddb": 80000,
+        "ddb_senior": true,
+        "c80eea": 200000,
+        "c80eeb": 90000,
+        "c80ggc": 25000
+      },
+      "expect_value": {
+        "d80C": 0,
+        "d80CCD1B": 0,
+        "d80CCD2": 0,
+        "d80D": 0.0,
+        "d80E": 0,
+        "d80G": 0,
+        "d80TTA": 0,
+        "d80TTB": 0,
+        "d80U": 0,
+        "total": 470000,
+        "d80D_self": 0,
+        "d80D_parents": 0,
+        "d80DD": 125000,
+        "d80DDB": 80000,
+        "d80EE": 0,
+        "d80EEA": 150000,
+        "d80EEB": 90000,
+        "d80GGC": 25000
+      }
+    },
+    {
+      "args": {
+        "regime": "new",
+        "gross_total": 2000000,
+        "dd_nature": "1",
+        "c80ggc": 25000
+      },
+      "expect_value": {
+        "d80C": 0,
+        "d80CCD1B": 0,
+        "d80CCD2": 0,
+        "d80D": 0,
+        "d80E": 0,
+        "d80G": 0,
+        "d80TTA": 0,
+        "d80TTB": 0,
+        "d80U": 0,
+        "total": 0,
+        "d80D_self": 0,
+        "d80D_parents": 0,
+        "d80DD": 0,
+        "d80DDB": 0,
+        "d80EE": 0,
+        "d80EEA": 0,
+        "d80EEB": 0,
+        "d80GGC": 0
+      }
+    },
+    {
+      "args": {
+        "regime": "old",
+        "status": "huf",
+        "gross_total": 2000000,
+        "dd_nature": "1",
+        "c80eea": 100000
+      },
+      "expect_value": {
+        "d80C": 0,
+        "d80CCD1B": 0,
+        "d80CCD2": 0,
+        "d80D": 0.0,
+        "d80E": 0,
+        "d80G": 0,
+        "d80TTA": 0,
+        "d80TTB": 0,
+        "d80U": 0,
+        "total": 75000,
+        "d80D_self": 0,
+        "d80D_parents": 0,
+        "d80DD": 75000,
+        "d80DDB": 0,
+        "d80EE": 0,
+        "d80EEA": 0,
+        "d80EEB": 0,
+        "d80GGC": 0
       }
     }
   ]

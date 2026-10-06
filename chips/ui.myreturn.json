@@ -130,7 +130,7 @@
     {
       "name": "drop_hint",
       "type": "text",
-      "default": "Pre-filled JSON · AIS (JSON, CSV or PDF) · Form 16 (PDF) · 26AS (text or PDF)",
+      "default": "Pre-filled JSON · AIS (JSON, CSV or PDF) · Form 16 (PDF) · 26AS (text or PDF) · bank statement (PDF, Excel or CSV)",
       "label": "drop_hint"
     },
     {
@@ -1392,6 +1392,756 @@
       "type": "text",
       "default": "Regime used by employer",
       "label": "fd_regime"
+    },
+    {
+      "name": "pick_new",
+      "type": "text",
+      "default": "Start from documents",
+      "label": "pick new"
+    },
+    {
+      "name": "pick_new_sub",
+      "type": "text",
+      "default": "No client to add first. Drop your Form 16, the pre-filled JSON or a return already filed - the person is made from it (PAN, name, date of birth). Form 16, AIS and 26AS go in after.",
+      "label": "pick new sub"
+    },
+    {
+      "name": "no_who",
+      "type": "text",
+      "default": "This file does not name the person. Start with your Form 16, the pre-filled JSON or a filed return; AIS and 26AS come after.",
+      "label": "no who"
+    },
+    {
+      "name": "made",
+      "type": "text",
+      "default": "{name} - return started from {file}.",
+      "label": "made"
+    },
+    {
+      "name": "found_old",
+      "type": "text",
+      "default": "{name} was already here - added to their return.",
+      "label": "found old"
+    },
+    {
+      "name": "k_other_why",
+      "type": "text",
+      "default": "Files not read - locked, or not a pre-filled JSON, AIS, Form 16, 26AS or filed return. Remove and send again (with the password if it is locked).",
+      "label": "k_other_why"
+    },
+    {
+      "name": "k_other_how",
+      "type": "text",
+      "default": "Remove the file with the bin|Type the PDF password above (AIS: PAN in small letters + date of birth DDMMYYYY)|Drop the file again and press Read",
+      "label": "k_other_how"
+    },
+    {
+      "name": "not_read",
+      "type": "text",
+      "default": "Not read",
+      "label": "not_read"
+    },
+    {
+      "name": "how_h",
+      "type": "text",
+      "default": "How your return is put together",
+      "label": "how_h"
+    },
+    {
+      "name": "how_steps",
+      "type": "text",
+      "default": "Start: drop your Form 16, the pre-filled JSON or a return already filed - your PAN is read from it and your return is made (no client to add first).|Add the rest in any order: 26AS (TDS credited to you, FD interest under 194A, dividends under 194), AIS / TIS (savings interest, tax you paid yourself), last filed return (to compare).|Locked PDFs (AIS, TIS, 26AS) open by themselves once your date of birth is known - from the pre-filled JSON or a filed return. Otherwise type the password: PAN in small letters + date of birth DDMMYYYY.|Each figure comes from the document trusted most for it: salary and deductions from Form 16, TDS from 26AS, other income from AIS (else 26AS). Check shows where each one came from; a figure you type wins.|The same file again replaces it - the old one is kept. History (top right) shows every file added or removed, with the earlier version to download.|File: say if it is already filed (date, acknowledgement number), pick the regime, and download the department's JSON. Compare lines each figure up with the filed return.",
+      "label": "how_steps"
+    },
+    {
+      "name": "rv_paid",
+      "type": "text",
+      "default": "Tax you paid yourself",
+      "label": "rv_paid"
+    },
+    {
+      "name": "rv_paid_p",
+      "type": "text",
+      "default": "Advance tax and self-assessment tax (challan 280). The AIS shows these up to the day it was downloaded - add any paid after it, e.g. with the return.",
+      "label": "rv_paid_p"
+    },
+    {
+      "name": "pd_kind",
+      "type": "text",
+      "default": "Kind",
+      "label": "pd_kind"
+    },
+    {
+      "name": "pd_advance",
+      "type": "text",
+      "default": "Advance tax",
+      "label": "pd_advance"
+    },
+    {
+      "name": "pd_self",
+      "type": "text",
+      "default": "Self-assessment tax",
+      "label": "pd_self"
+    },
+    {
+      "name": "pd_on",
+      "type": "text",
+      "default": "Paid on",
+      "label": "pd_on"
+    },
+    {
+      "name": "pd_amount",
+      "type": "text",
+      "default": "Amount",
+      "label": "pd_amount"
+    },
+    {
+      "name": "pd_add",
+      "type": "text",
+      "default": "Add a payment",
+      "label": "pd_add"
+    },
+    {
+      "name": "pd_none",
+      "type": "text",
+      "default": "Only what the documents show. Add a payment they do not.",
+      "label": "pd_none"
+    },
+    {
+      "name": "ask_eyebrow",
+      "type": "text",
+      "default": "Before we go on",
+      "label": "ask_eyebrow"
+    },
+    {
+      "name": "ask_start_h",
+      "type": "text",
+      "default": "A return for AY {ay} is already under way",
+      "label": "ask_start_h"
+    },
+    {
+      "name": "ask_start_p",
+      "type": "text",
+      "default": "{name}'s return for AY {ay} already holds {n} documents. Carry on with it and add this file, or start again with this file alone?",
+      "label": "ask_start_p"
+    },
+    {
+      "name": "ask_continue",
+      "type": "text",
+      "default": "Carry on with it",
+      "label": "ask_continue"
+    },
+    {
+      "name": "ask_continue_sub",
+      "type": "text",
+      "default": "Keep everything gathered so far and add this file.",
+      "label": "ask_continue_sub"
+    },
+    {
+      "name": "ask_fresh",
+      "type": "text",
+      "default": "Start again",
+      "label": "ask_fresh"
+    },
+    {
+      "name": "ask_fresh_sub",
+      "type": "text",
+      "default": "An empty return with this file alone. Every earlier document stays in History, ready to download.",
+      "label": "ask_fresh_sub"
+    },
+    {
+      "name": "ask_same_h",
+      "type": "text",
+      "default": "Your {kind} for AY {ay} is already here",
+      "label": "ask_same_h"
+    },
+    {
+      "name": "ask_same_p",
+      "type": "text",
+      "default": "This return already holds the {kind} shown below. Replace it with the new file, or keep both?",
+      "label": "ask_same_p"
+    },
+    {
+      "name": "ask_replace",
+      "type": "text",
+      "default": "Replace it",
+      "label": "ask_replace"
+    },
+    {
+      "name": "ask_replace_sub",
+      "type": "text",
+      "default": "Use the new file. The one it replaces stays in History.",
+      "label": "ask_replace_sub"
+    },
+    {
+      "name": "ask_keep",
+      "type": "text",
+      "default": "Keep both",
+      "label": "ask_keep"
+    },
+    {
+      "name": "ask_keep_sub",
+      "type": "text",
+      "default": "Hold on to both - the first one read is used for the figures.",
+      "label": "ask_keep_sub"
+    },
+    {
+      "name": "ask_have",
+      "type": "text",
+      "default": "Already here",
+      "label": "ask_have"
+    },
+    {
+      "name": "ask_new",
+      "type": "text",
+      "default": "New file",
+      "label": "ask_new"
+    },
+    {
+      "name": "ask_added",
+      "type": "text",
+      "default": "added {when}",
+      "label": "ask_added"
+    },
+    {
+      "name": "ask_cancel",
+      "type": "text",
+      "default": "Cancel",
+      "label": "ask_cancel"
+    },
+    {
+      "name": "why_presumptive",
+      "type": "text",
+      "default": "Income from a profession or business worked out on the presumptive basis (44ADA / 44AD), with nothing ITR-1 would refuse - ITR-4 (Sugam).",
+      "label": "why presumptive"
+    },
+    {
+      "name": "why_biz_more",
+      "type": "text",
+      "default": "Presumptive business or profession income together with something ITR-4 cannot hold (other capital gains, foreign assets, a directorship...) - ITR-3.",
+      "label": "why biz more"
+    },
+    {
+      "name": "why_biz_limit",
+      "type": "text",
+      "default": "Receipts are above the presumptive limit, so the income cannot be worked out on the presumptive basis - books of account and ITR-3.",
+      "label": "why biz limit"
+    },
+    {
+      "name": "rv_biz",
+      "type": "text",
+      "default": "Business or profession",
+      "label": "rv biz"
+    },
+    {
+      "name": "rv_biz_p",
+      "type": "text",
+      "default": "A freelancer, consultant or contractor without books: 44ADA (doctors, lawyers, engineers, architects, consultants, IT professionals - 50% of receipts) or 44AD (any other business - 6% of bank receipts, 8% of cash). Receipts come from your bank statement and invoices; the department's view of them is in the AIS and 26AS.",
+      "label": "rv biz p"
+    },
+    {
+      "name": "biz_kind",
+      "type": "text",
+      "default": "Kind",
+      "label": "biz kind"
+    },
+    {
+      "name": "biz_none",
+      "type": "text",
+      "default": "None",
+      "label": "biz none"
+    },
+    {
+      "name": "biz_ada",
+      "type": "text",
+      "default": "Profession - 44ADA",
+      "label": "biz ada"
+    },
+    {
+      "name": "biz_ad",
+      "type": "text",
+      "default": "Business - 44AD",
+      "label": "biz ad"
+    },
+    {
+      "name": "biz_code",
+      "type": "text",
+      "default": "Nature of the work (code)",
+      "label": "biz code"
+    },
+    {
+      "name": "biz_name",
+      "type": "text",
+      "default": "Trade name (or your name)",
+      "label": "biz name"
+    },
+    {
+      "name": "biz_digital",
+      "type": "text",
+      "default": "Receipts by bank / UPI / cheque",
+      "label": "biz digital"
+    },
+    {
+      "name": "biz_cash",
+      "type": "text",
+      "default": "Receipts in cash",
+      "label": "biz cash"
+    },
+    {
+      "name": "biz_declared",
+      "type": "text",
+      "default": "Income declared, if higher",
+      "label": "biz declared"
+    },
+    {
+      "name": "biz_gstin",
+      "type": "text",
+      "default": "GSTIN (if registered)",
+      "label": "biz gstin"
+    },
+    {
+      "name": "biz_gst_turnover",
+      "type": "text",
+      "default": "Turnover in GST returns",
+      "label": "biz gst turnover"
+    },
+    {
+      "name": "biz_income",
+      "type": "text",
+      "default": "Presumptive income {income} on receipts {receipts}",
+      "label": "biz income"
+    },
+    {
+      "name": "biz_seen",
+      "type": "text",
+      "default": "The department has seen {amount} paid to you (TDS 194J / 194C...)",
+      "label": "biz seen"
+    },
+    {
+      "name": "biz_seen_more",
+      "type": "text",
+      "default": "Receipts typed are less than the {amount} the department has seen paid to you - check your bank statement.",
+      "label": "biz seen more"
+    },
+    {
+      "name": "biz_over",
+      "type": "text",
+      "default": "Receipts {receipts} are over the {limit} limit - presumptive income is not open; this needs books and ITR-3.",
+      "label": "biz over"
+    },
+    {
+      "name": "biz_pick",
+      "type": "text",
+      "default": "Pick the nature of the work",
+      "label": "biz pick"
+    },
+    {
+      "name": "k_bank",
+      "type": "text",
+      "default": "Bank statement",
+      "label": "k bank"
+    },
+    {
+      "name": "k_bank_why",
+      "type": "text",
+      "default": "For a profession or business with no Form 16: the receipts in the year. Kept with your return.",
+      "label": "k bank why"
+    },
+    {
+      "name": "src_h",
+      "type": "text",
+      "default": "Where each document comes from",
+      "label": "src h"
+    },
+    {
+      "name": "src_rows",
+      "type": "text",
+      "default": "Form 16|Your employer (TRACES), by 15 June|Salary, exemptions, deductions declared, TDS on salary||Form 26AS|Income Tax Department - incometax.gov.in > e-File > Income Tax Returns > View Form 26AS (TRACES)|Every TDS / TCS credited to your PAN||AIS and TIS|Income Tax Department - incometax.gov.in > Services > AIS|Interest, dividends, sales of shares and funds, business receipts, tax you paid (advance, self-assessment)||Pre-filled JSON|Income Tax Department - e-File > Income Tax Returns > Download Pre-Filled Data|Who you are, banks, salary, TDS, taxes paid||Filed return (JSON)|You - e-File > Income Tax Returns > View Filed Returns|Last year's figures, your date of birth, to compare||Bank statement|Your bank - net banking > statements|Receipts of a profession or business with no TDS||GST returns|gst.gov.in > Returns > View filed returns|Turnover of a GST-registered business||Capital gains statement|Your broker / CAMS / KFintech|Each sale of shares and funds||Proofs|Lender, insurer, LIC, PPF, NPS, landlord|Home loan interest, 80C, 80D, rent (old regime)",
+      "label": "src rows"
+    },
+    {
+      "name": "pd_bsr",
+      "type": "text",
+      "default": "BSR code (7 digits)",
+      "label": "pd_bsr"
+    },
+    {
+      "name": "pd_challan",
+      "type": "text",
+      "default": "Challan no.",
+      "label": "pd_challan"
+    },
+    {
+      "name": "pd_bsr_p",
+      "type": "text",
+      "default": "On the challan (or e-Pay Tax > Payment history): the department matches a payment by its BSR code, date and challan number.",
+      "label": "pd_bsr_p"
+    },
+    {
+      "name": "f10iea",
+      "type": "text",
+      "default": "Business income in the old regime needs Form 10-IEA filed by the due date - file it on the e-filing portal before this return.",
+      "label": "f10iea"
+    },
+    {
+      "name": "k_bank_how",
+      "type": "text",
+      "default": "Net banking > Accounts > Statement|Choose 1 April 2025 to 31 March 2026|Download as PDF or Excel and drop it here",
+      "label": "k bank how"
+    },
+    {
+      "name": "bank_kept",
+      "type": "text",
+      "default": "Kept with your return - add the year's receipts under Business or profession on Check.",
+      "label": "bank kept"
+    },
+    {
+      "name": "src_issuer",
+      "type": "text",
+      "default": "Issued by / where",
+      "label": "src issuer"
+    },
+    {
+      "name": "src_gives",
+      "type": "text",
+      "default": "What it gives your return",
+      "label": "src gives"
+    },
+    {
+      "name": "fd_bank_credits",
+      "type": "text",
+      "default": "Credits in the statement",
+      "label": "fd bank credits"
+    },
+    {
+      "name": "fd_bank_receipts",
+      "type": "text",
+      "default": "Receipts (not interest, refunds, salary or own transfers)",
+      "label": "fd bank receipts"
+    },
+    {
+      "name": "fd_bank_cash",
+      "type": "text",
+      "default": "Cash deposits",
+      "label": "fd bank cash"
+    },
+    {
+      "name": "fd_bank_interest",
+      "type": "text",
+      "default": "Interest credited",
+      "label": "fd bank interest"
+    },
+    {
+      "name": "fd_bank_period",
+      "type": "text",
+      "default": "Period",
+      "label": "fd bank period"
+    },
+    {
+      "name": "no_bank_table",
+      "type": "text",
+      "default": "This statement's table could not be found - is it the statement itself (date, narration, credit, balance)? Excel or CSV reads best.",
+      "label": "no bank table"
+    },
+    {
+      "name": "biz_from_bank",
+      "type": "text",
+      "default": "Bank statements: receipts {receipts} and cash deposits {cash} - use these as the receipts?",
+      "label": "biz from bank"
+    },
+    {
+      "name": "biz_use_bank",
+      "type": "text",
+      "default": "Use these receipts",
+      "label": "biz use bank"
+    },
+    {
+      "name": "biz_used_bank",
+      "type": "text",
+      "default": "Receipts set from the bank statements.",
+      "label": "biz used bank"
+    },
+    {
+      "name": "pw_show",
+      "type": "text",
+      "default": "Show password",
+      "label": "pw_show"
+    },
+    {
+      "name": "pw_hide",
+      "type": "text",
+      "default": "Hide password",
+      "label": "pw_hide"
+    },
+    {
+      "name": "back_to",
+      "type": "text",
+      "default": "Back to {step}",
+      "label": "back_to"
+    },
+    {
+      "name": "from_filed",
+      "type": "text",
+      "default": "Fill from the filed return",
+      "label": "from_filed"
+    },
+    {
+      "name": "from_filed_done",
+      "type": "text",
+      "default": "Filed on {date}, acknowledgement {ack}, {n} tax payments - taken from the filed return.",
+      "label": "from_filed_done"
+    },
+    {
+      "name": "from_filed_none",
+      "type": "text",
+      "default": "No return filed for AY {ay} is here - drop this year's filed return (JSON) first.",
+      "label": "from_filed_none"
+    },
+    {
+      "name": "why_huf",
+      "type": "text",
+      "default": "A Hindu undivided family cannot use ITR-1 (it is for individuals) - ITR-2.",
+      "label": "why_huf"
+    },
+    {
+      "name": "q_karta_name",
+      "type": "text",
+      "default": "Karta's name (signs the return)",
+      "label": "q_karta_name"
+    },
+    {
+      "name": "q_karta_pan",
+      "type": "text",
+      "default": "Karta's own PAN",
+      "label": "q_karta_pan"
+    },
+    {
+      "name": "q_formed_on",
+      "type": "text",
+      "default": "Date the HUF was formed",
+      "label": "q_formed_on"
+    },
+    {
+      "name": "q_father_karta",
+      "type": "text",
+      "default": "Karta's father's name",
+      "label": "q_father_karta"
+    },
+    {
+      "name": "bad_karta_pan",
+      "type": "text",
+      "default": "The Karta's PAN is a person's PAN - its 4th letter is P.",
+      "label": "bad_karta_pan"
+    },
+    {
+      "name": "more_via_h",
+      "type": "text",
+      "default": "More deductions (old regime)",
+      "label": "more_via_h"
+    },
+    {
+      "name": "more_via_p",
+      "type": "text",
+      "default": "Less common ones - a dependant's disability, treating a serious illness, special loans, rent with no HRA, gifts to a party. Each needs the details the department's schedule asks for.",
+      "label": "more_via_p"
+    },
+    {
+      "name": "f_dd_nature",
+      "type": "text",
+      "default": "80DD - a dependant with a disability",
+      "label": "f_dd_nature"
+    },
+    {
+      "name": "dd_none",
+      "type": "text",
+      "default": "None",
+      "label": "dd_none"
+    },
+    {
+      "name": "dd_1",
+      "type": "text",
+      "default": "Disability (40% or more)",
+      "label": "dd_1"
+    },
+    {
+      "name": "dd_2",
+      "type": "text",
+      "default": "Severe disability (80% or more)",
+      "label": "dd_2"
+    },
+    {
+      "name": "f_dd_type",
+      "type": "text",
+      "default": "Kind of disability",
+      "label": "f_dd_type"
+    },
+    {
+      "name": "dd_type_1",
+      "type": "text",
+      "default": "Autism, cerebral palsy or multiple disabilities",
+      "label": "dd_type_1"
+    },
+    {
+      "name": "dd_type_2",
+      "type": "text",
+      "default": "Other",
+      "label": "dd_type_2"
+    },
+    {
+      "name": "f_dd_dependent",
+      "type": "text",
+      "default": "The dependant is your",
+      "label": "f_dd_dependent"
+    },
+    {
+      "name": "dd_dep",
+      "type": "text",
+      "default": "1=Spouse|2=Son|3=Daughter|4=Father|5=Mother|6=Brother|7=Sister|8=Member of the HUF",
+      "label": "dd_dep"
+    },
+    {
+      "name": "f_c80ddb",
+      "type": "text",
+      "default": "80DDB - spent treating a specified disease",
+      "label": "f_c80ddb"
+    },
+    {
+      "name": "f_ddb_senior",
+      "type": "text",
+      "default": "The patient is 60 or over",
+      "label": "f_ddb_senior"
+    },
+    {
+      "name": "f_c80ee",
+      "type": "text",
+      "default": "80EE - interest on a first-home loan (sanctioned 2016-17)",
+      "label": "f_c80ee"
+    },
+    {
+      "name": "f_c80eea",
+      "type": "text",
+      "default": "80EEA - interest on an affordable first-home loan (2019-22)",
+      "label": "f_c80eea"
+    },
+    {
+      "name": "f_c80eeb",
+      "type": "text",
+      "default": "80EEB - interest on an electric-vehicle loan (2019-23)",
+      "label": "f_c80eeb"
+    },
+    {
+      "name": "f_c80gg",
+      "type": "text",
+      "default": "80GG - rent paid (no HRA from an employer)",
+      "label": "f_c80gg"
+    },
+    {
+      "name": "f_c80ggc",
+      "type": "text",
+      "default": "80GGC - given to a political party (not in cash)",
+      "label": "f_c80ggc"
+    },
+    {
+      "name": "loan_h",
+      "type": "text",
+      "default": "Loan details for {sec}",
+      "label": "loan_h"
+    },
+    {
+      "name": "f_loan_from",
+      "type": "text",
+      "default": "Lender",
+      "label": "f_loan_from"
+    },
+    {
+      "name": "loan_b",
+      "type": "text",
+      "default": "Bank",
+      "label": "loan_b"
+    },
+    {
+      "name": "loan_i",
+      "type": "text",
+      "default": "Other institution",
+      "label": "loan_i"
+    },
+    {
+      "name": "f_loan_bank",
+      "type": "text",
+      "default": "Lender's name",
+      "label": "f_loan_bank"
+    },
+    {
+      "name": "f_loan_acc",
+      "type": "text",
+      "default": "Loan account number",
+      "label": "f_loan_acc"
+    },
+    {
+      "name": "f_loan_date",
+      "type": "text",
+      "default": "Date sanctioned",
+      "label": "f_loan_date"
+    },
+    {
+      "name": "f_loan_amount",
+      "type": "text",
+      "default": "Loan amount",
+      "label": "f_loan_amount"
+    },
+    {
+      "name": "f_loan_left",
+      "type": "text",
+      "default": "Outstanding at 31 March",
+      "label": "f_loan_left"
+    },
+    {
+      "name": "f_stamp",
+      "type": "text",
+      "default": "Stamp duty value of the house",
+      "label": "f_stamp"
+    },
+    {
+      "name": "f_vehicle",
+      "type": "text",
+      "default": "Vehicle registration number",
+      "label": "f_vehicle"
+    },
+    {
+      "name": "ggc_h",
+      "type": "text",
+      "default": "The gift to the party",
+      "label": "ggc_h"
+    },
+    {
+      "name": "f_ggc_party",
+      "type": "text",
+      "default": "Party's name",
+      "label": "f_ggc_party"
+    },
+    {
+      "name": "f_ggc_pan",
+      "type": "text",
+      "default": "Party's PAN",
+      "label": "f_ggc_pan"
+    },
+    {
+      "name": "f_ggc_date",
+      "type": "text",
+      "default": "Date given",
+      "label": "f_ggc_date"
+    },
+    {
+      "name": "f_ggc_ref",
+      "type": "text",
+      "default": "Transaction reference",
+      "label": "f_ggc_ref"
+    },
+    {
+      "name": "f_ggc_ifsc",
+      "type": "text",
+      "default": "Your bank's IFSC",
+      "label": "f_ggc_ifsc"
     }
   ],
   "expr": {
@@ -1627,13 +2377,138 @@
       "fd_paid": "$fd_paid",
       "fd_via": "$fd_via",
       "fd_rows": "$fd_rows",
-      "fd_regime": "$fd_regime"
+      "fd_regime": "$fd_regime",
+      "pick_new": "$pick_new",
+      "pick_new_sub": "$pick_new_sub",
+      "no_who": "$no_who",
+      "made": "$made",
+      "found_old": "$found_old",
+      "k_other_why": "$k_other_why",
+      "k_other_how": "$k_other_how",
+      "not_read": "$not_read",
+      "how_h": "$how_h",
+      "how_steps": "$how_steps",
+      "rv_paid": "$rv_paid",
+      "rv_paid_p": "$rv_paid_p",
+      "pd_kind": "$pd_kind",
+      "pd_advance": "$pd_advance",
+      "pd_self": "$pd_self",
+      "pd_on": "$pd_on",
+      "pd_amount": "$pd_amount",
+      "pd_add": "$pd_add",
+      "pd_none": "$pd_none",
+      "ask_eyebrow": "$ask_eyebrow",
+      "ask_start_h": "$ask_start_h",
+      "ask_start_p": "$ask_start_p",
+      "ask_continue": "$ask_continue",
+      "ask_continue_sub": "$ask_continue_sub",
+      "ask_fresh": "$ask_fresh",
+      "ask_fresh_sub": "$ask_fresh_sub",
+      "ask_same_h": "$ask_same_h",
+      "ask_same_p": "$ask_same_p",
+      "ask_replace": "$ask_replace",
+      "ask_replace_sub": "$ask_replace_sub",
+      "ask_keep": "$ask_keep",
+      "ask_keep_sub": "$ask_keep_sub",
+      "ask_have": "$ask_have",
+      "ask_new": "$ask_new",
+      "ask_added": "$ask_added",
+      "ask_cancel": "$ask_cancel",
+      "why_presumptive": "$why_presumptive",
+      "why_biz_more": "$why_biz_more",
+      "why_biz_limit": "$why_biz_limit",
+      "rv_biz": "$rv_biz",
+      "rv_biz_p": "$rv_biz_p",
+      "biz_kind": "$biz_kind",
+      "biz_none": "$biz_none",
+      "biz_ada": "$biz_ada",
+      "biz_ad": "$biz_ad",
+      "biz_code": "$biz_code",
+      "biz_name": "$biz_name",
+      "biz_digital": "$biz_digital",
+      "biz_cash": "$biz_cash",
+      "biz_declared": "$biz_declared",
+      "biz_gstin": "$biz_gstin",
+      "biz_gst_turnover": "$biz_gst_turnover",
+      "biz_income": "$biz_income",
+      "biz_seen": "$biz_seen",
+      "biz_seen_more": "$biz_seen_more",
+      "biz_over": "$biz_over",
+      "biz_pick": "$biz_pick",
+      "k_bank": "$k_bank",
+      "k_bank_why": "$k_bank_why",
+      "src_h": "$src_h",
+      "src_rows": "$src_rows",
+      "pd_bsr": "$pd_bsr",
+      "pd_challan": "$pd_challan",
+      "pd_bsr_p": "$pd_bsr_p",
+      "f10iea": "$f10iea",
+      "k_bank_how": "$k_bank_how",
+      "bank_kept": "$bank_kept",
+      "src_issuer": "$src_issuer",
+      "src_gives": "$src_gives",
+      "fd_bank_credits": "$fd_bank_credits",
+      "fd_bank_receipts": "$fd_bank_receipts",
+      "fd_bank_cash": "$fd_bank_cash",
+      "fd_bank_interest": "$fd_bank_interest",
+      "fd_bank_period": "$fd_bank_period",
+      "no_bank_table": "$no_bank_table",
+      "biz_from_bank": "$biz_from_bank",
+      "biz_use_bank": "$biz_use_bank",
+      "biz_used_bank": "$biz_used_bank",
+      "pw_show": "$pw_show",
+      "pw_hide": "$pw_hide",
+      "back_to": "$back_to",
+      "from_filed": "$from_filed",
+      "from_filed_done": "$from_filed_done",
+      "from_filed_none": "$from_filed_none",
+      "why_huf": "$why_huf",
+      "q_karta_name": "$q_karta_name",
+      "q_karta_pan": "$q_karta_pan",
+      "q_formed_on": "$q_formed_on",
+      "q_father_karta": "$q_father_karta",
+      "bad_karta_pan": "$bad_karta_pan",
+      "more_via_h": "$more_via_h",
+      "more_via_p": "$more_via_p",
+      "f_dd_nature": "$f_dd_nature",
+      "dd_none": "$dd_none",
+      "dd_1": "$dd_1",
+      "dd_2": "$dd_2",
+      "f_dd_type": "$f_dd_type",
+      "dd_type_1": "$dd_type_1",
+      "dd_type_2": "$dd_type_2",
+      "f_dd_dependent": "$f_dd_dependent",
+      "dd_dep": "$dd_dep",
+      "f_c80ddb": "$f_c80ddb",
+      "f_ddb_senior": "$f_ddb_senior",
+      "f_c80ee": "$f_c80ee",
+      "f_c80eea": "$f_c80eea",
+      "f_c80eeb": "$f_c80eeb",
+      "f_c80gg": "$f_c80gg",
+      "f_c80ggc": "$f_c80ggc",
+      "loan_h": "$loan_h",
+      "f_loan_from": "$f_loan_from",
+      "loan_b": "$loan_b",
+      "loan_i": "$loan_i",
+      "f_loan_bank": "$f_loan_bank",
+      "f_loan_acc": "$f_loan_acc",
+      "f_loan_date": "$f_loan_date",
+      "f_loan_amount": "$f_loan_amount",
+      "f_loan_left": "$f_loan_left",
+      "f_stamp": "$f_stamp",
+      "f_vehicle": "$f_vehicle",
+      "ggc_h": "$ggc_h",
+      "f_ggc_party": "$f_ggc_party",
+      "f_ggc_pan": "$f_ggc_pan",
+      "f_ggc_date": "$f_ggc_date",
+      "f_ggc_ref": "$f_ggc_ref",
+      "f_ggc_ifsc": "$f_ggc_ifsc"
     }
   },
   "returns": "record",
-  "version": 6,
+  "version": 22,
   "status": "published",
-  "description_nl": "2026-10-06: every word of My return - the steps, the documents and how to get each, the checks, the regimes, the review fields, the form and how to file it.",
+  "description_nl": "2026-10-06: every word of My return - the steps, the documents and how to get each, the checks, the regimes, the review fields, the form and how to file it. 2026-10-06: start from documents. 2026-10-06: an Other card for files not read, so a locked one can be removed. 2026-10-06: how_h / how_steps - the step-by-step shown on Gather. 2026-10-06: rv_paid / pd_* - tax the person paid themselves, typed on Check. 2026-10-06: ask_* - the two questions before a file goes in: a return already under way (carry on / start again) and a second AIS / 26AS (replace / keep both). 2026-10-06: the business card on Check (44ADA / 44AD), the ITR-4 reasons, and where each document comes from. 2026-10-06: pd_bsr / pd_challan - a typed payment's BSR code and challan number; f10iea. 2026-10-06: k_bank_how, bank_kept, src_issuer, src_gives. 2026-10-06: the bank statement's figures on its card and on the business card. 2026-10-06: pw_show / pw_hide - the eye on the PDF password. 2026-10-06: back_to - the Back button on each step. 2026-10-06: from_filed / from_filed_done / from_filed_none. 2026-10-06: why_huf. 2026-10-06: the Karta's fields for an HUF. 2026-10-06: the More deductions panel on Check.",
   "test_cases": [
     {
       "args": {},
@@ -1658,7 +2533,7 @@
         "gather_h": "Your documents",
         "gather_p": "Start with the pre-filled JSON - it carries your details, salary, TDS and bank accounts. Then the AIS, and Form 16 from each employer. Drop them in any order; each one is read as it arrives.",
         "drop": "Drop a document here, or choose one",
-        "drop_hint": "Pre-filled JSON · AIS (JSON, CSV or PDF) · Form 16 (PDF) · 26AS (text or PDF)",
+        "drop_hint": "Pre-filled JSON · AIS (JSON, CSV or PDF) · Form 16 (PDF) · 26AS (text or PDF) · bank statement (PDF, Excel or CSV)",
         "pw": "PDF password (if it has one)",
         "pw_ph": "AIS / 26AS: your PAN in small letters + date of birth DDMMYYYY",
         "ai_ok": "Read Form 16 Part B with AI when its layout is unusual - the page goes to Google Gemini on this portal's key and nothing is kept there",
@@ -1868,7 +2743,132 @@
         "fd_paid": "Taxes paid",
         "fd_via": "Deductions declared",
         "fd_rows": "TDS rows",
-        "fd_regime": "Regime used by employer"
+        "fd_regime": "Regime used by employer",
+        "pick_new": "Start from documents",
+        "pick_new_sub": "No client to add first. Drop your Form 16, the pre-filled JSON or a return already filed - the person is made from it (PAN, name, date of birth). Form 16, AIS and 26AS go in after.",
+        "no_who": "This file does not name the person. Start with your Form 16, the pre-filled JSON or a filed return; AIS and 26AS come after.",
+        "made": "{name} - return started from {file}.",
+        "found_old": "{name} was already here - added to their return.",
+        "k_other_why": "Files not read - locked, or not a pre-filled JSON, AIS, Form 16, 26AS or filed return. Remove and send again (with the password if it is locked).",
+        "k_other_how": "Remove the file with the bin|Type the PDF password above (AIS: PAN in small letters + date of birth DDMMYYYY)|Drop the file again and press Read",
+        "not_read": "Not read",
+        "how_h": "How your return is put together",
+        "how_steps": "Start: drop your Form 16, the pre-filled JSON or a return already filed - your PAN is read from it and your return is made (no client to add first).|Add the rest in any order: 26AS (TDS credited to you, FD interest under 194A, dividends under 194), AIS / TIS (savings interest, tax you paid yourself), last filed return (to compare).|Locked PDFs (AIS, TIS, 26AS) open by themselves once your date of birth is known - from the pre-filled JSON or a filed return. Otherwise type the password: PAN in small letters + date of birth DDMMYYYY.|Each figure comes from the document trusted most for it: salary and deductions from Form 16, TDS from 26AS, other income from AIS (else 26AS). Check shows where each one came from; a figure you type wins.|The same file again replaces it - the old one is kept. History (top right) shows every file added or removed, with the earlier version to download.|File: say if it is already filed (date, acknowledgement number), pick the regime, and download the department's JSON. Compare lines each figure up with the filed return.",
+        "rv_paid": "Tax you paid yourself",
+        "rv_paid_p": "Advance tax and self-assessment tax (challan 280). The AIS shows these up to the day it was downloaded - add any paid after it, e.g. with the return.",
+        "pd_kind": "Kind",
+        "pd_advance": "Advance tax",
+        "pd_self": "Self-assessment tax",
+        "pd_on": "Paid on",
+        "pd_amount": "Amount",
+        "pd_add": "Add a payment",
+        "pd_none": "Only what the documents show. Add a payment they do not.",
+        "ask_eyebrow": "Before we go on",
+        "ask_start_h": "A return for AY {ay} is already under way",
+        "ask_start_p": "{name}'s return for AY {ay} already holds {n} documents. Carry on with it and add this file, or start again with this file alone?",
+        "ask_continue": "Carry on with it",
+        "ask_continue_sub": "Keep everything gathered so far and add this file.",
+        "ask_fresh": "Start again",
+        "ask_fresh_sub": "An empty return with this file alone. Every earlier document stays in History, ready to download.",
+        "ask_same_h": "Your {kind} for AY {ay} is already here",
+        "ask_same_p": "This return already holds the {kind} shown below. Replace it with the new file, or keep both?",
+        "ask_replace": "Replace it",
+        "ask_replace_sub": "Use the new file. The one it replaces stays in History.",
+        "ask_keep": "Keep both",
+        "ask_keep_sub": "Hold on to both - the first one read is used for the figures.",
+        "ask_have": "Already here",
+        "ask_new": "New file",
+        "ask_added": "added {when}",
+        "ask_cancel": "Cancel",
+        "why_presumptive": "Income from a profession or business worked out on the presumptive basis (44ADA / 44AD), with nothing ITR-1 would refuse - ITR-4 (Sugam).",
+        "why_biz_more": "Presumptive business or profession income together with something ITR-4 cannot hold (other capital gains, foreign assets, a directorship...) - ITR-3.",
+        "why_biz_limit": "Receipts are above the presumptive limit, so the income cannot be worked out on the presumptive basis - books of account and ITR-3.",
+        "rv_biz": "Business or profession",
+        "rv_biz_p": "A freelancer, consultant or contractor without books: 44ADA (doctors, lawyers, engineers, architects, consultants, IT professionals - 50% of receipts) or 44AD (any other business - 6% of bank receipts, 8% of cash). Receipts come from your bank statement and invoices; the department's view of them is in the AIS and 26AS.",
+        "biz_kind": "Kind",
+        "biz_none": "None",
+        "biz_ada": "Profession - 44ADA",
+        "biz_ad": "Business - 44AD",
+        "biz_code": "Nature of the work (code)",
+        "biz_name": "Trade name (or your name)",
+        "biz_digital": "Receipts by bank / UPI / cheque",
+        "biz_cash": "Receipts in cash",
+        "biz_declared": "Income declared, if higher",
+        "biz_gstin": "GSTIN (if registered)",
+        "biz_gst_turnover": "Turnover in GST returns",
+        "biz_income": "Presumptive income {income} on receipts {receipts}",
+        "biz_seen": "The department has seen {amount} paid to you (TDS 194J / 194C...)",
+        "biz_seen_more": "Receipts typed are less than the {amount} the department has seen paid to you - check your bank statement.",
+        "biz_over": "Receipts {receipts} are over the {limit} limit - presumptive income is not open; this needs books and ITR-3.",
+        "biz_pick": "Pick the nature of the work",
+        "k_bank": "Bank statement",
+        "k_bank_why": "For a profession or business with no Form 16: the receipts in the year. Kept with your return.",
+        "src_h": "Where each document comes from",
+        "src_rows": "Form 16|Your employer (TRACES), by 15 June|Salary, exemptions, deductions declared, TDS on salary||Form 26AS|Income Tax Department - incometax.gov.in > e-File > Income Tax Returns > View Form 26AS (TRACES)|Every TDS / TCS credited to your PAN||AIS and TIS|Income Tax Department - incometax.gov.in > Services > AIS|Interest, dividends, sales of shares and funds, business receipts, tax you paid (advance, self-assessment)||Pre-filled JSON|Income Tax Department - e-File > Income Tax Returns > Download Pre-Filled Data|Who you are, banks, salary, TDS, taxes paid||Filed return (JSON)|You - e-File > Income Tax Returns > View Filed Returns|Last year's figures, your date of birth, to compare||Bank statement|Your bank - net banking > statements|Receipts of a profession or business with no TDS||GST returns|gst.gov.in > Returns > View filed returns|Turnover of a GST-registered business||Capital gains statement|Your broker / CAMS / KFintech|Each sale of shares and funds||Proofs|Lender, insurer, LIC, PPF, NPS, landlord|Home loan interest, 80C, 80D, rent (old regime)",
+        "pd_bsr": "BSR code (7 digits)",
+        "pd_challan": "Challan no.",
+        "pd_bsr_p": "On the challan (or e-Pay Tax > Payment history): the department matches a payment by its BSR code, date and challan number.",
+        "f10iea": "Business income in the old regime needs Form 10-IEA filed by the due date - file it on the e-filing portal before this return.",
+        "k_bank_how": "Net banking > Accounts > Statement|Choose 1 April 2025 to 31 March 2026|Download as PDF or Excel and drop it here",
+        "bank_kept": "Kept with your return - add the year's receipts under Business or profession on Check.",
+        "src_issuer": "Issued by / where",
+        "src_gives": "What it gives your return",
+        "fd_bank_credits": "Credits in the statement",
+        "fd_bank_receipts": "Receipts (not interest, refunds, salary or own transfers)",
+        "fd_bank_cash": "Cash deposits",
+        "fd_bank_interest": "Interest credited",
+        "fd_bank_period": "Period",
+        "no_bank_table": "This statement's table could not be found - is it the statement itself (date, narration, credit, balance)? Excel or CSV reads best.",
+        "biz_from_bank": "Bank statements: receipts {receipts} and cash deposits {cash} - use these as the receipts?",
+        "biz_use_bank": "Use these receipts",
+        "biz_used_bank": "Receipts set from the bank statements.",
+        "pw_show": "Show password",
+        "pw_hide": "Hide password",
+        "back_to": "Back to {step}",
+        "from_filed": "Fill from the filed return",
+        "from_filed_done": "Filed on {date}, acknowledgement {ack}, {n} tax payments - taken from the filed return.",
+        "from_filed_none": "No return filed for AY {ay} is here - drop this year's filed return (JSON) first.",
+        "why_huf": "A Hindu undivided family cannot use ITR-1 (it is for individuals) - ITR-2.",
+        "q_karta_name": "Karta's name (signs the return)",
+        "q_karta_pan": "Karta's own PAN",
+        "q_formed_on": "Date the HUF was formed",
+        "q_father_karta": "Karta's father's name",
+        "bad_karta_pan": "The Karta's PAN is a person's PAN - its 4th letter is P.",
+        "more_via_h": "More deductions (old regime)",
+        "more_via_p": "Less common ones - a dependant's disability, treating a serious illness, special loans, rent with no HRA, gifts to a party. Each needs the details the department's schedule asks for.",
+        "f_dd_nature": "80DD - a dependant with a disability",
+        "dd_none": "None",
+        "dd_1": "Disability (40% or more)",
+        "dd_2": "Severe disability (80% or more)",
+        "f_dd_type": "Kind of disability",
+        "dd_type_1": "Autism, cerebral palsy or multiple disabilities",
+        "dd_type_2": "Other",
+        "f_dd_dependent": "The dependant is your",
+        "dd_dep": "1=Spouse|2=Son|3=Daughter|4=Father|5=Mother|6=Brother|7=Sister|8=Member of the HUF",
+        "f_c80ddb": "80DDB - spent treating a specified disease",
+        "f_ddb_senior": "The patient is 60 or over",
+        "f_c80ee": "80EE - interest on a first-home loan (sanctioned 2016-17)",
+        "f_c80eea": "80EEA - interest on an affordable first-home loan (2019-22)",
+        "f_c80eeb": "80EEB - interest on an electric-vehicle loan (2019-23)",
+        "f_c80gg": "80GG - rent paid (no HRA from an employer)",
+        "f_c80ggc": "80GGC - given to a political party (not in cash)",
+        "loan_h": "Loan details for {sec}",
+        "f_loan_from": "Lender",
+        "loan_b": "Bank",
+        "loan_i": "Other institution",
+        "f_loan_bank": "Lender's name",
+        "f_loan_acc": "Loan account number",
+        "f_loan_date": "Date sanctioned",
+        "f_loan_amount": "Loan amount",
+        "f_loan_left": "Outstanding at 31 March",
+        "f_stamp": "Stamp duty value of the house",
+        "f_vehicle": "Vehicle registration number",
+        "ggc_h": "The gift to the party",
+        "f_ggc_party": "Party's name",
+        "f_ggc_pan": "Party's PAN",
+        "f_ggc_date": "Date given",
+        "f_ggc_ref": "Transaction reference",
+        "f_ggc_ifsc": "Your bank's IFSC"
       }
     }
   ]

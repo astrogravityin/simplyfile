@@ -581,7 +581,7 @@ function poolRows(d, pid) {
 function poolAddForm(pid, label, have = false) {
   // 2026-09-20 owner: "Add another key - but there is no key". The first one is not "another".
   return `<div class="row tight pool-add">
-    <input type="password" autocomplete="off" spellcheck="false" data-pool-secret="${esc(pid)}" placeholder="${esc(label)}"/>
+    <input type="password" autocomplete="new-password" data-lpignore="true" data-1p-ignore spellcheck="false" data-pool-secret="${esc(pid)}" placeholder="${esc(label)}"/>
     <input data-pool-name="${esc(pid)}" placeholder="${esc(w('pool_name'))}" style="max-width:160px"/>
     <button type="button" class="small" data-pool-add="${esc(pid)}">${icon('plus', 13)} ${have ? w('pool_add') : w('pool_add_first')}</button></div>`;
 }

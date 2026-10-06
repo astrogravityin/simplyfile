@@ -97,6 +97,18 @@
             "name",
             "email"
           ]
+        },
+        {
+          "id": "my_return_docs",
+          "pattern": "^sf_myreturn/(?P<cid>[0-9a-f]{6,32})/(?P<ay>\\d{4}-\\d{2})\\.json$",
+          "scope": "client",
+          "kind": "doc",
+          "list_path": "docs",
+          "list_key": "id",
+          "name_field": "name",
+          "version_field": "version",
+          "kept_in": "sf_myreturn",
+          "area": "My return"
         }
       ],
       "label": "rows"
@@ -109,9 +121,9 @@
     }
   },
   "returns": "record",
-  "version": 1,
+  "version": 2,
   "status": "published",
-  "description_nl": "2026-10-05: the stores whose every change is logged - field by field, old and new, when and who - and what each holds: the client and each of its years, the computation choices, the SF Refs, the statements and portal files (documents), the explanations, the tax audit work, the firm's profile and its team.",
+  "description_nl": "2026-10-05: the stores whose every change is logged - field by field, old and new, when and who - and what each holds: the client and each of its years, the computation choices, the SF Refs, the statements and portal files (documents), the explanations, the tax audit work, the firm's profile and its team. 2026-10-06: my_return_docs - My return's documents (the docs list inside its store, list_path), removed ones kept for History.",
   "test_cases": [
     {
       "args": {},
@@ -203,6 +215,18 @@
               "name",
               "email"
             ]
+          },
+          {
+            "id": "my_return_docs",
+            "pattern": "^sf_myreturn/(?P<cid>[0-9a-f]{6,32})/(?P<ay>\\d{4}-\\d{2})\\.json$",
+            "scope": "client",
+            "kind": "doc",
+            "list_path": "docs",
+            "list_key": "id",
+            "name_field": "name",
+            "version_field": "version",
+            "kept_in": "sf_myreturn",
+            "area": "My return"
           }
         ]
       }

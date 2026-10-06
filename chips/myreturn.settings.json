@@ -16,7 +16,8 @@
         ".csv",
         ".txt",
         ".xlsx",
-        ".zip"
+        ".zip",
+        ".xls"
       ],
       "label": "exts"
     },
@@ -67,7 +68,10 @@
         "employer_category",
         "state",
         "filed_on",
-        "ack_no"
+        "ack_no",
+        "karta_name",
+        "karta_pan",
+        "formed_on"
       ],
       "label": "questions"
     },
@@ -89,7 +93,10 @@
         "employer_category": "",
         "state": "",
         "filed_on": "",
-        "ack_no": ""
+        "ack_no": "",
+        "karta_name": "",
+        "karta_pan": "",
+        "formed_on": ""
       },
       "label": "answer defaults"
     },
@@ -131,6 +138,72 @@
         }
       ],
       "label": "kinds"
+    },
+    {
+      "name": "who",
+      "type": "json",
+      "default": {
+        "block": "PersonalInfo",
+        "pan": "PAN",
+        "dob": "DOB",
+        "name": [
+          "AssesseeName.FirstName",
+          "AssesseeName.MiddleName",
+          "AssesseeName.SurNameOrOrgName"
+        ]
+      },
+      "label": "who"
+    },
+    {
+      "name": "paid_minor",
+      "type": "json",
+      "default": {
+        "advance": "100",
+        "self": "300"
+      },
+      "label": "challan minor head of a typed payment"
+    },
+    {
+      "name": "one_per_kind",
+      "type": "json",
+      "default": [
+        "prefill",
+        "ais",
+        "26as",
+        "filed"
+      ],
+      "label": "kinds a return holds one of - another asks: replace or keep both"
+    },
+    {
+      "name": "business_sections",
+      "type": "json",
+      "default": [
+        "194J",
+        "194JA",
+        "194JB",
+        "194C",
+        "194H",
+        "194O",
+        "194M"
+      ],
+      "label": "business sections"
+    },
+    {
+      "name": "from_filed",
+      "type": "json",
+      "default": {
+        "date": [
+          "Verification.Date",
+          "PartA_GEN1.FilingStatus.OrigRetFiledDate"
+        ],
+        "challans": "ScheduleIT.TaxPayment",
+        "bsr": "BSRCode",
+        "on": "DateDep",
+        "no": "SrlNoOfChaln",
+        "amount": "Amt",
+        "ack_digits": 15
+      },
+      "label": "where a filed return keeps its date and challans"
     }
   ],
   "expr": {
@@ -144,13 +217,18 @@
       "questions": "$questions",
       "answer_defaults": "$answer_defaults",
       "steps": "$steps",
-      "kinds": "$kinds"
+      "kinds": "$kinds",
+      "who": "$who",
+      "paid_minor": "$paid_minor",
+      "one_per_kind": "$one_per_kind",
+      "business_sections": "$business_sections",
+      "from_filed": "$from_filed"
     }
   },
   "returns": "record",
-  "version": 4,
+  "version": 11,
   "status": "published",
-  "description_nl": "2026-10-06: what may be dropped in (types, size), how many houses, which filing kinds pay the late fee, the yes/no questions a person answers and their defaults, the five steps, and the documents asked for (need = the journey nudges for it).",
+  "description_nl": "2026-10-06: what may be dropped in (types, size), how many houses, which filing kinds pay the late fee, the yes/no questions a person answers and their defaults, the five steps, and the documents asked for (need = the journey nudges for it). 2026-10-06: who - where a filed return (JSON) names the person, so a return can start from documents and the client is made from them. 2026-10-06: paid_minor - a payment typed on Check as its challan minor head (100 advance, 300 self-assessment). 2026-10-06: one_per_kind - a second AIS / 26AS / pre-filled JSON / filed return asks first: replace it (the old kept in History) or keep both. 2026-10-06: business_sections - TDS sections whose amount paid is a receipt of a business or profession (shown beside the receipts typed). 2026-10-06: .xls (an old Excel bank statement). 2026-10-06: from_filed - this year's filed return gives the filing date (Verification Date), the acknowledgement (its file name) and each challan (Schedule IT). 2026-10-06: karta_name / karta_pan / formed_on - an HUF's Karta signs its return; its date of formation stands where a person's birth date does.",
   "test_cases": [
     {
       "args": {},
@@ -161,7 +239,8 @@
           ".csv",
           ".txt",
           ".xlsx",
-          ".zip"
+          ".zip",
+          ".xls"
         ],
         "max_mb": 10,
         "houses_max": 2,
@@ -187,7 +266,10 @@
           "employer_category",
           "state",
           "filed_on",
-          "ack_no"
+          "ack_no",
+          "karta_name",
+          "karta_pan",
+          "formed_on"
         ],
         "answer_defaults": {
           "resident": true,
@@ -204,7 +286,10 @@
           "employer_category": "",
           "state": "",
           "filed_on": "",
-          "ack_no": ""
+          "ack_no": "",
+          "karta_name": "",
+          "karta_pan": "",
+          "formed_on": ""
         },
         "steps": [
           "gather",
@@ -234,7 +319,48 @@
             "icon": "check",
             "need": false
           }
-        ]
+        ],
+        "who": {
+          "block": "PersonalInfo",
+          "pan": "PAN",
+          "dob": "DOB",
+          "name": [
+            "AssesseeName.FirstName",
+            "AssesseeName.MiddleName",
+            "AssesseeName.SurNameOrOrgName"
+          ]
+        },
+        "paid_minor": {
+          "advance": "100",
+          "self": "300"
+        },
+        "one_per_kind": [
+          "prefill",
+          "ais",
+          "26as",
+          "filed"
+        ],
+        "business_sections": [
+          "194J",
+          "194JA",
+          "194JB",
+          "194C",
+          "194H",
+          "194O",
+          "194M"
+        ],
+        "from_filed": {
+          "date": [
+            "Verification.Date",
+            "PartA_GEN1.FilingStatus.OrigRetFiledDate"
+          ],
+          "challans": "ScheduleIT.TaxPayment",
+          "bsr": "BSRCode",
+          "on": "DateDep",
+          "no": "SrlNoOfChaln",
+          "amount": "Amt",
+          "ack_digits": 15
+        }
       }
     }
   ]

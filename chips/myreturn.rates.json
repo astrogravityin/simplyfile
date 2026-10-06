@@ -407,7 +407,13 @@
           "80TTA",
           "80TTB",
           "80U",
-          "80EEB"
+          "80EEB",
+          "80DD",
+          "80DDB",
+          "80EE",
+          "80EEA",
+          "80GG",
+          "80GGC"
         ]
       },
       "label": "via regimes"
@@ -477,6 +483,76 @@
       "type": "json",
       "default": 80,
       "label": "very senior age"
+    },
+    {
+      "name": "via_status",
+      "type": "json",
+      "default": {
+        "individual": [
+          "80C",
+          "80CCD1B",
+          "80CCD2",
+          "80D",
+          "80E",
+          "80G",
+          "80TTA",
+          "80TTB",
+          "80U",
+          "80DD",
+          "80DDB",
+          "80EE",
+          "80EEA",
+          "80EEB",
+          "80GG",
+          "80GGC"
+        ],
+        "huf": [
+          "80C",
+          "80D",
+          "80G",
+          "80TTA",
+          "80DD",
+          "80DDB",
+          "80GGC"
+        ]
+      },
+      "label": "Chapter VI-A sections each status may claim"
+    },
+    {
+      "name": "cap_80dd",
+      "type": "json",
+      "default": {
+        "1": 75000,
+        "2": 125000
+      },
+      "label": "80DD: a fixed sum - 1 disability (40% or more), 2 severe (80% or more)"
+    },
+    {
+      "name": "cap_80ddb",
+      "type": "json",
+      "default": {
+        "below60": 40000,
+        "senior": 100000
+      },
+      "label": "80DDB: specified diseases - up to, by the patient's age"
+    },
+    {
+      "name": "cap_80ee",
+      "type": "json",
+      "default": 50000,
+      "label": "80EE: interest on a first-home loan sanctioned in FY 2016-17"
+    },
+    {
+      "name": "cap_80eea",
+      "type": "json",
+      "default": 150000,
+      "label": "80EEA: interest on an affordable first-home loan sanctioned FY 2019-20 to 2021-22 (stamp value up to 45 lakh)"
+    },
+    {
+      "name": "cap_80eeb",
+      "type": "json",
+      "default": 150000,
+      "label": "80EEB: interest on an electric-vehicle loan sanctioned FY 2019-20 to 2022-23"
     }
   ],
   "expr": {
@@ -519,13 +595,19 @@
       "itr1_agri_max": "$itr1_agri_max",
       "itr1_houses_max": "$itr1_houses_max",
       "senior_age": "$senior_age",
-      "very_senior_age": "$very_senior_age"
+      "very_senior_age": "$very_senior_age",
+      "via_status": "$via_status",
+      "cap_80dd": "$cap_80dd",
+      "cap_80ddb": "$cap_80ddb",
+      "cap_80ee": "$cap_80ee",
+      "cap_80eea": "$cap_80eea",
+      "cap_80eeb": "$cap_80eeb"
     }
   },
   "returns": "record",
-  "version": 1,
+  "version": 3,
   "status": "published",
-  "description_nl": "2026-10-06: every number the individual return uses for AY 2026-27 (FY 2025-26), both regimes - slabs by age, 87A, surcharge, cess, the 111A/112A rates and 1.25 lakh exemption, standard deduction, family pension, house property, Chapter VI-A caps, HRA percentages and the ITR-1 limits. A new year = a new row of numbers here, nothing else.",
+  "description_nl": "2026-10-06: every number the individual return uses for AY 2026-27 (FY 2025-26), both regimes - slabs by age, 87A, surcharge, cess, the 111A/112A rates and 1.25 lakh exemption, standard deduction, family pension, house property, Chapter VI-A caps, HRA percentages and the ITR-1 limits. A new year = a new row of numbers here, nothing else. 2026-10-06: via_status - an HUF claims 80C, 80D (for a member), 80G and 80TTA; 80CCC / 80CCD, 80E, 80U and 80TTB are for individuals. 2026-10-06: 80DD, 80DDB, 80EE, 80EEA, 80EEB, 80GG, 80GGC - old regime only; an HUF claims 80DD, 80DDB and 80GGC too.",
   "test_cases": [
     {
       "args": {},
@@ -792,7 +874,13 @@
             "80TTA",
             "80TTB",
             "80U",
-            "80EEB"
+            "80EEB",
+            "80DD",
+            "80DDB",
+            "80EE",
+            "80EEA",
+            "80GG",
+            "80GGC"
           ]
         },
         "exempt_in_new": [
@@ -810,7 +898,47 @@
         "itr1_agri_max": 5000,
         "itr1_houses_max": 2,
         "senior_age": 60,
-        "very_senior_age": 80
+        "very_senior_age": 80,
+        "via_status": {
+          "individual": [
+            "80C",
+            "80CCD1B",
+            "80CCD2",
+            "80D",
+            "80E",
+            "80G",
+            "80TTA",
+            "80TTB",
+            "80U",
+            "80DD",
+            "80DDB",
+            "80EE",
+            "80EEA",
+            "80EEB",
+            "80GG",
+            "80GGC"
+          ],
+          "huf": [
+            "80C",
+            "80D",
+            "80G",
+            "80TTA",
+            "80DD",
+            "80DDB",
+            "80GGC"
+          ]
+        },
+        "cap_80dd": {
+          "1": 75000,
+          "2": 125000
+        },
+        "cap_80ddb": {
+          "below60": 40000,
+          "senior": 100000
+        },
+        "cap_80ee": 50000,
+        "cap_80eea": 150000,
+        "cap_80eeb": 150000
       }
     }
   ]

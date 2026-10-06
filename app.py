@@ -1061,14 +1061,24 @@ def api_portalstats(ay: str = "", _: dict = Depends(screen("portalstats"))):
 
 
 @app.get("/api/taxwatch")
-def api_taxwatch(ay: str = "", _: dict = Depends(screen("taxwatch"))):
-    """Tax rules (2026-10-06 owner): the live figures beside the new year's as fetched - Fetch, Compare, Apply (chips taxwatch.*)."""
-    return taxwatch.compare(ay or taxwatch.compare("")["next"])
+def api_taxwatch(ay: str = "", u: dict = Depends(firms.gate("taxwatch"))):
+    """Tax rules (2026-10-06 owner): the live figures beside the new year's as fetched - Fetch, Compare, Apply (chips taxwatch.*).
+    Everyone in Filing reads it; only the portal owner fetches, edits and applies (the owner guard on those routes)."""
+    can = u.get("role") == "owner"
+    return taxwatch.compare(ay or taxwatch.compare("")["next"]) | {"can_change": can, "ais": taxwatch.ai_choices(u) if can else []}
+
+
+@app.get("/api/rulebook")
+def api_rulebook(_: dict = Depends(firms.gate("taxwatch"))):
+    """The rule book (2026-10-06 owner): every rule the engine follows, built from the chips now - so after Apply it is current."""
+    import rulebook  # noqa: PLC0415
+    return HTMLResponse('<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">'
+                        + rulebook.build() + "</html>")
 
 
 @app.post("/api/taxwatch/{ay}/fetch")
-def api_taxwatch_fetch(ay: str, u: dict = Depends(owner)):
-    return taxwatch.fetch(u, ay)
+def api_taxwatch_fetch(ay: str, body: dict = Body(default={}), u: dict = Depends(owner)):
+    return taxwatch.fetch(u, ay, str((body or {}).get("provider") or ""))
 
 
 @app.put("/api/taxwatch/{ay}/{item}")
@@ -1284,12 +1294,20 @@ def api_myreturn_set(cid: str, ay: str, body: dict = Body(...), u: dict = Depend
     return myreturn.answer(u, cid, ay, body)
 
 
+@app.post("/api/myreturn/start/{ay}")
+async def api_myreturn_start(ay: str, file: UploadFile = File(...), password: str = Form(""), on_old: str = Form(""), on_same: str = Form(""),
+                             u: dict = Depends(firms.gate("myreturn"))):
+    """A return begun from a document - the pre-filled JSON or a filed return names the person, who becomes the client."""
+    data = await file.read()
+    return await run_in_threadpool(myreturn.start, u, ay, file.filename or "file", data, password, on_old, on_same)
+
+
 @app.post("/api/myreturn/{cid}/{ay}/docs")
-async def api_myreturn_doc(cid: str, ay: str, file: UploadFile = File(...), password: str = Form(""),
+async def api_myreturn_doc(cid: str, ay: str, file: UploadFile = File(...), password: str = Form(""), on_same: str = Form(""),
                            u: dict = Depends(firms.gate("myreturn"))):
     """A document dropped in: kept, read (pre-filled JSON, AIS, Form 16, 26AS), and added to the return."""
     data = await file.read()
-    return await run_in_threadpool(myreturn.add_doc, u, cid, ay, file.filename or "file", data, password)
+    return await run_in_threadpool(myreturn.add_doc, u, cid, ay, file.filename or "file", data, password, on_same)
 
 
 @app.delete("/api/myreturn/{cid}/{ay}/docs/{fid}")
@@ -1301,6 +1319,12 @@ def api_myreturn_doc_delete(cid: str, ay: str, fid: str, u: dict = Depends(firms
 def api_myreturn_doc_file(cid: str, ay: str, fid: str, _: dict = Depends(firms.gate("myreturn"))):
     path, name = myreturn.doc_file(cid, ay, fid)
     return FileResponse(path, filename=name)
+
+
+@app.post("/api/myreturn/{cid}/{ay}/from-filed")
+def api_myreturn_from_filed(cid: str, ay: str, u: dict = Depends(firms.gate("myreturn"))):
+    """This year's filed return fills Already filed? and the tax paid (2026-10-06)."""
+    return myreturn.from_filed(u, cid, ay)
 
 
 @app.get("/api/myreturn/{cid}/{ay}/compare")

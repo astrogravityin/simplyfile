@@ -67,7 +67,8 @@ def _day(s: str) -> int:
     return int(re.sub(r"\D", "", str(s or ""))[:8] or 0)
 
 
-def interest_234(cid: str, ay: str, k: dict, assessed: float, paid: list[dict], exempt: bool = False, filed_on: int = 0, due: int = 0) -> dict:
+def interest_234(cid: str, ay: str, k: dict, assessed: float, paid: list[dict], exempt: bool = False, filed_on: int = 0, due: int = 0,
+                 presumptive: bool | None = None) -> dict:
     """Interest u/s 234A / 234B / 234C (chip compute.interest). Here: which challan is advance tax and which self-assessment
     (chip compute.paid_kind), what was paid by each instalment date, and the months - counted by op months_part."""
     import datetime  # noqa: PLC0415
@@ -86,9 +87,13 @@ def interest_234(cid: str, ay: str, k: dict, assessed: float, paid: list[dict], 
     after_due = int((datetime.date(due // 10000, due // 100 % 100, due % 100) + datetime.timedelta(days=1)).strftime("%Y%m%d"))
     adv_total = sum(r["amount"] for r in adv)
 
+    step = float(engine.knobs("compute.interest")["floor_step"]) or 1.0
+
     def upto(pays: list[dict], owed: float) -> list[dict]:
-        """Self-assessment payments in date order, each counted only up to what was still owed."""
+        """Self-assessment payments in date order, each counted only up to what was still owed - that owed rounded down to
+        the chip's floor_step first, as the department does (338,521 owed -> interest on 338,500)."""
         out = []
+        owed = (max(owed, 0.0) // step) * step
         for r in sorted(pays, key=lambda r: r["on"]):
             take = max(0.0, min(r["amount"], owed))
             owed -= take
@@ -103,7 +108,7 @@ def interest_234(cid: str, ay: str, k: dict, assessed: float, paid: list[dict], 
         "sat_im": sum(r["amount"] * months_part(year_day(ay, "start"), r["on"]) for r in sat_b),
         "sat_after_due": sum(r["amount"] for r in sat_a), "sat_after_im": sum(r["amount"] * months_part(after_due, r["on"]) for r in sat_a),
         "months_b": months_part(year_day(ay, "start"), filing), "months_a": months_part(after_due, filing),
-        "presumptive": bool(y.get("presumptive")), "exempt": exempt}) | {"filing_day": filing, "exempt": exempt, "due": due}
+        "presumptive": bool(y.get("presumptive")) if presumptive is None else presumptive, "exempt": exempt}) | {"filing_day": filing, "exempt": exempt, "due": due}
 
 
 def refund_interest(ay: str, st: dict, auto: dict, refund: float, tax_total: float) -> dict:
@@ -333,8 +338,9 @@ def act(user: dict, cid: str, ay: str, action: str, body: dict) -> dict:
         if action == "file":
             if cur:
                 cur["status"], cur["superseded_at"] = "superseded", now
+            fee = engine.run("compute.fee_234i", {"income": d["figures"]["income"]}) if when.get("fee_234i") else 0   # s.234I: revised after 31 Dec
             fl.append({"n": len(fl) + 1, "kind": when["kind"], "ack_no": ack, "filed_on": filed_on or now[:10], "by": who, "at": now,
-                       "figures": d["figures"], "status": "current", "revises": (cur or {}).get("ack_no", ""),
+                       "figures": d["figures"] | ({"fee_234i": fee} if fee else {}), "status": "current", "revises": (cur or {}).get("ack_no", ""),
                        "itr_u": {k: upd[k] for k in ("extra", "pct", "additional")} if upd else None})
             yy["revising"] = False
             yy["ack_no"] = ack

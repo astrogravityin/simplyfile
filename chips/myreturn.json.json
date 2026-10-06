@@ -54,6 +54,24 @@
         "NA"
       ],
       "label": "employer categories"
+    },
+    {
+      "name": "status_codes",
+      "type": "json",
+      "default": {
+        "individual": "I",
+        "huf": "H"
+      },
+      "label": "PersonalInfo.Status in the department's JSON"
+    },
+    {
+      "name": "capacity",
+      "type": "json",
+      "default": {
+        "individual": "S",
+        "huf": "K"
+      },
+      "label": "Verification.Capacity: S self, K Karta"
     }
   ],
   "expr": {
@@ -63,13 +81,15 @@
       "os_words": "$os_words",
       "family_pension_code": "$family_pension_code",
       "employer_default": "$employer_default",
-      "employer_categories": "$employer_categories"
+      "employer_categories": "$employer_categories",
+      "status_codes": "$status_codes",
+      "capacity": "$capacity"
     }
   },
   "returns": "record",
-  "version": 1,
+  "version": 3,
   "status": "published",
-  "description_nl": "2026-10-06: other-sources nature codes (SAV savings, IFD deposits, TAX refund interest, DIV dividend, FAP family pension, OTH other), and the employer category (OTH = private employer) when the person has not picked one.",
+  "description_nl": "2026-10-06: other-sources nature codes (SAV savings, IFD deposits, TAX refund interest, DIV dividend, FAP family pension, OTH other), and the employer category (OTH = private employer) when the person has not picked one. 2026-10-06: status_codes - I for an individual, H for an HUF. 2026-10-06: capacity - an HUF's return is verified by its Karta (K).",
   "test_cases": [
     {
       "args": {},
@@ -96,7 +116,15 @@
           "PEO",
           "OTH",
           "NA"
-        ]
+        ],
+        "status_codes": {
+          "individual": "I",
+          "huf": "H"
+        },
+        "capacity": {
+          "individual": "S",
+          "huf": "K"
+        }
       }
     }
   ]

@@ -24,7 +24,7 @@ from core import access, auth, demo, engine, lists, mailer, ops, store
 
 FILE = "sf_firms"
 _LOCK = threading.Lock()  # ponytail: one lock for every firm; per-firm locks if sign-ups ever queue
-FILING = ("clients", "myreturn", "intake", "recon", "compute", "audit", "analytics", "itrimport")
+FILING = ("clients", "myreturn", "taxwatch", "intake", "recon", "compute", "audit", "analytics", "itrimport")
 
 
 def settings() -> dict:
@@ -243,9 +243,7 @@ def add_doc(u: dict, kind: str, name: str, data: bytes) -> dict:
             raise HTTPException(409, say("not_editable"))
         folder = store.DATA / "sf_firms" / f["id"]
         folder.mkdir(parents=True, exist_ok=True)
-        for old in f["docs"]:
-            if old["kind"] == kind:
-                (folder / old["file"]).unlink(missing_ok=True)
+        # ponytail: a replaced paper's file stays in the folder (its own id), never deleted; listed again when firm papers get History
         doc = {"id": store.new_id(), "kind": kind, "name": _txt(name, 120), "size": len(data), "at": store.now()}
         doc["file"] = doc["id"] + ext
         (folder / doc["file"]).write_bytes(data)

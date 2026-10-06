@@ -1,0 +1,184 @@
+{
+  "chip_id": "myreturn.d80gg",
+  "kind": "accessor",
+  "set": "myreturn",
+  "label": "My return: 80GG - rent paid with no HRA",
+  "aliases": [
+    "80gg",
+    "rent without hra"
+  ],
+  "params": [
+    {
+      "name": "rent",
+      "type": "number",
+      "default": 0,
+      "label": "rent paid in the year"
+    },
+    {
+      "name": "ati",
+      "type": "number",
+      "default": 0,
+      "label": "total income before 80GG (gross total less the other deductions)"
+    },
+    {
+      "name": "regime",
+      "type": "text",
+      "default": "old",
+      "label": "regime"
+    },
+    {
+      "name": "status",
+      "type": "text",
+      "default": "individual",
+      "label": "individual / huf"
+    },
+    {
+      "name": "has_hra",
+      "type": "boolean",
+      "default": false,
+      "label": "HRA received from an employer"
+    },
+    {
+      "name": "month_cap",
+      "type": "number",
+      "default": 5000,
+      "label": "a month, at most"
+    },
+    {
+      "name": "months",
+      "type": "number",
+      "default": 12,
+      "label": "months"
+    },
+    {
+      "name": "ati_pct",
+      "type": "number",
+      "default": 25,
+      "label": "% of that income, at most"
+    },
+    {
+      "name": "rent_less_pct",
+      "type": "number",
+      "default": 10,
+      "label": "rent less this % of that income"
+    }
+  ],
+  "expr": {
+    "vop": "choose",
+    "cases": [
+      {
+        "when": {
+          "op": "all",
+          "items": [
+            {
+              "op": "eq",
+              "left": "$regime",
+              "right": "old"
+            },
+            {
+              "op": "eq",
+              "left": "$status",
+              "right": "individual"
+            },
+            {
+              "op": "eq",
+              "left": "$has_hra",
+              "right": false
+            },
+            {
+              "op": "gt",
+              "left": "$rent",
+              "right": 0
+            }
+          ]
+        },
+        "then": {
+          "vop": "round_to",
+          "value": {
+            "vop": "largest",
+            "values": [
+              {
+                "vop": "smallest",
+                "values": [
+                  {
+                    "vop": "mul",
+                    "a": "$month_cap",
+                    "b": "$months"
+                  },
+                  {
+                    "vop": "div",
+                    "a": {
+                      "vop": "mul",
+                      "a": "$ati",
+                      "b": "$ati_pct"
+                    },
+                    "b": 100
+                  },
+                  {
+                    "vop": "sub",
+                    "a": "$rent",
+                    "b": {
+                      "vop": "div",
+                      "a": {
+                        "vop": "mul",
+                        "a": "$ati",
+                        "b": "$rent_less_pct"
+                      },
+                      "b": 100
+                    }
+                  }
+                ]
+              },
+              0
+            ]
+          }
+        }
+      }
+    ],
+    "else": 0
+  },
+  "returns": "number",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-06: s.80GG - an individual paying rent with no HRA from an employer, old regime: the least of 5,000 a month, 25% of total income (before 80GG) and rent less 10% of that income. Form 10BA is the person's declaration.",
+  "test_cases": [
+    {
+      "args": {
+        "rent": 240000,
+        "ati": 600000
+      },
+      "expect_value": 60000
+    },
+    {
+      "args": {
+        "rent": 100000,
+        "ati": 600000
+      },
+      "expect_value": 40000
+    },
+    {
+      "args": {
+        "rent": 240000,
+        "ati": 600000,
+        "has_hra": true
+      },
+      "expect_value": 0
+    },
+    {
+      "args": {
+        "rent": 240000,
+        "ati": 600000,
+        "regime": "new"
+      },
+      "expect_value": 0
+    },
+    {
+      "args": {
+        "rent": 240000,
+        "ati": 600000,
+        "status": "huf"
+      },
+      "expect_value": 0
+    }
+  ]
+}

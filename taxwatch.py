@@ -75,8 +75,13 @@ def _set(root: dict, path: str, value) -> None:
 
 
 def live_value(it: dict):
-    """An item's value as the portal holds it - its first target, the one whose shape the AI is asked for."""
+    """An item's value as the portal holds it - its first target, the one whose shape the AI is asked for. A due date the
+    department extended for the live year (close.dates extensions) is the date that year has."""
     t = it["targets"][0]
+    if t["chip"] == "close.dates":
+        ext = (_params("close.dates").get("extensions") or {}).get(settings()["live_ay"][:4]) or {}
+        if t["path"] in ext:
+            return ext[t["path"]]
     return _get(_params(t["chip"]), t["path"])
 
 
@@ -90,17 +95,43 @@ def draft(ay: str) -> dict:
     return store.read(_key(ay), {}) or {}
 
 
-def fetch(u: dict, ay: str) -> dict:
+def ai_choices(u: dict) -> list[dict]:
+    """The AIs Fetch may ask (chip taxwatch.settings ais), each with whether this person has a key that works now."""
+    import providers  # noqa: PLC0415
+    return [a | {"ready": bool(providers.candidates(u["id"], a["provider"])), "why": "" if providers.candidates(u["id"], a["provider"])
+                 else providers.no_key_text(u["id"], a["provider"])} for a in settings()["ais"]]
+
+
+def fetch(u: dict, ay: str, provider: str = "") -> dict:
     import providers  # noqa: PLC0415
     k = settings()
-    if not (re.fullmatch(r"\d{4}-\d{2}", ay or "") and ay > k["live_ay"]):
+    if not (re.fullmatch(r"\d{4}-\d{2}", ay or "") and ay >= k["live_ay"]):          # the live year too: what changed since
         raise HTTPException(400, say("bad_ay", ay=k["live_ay"]))
-    if not providers.have_key(u["id"], k["provider"]):
-        raise HTTPException(400, say("no_key"))
+    choices = ai_choices(u)
+    pick = next((a for a in choices if a["provider"] == provider), None) if provider else next((a for a in choices if a["ready"]), None)
+    if not pick or not pick["ready"]:
+        why = (pick or choices[0])["why"] if choices else say("no_key")
+        raise HTTPException(400, say("ai_none", why=why))
+    k = k | {"provider": pick["provider"], "model": pick["model"]}
     lines = "\n".join(f"- {it['id']}: {it['label']}. AY {k['live_ay']}: {json.dumps(live_value(it))}" for it in items())
     prompt = template(k["prompt"], {"ay": ay, "fy": f"{int(ay[:4]) - 1}-{ay[2:4]}", "live_ay": k["live_ay"], "items": lines})
 
+    def call_openai(secret: str):
+        """OpenAI's Responses API with its web_search tool, over plain HTTPS (no SDK: the portal's own client, providers._post_json)."""
+        base = (providers.row("openai") or {}).get("base_url") or "https://api.openai.com/v1"
+        resp = providers._post_json(f"{base.rstrip('/')}/responses", secret,  # noqa: SLF001
+                                    {"model": k["model"], "input": prompt, "tools": [{"type": pick.get("tool") or "web_search"}]}, float(k["ai_timeout"]))
+        text, pages = [], []
+        for out in resp.get("output") or []:
+            for part in out.get("content") or []:
+                if part.get("type") == "output_text":
+                    text.append(part.get("text") or "")
+                    pages += [{"title": a.get("title") or "", "uri": a["url"]} for a in part.get("annotations") or [] if a.get("url")]
+        return "".join(text), pages
+
     def call(secret: str):
+        if k["provider"] == "openai":
+            return call_openai(secret)
         from google import genai  # noqa: PLC0415
         from google.genai import types  # noqa: PLC0415
         cfg = types.GenerateContentConfig(tools=[types.Tool(google_search=types.GoogleSearch())] if k["search"] else None)
@@ -125,8 +156,10 @@ def fetch(u: dict, ay: str) -> dict:
     known = {it["id"] for it in items()}
     rows = {i: {"value": (v or {}).get("value"), "source": str((v or {}).get("source") or "")[:300],
                 "note": str((v or {}).get("note") or "")[: k["note_chars"]]} for i, v in got.items() if i in known and isinstance(v, dict)}
+    new_rules = [{f: str(x.get(f) or "")[: k["note_chars"]] for f in ("what", "who", "source")}   # what is not a figure: needs building
+                 for x in (got.get("_new") or []) if isinstance(x, dict) and x.get("what")][: int(k["new_most"])]
     d = {"ay": ay, "live_ay": k["live_ay"], "at": store.now(), "by": u.get("email", ""), "model": k["model"], "items": rows,
-         "pages": pages[: k["sources_most"]]}
+         "pages": pages[: k["sources_most"]], "new_rules": new_rules}
     store.write(_key(ay), d)
     return compare(ay)
 
@@ -173,7 +206,7 @@ def compare(ay: str) -> dict:
                      "where": [f"{t['chip']} · {t['path']}" for t in it["targets"]]})
     count = {s: sum(r["state"] == s for r in rows) for s in ("changed", "same", "unknown")}
     return {"live_ay": k["live_ay"], "ay": ay, "fetched": bool(d), "at": d.get("at"), "by": d.get("by", ""), "model": d.get("model", ""),
-            "pages": d.get("pages", []), "rows": rows, "count": count, "groups": engine.run("taxwatch.items")["groups"],
+            "pages": d.get("pages", []), "new_rules": d.get("new_rules", []), "rows": rows, "count": count, "groups": engine.run("taxwatch.items")["groups"],
             "next": _ay_next(k["live_ay"])}
 
 
@@ -193,17 +226,26 @@ def apply(u: dict, ay: str, ids: list[str]) -> dict:
                 head = _steps(t["path"])[0]
                 if t.get("archive") and k["live_ay"] not in (params[t["archive"]]["default"] or {}):
                     params[t["archive"]]["default"] = dict(params[t["archive"]]["default"] or {}) | {k["live_ay"]: copy.deepcopy(params[head]["default"])}
+                new = r["new"][t["pick"]] if t.get("pick") else r["new"]
+                if ay == k["live_ay"] and t["chip"] == "close.dates" and t["path"].endswith("_mmdd"):
+                    # this year's date as the department moved it (a circular): this year only, the rule stays for the others
+                    ext = copy.deepcopy(params["extensions"]["default"] or {})
+                    ext.setdefault(ay[:4], {})[t["path"]] = new
+                    ext[ay[:4]]["why"] = r.get("note") or ext[ay[:4]].get("why") or say("ext_why", ay=ay)
+                    ext[ay[:4]]["source"] = r.get("source") or ext[ay[:4]].get("source", "")
+                    params["extensions"]["default"] = ext
+                    continue
                 vals = {n: p["default"] for n, p in params.items()}
-                _set(vals, t["path"], r["new"][t["pick"]] if t.get("pick") else r["new"])
+                _set(vals, t["path"], new)
                 params[head]["default"] = vals[head]
-        # the settings chip moves on to the new year with them
-        tw = copy.deepcopy(builder._clean(engine.chips()["taxwatch.settings"]))  # noqa: SLF001
-        next(p for p in tw["params"] if p["name"] == "live_ay")["default"] = ay
-        chips["taxwatch.settings"] = tw
+        if ay > k["live_ay"]:                       # a new year: the settings chip moves on to it; a re-check of the live year stays
+            tw = copy.deepcopy(builder._clean(engine.chips()["taxwatch.settings"]))  # noqa: SLF001
+            next(p for p in tw["params"] if p["name"] == "live_ay")["default"] = ay
+            chips["taxwatch.settings"] = tw
         note = f" {store.now()[:10]}: AY {ay} figures applied from Tax rules ({', '.join(r['id'] for r in pick)}) by {u.get('email', '')}."
         # every test that held before and fails with the new figures (the chips changed, and the chips that use them) now
         # expects the new answer - listed for the owner, so a surprise shows
-        figured = len(chips) - 1
+        figured = len(chips) - (1 if "taxwatch.settings" in chips else 0)
         rebased = []
         lib = engine.with_drafts(list(chips.values()))
         was = engine.chips()

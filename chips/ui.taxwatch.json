@@ -360,6 +360,102 @@
       "type": "text",
       "default": "Not applied: chip {chip} fails its own checks with these figures - nothing was changed.",
       "label": "apply failed"
+    },
+    {
+      "name": "new_h",
+      "type": "text",
+      "default": "Changes the engine cannot apply by itself",
+      "label": "new h"
+    },
+    {
+      "name": "new_p",
+      "type": "text",
+      "default": "Not a figure to swap: a new fee, section, form field or schema version. Each needs building into SimplyFile - send the list with Report an issue (bottom bar) so it is built before the year's returns.",
+      "label": "new p"
+    },
+    {
+      "name": "new_who",
+      "type": "text",
+      "default": "Affects: {who}",
+      "label": "new who"
+    },
+    {
+      "name": "new_none",
+      "type": "text",
+      "default": "Nothing beyond the figures above.",
+      "label": "new none"
+    },
+    {
+      "name": "ro_note",
+      "type": "text",
+      "default": "These are the figures every return on this portal uses for AY {ay}. The portal owner fetches each new year's and applies them - nothing here changes from this screen.",
+      "label": "ro_note"
+    },
+    {
+      "name": "ro_tag",
+      "type": "text",
+      "default": "Read-only",
+      "label": "ro_tag"
+    },
+    {
+      "name": "rulebook",
+      "type": "text",
+      "default": "Rule book",
+      "label": "rulebook"
+    },
+    {
+      "name": "rulebook_sub",
+      "type": "text",
+      "default": "Every rule the engine follows, with the law, the figures and worked examples - always as the engine is now. Share it with your CA.",
+      "label": "rulebook_sub"
+    },
+    {
+      "name": "ai_pick",
+      "type": "text",
+      "default": "Ask",
+      "label": "ai pick"
+    },
+    {
+      "name": "ai_auto",
+      "type": "text",
+      "default": "Automatic (the first key that works)",
+      "label": "ai auto"
+    },
+    {
+      "name": "ai_none",
+      "type": "text",
+      "default": "No AI key that works: {why}",
+      "label": "ai none"
+    },
+    {
+      "name": "ai_ready",
+      "type": "text",
+      "default": "key ready",
+      "label": "ai ready"
+    },
+    {
+      "name": "ai_resting",
+      "type": "text",
+      "default": "key resting",
+      "label": "ai resting"
+    },
+    {
+      "name": "recheck",
+      "type": "text",
+      "default": "AY {ay} - check this year again",
+      "label": "recheck"
+    },
+    {
+      "name": "ext_why",
+      "type": "text",
+      "default": "Extended for AY {ay} (Tax rules)",
+      "label": "ext_why"
+    },
+    {
+      "name": "recheck_p",
+      "type": "text",
+      "default": "Checks the year being filed for anything the department published since - a circular extending a due date, a notification. A date it extends is changed for this year only.",
+      "label": "recheck_p"
     }
   ],
   "expr": {
@@ -423,13 +519,29 @@
       "80plus": "$80plus",
       "new": "$new",
       "old": "$old",
-      "apply_failed": "$apply_failed"
+      "apply_failed": "$apply_failed",
+      "new_h": "$new_h",
+      "new_p": "$new_p",
+      "new_who": "$new_who",
+      "new_none": "$new_none",
+      "ro_note": "$ro_note",
+      "ro_tag": "$ro_tag",
+      "rulebook": "$rulebook",
+      "rulebook_sub": "$rulebook_sub",
+      "ai_pick": "$ai_pick",
+      "ai_auto": "$ai_auto",
+      "ai_none": "$ai_none",
+      "ai_ready": "$ai_ready",
+      "ai_resting": "$ai_resting",
+      "recheck": "$recheck",
+      "ext_why": "$ext_why",
+      "recheck_p": "$recheck_p"
     }
   },
   "returns": "record",
-  "version": 1,
+  "version": 6,
   "status": "published",
-  "description_nl": "2026-10-06: every word on Tax rules (Fetch, Compare, Apply).",
+  "description_nl": "2026-10-06: every word on Tax rules (Fetch, Compare, Apply). 2026-10-06: new_h / new_p / new_who / new_none - the changes Fetch found that are not a figure. 2026-10-06: ro_note / ro_tag - what everyone but the owner sees. 2026-10-06: rulebook / rulebook_sub - the Rule book button. 2026-10-06: ai_pick / ai_auto / ai_none / ai_ready / ai_resting - the AI choice beside Fetch. 2026-10-06: recheck / ext_why / recheck_p - checking the live year again.",
   "test_cases": [
     {
       "args": {},
@@ -492,7 +604,23 @@
         "80plus": "80 and over",
         "new": "new",
         "old": "old",
-        "apply_failed": "Not applied: chip {chip} fails its own checks with these figures - nothing was changed."
+        "apply_failed": "Not applied: chip {chip} fails its own checks with these figures - nothing was changed.",
+        "new_h": "Changes the engine cannot apply by itself",
+        "new_p": "Not a figure to swap: a new fee, section, form field or schema version. Each needs building into SimplyFile - send the list with Report an issue (bottom bar) so it is built before the year's returns.",
+        "new_who": "Affects: {who}",
+        "new_none": "Nothing beyond the figures above.",
+        "ro_note": "These are the figures every return on this portal uses for AY {ay}. The portal owner fetches each new year's and applies them - nothing here changes from this screen.",
+        "ro_tag": "Read-only",
+        "rulebook": "Rule book",
+        "rulebook_sub": "Every rule the engine follows, with the law, the figures and worked examples - always as the engine is now. Share it with your CA.",
+        "ai_pick": "Ask",
+        "ai_auto": "Automatic (the first key that works)",
+        "ai_none": "No AI key that works: {why}",
+        "ai_ready": "key ready",
+        "ai_resting": "key resting",
+        "recheck": "AY {ay} - check this year again",
+        "ext_why": "Extended for AY {ay} (Tax rules)",
+        "recheck_p": "Checks the year being filed for anything the department published since - a circular extending a due date, a notification. A date it extends is changed for this year only."
       }
     }
   ]

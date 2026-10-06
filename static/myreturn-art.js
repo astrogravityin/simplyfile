@@ -113,3 +113,32 @@ export function tdsMap(rows, words, W = 720) {
   return `<svg class="mr-tmap" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(words.title)}">
     <text x="0" y="16" class="mr-tm-h">${esc(words.left)}</text><text x="470" y="16" class="mr-tm-h">${esc(words.right)}</text>${items}</svg>`;
 }
+
+/** The picture on a "before we go on" question. why 'start': a return already under way - its folder of papers and the
+ *  new sheet arriving; why 'same': the paper already there and the new one beside it, a clock on the old one (kept in History). */
+export function askArt(why) {
+  const sheet = (x, y, cls, r = 0) => `<g transform="translate(${x} ${y}) rotate(${r})" class="${cls}">
+      <path d="M0 0 h30 l12 12 v44 a4 4 0 0 1 -4 4 h-38 a4 4 0 0 1 -4 -4 v-52 a4 4 0 0 1 4 -4z" class="ask-sheet"/>
+      <path d="M30 0 v8 a4 4 0 0 0 4 4 h8" class="ask-fold"/>
+      <path d="M6 22 h26 M6 30 h30 M6 38 h22 M6 46 h28" class="ask-ln"/></g>`;
+  const defs = `<defs><radialGradient id="ask-glow" cx="50%" cy="50%" r="50%"><stop offset="0" class="ask-g0"/><stop offset="1" class="ask-g1"/></radialGradient>
+      <marker id="ask-head" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M1 1 L8 5 L1 9" class="ask-headp"/></marker></defs>`;
+  if (why === 'start') {
+    return `<svg class="ask-art" viewBox="0 0 260 150" role="img" aria-hidden="true">${defs}
+      <ellipse cx="130" cy="78" rx="118" ry="66" fill="url(#ask-glow)"/>
+      <path d="M44 66 h40 l10 10 h66 a6 6 0 0 1 6 6 v50 a6 6 0 0 1 -6 6 h-116 a6 6 0 0 1 -6 -6 v-60 a6 6 0 0 1 6 -6z" class="ask-folder-back"/>
+      ${sheet(62, 32, 'ask-dim', -7)}${sheet(86, 26, 'ask-dim', 4)}
+      <path d="M38 92 h132 a6 6 0 0 1 6 7 l-6 34 a6 6 0 0 1 -6 5 h-118 a6 6 0 0 1 -6 -5 l-8 -34 a6 6 0 0 1 6 -7z" class="ask-folder"/>
+      <path d="M196 34 C 176 14, 150 18, 142 44" class="ask-arc" marker-end="url(#ask-head)"/>
+      ${sheet(192, 30, 'ask-new', 8)}
+      <circle cx="236" cy="30" r="11" class="ask-badge"/><path d="M231 30 h10 M236 25 v10" class="ask-badge-mark"/></svg>`;
+  }
+  return `<svg class="ask-art" viewBox="0 0 260 150" role="img" aria-hidden="true">${defs}
+      <ellipse cx="130" cy="78" rx="118" ry="66" fill="url(#ask-glow)"/>
+      ${sheet(52, 44, 'ask-dim', -5)}
+      <circle cx="98" cy="106" r="13" class="ask-clock"/><path d="M98 99 v7 l5 4" class="ask-clock-hand"/>
+      <path d="M112 52 C 124 36, 140 36, 152 52" class="ask-arc" marker-end="url(#ask-head)"/>
+      <path d="M152 112 C 140 128, 124 128, 112 112" class="ask-arc ask-arc-back" marker-end="url(#ask-head)"/>
+      ${sheet(162, 40, 'ask-new', 4)}
+      <circle cx="212" cy="40" r="11" class="ask-badge"/><path d="M207 40 l3.5 3.5 l6.5 -7" class="ask-badge-mark"/></svg>`;
+}

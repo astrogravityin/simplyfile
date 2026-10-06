@@ -112,6 +112,37 @@
       "type": "number",
       "default": 5,
       "label": "... = 31 March, AY's first year + 5"
+    },
+    {
+      "name": "extensions",
+      "type": "json",
+      "default": {
+        "2026": {
+          "due_audit_mmdd": 1121,
+          "audit_report_mmdd": 1021,
+          "why": "CBDT Circular No. 07/2026 dated 28 September 2026",
+          "source": "https://www.incometax.gov.in/iec/foportal/latest-news"
+        }
+      },
+      "label": "one year's due dates as CBDT extended them (by circular) - {AY start year: {date: MMDD, why, source}}"
+    },
+    {
+      "name": "audit_report_mmdd",
+      "type": "number",
+      "default": 930,
+      "label": "tax audit report (s.44AB) due, MMDD"
+    },
+    {
+      "name": "revise_long_from_year",
+      "type": "number",
+      "default": 2026,
+      "label": "from this AY a return can be revised to 31 March of the AY (Finance Act 2026)"
+    },
+    {
+      "name": "revise_late_mmdd",
+      "type": "number",
+      "default": 331,
+      "label": "last day to revise (in the year after the AY starts), with the s.234I fee"
     }
   ],
   "expr": {
@@ -137,7 +168,26 @@
                 },
                 "b": 10000
               },
-              "b": "$due_tp_mmdd"
+              "b": {
+                "vop": "coalesce",
+                "values": [
+                  {
+                    "vop": "get",
+                    "value": "$extensions",
+                    "path": {
+                      "vop": "template",
+                      "text": "{y}.due_tp_mmdd",
+                      "values": {
+                        "vop": "record",
+                        "fields": {
+                          "y": "$ay_year"
+                        }
+                      }
+                    }
+                  },
+                  "$due_tp_mmdd"
+                ]
+              }
             }
           },
           {
@@ -157,7 +207,26 @@
                 },
                 "b": 10000
               },
-              "b": "$due_audit_mmdd"
+              "b": {
+                "vop": "coalesce",
+                "values": [
+                  {
+                    "vop": "get",
+                    "value": "$extensions",
+                    "path": {
+                      "vop": "template",
+                      "text": "{y}.due_audit_mmdd",
+                      "values": {
+                        "vop": "record",
+                        "fields": {
+                          "y": "$ay_year"
+                        }
+                      }
+                    }
+                  },
+                  "$due_audit_mmdd"
+                ]
+              }
             }
           },
           {
@@ -187,7 +256,26 @@
                 },
                 "b": 10000
               },
-              "b": "$due_business_mmdd"
+              "b": {
+                "vop": "coalesce",
+                "values": [
+                  {
+                    "vop": "get",
+                    "value": "$extensions",
+                    "path": {
+                      "vop": "template",
+                      "text": "{y}.due_business_mmdd",
+                      "values": {
+                        "vop": "record",
+                        "fields": {
+                          "y": "$ay_year"
+                        }
+                      }
+                    }
+                  },
+                  "$due_business_mmdd"
+                ]
+              }
             }
           }
         ],
@@ -202,21 +290,65 @@
             },
             "b": 10000
           },
-          "b": "$due_mmdd"
+          "b": {
+            "vop": "coalesce",
+            "values": [
+              {
+                "vop": "get",
+                "value": "$extensions",
+                "path": {
+                  "vop": "template",
+                  "text": "{y}.due_mmdd",
+                  "values": {
+                    "vop": "record",
+                    "fields": {
+                      "y": "$ay_year"
+                    }
+                  }
+                }
+              },
+              "$due_mmdd"
+            ]
+          }
         }
       },
       "revise_by": {
-        "vop": "add",
-        "a": {
-          "vop": "mul",
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "ge",
+              "left": "$ay_year",
+              "right": "$revise_long_from_year"
+            },
+            "then": {
+              "vop": "add",
+              "a": {
+                "vop": "mul",
+                "a": {
+                  "vop": "add",
+                  "a": "$ay_year",
+                  "b": 1
+                },
+                "b": 10000
+              },
+              "b": "$revise_late_mmdd"
+            }
+          }
+        ],
+        "else": {
+          "vop": "add",
           "a": {
-            "vop": "add",
-            "a": "$ay_year",
-            "b": 0
+            "vop": "mul",
+            "a": {
+              "vop": "add",
+              "a": "$ay_year",
+              "b": 0
+            },
+            "b": 10000
           },
-          "b": 10000
-        },
-        "b": "$revise_mmdd"
+          "b": "$revise_mmdd"
+        }
       },
       "updated_by": {
         "vop": "add",
@@ -248,17 +380,42 @@
                     "op": "le",
                     "left": "$filed_on",
                     "right": {
-                      "vop": "add",
-                      "a": {
-                        "vop": "mul",
+                      "vop": "choose",
+                      "cases": [
+                        {
+                          "when": {
+                            "op": "ge",
+                            "left": "$ay_year",
+                            "right": "$revise_long_from_year"
+                          },
+                          "then": {
+                            "vop": "add",
+                            "a": {
+                              "vop": "mul",
+                              "a": {
+                                "vop": "add",
+                                "a": "$ay_year",
+                                "b": 1
+                              },
+                              "b": 10000
+                            },
+                            "b": "$revise_late_mmdd"
+                          }
+                        }
+                      ],
+                      "else": {
+                        "vop": "add",
                         "a": {
-                          "vop": "add",
-                          "a": "$ay_year",
-                          "b": 0
+                          "vop": "mul",
+                          "a": {
+                            "vop": "add",
+                            "a": "$ay_year",
+                            "b": 0
+                          },
+                          "b": 10000
                         },
-                        "b": 10000
-                      },
-                      "b": "$revise_mmdd"
+                        "b": "$revise_mmdd"
+                      }
                     }
                   },
                   "then": "revised"
@@ -324,7 +481,26 @@
                         },
                         "b": 10000
                       },
-                      "b": "$due_tp_mmdd"
+                      "b": {
+                        "vop": "coalesce",
+                        "values": [
+                          {
+                            "vop": "get",
+                            "value": "$extensions",
+                            "path": {
+                              "vop": "template",
+                              "text": "{y}.due_tp_mmdd",
+                              "values": {
+                                "vop": "record",
+                                "fields": {
+                                  "y": "$ay_year"
+                                }
+                              }
+                            }
+                          },
+                          "$due_tp_mmdd"
+                        ]
+                      }
                     }
                   },
                   {
@@ -344,7 +520,26 @@
                         },
                         "b": 10000
                       },
-                      "b": "$due_audit_mmdd"
+                      "b": {
+                        "vop": "coalesce",
+                        "values": [
+                          {
+                            "vop": "get",
+                            "value": "$extensions",
+                            "path": {
+                              "vop": "template",
+                              "text": "{y}.due_audit_mmdd",
+                              "values": {
+                                "vop": "record",
+                                "fields": {
+                                  "y": "$ay_year"
+                                }
+                              }
+                            }
+                          },
+                          "$due_audit_mmdd"
+                        ]
+                      }
                     }
                   },
                   {
@@ -374,7 +569,26 @@
                         },
                         "b": 10000
                       },
-                      "b": "$due_business_mmdd"
+                      "b": {
+                        "vop": "coalesce",
+                        "values": [
+                          {
+                            "vop": "get",
+                            "value": "$extensions",
+                            "path": {
+                              "vop": "template",
+                              "text": "{y}.due_business_mmdd",
+                              "values": {
+                                "vop": "record",
+                                "fields": {
+                                  "y": "$ay_year"
+                                }
+                              }
+                            }
+                          },
+                          "$due_business_mmdd"
+                        ]
+                      }
                     }
                   }
                 ],
@@ -389,7 +603,26 @@
                     },
                     "b": 10000
                   },
-                  "b": "$due_mmdd"
+                  "b": {
+                    "vop": "coalesce",
+                    "values": [
+                      {
+                        "vop": "get",
+                        "value": "$extensions",
+                        "path": {
+                          "vop": "template",
+                          "text": "{y}.due_mmdd",
+                          "values": {
+                            "vop": "record",
+                            "fields": {
+                              "y": "$ay_year"
+                            }
+                          }
+                        }
+                      },
+                      "$due_mmdd"
+                    ]
+                  }
                 }
               }
             },
@@ -400,17 +633,42 @@
               "op": "le",
               "left": "$filed_on",
               "right": {
-                "vop": "add",
-                "a": {
-                  "vop": "mul",
+                "vop": "choose",
+                "cases": [
+                  {
+                    "when": {
+                      "op": "ge",
+                      "left": "$ay_year",
+                      "right": "$revise_long_from_year"
+                    },
+                    "then": {
+                      "vop": "add",
+                      "a": {
+                        "vop": "mul",
+                        "a": {
+                          "vop": "add",
+                          "a": "$ay_year",
+                          "b": 1
+                        },
+                        "b": 10000
+                      },
+                      "b": "$revise_late_mmdd"
+                    }
+                  }
+                ],
+                "else": {
+                  "vop": "add",
                   "a": {
-                    "vop": "add",
-                    "a": "$ay_year",
-                    "b": 0
+                    "vop": "mul",
+                    "a": {
+                      "vop": "add",
+                      "a": "$ay_year",
+                      "b": 0
+                    },
+                    "b": 10000
                   },
-                  "b": 10000
-                },
-                "b": "$revise_mmdd"
+                  "b": "$revise_mmdd"
+                }
               }
             },
             "then": "belated"
@@ -463,17 +721,42 @@
             "op": "le",
             "left": "$today",
             "right": {
-              "vop": "add",
-              "a": {
-                "vop": "mul",
+              "vop": "choose",
+              "cases": [
+                {
+                  "when": {
+                    "op": "ge",
+                    "left": "$ay_year",
+                    "right": "$revise_long_from_year"
+                  },
+                  "then": {
+                    "vop": "add",
+                    "a": {
+                      "vop": "mul",
+                      "a": {
+                        "vop": "add",
+                        "a": "$ay_year",
+                        "b": 1
+                      },
+                      "b": 10000
+                    },
+                    "b": "$revise_late_mmdd"
+                  }
+                }
+              ],
+              "else": {
+                "vop": "add",
                 "a": {
-                  "vop": "add",
-                  "a": "$ay_year",
-                  "b": 0
+                  "vop": "mul",
+                  "a": {
+                    "vop": "add",
+                    "a": "$ay_year",
+                    "b": 0
+                  },
+                  "b": 10000
                 },
-                "b": 10000
-              },
-              "b": "$revise_mmdd"
+                "b": "$revise_mmdd"
+              }
             }
           }
         ]
@@ -498,17 +781,42 @@
             "op": "gt",
             "left": "$today",
             "right": {
-              "vop": "add",
-              "a": {
-                "vop": "mul",
+              "vop": "choose",
+              "cases": [
+                {
+                  "when": {
+                    "op": "ge",
+                    "left": "$ay_year",
+                    "right": "$revise_long_from_year"
+                  },
+                  "then": {
+                    "vop": "add",
+                    "a": {
+                      "vop": "mul",
+                      "a": {
+                        "vop": "add",
+                        "a": "$ay_year",
+                        "b": 1
+                      },
+                      "b": 10000
+                    },
+                    "b": "$revise_late_mmdd"
+                  }
+                }
+              ],
+              "else": {
+                "vop": "add",
                 "a": {
-                  "vop": "add",
-                  "a": "$ay_year",
-                  "b": 0
+                  "vop": "mul",
+                  "a": {
+                    "vop": "add",
+                    "a": "$ay_year",
+                    "b": 0
+                  },
+                  "b": 10000
                 },
-                "b": 10000
-              },
-              "b": "$revise_mmdd"
+                "b": "$revise_mmdd"
+              }
             }
           },
           {
@@ -529,13 +837,149 @@
             }
           }
         ]
+      },
+      "revise_free_by": {
+        "vop": "add",
+        "a": {
+          "vop": "mul",
+          "a": {
+            "vop": "add",
+            "a": "$ay_year",
+            "b": 0
+          },
+          "b": 10000
+        },
+        "b": "$revise_mmdd"
+      },
+      "fee_234i": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "ge",
+                  "left": "$ay_year",
+                  "right": "$revise_long_from_year"
+                },
+                {
+                  "op": "eq",
+                  "left": "$has_current",
+                  "right": true
+                },
+                {
+                  "op": "gt",
+                  "left": "$filed_on",
+                  "right": {
+                    "vop": "add",
+                    "a": {
+                      "vop": "mul",
+                      "a": {
+                        "vop": "add",
+                        "a": "$ay_year",
+                        "b": 0
+                      },
+                      "b": 10000
+                    },
+                    "b": "$revise_mmdd"
+                  }
+                },
+                {
+                  "op": "le",
+                  "left": "$filed_on",
+                  "right": {
+                    "vop": "add",
+                    "a": {
+                      "vop": "mul",
+                      "a": {
+                        "vop": "add",
+                        "a": "$ay_year",
+                        "b": 1
+                      },
+                      "b": 10000
+                    },
+                    "b": "$revise_late_mmdd"
+                  }
+                }
+              ]
+            },
+            "then": true
+          }
+        ],
+        "else": false
+      },
+      "audit_report_by": {
+        "vop": "add",
+        "a": {
+          "vop": "mul",
+          "a": {
+            "vop": "add",
+            "a": "$ay_year",
+            "b": 0
+          },
+          "b": 10000
+        },
+        "b": {
+          "vop": "coalesce",
+          "values": [
+            {
+              "vop": "get",
+              "value": "$extensions",
+              "path": {
+                "vop": "template",
+                "text": "{y}.audit_report_mmdd",
+                "values": {
+                  "vop": "record",
+                  "fields": {
+                    "y": "$ay_year"
+                  }
+                }
+              }
+            },
+            "$audit_report_mmdd"
+          ]
+        }
+      },
+      "extended_by": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "eq",
+              "left": "$audit",
+              "right": true
+            },
+            "then": {
+              "vop": "coalesce",
+              "values": [
+                {
+                  "vop": "get",
+                  "value": "$extensions",
+                  "path": {
+                    "vop": "template",
+                    "text": "{y}.why",
+                    "values": {
+                      "vop": "record",
+                      "fields": {
+                        "y": "$ay_year"
+                      }
+                    }
+                  }
+                },
+                ""
+              ]
+            }
+          }
+        ],
+        "else": ""
       }
     }
   },
   "returns": "record",
-  "version": 1,
+  "version": 2,
   "status": "published",
-  "description_nl": "Income-tax Act dates as amended by the Finance Acts 2025 and 2026: due date u/s 139(1) 31 July (ITR-1 / ITR-2), 31 August for business or profession without audit (ITR-3 / 4 / 5, Finance Act 2026), 31 October with a tax audit, 30 November with a transfer pricing report in Form 3CEB u/s 92E); a belated (139(4)) or revised (139(5)) return by 31 December of the AY; an updated return (ITR-U, 139(8A)) once, within 48 months from the end of the AY. Dates are numbers yyyymmdd so the chip compares them.",
+  "description_nl": "Income-tax Act dates as amended by the Finance Acts 2025 and 2026: due date u/s 139(1) 31 July (ITR-1 / ITR-2), 31 August for business or profession without audit (ITR-3 / 4 / 5, Finance Act 2026), 31 October with a tax audit, 30 November with a transfer pricing report in Form 3CEB u/s 92E); a belated (139(4)) or revised (139(5)) return by 31 December of the AY; an updated return (ITR-U, 139(8A)) once, within 48 months from the end of the AY. Dates are numbers yyyymmdd so the chip compares them. 2026-10-06: extensions - a year's dates as CBDT extended them by circular (AY 2026-27, Circular 07/2026: audit cases' return 21 November, audit report 21 October); every other year keeps the rule's dates. From AY 2026-27 (Finance Act 2026) a return may be revised to 31 March of the AY - free to 31 December (revise_free_by), then with the s.234I fee (fee_234i). extended_by names the circular only for the returns it covers (audit cases); fee_234i only within the revise window.",
   "test_cases": [
     {
       "args": {
@@ -545,12 +989,16 @@
         "today": 20261015
       },
       "expect_value": {
-        "due": 20261031,
-        "revise_by": 20261231,
+        "due": 20261121,
+        "revise_by": 20270331,
         "updated_by": 20310331,
         "kind": "original",
         "may_revise": false,
-        "may_update": false
+        "may_update": false,
+        "revise_free_by": 20261231,
+        "fee_234i": false,
+        "audit_report_by": 20261021,
+        "extended_by": "CBDT Circular No. 07/2026 dated 28 September 2026"
       }
     },
     {
@@ -563,11 +1011,15 @@
       },
       "expect_value": {
         "due": 20261130,
-        "revise_by": 20261231,
+        "revise_by": 20270331,
         "updated_by": 20310331,
         "kind": "original",
         "may_revise": false,
-        "may_update": false
+        "may_update": false,
+        "revise_free_by": 20261231,
+        "fee_234i": false,
+        "audit_report_by": 20261021,
+        "extended_by": "CBDT Circular No. 07/2026 dated 28 September 2026"
       }
     },
     {
@@ -579,11 +1031,15 @@
       },
       "expect_value": {
         "due": 20260831,
-        "revise_by": 20261231,
+        "revise_by": 20270331,
         "updated_by": 20310331,
         "kind": "original",
         "may_revise": false,
-        "may_update": false
+        "may_update": false,
+        "revise_free_by": 20261231,
+        "fee_234i": false,
+        "audit_report_by": 20261021,
+        "extended_by": ""
       }
     },
     {
@@ -599,7 +1055,11 @@
         "updated_by": 20300331,
         "kind": "belated",
         "may_revise": false,
-        "may_update": false
+        "may_update": false,
+        "revise_free_by": 20251231,
+        "fee_234i": false,
+        "audit_report_by": 20250930,
+        "extended_by": ""
       }
     },
     {
@@ -610,11 +1070,15 @@
       },
       "expect_value": {
         "due": 20260731,
-        "revise_by": 20261231,
+        "revise_by": 20270331,
         "updated_by": 20310331,
         "kind": "belated",
         "may_revise": false,
-        "may_update": false
+        "may_update": false,
+        "revise_free_by": 20261231,
+        "fee_234i": false,
+        "audit_report_by": 20261021,
+        "extended_by": ""
       }
     },
     {
@@ -626,11 +1090,15 @@
       },
       "expect_value": {
         "due": 20260731,
-        "revise_by": 20261231,
+        "revise_by": 20270331,
         "updated_by": 20310331,
         "kind": "revised",
         "may_revise": true,
-        "may_update": false
+        "may_update": false,
+        "revise_free_by": 20261231,
+        "fee_234i": false,
+        "audit_report_by": 20261021,
+        "extended_by": ""
       }
     },
     {
@@ -642,11 +1110,15 @@
       },
       "expect_value": {
         "due": 20260731,
-        "revise_by": 20261231,
+        "revise_by": 20270331,
         "updated_by": 20310331,
         "kind": "updated",
         "may_revise": false,
-        "may_update": true
+        "may_update": true,
+        "revise_free_by": 20261231,
+        "fee_234i": false,
+        "audit_report_by": 20261021,
+        "extended_by": ""
       }
     },
     {
@@ -659,11 +1131,75 @@
       },
       "expect_value": {
         "due": 20260731,
-        "revise_by": 20261231,
+        "revise_by": 20270331,
         "updated_by": 20310331,
         "kind": "too_late",
         "may_revise": false,
-        "may_update": false
+        "may_update": false,
+        "revise_free_by": 20261231,
+        "fee_234i": false,
+        "audit_report_by": 20261021,
+        "extended_by": ""
+      }
+    },
+    {
+      "args": {
+        "ay_year": 2026,
+        "audit": true,
+        "filed_on": 20261120,
+        "today": 20261120
+      },
+      "expect_value": {
+        "due": 20261121,
+        "revise_by": 20270331,
+        "updated_by": 20310331,
+        "kind": "original",
+        "may_revise": false,
+        "may_update": false,
+        "revise_free_by": 20261231,
+        "fee_234i": false,
+        "audit_report_by": 20261021,
+        "extended_by": "CBDT Circular No. 07/2026 dated 28 September 2026"
+      }
+    },
+    {
+      "args": {
+        "ay_year": 2025,
+        "audit": true,
+        "filed_on": 20251030,
+        "today": 20251030
+      },
+      "expect_value": {
+        "due": 20251031,
+        "revise_by": 20251231,
+        "updated_by": 20300331,
+        "kind": "original",
+        "may_revise": false,
+        "may_update": false,
+        "revise_free_by": 20251231,
+        "fee_234i": false,
+        "audit_report_by": 20250930,
+        "extended_by": null
+      }
+    },
+    {
+      "args": {
+        "ay_year": 2026,
+        "has_current": true,
+        "filed_on": 20270215,
+        "today": 20270215
+      },
+      "expect_value": {
+        "due": 20260731,
+        "revise_by": 20270331,
+        "updated_by": 20310331,
+        "kind": "revised",
+        "may_revise": true,
+        "may_update": false,
+        "revise_free_by": 20261231,
+        "fee_234i": true,
+        "audit_report_by": 20261021,
+        "extended_by": ""
       }
     }
   ]

@@ -1241,6 +1241,191 @@
             "path": "ITR1.Schedule80D.Sec80DSelfFamSrCtznHealth.HlthInsPremParentsSrCtzn",
             "from": "d80d.parents_sr",
             "skip_zero": true
+          },
+          {
+            "path": "ITR1.ITR1_IncomeDeductions.DeductUndChapVIA.Section80DD",
+            "from": "via.d80DD",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR1.ITR1_IncomeDeductions.DeductUndChapVIA.Section80DDB",
+            "from": "via.d80DDB",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR1.ITR1_IncomeDeductions.DeductUndChapVIA.Section80EE",
+            "from": "via.d80EE",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR1.ITR1_IncomeDeductions.DeductUndChapVIA.Section80EEA",
+            "from": "via.d80EEA",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR1.ITR1_IncomeDeductions.DeductUndChapVIA.Section80EEB",
+            "from": "via.d80EEB",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR1.ITR1_IncomeDeductions.DeductUndChapVIA.Section80GG",
+            "from": "via.d80GG",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR1.ITR1_IncomeDeductions.DeductUndChapVIA.Section80GGC",
+            "from": "via.d80GGC",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR1.ITR1_IncomeDeductions.UsrDeductUndChapVIA.Section80DD",
+            "from": "via.d80DD",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR1.ITR1_IncomeDeductions.UsrDeductUndChapVIA.Section80DDB",
+            "from": "via.d80DDB",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR1.ITR1_IncomeDeductions.UsrDeductUndChapVIA.Section80EE",
+            "from": "via.d80EE",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR1.ITR1_IncomeDeductions.UsrDeductUndChapVIA.Section80EEA",
+            "from": "via.d80EEA",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR1.ITR1_IncomeDeductions.UsrDeductUndChapVIA.Section80EEB",
+            "from": "via.d80EEB",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR1.ITR1_IncomeDeductions.UsrDeductUndChapVIA.Section80GG",
+            "from": "via.d80GG",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR1.ITR1_IncomeDeductions.UsrDeductUndChapVIA.Section80GGC",
+            "from": "via.d80GGC",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR1.ITR1_IncomeDeductions.UsrDeductUndChapVIA.Section80DDBUsrType",
+            "from": "via_more.ddb_type",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR1.Schedule80DD.NatureOfDisability",
+            "from": "via_more.dd_nature",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR1.Schedule80DD.TypeOfDisability",
+            "from": "via_more.dd_type",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR1.Schedule80DD.DependentType",
+            "from": "via_more.dd_dependent",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR1.Schedule80DD.DeductionAmount",
+            "from": "via.d80DD",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR1.Schedule80EE.Schedule80EEDtls",
+            "each": "loans_80ee",
+            "item": {
+              "LoanTknFrom": "from",
+              "BankOrInstnName": "bank",
+              "LoanAccNoOfBankOrInstnRefNo": "acc",
+              "DateofLoan": "date",
+              "TotalLoanAmt": "amount",
+              "LoanOutstndngAmt": "left",
+              "Interest80EE": "interest"
+            }
+          },
+          {
+            "path": "ITR1.Schedule80EE.TotalInterest80EE",
+            "from": "via.d80EE",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR1.Schedule80EEA.Schedule80EEADtls",
+            "each": "loans_80eea",
+            "item": {
+              "LoanTknFrom": "from",
+              "BankOrInstnName": "bank",
+              "LoanAccNoOfBankOrInstnRefNo": "acc",
+              "DateofLoan": "date",
+              "TotalLoanAmt": "amount",
+              "LoanOutstndngAmt": "left",
+              "Interest80EEA": "interest"
+            }
+          },
+          {
+            "path": "ITR1.Schedule80EEA.PropStmpDtyVal",
+            "from": "via_more.stamp",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR1.Schedule80EEA.TotalInterest80EEA",
+            "from": "via.d80EEA",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR1.Schedule80EEB.Schedule80EEBDtls",
+            "each": "loans_80eeb",
+            "item": {
+              "LoanTknFrom": "from",
+              "BankOrInstnName": "bank",
+              "LoanAccNoOfBankOrInstnRefNo": "acc",
+              "DateofLoan": "date",
+              "TotalLoanAmt": "amount",
+              "LoanOutstndngAmt": "left",
+              "Interest80EEB": "interest",
+              "VehicleRegNo": "vehicle"
+            }
+          },
+          {
+            "path": "ITR1.Schedule80EEB.TotalInterest80EEB",
+            "from": "via.d80EEB",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR1.Schedule80GGC.Schedule80GGCDetails",
+            "each": "ggc_rows",
+            "item": {
+              "DonationDate": "date",
+              "DonationAmtCash": "#0",
+              "DonationAmtOtherMode": "amount",
+              "TransactionRefNum": "ref",
+              "IFSCCode": "ifsc",
+              "DonationAmt": "amount",
+              "EligibleDonationAmt": "amount",
+              "PoliticalPartyName": "party",
+              "PoliticalPartyPAN": "pan"
+            }
+          },
+          {
+            "path": "ITR1.Schedule80GGC.TotalDonationAmtOtherMode80GGC",
+            "from": "via.d80GGC",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR1.Schedule80GGC.TotalDonationsUs80GGC",
+            "from": "via.d80GGC",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR1.Schedule80GGC.TotalEligibleDonationAmt80GGC",
+            "from": "via.d80GGC",
+            "skip_zero": true
           }
         ],
         "ITR-2": [
@@ -1358,7 +1543,7 @@
           },
           {
             "path": "ITR2.PartA_GEN1.PersonalInfo.Status",
-            "from": "=I"
+            "from": "client.status_code"
           },
           {
             "path": "ITR2.PartA_GEN1.FilingStatus.ReturnFileSec",
@@ -2188,7 +2373,7 @@
           },
           {
             "path": "ITR2.Verification.Declaration.AssesseeVerName",
-            "from": "client.name"
+            "from": "client.signer_name"
           },
           {
             "path": "ITR2.Verification.Declaration.FatherName",
@@ -2196,15 +2381,994 @@
           },
           {
             "path": "ITR2.Verification.Declaration.AssesseeVerPAN",
-            "from": "client.pan"
+            "from": "client.signer_pan"
           },
           {
             "path": "ITR2.Verification.Capacity",
-            "from": "=S"
+            "from": "client.capacity"
           },
           {
             "path": "ITR2.Verification.Place",
             "from": "client.city"
+          },
+          {
+            "path": "ITR2.ScheduleVIA.DeductUndChapVIA.Section80DD",
+            "from": "via.d80DD",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR2.ScheduleVIA.DeductUndChapVIA.Section80DDB",
+            "from": "via.d80DDB",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR2.ScheduleVIA.DeductUndChapVIA.Section80EE",
+            "from": "via.d80EE",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR2.ScheduleVIA.DeductUndChapVIA.Section80EEA",
+            "from": "via.d80EEA",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR2.ScheduleVIA.DeductUndChapVIA.Section80EEB",
+            "from": "via.d80EEB",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR2.ScheduleVIA.DeductUndChapVIA.Section80GG",
+            "from": "via.d80GG",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR2.ScheduleVIA.DeductUndChapVIA.Section80GGC",
+            "from": "via.d80GGC",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR2.ScheduleVIA.UsrDeductUndChapVIA.Section80DD",
+            "from": "via.d80DD",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR2.ScheduleVIA.UsrDeductUndChapVIA.Section80DDB",
+            "from": "via.d80DDB",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR2.ScheduleVIA.UsrDeductUndChapVIA.Section80EE",
+            "from": "via.d80EE",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR2.ScheduleVIA.UsrDeductUndChapVIA.Section80EEA",
+            "from": "via.d80EEA",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR2.ScheduleVIA.UsrDeductUndChapVIA.Section80EEB",
+            "from": "via.d80EEB",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR2.ScheduleVIA.UsrDeductUndChapVIA.Section80GG",
+            "from": "via.d80GG",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR2.ScheduleVIA.UsrDeductUndChapVIA.Section80GGC",
+            "from": "via.d80GGC",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR2.ScheduleVIA.UsrDeductUndChapVIA.Section80DDBUsrType",
+            "from": "via_more.ddb_type",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR2.Schedule80DD.NatureOfDisability",
+            "from": "via_more.dd_nature",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR2.Schedule80DD.TypeOfDisability",
+            "from": "via_more.dd_type",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR2.Schedule80DD.DependentType",
+            "from": "via_more.dd_dependent",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR2.Schedule80DD.DeductionAmount",
+            "from": "via.d80DD",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR2.Schedule80EE.Schedule80EEDtls",
+            "each": "loans_80ee",
+            "item": {
+              "LoanTknFrom": "from",
+              "BankOrInstnName": "bank",
+              "LoanAccNoOfBankOrInstnRefNo": "acc",
+              "DateofLoan": "date",
+              "TotalLoanAmt": "amount",
+              "LoanOutstndngAmt": "left",
+              "Interest80EE": "interest"
+            }
+          },
+          {
+            "path": "ITR2.Schedule80EE.TotalInterest80EE",
+            "from": "via.d80EE",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR2.Schedule80EEA.Schedule80EEADtls",
+            "each": "loans_80eea",
+            "item": {
+              "LoanTknFrom": "from",
+              "BankOrInstnName": "bank",
+              "LoanAccNoOfBankOrInstnRefNo": "acc",
+              "DateofLoan": "date",
+              "TotalLoanAmt": "amount",
+              "LoanOutstndngAmt": "left",
+              "Interest80EEA": "interest"
+            }
+          },
+          {
+            "path": "ITR2.Schedule80EEA.PropStmpDtyVal",
+            "from": "via_more.stamp",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR2.Schedule80EEA.TotalInterest80EEA",
+            "from": "via.d80EEA",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR2.Schedule80EEB.Schedule80EEBDtls",
+            "each": "loans_80eeb",
+            "item": {
+              "LoanTknFrom": "from",
+              "BankOrInstnName": "bank",
+              "LoanAccNoOfBankOrInstnRefNo": "acc",
+              "DateofLoan": "date",
+              "TotalLoanAmt": "amount",
+              "LoanOutstndngAmt": "left",
+              "Interest80EEB": "interest",
+              "VehicleRegNo": "vehicle"
+            }
+          },
+          {
+            "path": "ITR2.Schedule80EEB.TotalInterest80EEB",
+            "from": "via.d80EEB",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR2.Schedule80GGC.Schedule80GGCDetails",
+            "each": "ggc_rows",
+            "item": {
+              "DonationDate": "date",
+              "DonationAmtCash": "#0",
+              "DonationAmtOtherMode": "amount",
+              "TransactionRefNum": "ref",
+              "IFSCCode": "ifsc",
+              "DonationAmt": "amount",
+              "EligibleDonationAmt": "amount",
+              "PoliticalPartyName": "party",
+              "PoliticalPartyPAN": "pan"
+            }
+          },
+          {
+            "path": "ITR2.Schedule80GGC.TotalDonationAmtOtherMode80GGC",
+            "from": "via.d80GGC",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR2.Schedule80GGC.TotalDonationsUs80GGC",
+            "from": "via.d80GGC",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR2.Schedule80GGC.TotalEligibleDonationAmt80GGC",
+            "from": "via.d80GGC",
+            "skip_zero": true
+          }
+        ],
+        "ITR-4": [
+          {
+            "path": "ITR4.CreationInfo.SWVersionNo",
+            "from": "sw_version"
+          },
+          {
+            "path": "ITR4.CreationInfo.SWCreatedBy",
+            "from": "sw_id"
+          },
+          {
+            "path": "ITR4.CreationInfo.JSONCreatedBy",
+            "from": "sw_id"
+          },
+          {
+            "path": "ITR4.CreationInfo.JSONCreationDate",
+            "from": "today"
+          },
+          {
+            "path": "ITR4.CreationInfo.IntermediaryCity",
+            "from": "client.city"
+          },
+          {
+            "path": "ITR4.CreationInfo.Digest",
+            "from": "=-"
+          },
+          {
+            "path": "ITR4.Form_ITR4.FormName",
+            "from": "=ITR-4"
+          },
+          {
+            "path": "ITR4.Form_ITR4.Description",
+            "from": "=SimplyFile"
+          },
+          {
+            "path": "ITR4.Form_ITR4.AssessmentYear",
+            "from": "ay_code"
+          },
+          {
+            "path": "ITR4.Form_ITR4.SchemaVer",
+            "from": "=Ver1.0"
+          },
+          {
+            "path": "ITR4.Form_ITR4.FormVer",
+            "from": "=Ver1.0"
+          },
+          {
+            "path": "ITR4.PersonalInfo.AssesseeName.FirstName",
+            "from": "client.first"
+          },
+          {
+            "path": "ITR4.PersonalInfo.AssesseeName.MiddleName",
+            "from": "client.middle"
+          },
+          {
+            "path": "ITR4.PersonalInfo.AssesseeName.SurNameOrOrgName",
+            "from": "client.surname"
+          },
+          {
+            "path": "ITR4.PersonalInfo.PAN",
+            "from": "client.pan"
+          },
+          {
+            "path": "ITR4.PersonalInfo.Address.ResidenceNo",
+            "from": "client.flat"
+          },
+          {
+            "path": "ITR4.PersonalInfo.Address.ResidenceName",
+            "from": "client.building"
+          },
+          {
+            "path": "ITR4.PersonalInfo.Address.RoadOrStreet",
+            "from": "client.road"
+          },
+          {
+            "path": "ITR4.PersonalInfo.Address.LocalityOrArea",
+            "from": "client.area"
+          },
+          {
+            "path": "ITR4.PersonalInfo.Address.CityOrTownOrDistrict",
+            "from": "client.city"
+          },
+          {
+            "path": "ITR4.PersonalInfo.Address.StateCode",
+            "from": "client.state"
+          },
+          {
+            "path": "ITR4.PersonalInfo.Address.CountryCode",
+            "from": "=91"
+          },
+          {
+            "path": "ITR4.PersonalInfo.Address.PinCode",
+            "from": "client.pin"
+          },
+          {
+            "path": "ITR4.PersonalInfo.Address.CountryCodeMobile",
+            "from": "#91"
+          },
+          {
+            "path": "ITR4.PersonalInfo.Address.MobileNo",
+            "from": "client.mobile"
+          },
+          {
+            "path": "ITR4.PersonalInfo.Address.EmailAddress",
+            "from": "client.email"
+          },
+          {
+            "path": "ITR4.PersonalInfo.SecondaryAdd",
+            "from": "=N"
+          },
+          {
+            "path": "ITR4.PersonalInfo.DOB",
+            "from": "client.dob"
+          },
+          {
+            "path": "ITR4.PersonalInfo.EmployerCategory",
+            "from": "filing.employer_category"
+          },
+          {
+            "path": "ITR4.FilingStatus.ReturnFileSec",
+            "from": "filing.section"
+          },
+          {
+            "path": "ITR4.FilingStatus.AsseseeRepFlg",
+            "from": "=N"
+          },
+          {
+            "path": "ITR4.FilingStatus.ItrFilingDueDate",
+            "from": "filing.due"
+          },
+          {
+            "path": "ITR4.FilingStatus.ReceiptNo",
+            "from": "filing.orig_ack"
+          },
+          {
+            "path": "ITR4.FilingStatus.OrigRetFiledDate",
+            "from": "filing.orig_date"
+          },
+          {
+            "path": "ITR4.IncomeDeductions.GrossSalary",
+            "from": "salary.gross"
+          },
+          {
+            "path": "ITR4.IncomeDeductions.Salary",
+            "from": "salary.s17_1"
+          },
+          {
+            "path": "ITR4.IncomeDeductions.PerquisitesValue",
+            "from": "salary.s17_2"
+          },
+          {
+            "path": "ITR4.IncomeDeductions.ProfitsInSalary",
+            "from": "salary.s17_3"
+          },
+          {
+            "path": "ITR4.IncomeDeductions.NetSalary",
+            "from": "salary.net"
+          },
+          {
+            "path": "ITR4.IncomeDeductions.DeductionUs16",
+            "from": "salary.d16"
+          },
+          {
+            "path": "ITR4.IncomeDeductions.DeductionUs16ia",
+            "from": "salary.std"
+          },
+          {
+            "path": "ITR4.IncomeDeductions.ProfessionalTaxUs16iii",
+            "from": "salary.prof_tax"
+          },
+          {
+            "path": "ITR4.IncomeDeductions.IncomeFromSal",
+            "from": "salary.income"
+          },
+          {
+            "path": "ITR4.IncomeDeductions.AllwncExemptUs10.AllwncExemptUs10Dtls",
+            "each": "exempt_rows",
+            "item": {
+              "SalNatureDesc": "code",
+              "SalOthAmount": "amount"
+            }
+          },
+          {
+            "path": "ITR4.IncomeDeductions.AllwncExemptUs10.TotalAllwncExemptUs10",
+            "from": "salary.exempt",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR4.IncomeDeductions.PropertyDetails",
+            "each": "hp_rows",
+            "item": {
+              "HPSNo": "n",
+              "AddressDetailWithZipCode.AddrDetail": "address",
+              "AddressDetailWithZipCode.CityOrTownOrDistrict": "city",
+              "AddressDetailWithZipCode.StateCode": "state",
+              "AddressDetailWithZipCode.CountryCode": "=91",
+              "AddressDetailWithZipCode.PinCode": "pin",
+              "PropertyOwner": "=SE",
+              "PropCoOwnedFlg": "=NO",
+              "ifLetOut": "let",
+              "Rentdetails.AnnualLetableValue": "rent",
+              "Rentdetails.LocalTaxes": "municipal_tax",
+              "Rentdetails.TotalUnrealizedAndTax": "municipal_tax",
+              "Rentdetails.BalanceALV": "nav",
+              "Rentdetails.AnnualOfPropOwned": "nav",
+              "Rentdetails.ThirtyPercentOfBalance": "std",
+              "Rentdetails.IntOnBorwCap": "interest",
+              "Rentdetails.TotalDeduct": "deduct",
+              "Rentdetails.IncomeOfHP": "net"
+            }
+          },
+          {
+            "path": "ITR4.IncomeDeductions.TotalIncomeChargeableUnHP",
+            "from": "hp.net"
+          },
+          {
+            "path": "ITR4.IncomeDeductions.IncomeOthSrc",
+            "from": "os.total"
+          },
+          {
+            "path": "ITR4.IncomeDeductions.OthersInc.OthersIncDtlsOthSrc",
+            "each": "os_rows",
+            "item": {
+              "OthSrcNatureDesc": "code",
+              "OthSrcOthNatOfInc": "what",
+              "OthSrcOthAmount": "amount"
+            }
+          },
+          {
+            "path": "ITR4.IncomeDeductions.DeductionUs57iia",
+            "from": "os.fp_deduction"
+          },
+          {
+            "path": "ITR4.IncomeDeductions.GrossTotIncome",
+            "from": "gti_normal"
+          },
+          {
+            "path": "ITR4.IncomeDeductions.GrossTotIncomeIncLTCG112A",
+            "from": "gti"
+          },
+          {
+            "path": "ITR4.IncomeDeductions.UsrDeductUndChapVIA.Section80C",
+            "from": "via.d80C"
+          },
+          {
+            "path": "ITR4.IncomeDeductions.UsrDeductUndChapVIA.Section80CCD1B",
+            "from": "via.d80CCD1B"
+          },
+          {
+            "path": "ITR4.IncomeDeductions.UsrDeductUndChapVIA.Section80CCDEmployer",
+            "from": "via.d80CCD2"
+          },
+          {
+            "path": "ITR4.IncomeDeductions.UsrDeductUndChapVIA.Section80D",
+            "from": "via.d80D"
+          },
+          {
+            "path": "ITR4.IncomeDeductions.UsrDeductUndChapVIA.Section80E",
+            "from": "via.d80E"
+          },
+          {
+            "path": "ITR4.IncomeDeductions.UsrDeductUndChapVIA.Section80G",
+            "from": "via.d80G"
+          },
+          {
+            "path": "ITR4.IncomeDeductions.UsrDeductUndChapVIA.Section80TTA",
+            "from": "via.d80TTA"
+          },
+          {
+            "path": "ITR4.IncomeDeductions.UsrDeductUndChapVIA.Section80TTB",
+            "from": "via.d80TTB"
+          },
+          {
+            "path": "ITR4.IncomeDeductions.UsrDeductUndChapVIA.Section80U",
+            "from": "via.d80U"
+          },
+          {
+            "path": "ITR4.IncomeDeductions.UsrDeductUndChapVIA.TotalChapVIADeductions",
+            "from": "via.total"
+          },
+          {
+            "path": "ITR4.IncomeDeductions.DeductUndChapVIA.Section80C",
+            "from": "via.d80C"
+          },
+          {
+            "path": "ITR4.IncomeDeductions.DeductUndChapVIA.Section80CCD1B",
+            "from": "via.d80CCD1B"
+          },
+          {
+            "path": "ITR4.IncomeDeductions.DeductUndChapVIA.Section80CCDEmployer",
+            "from": "via.d80CCD2"
+          },
+          {
+            "path": "ITR4.IncomeDeductions.DeductUndChapVIA.Section80D",
+            "from": "via.d80D"
+          },
+          {
+            "path": "ITR4.IncomeDeductions.DeductUndChapVIA.Section80E",
+            "from": "via.d80E"
+          },
+          {
+            "path": "ITR4.IncomeDeductions.DeductUndChapVIA.Section80G",
+            "from": "via.d80G"
+          },
+          {
+            "path": "ITR4.IncomeDeductions.DeductUndChapVIA.Section80TTA",
+            "from": "via.d80TTA"
+          },
+          {
+            "path": "ITR4.IncomeDeductions.DeductUndChapVIA.Section80TTB",
+            "from": "via.d80TTB"
+          },
+          {
+            "path": "ITR4.IncomeDeductions.DeductUndChapVIA.Section80U",
+            "from": "via.d80U"
+          },
+          {
+            "path": "ITR4.IncomeDeductions.DeductUndChapVIA.TotalChapVIADeductions",
+            "from": "via.total"
+          },
+          {
+            "path": "ITR4.IncomeDeductions.TotalIncome",
+            "from": "total_income"
+          },
+          {
+            "path": "ITR4.TaxComputation.TotalTaxPayable",
+            "from": "tax2.slab"
+          },
+          {
+            "path": "ITR4.TaxComputation.Rebate87A",
+            "from": "tax2.rebate_all"
+          },
+          {
+            "path": "ITR4.TaxComputation.TaxPayableOnRebate",
+            "from": "tax2.after_rebate"
+          },
+          {
+            "path": "ITR4.TaxComputation.EducationCess",
+            "from": "tax2.cess"
+          },
+          {
+            "path": "ITR4.TaxComputation.GrossTaxLiability",
+            "from": "tax2.gross"
+          },
+          {
+            "path": "ITR4.TaxComputation.Section89",
+            "from": "#0"
+          },
+          {
+            "path": "ITR4.TaxComputation.NetTaxLiability",
+            "from": "tax2.gross"
+          },
+          {
+            "path": "ITR4.TaxComputation.IntrstPay.IntrstPayUs234A",
+            "from": "tax2.i234a"
+          },
+          {
+            "path": "ITR4.TaxComputation.IntrstPay.IntrstPayUs234B",
+            "from": "tax2.i234b"
+          },
+          {
+            "path": "ITR4.TaxComputation.IntrstPay.IntrstPayUs234C",
+            "from": "tax2.i234c"
+          },
+          {
+            "path": "ITR4.TaxComputation.IntrstPay.LateFilingFee234F",
+            "from": "tax2.fee_234f"
+          },
+          {
+            "path": "ITR4.TaxComputation.TotTaxPlusIntrstPay",
+            "from": "tax2.aggregate"
+          },
+          {
+            "path": "ITR4.TaxPaid.TaxesPaid.AdvanceTax",
+            "from": "tax2.advance"
+          },
+          {
+            "path": "ITR4.TaxPaid.TaxesPaid.TDS",
+            "from": "tax2.tds"
+          },
+          {
+            "path": "ITR4.TaxPaid.TaxesPaid.TCS",
+            "from": "#0"
+          },
+          {
+            "path": "ITR4.TaxPaid.TaxesPaid.SelfAssessmentTax",
+            "from": "tax2.sat"
+          },
+          {
+            "path": "ITR4.TaxPaid.TaxesPaid.TotalTaxesPaid",
+            "from": "tax2.paid_all"
+          },
+          {
+            "path": "ITR4.TaxPaid.BalTaxPayable",
+            "from": "tax2.payable"
+          },
+          {
+            "path": "ITR4.Refund.RefundDue",
+            "from": "tax2.refund"
+          },
+          {
+            "path": "ITR4.Refund.BankAccountDtls.AddtnlBankDetails",
+            "each": "bank_rows",
+            "item": {
+              "IFSCCode": "ifsc",
+              "BankName": "bank",
+              "BankAccountNo": "account",
+              "AccountType": "type",
+              "UseForRefund": "refund"
+            }
+          },
+          {
+            "path": "ITR4.TDSonSalaries.TDSonSalary",
+            "each": "tds_salary",
+            "item": {
+              "EmployerOrDeductorOrCollectDetl.TAN": "tan",
+              "EmployerOrDeductorOrCollectDetl.EmployerOrDeductorOrCollecterName": "name",
+              "IncChrgSal": "income",
+              "TotalTDSSal": "tds"
+            }
+          },
+          {
+            "path": "ITR4.TDSonSalaries.TotalTDSonSalaries",
+            "from": "tax2.tds_salary",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR4.TDSonOthThanSals.TDSonOthThanSal",
+            "each": "tds_other",
+            "item": {
+              "EmployerOrDeductorOrCollectDetl.TAN": "tan",
+              "EmployerOrDeductorOrCollectDetl.EmployerOrDeductorOrCollecterName": "name",
+              "TDSSection": "section",
+              "AmtForTaxDeduct": "income",
+              "DeductedYr": "year",
+              "TotTDSOnAmtPaid": "tds",
+              "ClaimOutOfTotTDSOnAmtPaid": "tds"
+            }
+          },
+          {
+            "path": "ITR4.TDSonOthThanSals.TotalTDSonOthThanSals",
+            "from": "tax2.tds_other",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR4.ScheduleIT.TaxPayment",
+            "each": "paid_rows",
+            "item": {
+              "BSRCode": "bsr",
+              "DateDep": "date",
+              "SrlNoOfChaln": "serial",
+              "Amt": "amount"
+            }
+          },
+          {
+            "path": "ITR4.LTCG112A.LongCap112A",
+            "from": "cg.ltcg_112a",
+            "skip_zero": true,
+            "seed": true
+          },
+          {
+            "path": "ITR4.Verification.Declaration.AssesseeVerName",
+            "from": "client.signer_name"
+          },
+          {
+            "path": "ITR4.Verification.Declaration.FatherName",
+            "from": "client.father"
+          },
+          {
+            "path": "ITR4.Verification.Declaration.AssesseeVerPAN",
+            "from": "client.signer_pan"
+          },
+          {
+            "path": "ITR4.Verification.Capacity",
+            "from": "client.capacity"
+          },
+          {
+            "path": "ITR4.Verification.Place",
+            "from": "client.city"
+          },
+          {
+            "path": "ITR4.Schedule80D.Sec80DSelfFamSrCtznHealth.EligibleAmountOfDedn",
+            "from": "d80d.total",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR4.Schedule80D.Sec80DSelfFamSrCtznHealth.SeniorCitizenFlag",
+            "from": "d80d.self_flag"
+          },
+          {
+            "path": "ITR4.Schedule80D.Sec80DSelfFamSrCtznHealth.SelfAndFamily",
+            "from": "d80d.self",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR4.Schedule80D.Sec80DSelfFamSrCtznHealth.HealthInsPremSlfFam",
+            "from": "d80d.self",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR4.Schedule80D.Sec80DSelfFamSrCtznHealth.SelfAndFamilySeniorCitizen",
+            "from": "d80d.self_sr",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR4.Schedule80D.Sec80DSelfFamSrCtznHealth.HlthInsPremSlfFamSrCtzn",
+            "from": "d80d.self_sr",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR4.Schedule80D.Sec80DSelfFamSrCtznHealth.ParentsSeniorCitizenFlag",
+            "from": "d80d.parents_flag"
+          },
+          {
+            "path": "ITR4.Schedule80D.Sec80DSelfFamSrCtznHealth.Parents",
+            "from": "d80d.parents",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR4.Schedule80D.Sec80DSelfFamSrCtznHealth.HlthInsPremParents",
+            "from": "d80d.parents",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR4.Schedule80D.Sec80DSelfFamSrCtznHealth.ParentsSeniorCitizen",
+            "from": "d80d.parents_sr",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR4.Schedule80D.Sec80DSelfFamSrCtznHealth.HlthInsPremParentsSrCtzn",
+            "from": "d80d.parents_sr",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR4.ScheduleIT.TotalTaxPayments",
+            "from": "tax2.paid"
+          },
+          {
+            "path": "ITR4.FilingStatus.Form10IEAEarlierAYOldRegime",
+            "from": "=NA"
+          },
+          {
+            "path": "ITR4.PersonalInfo.Status",
+            "from": "client.status_code"
+          },
+          {
+            "path": "ITR4.IncomeDeductions.IncomeFromBusinessProf",
+            "from": "biz.income"
+          },
+          {
+            "path": "ITR4.ScheduleBP.NatOfBus44ADA",
+            "from": "biz.nature_ada"
+          },
+          {
+            "path": "ITR4.ScheduleBP.PersumptiveInc44ADA.GrsReceipt",
+            "from": "biz.ada_receipts"
+          },
+          {
+            "path": "ITR4.ScheduleBP.PersumptiveInc44ADA.GrsTrnOverBank44ADA",
+            "from": "biz.ada_digital"
+          },
+          {
+            "path": "ITR4.ScheduleBP.PersumptiveInc44ADA.GrsTotalTrnOverInCash44ADA",
+            "from": "biz.ada_cash"
+          },
+          {
+            "path": "ITR4.ScheduleBP.PersumptiveInc44ADA.TotPersumptiveInc44ADA",
+            "from": "biz.ada_income"
+          },
+          {
+            "path": "ITR4.ScheduleBP.NatOfBus44AD",
+            "from": "biz.nature_ad"
+          },
+          {
+            "path": "ITR4.ScheduleBP.PersumptiveInc44AD.GrsTotalTrnOver",
+            "from": "biz.ad_receipts"
+          },
+          {
+            "path": "ITR4.ScheduleBP.PersumptiveInc44AD.GrsTrnOverBank",
+            "from": "biz.ad_digital"
+          },
+          {
+            "path": "ITR4.ScheduleBP.PersumptiveInc44AD.GrsTotalTrnOverInCash",
+            "from": "biz.ad_cash"
+          },
+          {
+            "path": "ITR4.ScheduleBP.PersumptiveInc44AD.PersumptiveInc44AD6Per",
+            "from": "biz.ad_6"
+          },
+          {
+            "path": "ITR4.ScheduleBP.PersumptiveInc44AD.PersumptiveInc44AD8Per",
+            "from": "biz.ad_8"
+          },
+          {
+            "path": "ITR4.ScheduleBP.PersumptiveInc44AD.TotPersumptiveInc44AD",
+            "from": "biz.ad_income"
+          },
+          {
+            "path": "ITR4.ScheduleBP.TurnoverGrsRcptForGSTIN",
+            "from": "biz.gst_rows"
+          },
+          {
+            "path": "ITR4.ScheduleBP.TotalTurnoverGrsRcptGSTIN",
+            "from": "biz.gst_turnover"
+          },
+          {
+            "path": "ITR4.FilingStatus.F10IEACurrAYOldRegime",
+            "from": "regime_opt_out"
+          },
+          {
+            "path": "ITR4.IncomeDeductions.DeductUndChapVIA.Section80DD",
+            "from": "via.d80DD",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR4.IncomeDeductions.DeductUndChapVIA.Section80DDB",
+            "from": "via.d80DDB",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR4.IncomeDeductions.DeductUndChapVIA.Section80EE",
+            "from": "via.d80EE",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR4.IncomeDeductions.DeductUndChapVIA.Section80EEA",
+            "from": "via.d80EEA",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR4.IncomeDeductions.DeductUndChapVIA.Section80EEB",
+            "from": "via.d80EEB",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR4.IncomeDeductions.DeductUndChapVIA.Section80GG",
+            "from": "via.d80GG",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR4.IncomeDeductions.DeductUndChapVIA.Section80GGC",
+            "from": "via.d80GGC",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR4.IncomeDeductions.UsrDeductUndChapVIA.Section80DD",
+            "from": "via.d80DD",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR4.IncomeDeductions.UsrDeductUndChapVIA.Section80DDB",
+            "from": "via.d80DDB",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR4.IncomeDeductions.UsrDeductUndChapVIA.Section80EE",
+            "from": "via.d80EE",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR4.IncomeDeductions.UsrDeductUndChapVIA.Section80EEA",
+            "from": "via.d80EEA",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR4.IncomeDeductions.UsrDeductUndChapVIA.Section80EEB",
+            "from": "via.d80EEB",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR4.IncomeDeductions.UsrDeductUndChapVIA.Section80GG",
+            "from": "via.d80GG",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR4.IncomeDeductions.UsrDeductUndChapVIA.Section80GGC",
+            "from": "via.d80GGC",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR4.IncomeDeductions.UsrDeductUndChapVIA.Section80DDBUsrType",
+            "from": "via_more.ddb_type",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR4.Schedule80DD.NatureOfDisability",
+            "from": "via_more.dd_nature",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR4.Schedule80DD.TypeOfDisability",
+            "from": "via_more.dd_type",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR4.Schedule80DD.DependentType",
+            "from": "via_more.dd_dependent",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR4.Schedule80DD.DeductionAmount",
+            "from": "via.d80DD",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR4.Schedule80EE.Schedule80EEDtls",
+            "each": "loans_80ee",
+            "item": {
+              "LoanTknFrom": "from",
+              "BankOrInstnName": "bank",
+              "LoanAccNoOfBankOrInstnRefNo": "acc",
+              "DateofLoan": "date",
+              "TotalLoanAmt": "amount",
+              "LoanOutstndngAmt": "left",
+              "Interest80EE": "interest"
+            }
+          },
+          {
+            "path": "ITR4.Schedule80EE.TotalInterest80EE",
+            "from": "via.d80EE",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR4.Schedule80EEA.Schedule80EEADtls",
+            "each": "loans_80eea",
+            "item": {
+              "LoanTknFrom": "from",
+              "BankOrInstnName": "bank",
+              "LoanAccNoOfBankOrInstnRefNo": "acc",
+              "DateofLoan": "date",
+              "TotalLoanAmt": "amount",
+              "LoanOutstndngAmt": "left",
+              "Interest80EEA": "interest"
+            }
+          },
+          {
+            "path": "ITR4.Schedule80EEA.PropStmpDtyVal",
+            "from": "via_more.stamp",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR4.Schedule80EEA.TotalInterest80EEA",
+            "from": "via.d80EEA",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR4.Schedule80EEB.Schedule80EEBDtls",
+            "each": "loans_80eeb",
+            "item": {
+              "LoanTknFrom": "from",
+              "BankOrInstnName": "bank",
+              "LoanAccNoOfBankOrInstnRefNo": "acc",
+              "DateofLoan": "date",
+              "TotalLoanAmt": "amount",
+              "LoanOutstndngAmt": "left",
+              "Interest80EEB": "interest",
+              "VehicleRegNo": "vehicle"
+            }
+          },
+          {
+            "path": "ITR4.Schedule80EEB.TotalInterest80EEB",
+            "from": "via.d80EEB",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR4.Schedule80GGC.Schedule80GGCDetails",
+            "each": "ggc_rows",
+            "item": {
+              "DonationDate": "date",
+              "DonationAmtCash": "#0",
+              "DonationAmtOtherMode": "amount",
+              "TransactionRefNum": "ref",
+              "IFSCCode": "ifsc",
+              "DonationAmt": "amount",
+              "EligibleDonationAmt": "amount",
+              "PoliticalPartyName": "party",
+              "PoliticalPartyPAN": "pan"
+            }
+          },
+          {
+            "path": "ITR4.Schedule80GGC.TotalDonationAmtOtherMode80GGC",
+            "from": "via.d80GGC",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR4.Schedule80GGC.TotalDonationsUs80GGC",
+            "from": "via.d80GGC",
+            "skip_zero": true
+          },
+          {
+            "path": "ITR4.Schedule80GGC.TotalEligibleDonationAmt80GGC",
+            "from": "via.d80GGC",
+            "skip_zero": true
           }
         ]
       },
@@ -2218,9 +3382,9 @@
     }
   },
   "returns": "record",
-  "version": 5,
+  "version": 11,
   "status": "published",
-  "description_nl": "Each row: a path in the CBDT JSON and the SimplyFile fact it takes (=text, #number for a fixed value). A list row ('each') writes one item per TDS line, challan or bank account. What is not here stays as the schema's empty default and is completed in the department's utility (balance sheet, P&L, schedules). 2026-10-06: ITR-1 (Sahaj) for My return - an individual's salary, up to two houses, other sources, Chapter VI-A, the tax computation, TDS, challans and refund bank; rows with `each` write a list, skip_zero leaves an optional block out when its figure is nil, seed gives an optional block its required fields first. 2026-10-06: ITR-2 for My return - salary (Schedule S), other sources (Schedule OS), Chapter VI-A, this year's income through CYLA/BFLA (no losses carried), capital gains as totals (111A at 20%, 112/112A at 12.5%), the computation, TDS, challans and refund bank. The capital-gains schedule's scrip-wise rows are completed in the department's utility.",
+  "description_nl": "Each row: a path in the CBDT JSON and the SimplyFile fact it takes (=text, #number for a fixed value). A list row ('each') writes one item per TDS line, challan or bank account. What is not here stays as the schema's empty default and is completed in the department's utility (balance sheet, P&L, schedules). 2026-10-06: ITR-1 (Sahaj) for My return - an individual's salary, up to two houses, other sources, Chapter VI-A, the tax computation, TDS, challans and refund bank; rows with `each` write a list, skip_zero leaves an optional block out when its figure is nil, seed gives an optional block its required fields first. 2026-10-06: ITR-2 for My return - salary (Schedule S), other sources (Schedule OS), Chapter VI-A, this year's income through CYLA/BFLA (no losses carried), capital gains as totals (111A at 20%, 112/112A at 12.5%), the computation, TDS, challans and refund bank. The capital-gains schedule's scrip-wise rows are completed in the department's utility. 2026-10-06: ITR-4: ITR-1's rows at ITR-4's paths, plus Schedule BP (44ADA / 44AD: nature, receipts by mode, income) and the GSTIN turnover. 2026-10-06: ITR-4 has no OptOutNewTaxRegime (the old regime for business income is Form 10-IEA: F10IEACurrAYOldRegime) and no TotalIntrstPay. 2026-10-06: ITR-2 / ITR-4 PersonalInfo.Status from the client's status (I / H), not always I. 2026-10-06: ITR-2 / ITR-4 verification from the signer (the person, or an HUF's Karta) - 6 rows. 2026-10-06: 80DD, 80DDB, 80EE, 80EEA, 80EEB, 80GG, 80GGC rows and Schedules 80DD, 80EE, 80EEA, 80EEB, 80GGC for ITR-1, ITR-2 and ITR-4. 2026-10-06: Section80DDBUsrType only in the claimed block (UsrDeductUndChapVIA).",
   "test_cases": [
     {
       "args": {},
@@ -3456,6 +4620,191 @@
               "path": "ITR1.Schedule80D.Sec80DSelfFamSrCtznHealth.HlthInsPremParentsSrCtzn",
               "from": "d80d.parents_sr",
               "skip_zero": true
+            },
+            {
+              "path": "ITR1.ITR1_IncomeDeductions.DeductUndChapVIA.Section80DD",
+              "from": "via.d80DD",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR1.ITR1_IncomeDeductions.DeductUndChapVIA.Section80DDB",
+              "from": "via.d80DDB",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR1.ITR1_IncomeDeductions.DeductUndChapVIA.Section80EE",
+              "from": "via.d80EE",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR1.ITR1_IncomeDeductions.DeductUndChapVIA.Section80EEA",
+              "from": "via.d80EEA",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR1.ITR1_IncomeDeductions.DeductUndChapVIA.Section80EEB",
+              "from": "via.d80EEB",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR1.ITR1_IncomeDeductions.DeductUndChapVIA.Section80GG",
+              "from": "via.d80GG",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR1.ITR1_IncomeDeductions.DeductUndChapVIA.Section80GGC",
+              "from": "via.d80GGC",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR1.ITR1_IncomeDeductions.UsrDeductUndChapVIA.Section80DD",
+              "from": "via.d80DD",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR1.ITR1_IncomeDeductions.UsrDeductUndChapVIA.Section80DDB",
+              "from": "via.d80DDB",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR1.ITR1_IncomeDeductions.UsrDeductUndChapVIA.Section80EE",
+              "from": "via.d80EE",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR1.ITR1_IncomeDeductions.UsrDeductUndChapVIA.Section80EEA",
+              "from": "via.d80EEA",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR1.ITR1_IncomeDeductions.UsrDeductUndChapVIA.Section80EEB",
+              "from": "via.d80EEB",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR1.ITR1_IncomeDeductions.UsrDeductUndChapVIA.Section80GG",
+              "from": "via.d80GG",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR1.ITR1_IncomeDeductions.UsrDeductUndChapVIA.Section80GGC",
+              "from": "via.d80GGC",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR1.ITR1_IncomeDeductions.UsrDeductUndChapVIA.Section80DDBUsrType",
+              "from": "via_more.ddb_type",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR1.Schedule80DD.NatureOfDisability",
+              "from": "via_more.dd_nature",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR1.Schedule80DD.TypeOfDisability",
+              "from": "via_more.dd_type",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR1.Schedule80DD.DependentType",
+              "from": "via_more.dd_dependent",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR1.Schedule80DD.DeductionAmount",
+              "from": "via.d80DD",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR1.Schedule80EE.Schedule80EEDtls",
+              "each": "loans_80ee",
+              "item": {
+                "LoanTknFrom": "from",
+                "BankOrInstnName": "bank",
+                "LoanAccNoOfBankOrInstnRefNo": "acc",
+                "DateofLoan": "date",
+                "TotalLoanAmt": "amount",
+                "LoanOutstndngAmt": "left",
+                "Interest80EE": "interest"
+              }
+            },
+            {
+              "path": "ITR1.Schedule80EE.TotalInterest80EE",
+              "from": "via.d80EE",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR1.Schedule80EEA.Schedule80EEADtls",
+              "each": "loans_80eea",
+              "item": {
+                "LoanTknFrom": "from",
+                "BankOrInstnName": "bank",
+                "LoanAccNoOfBankOrInstnRefNo": "acc",
+                "DateofLoan": "date",
+                "TotalLoanAmt": "amount",
+                "LoanOutstndngAmt": "left",
+                "Interest80EEA": "interest"
+              }
+            },
+            {
+              "path": "ITR1.Schedule80EEA.PropStmpDtyVal",
+              "from": "via_more.stamp",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR1.Schedule80EEA.TotalInterest80EEA",
+              "from": "via.d80EEA",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR1.Schedule80EEB.Schedule80EEBDtls",
+              "each": "loans_80eeb",
+              "item": {
+                "LoanTknFrom": "from",
+                "BankOrInstnName": "bank",
+                "LoanAccNoOfBankOrInstnRefNo": "acc",
+                "DateofLoan": "date",
+                "TotalLoanAmt": "amount",
+                "LoanOutstndngAmt": "left",
+                "Interest80EEB": "interest",
+                "VehicleRegNo": "vehicle"
+              }
+            },
+            {
+              "path": "ITR1.Schedule80EEB.TotalInterest80EEB",
+              "from": "via.d80EEB",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR1.Schedule80GGC.Schedule80GGCDetails",
+              "each": "ggc_rows",
+              "item": {
+                "DonationDate": "date",
+                "DonationAmtCash": "#0",
+                "DonationAmtOtherMode": "amount",
+                "TransactionRefNum": "ref",
+                "IFSCCode": "ifsc",
+                "DonationAmt": "amount",
+                "EligibleDonationAmt": "amount",
+                "PoliticalPartyName": "party",
+                "PoliticalPartyPAN": "pan"
+              }
+            },
+            {
+              "path": "ITR1.Schedule80GGC.TotalDonationAmtOtherMode80GGC",
+              "from": "via.d80GGC",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR1.Schedule80GGC.TotalDonationsUs80GGC",
+              "from": "via.d80GGC",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR1.Schedule80GGC.TotalEligibleDonationAmt80GGC",
+              "from": "via.d80GGC",
+              "skip_zero": true
             }
           ],
           "ITR-2": [
@@ -3573,7 +4922,7 @@
             },
             {
               "path": "ITR2.PartA_GEN1.PersonalInfo.Status",
-              "from": "=I"
+              "from": "client.status_code"
             },
             {
               "path": "ITR2.PartA_GEN1.FilingStatus.ReturnFileSec",
@@ -4403,7 +5752,7 @@
             },
             {
               "path": "ITR2.Verification.Declaration.AssesseeVerName",
-              "from": "client.name"
+              "from": "client.signer_name"
             },
             {
               "path": "ITR2.Verification.Declaration.FatherName",
@@ -4411,15 +5760,994 @@
             },
             {
               "path": "ITR2.Verification.Declaration.AssesseeVerPAN",
-              "from": "client.pan"
+              "from": "client.signer_pan"
             },
             {
               "path": "ITR2.Verification.Capacity",
-              "from": "=S"
+              "from": "client.capacity"
             },
             {
               "path": "ITR2.Verification.Place",
               "from": "client.city"
+            },
+            {
+              "path": "ITR2.ScheduleVIA.DeductUndChapVIA.Section80DD",
+              "from": "via.d80DD",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR2.ScheduleVIA.DeductUndChapVIA.Section80DDB",
+              "from": "via.d80DDB",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR2.ScheduleVIA.DeductUndChapVIA.Section80EE",
+              "from": "via.d80EE",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR2.ScheduleVIA.DeductUndChapVIA.Section80EEA",
+              "from": "via.d80EEA",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR2.ScheduleVIA.DeductUndChapVIA.Section80EEB",
+              "from": "via.d80EEB",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR2.ScheduleVIA.DeductUndChapVIA.Section80GG",
+              "from": "via.d80GG",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR2.ScheduleVIA.DeductUndChapVIA.Section80GGC",
+              "from": "via.d80GGC",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR2.ScheduleVIA.UsrDeductUndChapVIA.Section80DD",
+              "from": "via.d80DD",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR2.ScheduleVIA.UsrDeductUndChapVIA.Section80DDB",
+              "from": "via.d80DDB",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR2.ScheduleVIA.UsrDeductUndChapVIA.Section80EE",
+              "from": "via.d80EE",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR2.ScheduleVIA.UsrDeductUndChapVIA.Section80EEA",
+              "from": "via.d80EEA",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR2.ScheduleVIA.UsrDeductUndChapVIA.Section80EEB",
+              "from": "via.d80EEB",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR2.ScheduleVIA.UsrDeductUndChapVIA.Section80GG",
+              "from": "via.d80GG",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR2.ScheduleVIA.UsrDeductUndChapVIA.Section80GGC",
+              "from": "via.d80GGC",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR2.ScheduleVIA.UsrDeductUndChapVIA.Section80DDBUsrType",
+              "from": "via_more.ddb_type",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR2.Schedule80DD.NatureOfDisability",
+              "from": "via_more.dd_nature",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR2.Schedule80DD.TypeOfDisability",
+              "from": "via_more.dd_type",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR2.Schedule80DD.DependentType",
+              "from": "via_more.dd_dependent",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR2.Schedule80DD.DeductionAmount",
+              "from": "via.d80DD",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR2.Schedule80EE.Schedule80EEDtls",
+              "each": "loans_80ee",
+              "item": {
+                "LoanTknFrom": "from",
+                "BankOrInstnName": "bank",
+                "LoanAccNoOfBankOrInstnRefNo": "acc",
+                "DateofLoan": "date",
+                "TotalLoanAmt": "amount",
+                "LoanOutstndngAmt": "left",
+                "Interest80EE": "interest"
+              }
+            },
+            {
+              "path": "ITR2.Schedule80EE.TotalInterest80EE",
+              "from": "via.d80EE",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR2.Schedule80EEA.Schedule80EEADtls",
+              "each": "loans_80eea",
+              "item": {
+                "LoanTknFrom": "from",
+                "BankOrInstnName": "bank",
+                "LoanAccNoOfBankOrInstnRefNo": "acc",
+                "DateofLoan": "date",
+                "TotalLoanAmt": "amount",
+                "LoanOutstndngAmt": "left",
+                "Interest80EEA": "interest"
+              }
+            },
+            {
+              "path": "ITR2.Schedule80EEA.PropStmpDtyVal",
+              "from": "via_more.stamp",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR2.Schedule80EEA.TotalInterest80EEA",
+              "from": "via.d80EEA",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR2.Schedule80EEB.Schedule80EEBDtls",
+              "each": "loans_80eeb",
+              "item": {
+                "LoanTknFrom": "from",
+                "BankOrInstnName": "bank",
+                "LoanAccNoOfBankOrInstnRefNo": "acc",
+                "DateofLoan": "date",
+                "TotalLoanAmt": "amount",
+                "LoanOutstndngAmt": "left",
+                "Interest80EEB": "interest",
+                "VehicleRegNo": "vehicle"
+              }
+            },
+            {
+              "path": "ITR2.Schedule80EEB.TotalInterest80EEB",
+              "from": "via.d80EEB",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR2.Schedule80GGC.Schedule80GGCDetails",
+              "each": "ggc_rows",
+              "item": {
+                "DonationDate": "date",
+                "DonationAmtCash": "#0",
+                "DonationAmtOtherMode": "amount",
+                "TransactionRefNum": "ref",
+                "IFSCCode": "ifsc",
+                "DonationAmt": "amount",
+                "EligibleDonationAmt": "amount",
+                "PoliticalPartyName": "party",
+                "PoliticalPartyPAN": "pan"
+              }
+            },
+            {
+              "path": "ITR2.Schedule80GGC.TotalDonationAmtOtherMode80GGC",
+              "from": "via.d80GGC",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR2.Schedule80GGC.TotalDonationsUs80GGC",
+              "from": "via.d80GGC",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR2.Schedule80GGC.TotalEligibleDonationAmt80GGC",
+              "from": "via.d80GGC",
+              "skip_zero": true
+            }
+          ],
+          "ITR-4": [
+            {
+              "path": "ITR4.CreationInfo.SWVersionNo",
+              "from": "sw_version"
+            },
+            {
+              "path": "ITR4.CreationInfo.SWCreatedBy",
+              "from": "sw_id"
+            },
+            {
+              "path": "ITR4.CreationInfo.JSONCreatedBy",
+              "from": "sw_id"
+            },
+            {
+              "path": "ITR4.CreationInfo.JSONCreationDate",
+              "from": "today"
+            },
+            {
+              "path": "ITR4.CreationInfo.IntermediaryCity",
+              "from": "client.city"
+            },
+            {
+              "path": "ITR4.CreationInfo.Digest",
+              "from": "=-"
+            },
+            {
+              "path": "ITR4.Form_ITR4.FormName",
+              "from": "=ITR-4"
+            },
+            {
+              "path": "ITR4.Form_ITR4.Description",
+              "from": "=SimplyFile"
+            },
+            {
+              "path": "ITR4.Form_ITR4.AssessmentYear",
+              "from": "ay_code"
+            },
+            {
+              "path": "ITR4.Form_ITR4.SchemaVer",
+              "from": "=Ver1.0"
+            },
+            {
+              "path": "ITR4.Form_ITR4.FormVer",
+              "from": "=Ver1.0"
+            },
+            {
+              "path": "ITR4.PersonalInfo.AssesseeName.FirstName",
+              "from": "client.first"
+            },
+            {
+              "path": "ITR4.PersonalInfo.AssesseeName.MiddleName",
+              "from": "client.middle"
+            },
+            {
+              "path": "ITR4.PersonalInfo.AssesseeName.SurNameOrOrgName",
+              "from": "client.surname"
+            },
+            {
+              "path": "ITR4.PersonalInfo.PAN",
+              "from": "client.pan"
+            },
+            {
+              "path": "ITR4.PersonalInfo.Address.ResidenceNo",
+              "from": "client.flat"
+            },
+            {
+              "path": "ITR4.PersonalInfo.Address.ResidenceName",
+              "from": "client.building"
+            },
+            {
+              "path": "ITR4.PersonalInfo.Address.RoadOrStreet",
+              "from": "client.road"
+            },
+            {
+              "path": "ITR4.PersonalInfo.Address.LocalityOrArea",
+              "from": "client.area"
+            },
+            {
+              "path": "ITR4.PersonalInfo.Address.CityOrTownOrDistrict",
+              "from": "client.city"
+            },
+            {
+              "path": "ITR4.PersonalInfo.Address.StateCode",
+              "from": "client.state"
+            },
+            {
+              "path": "ITR4.PersonalInfo.Address.CountryCode",
+              "from": "=91"
+            },
+            {
+              "path": "ITR4.PersonalInfo.Address.PinCode",
+              "from": "client.pin"
+            },
+            {
+              "path": "ITR4.PersonalInfo.Address.CountryCodeMobile",
+              "from": "#91"
+            },
+            {
+              "path": "ITR4.PersonalInfo.Address.MobileNo",
+              "from": "client.mobile"
+            },
+            {
+              "path": "ITR4.PersonalInfo.Address.EmailAddress",
+              "from": "client.email"
+            },
+            {
+              "path": "ITR4.PersonalInfo.SecondaryAdd",
+              "from": "=N"
+            },
+            {
+              "path": "ITR4.PersonalInfo.DOB",
+              "from": "client.dob"
+            },
+            {
+              "path": "ITR4.PersonalInfo.EmployerCategory",
+              "from": "filing.employer_category"
+            },
+            {
+              "path": "ITR4.FilingStatus.ReturnFileSec",
+              "from": "filing.section"
+            },
+            {
+              "path": "ITR4.FilingStatus.AsseseeRepFlg",
+              "from": "=N"
+            },
+            {
+              "path": "ITR4.FilingStatus.ItrFilingDueDate",
+              "from": "filing.due"
+            },
+            {
+              "path": "ITR4.FilingStatus.ReceiptNo",
+              "from": "filing.orig_ack"
+            },
+            {
+              "path": "ITR4.FilingStatus.OrigRetFiledDate",
+              "from": "filing.orig_date"
+            },
+            {
+              "path": "ITR4.IncomeDeductions.GrossSalary",
+              "from": "salary.gross"
+            },
+            {
+              "path": "ITR4.IncomeDeductions.Salary",
+              "from": "salary.s17_1"
+            },
+            {
+              "path": "ITR4.IncomeDeductions.PerquisitesValue",
+              "from": "salary.s17_2"
+            },
+            {
+              "path": "ITR4.IncomeDeductions.ProfitsInSalary",
+              "from": "salary.s17_3"
+            },
+            {
+              "path": "ITR4.IncomeDeductions.NetSalary",
+              "from": "salary.net"
+            },
+            {
+              "path": "ITR4.IncomeDeductions.DeductionUs16",
+              "from": "salary.d16"
+            },
+            {
+              "path": "ITR4.IncomeDeductions.DeductionUs16ia",
+              "from": "salary.std"
+            },
+            {
+              "path": "ITR4.IncomeDeductions.ProfessionalTaxUs16iii",
+              "from": "salary.prof_tax"
+            },
+            {
+              "path": "ITR4.IncomeDeductions.IncomeFromSal",
+              "from": "salary.income"
+            },
+            {
+              "path": "ITR4.IncomeDeductions.AllwncExemptUs10.AllwncExemptUs10Dtls",
+              "each": "exempt_rows",
+              "item": {
+                "SalNatureDesc": "code",
+                "SalOthAmount": "amount"
+              }
+            },
+            {
+              "path": "ITR4.IncomeDeductions.AllwncExemptUs10.TotalAllwncExemptUs10",
+              "from": "salary.exempt",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR4.IncomeDeductions.PropertyDetails",
+              "each": "hp_rows",
+              "item": {
+                "HPSNo": "n",
+                "AddressDetailWithZipCode.AddrDetail": "address",
+                "AddressDetailWithZipCode.CityOrTownOrDistrict": "city",
+                "AddressDetailWithZipCode.StateCode": "state",
+                "AddressDetailWithZipCode.CountryCode": "=91",
+                "AddressDetailWithZipCode.PinCode": "pin",
+                "PropertyOwner": "=SE",
+                "PropCoOwnedFlg": "=NO",
+                "ifLetOut": "let",
+                "Rentdetails.AnnualLetableValue": "rent",
+                "Rentdetails.LocalTaxes": "municipal_tax",
+                "Rentdetails.TotalUnrealizedAndTax": "municipal_tax",
+                "Rentdetails.BalanceALV": "nav",
+                "Rentdetails.AnnualOfPropOwned": "nav",
+                "Rentdetails.ThirtyPercentOfBalance": "std",
+                "Rentdetails.IntOnBorwCap": "interest",
+                "Rentdetails.TotalDeduct": "deduct",
+                "Rentdetails.IncomeOfHP": "net"
+              }
+            },
+            {
+              "path": "ITR4.IncomeDeductions.TotalIncomeChargeableUnHP",
+              "from": "hp.net"
+            },
+            {
+              "path": "ITR4.IncomeDeductions.IncomeOthSrc",
+              "from": "os.total"
+            },
+            {
+              "path": "ITR4.IncomeDeductions.OthersInc.OthersIncDtlsOthSrc",
+              "each": "os_rows",
+              "item": {
+                "OthSrcNatureDesc": "code",
+                "OthSrcOthNatOfInc": "what",
+                "OthSrcOthAmount": "amount"
+              }
+            },
+            {
+              "path": "ITR4.IncomeDeductions.DeductionUs57iia",
+              "from": "os.fp_deduction"
+            },
+            {
+              "path": "ITR4.IncomeDeductions.GrossTotIncome",
+              "from": "gti_normal"
+            },
+            {
+              "path": "ITR4.IncomeDeductions.GrossTotIncomeIncLTCG112A",
+              "from": "gti"
+            },
+            {
+              "path": "ITR4.IncomeDeductions.UsrDeductUndChapVIA.Section80C",
+              "from": "via.d80C"
+            },
+            {
+              "path": "ITR4.IncomeDeductions.UsrDeductUndChapVIA.Section80CCD1B",
+              "from": "via.d80CCD1B"
+            },
+            {
+              "path": "ITR4.IncomeDeductions.UsrDeductUndChapVIA.Section80CCDEmployer",
+              "from": "via.d80CCD2"
+            },
+            {
+              "path": "ITR4.IncomeDeductions.UsrDeductUndChapVIA.Section80D",
+              "from": "via.d80D"
+            },
+            {
+              "path": "ITR4.IncomeDeductions.UsrDeductUndChapVIA.Section80E",
+              "from": "via.d80E"
+            },
+            {
+              "path": "ITR4.IncomeDeductions.UsrDeductUndChapVIA.Section80G",
+              "from": "via.d80G"
+            },
+            {
+              "path": "ITR4.IncomeDeductions.UsrDeductUndChapVIA.Section80TTA",
+              "from": "via.d80TTA"
+            },
+            {
+              "path": "ITR4.IncomeDeductions.UsrDeductUndChapVIA.Section80TTB",
+              "from": "via.d80TTB"
+            },
+            {
+              "path": "ITR4.IncomeDeductions.UsrDeductUndChapVIA.Section80U",
+              "from": "via.d80U"
+            },
+            {
+              "path": "ITR4.IncomeDeductions.UsrDeductUndChapVIA.TotalChapVIADeductions",
+              "from": "via.total"
+            },
+            {
+              "path": "ITR4.IncomeDeductions.DeductUndChapVIA.Section80C",
+              "from": "via.d80C"
+            },
+            {
+              "path": "ITR4.IncomeDeductions.DeductUndChapVIA.Section80CCD1B",
+              "from": "via.d80CCD1B"
+            },
+            {
+              "path": "ITR4.IncomeDeductions.DeductUndChapVIA.Section80CCDEmployer",
+              "from": "via.d80CCD2"
+            },
+            {
+              "path": "ITR4.IncomeDeductions.DeductUndChapVIA.Section80D",
+              "from": "via.d80D"
+            },
+            {
+              "path": "ITR4.IncomeDeductions.DeductUndChapVIA.Section80E",
+              "from": "via.d80E"
+            },
+            {
+              "path": "ITR4.IncomeDeductions.DeductUndChapVIA.Section80G",
+              "from": "via.d80G"
+            },
+            {
+              "path": "ITR4.IncomeDeductions.DeductUndChapVIA.Section80TTA",
+              "from": "via.d80TTA"
+            },
+            {
+              "path": "ITR4.IncomeDeductions.DeductUndChapVIA.Section80TTB",
+              "from": "via.d80TTB"
+            },
+            {
+              "path": "ITR4.IncomeDeductions.DeductUndChapVIA.Section80U",
+              "from": "via.d80U"
+            },
+            {
+              "path": "ITR4.IncomeDeductions.DeductUndChapVIA.TotalChapVIADeductions",
+              "from": "via.total"
+            },
+            {
+              "path": "ITR4.IncomeDeductions.TotalIncome",
+              "from": "total_income"
+            },
+            {
+              "path": "ITR4.TaxComputation.TotalTaxPayable",
+              "from": "tax2.slab"
+            },
+            {
+              "path": "ITR4.TaxComputation.Rebate87A",
+              "from": "tax2.rebate_all"
+            },
+            {
+              "path": "ITR4.TaxComputation.TaxPayableOnRebate",
+              "from": "tax2.after_rebate"
+            },
+            {
+              "path": "ITR4.TaxComputation.EducationCess",
+              "from": "tax2.cess"
+            },
+            {
+              "path": "ITR4.TaxComputation.GrossTaxLiability",
+              "from": "tax2.gross"
+            },
+            {
+              "path": "ITR4.TaxComputation.Section89",
+              "from": "#0"
+            },
+            {
+              "path": "ITR4.TaxComputation.NetTaxLiability",
+              "from": "tax2.gross"
+            },
+            {
+              "path": "ITR4.TaxComputation.IntrstPay.IntrstPayUs234A",
+              "from": "tax2.i234a"
+            },
+            {
+              "path": "ITR4.TaxComputation.IntrstPay.IntrstPayUs234B",
+              "from": "tax2.i234b"
+            },
+            {
+              "path": "ITR4.TaxComputation.IntrstPay.IntrstPayUs234C",
+              "from": "tax2.i234c"
+            },
+            {
+              "path": "ITR4.TaxComputation.IntrstPay.LateFilingFee234F",
+              "from": "tax2.fee_234f"
+            },
+            {
+              "path": "ITR4.TaxComputation.TotTaxPlusIntrstPay",
+              "from": "tax2.aggregate"
+            },
+            {
+              "path": "ITR4.TaxPaid.TaxesPaid.AdvanceTax",
+              "from": "tax2.advance"
+            },
+            {
+              "path": "ITR4.TaxPaid.TaxesPaid.TDS",
+              "from": "tax2.tds"
+            },
+            {
+              "path": "ITR4.TaxPaid.TaxesPaid.TCS",
+              "from": "#0"
+            },
+            {
+              "path": "ITR4.TaxPaid.TaxesPaid.SelfAssessmentTax",
+              "from": "tax2.sat"
+            },
+            {
+              "path": "ITR4.TaxPaid.TaxesPaid.TotalTaxesPaid",
+              "from": "tax2.paid_all"
+            },
+            {
+              "path": "ITR4.TaxPaid.BalTaxPayable",
+              "from": "tax2.payable"
+            },
+            {
+              "path": "ITR4.Refund.RefundDue",
+              "from": "tax2.refund"
+            },
+            {
+              "path": "ITR4.Refund.BankAccountDtls.AddtnlBankDetails",
+              "each": "bank_rows",
+              "item": {
+                "IFSCCode": "ifsc",
+                "BankName": "bank",
+                "BankAccountNo": "account",
+                "AccountType": "type",
+                "UseForRefund": "refund"
+              }
+            },
+            {
+              "path": "ITR4.TDSonSalaries.TDSonSalary",
+              "each": "tds_salary",
+              "item": {
+                "EmployerOrDeductorOrCollectDetl.TAN": "tan",
+                "EmployerOrDeductorOrCollectDetl.EmployerOrDeductorOrCollecterName": "name",
+                "IncChrgSal": "income",
+                "TotalTDSSal": "tds"
+              }
+            },
+            {
+              "path": "ITR4.TDSonSalaries.TotalTDSonSalaries",
+              "from": "tax2.tds_salary",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR4.TDSonOthThanSals.TDSonOthThanSal",
+              "each": "tds_other",
+              "item": {
+                "EmployerOrDeductorOrCollectDetl.TAN": "tan",
+                "EmployerOrDeductorOrCollectDetl.EmployerOrDeductorOrCollecterName": "name",
+                "TDSSection": "section",
+                "AmtForTaxDeduct": "income",
+                "DeductedYr": "year",
+                "TotTDSOnAmtPaid": "tds",
+                "ClaimOutOfTotTDSOnAmtPaid": "tds"
+              }
+            },
+            {
+              "path": "ITR4.TDSonOthThanSals.TotalTDSonOthThanSals",
+              "from": "tax2.tds_other",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR4.ScheduleIT.TaxPayment",
+              "each": "paid_rows",
+              "item": {
+                "BSRCode": "bsr",
+                "DateDep": "date",
+                "SrlNoOfChaln": "serial",
+                "Amt": "amount"
+              }
+            },
+            {
+              "path": "ITR4.LTCG112A.LongCap112A",
+              "from": "cg.ltcg_112a",
+              "skip_zero": true,
+              "seed": true
+            },
+            {
+              "path": "ITR4.Verification.Declaration.AssesseeVerName",
+              "from": "client.signer_name"
+            },
+            {
+              "path": "ITR4.Verification.Declaration.FatherName",
+              "from": "client.father"
+            },
+            {
+              "path": "ITR4.Verification.Declaration.AssesseeVerPAN",
+              "from": "client.signer_pan"
+            },
+            {
+              "path": "ITR4.Verification.Capacity",
+              "from": "client.capacity"
+            },
+            {
+              "path": "ITR4.Verification.Place",
+              "from": "client.city"
+            },
+            {
+              "path": "ITR4.Schedule80D.Sec80DSelfFamSrCtznHealth.EligibleAmountOfDedn",
+              "from": "d80d.total",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR4.Schedule80D.Sec80DSelfFamSrCtznHealth.SeniorCitizenFlag",
+              "from": "d80d.self_flag"
+            },
+            {
+              "path": "ITR4.Schedule80D.Sec80DSelfFamSrCtznHealth.SelfAndFamily",
+              "from": "d80d.self",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR4.Schedule80D.Sec80DSelfFamSrCtznHealth.HealthInsPremSlfFam",
+              "from": "d80d.self",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR4.Schedule80D.Sec80DSelfFamSrCtznHealth.SelfAndFamilySeniorCitizen",
+              "from": "d80d.self_sr",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR4.Schedule80D.Sec80DSelfFamSrCtznHealth.HlthInsPremSlfFamSrCtzn",
+              "from": "d80d.self_sr",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR4.Schedule80D.Sec80DSelfFamSrCtznHealth.ParentsSeniorCitizenFlag",
+              "from": "d80d.parents_flag"
+            },
+            {
+              "path": "ITR4.Schedule80D.Sec80DSelfFamSrCtznHealth.Parents",
+              "from": "d80d.parents",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR4.Schedule80D.Sec80DSelfFamSrCtznHealth.HlthInsPremParents",
+              "from": "d80d.parents",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR4.Schedule80D.Sec80DSelfFamSrCtznHealth.ParentsSeniorCitizen",
+              "from": "d80d.parents_sr",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR4.Schedule80D.Sec80DSelfFamSrCtznHealth.HlthInsPremParentsSrCtzn",
+              "from": "d80d.parents_sr",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR4.ScheduleIT.TotalTaxPayments",
+              "from": "tax2.paid"
+            },
+            {
+              "path": "ITR4.FilingStatus.Form10IEAEarlierAYOldRegime",
+              "from": "=NA"
+            },
+            {
+              "path": "ITR4.PersonalInfo.Status",
+              "from": "client.status_code"
+            },
+            {
+              "path": "ITR4.IncomeDeductions.IncomeFromBusinessProf",
+              "from": "biz.income"
+            },
+            {
+              "path": "ITR4.ScheduleBP.NatOfBus44ADA",
+              "from": "biz.nature_ada"
+            },
+            {
+              "path": "ITR4.ScheduleBP.PersumptiveInc44ADA.GrsReceipt",
+              "from": "biz.ada_receipts"
+            },
+            {
+              "path": "ITR4.ScheduleBP.PersumptiveInc44ADA.GrsTrnOverBank44ADA",
+              "from": "biz.ada_digital"
+            },
+            {
+              "path": "ITR4.ScheduleBP.PersumptiveInc44ADA.GrsTotalTrnOverInCash44ADA",
+              "from": "biz.ada_cash"
+            },
+            {
+              "path": "ITR4.ScheduleBP.PersumptiveInc44ADA.TotPersumptiveInc44ADA",
+              "from": "biz.ada_income"
+            },
+            {
+              "path": "ITR4.ScheduleBP.NatOfBus44AD",
+              "from": "biz.nature_ad"
+            },
+            {
+              "path": "ITR4.ScheduleBP.PersumptiveInc44AD.GrsTotalTrnOver",
+              "from": "biz.ad_receipts"
+            },
+            {
+              "path": "ITR4.ScheduleBP.PersumptiveInc44AD.GrsTrnOverBank",
+              "from": "biz.ad_digital"
+            },
+            {
+              "path": "ITR4.ScheduleBP.PersumptiveInc44AD.GrsTotalTrnOverInCash",
+              "from": "biz.ad_cash"
+            },
+            {
+              "path": "ITR4.ScheduleBP.PersumptiveInc44AD.PersumptiveInc44AD6Per",
+              "from": "biz.ad_6"
+            },
+            {
+              "path": "ITR4.ScheduleBP.PersumptiveInc44AD.PersumptiveInc44AD8Per",
+              "from": "biz.ad_8"
+            },
+            {
+              "path": "ITR4.ScheduleBP.PersumptiveInc44AD.TotPersumptiveInc44AD",
+              "from": "biz.ad_income"
+            },
+            {
+              "path": "ITR4.ScheduleBP.TurnoverGrsRcptForGSTIN",
+              "from": "biz.gst_rows"
+            },
+            {
+              "path": "ITR4.ScheduleBP.TotalTurnoverGrsRcptGSTIN",
+              "from": "biz.gst_turnover"
+            },
+            {
+              "path": "ITR4.FilingStatus.F10IEACurrAYOldRegime",
+              "from": "regime_opt_out"
+            },
+            {
+              "path": "ITR4.IncomeDeductions.DeductUndChapVIA.Section80DD",
+              "from": "via.d80DD",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR4.IncomeDeductions.DeductUndChapVIA.Section80DDB",
+              "from": "via.d80DDB",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR4.IncomeDeductions.DeductUndChapVIA.Section80EE",
+              "from": "via.d80EE",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR4.IncomeDeductions.DeductUndChapVIA.Section80EEA",
+              "from": "via.d80EEA",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR4.IncomeDeductions.DeductUndChapVIA.Section80EEB",
+              "from": "via.d80EEB",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR4.IncomeDeductions.DeductUndChapVIA.Section80GG",
+              "from": "via.d80GG",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR4.IncomeDeductions.DeductUndChapVIA.Section80GGC",
+              "from": "via.d80GGC",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR4.IncomeDeductions.UsrDeductUndChapVIA.Section80DD",
+              "from": "via.d80DD",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR4.IncomeDeductions.UsrDeductUndChapVIA.Section80DDB",
+              "from": "via.d80DDB",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR4.IncomeDeductions.UsrDeductUndChapVIA.Section80EE",
+              "from": "via.d80EE",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR4.IncomeDeductions.UsrDeductUndChapVIA.Section80EEA",
+              "from": "via.d80EEA",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR4.IncomeDeductions.UsrDeductUndChapVIA.Section80EEB",
+              "from": "via.d80EEB",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR4.IncomeDeductions.UsrDeductUndChapVIA.Section80GG",
+              "from": "via.d80GG",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR4.IncomeDeductions.UsrDeductUndChapVIA.Section80GGC",
+              "from": "via.d80GGC",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR4.IncomeDeductions.UsrDeductUndChapVIA.Section80DDBUsrType",
+              "from": "via_more.ddb_type",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR4.Schedule80DD.NatureOfDisability",
+              "from": "via_more.dd_nature",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR4.Schedule80DD.TypeOfDisability",
+              "from": "via_more.dd_type",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR4.Schedule80DD.DependentType",
+              "from": "via_more.dd_dependent",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR4.Schedule80DD.DeductionAmount",
+              "from": "via.d80DD",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR4.Schedule80EE.Schedule80EEDtls",
+              "each": "loans_80ee",
+              "item": {
+                "LoanTknFrom": "from",
+                "BankOrInstnName": "bank",
+                "LoanAccNoOfBankOrInstnRefNo": "acc",
+                "DateofLoan": "date",
+                "TotalLoanAmt": "amount",
+                "LoanOutstndngAmt": "left",
+                "Interest80EE": "interest"
+              }
+            },
+            {
+              "path": "ITR4.Schedule80EE.TotalInterest80EE",
+              "from": "via.d80EE",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR4.Schedule80EEA.Schedule80EEADtls",
+              "each": "loans_80eea",
+              "item": {
+                "LoanTknFrom": "from",
+                "BankOrInstnName": "bank",
+                "LoanAccNoOfBankOrInstnRefNo": "acc",
+                "DateofLoan": "date",
+                "TotalLoanAmt": "amount",
+                "LoanOutstndngAmt": "left",
+                "Interest80EEA": "interest"
+              }
+            },
+            {
+              "path": "ITR4.Schedule80EEA.PropStmpDtyVal",
+              "from": "via_more.stamp",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR4.Schedule80EEA.TotalInterest80EEA",
+              "from": "via.d80EEA",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR4.Schedule80EEB.Schedule80EEBDtls",
+              "each": "loans_80eeb",
+              "item": {
+                "LoanTknFrom": "from",
+                "BankOrInstnName": "bank",
+                "LoanAccNoOfBankOrInstnRefNo": "acc",
+                "DateofLoan": "date",
+                "TotalLoanAmt": "amount",
+                "LoanOutstndngAmt": "left",
+                "Interest80EEB": "interest",
+                "VehicleRegNo": "vehicle"
+              }
+            },
+            {
+              "path": "ITR4.Schedule80EEB.TotalInterest80EEB",
+              "from": "via.d80EEB",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR4.Schedule80GGC.Schedule80GGCDetails",
+              "each": "ggc_rows",
+              "item": {
+                "DonationDate": "date",
+                "DonationAmtCash": "#0",
+                "DonationAmtOtherMode": "amount",
+                "TransactionRefNum": "ref",
+                "IFSCCode": "ifsc",
+                "DonationAmt": "amount",
+                "EligibleDonationAmt": "amount",
+                "PoliticalPartyName": "party",
+                "PoliticalPartyPAN": "pan"
+              }
+            },
+            {
+              "path": "ITR4.Schedule80GGC.TotalDonationAmtOtherMode80GGC",
+              "from": "via.d80GGC",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR4.Schedule80GGC.TotalDonationsUs80GGC",
+              "from": "via.d80GGC",
+              "skip_zero": true
+            },
+            {
+              "path": "ITR4.Schedule80GGC.TotalEligibleDonationAmt80GGC",
+              "from": "via.d80GGC",
+              "skip_zero": true
             }
           ]
         }

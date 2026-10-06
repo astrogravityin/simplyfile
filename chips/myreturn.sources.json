@@ -22,7 +22,8 @@
         ],
         "other": [
           "ais",
-          "prefill"
+          "prefill",
+          "26as"
         ],
         "cg": [
           "ais",
@@ -52,9 +53,9 @@
   ],
   "expr": "$order",
   "returns": "record",
-  "version": 1,
+  "version": 2,
   "status": "published",
-  "description_nl": "2026-10-06: salary from Form 16 (each employer's own certificate), interest and dividends from the AIS, tax credit as 26AS shows it (it is what the department checks against), personal details and refund banks from the pre-filled JSON. A figure the person types wins over all.",
+  "description_nl": "2026-10-06: salary from Form 16 (each employer's own certificate), interest and dividends from the AIS, tax credit as 26AS shows it (it is what the department checks against), personal details and refund banks from the pre-filled JSON. A figure the person types wins over all. 2026-10-06: other income falls back to 26AS (interest / dividend paid) when no AIS or pre-filled JSON.",
   "test_cases": [
     {
       "args": {},
@@ -70,7 +71,8 @@
         ],
         "other": [
           "ais",
-          "prefill"
+          "prefill",
+          "26as"
         ],
         "cg": [
           "ais",

@@ -34,13 +34,13 @@
     {
       "name": "prompt",
       "type": "long",
-      "default": "You are checking India's income-tax figures for Assessment Year {ay} (financial year {fy}), as enacted by the Finance Act for that year and any CBDT notification or circular since. Use only official sources: incometax.gov.in, indiabudget.gov.in, egazette.gov.in, cbic / CBDT circulars and press releases. For each item below you are given its value for AY {live_ay} and its exact JSON shape. Give the value for AY {ay} in the SAME shape (same keys, same units: rupees as whole numbers, rates as percent numbers, dates as MMDD numbers like 731 for 31 July). If AY {ay} has not been announced yet, or you are not sure, give null and say why in note.\n\nItems:\n{items}\n\nAnswer with one JSON object only, inside a ```json fence: {{\"<item id>\": {{\"value\": <value or null>, \"source\": \"<official URL>\", \"note\": \"<one short line: what changed, or why null>\"}}, ...}} - every item id once.",
+      "default": "You are checking India's income-tax figures for Assessment Year {ay} (financial year {fy}), as enacted by the Finance Act for that year and any CBDT notification or circular since. Use only official sources: incometax.gov.in, indiabudget.gov.in, egazette.gov.in, cbic / CBDT circulars and press releases. For each item below you are given its value for AY {live_ay} and its exact JSON shape. Give the value for AY {ay} in the SAME shape (same keys, same units: rupees as whole numbers, rates as percent numbers, dates as MMDD numbers like 731 for 31 July). If AY {ay} has not been announced yet, or you are not sure, give null and say why in note.\n\nItems:\n{items}\n\nAnswer with one JSON object only, inside a ```json fence: {{\"<item id>\": {{\"value\": <value or null>, \"source\": \"<official URL>\", \"note\": \"<one short line: what changed, or why null>\"}}, ...}} - every item id once. Also give the key \"_new\": a list of the other income-tax changes for AY {ay} that affect an individual's return and are NOT among the items above (a new section, fee, deduction, exemption, return form or schedule change, due-date rule, JSON schema version), each {{\"what\": \"<one line>\", \"who\": \"<who it affects>\", \"source\": \"<official URL>\"}}; [] if none.",
       "label": "prompt"
     },
     {
       "name": "fence",
       "type": "text",
-      "default": "```(?:json)?\\s*(\\{.*\\})\\s*```",
+      "default": "```(?:json)?",
       "label": "fence"
     },
     {
@@ -60,6 +60,36 @@
       "type": "text",
       "default": "{ay}",
       "label": "archive key"
+    },
+    {
+      "name": "new_most",
+      "type": "json",
+      "default": 20,
+      "label": "new most"
+    },
+    {
+      "name": "ais",
+      "type": "json",
+      "default": [
+        {
+          "provider": "gemini",
+          "model": "gemini-2.5-flash",
+          "label": "Gemini with Google Search"
+        },
+        {
+          "provider": "openai",
+          "model": "gpt-4.1",
+          "label": "OpenAI with web search",
+          "tool": "web_search"
+        }
+      ],
+      "label": "ais"
+    },
+    {
+      "name": "ai_timeout",
+      "type": "number",
+      "default": 240,
+      "label": "seconds a Fetch may take (the AI searches the web first)"
     }
   ],
   "expr": {
@@ -73,13 +103,16 @@
       "fence": "$fence",
       "sources_most": "$sources_most",
       "note_chars": "$note_chars",
-      "archive_key": "$archive_key"
+      "archive_key": "$archive_key",
+      "new_most": "$new_most",
+      "ais": "$ais",
+      "ai_timeout": "$ai_timeout"
     }
   },
   "returns": "record",
-  "version": 1,
+  "version": 5,
   "status": "published",
-  "description_nl": "2026-10-06: the AY the portal's live figures are for (live_ay - Apply moves it on), the AI that fetches (Gemini with Google Search, official sources only), its prompt, and how its answer is read. Apply publishes through the Ops & chips builder layer (data/builder/chips), so a deploy never undoes it and each chip keeps its History.",
+  "description_nl": "2026-10-06: the AY the portal's live figures are for (live_ay - Apply moves it on), the AI that fetches (Gemini with Google Search, official sources only), its prompt, and how its answer is read. Apply publishes through the Ops & chips builder layer (data/builder/chips), so a deploy never undoes it and each chip keeps its History. 2026-10-06: the prompt also asks for the changes that are not one of the items (\"_new\") - they cannot be applied as a figure; Compare shows them as needs building. new_most: how many are kept. 2026-10-06: ais - the models Fetch may ask, each searching the web itself; Automatic takes the first whose key works. 2026-10-06: ai_timeout - how long a Fetch may take. 2026-10-06: fence is the fence marks only (json_in_text removes what it matches - the old pattern took the answer with it).",
   "test_cases": [
     {
       "args": {},
@@ -88,11 +121,26 @@
         "provider": "gemini",
         "model": "gemini-2.5-flash",
         "search": true,
-        "prompt": "You are checking India's income-tax figures for Assessment Year {ay} (financial year {fy}), as enacted by the Finance Act for that year and any CBDT notification or circular since. Use only official sources: incometax.gov.in, indiabudget.gov.in, egazette.gov.in, cbic / CBDT circulars and press releases. For each item below you are given its value for AY {live_ay} and its exact JSON shape. Give the value for AY {ay} in the SAME shape (same keys, same units: rupees as whole numbers, rates as percent numbers, dates as MMDD numbers like 731 for 31 July). If AY {ay} has not been announced yet, or you are not sure, give null and say why in note.\n\nItems:\n{items}\n\nAnswer with one JSON object only, inside a ```json fence: {{\"<item id>\": {{\"value\": <value or null>, \"source\": \"<official URL>\", \"note\": \"<one short line: what changed, or why null>\"}}, ...}} - every item id once.",
-        "fence": "```(?:json)?\\s*(\\{.*\\})\\s*```",
+        "prompt": "You are checking India's income-tax figures for Assessment Year {ay} (financial year {fy}), as enacted by the Finance Act for that year and any CBDT notification or circular since. Use only official sources: incometax.gov.in, indiabudget.gov.in, egazette.gov.in, cbic / CBDT circulars and press releases. For each item below you are given its value for AY {live_ay} and its exact JSON shape. Give the value for AY {ay} in the SAME shape (same keys, same units: rupees as whole numbers, rates as percent numbers, dates as MMDD numbers like 731 for 31 July). If AY {ay} has not been announced yet, or you are not sure, give null and say why in note.\n\nItems:\n{items}\n\nAnswer with one JSON object only, inside a ```json fence: {{\"<item id>\": {{\"value\": <value or null>, \"source\": \"<official URL>\", \"note\": \"<one short line: what changed, or why null>\"}}, ...}} - every item id once. Also give the key \"_new\": a list of the other income-tax changes for AY {ay} that affect an individual's return and are NOT among the items above (a new section, fee, deduction, exemption, return form or schedule change, due-date rule, JSON schema version), each {{\"what\": \"<one line>\", \"who\": \"<who it affects>\", \"source\": \"<official URL>\"}}; [] if none.",
+        "fence": "```(?:json)?",
         "sources_most": 8,
         "note_chars": 240,
-        "archive_key": "{ay}"
+        "archive_key": "{ay}",
+        "new_most": 20,
+        "ais": [
+          {
+            "provider": "gemini",
+            "model": "gemini-2.5-flash",
+            "label": "Gemini with Google Search"
+          },
+          {
+            "provider": "openai",
+            "model": "gpt-4.1",
+            "label": "OpenAI with web search",
+            "tool": "web_search"
+          }
+        ],
+        "ai_timeout": 240
       }
     }
   ]

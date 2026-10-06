@@ -249,7 +249,7 @@ def check_fields(*, email: str | None = None, username: str | None = None, name:
     if name is not None:
         checks.append(("name", "auth.display_name_problem", {"name": name}))
     if username is not None:
-        checks.append(("username", "auth.username_problem", {"username": username}))
+        checks.append(("username", "auth.username_problem", {"username": username, "email": email or ""}))
     if email is not None:
         checks.append(("email", "auth.email_problem", {"email": email}))
     if password is not None:

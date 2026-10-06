@@ -431,6 +431,216 @@
       "type": "text",
       "default": "(\\.\\d{2})(?=\\d)",
       "label": "where two amounts printed with no space are cut apart (2026-10-06: a TRACES Form 16 prints tax deducted and deposited as 1311485.001311485.00)"
+    },
+    {
+      "name": "employee_pan_pattern",
+      "type": "text",
+      "default": "PAN of (?:the )?Employee\\D{0,40}?([A-Z]{5}[0-9]{4}[A-Z])",
+      "label": "employee pan pattern"
+    },
+    {
+      "name": "pdf26as",
+      "type": "json",
+      "default": {
+        "start": "PART-I - Details of Tax Deducted",
+        "end": "PART-II",
+        "deductor": "^\\d+ (.+?) ([A-Z]{4}[0-9]{5}[A-Z]) (-?[\\d,]+\\.\\d\\d) (-?[\\d,]+\\.\\d\\d) (-?[\\d,]+\\.\\d\\d)$",
+        "entry": "^\\d+ (\\d{3}[A-Z0-9]*) \\d\\d-[A-Za-z]{3}-\\d{4} "
+      },
+      "label": "26AS PDF lines"
+    },
+    {
+      "name": "income_of",
+      "type": "json",
+      "default": {
+        "194A": "deposits",
+        "194": "dividend"
+      },
+      "label": "26AS section to income"
+    },
+    {
+      "name": "ais_amount_tail",
+      "type": "text",
+      "default": "(?<![\\w.])(\\d[\\d,]*(?:\\.\\d+)?)\\s*$",
+      "label": "AIS amount at line end"
+    },
+    {
+      "name": "tis",
+      "type": "json",
+      "default": {
+        "words": [
+          "taxpayer information summary"
+        ],
+        "start": "INFORMATION CATEGORY",
+        "end": "information details under each",
+        "row": "^\\d+ (.+?) (\\d[\\d,]*(?:\\.\\d+)?) (\\d[\\d,]*(?:\\.\\d+)?)$"
+      },
+      "label": "TIS summary"
+    },
+    {
+      "name": "ais_paid",
+      "type": "json",
+      "default": {
+        "start": "Part B3",
+        "end": "Part B4",
+        "row": "\\b\\d+ (\\d{4}-\\d{2}) Income Tax (?:\\(Other than Companies\\) )?(.+?) (\\d[\\d,]*) (\\d[\\d,]*) (\\d[\\d,]*) (\\d[\\d,]*) (\\d[\\d,]*) (\\d{7}) (\\d\\d)/(\\d\\d)/(\\d{4}) (\\d+)",
+        "minor": {
+          "advance": "100",
+          "self assessment": "300",
+          "regular": "400"
+        }
+      },
+      "label": "AIS Part B3 - tax payments"
+    },
+    {
+      "name": "words_bank",
+      "type": "json",
+      "default": [
+        "statement of account",
+        "account statement",
+        "opening balance",
+        "closing balance"
+      ],
+      "label": "words bank"
+    },
+    {
+      "name": "bank",
+      "type": "json",
+      "default": {
+        "date_words": [
+          "date",
+          "txn date",
+          "value date",
+          "tran date",
+          "transaction date",
+          "post date"
+        ],
+        "credit_words": [
+          "credit",
+          "deposit",
+          "cr amount",
+          "cr",
+          "deposits",
+          "credit amount",
+          "credit(inr)",
+          "deposit amt"
+        ],
+        "debit_words": [
+          "debit",
+          "withdrawal",
+          "dr amount",
+          "dr",
+          "withdrawals",
+          "debit amount",
+          "withdrawal amt"
+        ],
+        "narration_words": [
+          "narration",
+          "description",
+          "particulars",
+          "transaction details",
+          "remarks",
+          "details"
+        ],
+        "balance_words": [
+          "balance",
+          "closing balance",
+          "running balance"
+        ],
+        "date_pattern": "^\\s*\\d{1,2}[-/. ](?:\\d{1,2}|[A-Za-z]{3,9})[-/. ]\\d{2,4}\\b|^\\s*\\d{4}-\\d{2}-\\d{2}\\b",
+        "kinds": [
+          {
+            "kind": "interest",
+            "words": [
+              "int.pd",
+              "int pd",
+              "int.cr",
+              "interest",
+              "sb int",
+              "int credit",
+              "int.coll"
+            ]
+          },
+          {
+            "kind": "refund",
+            "words": [
+              "itdtax refund",
+              "tax refund",
+              "cpc",
+              "it refund",
+              "income tax refund"
+            ]
+          },
+          {
+            "kind": "salary",
+            "words": [
+              "salary",
+              "sal cr",
+              "payroll"
+            ]
+          },
+          {
+            "kind": "reversal",
+            "words": [
+              "reversal",
+              "reversed",
+              "rev:",
+              "chargeback",
+              "refund"
+            ]
+          },
+          {
+            "kind": "own",
+            "words": [
+              "self",
+              "own a/c",
+              "own account",
+              "sweep",
+              "fd closure",
+              "fd proceeds",
+              "td closure",
+              "rd closure",
+              "redemption",
+              "mf red",
+              "to self",
+              "from self"
+            ]
+          },
+          {
+            "kind": "cash",
+            "words": [
+              "cash dep",
+              "by cash",
+              "cash deposit",
+              "cdm",
+              "csh dep"
+            ]
+          }
+        ],
+        "receipt_kind": "receipt",
+        "top_most": 8,
+        "amount_words": [
+          "amount",
+          "transaction amount",
+          "txn amount",
+          "amount (inr)",
+          "amount(inr)"
+        ],
+        "type_words": [
+          "dr/cr",
+          "cr/dr",
+          "dr / cr",
+          "type",
+          "txn type",
+          "debit/credit"
+        ],
+        "credit_marks": [
+          "cr",
+          "c",
+          "credit"
+        ]
+      },
+      "label": "bank"
     }
   ],
   "expr": {
@@ -463,13 +673,21 @@
       "exempt_codes": "$exempt_codes",
       "filed_roots": "$filed_roots",
       "filed_found": "$filed_found",
-      "glued_split": "$glued_split"
+      "glued_split": "$glued_split",
+      "employee_pan_pattern": "$employee_pan_pattern",
+      "pdf26as": "$pdf26as",
+      "income_of": "$income_of",
+      "ais_amount_tail": "$ais_amount_tail",
+      "tis": "$tis",
+      "ais_paid": "$ais_paid",
+      "words_bank": "$words_bank",
+      "bank": "$bank"
     }
   },
   "returns": "record",
-  "version": 4,
+  "version": 13,
   "status": "published",
-  "description_nl": "2026-10-06: the pre-filled JSON's keys (camelCase, e-filing portal), the words that tell a Form 16, an AIS and a 26AS apart, the AIS JSON's encryption (PBKDF2-SHA256 over PAN + pepper + DDMMYYYY, AES-256-CBC), AIS information codes -> fields (SFT-016 SB/TD interest, SFT-015 dividend, TDS-192 salary; TDS-194/194A are the same income again and are left out), Form 16's line anchors (the figure is the last amount on the line), and the AI fallback's model, fields and prompt.",
+  "description_nl": "2026-10-06: the pre-filled JSON's keys (camelCase, e-filing portal), the words that tell a Form 16, an AIS and a 26AS apart, the AIS JSON's encryption (PBKDF2-SHA256 over PAN + pepper + DDMMYYYY, AES-256-CBC), AIS information codes -> fields (SFT-016 SB/TD interest, SFT-015 dividend, TDS-192 salary; TDS-194/194A are the same income again and are left out), Form 16's line anchors (the figure is the last amount on the line), and the AI fallback's model, fields and prompt. 2026-10-06: employee_pan_pattern - the employee's PAN in a TRACES Form 16 (TAN and PAN on lines of their own), so a return can start from it. 2026-10-06: pdf26as - the TRACES Annual Tax Statement as a PDF: Part I, each deductor's total line (name, TAN, paid, deducted, deposited) and its entries' section. 2026-10-06: income_of - a 26AS section whose amount paid is that kind of other income (used when no AIS or pre-filled JSON is there). 2026-10-06: ais_amount_tail - an AIS PDF line's amount when it has no comma (654), the last number on the line. 2026-10-06: tis - the Taxpayer Information Summary PDF: its first table, one line per category (processed, accepted); the accepted total is used, read as the AIS. 2026-10-06: ais_paid - AIS Part B3, tax the person paid (advance, self-assessment): a row's financial year, minor head words, total, BSR, date, challan. Only the return's own year counts. 2026-10-06: words_bank - a bank statement (kept with the return: the receipts of a business or profession with no TDS; its credits are typed). 2026-10-06: bank - a bank statement (PDF / Excel / CSV): its table found by the date and credit column words; a credit is then sorted by the first kind whose words its narration has (interest, tax refund, salary, reversal, own transfer, cash) - else a receipt. Where the columns run together (a PDF) the running balance says what came in. 2026-10-06: bank amount_words / type_words / credit_marks - one Amount column with a Dr / Cr column beside it.",
   "test_cases": [
     {
       "args": {},
@@ -758,7 +976,177 @@
             }
           ]
         },
-        "glued_split": "(\\.\\d{2})(?=\\d)"
+        "glued_split": "(\\.\\d{2})(?=\\d)",
+        "employee_pan_pattern": "PAN of (?:the )?Employee\\D{0,40}?([A-Z]{5}[0-9]{4}[A-Z])",
+        "pdf26as": {
+          "start": "PART-I - Details of Tax Deducted",
+          "end": "PART-II",
+          "deductor": "^\\d+ (.+?) ([A-Z]{4}[0-9]{5}[A-Z]) (-?[\\d,]+\\.\\d\\d) (-?[\\d,]+\\.\\d\\d) (-?[\\d,]+\\.\\d\\d)$",
+          "entry": "^\\d+ (\\d{3}[A-Z0-9]*) \\d\\d-[A-Za-z]{3}-\\d{4} "
+        },
+        "income_of": {
+          "194A": "deposits",
+          "194": "dividend"
+        },
+        "ais_amount_tail": "(?<![\\w.])(\\d[\\d,]*(?:\\.\\d+)?)\\s*$",
+        "tis": {
+          "words": [
+            "taxpayer information summary"
+          ],
+          "start": "INFORMATION CATEGORY",
+          "end": "information details under each",
+          "row": "^\\d+ (.+?) (\\d[\\d,]*(?:\\.\\d+)?) (\\d[\\d,]*(?:\\.\\d+)?)$"
+        },
+        "ais_paid": {
+          "start": "Part B3",
+          "end": "Part B4",
+          "row": "\\b\\d+ (\\d{4}-\\d{2}) Income Tax (?:\\(Other than Companies\\) )?(.+?) (\\d[\\d,]*) (\\d[\\d,]*) (\\d[\\d,]*) (\\d[\\d,]*) (\\d[\\d,]*) (\\d{7}) (\\d\\d)/(\\d\\d)/(\\d{4}) (\\d+)",
+          "minor": {
+            "advance": "100",
+            "self assessment": "300",
+            "regular": "400"
+          }
+        },
+        "words_bank": [
+          "statement of account",
+          "account statement",
+          "opening balance",
+          "closing balance"
+        ],
+        "bank": {
+          "date_words": [
+            "date",
+            "txn date",
+            "value date",
+            "tran date",
+            "transaction date",
+            "post date"
+          ],
+          "credit_words": [
+            "credit",
+            "deposit",
+            "cr amount",
+            "cr",
+            "deposits",
+            "credit amount",
+            "credit(inr)",
+            "deposit amt"
+          ],
+          "debit_words": [
+            "debit",
+            "withdrawal",
+            "dr amount",
+            "dr",
+            "withdrawals",
+            "debit amount",
+            "withdrawal amt"
+          ],
+          "narration_words": [
+            "narration",
+            "description",
+            "particulars",
+            "transaction details",
+            "remarks",
+            "details"
+          ],
+          "balance_words": [
+            "balance",
+            "closing balance",
+            "running balance"
+          ],
+          "date_pattern": "^\\s*\\d{1,2}[-/. ](?:\\d{1,2}|[A-Za-z]{3,9})[-/. ]\\d{2,4}\\b|^\\s*\\d{4}-\\d{2}-\\d{2}\\b",
+          "kinds": [
+            {
+              "kind": "interest",
+              "words": [
+                "int.pd",
+                "int pd",
+                "int.cr",
+                "interest",
+                "sb int",
+                "int credit",
+                "int.coll"
+              ]
+            },
+            {
+              "kind": "refund",
+              "words": [
+                "itdtax refund",
+                "tax refund",
+                "cpc",
+                "it refund",
+                "income tax refund"
+              ]
+            },
+            {
+              "kind": "salary",
+              "words": [
+                "salary",
+                "sal cr",
+                "payroll"
+              ]
+            },
+            {
+              "kind": "reversal",
+              "words": [
+                "reversal",
+                "reversed",
+                "rev:",
+                "chargeback",
+                "refund"
+              ]
+            },
+            {
+              "kind": "own",
+              "words": [
+                "self",
+                "own a/c",
+                "own account",
+                "sweep",
+                "fd closure",
+                "fd proceeds",
+                "td closure",
+                "rd closure",
+                "redemption",
+                "mf red",
+                "to self",
+                "from self"
+              ]
+            },
+            {
+              "kind": "cash",
+              "words": [
+                "cash dep",
+                "by cash",
+                "cash deposit",
+                "cdm",
+                "csh dep"
+              ]
+            }
+          ],
+          "receipt_kind": "receipt",
+          "top_most": 8,
+          "amount_words": [
+            "amount",
+            "transaction amount",
+            "txn amount",
+            "amount (inr)",
+            "amount(inr)"
+          ],
+          "type_words": [
+            "dr/cr",
+            "cr/dr",
+            "dr / cr",
+            "type",
+            "txn type",
+            "debit/credit"
+          ],
+          "credit_marks": [
+            "cr",
+            "c",
+            "credit"
+          ]
+        }
       }
     }
   ]

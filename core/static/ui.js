@@ -295,7 +295,7 @@ export async function busy(button, run) {
 export function secretField(id, label, { set = false, tail = '', hint = '' } = {}) {
   return `<div class="field"><label for="${id}">${esc(label)}</label>
     <span class="withbtn wide">
-      <input id="${id}" type="password" autocomplete="off" spellcheck="false" autocapitalize="off"
+      <input id="${id}" type="password" autocomplete="new-password" data-lpignore="true" data-1p-ignore spellcheck="false" autocapitalize="off"
         placeholder="${esc(set ? sw('secret_saved', { tail }) : sw('secret_empty'))}"/>
       <button type="button" data-paste="${id}">${sw('paste')}</button>
       <button type="button" data-reveal="${id}">${sw('show')}</button>
