@@ -1,0 +1,817 @@
+{
+  "chip_id": "myreturn.rates",
+  "kind": "accessor",
+  "set": "myreturn",
+  "label": "My return: the year's rates and limits (AY 2026-27)",
+  "aliases": [
+    "my return: the year's rates and limits ("
+  ],
+  "params": [
+    {
+      "name": "slabs",
+      "type": "json",
+      "default": {
+        "new": {
+          "below60": [
+            {
+              "upto": 400000,
+              "rate": 0
+            },
+            {
+              "upto": 800000,
+              "rate": 5
+            },
+            {
+              "upto": 1200000,
+              "rate": 10
+            },
+            {
+              "upto": 1600000,
+              "rate": 15
+            },
+            {
+              "upto": 2000000,
+              "rate": 20
+            },
+            {
+              "upto": 2400000,
+              "rate": 25
+            },
+            {
+              "upto": null,
+              "rate": 30
+            }
+          ],
+          "60to80": [
+            {
+              "upto": 400000,
+              "rate": 0
+            },
+            {
+              "upto": 800000,
+              "rate": 5
+            },
+            {
+              "upto": 1200000,
+              "rate": 10
+            },
+            {
+              "upto": 1600000,
+              "rate": 15
+            },
+            {
+              "upto": 2000000,
+              "rate": 20
+            },
+            {
+              "upto": 2400000,
+              "rate": 25
+            },
+            {
+              "upto": null,
+              "rate": 30
+            }
+          ],
+          "80plus": [
+            {
+              "upto": 400000,
+              "rate": 0
+            },
+            {
+              "upto": 800000,
+              "rate": 5
+            },
+            {
+              "upto": 1200000,
+              "rate": 10
+            },
+            {
+              "upto": 1600000,
+              "rate": 15
+            },
+            {
+              "upto": 2000000,
+              "rate": 20
+            },
+            {
+              "upto": 2400000,
+              "rate": 25
+            },
+            {
+              "upto": null,
+              "rate": 30
+            }
+          ]
+        },
+        "old": {
+          "below60": [
+            {
+              "upto": 250000,
+              "rate": 0
+            },
+            {
+              "upto": 500000,
+              "rate": 5
+            },
+            {
+              "upto": 1000000,
+              "rate": 20
+            },
+            {
+              "upto": null,
+              "rate": 30
+            }
+          ],
+          "60to80": [
+            {
+              "upto": 300000,
+              "rate": 0
+            },
+            {
+              "upto": 500000,
+              "rate": 5
+            },
+            {
+              "upto": 1000000,
+              "rate": 20
+            },
+            {
+              "upto": null,
+              "rate": 30
+            }
+          ],
+          "80plus": [
+            {
+              "upto": 500000,
+              "rate": 0
+            },
+            {
+              "upto": 1000000,
+              "rate": 20
+            },
+            {
+              "upto": null,
+              "rate": 30
+            }
+          ]
+        }
+      },
+      "label": "slabs"
+    },
+    {
+      "name": "basic",
+      "type": "json",
+      "default": {
+        "new": {
+          "below60": 400000,
+          "60to80": 400000,
+          "80plus": 400000
+        },
+        "old": {
+          "below60": 250000,
+          "60to80": 300000,
+          "80plus": 500000
+        }
+      },
+      "label": "basic"
+    },
+    {
+      "name": "rebate_upto",
+      "type": "json",
+      "default": {
+        "new": 1200000,
+        "old": 500000
+      },
+      "label": "rebate upto"
+    },
+    {
+      "name": "rebate_most",
+      "type": "json",
+      "default": {
+        "new": 60000,
+        "old": 12500
+      },
+      "label": "rebate most"
+    },
+    {
+      "name": "surcharge",
+      "type": "json",
+      "default": {
+        "new": [
+          {
+            "above": 5000000,
+            "rate": 10
+          },
+          {
+            "above": 10000000,
+            "rate": 15
+          },
+          {
+            "above": 20000000,
+            "rate": 25
+          }
+        ],
+        "old": [
+          {
+            "above": 5000000,
+            "rate": 10
+          },
+          {
+            "above": 10000000,
+            "rate": 15
+          },
+          {
+            "above": 20000000,
+            "rate": 25
+          },
+          {
+            "above": 50000000,
+            "rate": 37
+          }
+        ]
+      },
+      "label": "surcharge"
+    },
+    {
+      "name": "special_surcharge_max",
+      "type": "json",
+      "default": 15,
+      "label": "special surcharge max"
+    },
+    {
+      "name": "cess_pct",
+      "type": "json",
+      "default": 4,
+      "label": "cess pct"
+    },
+    {
+      "name": "round_to",
+      "type": "json",
+      "default": 10,
+      "label": "round to"
+    },
+    {
+      "name": "rate_111a",
+      "type": "json",
+      "default": 20,
+      "label": "rate 111a"
+    },
+    {
+      "name": "rate_112a",
+      "type": "json",
+      "default": 12.5,
+      "label": "rate 112a"
+    },
+    {
+      "name": "exempt_112a",
+      "type": "json",
+      "default": 125000,
+      "label": "exempt 112a"
+    },
+    {
+      "name": "rate_112",
+      "type": "json",
+      "default": 12.5,
+      "label": "rate 112"
+    },
+    {
+      "name": "std_deduction",
+      "type": "json",
+      "default": {
+        "new": 75000,
+        "old": 50000
+      },
+      "label": "std deduction"
+    },
+    {
+      "name": "prof_tax_cap",
+      "type": "json",
+      "default": 2500,
+      "label": "prof tax cap"
+    },
+    {
+      "name": "prof_tax_allowed",
+      "type": "json",
+      "default": {
+        "new": false,
+        "old": true
+      },
+      "label": "prof tax allowed"
+    },
+    {
+      "name": "family_pension_cap",
+      "type": "json",
+      "default": {
+        "new": 25000,
+        "old": 15000
+      },
+      "label": "family pension cap"
+    },
+    {
+      "name": "family_pension_pct",
+      "type": "json",
+      "default": 33.3333,
+      "label": "family pension pct"
+    },
+    {
+      "name": "hp_std_pct",
+      "type": "json",
+      "default": 30,
+      "label": "hp std pct"
+    },
+    {
+      "name": "self_interest_cap",
+      "type": "json",
+      "default": {
+        "new": 0,
+        "old": 200000
+      },
+      "label": "self interest cap"
+    },
+    {
+      "name": "hp_loss_cap",
+      "type": "json",
+      "default": {
+        "new": 0,
+        "old": 200000
+      },
+      "label": "hp loss cap"
+    },
+    {
+      "name": "cap_80c",
+      "type": "json",
+      "default": 150000,
+      "label": "cap 80c"
+    },
+    {
+      "name": "cap_80ccd1b",
+      "type": "json",
+      "default": 50000,
+      "label": "cap 80ccd1b"
+    },
+    {
+      "name": "pct_80ccd2",
+      "type": "json",
+      "default": {
+        "new": 14,
+        "old": 10
+      },
+      "label": "pct 80ccd2"
+    },
+    {
+      "name": "cap_80d",
+      "type": "json",
+      "default": {
+        "self": 25000,
+        "self_senior": 50000,
+        "parents": 25000,
+        "parents_senior": 50000
+      },
+      "label": "cap 80d"
+    },
+    {
+      "name": "cap_80tta",
+      "type": "json",
+      "default": 10000,
+      "label": "cap 80tta"
+    },
+    {
+      "name": "cap_80ttb",
+      "type": "json",
+      "default": 50000,
+      "label": "cap 80ttb"
+    },
+    {
+      "name": "cap_80u",
+      "type": "json",
+      "default": {
+        "normal": 75000,
+        "severe": 125000
+      },
+      "label": "cap 80u"
+    },
+    {
+      "name": "via_regimes",
+      "type": "json",
+      "default": {
+        "new": [
+          "80CCD2"
+        ],
+        "old": [
+          "80C",
+          "80CCD1B",
+          "80CCD2",
+          "80D",
+          "80E",
+          "80G",
+          "80TTA",
+          "80TTB",
+          "80U",
+          "80EEB"
+        ]
+      },
+      "label": "via regimes"
+    },
+    {
+      "name": "exempt_in_new",
+      "type": "json",
+      "default": [
+        "10(10)",
+        "10(10A)",
+        "10(10AA)",
+        "10(10B)",
+        "10(10C)"
+      ],
+      "label": "exempt in new"
+    },
+    {
+      "name": "hra_metro_pct",
+      "type": "json",
+      "default": 50,
+      "label": "hra metro pct"
+    },
+    {
+      "name": "hra_other_pct",
+      "type": "json",
+      "default": 40,
+      "label": "hra other pct"
+    },
+    {
+      "name": "hra_rent_less_pct",
+      "type": "json",
+      "default": 10,
+      "label": "hra rent less pct"
+    },
+    {
+      "name": "itr1_income_max",
+      "type": "json",
+      "default": 5000000,
+      "label": "itr1 income max"
+    },
+    {
+      "name": "itr1_ltcg112a_max",
+      "type": "json",
+      "default": 125000,
+      "label": "itr1 ltcg112a max"
+    },
+    {
+      "name": "itr1_agri_max",
+      "type": "json",
+      "default": 5000,
+      "label": "itr1 agri max"
+    },
+    {
+      "name": "itr1_houses_max",
+      "type": "json",
+      "default": 2,
+      "label": "itr1 houses max"
+    },
+    {
+      "name": "senior_age",
+      "type": "json",
+      "default": 60,
+      "label": "senior age"
+    },
+    {
+      "name": "very_senior_age",
+      "type": "json",
+      "default": 80,
+      "label": "very senior age"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "slabs": "$slabs",
+      "basic": "$basic",
+      "rebate_upto": "$rebate_upto",
+      "rebate_most": "$rebate_most",
+      "surcharge": "$surcharge",
+      "special_surcharge_max": "$special_surcharge_max",
+      "cess_pct": "$cess_pct",
+      "round_to": "$round_to",
+      "rate_111a": "$rate_111a",
+      "rate_112a": "$rate_112a",
+      "exempt_112a": "$exempt_112a",
+      "rate_112": "$rate_112",
+      "std_deduction": "$std_deduction",
+      "prof_tax_cap": "$prof_tax_cap",
+      "prof_tax_allowed": "$prof_tax_allowed",
+      "family_pension_cap": "$family_pension_cap",
+      "family_pension_pct": "$family_pension_pct",
+      "hp_std_pct": "$hp_std_pct",
+      "self_interest_cap": "$self_interest_cap",
+      "hp_loss_cap": "$hp_loss_cap",
+      "cap_80c": "$cap_80c",
+      "cap_80ccd1b": "$cap_80ccd1b",
+      "pct_80ccd2": "$pct_80ccd2",
+      "cap_80d": "$cap_80d",
+      "cap_80tta": "$cap_80tta",
+      "cap_80ttb": "$cap_80ttb",
+      "cap_80u": "$cap_80u",
+      "via_regimes": "$via_regimes",
+      "exempt_in_new": "$exempt_in_new",
+      "hra_metro_pct": "$hra_metro_pct",
+      "hra_other_pct": "$hra_other_pct",
+      "hra_rent_less_pct": "$hra_rent_less_pct",
+      "itr1_income_max": "$itr1_income_max",
+      "itr1_ltcg112a_max": "$itr1_ltcg112a_max",
+      "itr1_agri_max": "$itr1_agri_max",
+      "itr1_houses_max": "$itr1_houses_max",
+      "senior_age": "$senior_age",
+      "very_senior_age": "$very_senior_age"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-06: every number the individual return uses for AY 2026-27 (FY 2025-26), both regimes - slabs by age, 87A, surcharge, cess, the 111A/112A rates and 1.25 lakh exemption, standard deduction, family pension, house property, Chapter VI-A caps, HRA percentages and the ITR-1 limits. A new year = a new row of numbers here, nothing else.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "slabs": {
+          "new": {
+            "below60": [
+              {
+                "upto": 400000,
+                "rate": 0
+              },
+              {
+                "upto": 800000,
+                "rate": 5
+              },
+              {
+                "upto": 1200000,
+                "rate": 10
+              },
+              {
+                "upto": 1600000,
+                "rate": 15
+              },
+              {
+                "upto": 2000000,
+                "rate": 20
+              },
+              {
+                "upto": 2400000,
+                "rate": 25
+              },
+              {
+                "upto": null,
+                "rate": 30
+              }
+            ],
+            "60to80": [
+              {
+                "upto": 400000,
+                "rate": 0
+              },
+              {
+                "upto": 800000,
+                "rate": 5
+              },
+              {
+                "upto": 1200000,
+                "rate": 10
+              },
+              {
+                "upto": 1600000,
+                "rate": 15
+              },
+              {
+                "upto": 2000000,
+                "rate": 20
+              },
+              {
+                "upto": 2400000,
+                "rate": 25
+              },
+              {
+                "upto": null,
+                "rate": 30
+              }
+            ],
+            "80plus": [
+              {
+                "upto": 400000,
+                "rate": 0
+              },
+              {
+                "upto": 800000,
+                "rate": 5
+              },
+              {
+                "upto": 1200000,
+                "rate": 10
+              },
+              {
+                "upto": 1600000,
+                "rate": 15
+              },
+              {
+                "upto": 2000000,
+                "rate": 20
+              },
+              {
+                "upto": 2400000,
+                "rate": 25
+              },
+              {
+                "upto": null,
+                "rate": 30
+              }
+            ]
+          },
+          "old": {
+            "below60": [
+              {
+                "upto": 250000,
+                "rate": 0
+              },
+              {
+                "upto": 500000,
+                "rate": 5
+              },
+              {
+                "upto": 1000000,
+                "rate": 20
+              },
+              {
+                "upto": null,
+                "rate": 30
+              }
+            ],
+            "60to80": [
+              {
+                "upto": 300000,
+                "rate": 0
+              },
+              {
+                "upto": 500000,
+                "rate": 5
+              },
+              {
+                "upto": 1000000,
+                "rate": 20
+              },
+              {
+                "upto": null,
+                "rate": 30
+              }
+            ],
+            "80plus": [
+              {
+                "upto": 500000,
+                "rate": 0
+              },
+              {
+                "upto": 1000000,
+                "rate": 20
+              },
+              {
+                "upto": null,
+                "rate": 30
+              }
+            ]
+          }
+        },
+        "basic": {
+          "new": {
+            "below60": 400000,
+            "60to80": 400000,
+            "80plus": 400000
+          },
+          "old": {
+            "below60": 250000,
+            "60to80": 300000,
+            "80plus": 500000
+          }
+        },
+        "rebate_upto": {
+          "new": 1200000,
+          "old": 500000
+        },
+        "rebate_most": {
+          "new": 60000,
+          "old": 12500
+        },
+        "surcharge": {
+          "new": [
+            {
+              "above": 5000000,
+              "rate": 10
+            },
+            {
+              "above": 10000000,
+              "rate": 15
+            },
+            {
+              "above": 20000000,
+              "rate": 25
+            }
+          ],
+          "old": [
+            {
+              "above": 5000000,
+              "rate": 10
+            },
+            {
+              "above": 10000000,
+              "rate": 15
+            },
+            {
+              "above": 20000000,
+              "rate": 25
+            },
+            {
+              "above": 50000000,
+              "rate": 37
+            }
+          ]
+        },
+        "special_surcharge_max": 15,
+        "cess_pct": 4,
+        "round_to": 10,
+        "rate_111a": 20,
+        "rate_112a": 12.5,
+        "exempt_112a": 125000,
+        "rate_112": 12.5,
+        "std_deduction": {
+          "new": 75000,
+          "old": 50000
+        },
+        "prof_tax_cap": 2500,
+        "prof_tax_allowed": {
+          "new": false,
+          "old": true
+        },
+        "family_pension_cap": {
+          "new": 25000,
+          "old": 15000
+        },
+        "family_pension_pct": 33.3333,
+        "hp_std_pct": 30,
+        "self_interest_cap": {
+          "new": 0,
+          "old": 200000
+        },
+        "hp_loss_cap": {
+          "new": 0,
+          "old": 200000
+        },
+        "cap_80c": 150000,
+        "cap_80ccd1b": 50000,
+        "pct_80ccd2": {
+          "new": 14,
+          "old": 10
+        },
+        "cap_80d": {
+          "self": 25000,
+          "self_senior": 50000,
+          "parents": 25000,
+          "parents_senior": 50000
+        },
+        "cap_80tta": 10000,
+        "cap_80ttb": 50000,
+        "cap_80u": {
+          "normal": 75000,
+          "severe": 125000
+        },
+        "via_regimes": {
+          "new": [
+            "80CCD2"
+          ],
+          "old": [
+            "80C",
+            "80CCD1B",
+            "80CCD2",
+            "80D",
+            "80E",
+            "80G",
+            "80TTA",
+            "80TTB",
+            "80U",
+            "80EEB"
+          ]
+        },
+        "exempt_in_new": [
+          "10(10)",
+          "10(10A)",
+          "10(10AA)",
+          "10(10B)",
+          "10(10C)"
+        ],
+        "hra_metro_pct": 50,
+        "hra_other_pct": 40,
+        "hra_rent_less_pct": 10,
+        "itr1_income_max": 5000000,
+        "itr1_ltcg112a_max": 125000,
+        "itr1_agri_max": 5000,
+        "itr1_houses_max": 2,
+        "senior_age": 60,
+        "very_senior_age": 80
+      }
+    }
+  ]
+}

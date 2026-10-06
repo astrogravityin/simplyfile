@@ -445,14 +445,20 @@ async function landed(user) {
   state.needsFirstAccount = false;
   await refresh();
   // a link that named a screen (katha's /k/<id> -> #/read?w=<id>) opens that screen after sign-in; else the landing
+  toLanding();
+  render();
+}
+
+/** No screen asked for (or one this person may not open): the landing (a door's first screen: Katha #/read; a self-filer's
+ *  My return) when granted, else the first screen this person may open. On sign-in, and on a page opened already signed in. */
+function toLanding() {
   const asked = (location.hash || '').replace(/^#\//, '').split('?')[0];
   if (!asked || !([...screens(), ...askable()].some((s) => s.id === asked) || ((state.elsewhere || {}).screens || []).includes(asked))) {
-    // the landing (a door's first screen: Katha #/read) only when granted; else the first screen this person may open
     const land = (typeof config.landing === 'function' ? config.landing() : config.landing) || '';
     const first = screens()[0];
-    location.hash = may(land.replace(/^#\//, '')) || !first ? land : `#/${first.id}`;
+    const to = may(land.replace(/^#\//, '')) || !first ? land : `#/${first.id}`;
+    if (to) history.replaceState(null, '', to);
   }
-  render();
 }
 
 /** Signed in (or out): nothing typed on the card is kept in memory. */
@@ -1460,6 +1466,7 @@ export async function startPortal(options) {
     if (!state.user && state.canSignup && !state.demo && !state.needsFirstAccount && !signedInBefore()) setMode('signup');
     flow.focus = false;
     if (!mustChange()) await config.onBoot(d);
+    if (state.user && !mustChange() && !(location.hash || '').replace(/^#\/?/, '')) toLanding();   // 2026-10-06: opened signed in, no screen named
   } catch (e) {
     // The one card drawn when the server cannot be reached: then its words cannot be fetched either, so
     // they are the chip's where they did arrive and this fallback where they did not.

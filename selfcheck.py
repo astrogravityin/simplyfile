@@ -21,9 +21,9 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 PY = sys.executable
-MODULES = ["firms", "itr_json", "analytics", "portal_stats", "server", "delegation", "chipchat", "chatfam", "notes", "dock_issues", "itr_import", "clients", "intake", "recon", "compute", "audit", "changelog", "edition", "tourvideo", "manuals", "projects", "scan", "source", "keyshare",
+MODULES = ["firms", "itr_json", "myreturn", "myreturn_read", "taxwatch", "analytics", "portal_stats", "server", "delegation", "chipchat", "chatfam", "notes", "dock_issues", "itr_import", "clients", "intake", "recon", "compute", "audit", "changelog", "edition", "tourvideo", "manuals", "projects", "scan", "source", "keyshare",
            "keysales", "wallet", "guideme"]
-SCREENS = ["firm", "analytics", "delegate", "clients", "itrimport", "intake", "recon", "compute", "audit", "manuals", "howto", "guideme", "tourvideo", "setup", "keys", "buykey", "keysales", "approvals", "portalstats", "server"]
+SCREENS = ["firm", "analytics", "delegate", "clients", "myreturn", "itrimport", "intake", "recon", "compute", "audit", "manuals", "howto", "guideme", "tourvideo", "setup", "keys", "buykey", "keysales", "approvals", "portalstats", "server", "taxwatch"]
 
 
 def run(args: list[str], what: str) -> None:
@@ -356,9 +356,10 @@ def firm_check(app, owner, house_cid: str) -> None:
         me2.post(f"/api/firm/docs/{k}", files={"file": (f"{k}.jpg", b"jpg")})
     assert me2.post(f"/api/firm/{f2['id']}/move", json={"action": "submit"}).status_code == 200
     owner.post(f"/api/firm/{f2['id']}/move", json={"action": "approve"})
-    own = me2.get("/api/lists/clients").json()["rows"]
-    assert [x["pan"] for x in own] == ["AAAHG4321K"], own
-    assert me2.post("/api/clients", json={"name": "X", "status": "individual", "pan": "ABCPX1234K"}).status_code == 409
+    home = me2.get("/api/myreturn").json()           # 2026-10-06: a self-filer works in My return, not a client register
+    assert home["self"] and [x["pan"] for x in home["clients"]] == ["AAAHG4321K"], home
+    assert me2.get(f"/api/myreturn/{home['clients'][0]['id']}/{home['current_ay']}").status_code == 200
+    assert me2.post("/api/clients", json={"name": "X", "status": "individual", "pan": "ABCPX1234K"}).status_code == 403
 
 
 # Chips-first guard (2026-10-04 audit). Every rate, threshold and decision of the Filing screens is a chip; these are the
@@ -413,7 +414,7 @@ LEAKS = {
         ("['tds', 'tds_claim']", "which findings belong to which check -> chip page.recon checks"),
     ],
 }
-REQUIRED_CHIPS = ["demo.host", "audit.settings", "audit.applicable", "audit.trend", "audit.checklist", "audit.pattern", "audit.risk", "audit.risk_level", "audit.gst_read", "audit.gst", "audit.gst_month", "audit.llp_audit", "audit.as_level", "audit.as_list", "ui.audit", "page.audit", "list.delegations", "list.firm_team", "list.due_radar", "list.firm_requests", "list.portal_firms", "list.chat_turns", "chat.examples", "chat.surprise", "chat.next", "chat.train", "notes.settings", "notes.list_view", "issues.mine_view", "chat.families", "chat.fee_234f", "chat.pan_kind", "chat.pick", "ui.chatfam", "chat.settings", "chat.faq", "chat.route", "ui.chipchat", "page.dock", "ui.dock", "delegation.settings", "delegation.check", "delegation.covers", "ui.delegate", "server.settings", "server.disk", "server.backup", "server.site", "server.trend", "ui.server", "page.server", "portalstats.settings", "portalstats.firm", "portalstats.rollup", "ui.portalstats", "itr.read", "itr.codes_in", "itr.import_ok", "itr.statement", "ui.itrimport", "analytics.settings", "analytics.client", "analytics.rollup", "ui.analytics", "page.analytics", "compute.settings", "compute.tax", "compute.tax_parts", "compute.balance", "compute.regime", "compute.total_income",
+REQUIRED_CHIPS = ["demo.host", "taxwatch.settings", "taxwatch.items", "ui.taxwatch", "guide.taxwatch", "myreturn.cyla", "myreturn.rates", "myreturn.age_band", "myreturn.hra", "myreturn.salary", "myreturn.house", "myreturn.hp_total", "myreturn.family_pension", "myreturn.deductions", "myreturn.tax", "myreturn.better", "myreturn.form", "myreturn.settings", "myreturn.sources", "myreturn.checks", "myreturn.steps", "myreturn.read", "myreturn.json", "ui.myreturn", "guide.myreturn", "audit.settings", "audit.applicable", "audit.trend", "audit.checklist", "audit.pattern", "audit.risk", "audit.risk_level", "audit.gst_read", "audit.gst", "audit.gst_month", "audit.llp_audit", "audit.as_level", "audit.as_list", "ui.audit", "page.audit", "list.delegations", "list.firm_team", "list.due_radar", "list.firm_requests", "list.portal_firms", "list.chat_turns", "chat.examples", "chat.surprise", "chat.next", "chat.train", "notes.settings", "notes.list_view", "issues.mine_view", "chat.families", "chat.fee_234f", "chat.pan_kind", "chat.pick", "ui.chatfam", "chat.settings", "chat.faq", "chat.route", "ui.chipchat", "page.dock", "ui.dock", "delegation.settings", "delegation.check", "delegation.covers", "ui.delegate", "server.settings", "server.disk", "server.backup", "server.site", "server.trend", "ui.server", "page.server", "portalstats.settings", "portalstats.firm", "portalstats.rollup", "ui.portalstats", "itr.read", "itr.codes_in", "itr.import_ok", "itr.statement", "ui.itrimport", "analytics.settings", "analytics.client", "analytics.rollup", "ui.analytics", "page.analytics", "compute.settings", "compute.tax", "compute.tax_parts", "compute.balance", "compute.regime", "compute.total_income",
                   "compute.hp", "close.move", "close.settings", "close.signoff", "close.steps", "recon.settings", "page.recon",
                   "page.intake", "ui.compute",
                   "firm.settings", "firm.roles", "firm.problem", "firm.ready", "firm.move", "firm.may", "firm.sla", "firm.steps",
@@ -442,7 +443,7 @@ def chips_first_check() -> None:
     print(f"  chips first: no decision in code ({sum(len(r) for r in LEAKS.values())} shapes watched), {len(REQUIRED_CHIPS)} chips present OK")
 
 
-GUIDED = ["firm", "analytics", "delegate", "clients", "itrimport", "intake", "recon", "compute", "audit", "approvals", "portalstats", "server"]
+GUIDED = ["firm", "analytics", "delegate", "clients", "myreturn", "itrimport", "intake", "recon", "compute", "audit", "approvals", "portalstats", "server", "taxwatch"]
 
 
 def guides_tours_check() -> None:

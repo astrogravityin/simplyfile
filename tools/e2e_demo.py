@@ -235,17 +235,15 @@ def _():
     assert dc["locked"] and stage(S["partner"]) == "filed"
 
 
-@step("15 Self-filer: the HUF signs up on its own, one client = itself")
+@step("15 Self-filer: the HUF signs up on its own, approved on submit, one client = itself")
 def _():
     admin.post("/api/users", json={"email": "ganesh@huf.test", "password": "Ganesh-pass-12", "display_name": "Ganesh"})
     g = session("ganesh@huf.test", "Ganesh-pass-12")
     fid = g.post("/api/firm/start", json={"kind": "self"}).json()["id"]
     g.put("/api/firm", json={"name": "Shree Ganesh Agarwal HUF", "pan": "AAAHG4321K", "owner_name": "Ganesh Prasad Agarwal",
                              "aadhaar_last4": "1111", "phone": "9800012345", "email": "ganesh@huf.test", "consent": True})
-    for k in ("owner_aadhaar", "pan_card"):
-        g.post(f"/api/firm/docs/{k}", files={"file": (f"{k}.jpg", b"jpg")})
-    g.post(f"/api/firm/{fid}/move", json={"action": "submit"})
-    admin.post(f"/api/firm/{fid}/move", json={"action": "approve"})
+    st = g.post(f"/api/firm/{fid}/move", json={"action": "submit"}).json()
+    assert st.get("state") == "approved", f"an individual is approved on submit, no papers: {st}"
     rows = g.get("/api/lists/clients").json()["rows"]
     assert [r["pan"] for r in rows] == ["AAAHG4321K"], rows
     assert g.post("/api/clients", json={"name": "Other", "status": "individual", "pan": "ABCPX1234K"}).status_code == 409

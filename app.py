@@ -72,6 +72,8 @@ import notes
 import portal_stats
 import server
 import itr_import
+import myreturn
+import taxwatch
 import providers
 import keyshare
 import keysales
@@ -237,6 +239,7 @@ def tv_bootstrap(request: Request, u: dict | None) -> dict:
 
 auth.BOOTSTRAP_EXTRAS.append(tv_bootstrap)
 auth.BOOTSTRAP_EXTRAS.append(edition.bootstrap_extra)
+auth.BOOTSTRAP_EXTRAS.append(firms.bootstrap_extra)   # a self-filer lands on My return
 core.find.register_menu(edition.menu_ids)   # 2026-10-01: Ctrl+K offers what THIS address's menu shows (sm: no Katha section)
 
 
@@ -1057,6 +1060,27 @@ def api_portalstats(ay: str = "", _: dict = Depends(screen("portalstats"))):
                                                           "flag_n": {k: len(v) for k, v in flags.items()}}
 
 
+@app.get("/api/taxwatch")
+def api_taxwatch(ay: str = "", _: dict = Depends(screen("taxwatch"))):
+    """Tax rules (2026-10-06 owner): the live figures beside the new year's as fetched - Fetch, Compare, Apply (chips taxwatch.*)."""
+    return taxwatch.compare(ay or taxwatch.compare("")["next"])
+
+
+@app.post("/api/taxwatch/{ay}/fetch")
+def api_taxwatch_fetch(ay: str, u: dict = Depends(owner)):
+    return taxwatch.fetch(u, ay)
+
+
+@app.put("/api/taxwatch/{ay}/{item}")
+def api_taxwatch_edit(ay: str, item: str, body: dict = Body(...), u: dict = Depends(owner)):
+    return taxwatch.edit(u, ay, item, body.get("value"))
+
+
+@app.post("/api/taxwatch/{ay}/apply")
+def api_taxwatch_apply(ay: str, body: dict = Body(...), u: dict = Depends(owner)):
+    return taxwatch.apply(u, ay, [str(x) for x in (body.get("ids") or [])])
+
+
 @app.get("/api/server")
 def api_server(_: dict = Depends(screen("server"))):
     """Server & sites (2026-10-04 owner, read-only): each site's state, the disk, the backups, disk over time (chips server.*)."""
@@ -1235,6 +1259,65 @@ def api_compute_itr_check(cid: str, ay: str, _: dict = Depends(firms.gate("compu
 @app.get("/api/compute/{cid}/{ay}/itr.json")
 def api_compute_itr_json(cid: str, ay: str, _: dict = Depends(firms.gate("compute"))):
     name, data = itr_json.export(cid, ay)
+    return Response(data, media_type="application/json", headers=named(name.removesuffix(".json"), ".json"))
+
+
+# --- My return (2026-10-06): an individual's own ITR-1 / ITR-2 - documents in, both regimes, the JSON out (myreturn.py) ---
+@app.get("/api/myreturn")
+def api_myreturn_home(u: dict = Depends(firms.gate("myreturn"))):
+    """Where the journey starts: a self-filer's own return (their one client, the year being worked), else the clients to pick from."""
+    mine = [c for c in clients._mine(u) if not c.get("archived_at")]  # noqa: SLF001
+    k = clients.settings()
+    return {"current_ay": k["current_ay"], "years": k["years"],
+            "clients": [{"id": c["id"], "name": c["name"], "pan": c["pan"], "status": c["status"]} for c in mine],
+            "self": len(mine) == 1 and bool(firms.firm_of(u)) and firms.kind_of(firms.firm_of(u)["kind"])["self_client"]}
+
+
+@app.get("/api/myreturn/{cid}/{ay}")
+def api_myreturn(cid: str, ay: str, _: dict = Depends(firms.gate("myreturn"))):
+    return myreturn.work(cid, ay)
+
+
+@app.put("/api/myreturn/{cid}/{ay}")
+def api_myreturn_set(cid: str, ay: str, body: dict = Body(...), u: dict = Depends(firms.gate("myreturn"))):
+    """Answers, figures typed over the documents', houses, the regime, a check accepted, a step done."""
+    return myreturn.answer(u, cid, ay, body)
+
+
+@app.post("/api/myreturn/{cid}/{ay}/docs")
+async def api_myreturn_doc(cid: str, ay: str, file: UploadFile = File(...), password: str = Form(""),
+                           u: dict = Depends(firms.gate("myreturn"))):
+    """A document dropped in: kept, read (pre-filled JSON, AIS, Form 16, 26AS), and added to the return."""
+    data = await file.read()
+    return await run_in_threadpool(myreturn.add_doc, u, cid, ay, file.filename or "file", data, password)
+
+
+@app.delete("/api/myreturn/{cid}/{ay}/docs/{fid}")
+def api_myreturn_doc_delete(cid: str, ay: str, fid: str, u: dict = Depends(firms.gate("myreturn"))):
+    return myreturn.remove_doc(u, cid, ay, fid)
+
+
+@app.get("/api/myreturn/{cid}/{ay}/docs/{fid}/file")
+def api_myreturn_doc_file(cid: str, ay: str, fid: str, _: dict = Depends(firms.gate("myreturn"))):
+    path, name = myreturn.doc_file(cid, ay, fid)
+    return FileResponse(path, filename=name)
+
+
+@app.get("/api/myreturn/{cid}/{ay}/compare")
+def api_myreturn_compare(cid: str, ay: str, _: dict = Depends(firms.gate("myreturn"))):
+    """The return as filed beside the return as made here, figure by figure."""
+    return myreturn.compare(cid, ay)
+
+
+@app.get("/api/myreturn/{cid}/{ay}/itr-check")
+def api_myreturn_check(cid: str, ay: str, _: dict = Depends(firms.gate("myreturn"))):
+    """The ITR-1 / ITR-2 JSON checked against the department's schema."""
+    return myreturn.report(cid, ay)
+
+
+@app.get("/api/myreturn/{cid}/{ay}/itr.json")
+def api_myreturn_json(cid: str, ay: str, _: dict = Depends(firms.gate("myreturn"))):
+    name, data, _rep = myreturn.export(cid, ay)
     return Response(data, media_type="application/json", headers=named(name.removesuffix(".json"), ".json"))
 
 

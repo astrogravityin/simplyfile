@@ -1,0 +1,140 @@
+{
+  "chip_id": "myreturn.family_pension",
+  "kind": "accessor",
+  "set": "myreturn",
+  "label": "My return: family pension after the 57(iia) deduction",
+  "aliases": [
+    "my return: family pension after the 57(i"
+  ],
+  "params": [
+    {
+      "name": "pension",
+      "type": "number",
+      "default": 0,
+      "label": "family pension received"
+    },
+    {
+      "name": "regime",
+      "type": "text",
+      "default": "new",
+      "label": "regime"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "deduction": {
+        "vop": "round_to",
+        "value": {
+          "vop": "smallest",
+          "values": [
+            {
+              "vop": "mul",
+              "a": "$pension",
+              "b": {
+                "vop": "div",
+                "a": {
+                  "vop": "get",
+                  "value": {
+                    "chip": "myreturn.rates",
+                    "args": {}
+                  },
+                  "path": "family_pension_pct"
+                },
+                "b": 100
+              }
+            },
+            {
+              "vop": "get",
+              "value": {
+                "chip": "myreturn.rates",
+                "args": {}
+              },
+              "path": {
+                "vop": "template",
+                "text": "family_pension_cap.{r}",
+                "values": {
+                  "vop": "record",
+                  "fields": {
+                    "r": "$regime"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "net": {
+        "vop": "sub",
+        "a": "$pension",
+        "b": {
+          "vop": "round_to",
+          "value": {
+            "vop": "smallest",
+            "values": [
+              {
+                "vop": "mul",
+                "a": "$pension",
+                "b": {
+                  "vop": "div",
+                  "a": {
+                    "vop": "get",
+                    "value": {
+                      "chip": "myreturn.rates",
+                      "args": {}
+                    },
+                    "path": "family_pension_pct"
+                  },
+                  "b": 100
+                }
+              },
+              {
+                "vop": "get",
+                "value": {
+                  "chip": "myreturn.rates",
+                  "args": {}
+                },
+                "path": {
+                  "vop": "template",
+                  "text": "family_pension_cap.{r}",
+                  "values": {
+                    "vop": "record",
+                    "fields": {
+                      "r": "$regime"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-06: a third of family pension, at most 25,000 (new) or 15,000 (old), comes off u/s 57(iia).",
+  "test_cases": [
+    {
+      "args": {
+        "pension": 120000,
+        "regime": "new"
+      },
+      "expect_value": {
+        "deduction": 25000,
+        "net": 95000
+      }
+    },
+    {
+      "args": {
+        "pension": 30000,
+        "regime": "old"
+      },
+      "expect_value": {
+        "deduction": 10000,
+        "net": 20000
+      }
+    }
+  ]
+}

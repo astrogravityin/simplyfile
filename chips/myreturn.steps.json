@@ -1,0 +1,199 @@
+{
+  "chip_id": "myreturn.steps",
+  "kind": "accessor",
+  "set": "myreturn",
+  "label": "My return: which steps are done and where the person is",
+  "aliases": [
+    "my return: which steps are done and wher"
+  ],
+  "params": [
+    {
+      "name": "has_docs",
+      "type": "boolean",
+      "default": false,
+      "label": "a document read"
+    },
+    {
+      "name": "has_income",
+      "type": "boolean",
+      "default": false,
+      "label": "some income found"
+    },
+    {
+      "name": "open_checks",
+      "type": "number",
+      "default": 0,
+      "label": "checks that disagree and are not settled"
+    },
+    {
+      "name": "regime_seen",
+      "type": "boolean",
+      "default": false,
+      "label": "the regimes compared"
+    },
+    {
+      "name": "reviewed",
+      "type": "boolean",
+      "default": false,
+      "label": "the figures reviewed"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "done": {
+        "vop": "record",
+        "fields": {
+          "gather": {
+            "op": "all",
+            "items": [
+              {
+                "op": "eq",
+                "left": "$has_docs",
+                "right": true
+              },
+              {
+                "op": "eq",
+                "left": "$has_income",
+                "right": true
+              }
+            ]
+          },
+          "check": {
+            "op": "all",
+            "items": [
+              {
+                "op": "eq",
+                "left": "$has_income",
+                "right": true
+              },
+              {
+                "op": "eq",
+                "left": "$open_checks",
+                "right": 0
+              }
+            ]
+          },
+          "choose": {
+            "op": "eq",
+            "left": "$regime_seen",
+            "right": true
+          },
+          "review": {
+            "op": "eq",
+            "left": "$reviewed",
+            "right": true
+          }
+        }
+      },
+      "now": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "not",
+              "item": {
+                "op": "all",
+                "items": [
+                  {
+                    "op": "eq",
+                    "left": "$has_docs",
+                    "right": true
+                  },
+                  {
+                    "op": "eq",
+                    "left": "$has_income",
+                    "right": true
+                  }
+                ]
+              }
+            },
+            "then": "gather"
+          },
+          {
+            "when": {
+              "op": "gt",
+              "left": "$open_checks",
+              "right": 0
+            },
+            "then": "check"
+          },
+          {
+            "when": {
+              "op": "not",
+              "item": {
+                "op": "eq",
+                "left": "$regime_seen",
+                "right": true
+              }
+            },
+            "then": "choose"
+          },
+          {
+            "when": {
+              "op": "not",
+              "item": {
+                "op": "eq",
+                "left": "$reviewed",
+                "right": true
+              }
+            },
+            "then": "review"
+          }
+        ],
+        "else": "file"
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-06: gather until a document with income is in; check while a figure disagrees; choose until the two regimes have been seen; review until the figures are confirmed; then file.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "done": {
+          "gather": false,
+          "check": false,
+          "choose": false,
+          "review": false
+        },
+        "now": "gather"
+      }
+    },
+    {
+      "args": {
+        "has_docs": true,
+        "has_income": true,
+        "open_checks": 1
+      },
+      "expect_value": {
+        "done": {
+          "gather": true,
+          "check": false,
+          "choose": false,
+          "review": false
+        },
+        "now": "check"
+      }
+    },
+    {
+      "args": {
+        "has_docs": true,
+        "has_income": true,
+        "regime_seen": true,
+        "reviewed": true
+      },
+      "expect_value": {
+        "done": {
+          "gather": true,
+          "check": true,
+          "choose": true,
+          "review": true
+        },
+        "now": "file"
+      }
+    }
+  ]
+}

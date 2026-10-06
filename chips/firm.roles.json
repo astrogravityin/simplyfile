@@ -27,6 +27,7 @@
             "intake.delete",
             "recon",
             "recon.delete",
+            "myreturn",
             "compute",
             "compute.signoff",
             "compute.file",
@@ -49,6 +50,7 @@
             "intake.delete",
             "recon",
             "recon.delete",
+            "myreturn",
             "compute",
             "compute.signoff",
             "compute.file",
@@ -68,6 +70,7 @@
             "clients",
             "intake",
             "recon",
+            "myreturn",
             "compute",
             "compute.signoff",
             "audit",
@@ -101,6 +104,7 @@
             "intake.delete",
             "recon",
             "recon.delete",
+            "myreturn",
             "compute",
             "itrimport",
             "audit"
@@ -109,23 +113,11 @@
         {
           "id": "self",
           "label": "Self-filer",
-          "sub": "Files their own return.",
+          "sub": "Your own return: My return reads your documents and makes the ITR-1 / ITR-2.",
           "assignable": false,
           "grants": [
             "firm",
-            "clients",
-            "clients.create",
-            "intake",
-            "intake.delete",
-            "recon",
-            "recon.delete",
-            "compute",
-            "compute.signoff",
-            "compute.file",
-            "compute.reopen",
-            "itrimport",
-            "audit",
-            "audit.clear"
+            "myreturn"
           ]
         }
       ],
@@ -139,9 +131,9 @@
     }
   },
   "returns": "record",
-  "version": 1,
+  "version": 4,
   "status": "published",
-  "description_nl": "A grant is a screen (clients, intake, recon, compute), a screen.function (compute.signoff), firm (edit the firm's profile and papers) or team (add people, change roles). The firm admin gives roles marked assignable.",
+  "description_nl": "A grant is a screen (clients, intake, recon, compute), a screen.function (compute.signoff), firm (edit the firm's profile and papers) or team (add people, change roles). The firm admin gives roles marked assignable. 2026-10-06: My return (an individual's ITR-1 / ITR-2) for every role that computes. 2026-10-06: a self-filer sees My firm and My return only - the CA's register, intake, reconcile, compute and audit are a firm's tools.",
   "test_cases": [
     {
       "args": {},
@@ -163,6 +155,7 @@
               "intake.delete",
               "recon",
               "recon.delete",
+              "myreturn",
               "compute",
               "compute.signoff",
               "compute.file",
@@ -185,6 +178,7 @@
               "intake.delete",
               "recon",
               "recon.delete",
+              "myreturn",
               "compute",
               "compute.signoff",
               "compute.file",
@@ -204,6 +198,7 @@
               "clients",
               "intake",
               "recon",
+              "myreturn",
               "compute",
               "compute.signoff",
               "audit",
@@ -237,6 +232,7 @@
               "intake.delete",
               "recon",
               "recon.delete",
+              "myreturn",
               "compute",
               "itrimport",
               "audit"
@@ -245,23 +241,11 @@
           {
             "id": "self",
             "label": "Self-filer",
-            "sub": "Files their own return.",
+            "sub": "Your own return: My return reads your documents and makes the ITR-1 / ITR-2.",
             "assignable": false,
             "grants": [
               "firm",
-              "clients",
-              "clients.create",
-              "intake",
-              "intake.delete",
-              "recon",
-              "recon.delete",
-              "compute",
-              "compute.signoff",
-              "compute.file",
-              "compute.reopen",
-              "itrimport",
-              "audit",
-              "audit.clear"
+              "myreturn"
             ]
           }
         ]

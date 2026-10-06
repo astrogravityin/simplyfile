@@ -1,0 +1,106 @@
+// Tax rules - #/taxwatch. Each new year's tax figures: Fetch (Gemini with Google Search, official sources only, in the
+// portal's own shapes), Compare (live beside fetched, what changed, the source), Apply (the ticked ones, published through
+// the Ops & chips builder layer with History). taxwatch.py decides and writes (chips taxwatch.*); this draws.
+// Words: chip ui.taxwatch.
+import { api, esc, toast, busy, pageHead, t, loadWords, confirmDialog } from './app.js';
+import { icon } from './icons.js';
+import { kpiTile } from './page-kit.js';
+
+const w = (k, v) => t('taxwatch', k, v);
+const L = (n) => (n == null ? '∞' : n >= 1e5 && n % 1e3 === 0 ? `${+(n / 1e5).toFixed(2)}${w('lakh')}` : `₹${Number(n).toLocaleString('en-IN')}`);
+const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const named = (k) => { const x = w(k); return x === k ? k : x; };
+
+/** A value as people read it, by the item's kind; `other` marks the parts that differ from it. */
+function show(kind, v, other) {
+  if (v == null) return `<span class="muted">-</span>`;
+  const diff = (a, b) => (JSON.stringify(a) !== JSON.stringify(b) ? ' tw-diff' : '');
+  const slabs = (rows, o) => rows.map((s, i) => `<span class="tw-slab${o ? diff(s, (o || [])[i]) : ''}">${esc(s.upto == null ? w('slab_above', { from: L(rows[i - 1] ? rows[i - 1].upto : 0) }) : w('slab_upto', { upto: L(s.upto) }))} <b>${esc(s.rate)}%</b></span>`).join('');
+  switch (kind) {
+    case 'slabs_by_age': return Object.keys(v).map((b) => `<div class="tw-band"><small>${esc(named(b))}</small>${slabs(v[b], other && other[b])}</div>`).join('');
+    case 'steps': return v.map((s, i) => `<span class="tw-slab${other ? diff(s, other[i]) : ''}">${esc(w('slab_above', { from: L(s.above) }))} <b>${esc(s.rate)}%</b></span>`).join('');
+    case 'money': return esc(L(v));
+    case 'pct': return `${esc(v)}%`;
+    case 'number': return esc(v);
+    case 'mmdd': return esc(`${v % 100} ${MON[Math.floor(v / 100) - 1] || '?'}`);
+    case 'money_by_age': case 'money_by_regime': case 'money_map': case 'pct_by_regime':
+      return Object.entries(v).map(([k, x]) => `<span class="tw-slab${other ? diff(x, other[k]) : ''}">${esc(named(k))} <b>${esc(kind === 'pct_by_regime' ? `${x}%` : L(x))}</b></span>`).join('');
+    default: return `<code>${esc(JSON.stringify(v))}</code>`;
+  }
+}
+
+export async function taxwatchPage(host) {
+  await loadWords('taxwatch');
+  const q = new URLSearchParams((location.hash.split('?')[1]) || '');
+  let d = await api(`/api/taxwatch${q.get('ay') ? `?ay=${encodeURIComponent(q.get('ay'))}` : ''}`);
+  const S = { only: false, pick: new Set(d.rows.filter((r) => r.state === 'changed').map((r) => r.id)), edit: '' };
+
+  const draw = () => {
+    const tone = { changed: '--warn', same: '--ok', unknown: '--muted' };
+    const years = [0, 1, 2].map((n) => { const y = +d.live_ay.slice(0, 4) + 1 + n; return `${y}-${String(y + 1).slice(2)}`; });
+    const rows = d.rows.filter((r) => !S.only || r.state === 'changed');
+    const groups = Object.keys(d.groups).filter((g) => rows.some((r) => r.group === g));
+    const picked = [...S.pick].filter((id) => d.rows.some((r) => r.id === id && r.state === 'changed'));
+    host.innerHTML = pageHead(w('title'), esc(w('lede')))
+      + `<section class="card tw-head" id="tw-head"><div class="tw-live">${icon('check', 15)} <b>${esc(w('live', { ay: d.live_ay }))}</b></div>
+        <div class="tw-fetch" id="tw-fetch"><label>${esc(w('target'))} <select id="tw-ay">${years.map((y) => `<option${y === d.ay ? ' selected' : ''}>${esc(y)}</option>`).join('')}</select></label>
+          <button class="btn primary" id="tw-go" data-work="${esc(w('fetching'))}">${icon('refresh', 14)} ${esc(w('fetch'))}</button>
+          ${d.at ? `<span class="small muted">${esc(w('fetched_at', { when: `${d.at.slice(0, 16).replace('T', ' ')} · ${d.model}` }))}</span>` : ''}</div>
+        <p class="small muted">${icon('lock', 13)} ${esc(w('rule'))}</p></section>`
+      + `<section class="sf-kpis">${kpiTile('list', '--brand', w('k_items'), d.rows.length, w('h_live', { ay: d.live_ay }))}
+          ${kpiTile('pulse', '--warn', w('k_changed'), d.count.changed, w('h_new', { ay: d.ay }))}
+          ${kpiTile('check', '--ok', w('k_same'), d.count.same, '')}${kpiTile('info', '--muted', w('k_unknown'), d.count.unknown, '')}</section>`
+      + (!d.fetched ? `<div class="card"><p>${icon('info', 14)} ${esc(w('none_yet', { ay: d.ay }))}</p></div>` : '')
+      + `<section class="card an-card" id="tw-table"><div class="tw-bar"><button class="btn ghost sm" id="tw-only">${esc(S.only ? w('show_all') : w('only_changed'))}</button></div>
+        <div class="an-scroll"><table class="cc-tbl an-tbl tw-tbl"><thead><tr><th>${esc(w('h_item'))}</th><th>${esc(w('h_live', { ay: d.live_ay }))}</th>
+          <th>${esc(w('h_new', { ay: d.ay }))}</th><th>${esc(w('h_source'))}</th><th class="num">${esc(w('h_pick'))}</th></tr></thead><tbody>
+        ${groups.map((g) => `<tr class="tw-group"><td colspan="5">${esc(w(`g_${g}`))}</td></tr>${rows.filter((r) => r.group === g).map((r) => `<tr class="tw-row s-${r.state}">
+          <td><b>${esc(r.label)}</b><div class="small muted">${esc(w('where'))}: ${r.where.map((x) => `<code>${esc(x)}</code>`).join(' ')}</div></td>
+          <td>${show(r.kind, r.live)}</td>
+          <td>${S.edit === r.id ? `<textarea class="tw-json" rows="5">${esc(JSON.stringify(r.new ?? r.live, null, 1))}</textarea>
+                <div class="tw-ed"><button class="btn sm primary" data-save="${esc(r.id)}">${esc(w('save'))}</button><button class="btn sm ghost" data-cancel>${esc(w('cancel'))}</button></div>`
+            : `${show(r.kind, r.new, r.live)}<div class="tw-state"><span class="sv-pill" style="--c:var(${tone[r.state]})">${esc(w(r.state))}</span>${r.edited ? ` <span class="small muted">${esc(w('edited'))}</span>` : ''}
+                <button class="link small" data-edit="${esc(r.id)}">${esc(w('edit'))}</button></div>${r.note ? `<div class="small muted">${esc(r.note)}</div>` : ''}`}</td>
+          <td>${r.source ? `<a class="small" href="${esc(r.source)}" target="_blank" rel="noopener noreferrer">${esc(r.source.replace(/^https?:\/\//, '').slice(0, 40))}</a>` : ''}</td>
+          <td class="num">${r.state === 'changed' ? `<input type="checkbox" data-pick="${esc(r.id)}" ${S.pick.has(r.id) ? 'checked' : ''} aria-label="${esc(r.label)}">` : ''}</td></tr>`).join('')}`).join('')}
+        </tbody></table></div>
+        <div class="tw-apply" id="tw-apply"><button class="btn primary" id="tw-do" ${picked.length ? '' : 'disabled'}>${icon('check', 14)} ${esc(picked.length ? w('apply', { n: picked.length, ay: d.ay }) : w('apply_none'))}</button></div></section>`
+      + (d.pages.length ? `<section class="card"><h3 class="rc-h">${icon('globe', 15)} ${esc(w('sources'))}</h3><ul class="tw-pages">${d.pages.map((p) => `<li><a href="${esc(p.uri)}" target="_blank" rel="noopener noreferrer">${esc(p.title || p.uri)}</a></li>`).join('')}</ul></section>` : '');
+    wire();
+  };
+
+  const wire = () => {
+    host.querySelector('#tw-ay').onchange = async (e) => { d = await api(`/api/taxwatch?ay=${encodeURIComponent(e.target.value)}`); S.pick = new Set(d.rows.filter((r) => r.state === 'changed').map((r) => r.id)); draw(); };
+    host.querySelector('#tw-go').onclick = async (e) => {
+      const btn = e.currentTarget;
+      const ay = host.querySelector('#tw-ay').value;
+      try { d = await busy(btn, () => api(`/api/taxwatch/${encodeURIComponent(ay)}/fetch`, { method: 'POST', body: {} })); }
+      catch (x) { toast(x.message, 'bad', 10); return; }
+      S.pick = new Set(d.rows.filter((r) => r.state === 'changed').map((r) => r.id)); draw();
+    };
+    host.querySelector('#tw-only').onclick = () => { S.only = !S.only; draw(); };
+    host.querySelector('#tw-do').onclick = async (e) => {
+      const ids = [...S.pick].filter((id) => d.rows.some((r) => r.id === id && r.state === 'changed'));
+      if (!ids.length) return;
+      const btn = e.currentTarget;
+      confirmDialog(w('title'), w('confirm', { n: ids.length, ay: d.ay }), async () => {
+        try {
+          const r = await busy(btn, () => api(`/api/taxwatch/${encodeURIComponent(d.ay)}/apply`, { method: 'POST', body: { ids } }));
+          toast(r.done, 'ok', 8);
+          if (r.rebased) toast(r.rebased, 'info', 12);
+          d = await api('/api/taxwatch'); S.pick = new Set(); draw();
+        } catch (x) { toast(x.message, 'bad', 10); }
+      }, w('apply', { n: ids.length, ay: d.ay }), { tone: 'warn' });
+    };
+    host.querySelectorAll('[data-pick]').forEach((b) => { b.onchange = () => { if (b.checked) S.pick.add(b.dataset.pick); else S.pick.delete(b.dataset.pick); draw(); }; });
+    host.querySelectorAll('[data-edit]').forEach((b) => { b.onclick = () => { S.edit = b.dataset.edit; draw(); }; });
+    host.querySelectorAll('[data-cancel]').forEach((b) => { b.onclick = () => { S.edit = ''; draw(); }; });
+    host.querySelectorAll('[data-save]').forEach((b) => { b.onclick = async () => {
+      let value;
+      try { value = JSON.parse(host.querySelector('.tw-json').value); } catch { toast(w('bad_json'), 'bad'); return; }
+      try { d = await api(`/api/taxwatch/${encodeURIComponent(d.ay)}/${encodeURIComponent(b.dataset.save)}`, { method: 'PUT', body: { value } }); S.edit = ''; S.pick.add(b.dataset.save); draw(); }
+      catch (x) { toast(x.message, 'bad', 8); }
+    }; });
+  };
+  draw();
+}

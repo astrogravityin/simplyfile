@@ -1,0 +1,1875 @@
+{
+  "chip_id": "ui.myreturn",
+  "kind": "accessor",
+  "set": "ui",
+  "label": "My return: words",
+  "aliases": [
+    "my return: words"
+  ],
+  "params": [
+    {
+      "name": "title",
+      "type": "text",
+      "default": "My return · AY {ay}",
+      "label": "title"
+    },
+    {
+      "name": "lede",
+      "type": "text",
+      "default": "{name}: drop in your documents - we read them, check them against each other and work out both tax regimes. You file the JSON on the e-filing portal.",
+      "label": "lede"
+    },
+    {
+      "name": "pick_lede",
+      "type": "text",
+      "default": "Whose return? Pick the person - an individual or HUF.",
+      "label": "pick_lede"
+    },
+    {
+      "name": "pick_none",
+      "type": "text",
+      "default": "No individual or HUF clients yet. Add one under Clients & years.",
+      "label": "pick_none"
+    },
+    {
+      "name": "saved",
+      "type": "text",
+      "default": "Saved",
+      "label": "saved"
+    },
+    {
+      "name": "s_gather",
+      "type": "text",
+      "default": "Gather",
+      "label": "s_gather"
+    },
+    {
+      "name": "s_check",
+      "type": "text",
+      "default": "Check",
+      "label": "s_check"
+    },
+    {
+      "name": "s_choose",
+      "type": "text",
+      "default": "Choose",
+      "label": "s_choose"
+    },
+    {
+      "name": "s_review",
+      "type": "text",
+      "default": "Review",
+      "label": "s_review"
+    },
+    {
+      "name": "s_file",
+      "type": "text",
+      "default": "File",
+      "label": "s_file"
+    },
+    {
+      "name": "g_income",
+      "type": "text",
+      "default": "Total income",
+      "label": "g_income"
+    },
+    {
+      "name": "g_tax",
+      "type": "text",
+      "default": "Tax",
+      "label": "g_tax"
+    },
+    {
+      "name": "g_pay",
+      "type": "text",
+      "default": "To pay",
+      "label": "g_pay"
+    },
+    {
+      "name": "g_refund",
+      "type": "text",
+      "default": "Refund due",
+      "label": "g_refund"
+    },
+    {
+      "name": "g_regime",
+      "type": "text",
+      "default": "Regime",
+      "label": "g_regime"
+    },
+    {
+      "name": "r_new",
+      "type": "text",
+      "default": "New regime",
+      "label": "r_new"
+    },
+    {
+      "name": "r_old",
+      "type": "text",
+      "default": "Old regime",
+      "label": "r_old"
+    },
+    {
+      "name": "gather_h",
+      "type": "text",
+      "default": "Your documents",
+      "label": "gather_h"
+    },
+    {
+      "name": "gather_p",
+      "type": "text",
+      "default": "Start with the pre-filled JSON - it carries your details, salary, TDS and bank accounts. Then the AIS, and Form 16 from each employer. Drop them in any order; each one is read as it arrives.",
+      "label": "gather_p"
+    },
+    {
+      "name": "drop",
+      "type": "text",
+      "default": "Drop a document here, or choose one",
+      "label": "drop"
+    },
+    {
+      "name": "drop_hint",
+      "type": "text",
+      "default": "Pre-filled JSON · AIS (JSON, CSV or PDF) · Form 16 (PDF) · 26AS (text or PDF)",
+      "label": "drop_hint"
+    },
+    {
+      "name": "pw",
+      "type": "text",
+      "default": "PDF password (if it has one)",
+      "label": "pw"
+    },
+    {
+      "name": "pw_ph",
+      "type": "text",
+      "default": "AIS / 26AS: your PAN in small letters + date of birth DDMMYYYY",
+      "label": "pw_ph"
+    },
+    {
+      "name": "ai_ok",
+      "type": "text",
+      "default": "Read Form 16 Part B with AI when its layout is unusual - the page goes to Google Gemini on this portal's key and nothing is kept there",
+      "label": "ai_ok"
+    },
+    {
+      "name": "read",
+      "type": "text",
+      "default": "Read it",
+      "label": "read"
+    },
+    {
+      "name": "read_done",
+      "type": "text",
+      "default": "{kind} read",
+      "label": "read_done"
+    },
+    {
+      "name": "read_ok",
+      "type": "text",
+      "default": "Read",
+      "label": "read_ok"
+    },
+    {
+      "name": "read_ai",
+      "type": "text",
+      "default": "Read with AI",
+      "label": "read_ai"
+    },
+    {
+      "name": "open",
+      "type": "text",
+      "default": "Open",
+      "label": "open"
+    },
+    {
+      "name": "remove",
+      "type": "text",
+      "default": "Remove",
+      "label": "remove"
+    },
+    {
+      "name": "how_get",
+      "type": "text",
+      "default": "How to get it",
+      "label": "how_get"
+    },
+    {
+      "name": "k_prefill",
+      "type": "text",
+      "default": "Pre-filled JSON",
+      "label": "k_prefill"
+    },
+    {
+      "name": "k_prefill_why",
+      "type": "text",
+      "default": "Your details, salary from your employer's TDS returns, TDS, taxes paid and bank accounts - straight from the department.",
+      "label": "k_prefill_why"
+    },
+    {
+      "name": "k_prefill_how",
+      "type": "text",
+      "default": "Sign in at incometax.gov.in|e-File > Income Tax Returns > Download Pre-Filled Data|Pick AY {ay} and download the JSON|Drop it here",
+      "label": "k_prefill_how"
+    },
+    {
+      "name": "k_ais",
+      "type": "text",
+      "default": "AIS",
+      "label": "k_ais"
+    },
+    {
+      "name": "k_ais_why",
+      "type": "text",
+      "default": "Interest, dividends, sales of shares and funds, and every TDS the department knows about.",
+      "label": "k_ais_why"
+    },
+    {
+      "name": "k_ais_how",
+      "type": "text",
+      "default": "Sign in at incometax.gov.in|Services > Annual Information Statement (AIS) > Proceed|Choose FY 2025-26, then AIS > Download (JSON or PDF)|The PDF's password is your PAN in small letters with your date of birth, e.g. abcde1234f01011990",
+      "label": "k_ais_how"
+    },
+    {
+      "name": "k_form16",
+      "type": "text",
+      "default": "Form 16",
+      "label": "k_form16"
+    },
+    {
+      "name": "k_form16_why",
+      "type": "text",
+      "default": "Your employer's certificate: Part A (TDS by quarter) and Part B (salary, allowances, deductions). One per employer.",
+      "label": "k_form16_why"
+    },
+    {
+      "name": "k_form16_how",
+      "type": "text",
+      "default": "Ask your employer's HR or payroll - it is due by 15 June|Usually a signed PDF; Part A comes from TRACES|Changed jobs in the year? Bring one from each employer",
+      "label": "k_form16_how"
+    },
+    {
+      "name": "k_26as",
+      "type": "text",
+      "default": "26AS",
+      "label": "k_26as"
+    },
+    {
+      "name": "k_26as_why",
+      "type": "text",
+      "default": "Your tax credit as the department holds it: TDS by deductor and taxes you paid. The return is checked against it.",
+      "label": "k_26as_why"
+    },
+    {
+      "name": "k_26as_how",
+      "type": "text",
+      "default": "Sign in at incometax.gov.in|e-File > Income Tax Returns > View Form 26AS > Confirm|Pick AY {ay}, view as Text, export|Drop the text file (or the PDF) here",
+      "label": "k_26as_how"
+    },
+    {
+      "name": "k_other",
+      "type": "text",
+      "default": "Other document",
+      "label": "k_other"
+    },
+    {
+      "name": "check_h",
+      "type": "text",
+      "default": "Do the documents agree?",
+      "label": "check_h"
+    },
+    {
+      "name": "check_p",
+      "type": "text",
+      "default": "The same figure from two documents, side by side. A gap is not always wrong - a TDS deposited late may not show in 26AS yet - but it is better seen now than in a notice.",
+      "label": "check_p"
+    },
+    {
+      "name": "check_none",
+      "type": "text",
+      "default": "Nothing to compare yet - drop in Form 16 and 26AS or the AIS.",
+      "label": "check_none"
+    },
+    {
+      "name": "c_left",
+      "type": "text",
+      "default": "Form 16 says",
+      "label": "c_left"
+    },
+    {
+      "name": "c_right",
+      "type": "text",
+      "default": "26AS / AIS says",
+      "label": "c_right"
+    },
+    {
+      "name": "c_f16",
+      "type": "text",
+      "default": "Form 16 · {tan}",
+      "label": "c_f16"
+    },
+    {
+      "name": "c_credit",
+      "type": "text",
+      "default": "Credit · {tan}",
+      "label": "c_credit"
+    },
+    {
+      "name": "c_tds",
+      "type": "text",
+      "default": "Tax deducted by {tan}",
+      "label": "c_tds"
+    },
+    {
+      "name": "c_salary",
+      "type": "text",
+      "default": "Salary",
+      "label": "c_salary"
+    },
+    {
+      "name": "c_savings",
+      "type": "text",
+      "default": "Savings interest",
+      "label": "c_savings"
+    },
+    {
+      "name": "c_deposits",
+      "type": "text",
+      "default": "Deposit interest",
+      "label": "c_deposits"
+    },
+    {
+      "name": "c_dividend",
+      "type": "text",
+      "default": "Dividends",
+      "label": "c_dividend"
+    },
+    {
+      "name": "lv_ok",
+      "type": "text",
+      "default": "Agrees: {a}",
+      "label": "lv_ok"
+    },
+    {
+      "name": "lv_amber",
+      "type": "text",
+      "default": "{a} here, not in the other document - worth a look",
+      "label": "lv_amber"
+    },
+    {
+      "name": "lv_red",
+      "type": "text",
+      "default": "{a} here, {b} there - a gap of {gap}",
+      "label": "lv_red"
+    },
+    {
+      "name": "accept",
+      "type": "text",
+      "default": "I have checked this",
+      "label": "accept"
+    },
+    {
+      "name": "choose_h",
+      "type": "text",
+      "default": "New or old regime?",
+      "label": "choose_h"
+    },
+    {
+      "name": "verdict",
+      "type": "text",
+      "default": "{regime} costs you {saving} less.",
+      "label": "verdict"
+    },
+    {
+      "name": "old_closed",
+      "type": "text",
+      "default": "The old regime can only be chosen in a return filed by the due date (31 July) - a belated return is under the new regime.",
+      "label": "old_closed"
+    },
+    {
+      "name": "old_closed_short",
+      "type": "text",
+      "default": "Closed for a belated return",
+      "label": "old_closed_short"
+    },
+    {
+      "name": "verdict_same",
+      "type": "text",
+      "default": "Both regimes come to the same tax - the new regime needs nothing more from you.",
+      "label": "verdict_same"
+    },
+    {
+      "name": "cheaper",
+      "type": "text",
+      "default": "Cheaper",
+      "label": "cheaper"
+    },
+    {
+      "name": "chosen",
+      "type": "text",
+      "default": "Chosen",
+      "label": "chosen"
+    },
+    {
+      "name": "choose_this",
+      "type": "text",
+      "default": "Choose this one",
+      "label": "choose_this"
+    },
+    {
+      "name": "d_income",
+      "type": "text",
+      "default": "Total income",
+      "label": "d_income"
+    },
+    {
+      "name": "d_via",
+      "type": "text",
+      "default": "Deductions (Chapter VI-A)",
+      "label": "d_via"
+    },
+    {
+      "name": "d_tax",
+      "type": "text",
+      "default": "Tax on income",
+      "label": "d_tax"
+    },
+    {
+      "name": "d_rebate",
+      "type": "text",
+      "default": "Rebate u/s 87A",
+      "label": "d_rebate"
+    },
+    {
+      "name": "d_sur",
+      "type": "text",
+      "default": "Surcharge",
+      "label": "d_sur"
+    },
+    {
+      "name": "d_cess",
+      "type": "text",
+      "default": "Health & education cess",
+      "label": "d_cess"
+    },
+    {
+      "name": "d_fee",
+      "type": "text",
+      "default": "Late fee and interest",
+      "label": "d_fee"
+    },
+    {
+      "name": "d_total",
+      "type": "text",
+      "default": "You owe in all",
+      "label": "d_total"
+    },
+    {
+      "name": "flow_h",
+      "type": "text",
+      "default": "From income to tax · {regime}",
+      "label": "flow_h"
+    },
+    {
+      "name": "wf_gross",
+      "type": "text",
+      "default": "Income",
+      "label": "wf_gross"
+    },
+    {
+      "name": "wf_exempt",
+      "type": "text",
+      "default": "Exempt",
+      "label": "wf_exempt"
+    },
+    {
+      "name": "wf_std",
+      "type": "text",
+      "default": "Std. deduction",
+      "label": "wf_std"
+    },
+    {
+      "name": "wf_hp",
+      "type": "text",
+      "default": "Home loan",
+      "label": "wf_hp"
+    },
+    {
+      "name": "wf_via",
+      "type": "text",
+      "default": "Deductions",
+      "label": "wf_via"
+    },
+    {
+      "name": "wf_taxable",
+      "type": "text",
+      "default": "Taxable",
+      "label": "wf_taxable"
+    },
+    {
+      "name": "wf_tax",
+      "type": "text",
+      "default": "Tax",
+      "label": "wf_tax"
+    },
+    {
+      "name": "rv_salary",
+      "type": "text",
+      "default": "Salary",
+      "label": "rv_salary"
+    },
+    {
+      "name": "rv_house",
+      "type": "text",
+      "default": "House property",
+      "label": "rv_house"
+    },
+    {
+      "name": "rv_other",
+      "type": "text",
+      "default": "Other income",
+      "label": "rv_other"
+    },
+    {
+      "name": "rv_cg",
+      "type": "text",
+      "default": "Capital gains",
+      "label": "rv_cg"
+    },
+    {
+      "name": "rv_cg_p",
+      "type": "text",
+      "default": "From the AIS or your broker's capital-gains statement. Anything here other than 112A gains up to 1.25 lakh makes it an ITR-2.",
+      "label": "rv_cg_p"
+    },
+    {
+      "name": "rv_via",
+      "type": "text",
+      "default": "Deductions",
+      "label": "rv_via"
+    },
+    {
+      "name": "rv_via_p",
+      "type": "text",
+      "default": "As your employer declared them in Form 16, or what you type. The old regime allows them all; the new only the employer's NPS (80CCD(2)).",
+      "label": "rv_via_p"
+    },
+    {
+      "name": "rv_q",
+      "type": "text",
+      "default": "A few questions",
+      "label": "rv_q"
+    },
+    {
+      "name": "no_salary",
+      "type": "text",
+      "default": "No salary yet - drop Form 16, or add an employer.",
+      "label": "no_salary"
+    },
+    {
+      "name": "no_house",
+      "type": "text",
+      "default": "No house property. Add one if you own a home or let one out.",
+      "label": "no_house"
+    },
+    {
+      "name": "add_employer",
+      "type": "text",
+      "default": "Add an employer",
+      "label": "add_employer"
+    },
+    {
+      "name": "add_house",
+      "type": "text",
+      "default": "Add a house",
+      "label": "add_house"
+    },
+    {
+      "name": "employer_n",
+      "type": "text",
+      "default": "Employer {n}",
+      "label": "employer_n"
+    },
+    {
+      "name": "you",
+      "type": "text",
+      "default": "you",
+      "label": "you"
+    },
+    {
+      "name": "f_gross_17_1",
+      "type": "text",
+      "default": "Salary 17(1)",
+      "label": "f_gross_17_1"
+    },
+    {
+      "name": "f_perq_17_2",
+      "type": "text",
+      "default": "Perquisites 17(2)",
+      "label": "f_perq_17_2"
+    },
+    {
+      "name": "f_profit_17_3",
+      "type": "text",
+      "default": "Profits in lieu 17(3)",
+      "label": "f_profit_17_3"
+    },
+    {
+      "name": "f_exempt_all",
+      "type": "text",
+      "default": "Exempt allowances (sec 10)",
+      "label": "f_exempt_all"
+    },
+    {
+      "name": "f_exempt_new",
+      "type": "text",
+      "default": "Still exempt (new regime)",
+      "label": "f_exempt_new"
+    },
+    {
+      "name": "f_prof_tax",
+      "type": "text",
+      "default": "Professional tax",
+      "label": "f_prof_tax"
+    },
+    {
+      "name": "f_basic_da",
+      "type": "text",
+      "default": "Basic + DA",
+      "label": "f_basic_da"
+    },
+    {
+      "name": "f_tds",
+      "type": "text",
+      "default": "TDS",
+      "label": "f_tds"
+    },
+    {
+      "name": "f_kind",
+      "type": "text",
+      "default": "Kind",
+      "label": "f_kind"
+    },
+    {
+      "name": "h_self",
+      "type": "text",
+      "default": "Self-occupied",
+      "label": "h_self"
+    },
+    {
+      "name": "h_let",
+      "type": "text",
+      "default": "Let out",
+      "label": "h_let"
+    },
+    {
+      "name": "f_rent",
+      "type": "text",
+      "default": "Rent received",
+      "label": "f_rent"
+    },
+    {
+      "name": "f_municipal_tax",
+      "type": "text",
+      "default": "Municipal tax",
+      "label": "f_municipal_tax"
+    },
+    {
+      "name": "f_interest",
+      "type": "text",
+      "default": "Home-loan interest",
+      "label": "f_interest"
+    },
+    {
+      "name": "f_savings",
+      "type": "text",
+      "default": "Savings-account interest",
+      "label": "f_savings"
+    },
+    {
+      "name": "f_deposits",
+      "type": "text",
+      "default": "FD / RD interest",
+      "label": "f_deposits"
+    },
+    {
+      "name": "f_dividend",
+      "type": "text",
+      "default": "Dividends",
+      "label": "f_dividend"
+    },
+    {
+      "name": "f_family_pension",
+      "type": "text",
+      "default": "Family pension",
+      "label": "f_family_pension"
+    },
+    {
+      "name": "f_refund_interest",
+      "type": "text",
+      "default": "Interest on a tax refund",
+      "label": "f_refund_interest"
+    },
+    {
+      "name": "f_other",
+      "type": "text",
+      "default": "Any other income",
+      "label": "f_other"
+    },
+    {
+      "name": "f_stcg_111a",
+      "type": "text",
+      "default": "Short-term, listed (111A)",
+      "label": "f_stcg_111a"
+    },
+    {
+      "name": "f_ltcg_112a",
+      "type": "text",
+      "default": "Long-term, listed (112A)",
+      "label": "f_ltcg_112a"
+    },
+    {
+      "name": "f_ltcg_112",
+      "type": "text",
+      "default": "Other long-term (112)",
+      "label": "f_ltcg_112"
+    },
+    {
+      "name": "f_stcg_other",
+      "type": "text",
+      "default": "Other short-term",
+      "label": "f_stcg_other"
+    },
+    {
+      "name": "f_c80c",
+      "type": "text",
+      "default": "80C: PPF, ELSS, LIC, EPF...",
+      "label": "f_c80c"
+    },
+    {
+      "name": "f_c80ccc",
+      "type": "text",
+      "default": "80CCC: pension plan",
+      "label": "f_c80ccc"
+    },
+    {
+      "name": "f_c80ccd1",
+      "type": "text",
+      "default": "80CCD(1): your NPS",
+      "label": "f_c80ccd1"
+    },
+    {
+      "name": "f_c80ccd1b",
+      "type": "text",
+      "default": "80CCD(1B): NPS extra",
+      "label": "f_c80ccd1b"
+    },
+    {
+      "name": "f_c80ccd2",
+      "type": "text",
+      "default": "80CCD(2): employer NPS",
+      "label": "f_c80ccd2"
+    },
+    {
+      "name": "f_c80d_self",
+      "type": "text",
+      "default": "80D: you and family",
+      "label": "f_c80d_self"
+    },
+    {
+      "name": "f_c80d_parents",
+      "type": "text",
+      "default": "80D: parents",
+      "label": "f_c80d_parents"
+    },
+    {
+      "name": "f_c80e",
+      "type": "text",
+      "default": "80E: education loan",
+      "label": "f_c80e"
+    },
+    {
+      "name": "f_c80g",
+      "type": "text",
+      "default": "80G: donations",
+      "label": "f_c80g"
+    },
+    {
+      "name": "q_resident",
+      "type": "text",
+      "default": "I lived in India for 182 days or more in FY 2025-26",
+      "label": "q_resident"
+    },
+    {
+      "name": "q_director",
+      "type": "text",
+      "default": "I was a director of a company",
+      "label": "q_director"
+    },
+    {
+      "name": "q_unlisted",
+      "type": "text",
+      "default": "I held unlisted shares at some time in the year",
+      "label": "q_unlisted"
+    },
+    {
+      "name": "q_foreign",
+      "type": "text",
+      "default": "I have assets or income outside India",
+      "label": "q_foreign"
+    },
+    {
+      "name": "q_parents_senior",
+      "type": "text",
+      "default": "A parent I pay health cover for is 60 or older",
+      "label": "q_parents_senior"
+    },
+    {
+      "name": "q_metro",
+      "type": "text",
+      "default": "I rented in Mumbai, Delhi, Kolkata or Chennai",
+      "label": "q_metro"
+    },
+    {
+      "name": "q_father",
+      "type": "text",
+      "default": "Father's name",
+      "label": "q_father"
+    },
+    {
+      "name": "q_state",
+      "type": "text",
+      "default": "State you live in",
+      "label": "q_state"
+    },
+    {
+      "name": "pick",
+      "type": "text",
+      "default": "Pick one",
+      "label": "pick"
+    },
+    {
+      "name": "q_employer_category",
+      "type": "text",
+      "default": "Your employer",
+      "label": "q_employer_category"
+    },
+    {
+      "name": "emp_cats",
+      "type": "text",
+      "default": "OTH=Private company or others|CGOV=Central Government|SGOV=State Government|PSU=Public sector undertaking|PE=Pensioner - Central Government|PESG=Pensioner - State Government|PEPS=Pensioner - public sector|PEO=Pensioner - others|NA=Not employed",
+      "label": "emp_cats"
+    },
+    {
+      "name": "states",
+      "type": "text",
+      "default": "01=Andaman and Nicobar Islands|02=Andhra Pradesh|03=Arunachal Pradesh|04=Assam|05=Bihar|06=Chandigarh|07=Dadra and Nagar Haveli|08=Daman and Diu|09=Delhi|10=Goa|11=Gujarat|12=Haryana|13=Himachal Pradesh|14=Jammu and Kashmir|15=Karnataka|16=Kerala|17=Lakshadweep|18=Madhya Pradesh|19=Maharashtra|20=Manipur|21=Meghalaya|22=Mizoram|23=Nagaland|24=Odisha|25=Puducherry|26=Punjab|27=Rajasthan|28=Sikkim|29=Tamil Nadu|30=Tripura|31=Uttar Pradesh|32=West Bengal|33=Chhattisgarh|34=Uttarakhand|35=Jharkhand|36=Telangana|37=Ladakh",
+      "label": "states"
+    },
+    {
+      "name": "ready_h",
+      "type": "text",
+      "default": "Before you start: keep these handy",
+      "label": "ready_h"
+    },
+    {
+      "name": "ready_p",
+      "type": "text",
+      "default": "Ten minutes of gathering saves an hour of guessing. Each one you drop in below ticks itself; tick the rest as you have them.",
+      "label": "ready_p"
+    },
+    {
+      "name": "ready_n",
+      "type": "text",
+      "default": "{n} of {total} ready",
+      "label": "ready_n"
+    },
+    {
+      "name": "k_filed",
+      "type": "text",
+      "default": "The return you filed",
+      "label": "k_filed"
+    },
+    {
+      "name": "k_filed_why",
+      "type": "text",
+      "default": "Already filed? Drop in the JSON you filed and every figure is set beside this one.",
+      "label": "k_filed_why"
+    },
+    {
+      "name": "k_filed_how",
+      "type": "text",
+      "default": "Sign in at incometax.gov.in|e-File > Income Tax Returns > View Filed Returns|Pick AY {ay} and download the JSON (or keep the one you uploaded)|Drop it here",
+      "label": "k_filed_how"
+    },
+    {
+      "name": "fd_form",
+      "type": "text",
+      "default": "Form",
+      "label": "fd_form"
+    },
+    {
+      "name": "fd_ay",
+      "type": "text",
+      "default": "Year",
+      "label": "fd_ay"
+    },
+    {
+      "name": "fd_total",
+      "type": "text",
+      "default": "Total income",
+      "label": "fd_total"
+    },
+    {
+      "name": "fd_tax",
+      "type": "text",
+      "default": "Tax",
+      "label": "fd_tax"
+    },
+    {
+      "name": "fd_refund",
+      "type": "text",
+      "default": "Refund",
+      "label": "fd_refund"
+    },
+    {
+      "name": "no_filed",
+      "type": "text",
+      "default": "No filed return in this one yet - drop in the JSON you filed.",
+      "label": "no_filed"
+    },
+    {
+      "name": "filed_h",
+      "type": "text",
+      "default": "Already filed?",
+      "label": "filed_h"
+    },
+    {
+      "name": "filed_p",
+      "type": "text",
+      "default": "Give the day you filed - the dates, the late fee, interest and the regime are then worked out as of that day.",
+      "label": "filed_p"
+    },
+    {
+      "name": "filed_on",
+      "type": "text",
+      "default": "Filed on",
+      "label": "filed_on"
+    },
+    {
+      "name": "ack_no",
+      "type": "text",
+      "default": "Acknowledgement no.",
+      "label": "ack_no"
+    },
+    {
+      "name": "cmp_h",
+      "type": "text",
+      "default": "Compared with the return you filed",
+      "label": "cmp_h"
+    },
+    {
+      "name": "cmp_p",
+      "type": "text",
+      "default": "{file}: {filed} as filed, {ours} as made here. A gap means one of the two has a figure the other does not.",
+      "label": "cmp_p"
+    },
+    {
+      "name": "cmp_same",
+      "type": "text",
+      "default": "Every figure agrees with the return you filed.",
+      "label": "cmp_same"
+    },
+    {
+      "name": "cmp_regime",
+      "type": "text",
+      "default": "Filed under the {regime}.",
+      "label": "cmp_regime"
+    },
+    {
+      "name": "cmp_fig",
+      "type": "text",
+      "default": "Figure",
+      "label": "cmp_fig"
+    },
+    {
+      "name": "cmp_ours",
+      "type": "text",
+      "default": "Here",
+      "label": "cmp_ours"
+    },
+    {
+      "name": "cmp_theirs",
+      "type": "text",
+      "default": "As filed",
+      "label": "cmp_theirs"
+    },
+    {
+      "name": "cmp_gap",
+      "type": "text",
+      "default": "Gap",
+      "label": "cmp_gap"
+    },
+    {
+      "name": "cmp_missing",
+      "type": "text",
+      "default": "not in the filed JSON",
+      "label": "cmp_missing"
+    },
+    {
+      "name": "cm_salary",
+      "type": "text",
+      "default": "Gross salary",
+      "label": "cm_salary"
+    },
+    {
+      "name": "cm_salary_income",
+      "type": "text",
+      "default": "Income from salary",
+      "label": "cm_salary_income"
+    },
+    {
+      "name": "cm_hp",
+      "type": "text",
+      "default": "House property",
+      "label": "cm_hp"
+    },
+    {
+      "name": "cm_os",
+      "type": "text",
+      "default": "Other sources",
+      "label": "cm_os"
+    },
+    {
+      "name": "cm_gti",
+      "type": "text",
+      "default": "Gross total income",
+      "label": "cm_gti"
+    },
+    {
+      "name": "cm_via",
+      "type": "text",
+      "default": "Deductions (VI-A)",
+      "label": "cm_via"
+    },
+    {
+      "name": "cm_total",
+      "type": "text",
+      "default": "Total income",
+      "label": "cm_total"
+    },
+    {
+      "name": "cm_tax",
+      "type": "text",
+      "default": "Tax on total income",
+      "label": "cm_tax"
+    },
+    {
+      "name": "cm_rebate",
+      "type": "text",
+      "default": "Rebate 87A",
+      "label": "cm_rebate"
+    },
+    {
+      "name": "cm_cess",
+      "type": "text",
+      "default": "Cess",
+      "label": "cm_cess"
+    },
+    {
+      "name": "cm_gross",
+      "type": "text",
+      "default": "Tax liability",
+      "label": "cm_gross"
+    },
+    {
+      "name": "cm_interest",
+      "type": "text",
+      "default": "Interest and fee",
+      "label": "cm_interest"
+    },
+    {
+      "name": "cm_tds",
+      "type": "text",
+      "default": "TDS",
+      "label": "cm_tds"
+    },
+    {
+      "name": "cm_paid",
+      "type": "text",
+      "default": "Taxes you paid",
+      "label": "cm_paid"
+    },
+    {
+      "name": "cm_refund",
+      "type": "text",
+      "default": "Refund",
+      "label": "cm_refund"
+    },
+    {
+      "name": "cm_payable",
+      "type": "text",
+      "default": "Tax payable",
+      "label": "cm_payable"
+    },
+    {
+      "name": "go_check",
+      "type": "text",
+      "default": "Check the documents",
+      "label": "go_check"
+    },
+    {
+      "name": "go_choose",
+      "type": "text",
+      "default": "Compare the regimes",
+      "label": "go_choose"
+    },
+    {
+      "name": "go_review",
+      "type": "text",
+      "default": "Review the figures",
+      "label": "go_review"
+    },
+    {
+      "name": "go_file",
+      "type": "text",
+      "default": "Make the return",
+      "label": "go_file"
+    },
+    {
+      "name": "file_h",
+      "type": "text",
+      "default": "Your return: {form}",
+      "label": "file_h"
+    },
+    {
+      "name": "why_simple",
+      "type": "text",
+      "default": "ITR-1 (Sahaj) fits: resident, income up to 50 lakh, salary, up to two houses and other sources.",
+      "label": "why_simple"
+    },
+    {
+      "name": "why_nonres",
+      "type": "text",
+      "default": "ITR-2, because you were not resident in India this year.",
+      "label": "why_nonres"
+    },
+    {
+      "name": "why_income",
+      "type": "text",
+      "default": "ITR-2, because your total income is above 50 lakh.",
+      "label": "why_income"
+    },
+    {
+      "name": "why_houses",
+      "type": "text",
+      "default": "ITR-2, because you have more than two house properties.",
+      "label": "why_houses"
+    },
+    {
+      "name": "why_cg",
+      "type": "text",
+      "default": "ITR-2, because of capital gains beyond 112A gains of 1.25 lakh.",
+      "label": "why_cg"
+    },
+    {
+      "name": "why_agri",
+      "type": "text",
+      "default": "ITR-2, because agricultural income is above 5,000.",
+      "label": "why_agri"
+    },
+    {
+      "name": "why_director",
+      "type": "text",
+      "default": "ITR-2, because you were a company director or held unlisted shares.",
+      "label": "why_director"
+    },
+    {
+      "name": "why_foreign",
+      "type": "text",
+      "default": "ITR-2, because of assets or income outside India.",
+      "label": "why_foreign"
+    },
+    {
+      "name": "why_other",
+      "type": "text",
+      "default": "ITR-2, because of losses carried forward or income ITR-1 does not take.",
+      "label": "why_other"
+    },
+    {
+      "name": "schema_wait",
+      "type": "text",
+      "default": "Checking against the department's schema...",
+      "label": "schema_wait"
+    },
+    {
+      "name": "schema_ok",
+      "type": "text",
+      "default": "Checked against the department's own schema ({schema}) - it fits.",
+      "label": "schema_ok"
+    },
+    {
+      "name": "schema_bad",
+      "type": "text",
+      "default": "{n} {n:thing|things} to fill before it fits the department's schema:",
+      "label": "schema_bad"
+    },
+    {
+      "name": "download",
+      "type": "text",
+      "default": "Download {form} JSON",
+      "label": "download"
+    },
+    {
+      "name": "upload_h",
+      "type": "text",
+      "default": "Then file it",
+      "label": "upload_h"
+    },
+    {
+      "name": "upload_steps",
+      "type": "text",
+      "default": "Sign in at incometax.gov.in|e-File > Income Tax Returns > File Income Tax Return|AY 2026-27 · Online · your status · the form shown here|Choose 'Upload JSON' (or open it in the department's offline utility) and pick this file|Check the pages, pay any tax due first, then submit|e-Verify with Aadhaar OTP within 30 days",
+      "label": "upload_steps"
+    },
+    {
+      "name": "file_note",
+      "type": "text",
+      "default": "SimplyFile prepares the return; you file it yourself on the e-filing portal. Keep the documents you used - the department may ask for them.",
+      "label": "file_note"
+    },
+    {
+      "name": "bad_ext",
+      "type": "text",
+      "default": "That kind of file is not read here - send {exts}.",
+      "label": "bad_ext"
+    },
+    {
+      "name": "too_big",
+      "type": "text",
+      "default": "That file is over {mb} MB.",
+      "label": "too_big"
+    },
+    {
+      "name": "no_doc",
+      "type": "text",
+      "default": "That document is not in this return.",
+      "label": "no_doc"
+    },
+    {
+      "name": "bad_field",
+      "type": "text",
+      "default": "That field ({field}) is not one this return keeps.",
+      "label": "bad_field"
+    },
+    {
+      "name": "unknown_doc",
+      "type": "text",
+      "default": "This does not look like a pre-filled JSON, AIS, Form 16 or 26AS. Send one of those.",
+      "label": "unknown_doc"
+    },
+    {
+      "name": "need_password",
+      "type": "text",
+      "default": "This PDF is locked - type its password above and send it again.",
+      "label": "need_password"
+    },
+    {
+      "name": "bad_password",
+      "type": "text",
+      "default": "That password does not open this PDF.",
+      "label": "bad_password"
+    },
+    {
+      "name": "scanned",
+      "type": "text",
+      "default": "This PDF has no text layer (a scan or photo). Tick 'Read with AI' to read it, or type the figures under Review.",
+      "label": "scanned"
+    },
+    {
+      "name": "ai_failed",
+      "type": "text",
+      "default": "The AI could not read it ({why}). Type the figures under Review.",
+      "label": "ai_failed"
+    },
+    {
+      "name": "no_ai_key",
+      "type": "text",
+      "default": "No AI key is set up on this portal, so only the usual layouts are read. Type the rest under Review.",
+      "label": "no_ai_key"
+    },
+    {
+      "name": "ay_mismatch",
+      "type": "text",
+      "default": "This document is for AY {theirs}, not AY {ours}.",
+      "label": "ay_mismatch"
+    },
+    {
+      "name": "pan_mismatch",
+      "type": "text",
+      "default": "This document is for PAN {theirs}, not {ours}.",
+      "label": "pan_mismatch"
+    },
+    {
+      "name": "fd_salary",
+      "type": "text",
+      "default": "Salary",
+      "label": "fd_salary"
+    },
+    {
+      "name": "fd_tds",
+      "type": "text",
+      "default": "TDS",
+      "label": "fd_tds"
+    },
+    {
+      "name": "fd_tan",
+      "type": "text",
+      "default": "Employer TAN",
+      "label": "fd_tan"
+    },
+    {
+      "name": "fd_employer",
+      "type": "text",
+      "default": "Employer",
+      "label": "fd_employer"
+    },
+    {
+      "name": "fd_name",
+      "type": "text",
+      "default": "Name",
+      "label": "fd_name"
+    },
+    {
+      "name": "fd_pan",
+      "type": "text",
+      "default": "PAN",
+      "label": "fd_pan"
+    },
+    {
+      "name": "fd_interest",
+      "type": "text",
+      "default": "Interest",
+      "label": "fd_interest"
+    },
+    {
+      "name": "fd_dividend",
+      "type": "text",
+      "default": "Dividends",
+      "label": "fd_dividend"
+    },
+    {
+      "name": "fd_cg",
+      "type": "text",
+      "default": "Capital gains",
+      "label": "fd_cg"
+    },
+    {
+      "name": "fd_banks",
+      "type": "text",
+      "default": "Bank accounts",
+      "label": "fd_banks"
+    },
+    {
+      "name": "fd_paid",
+      "type": "text",
+      "default": "Taxes paid",
+      "label": "fd_paid"
+    },
+    {
+      "name": "fd_via",
+      "type": "text",
+      "default": "Deductions declared",
+      "label": "fd_via"
+    },
+    {
+      "name": "fd_rows",
+      "type": "text",
+      "default": "TDS rows",
+      "label": "fd_rows"
+    },
+    {
+      "name": "fd_regime",
+      "type": "text",
+      "default": "Regime used by employer",
+      "label": "fd_regime"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "title": "$title",
+      "lede": "$lede",
+      "pick_lede": "$pick_lede",
+      "pick_none": "$pick_none",
+      "saved": "$saved",
+      "s_gather": "$s_gather",
+      "s_check": "$s_check",
+      "s_choose": "$s_choose",
+      "s_review": "$s_review",
+      "s_file": "$s_file",
+      "g_income": "$g_income",
+      "g_tax": "$g_tax",
+      "g_pay": "$g_pay",
+      "g_refund": "$g_refund",
+      "g_regime": "$g_regime",
+      "r_new": "$r_new",
+      "r_old": "$r_old",
+      "gather_h": "$gather_h",
+      "gather_p": "$gather_p",
+      "drop": "$drop",
+      "drop_hint": "$drop_hint",
+      "pw": "$pw",
+      "pw_ph": "$pw_ph",
+      "ai_ok": "$ai_ok",
+      "read": "$read",
+      "read_done": "$read_done",
+      "read_ok": "$read_ok",
+      "read_ai": "$read_ai",
+      "open": "$open",
+      "remove": "$remove",
+      "how_get": "$how_get",
+      "k_prefill": "$k_prefill",
+      "k_prefill_why": "$k_prefill_why",
+      "k_prefill_how": "$k_prefill_how",
+      "k_ais": "$k_ais",
+      "k_ais_why": "$k_ais_why",
+      "k_ais_how": "$k_ais_how",
+      "k_form16": "$k_form16",
+      "k_form16_why": "$k_form16_why",
+      "k_form16_how": "$k_form16_how",
+      "k_26as": "$k_26as",
+      "k_26as_why": "$k_26as_why",
+      "k_26as_how": "$k_26as_how",
+      "k_other": "$k_other",
+      "check_h": "$check_h",
+      "check_p": "$check_p",
+      "check_none": "$check_none",
+      "c_left": "$c_left",
+      "c_right": "$c_right",
+      "c_f16": "$c_f16",
+      "c_credit": "$c_credit",
+      "c_tds": "$c_tds",
+      "c_salary": "$c_salary",
+      "c_savings": "$c_savings",
+      "c_deposits": "$c_deposits",
+      "c_dividend": "$c_dividend",
+      "lv_ok": "$lv_ok",
+      "lv_amber": "$lv_amber",
+      "lv_red": "$lv_red",
+      "accept": "$accept",
+      "choose_h": "$choose_h",
+      "verdict": "$verdict",
+      "old_closed": "$old_closed",
+      "old_closed_short": "$old_closed_short",
+      "verdict_same": "$verdict_same",
+      "cheaper": "$cheaper",
+      "chosen": "$chosen",
+      "choose_this": "$choose_this",
+      "d_income": "$d_income",
+      "d_via": "$d_via",
+      "d_tax": "$d_tax",
+      "d_rebate": "$d_rebate",
+      "d_sur": "$d_sur",
+      "d_cess": "$d_cess",
+      "d_fee": "$d_fee",
+      "d_total": "$d_total",
+      "flow_h": "$flow_h",
+      "wf_gross": "$wf_gross",
+      "wf_exempt": "$wf_exempt",
+      "wf_std": "$wf_std",
+      "wf_hp": "$wf_hp",
+      "wf_via": "$wf_via",
+      "wf_taxable": "$wf_taxable",
+      "wf_tax": "$wf_tax",
+      "rv_salary": "$rv_salary",
+      "rv_house": "$rv_house",
+      "rv_other": "$rv_other",
+      "rv_cg": "$rv_cg",
+      "rv_cg_p": "$rv_cg_p",
+      "rv_via": "$rv_via",
+      "rv_via_p": "$rv_via_p",
+      "rv_q": "$rv_q",
+      "no_salary": "$no_salary",
+      "no_house": "$no_house",
+      "add_employer": "$add_employer",
+      "add_house": "$add_house",
+      "employer_n": "$employer_n",
+      "you": "$you",
+      "f_gross_17_1": "$f_gross_17_1",
+      "f_perq_17_2": "$f_perq_17_2",
+      "f_profit_17_3": "$f_profit_17_3",
+      "f_exempt_all": "$f_exempt_all",
+      "f_exempt_new": "$f_exempt_new",
+      "f_prof_tax": "$f_prof_tax",
+      "f_basic_da": "$f_basic_da",
+      "f_tds": "$f_tds",
+      "f_kind": "$f_kind",
+      "h_self": "$h_self",
+      "h_let": "$h_let",
+      "f_rent": "$f_rent",
+      "f_municipal_tax": "$f_municipal_tax",
+      "f_interest": "$f_interest",
+      "f_savings": "$f_savings",
+      "f_deposits": "$f_deposits",
+      "f_dividend": "$f_dividend",
+      "f_family_pension": "$f_family_pension",
+      "f_refund_interest": "$f_refund_interest",
+      "f_other": "$f_other",
+      "f_stcg_111a": "$f_stcg_111a",
+      "f_ltcg_112a": "$f_ltcg_112a",
+      "f_ltcg_112": "$f_ltcg_112",
+      "f_stcg_other": "$f_stcg_other",
+      "f_c80c": "$f_c80c",
+      "f_c80ccc": "$f_c80ccc",
+      "f_c80ccd1": "$f_c80ccd1",
+      "f_c80ccd1b": "$f_c80ccd1b",
+      "f_c80ccd2": "$f_c80ccd2",
+      "f_c80d_self": "$f_c80d_self",
+      "f_c80d_parents": "$f_c80d_parents",
+      "f_c80e": "$f_c80e",
+      "f_c80g": "$f_c80g",
+      "q_resident": "$q_resident",
+      "q_director": "$q_director",
+      "q_unlisted": "$q_unlisted",
+      "q_foreign": "$q_foreign",
+      "q_parents_senior": "$q_parents_senior",
+      "q_metro": "$q_metro",
+      "q_father": "$q_father",
+      "q_state": "$q_state",
+      "pick": "$pick",
+      "q_employer_category": "$q_employer_category",
+      "emp_cats": "$emp_cats",
+      "states": "$states",
+      "ready_h": "$ready_h",
+      "ready_p": "$ready_p",
+      "ready_n": "$ready_n",
+      "k_filed": "$k_filed",
+      "k_filed_why": "$k_filed_why",
+      "k_filed_how": "$k_filed_how",
+      "fd_form": "$fd_form",
+      "fd_ay": "$fd_ay",
+      "fd_total": "$fd_total",
+      "fd_tax": "$fd_tax",
+      "fd_refund": "$fd_refund",
+      "no_filed": "$no_filed",
+      "filed_h": "$filed_h",
+      "filed_p": "$filed_p",
+      "filed_on": "$filed_on",
+      "ack_no": "$ack_no",
+      "cmp_h": "$cmp_h",
+      "cmp_p": "$cmp_p",
+      "cmp_same": "$cmp_same",
+      "cmp_regime": "$cmp_regime",
+      "cmp_fig": "$cmp_fig",
+      "cmp_ours": "$cmp_ours",
+      "cmp_theirs": "$cmp_theirs",
+      "cmp_gap": "$cmp_gap",
+      "cmp_missing": "$cmp_missing",
+      "cm_salary": "$cm_salary",
+      "cm_salary_income": "$cm_salary_income",
+      "cm_hp": "$cm_hp",
+      "cm_os": "$cm_os",
+      "cm_gti": "$cm_gti",
+      "cm_via": "$cm_via",
+      "cm_total": "$cm_total",
+      "cm_tax": "$cm_tax",
+      "cm_rebate": "$cm_rebate",
+      "cm_cess": "$cm_cess",
+      "cm_gross": "$cm_gross",
+      "cm_interest": "$cm_interest",
+      "cm_tds": "$cm_tds",
+      "cm_paid": "$cm_paid",
+      "cm_refund": "$cm_refund",
+      "cm_payable": "$cm_payable",
+      "go_check": "$go_check",
+      "go_choose": "$go_choose",
+      "go_review": "$go_review",
+      "go_file": "$go_file",
+      "file_h": "$file_h",
+      "why_simple": "$why_simple",
+      "why_nonres": "$why_nonres",
+      "why_income": "$why_income",
+      "why_houses": "$why_houses",
+      "why_cg": "$why_cg",
+      "why_agri": "$why_agri",
+      "why_director": "$why_director",
+      "why_foreign": "$why_foreign",
+      "why_other": "$why_other",
+      "schema_wait": "$schema_wait",
+      "schema_ok": "$schema_ok",
+      "schema_bad": "$schema_bad",
+      "download": "$download",
+      "upload_h": "$upload_h",
+      "upload_steps": "$upload_steps",
+      "file_note": "$file_note",
+      "bad_ext": "$bad_ext",
+      "too_big": "$too_big",
+      "no_doc": "$no_doc",
+      "bad_field": "$bad_field",
+      "unknown_doc": "$unknown_doc",
+      "need_password": "$need_password",
+      "bad_password": "$bad_password",
+      "scanned": "$scanned",
+      "ai_failed": "$ai_failed",
+      "no_ai_key": "$no_ai_key",
+      "ay_mismatch": "$ay_mismatch",
+      "pan_mismatch": "$pan_mismatch",
+      "fd_salary": "$fd_salary",
+      "fd_tds": "$fd_tds",
+      "fd_tan": "$fd_tan",
+      "fd_employer": "$fd_employer",
+      "fd_name": "$fd_name",
+      "fd_pan": "$fd_pan",
+      "fd_interest": "$fd_interest",
+      "fd_dividend": "$fd_dividend",
+      "fd_cg": "$fd_cg",
+      "fd_banks": "$fd_banks",
+      "fd_paid": "$fd_paid",
+      "fd_via": "$fd_via",
+      "fd_rows": "$fd_rows",
+      "fd_regime": "$fd_regime"
+    }
+  },
+  "returns": "record",
+  "version": 6,
+  "status": "published",
+  "description_nl": "2026-10-06: every word of My return - the steps, the documents and how to get each, the checks, the regimes, the review fields, the form and how to file it.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "title": "My return · AY {ay}",
+        "lede": "{name}: drop in your documents - we read them, check them against each other and work out both tax regimes. You file the JSON on the e-filing portal.",
+        "pick_lede": "Whose return? Pick the person - an individual or HUF.",
+        "pick_none": "No individual or HUF clients yet. Add one under Clients & years.",
+        "saved": "Saved",
+        "s_gather": "Gather",
+        "s_check": "Check",
+        "s_choose": "Choose",
+        "s_review": "Review",
+        "s_file": "File",
+        "g_income": "Total income",
+        "g_tax": "Tax",
+        "g_pay": "To pay",
+        "g_refund": "Refund due",
+        "g_regime": "Regime",
+        "r_new": "New regime",
+        "r_old": "Old regime",
+        "gather_h": "Your documents",
+        "gather_p": "Start with the pre-filled JSON - it carries your details, salary, TDS and bank accounts. Then the AIS, and Form 16 from each employer. Drop them in any order; each one is read as it arrives.",
+        "drop": "Drop a document here, or choose one",
+        "drop_hint": "Pre-filled JSON · AIS (JSON, CSV or PDF) · Form 16 (PDF) · 26AS (text or PDF)",
+        "pw": "PDF password (if it has one)",
+        "pw_ph": "AIS / 26AS: your PAN in small letters + date of birth DDMMYYYY",
+        "ai_ok": "Read Form 16 Part B with AI when its layout is unusual - the page goes to Google Gemini on this portal's key and nothing is kept there",
+        "read": "Read it",
+        "read_done": "{kind} read",
+        "read_ok": "Read",
+        "read_ai": "Read with AI",
+        "open": "Open",
+        "remove": "Remove",
+        "how_get": "How to get it",
+        "k_prefill": "Pre-filled JSON",
+        "k_prefill_why": "Your details, salary from your employer's TDS returns, TDS, taxes paid and bank accounts - straight from the department.",
+        "k_prefill_how": "Sign in at incometax.gov.in|e-File > Income Tax Returns > Download Pre-Filled Data|Pick AY {ay} and download the JSON|Drop it here",
+        "k_ais": "AIS",
+        "k_ais_why": "Interest, dividends, sales of shares and funds, and every TDS the department knows about.",
+        "k_ais_how": "Sign in at incometax.gov.in|Services > Annual Information Statement (AIS) > Proceed|Choose FY 2025-26, then AIS > Download (JSON or PDF)|The PDF's password is your PAN in small letters with your date of birth, e.g. abcde1234f01011990",
+        "k_form16": "Form 16",
+        "k_form16_why": "Your employer's certificate: Part A (TDS by quarter) and Part B (salary, allowances, deductions). One per employer.",
+        "k_form16_how": "Ask your employer's HR or payroll - it is due by 15 June|Usually a signed PDF; Part A comes from TRACES|Changed jobs in the year? Bring one from each employer",
+        "k_26as": "26AS",
+        "k_26as_why": "Your tax credit as the department holds it: TDS by deductor and taxes you paid. The return is checked against it.",
+        "k_26as_how": "Sign in at incometax.gov.in|e-File > Income Tax Returns > View Form 26AS > Confirm|Pick AY {ay}, view as Text, export|Drop the text file (or the PDF) here",
+        "k_other": "Other document",
+        "check_h": "Do the documents agree?",
+        "check_p": "The same figure from two documents, side by side. A gap is not always wrong - a TDS deposited late may not show in 26AS yet - but it is better seen now than in a notice.",
+        "check_none": "Nothing to compare yet - drop in Form 16 and 26AS or the AIS.",
+        "c_left": "Form 16 says",
+        "c_right": "26AS / AIS says",
+        "c_f16": "Form 16 · {tan}",
+        "c_credit": "Credit · {tan}",
+        "c_tds": "Tax deducted by {tan}",
+        "c_salary": "Salary",
+        "c_savings": "Savings interest",
+        "c_deposits": "Deposit interest",
+        "c_dividend": "Dividends",
+        "lv_ok": "Agrees: {a}",
+        "lv_amber": "{a} here, not in the other document - worth a look",
+        "lv_red": "{a} here, {b} there - a gap of {gap}",
+        "accept": "I have checked this",
+        "choose_h": "New or old regime?",
+        "verdict": "{regime} costs you {saving} less.",
+        "old_closed": "The old regime can only be chosen in a return filed by the due date (31 July) - a belated return is under the new regime.",
+        "old_closed_short": "Closed for a belated return",
+        "verdict_same": "Both regimes come to the same tax - the new regime needs nothing more from you.",
+        "cheaper": "Cheaper",
+        "chosen": "Chosen",
+        "choose_this": "Choose this one",
+        "d_income": "Total income",
+        "d_via": "Deductions (Chapter VI-A)",
+        "d_tax": "Tax on income",
+        "d_rebate": "Rebate u/s 87A",
+        "d_sur": "Surcharge",
+        "d_cess": "Health & education cess",
+        "d_fee": "Late fee and interest",
+        "d_total": "You owe in all",
+        "flow_h": "From income to tax · {regime}",
+        "wf_gross": "Income",
+        "wf_exempt": "Exempt",
+        "wf_std": "Std. deduction",
+        "wf_hp": "Home loan",
+        "wf_via": "Deductions",
+        "wf_taxable": "Taxable",
+        "wf_tax": "Tax",
+        "rv_salary": "Salary",
+        "rv_house": "House property",
+        "rv_other": "Other income",
+        "rv_cg": "Capital gains",
+        "rv_cg_p": "From the AIS or your broker's capital-gains statement. Anything here other than 112A gains up to 1.25 lakh makes it an ITR-2.",
+        "rv_via": "Deductions",
+        "rv_via_p": "As your employer declared them in Form 16, or what you type. The old regime allows them all; the new only the employer's NPS (80CCD(2)).",
+        "rv_q": "A few questions",
+        "no_salary": "No salary yet - drop Form 16, or add an employer.",
+        "no_house": "No house property. Add one if you own a home or let one out.",
+        "add_employer": "Add an employer",
+        "add_house": "Add a house",
+        "employer_n": "Employer {n}",
+        "you": "you",
+        "f_gross_17_1": "Salary 17(1)",
+        "f_perq_17_2": "Perquisites 17(2)",
+        "f_profit_17_3": "Profits in lieu 17(3)",
+        "f_exempt_all": "Exempt allowances (sec 10)",
+        "f_exempt_new": "Still exempt (new regime)",
+        "f_prof_tax": "Professional tax",
+        "f_basic_da": "Basic + DA",
+        "f_tds": "TDS",
+        "f_kind": "Kind",
+        "h_self": "Self-occupied",
+        "h_let": "Let out",
+        "f_rent": "Rent received",
+        "f_municipal_tax": "Municipal tax",
+        "f_interest": "Home-loan interest",
+        "f_savings": "Savings-account interest",
+        "f_deposits": "FD / RD interest",
+        "f_dividend": "Dividends",
+        "f_family_pension": "Family pension",
+        "f_refund_interest": "Interest on a tax refund",
+        "f_other": "Any other income",
+        "f_stcg_111a": "Short-term, listed (111A)",
+        "f_ltcg_112a": "Long-term, listed (112A)",
+        "f_ltcg_112": "Other long-term (112)",
+        "f_stcg_other": "Other short-term",
+        "f_c80c": "80C: PPF, ELSS, LIC, EPF...",
+        "f_c80ccc": "80CCC: pension plan",
+        "f_c80ccd1": "80CCD(1): your NPS",
+        "f_c80ccd1b": "80CCD(1B): NPS extra",
+        "f_c80ccd2": "80CCD(2): employer NPS",
+        "f_c80d_self": "80D: you and family",
+        "f_c80d_parents": "80D: parents",
+        "f_c80e": "80E: education loan",
+        "f_c80g": "80G: donations",
+        "q_resident": "I lived in India for 182 days or more in FY 2025-26",
+        "q_director": "I was a director of a company",
+        "q_unlisted": "I held unlisted shares at some time in the year",
+        "q_foreign": "I have assets or income outside India",
+        "q_parents_senior": "A parent I pay health cover for is 60 or older",
+        "q_metro": "I rented in Mumbai, Delhi, Kolkata or Chennai",
+        "q_father": "Father's name",
+        "q_state": "State you live in",
+        "pick": "Pick one",
+        "q_employer_category": "Your employer",
+        "emp_cats": "OTH=Private company or others|CGOV=Central Government|SGOV=State Government|PSU=Public sector undertaking|PE=Pensioner - Central Government|PESG=Pensioner - State Government|PEPS=Pensioner - public sector|PEO=Pensioner - others|NA=Not employed",
+        "states": "01=Andaman and Nicobar Islands|02=Andhra Pradesh|03=Arunachal Pradesh|04=Assam|05=Bihar|06=Chandigarh|07=Dadra and Nagar Haveli|08=Daman and Diu|09=Delhi|10=Goa|11=Gujarat|12=Haryana|13=Himachal Pradesh|14=Jammu and Kashmir|15=Karnataka|16=Kerala|17=Lakshadweep|18=Madhya Pradesh|19=Maharashtra|20=Manipur|21=Meghalaya|22=Mizoram|23=Nagaland|24=Odisha|25=Puducherry|26=Punjab|27=Rajasthan|28=Sikkim|29=Tamil Nadu|30=Tripura|31=Uttar Pradesh|32=West Bengal|33=Chhattisgarh|34=Uttarakhand|35=Jharkhand|36=Telangana|37=Ladakh",
+        "ready_h": "Before you start: keep these handy",
+        "ready_p": "Ten minutes of gathering saves an hour of guessing. Each one you drop in below ticks itself; tick the rest as you have them.",
+        "ready_n": "{n} of {total} ready",
+        "k_filed": "The return you filed",
+        "k_filed_why": "Already filed? Drop in the JSON you filed and every figure is set beside this one.",
+        "k_filed_how": "Sign in at incometax.gov.in|e-File > Income Tax Returns > View Filed Returns|Pick AY {ay} and download the JSON (or keep the one you uploaded)|Drop it here",
+        "fd_form": "Form",
+        "fd_ay": "Year",
+        "fd_total": "Total income",
+        "fd_tax": "Tax",
+        "fd_refund": "Refund",
+        "no_filed": "No filed return in this one yet - drop in the JSON you filed.",
+        "filed_h": "Already filed?",
+        "filed_p": "Give the day you filed - the dates, the late fee, interest and the regime are then worked out as of that day.",
+        "filed_on": "Filed on",
+        "ack_no": "Acknowledgement no.",
+        "cmp_h": "Compared with the return you filed",
+        "cmp_p": "{file}: {filed} as filed, {ours} as made here. A gap means one of the two has a figure the other does not.",
+        "cmp_same": "Every figure agrees with the return you filed.",
+        "cmp_regime": "Filed under the {regime}.",
+        "cmp_fig": "Figure",
+        "cmp_ours": "Here",
+        "cmp_theirs": "As filed",
+        "cmp_gap": "Gap",
+        "cmp_missing": "not in the filed JSON",
+        "cm_salary": "Gross salary",
+        "cm_salary_income": "Income from salary",
+        "cm_hp": "House property",
+        "cm_os": "Other sources",
+        "cm_gti": "Gross total income",
+        "cm_via": "Deductions (VI-A)",
+        "cm_total": "Total income",
+        "cm_tax": "Tax on total income",
+        "cm_rebate": "Rebate 87A",
+        "cm_cess": "Cess",
+        "cm_gross": "Tax liability",
+        "cm_interest": "Interest and fee",
+        "cm_tds": "TDS",
+        "cm_paid": "Taxes you paid",
+        "cm_refund": "Refund",
+        "cm_payable": "Tax payable",
+        "go_check": "Check the documents",
+        "go_choose": "Compare the regimes",
+        "go_review": "Review the figures",
+        "go_file": "Make the return",
+        "file_h": "Your return: {form}",
+        "why_simple": "ITR-1 (Sahaj) fits: resident, income up to 50 lakh, salary, up to two houses and other sources.",
+        "why_nonres": "ITR-2, because you were not resident in India this year.",
+        "why_income": "ITR-2, because your total income is above 50 lakh.",
+        "why_houses": "ITR-2, because you have more than two house properties.",
+        "why_cg": "ITR-2, because of capital gains beyond 112A gains of 1.25 lakh.",
+        "why_agri": "ITR-2, because agricultural income is above 5,000.",
+        "why_director": "ITR-2, because you were a company director or held unlisted shares.",
+        "why_foreign": "ITR-2, because of assets or income outside India.",
+        "why_other": "ITR-2, because of losses carried forward or income ITR-1 does not take.",
+        "schema_wait": "Checking against the department's schema...",
+        "schema_ok": "Checked against the department's own schema ({schema}) - it fits.",
+        "schema_bad": "{n} {n:thing|things} to fill before it fits the department's schema:",
+        "download": "Download {form} JSON",
+        "upload_h": "Then file it",
+        "upload_steps": "Sign in at incometax.gov.in|e-File > Income Tax Returns > File Income Tax Return|AY 2026-27 · Online · your status · the form shown here|Choose 'Upload JSON' (or open it in the department's offline utility) and pick this file|Check the pages, pay any tax due first, then submit|e-Verify with Aadhaar OTP within 30 days",
+        "file_note": "SimplyFile prepares the return; you file it yourself on the e-filing portal. Keep the documents you used - the department may ask for them.",
+        "bad_ext": "That kind of file is not read here - send {exts}.",
+        "too_big": "That file is over {mb} MB.",
+        "no_doc": "That document is not in this return.",
+        "bad_field": "That field ({field}) is not one this return keeps.",
+        "unknown_doc": "This does not look like a pre-filled JSON, AIS, Form 16 or 26AS. Send one of those.",
+        "need_password": "This PDF is locked - type its password above and send it again.",
+        "bad_password": "That password does not open this PDF.",
+        "scanned": "This PDF has no text layer (a scan or photo). Tick 'Read with AI' to read it, or type the figures under Review.",
+        "ai_failed": "The AI could not read it ({why}). Type the figures under Review.",
+        "no_ai_key": "No AI key is set up on this portal, so only the usual layouts are read. Type the rest under Review.",
+        "ay_mismatch": "This document is for AY {theirs}, not AY {ours}.",
+        "pan_mismatch": "This document is for PAN {theirs}, not {ours}.",
+        "fd_salary": "Salary",
+        "fd_tds": "TDS",
+        "fd_tan": "Employer TAN",
+        "fd_employer": "Employer",
+        "fd_name": "Name",
+        "fd_pan": "PAN",
+        "fd_interest": "Interest",
+        "fd_dividend": "Dividends",
+        "fd_cg": "Capital gains",
+        "fd_banks": "Bank accounts",
+        "fd_paid": "Taxes paid",
+        "fd_via": "Deductions declared",
+        "fd_rows": "TDS rows",
+        "fd_regime": "Regime used by employer"
+      }
+    }
+  ]
+}

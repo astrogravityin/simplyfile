@@ -1,0 +1,99 @@
+{
+  "chip_id": "taxwatch.settings",
+  "kind": "accessor",
+  "set": "taxwatch",
+  "label": "Tax rules: fetch, compare, apply - settings",
+  "aliases": [
+    "tax rules: fetch, compare, apply - setti"
+  ],
+  "params": [
+    {
+      "name": "live_ay",
+      "type": "text",
+      "default": "2026-27",
+      "label": "live ay"
+    },
+    {
+      "name": "provider",
+      "type": "text",
+      "default": "gemini",
+      "label": "provider"
+    },
+    {
+      "name": "model",
+      "type": "text",
+      "default": "gemini-2.5-flash",
+      "label": "model"
+    },
+    {
+      "name": "search",
+      "type": "json",
+      "default": true,
+      "label": "search"
+    },
+    {
+      "name": "prompt",
+      "type": "long",
+      "default": "You are checking India's income-tax figures for Assessment Year {ay} (financial year {fy}), as enacted by the Finance Act for that year and any CBDT notification or circular since. Use only official sources: incometax.gov.in, indiabudget.gov.in, egazette.gov.in, cbic / CBDT circulars and press releases. For each item below you are given its value for AY {live_ay} and its exact JSON shape. Give the value for AY {ay} in the SAME shape (same keys, same units: rupees as whole numbers, rates as percent numbers, dates as MMDD numbers like 731 for 31 July). If AY {ay} has not been announced yet, or you are not sure, give null and say why in note.\n\nItems:\n{items}\n\nAnswer with one JSON object only, inside a ```json fence: {{\"<item id>\": {{\"value\": <value or null>, \"source\": \"<official URL>\", \"note\": \"<one short line: what changed, or why null>\"}}, ...}} - every item id once.",
+      "label": "prompt"
+    },
+    {
+      "name": "fence",
+      "type": "text",
+      "default": "```(?:json)?\\s*(\\{.*\\})\\s*```",
+      "label": "fence"
+    },
+    {
+      "name": "sources_most",
+      "type": "json",
+      "default": 8,
+      "label": "sources most"
+    },
+    {
+      "name": "note_chars",
+      "type": "json",
+      "default": 240,
+      "label": "note chars"
+    },
+    {
+      "name": "archive_key",
+      "type": "text",
+      "default": "{ay}",
+      "label": "archive key"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "live_ay": "$live_ay",
+      "provider": "$provider",
+      "model": "$model",
+      "search": "$search",
+      "prompt": "$prompt",
+      "fence": "$fence",
+      "sources_most": "$sources_most",
+      "note_chars": "$note_chars",
+      "archive_key": "$archive_key"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-06: the AY the portal's live figures are for (live_ay - Apply moves it on), the AI that fetches (Gemini with Google Search, official sources only), its prompt, and how its answer is read. Apply publishes through the Ops & chips builder layer (data/builder/chips), so a deploy never undoes it and each chip keeps its History.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "live_ay": "2026-27",
+        "provider": "gemini",
+        "model": "gemini-2.5-flash",
+        "search": true,
+        "prompt": "You are checking India's income-tax figures for Assessment Year {ay} (financial year {fy}), as enacted by the Finance Act for that year and any CBDT notification or circular since. Use only official sources: incometax.gov.in, indiabudget.gov.in, egazette.gov.in, cbic / CBDT circulars and press releases. For each item below you are given its value for AY {live_ay} and its exact JSON shape. Give the value for AY {ay} in the SAME shape (same keys, same units: rupees as whole numbers, rates as percent numbers, dates as MMDD numbers like 731 for 31 July). If AY {ay} has not been announced yet, or you are not sure, give null and say why in note.\n\nItems:\n{items}\n\nAnswer with one JSON object only, inside a ```json fence: {{\"<item id>\": {{\"value\": <value or null>, \"source\": \"<official URL>\", \"note\": \"<one short line: what changed, or why null>\"}}, ...}} - every item id once.",
+        "fence": "```(?:json)?\\s*(\\{.*\\})\\s*```",
+        "sources_most": 8,
+        "note_chars": 240,
+        "archive_key": "{ay}"
+      }
+    }
+  ]
+}

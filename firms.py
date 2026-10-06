@@ -24,7 +24,7 @@ from core import access, auth, demo, engine, lists, mailer, ops, store
 
 FILE = "sf_firms"
 _LOCK = threading.Lock()  # ponytail: one lock for every firm; per-firm locks if sign-ups ever queue
-FILING = ("clients", "intake", "recon", "compute", "audit", "analytics", "itrimport")
+FILING = ("clients", "myreturn", "intake", "recon", "compute", "audit", "analytics", "itrimport")
 
 
 def settings() -> dict:
@@ -296,6 +296,10 @@ def move(u: dict, fid: str, action: str, note: str = "") -> dict:
         f["state"] = to["to"]
         f[f"{to['to']}_at"] = store.now()
         _note(f, u, action, _txt(note, settings()["max_len"]["note"]))
+        if to["to"] == settings()["waiting_state"] and kind_of(f["kind"]).get("auto_approve"):   # an individual's own return needs no review
+            to = engine.run("firm.move", {"facts": {"action": "approve", "state": f["state"], "by": "admin"}})
+            f["state"] = to["to"]
+            f[f"{to['to']}_at"] = store.now()
         _save(rows)
     k = settings()
     if to["to"] == k["working_state"] and kind_of(f["kind"])["self_client"]:
@@ -321,6 +325,12 @@ def _self_client(f: dict) -> None:
     owner = store.user_by_id(f["created_by"]) or {"id": f["created_by"]}
     clients.save(owner | {"firm_id": f["id"]}, {"name": f["name"], "pan": f["pan"], "status": status,
                                                 "email": f.get("email", ""), "phone": f.get("phone", ""), "address": f.get("address", "")})
+
+
+def bootstrap_extra(_request, u: dict | None) -> dict:
+    """A self-filer (firm kind with self_client) opens on My return - their own return is the whole point (2026-10-06)."""
+    f = firm_of(u) if u else None
+    return {"self_filer": bool(f) and bool(kind_of(f["kind"]).get("self_client"))}
 
 
 def may_add_client(u: dict, count: int) -> None:

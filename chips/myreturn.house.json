@@ -1,0 +1,303 @@
+{
+  "chip_id": "myreturn.house",
+  "kind": "accessor",
+  "set": "myreturn",
+  "label": "My return: one house property, per regime",
+  "aliases": [
+    "my return: one house property, per regim"
+  ],
+  "params": [
+    {
+      "name": "kind",
+      "type": "text",
+      "default": "self",
+      "label": "self (self-occupied) or let (let out / deemed let out)"
+    },
+    {
+      "name": "rent",
+      "type": "number",
+      "default": 0,
+      "label": "rent received for the year"
+    },
+    {
+      "name": "municipal_tax",
+      "type": "number",
+      "default": 0,
+      "label": "municipal tax paid"
+    },
+    {
+      "name": "interest",
+      "type": "number",
+      "default": 0,
+      "label": "home-loan interest u/s 24(b)"
+    },
+    {
+      "name": "regime",
+      "type": "text",
+      "default": "new",
+      "label": "regime"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "nav": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "eq",
+              "left": "$kind",
+              "right": "self"
+            },
+            "then": 0
+          }
+        ],
+        "else": {
+          "vop": "largest",
+          "values": [
+            {
+              "vop": "sub",
+              "a": "$rent",
+              "b": "$municipal_tax"
+            },
+            0
+          ]
+        }
+      },
+      "std": {
+        "vop": "round_to",
+        "value": {
+          "vop": "mul",
+          "a": {
+            "vop": "choose",
+            "cases": [
+              {
+                "when": {
+                  "op": "eq",
+                  "left": "$kind",
+                  "right": "self"
+                },
+                "then": 0
+              }
+            ],
+            "else": {
+              "vop": "largest",
+              "values": [
+                {
+                  "vop": "sub",
+                  "a": "$rent",
+                  "b": "$municipal_tax"
+                },
+                0
+              ]
+            }
+          },
+          "b": {
+            "vop": "div",
+            "a": {
+              "vop": "get",
+              "value": {
+                "chip": "myreturn.rates",
+                "args": {}
+              },
+              "path": "hp_std_pct"
+            },
+            "b": 100
+          }
+        }
+      },
+      "interest": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "eq",
+              "left": "$kind",
+              "right": "self"
+            },
+            "then": {
+              "vop": "smallest",
+              "values": [
+                "$interest",
+                {
+                  "vop": "get",
+                  "value": {
+                    "chip": "myreturn.rates",
+                    "args": {}
+                  },
+                  "path": {
+                    "vop": "template",
+                    "text": "self_interest_cap.{r}",
+                    "values": {
+                      "vop": "record",
+                      "fields": {
+                        "r": "$regime"
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "else": "$interest"
+      },
+      "net": {
+        "vop": "sub",
+        "a": {
+          "vop": "sub",
+          "a": {
+            "vop": "choose",
+            "cases": [
+              {
+                "when": {
+                  "op": "eq",
+                  "left": "$kind",
+                  "right": "self"
+                },
+                "then": 0
+              }
+            ],
+            "else": {
+              "vop": "largest",
+              "values": [
+                {
+                  "vop": "sub",
+                  "a": "$rent",
+                  "b": "$municipal_tax"
+                },
+                0
+              ]
+            }
+          },
+          "b": {
+            "vop": "round_to",
+            "value": {
+              "vop": "mul",
+              "a": {
+                "vop": "choose",
+                "cases": [
+                  {
+                    "when": {
+                      "op": "eq",
+                      "left": "$kind",
+                      "right": "self"
+                    },
+                    "then": 0
+                  }
+                ],
+                "else": {
+                  "vop": "largest",
+                  "values": [
+                    {
+                      "vop": "sub",
+                      "a": "$rent",
+                      "b": "$municipal_tax"
+                    },
+                    0
+                  ]
+                }
+              },
+              "b": {
+                "vop": "div",
+                "a": {
+                  "vop": "get",
+                  "value": {
+                    "chip": "myreturn.rates",
+                    "args": {}
+                  },
+                  "path": "hp_std_pct"
+                },
+                "b": 100
+              }
+            }
+          }
+        },
+        "b": {
+          "vop": "choose",
+          "cases": [
+            {
+              "when": {
+                "op": "eq",
+                "left": "$kind",
+                "right": "self"
+              },
+              "then": {
+                "vop": "smallest",
+                "values": [
+                  "$interest",
+                  {
+                    "vop": "get",
+                    "value": {
+                      "chip": "myreturn.rates",
+                      "args": {}
+                    },
+                    "path": {
+                      "vop": "template",
+                      "text": "self_interest_cap.{r}",
+                      "values": {
+                        "vop": "record",
+                        "fields": {
+                          "r": "$regime"
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          ],
+          "else": "$interest"
+        }
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-06: self-occupied: annual value nil, interest up to 2 lakh (old regime; nil in the new). Let out: rent less municipal tax, 30% off, then interest in full.",
+  "test_cases": [
+    {
+      "args": {
+        "kind": "self",
+        "interest": 350000,
+        "regime": "old"
+      },
+      "expect_value": {
+        "nav": 0,
+        "std": 0,
+        "interest": 200000,
+        "net": -200000
+      }
+    },
+    {
+      "args": {
+        "kind": "self",
+        "interest": 350000,
+        "regime": "new"
+      },
+      "expect_value": {
+        "nav": 0,
+        "std": 0,
+        "interest": 0,
+        "net": 0
+      }
+    },
+    {
+      "args": {
+        "kind": "let",
+        "rent": 300000,
+        "municipal_tax": 20000,
+        "interest": 100000,
+        "regime": "new"
+      },
+      "expect_value": {
+        "nav": 280000,
+        "std": 84000,
+        "interest": 100000,
+        "net": 96000
+      }
+    }
+  ]
+}

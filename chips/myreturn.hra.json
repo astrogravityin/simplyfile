@@ -1,0 +1,147 @@
+{
+  "chip_id": "myreturn.hra",
+  "kind": "accessor",
+  "set": "myreturn",
+  "label": "My return: HRA exempt u/s 10(13A), the least of three",
+  "aliases": [
+    "my return: hra exempt u/s 10(13a), the l"
+  ],
+  "params": [
+    {
+      "name": "hra",
+      "type": "number",
+      "default": 0,
+      "label": "HRA received"
+    },
+    {
+      "name": "salary",
+      "type": "number",
+      "default": 0,
+      "label": "basic + DA for the months rent was paid"
+    },
+    {
+      "name": "rent",
+      "type": "number",
+      "default": 0,
+      "label": "rent paid"
+    },
+    {
+      "name": "metro",
+      "type": "boolean",
+      "default": false,
+      "label": "lived in Mumbai, Delhi, Kolkata or Chennai"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "exempt": {
+        "vop": "largest",
+        "values": [
+          {
+            "vop": "smallest",
+            "values": [
+              "$hra",
+              {
+                "vop": "sub",
+                "a": "$rent",
+                "b": {
+                  "vop": "mul",
+                  "a": "$salary",
+                  "b": {
+                    "vop": "div",
+                    "a": {
+                      "vop": "get",
+                      "value": {
+                        "chip": "myreturn.rates",
+                        "args": {}
+                      },
+                      "path": "hra_rent_less_pct"
+                    },
+                    "b": 100
+                  }
+                }
+              },
+              {
+                "vop": "mul",
+                "a": "$salary",
+                "b": {
+                  "vop": "div",
+                  "a": {
+                    "vop": "choose",
+                    "cases": [
+                      {
+                        "when": {
+                          "op": "eq",
+                          "left": "$metro",
+                          "right": true
+                        },
+                        "then": {
+                          "vop": "get",
+                          "value": {
+                            "chip": "myreturn.rates",
+                            "args": {}
+                          },
+                          "path": "hra_metro_pct"
+                        }
+                      }
+                    ],
+                    "else": {
+                      "vop": "get",
+                      "value": {
+                        "chip": "myreturn.rates",
+                        "args": {}
+                      },
+                      "path": "hra_other_pct"
+                    }
+                  },
+                  "b": 100
+                }
+              }
+            ]
+          },
+          0
+        ]
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-06: HRA exempt = the least of: HRA received; rent paid less 10% of salary; 50% of salary in a metro, 40% elsewhere. Old regime only.",
+  "test_cases": [
+    {
+      "args": {
+        "hra": 240000,
+        "salary": 600000,
+        "rent": 300000,
+        "metro": true
+      },
+      "expect_value": {
+        "exempt": 240000
+      }
+    },
+    {
+      "args": {
+        "hra": 240000,
+        "salary": 600000,
+        "rent": 200000,
+        "metro": false
+      },
+      "expect_value": {
+        "exempt": 140000
+      }
+    },
+    {
+      "args": {
+        "hra": 100000,
+        "salary": 600000,
+        "rent": 50000,
+        "metro": false
+      },
+      "expect_value": {
+        "exempt": 0
+      }
+    }
+  ]
+}

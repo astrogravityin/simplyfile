@@ -1,0 +1,159 @@
+{
+  "chip_id": "guide.myreturn",
+  "kind": "accessor",
+  "set": "guide",
+  "label": "Guide me: My return",
+  "aliases": [
+    "guide me: my return"
+  ],
+  "params": [
+    {
+      "name": "title",
+      "type": "text",
+      "default": "My return",
+      "label": "title"
+    },
+    {
+      "name": "lede",
+      "type": "long",
+      "default": "Your own return, ITR-1 or ITR-2: drop in your documents, and {product} reads them, checks them against each other and works out both regimes.",
+      "label": "lede"
+    },
+    {
+      "name": "icon",
+      "type": "text",
+      "default": "user",
+      "label": "icon"
+    },
+    {
+      "name": "minutes",
+      "type": "number",
+      "default": 3,
+      "label": "minutes"
+    },
+    {
+      "name": "steps",
+      "type": "rows",
+      "default": [
+        {
+          "title": "Five steps",
+          "say": "Gather, check, choose, review, file. Each step ticks itself off as it is done, and you can click any step to go back to it.",
+          "target": ".mr-rail-card|main"
+        },
+        {
+          "title": "Drop in your documents",
+          "say": "Start with the pre-filled JSON from the e-filing portal, then the AIS and Form 16 from each employer. A locked PDF opens with your PAN and date of birth.",
+          "target": "#mr-file|.mr-panel|main"
+        },
+        {
+          "title": "What each one gave",
+          "say": "Every document shows what was read from it - salary, tax deducted, interest - and, if you do not have it yet, how to get it.",
+          "target": ".mr-dgrid|main"
+        },
+        {
+          "title": "Your return at a glance",
+          "say": "Total income, tax, and the refund due or the amount to pay - kept up to date with every document and every figure.",
+          "target": ".mr-glance|main"
+        },
+        {
+          "title": "Do the documents agree?",
+          "say": "Form 16's tax deducted beside 26AS, and salary and interest beside the AIS. A gap is shown to you before the department finds it.",
+          "target": ".mr-tmap|.mr-panel|main"
+        },
+        {
+          "title": "New or old regime",
+          "say": "Both regimes worked out side by side, and the cheaper one marked. After the due date only the new regime is open, and the screen says so.",
+          "target": ".mr-rgs|.mr-panel|main"
+        },
+        {
+          "title": "From income to tax",
+          "say": "Income, what comes off it, what is taxed and the tax - the whole computation in one picture.",
+          "target": ".mr-water|main"
+        },
+        {
+          "title": "Review every figure",
+          "say": "Each figure carries the document it came from. Type over any of them; your figure wins, and is marked as yours.",
+          "target": ".mr-panel|main"
+        },
+        {
+          "title": "File it",
+          "say": "ITR-1 or ITR-2 is picked for you, and the return is checked against the department's own schema. Download it and upload it on the e-filing portal.",
+          "target": "#mr-json|.mr-panel|main"
+        }
+      ],
+      "label": "steps"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "title": "$title",
+      "lede": "$lede",
+      "icon": "$icon",
+      "minutes": "$minutes",
+      "steps": "$steps"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-06: the My return walk - the five steps, the documents, the checks, the two regimes, the review and the file; tours/sf-myreturn.json says the same.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "title": "My return",
+        "lede": "Your own return, ITR-1 or ITR-2: drop in your documents, and {product} reads them, checks them against each other and works out both regimes.",
+        "icon": "user",
+        "minutes": 3,
+        "steps": [
+          {
+            "title": "Five steps",
+            "say": "Gather, check, choose, review, file. Each step ticks itself off as it is done, and you can click any step to go back to it.",
+            "target": ".mr-rail-card|main"
+          },
+          {
+            "title": "Drop in your documents",
+            "say": "Start with the pre-filled JSON from the e-filing portal, then the AIS and Form 16 from each employer. A locked PDF opens with your PAN and date of birth.",
+            "target": "#mr-file|.mr-panel|main"
+          },
+          {
+            "title": "What each one gave",
+            "say": "Every document shows what was read from it - salary, tax deducted, interest - and, if you do not have it yet, how to get it.",
+            "target": ".mr-dgrid|main"
+          },
+          {
+            "title": "Your return at a glance",
+            "say": "Total income, tax, and the refund due or the amount to pay - kept up to date with every document and every figure.",
+            "target": ".mr-glance|main"
+          },
+          {
+            "title": "Do the documents agree?",
+            "say": "Form 16's tax deducted beside 26AS, and salary and interest beside the AIS. A gap is shown to you before the department finds it.",
+            "target": ".mr-tmap|.mr-panel|main"
+          },
+          {
+            "title": "New or old regime",
+            "say": "Both regimes worked out side by side, and the cheaper one marked. After the due date only the new regime is open, and the screen says so.",
+            "target": ".mr-rgs|.mr-panel|main"
+          },
+          {
+            "title": "From income to tax",
+            "say": "Income, what comes off it, what is taxed and the tax - the whole computation in one picture.",
+            "target": ".mr-water|main"
+          },
+          {
+            "title": "Review every figure",
+            "say": "Each figure carries the document it came from. Type over any of them; your figure wins, and is marked as yours.",
+            "target": ".mr-panel|main"
+          },
+          {
+            "title": "File it",
+            "say": "ITR-1 or ITR-2 is picked for you, and the return is checked against the department's own schema. Download it and upload it on the e-filing portal.",
+            "target": "#mr-json|.mr-panel|main"
+          }
+        ]
+      }
+    }
+  ]
+}

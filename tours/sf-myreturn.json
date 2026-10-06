@@ -1,0 +1,194 @@
+{
+  "prod_base": "https://sf.valuestream.in",
+  "voice": "en-IN-NeerjaNeural",
+  "rate": "+0%",
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "blur": [
+    "#whoami",
+    "#userpop .head"
+  ],
+  "page_key": "sf-myreturn",
+  "title": "My return",
+  "start_url": "/#/myreturn",
+  "covers": [
+    "the five steps",
+    "reading the pre-filled JSON, AIS, Form 16 and 26AS",
+    "checking documents against each other",
+    "new or old regime",
+    "the income-to-tax picture",
+    "reviewing figures",
+    "the ITR-1 / ITR-2 JSON"
+  ],
+  "steps": [
+    {
+      "chapter": "My return",
+      "say": "Your own return, ITR-1 or ITR-2: drop in your documents, and SimplyFile reads them, checks them against each other and works out both regimes.",
+      "do": [
+        {
+          "wait_for": ".mr-rail-card"
+        },
+        {
+          "wait": 1
+        }
+      ]
+    },
+    {
+      "chapter": "Five steps",
+      "say": "Gather, check, choose, review, file. Each step ticks itself off as it is done, and you can click any step to go back to it.",
+      "do": [
+        {
+          "highlight_target": ".mr-rail-card|main",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Drop in your documents",
+      "say": "Start with the pre-filled JSON from the e-filing portal, then the AIS and Form 16 from each employer. A locked PDF opens with your PAN and date of birth.",
+      "do": [
+        {
+          "click": ".mr-node[data-step='gather']",
+          "optional": true
+        },
+        {
+          "wait": 1.2
+        },
+        {
+          "highlight_target": "#mr-file|.mr-panel|main",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "What each one gave",
+      "say": "Every document shows what was read from it - salary, tax deducted, interest - and, if you do not have it yet, how to get it.",
+      "do": [
+        {
+          "click": ".mr-node[data-step='gather']",
+          "optional": true
+        },
+        {
+          "wait": 1.2
+        },
+        {
+          "highlight_target": ".mr-dgrid|main",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Your return at a glance",
+      "say": "Total income, tax, and the refund due or the amount to pay - kept up to date with every document and every figure.",
+      "do": [
+        {
+          "click": ".mr-node[data-step='gather']",
+          "optional": true
+        },
+        {
+          "wait": 1.2
+        },
+        {
+          "highlight_target": ".mr-glance|main",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Do the documents agree?",
+      "say": "Form 16's tax deducted beside 26AS, and salary and interest beside the AIS. A gap is shown to you before the department finds it.",
+      "do": [
+        {
+          "click": ".mr-node[data-step='check']",
+          "optional": true
+        },
+        {
+          "wait": 1.2
+        },
+        {
+          "highlight_target": ".mr-tmap|.mr-panel|main",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "New or old regime",
+      "say": "Both regimes worked out side by side, and the cheaper one marked. After the due date only the new regime is open, and the screen says so.",
+      "do": [
+        {
+          "click": ".mr-node[data-step='choose']",
+          "optional": true
+        },
+        {
+          "wait": 1.2
+        },
+        {
+          "highlight_target": ".mr-rgs|.mr-panel|main",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "From income to tax",
+      "say": "Income, what comes off it, what is taxed and the tax - the whole computation in one picture.",
+      "do": [
+        {
+          "click": ".mr-node[data-step='choose']",
+          "optional": true
+        },
+        {
+          "wait": 1.2
+        },
+        {
+          "highlight_target": ".mr-water|main",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Review every figure",
+      "say": "Each figure carries the document it came from. Type over any of them; your figure wins, and is marked as yours.",
+      "do": [
+        {
+          "click": ".mr-node[data-step='review']",
+          "optional": true
+        },
+        {
+          "wait": 1.2
+        },
+        {
+          "highlight_target": ".mr-panel|main",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "File it",
+      "say": "ITR-1 or ITR-2 is picked for you, and the return is checked against the department's own schema. Download it and upload it on the e-filing portal.",
+      "do": [
+        {
+          "click": ".mr-node[data-step='file']",
+          "optional": true
+        },
+        {
+          "wait": 1.2
+        },
+        {
+          "highlight_target": "#mr-json|.mr-panel|main",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    }
+  ]
+}

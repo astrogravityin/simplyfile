@@ -1,0 +1,83 @@
+{
+  "chip_id": "myreturn.better",
+  "kind": "accessor",
+  "set": "myreturn",
+  "label": "My return: which regime costs less",
+  "aliases": [
+    "my return: which regime costs less"
+  ],
+  "params": [
+    {
+      "name": "new",
+      "type": "number",
+      "default": 0,
+      "label": "tax + interest under the new regime"
+    },
+    {
+      "name": "old",
+      "type": "number",
+      "default": 0,
+      "label": "tax + interest under the old regime"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "better": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "lt",
+              "left": "$old",
+              "right": "$new"
+            },
+            "then": "old"
+          }
+        ],
+        "else": "new"
+      },
+      "saving": {
+        "vop": "largest",
+        "values": [
+          {
+            "vop": "sub",
+            "a": "$new",
+            "b": "$old"
+          },
+          {
+            "vop": "sub",
+            "a": "$old",
+            "b": "$new"
+          }
+        ]
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-06: the cheaper regime and by how much; a tie goes to the new regime (the default - nothing to opt out of).",
+  "test_cases": [
+    {
+      "args": {
+        "new": 124800,
+        "old": 98000
+      },
+      "expect_value": {
+        "better": "old",
+        "saving": 26800
+      }
+    },
+    {
+      "args": {
+        "new": 50000,
+        "old": 50000
+      },
+      "expect_value": {
+        "better": "new",
+        "saving": 0
+      }
+    }
+  ]
+}

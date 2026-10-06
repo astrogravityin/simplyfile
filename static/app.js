@@ -27,6 +27,8 @@ import { serverPage } from './page-server.js';
 import { delegatePage } from './page-delegate.js';
 import { syncDock } from './dock.js';
 import { itrImportPage } from './page-itrimport.js';
+import { myReturnPage } from './page-myreturn.js';
+import { taxwatchPage } from './page-taxwatch.js';
 import { api, BASE, esc, t, ps, loadWords, keep, kept, uploadBox, confirmDialog, setCurrency, shownMoney } from '../core-static/ui.js';
 import { icon } from './icons.js';
 
@@ -165,10 +167,10 @@ const NEEDS_PROJECT = new Set(['manuals', 'howto']);
 const keyScreen = () => ps('shell').key_screen;          // the Account & key screen (chip page.shell key_screen)
 
 startPortal({
-  views: { firm: firmPage, analytics: analyticsPage, portalstats: portalstatsPage, server: serverPage, delegate: delegatePage, itrimport: itrImportPage, approvals: approvalsPage, clients: clientsPage, intake: intakePage, recon: reconPage, compute: computePage, audit: auditPage, manuals: manualPage, howto: howtoPage, guideme: guidemePage, setup: setupPage, keys: keysPage, buykey: buyKeyPage, keysales: keySalesPage, tourvideo: tourVideoPage },
+  views: { firm: firmPage, analytics: analyticsPage, portalstats: portalstatsPage, server: serverPage, delegate: delegatePage, itrimport: itrImportPage, myreturn: myReturnPage, taxwatch: taxwatchPage, approvals: approvalsPage, clients: clientsPage, intake: intakePage, recon: reconPage, compute: computePage, audit: auditPage, manuals: manualPage, howto: howtoPage, guideme: guidemePage, setup: setupPage, keys: keysPage, buykey: buyKeyPage, keysales: keySalesPage, tourvideo: tourVideoPage },
   // The edition (tv or SteadyMove, chip edition.settings) names the line under the logo.
   pitch, logo, brandSub: () => (state.edition && state.edition.brand_sub) || '',
-  landing: () => (state.edition && state.edition.landing) || '#/video',   // a door (chip edition.settings doors) has its own first screen
+  landing: () => (state.selfFiler ? '#/myreturn' : '') || (state.edition && state.edition.landing) || '#/video',   // a self-filer opens on My return; a door (chip edition.settings doors) has its own first screen
   // 2026-10-01 owner "In Katha we don't need key": the key link, the key menu row and AI READY show only where Account &
   // key is in THIS host's menu - a door without the keys screen (Katha, chip edition.settings doors[].screens) shows none
   navFoot: () => (onMenu(keyScreen()) ? `<a class="quiet" href="${BASE}/help/gemini-key" target="_blank" rel="noopener">
@@ -178,6 +180,7 @@ startPortal({
     await loadWords('app');      // already there from the start; a no-op unless that first fetch failed
     state.edition = d.edition || null;
     state.showcase = !!d.showcase;                      // this site has a public showcase (landing.py bootstrap_extra)
+    state.selfFiler = !!d.self_filer;                   // firms.bootstrap_extra: one's own return, not a client register
     document.title = state.productName;                 // SteadyMove's tab says SteadyMove, not the HTML's default
     const aside = document.querySelector('aside.pitch');   // signed out: the pitch was drawn before the edition was known
     if (aside) aside.innerHTML = (aside.querySelector('.mark') || { outerHTML: '' }).outerHTML + pitch();

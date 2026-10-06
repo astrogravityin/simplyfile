@@ -1,0 +1,322 @@
+{
+  "chip_id": "myreturn.salary",
+  "kind": "accessor",
+  "set": "myreturn",
+  "label": "My return: income from salary, per regime",
+  "aliases": [
+    "my return: income from salary, per regim"
+  ],
+  "params": [
+    {
+      "name": "gross",
+      "type": "number",
+      "default": 0,
+      "label": "gross salary: 17(1) + 17(2) + 17(3), every employer"
+    },
+    {
+      "name": "exempt_all",
+      "type": "number",
+      "default": 0,
+      "label": "allowances exempt u/s 10 (old regime: all of them)"
+    },
+    {
+      "name": "exempt_new",
+      "type": "number",
+      "default": 0,
+      "label": "allowances still exempt in the new regime (gratuity, leave encashment, commuted pension...)"
+    },
+    {
+      "name": "prof_tax",
+      "type": "number",
+      "default": 0,
+      "label": "professional tax paid"
+    },
+    {
+      "name": "regime",
+      "type": "text",
+      "default": "new",
+      "label": "regime"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "exempt": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "eq",
+              "left": "$regime",
+              "right": "new"
+            },
+            "then": "$exempt_new"
+          }
+        ],
+        "else": "$exempt_all"
+      },
+      "std": {
+        "vop": "smallest",
+        "values": [
+          {
+            "vop": "get",
+            "value": {
+              "chip": "myreturn.rates",
+              "args": {}
+            },
+            "path": {
+              "vop": "template",
+              "text": "std_deduction.{r}",
+              "values": {
+                "vop": "record",
+                "fields": {
+                  "r": "$regime"
+                }
+              }
+            }
+          },
+          {
+            "vop": "largest",
+            "values": [
+              {
+                "vop": "sub",
+                "a": "$gross",
+                "b": {
+                  "vop": "choose",
+                  "cases": [
+                    {
+                      "when": {
+                        "op": "eq",
+                        "left": "$regime",
+                        "right": "new"
+                      },
+                      "then": "$exempt_new"
+                    }
+                  ],
+                  "else": "$exempt_all"
+                }
+              },
+              0
+            ]
+          }
+        ]
+      },
+      "prof_tax": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "eq",
+              "left": {
+                "vop": "get",
+                "value": {
+                  "chip": "myreturn.rates",
+                  "args": {}
+                },
+                "path": {
+                  "vop": "template",
+                  "text": "prof_tax_allowed.{r}",
+                  "values": {
+                    "vop": "record",
+                    "fields": {
+                      "r": "$regime"
+                    }
+                  }
+                }
+              },
+              "right": true
+            },
+            "then": {
+              "vop": "smallest",
+              "values": [
+                "$prof_tax",
+                {
+                  "vop": "get",
+                  "value": {
+                    "chip": "myreturn.rates",
+                    "args": {}
+                  },
+                  "path": "prof_tax_cap"
+                }
+              ]
+            }
+          }
+        ],
+        "else": 0
+      },
+      "income": {
+        "vop": "largest",
+        "values": [
+          {
+            "vop": "sub",
+            "a": {
+              "vop": "sub",
+              "a": {
+                "vop": "largest",
+                "values": [
+                  {
+                    "vop": "sub",
+                    "a": "$gross",
+                    "b": {
+                      "vop": "choose",
+                      "cases": [
+                        {
+                          "when": {
+                            "op": "eq",
+                            "left": "$regime",
+                            "right": "new"
+                          },
+                          "then": "$exempt_new"
+                        }
+                      ],
+                      "else": "$exempt_all"
+                    }
+                  },
+                  0
+                ]
+              },
+              "b": {
+                "vop": "smallest",
+                "values": [
+                  {
+                    "vop": "get",
+                    "value": {
+                      "chip": "myreturn.rates",
+                      "args": {}
+                    },
+                    "path": {
+                      "vop": "template",
+                      "text": "std_deduction.{r}",
+                      "values": {
+                        "vop": "record",
+                        "fields": {
+                          "r": "$regime"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "vop": "largest",
+                    "values": [
+                      {
+                        "vop": "sub",
+                        "a": "$gross",
+                        "b": {
+                          "vop": "choose",
+                          "cases": [
+                            {
+                              "when": {
+                                "op": "eq",
+                                "left": "$regime",
+                                "right": "new"
+                              },
+                              "then": "$exempt_new"
+                            }
+                          ],
+                          "else": "$exempt_all"
+                        }
+                      },
+                      0
+                    ]
+                  }
+                ]
+              }
+            },
+            "b": {
+              "vop": "choose",
+              "cases": [
+                {
+                  "when": {
+                    "op": "eq",
+                    "left": {
+                      "vop": "get",
+                      "value": {
+                        "chip": "myreturn.rates",
+                        "args": {}
+                      },
+                      "path": {
+                        "vop": "template",
+                        "text": "prof_tax_allowed.{r}",
+                        "values": {
+                          "vop": "record",
+                          "fields": {
+                            "r": "$regime"
+                          }
+                        }
+                      }
+                    },
+                    "right": true
+                  },
+                  "then": {
+                    "vop": "smallest",
+                    "values": [
+                      "$prof_tax",
+                      {
+                        "vop": "get",
+                        "value": {
+                          "chip": "myreturn.rates",
+                          "args": {}
+                        },
+                        "path": "prof_tax_cap"
+                      }
+                    ]
+                  }
+                }
+              ],
+              "else": 0
+            }
+          },
+          0
+        ]
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-06: salary less the allowances exempt u/s 10 (only gratuity, leave encashment, commuted pension and the like in the new regime), the standard deduction 16(ia) (75,000 new / 50,000 old, never more than the salary) and professional tax 16(iii) (old only, up to 2,500).",
+  "test_cases": [
+    {
+      "args": {
+        "gross": 1500000,
+        "exempt_all": 120000,
+        "exempt_new": 0,
+        "prof_tax": 2500,
+        "regime": "new"
+      },
+      "expect_value": {
+        "exempt": 0,
+        "std": 75000,
+        "prof_tax": 0,
+        "income": 1425000
+      }
+    },
+    {
+      "args": {
+        "gross": 1500000,
+        "exempt_all": 120000,
+        "exempt_new": 0,
+        "prof_tax": 2500,
+        "regime": "old"
+      },
+      "expect_value": {
+        "exempt": 120000,
+        "std": 50000,
+        "prof_tax": 2500,
+        "income": 1327500
+      }
+    },
+    {
+      "args": {
+        "gross": 40000,
+        "regime": "new"
+      },
+      "expect_value": {
+        "exempt": 0,
+        "std": 40000,
+        "prof_tax": 0,
+        "income": 0
+      }
+    }
+  ]
+}

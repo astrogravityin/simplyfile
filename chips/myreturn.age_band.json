@@ -1,0 +1,77 @@
+{
+  "chip_id": "myreturn.age_band",
+  "kind": "accessor",
+  "set": "myreturn",
+  "label": "My return: age band on the last day of the year",
+  "aliases": [
+    "my return: age band on the last day of t"
+  ],
+  "params": [
+    {
+      "name": "age",
+      "type": "number",
+      "default": 40,
+      "label": "age on 31 March of the financial year"
+    }
+  ],
+  "expr": {
+    "vop": "choose",
+    "cases": [
+      {
+        "when": {
+          "op": "ge",
+          "left": "$age",
+          "right": {
+            "vop": "get",
+            "value": {
+              "chip": "myreturn.rates",
+              "args": {}
+            },
+            "path": "very_senior_age"
+          }
+        },
+        "then": "80plus"
+      },
+      {
+        "when": {
+          "op": "ge",
+          "left": "$age",
+          "right": {
+            "vop": "get",
+            "value": {
+              "chip": "myreturn.rates",
+              "args": {}
+            },
+            "path": "senior_age"
+          }
+        },
+        "then": "60to80"
+      }
+    ],
+    "else": "below60"
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-06: below 60, 60 to 80 (senior) and 80 or more (very senior) - the old regime's basic exemption and 80D/80TTB follow it.",
+  "test_cases": [
+    {
+      "args": {
+        "age": 59
+      },
+      "expect_value": "below60"
+    },
+    {
+      "args": {
+        "age": 60
+      },
+      "expect_value": "60to80"
+    },
+    {
+      "args": {
+        "age": 85
+      },
+      "expect_value": "80plus"
+    }
+  ]
+}

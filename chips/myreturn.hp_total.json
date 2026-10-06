@@ -1,0 +1,105 @@
+{
+  "chip_id": "myreturn.hp_total",
+  "kind": "accessor",
+  "set": "myreturn",
+  "label": "My return: house property head, after the loss set-off limit",
+  "aliases": [
+    "my return: house property head, after th"
+  ],
+  "params": [
+    {
+      "name": "nets",
+      "type": "json",
+      "default": [],
+      "label": "each house's net"
+    },
+    {
+      "name": "regime",
+      "type": "text",
+      "default": "new",
+      "label": "regime"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "loss": {
+        "vop": "total",
+        "values": "$nets"
+      },
+      "net": {
+        "vop": "largest",
+        "values": [
+          {
+            "vop": "total",
+            "values": "$nets"
+          },
+          {
+            "vop": "sub",
+            "a": 0,
+            "b": {
+              "vop": "get",
+              "value": {
+                "chip": "myreturn.rates",
+                "args": {}
+              },
+              "path": {
+                "vop": "template",
+                "text": "hp_loss_cap.{r}",
+                "values": {
+                  "vop": "record",
+                  "fields": {
+                    "r": "$regime"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-06: the head is the sum of the houses; a loss is set off against other income up to 2 lakh in the old regime and not at all in the new.",
+  "test_cases": [
+    {
+      "args": {
+        "nets": [
+          -200000,
+          96000
+        ],
+        "regime": "old"
+      },
+      "expect_value": {
+        "loss": -104000,
+        "net": -104000
+      }
+    },
+    {
+      "args": {
+        "nets": [
+          -300000
+        ],
+        "regime": "old"
+      },
+      "expect_value": {
+        "loss": -300000,
+        "net": -200000
+      }
+    },
+    {
+      "args": {
+        "nets": [
+          -50000
+        ],
+        "regime": "new"
+      },
+      "expect_value": {
+        "loss": -50000,
+        "net": 0
+      }
+    }
+  ]
+}

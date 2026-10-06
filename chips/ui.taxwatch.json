@@ -1,0 +1,499 @@
+{
+  "chip_id": "ui.taxwatch",
+  "kind": "accessor",
+  "set": "ui",
+  "label": "Tax rules words",
+  "aliases": [
+    "tax rules words"
+  ],
+  "params": [
+    {
+      "name": "title",
+      "type": "text",
+      "default": "Tax rules",
+      "label": "title"
+    },
+    {
+      "name": "lede",
+      "type": "long",
+      "default": "Each year's slabs, rebates, caps and due dates: fetch the new year's, compare with this year's, apply what is right.",
+      "label": "lede"
+    },
+    {
+      "name": "live",
+      "type": "text",
+      "default": "Live figures are for AY {ay}",
+      "label": "live"
+    },
+    {
+      "name": "target",
+      "type": "text",
+      "default": "Fetch for AY",
+      "label": "target"
+    },
+    {
+      "name": "fetch",
+      "type": "text",
+      "default": "Fetch with AI",
+      "label": "fetch"
+    },
+    {
+      "name": "fetching",
+      "type": "text",
+      "default": "Asking Gemini, official sources only...",
+      "label": "fetching"
+    },
+    {
+      "name": "fetched_at",
+      "type": "text",
+      "default": "Fetched {when}",
+      "label": "fetched at"
+    },
+    {
+      "name": "none_yet",
+      "type": "long",
+      "default": "Nothing fetched for AY {ay} yet. Fetch asks Gemini with Google Search for every figure below, from official sources only.",
+      "label": "none yet"
+    },
+    {
+      "name": "h_item",
+      "type": "text",
+      "default": "Figure",
+      "label": "h item"
+    },
+    {
+      "name": "h_live",
+      "type": "text",
+      "default": "AY {ay} (live)",
+      "label": "h live"
+    },
+    {
+      "name": "h_new",
+      "type": "text",
+      "default": "AY {ay} (fetched)",
+      "label": "h new"
+    },
+    {
+      "name": "h_source",
+      "type": "text",
+      "default": "Source",
+      "label": "h source"
+    },
+    {
+      "name": "h_pick",
+      "type": "text",
+      "default": "Apply",
+      "label": "h pick"
+    },
+    {
+      "name": "same",
+      "type": "text",
+      "default": "Same",
+      "label": "same"
+    },
+    {
+      "name": "changed",
+      "type": "text",
+      "default": "Changed",
+      "label": "changed"
+    },
+    {
+      "name": "unknown",
+      "type": "text",
+      "default": "Not announced",
+      "label": "unknown"
+    },
+    {
+      "name": "edited",
+      "type": "text",
+      "default": "Edited by hand",
+      "label": "edited"
+    },
+    {
+      "name": "k_items",
+      "type": "text",
+      "default": "Figures watched",
+      "label": "k items"
+    },
+    {
+      "name": "k_changed",
+      "type": "text",
+      "default": "Changed",
+      "label": "k changed"
+    },
+    {
+      "name": "k_same",
+      "type": "text",
+      "default": "Same",
+      "label": "k same"
+    },
+    {
+      "name": "k_unknown",
+      "type": "text",
+      "default": "Not announced",
+      "label": "k unknown"
+    },
+    {
+      "name": "only_changed",
+      "type": "text",
+      "default": "Only changes",
+      "label": "only changed"
+    },
+    {
+      "name": "show_all",
+      "type": "text",
+      "default": "Show all",
+      "label": "show all"
+    },
+    {
+      "name": "edit",
+      "type": "text",
+      "default": "Edit",
+      "label": "edit"
+    },
+    {
+      "name": "save",
+      "type": "text",
+      "default": "Save",
+      "label": "save"
+    },
+    {
+      "name": "cancel",
+      "type": "text",
+      "default": "Cancel",
+      "label": "cancel"
+    },
+    {
+      "name": "bad_json",
+      "type": "text",
+      "default": "That is not a value of the right shape.",
+      "label": "bad json"
+    },
+    {
+      "name": "apply",
+      "type": "text",
+      "default": "Apply {n} to AY {ay}",
+      "label": "apply"
+    },
+    {
+      "name": "apply_none",
+      "type": "text",
+      "default": "Tick the changes to apply",
+      "label": "apply none"
+    },
+    {
+      "name": "confirm",
+      "type": "long",
+      "default": "Apply {n} changes? The live figures become AY {ay}'s. Last year's CA slabs are kept for past years; each chip keeps its History, so Ops & chips can restore it.",
+      "label": "confirm"
+    },
+    {
+      "name": "applied",
+      "type": "text",
+      "default": "Applied {n} changes in {chips} chips. Live figures are now AY {ay}.",
+      "label": "applied"
+    },
+    {
+      "name": "rebased",
+      "type": "text",
+      "default": "Tests moved to the new figures: {list}",
+      "label": "rebased"
+    },
+    {
+      "name": "where",
+      "type": "text",
+      "default": "Lives in",
+      "label": "where"
+    },
+    {
+      "name": "note_title",
+      "type": "text",
+      "default": "What the AI said",
+      "label": "note title"
+    },
+    {
+      "name": "no_key",
+      "type": "text",
+      "default": "Add a Gemini key in Account & key first.",
+      "label": "no key"
+    },
+    {
+      "name": "ai_failed",
+      "type": "text",
+      "default": "The AI could not answer: {why}",
+      "label": "ai failed"
+    },
+    {
+      "name": "ai_bad",
+      "type": "text",
+      "default": "The AI's answer was not the JSON asked for.",
+      "label": "ai bad"
+    },
+    {
+      "name": "no_draft",
+      "type": "text",
+      "default": "Fetch first.",
+      "label": "no draft"
+    },
+    {
+      "name": "unknown_item",
+      "type": "text",
+      "default": "Unknown figure: {id}",
+      "label": "unknown item"
+    },
+    {
+      "name": "not_owner",
+      "type": "text",
+      "default": "Only the portal owner changes tax rules.",
+      "label": "not owner"
+    },
+    {
+      "name": "bad_ay",
+      "type": "text",
+      "default": "Pick a year after AY {ay}.",
+      "label": "bad ay"
+    },
+    {
+      "name": "rule",
+      "type": "long",
+      "default": "Rules: the AI only proposes. Nothing changes until you tick and apply, and every applied chip keeps its History.",
+      "label": "rule"
+    },
+    {
+      "name": "sources",
+      "type": "text",
+      "default": "Pages the AI read",
+      "label": "sources"
+    },
+    {
+      "name": "slab_upto",
+      "type": "text",
+      "default": "up to {upto}",
+      "label": "slab upto"
+    },
+    {
+      "name": "slab_above",
+      "type": "text",
+      "default": "above {from}",
+      "label": "slab above"
+    },
+    {
+      "name": "lakh",
+      "type": "text",
+      "default": "L",
+      "label": "lakh"
+    },
+    {
+      "name": "g_slabs",
+      "type": "text",
+      "default": "Slabs",
+      "label": "g slabs"
+    },
+    {
+      "name": "g_rebate",
+      "type": "text",
+      "default": "Rebate, surcharge, cess",
+      "label": "g rebate"
+    },
+    {
+      "name": "g_salary",
+      "type": "text",
+      "default": "Salary and house",
+      "label": "g salary"
+    },
+    {
+      "name": "g_cg",
+      "type": "text",
+      "default": "Capital gains",
+      "label": "g cg"
+    },
+    {
+      "name": "g_via",
+      "type": "text",
+      "default": "Deductions",
+      "label": "g via"
+    },
+    {
+      "name": "g_forms",
+      "type": "text",
+      "default": "Which form",
+      "label": "g forms"
+    },
+    {
+      "name": "g_dates",
+      "type": "text",
+      "default": "Due dates",
+      "label": "g dates"
+    },
+    {
+      "name": "below60",
+      "type": "text",
+      "default": "below 60",
+      "label": "below60"
+    },
+    {
+      "name": "60to80",
+      "type": "text",
+      "default": "60 to 80",
+      "label": "60to80"
+    },
+    {
+      "name": "80plus",
+      "type": "text",
+      "default": "80 and over",
+      "label": "80plus"
+    },
+    {
+      "name": "new",
+      "type": "text",
+      "default": "new",
+      "label": "new"
+    },
+    {
+      "name": "old",
+      "type": "text",
+      "default": "old",
+      "label": "old"
+    },
+    {
+      "name": "apply_failed",
+      "type": "text",
+      "default": "Not applied: chip {chip} fails its own checks with these figures - nothing was changed.",
+      "label": "apply failed"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "title": "$title",
+      "lede": "$lede",
+      "live": "$live",
+      "target": "$target",
+      "fetch": "$fetch",
+      "fetching": "$fetching",
+      "fetched_at": "$fetched_at",
+      "none_yet": "$none_yet",
+      "h_item": "$h_item",
+      "h_live": "$h_live",
+      "h_new": "$h_new",
+      "h_source": "$h_source",
+      "h_pick": "$h_pick",
+      "same": "$same",
+      "changed": "$changed",
+      "unknown": "$unknown",
+      "edited": "$edited",
+      "k_items": "$k_items",
+      "k_changed": "$k_changed",
+      "k_same": "$k_same",
+      "k_unknown": "$k_unknown",
+      "only_changed": "$only_changed",
+      "show_all": "$show_all",
+      "edit": "$edit",
+      "save": "$save",
+      "cancel": "$cancel",
+      "bad_json": "$bad_json",
+      "apply": "$apply",
+      "apply_none": "$apply_none",
+      "confirm": "$confirm",
+      "applied": "$applied",
+      "rebased": "$rebased",
+      "where": "$where",
+      "note_title": "$note_title",
+      "no_key": "$no_key",
+      "ai_failed": "$ai_failed",
+      "ai_bad": "$ai_bad",
+      "no_draft": "$no_draft",
+      "unknown_item": "$unknown_item",
+      "not_owner": "$not_owner",
+      "bad_ay": "$bad_ay",
+      "rule": "$rule",
+      "sources": "$sources",
+      "slab_upto": "$slab_upto",
+      "slab_above": "$slab_above",
+      "lakh": "$lakh",
+      "g_slabs": "$g_slabs",
+      "g_rebate": "$g_rebate",
+      "g_salary": "$g_salary",
+      "g_cg": "$g_cg",
+      "g_via": "$g_via",
+      "g_forms": "$g_forms",
+      "g_dates": "$g_dates",
+      "below60": "$below60",
+      "60to80": "$60to80",
+      "80plus": "$80plus",
+      "new": "$new",
+      "old": "$old",
+      "apply_failed": "$apply_failed"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-06: every word on Tax rules (Fetch, Compare, Apply).",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "title": "Tax rules",
+        "lede": "Each year's slabs, rebates, caps and due dates: fetch the new year's, compare with this year's, apply what is right.",
+        "live": "Live figures are for AY {ay}",
+        "target": "Fetch for AY",
+        "fetch": "Fetch with AI",
+        "fetching": "Asking Gemini, official sources only...",
+        "fetched_at": "Fetched {when}",
+        "none_yet": "Nothing fetched for AY {ay} yet. Fetch asks Gemini with Google Search for every figure below, from official sources only.",
+        "h_item": "Figure",
+        "h_live": "AY {ay} (live)",
+        "h_new": "AY {ay} (fetched)",
+        "h_source": "Source",
+        "h_pick": "Apply",
+        "same": "Same",
+        "changed": "Changed",
+        "unknown": "Not announced",
+        "edited": "Edited by hand",
+        "k_items": "Figures watched",
+        "k_changed": "Changed",
+        "k_same": "Same",
+        "k_unknown": "Not announced",
+        "only_changed": "Only changes",
+        "show_all": "Show all",
+        "edit": "Edit",
+        "save": "Save",
+        "cancel": "Cancel",
+        "bad_json": "That is not a value of the right shape.",
+        "apply": "Apply {n} to AY {ay}",
+        "apply_none": "Tick the changes to apply",
+        "confirm": "Apply {n} changes? The live figures become AY {ay}'s. Last year's CA slabs are kept for past years; each chip keeps its History, so Ops & chips can restore it.",
+        "applied": "Applied {n} changes in {chips} chips. Live figures are now AY {ay}.",
+        "rebased": "Tests moved to the new figures: {list}",
+        "where": "Lives in",
+        "note_title": "What the AI said",
+        "no_key": "Add a Gemini key in Account & key first.",
+        "ai_failed": "The AI could not answer: {why}",
+        "ai_bad": "The AI's answer was not the JSON asked for.",
+        "no_draft": "Fetch first.",
+        "unknown_item": "Unknown figure: {id}",
+        "not_owner": "Only the portal owner changes tax rules.",
+        "bad_ay": "Pick a year after AY {ay}.",
+        "rule": "Rules: the AI only proposes. Nothing changes until you tick and apply, and every applied chip keeps its History.",
+        "sources": "Pages the AI read",
+        "slab_upto": "up to {upto}",
+        "slab_above": "above {from}",
+        "lakh": "L",
+        "g_slabs": "Slabs",
+        "g_rebate": "Rebate, surcharge, cess",
+        "g_salary": "Salary and house",
+        "g_cg": "Capital gains",
+        "g_via": "Deductions",
+        "g_forms": "Which form",
+        "g_dates": "Due dates",
+        "below60": "below 60",
+        "60to80": "60 to 80",
+        "80plus": "80 and over",
+        "new": "new",
+        "old": "old",
+        "apply_failed": "Not applied: chip {chip} fails its own checks with these figures - nothing was changed."
+      }
+    }
+  ]
+}

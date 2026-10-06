@@ -1,0 +1,757 @@
+{
+  "chip_id": "myreturn.read",
+  "kind": "accessor",
+  "set": "myreturn",
+  "label": "My return: how each document is recognised and read",
+  "aliases": [
+    "my return: how each document is recogni"
+  ],
+  "params": [
+    {
+      "name": "prefill_keys",
+      "type": "json",
+      "default": [
+        "personalInfo",
+        "form24q",
+        "form26as",
+        "insights",
+        "bankAccountDtls"
+      ],
+      "label": "prefill keys"
+    },
+    {
+      "name": "prefill",
+      "type": "json",
+      "default": {
+        "exempt_new_codes": [
+          "10(10)",
+          "10(10A)",
+          "10(10AA)",
+          "10(10B)",
+          "10(10C)"
+        ],
+        "via": {
+          "c80c": "section80C",
+          "c80ccc": "section80CCC",
+          "c80ccd1": "section80CCDEmployeeOrSE",
+          "c80ccd1b": "section80CCD1B",
+          "c80ccd2": "section80CCDEmployer",
+          "c80d_self": "section80D",
+          "c80e": "section80E",
+          "c80g": "section80G"
+        }
+      },
+      "label": "prefill"
+    },
+    {
+      "name": "words_form16",
+      "type": "json",
+      "default": [
+        "form no. 16",
+        "form no.16",
+        "form 16",
+        "certificate under section 203"
+      ],
+      "label": "words form16"
+    },
+    {
+      "name": "words_ais",
+      "type": "json",
+      "default": [
+        "annual information statement",
+        "information code"
+      ],
+      "label": "words ais"
+    },
+    {
+      "name": "words_26as",
+      "type": "json",
+      "default": [
+        "form 26as",
+        "annual tax statement",
+        "tan of deductor",
+        "total tax deducted"
+      ],
+      "label": "words 26as"
+    },
+    {
+      "name": "ais_crypt",
+      "type": "json",
+      "default": {
+        "pepper": "GQ39%*g",
+        "iterations": 1000
+      },
+      "label": "ais crypt"
+    },
+    {
+      "name": "ais_code_pattern",
+      "type": "text",
+      "default": "\\b(?:SFT|TDS|TCS)-\\d{3}[A-Z]{0,2}(?:\\s*\\([A-Z]+\\))?",
+      "label": "ais code pattern"
+    },
+    {
+      "name": "ais_codes",
+      "type": "json",
+      "default": [
+        {
+          "code": "SFT-016\\s*\\(SB\\)",
+          "field": "savings"
+        },
+        {
+          "code": "SFT-016\\s*\\(TD\\)",
+          "field": "deposits"
+        },
+        {
+          "code": "SFT-016\\s*\\(OTH\\)",
+          "field": "other"
+        },
+        {
+          "code": "SFT-015.*",
+          "field": "dividend"
+        },
+        {
+          "code": "TDS-192.*",
+          "field": "salary"
+        },
+        {
+          "code": "SFT-01[78].*",
+          "field": "sales"
+        },
+        {
+          "title": "interest from savings",
+          "field": "savings"
+        },
+        {
+          "title": "interest from (term )?deposit",
+          "field": "deposits"
+        },
+        {
+          "title": "^dividend",
+          "field": "dividend"
+        },
+        {
+          "title": "interest on (income.tax )?refund",
+          "field": "refund_interest"
+        },
+        {
+          "title": "^salary",
+          "field": "salary"
+        },
+        {
+          "title": "sale of securities|units of mutual fund",
+          "field": "sales"
+        }
+      ],
+      "label": "ais codes"
+    },
+    {
+      "name": "amount_pattern",
+      "type": "text",
+      "default": "(?<![\\w(.])\\d{1,3}(?:,\\d{2,3})+(?:\\.\\d{1,2})?(?![\\w)])|(?<![\\w(.,])\\d+\\.\\d{2}(?![\\w)])",
+      "label": "amount pattern"
+    },
+    {
+      "name": "tan_pattern",
+      "type": "text",
+      "default": "\\b[A-Z]{4}[0-9]{5}[A-Z]\\b",
+      "label": "tan pattern"
+    },
+    {
+      "name": "pan_pattern",
+      "type": "text",
+      "default": "\\b[A-Z]{5}[0-9]{4}[A-Z]\\b",
+      "label": "pan pattern"
+    },
+    {
+      "name": "employer_anchor",
+      "type": "text",
+      "default": "Name and address of the Employer",
+      "label": "employer anchor"
+    },
+    {
+      "name": "parta_total_anchor",
+      "type": "text",
+      "default": "^Total\\s*\\(Rs\\.?\\)",
+      "label": "parta total anchor"
+    },
+    {
+      "name": "regime_out_pattern",
+      "type": "text",
+      "default": "opting out of taxation u/s 115BAC\\s*\\(1A\\)\\s*\\??\\s*[:\\-]?\\s*(Yes|No)",
+      "label": "regime out pattern"
+    },
+    {
+      "name": "regime_in_pattern",
+      "type": "text",
+      "default": "opting for taxation u/s 115BAC\\s*\\??\\s*[:\\-]?\\s*(Yes|No)",
+      "label": "regime in pattern"
+    },
+    {
+      "name": "form16_anchors",
+      "type": "json",
+      "default": [
+        {
+          "field": "gross_17_1",
+          "pattern": "section\\s*17\\s*\\(\\s*1\\s*\\)"
+        },
+        {
+          "field": "perq_17_2",
+          "pattern": "section\\s*17\\s*\\(\\s*2\\s*\\)"
+        },
+        {
+          "field": "profit_17_3",
+          "pattern": "section\\s*17\\s*\\(\\s*3\\s*\\)"
+        },
+        {
+          "field": "lta",
+          "pattern": "section\\s*10\\s*\\(\\s*5\\s*\\)"
+        },
+        {
+          "field": "gratuity",
+          "pattern": "section\\s*10\\s*\\(\\s*10\\s*\\)"
+        },
+        {
+          "field": "commuted",
+          "pattern": "section\\s*10\\s*\\(\\s*10A\\s*\\)"
+        },
+        {
+          "field": "leave",
+          "pattern": "section\\s*10\\s*\\(\\s*10AA\\s*\\)"
+        },
+        {
+          "field": "hra",
+          "pattern": "section\\s*10\\s*\\(\\s*13A\\s*\\)"
+        },
+        {
+          "field": "exempt_total",
+          "pattern": "Total amount of exemption claimed under section 10"
+        },
+        {
+          "field": "std",
+          "pattern": "section\\s*16\\s*\\(\\s*ia\\s*\\)"
+        },
+        {
+          "field": "prof_tax",
+          "pattern": "section\\s*16\\s*\\(\\s*iii\\s*\\)"
+        },
+        {
+          "field": "c80c",
+          "pattern": "section\\s*80\\s*C(?![A-Z+])"
+        },
+        {
+          "field": "c80ccc",
+          "pattern": "section\\s*80\\s*CCC(?![A-Z])"
+        },
+        {
+          "field": "c80ccd1",
+          "pattern": "section\\s*80\\s*CCD\\s*\\(\\s*1\\s*\\)"
+        },
+        {
+          "field": "c80ccd1b",
+          "pattern": "section\\s*80\\s*CCD\\s*\\(\\s*1B\\s*\\)"
+        },
+        {
+          "field": "c80ccd2",
+          "pattern": "section\\s*80\\s*CC+D\\s*\\(\\s*2\\s*\\)"
+        },
+        {
+          "field": "c80d_self",
+          "pattern": "section\\s*80\\s*D(?![A-Z])"
+        },
+        {
+          "field": "c80e",
+          "pattern": "section\\s*80\\s*E(?![A-Z])"
+        },
+        {
+          "field": "c80g",
+          "pattern": "section\\s*80\\s*G(?![A-Z])"
+        }
+      ],
+      "label": "form16 anchors"
+    },
+    {
+      "name": "exempt_fields",
+      "type": "json",
+      "default": [
+        "lta",
+        "gratuity",
+        "commuted",
+        "leave",
+        "hra"
+      ],
+      "label": "exempt fields"
+    },
+    {
+      "name": "exempt_new_fields",
+      "type": "json",
+      "default": [
+        "gratuity",
+        "commuted",
+        "leave"
+      ],
+      "label": "exempt new fields"
+    },
+    {
+      "name": "pdf_pages_max",
+      "type": "json",
+      "default": 12,
+      "label": "pdf pages max"
+    },
+    {
+      "name": "scan_chars",
+      "type": "json",
+      "default": 80,
+      "label": "scan chars"
+    },
+    {
+      "name": "ai_provider",
+      "type": "text",
+      "default": "gemini",
+      "label": "ai provider"
+    },
+    {
+      "name": "ai_model",
+      "type": "text",
+      "default": "gemini-2.5-flash",
+      "label": "ai model"
+    },
+    {
+      "name": "ai_fields",
+      "type": "json",
+      "default": [
+        "employer",
+        "tan",
+        "gross_17_1",
+        "perq_17_2",
+        "profit_17_3",
+        "lta",
+        "gratuity",
+        "commuted",
+        "leave",
+        "hra",
+        "exempt_other",
+        "exempt_total",
+        "std",
+        "prof_tax",
+        "c80c",
+        "c80ccc",
+        "c80ccd1",
+        "c80ccd1b",
+        "c80ccd2",
+        "c80d_self",
+        "c80d_parents",
+        "c80e",
+        "c80g",
+        "tds"
+      ],
+      "label": "ai fields"
+    },
+    {
+      "name": "ai_prompt",
+      "type": "text",
+      "default": "This is an Indian Form 16 (TDS certificate on salary) for FY 2025-26. Read it and answer ONLY a JSON object with these keys, numbers in rupees without commas (0 when absent): employer (name), tan, gross_17_1 (salary u/s 17(1)), perq_17_2, profit_17_3, lta (10(5)), gratuity (10(10)), commuted (10(10A)), leave (10(10AA)), hra (10(13A)), exempt_other, exempt_total (total exempt u/s 10), std (16(ia)), prof_tax (16(iii)), c80c, c80ccc, c80ccd1, c80ccd1b, c80ccd2, c80d_self (80D), c80d_parents, c80e, c80g (deductible amounts), tds (total tax deducted in Part A). Never guess a figure that is not printed.",
+      "label": "ai prompt"
+    },
+    {
+      "name": "exempt_codes",
+      "type": "json",
+      "default": {
+        "lta": "10(5)",
+        "gratuity": "10(10)",
+        "commuted": "10(10A)",
+        "leave": "10(10AA)",
+        "hra": "10(13A)"
+      },
+      "label": "exempt codes"
+    },
+    {
+      "name": "filed_roots",
+      "type": "json",
+      "default": {
+        "ITR1": "ITR-1",
+        "ITR2": "ITR-2",
+        "ITR3": "ITR-3",
+        "ITR4": "ITR-4"
+      },
+      "label": "filed roots"
+    },
+    {
+      "name": "filed_found",
+      "type": "json",
+      "default": {
+        "ITR-1": [
+          {
+            "word": "fd_pan",
+            "path": "ITR1.PersonalInfo.PAN"
+          },
+          {
+            "word": "fd_ay",
+            "path": "ITR1.Form_ITR1.AssessmentYear"
+          },
+          {
+            "word": "fd_total",
+            "path": "ITR1.ITR1_IncomeDeductions.TotalIncome"
+          },
+          {
+            "word": "fd_tax",
+            "path": "ITR1.ITR1_TaxComputation.NetTaxLiability"
+          },
+          {
+            "word": "fd_refund",
+            "path": "ITR1.Refund.RefundDue"
+          }
+        ],
+        "ITR-2": [
+          {
+            "word": "fd_pan",
+            "path": "ITR2.PartA_GEN1.PersonalInfo.PAN"
+          },
+          {
+            "word": "fd_ay",
+            "path": "ITR2.Form_ITR2.AssessmentYear"
+          },
+          {
+            "word": "fd_total",
+            "path": "ITR2.PartB-TI.TotalIncome"
+          },
+          {
+            "word": "fd_tax",
+            "path": "ITR2.PartB_TTI.ComputationOfTaxLiability.NetTaxLiability"
+          },
+          {
+            "word": "fd_refund",
+            "path": "ITR2.PartB_TTI.Refund.RefundDue"
+          }
+        ]
+      },
+      "label": "filed found"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "prefill_keys": "$prefill_keys",
+      "prefill": "$prefill",
+      "words_form16": "$words_form16",
+      "words_ais": "$words_ais",
+      "words_26as": "$words_26as",
+      "ais_crypt": "$ais_crypt",
+      "ais_code_pattern": "$ais_code_pattern",
+      "ais_codes": "$ais_codes",
+      "amount_pattern": "$amount_pattern",
+      "tan_pattern": "$tan_pattern",
+      "pan_pattern": "$pan_pattern",
+      "employer_anchor": "$employer_anchor",
+      "parta_total_anchor": "$parta_total_anchor",
+      "regime_out_pattern": "$regime_out_pattern",
+      "regime_in_pattern": "$regime_in_pattern",
+      "form16_anchors": "$form16_anchors",
+      "exempt_fields": "$exempt_fields",
+      "exempt_new_fields": "$exempt_new_fields",
+      "pdf_pages_max": "$pdf_pages_max",
+      "scan_chars": "$scan_chars",
+      "ai_provider": "$ai_provider",
+      "ai_model": "$ai_model",
+      "ai_fields": "$ai_fields",
+      "ai_prompt": "$ai_prompt",
+      "exempt_codes": "$exempt_codes",
+      "filed_roots": "$filed_roots",
+      "filed_found": "$filed_found"
+    }
+  },
+  "returns": "record",
+  "version": 3,
+  "status": "published",
+  "description_nl": "2026-10-06: the pre-filled JSON's keys (camelCase, e-filing portal), the words that tell a Form 16, an AIS and a 26AS apart, the AIS JSON's encryption (PBKDF2-SHA256 over PAN + pepper + DDMMYYYY, AES-256-CBC), AIS information codes -> fields (SFT-016 SB/TD interest, SFT-015 dividend, TDS-192 salary; TDS-194/194A are the same income again and are left out), Form 16's line anchors (the figure is the last amount on the line), and the AI fallback's model, fields and prompt.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "prefill_keys": [
+          "personalInfo",
+          "form24q",
+          "form26as",
+          "insights",
+          "bankAccountDtls"
+        ],
+        "prefill": {
+          "exempt_new_codes": [
+            "10(10)",
+            "10(10A)",
+            "10(10AA)",
+            "10(10B)",
+            "10(10C)"
+          ],
+          "via": {
+            "c80c": "section80C",
+            "c80ccc": "section80CCC",
+            "c80ccd1": "section80CCDEmployeeOrSE",
+            "c80ccd1b": "section80CCD1B",
+            "c80ccd2": "section80CCDEmployer",
+            "c80d_self": "section80D",
+            "c80e": "section80E",
+            "c80g": "section80G"
+          }
+        },
+        "words_form16": [
+          "form no. 16",
+          "form no.16",
+          "form 16",
+          "certificate under section 203"
+        ],
+        "words_ais": [
+          "annual information statement",
+          "information code"
+        ],
+        "words_26as": [
+          "form 26as",
+          "annual tax statement",
+          "tan of deductor",
+          "total tax deducted"
+        ],
+        "ais_crypt": {
+          "pepper": "GQ39%*g",
+          "iterations": 1000
+        },
+        "ais_code_pattern": "\\b(?:SFT|TDS|TCS)-\\d{3}[A-Z]{0,2}(?:\\s*\\([A-Z]+\\))?",
+        "ais_codes": [
+          {
+            "code": "SFT-016\\s*\\(SB\\)",
+            "field": "savings"
+          },
+          {
+            "code": "SFT-016\\s*\\(TD\\)",
+            "field": "deposits"
+          },
+          {
+            "code": "SFT-016\\s*\\(OTH\\)",
+            "field": "other"
+          },
+          {
+            "code": "SFT-015.*",
+            "field": "dividend"
+          },
+          {
+            "code": "TDS-192.*",
+            "field": "salary"
+          },
+          {
+            "code": "SFT-01[78].*",
+            "field": "sales"
+          },
+          {
+            "title": "interest from savings",
+            "field": "savings"
+          },
+          {
+            "title": "interest from (term )?deposit",
+            "field": "deposits"
+          },
+          {
+            "title": "^dividend",
+            "field": "dividend"
+          },
+          {
+            "title": "interest on (income.tax )?refund",
+            "field": "refund_interest"
+          },
+          {
+            "title": "^salary",
+            "field": "salary"
+          },
+          {
+            "title": "sale of securities|units of mutual fund",
+            "field": "sales"
+          }
+        ],
+        "amount_pattern": "(?<![\\w(.])\\d{1,3}(?:,\\d{2,3})+(?:\\.\\d{1,2})?(?![\\w)])|(?<![\\w(.,])\\d+\\.\\d{2}(?![\\w)])",
+        "tan_pattern": "\\b[A-Z]{4}[0-9]{5}[A-Z]\\b",
+        "pan_pattern": "\\b[A-Z]{5}[0-9]{4}[A-Z]\\b",
+        "employer_anchor": "Name and address of the Employer",
+        "parta_total_anchor": "^Total\\s*\\(Rs\\.?\\)",
+        "regime_out_pattern": "opting out of taxation u/s 115BAC\\s*\\(1A\\)\\s*\\??\\s*[:\\-]?\\s*(Yes|No)",
+        "regime_in_pattern": "opting for taxation u/s 115BAC\\s*\\??\\s*[:\\-]?\\s*(Yes|No)",
+        "form16_anchors": [
+          {
+            "field": "gross_17_1",
+            "pattern": "section\\s*17\\s*\\(\\s*1\\s*\\)"
+          },
+          {
+            "field": "perq_17_2",
+            "pattern": "section\\s*17\\s*\\(\\s*2\\s*\\)"
+          },
+          {
+            "field": "profit_17_3",
+            "pattern": "section\\s*17\\s*\\(\\s*3\\s*\\)"
+          },
+          {
+            "field": "lta",
+            "pattern": "section\\s*10\\s*\\(\\s*5\\s*\\)"
+          },
+          {
+            "field": "gratuity",
+            "pattern": "section\\s*10\\s*\\(\\s*10\\s*\\)"
+          },
+          {
+            "field": "commuted",
+            "pattern": "section\\s*10\\s*\\(\\s*10A\\s*\\)"
+          },
+          {
+            "field": "leave",
+            "pattern": "section\\s*10\\s*\\(\\s*10AA\\s*\\)"
+          },
+          {
+            "field": "hra",
+            "pattern": "section\\s*10\\s*\\(\\s*13A\\s*\\)"
+          },
+          {
+            "field": "exempt_total",
+            "pattern": "Total amount of exemption claimed under section 10"
+          },
+          {
+            "field": "std",
+            "pattern": "section\\s*16\\s*\\(\\s*ia\\s*\\)"
+          },
+          {
+            "field": "prof_tax",
+            "pattern": "section\\s*16\\s*\\(\\s*iii\\s*\\)"
+          },
+          {
+            "field": "c80c",
+            "pattern": "section\\s*80\\s*C(?![A-Z+])"
+          },
+          {
+            "field": "c80ccc",
+            "pattern": "section\\s*80\\s*CCC(?![A-Z])"
+          },
+          {
+            "field": "c80ccd1",
+            "pattern": "section\\s*80\\s*CCD\\s*\\(\\s*1\\s*\\)"
+          },
+          {
+            "field": "c80ccd1b",
+            "pattern": "section\\s*80\\s*CCD\\s*\\(\\s*1B\\s*\\)"
+          },
+          {
+            "field": "c80ccd2",
+            "pattern": "section\\s*80\\s*CC+D\\s*\\(\\s*2\\s*\\)"
+          },
+          {
+            "field": "c80d_self",
+            "pattern": "section\\s*80\\s*D(?![A-Z])"
+          },
+          {
+            "field": "c80e",
+            "pattern": "section\\s*80\\s*E(?![A-Z])"
+          },
+          {
+            "field": "c80g",
+            "pattern": "section\\s*80\\s*G(?![A-Z])"
+          }
+        ],
+        "exempt_fields": [
+          "lta",
+          "gratuity",
+          "commuted",
+          "leave",
+          "hra"
+        ],
+        "exempt_new_fields": [
+          "gratuity",
+          "commuted",
+          "leave"
+        ],
+        "pdf_pages_max": 12,
+        "scan_chars": 80,
+        "ai_provider": "gemini",
+        "ai_model": "gemini-2.5-flash",
+        "ai_fields": [
+          "employer",
+          "tan",
+          "gross_17_1",
+          "perq_17_2",
+          "profit_17_3",
+          "lta",
+          "gratuity",
+          "commuted",
+          "leave",
+          "hra",
+          "exempt_other",
+          "exempt_total",
+          "std",
+          "prof_tax",
+          "c80c",
+          "c80ccc",
+          "c80ccd1",
+          "c80ccd1b",
+          "c80ccd2",
+          "c80d_self",
+          "c80d_parents",
+          "c80e",
+          "c80g",
+          "tds"
+        ],
+        "ai_prompt": "This is an Indian Form 16 (TDS certificate on salary) for FY 2025-26. Read it and answer ONLY a JSON object with these keys, numbers in rupees without commas (0 when absent): employer (name), tan, gross_17_1 (salary u/s 17(1)), perq_17_2, profit_17_3, lta (10(5)), gratuity (10(10)), commuted (10(10A)), leave (10(10AA)), hra (10(13A)), exempt_other, exempt_total (total exempt u/s 10), std (16(ia)), prof_tax (16(iii)), c80c, c80ccc, c80ccd1, c80ccd1b, c80ccd2, c80d_self (80D), c80d_parents, c80e, c80g (deductible amounts), tds (total tax deducted in Part A). Never guess a figure that is not printed.",
+        "exempt_codes": {
+          "lta": "10(5)",
+          "gratuity": "10(10)",
+          "commuted": "10(10A)",
+          "leave": "10(10AA)",
+          "hra": "10(13A)"
+        },
+        "filed_roots": {
+          "ITR1": "ITR-1",
+          "ITR2": "ITR-2",
+          "ITR3": "ITR-3",
+          "ITR4": "ITR-4"
+        },
+        "filed_found": {
+          "ITR-1": [
+            {
+              "word": "fd_pan",
+              "path": "ITR1.PersonalInfo.PAN"
+            },
+            {
+              "word": "fd_ay",
+              "path": "ITR1.Form_ITR1.AssessmentYear"
+            },
+            {
+              "word": "fd_total",
+              "path": "ITR1.ITR1_IncomeDeductions.TotalIncome"
+            },
+            {
+              "word": "fd_tax",
+              "path": "ITR1.ITR1_TaxComputation.NetTaxLiability"
+            },
+            {
+              "word": "fd_refund",
+              "path": "ITR1.Refund.RefundDue"
+            }
+          ],
+          "ITR-2": [
+            {
+              "word": "fd_pan",
+              "path": "ITR2.PartA_GEN1.PersonalInfo.PAN"
+            },
+            {
+              "word": "fd_ay",
+              "path": "ITR2.Form_ITR2.AssessmentYear"
+            },
+            {
+              "word": "fd_total",
+              "path": "ITR2.PartB-TI.TotalIncome"
+            },
+            {
+              "word": "fd_tax",
+              "path": "ITR2.PartB_TTI.ComputationOfTaxLiability.NetTaxLiability"
+            },
+            {
+              "word": "fd_refund",
+              "path": "ITR2.PartB_TTI.Refund.RefundDue"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

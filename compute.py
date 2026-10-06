@@ -67,7 +67,7 @@ def _day(s: str) -> int:
     return int(re.sub(r"\D", "", str(s or ""))[:8] or 0)
 
 
-def interest_234(cid: str, ay: str, k: dict, assessed: float, paid: list[dict], exempt: bool = False) -> dict:
+def interest_234(cid: str, ay: str, k: dict, assessed: float, paid: list[dict], exempt: bool = False, filed_on: int = 0, due: int = 0) -> dict:
     """Interest u/s 234A / 234B / 234C (chip compute.interest). Here: which challan is advance tax and which self-assessment
     (chip compute.paid_kind), what was paid by each instalment date, and the months - counted by op months_part."""
     import datetime  # noqa: PLC0415
@@ -75,8 +75,8 @@ def interest_234(cid: str, ay: str, k: dict, assessed: float, paid: list[dict], 
     ayy = int(ay[:4])
     y = clients.year_of(cid, ay)
     cur = current_filing(y)
-    filing = _day(cur["filed_on"]) if cur and cur.get("filed_on") and not y.get("revising") else _day(datetime.date.today().isoformat())
-    due = dates(cid, ay)["due"]
+    filing = filed_on or (_day(cur["filed_on"]) if cur and cur.get("filed_on") and not y.get("revising") else _day(datetime.date.today().isoformat()))
+    due = due or dates(cid, ay)["due"]       # My return passes its own form's due date and the day it was (or will be) filed
     rows = [{"on": _day(e["date"]), "amount": e["tax"] or e["gross"],
              "kind": engine.run("compute.paid_kind", {"minor": str(e.get("minor") or ""), "paid_on": _day(e["date"]), "fy_end": year_day(ay, "end")})}
             for e in paid]

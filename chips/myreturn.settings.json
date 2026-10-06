@@ -1,0 +1,241 @@
+{
+  "chip_id": "myreturn.settings",
+  "kind": "accessor",
+  "set": "myreturn",
+  "label": "My return: files, questions and steps",
+  "aliases": [
+    "my return: files, questions and steps"
+  ],
+  "params": [
+    {
+      "name": "exts",
+      "type": "json",
+      "default": [
+        ".pdf",
+        ".json",
+        ".csv",
+        ".txt",
+        ".xlsx",
+        ".zip"
+      ],
+      "label": "exts"
+    },
+    {
+      "name": "max_mb",
+      "type": "json",
+      "default": 10,
+      "label": "max mb"
+    },
+    {
+      "name": "houses_max",
+      "type": "json",
+      "default": 2,
+      "label": "houses max"
+    },
+    {
+      "name": "late_kinds",
+      "type": "json",
+      "default": [
+        "belated"
+      ],
+      "label": "late kinds"
+    },
+    {
+      "name": "old_regime_kinds",
+      "type": "json",
+      "default": [
+        "original",
+        "revised"
+      ],
+      "label": "old regime kinds"
+    },
+    {
+      "name": "questions",
+      "type": "json",
+      "default": [
+        "resident",
+        "director",
+        "unlisted",
+        "foreign",
+        "agri",
+        "loss_cf",
+        "parents_senior",
+        "disability",
+        "metro",
+        "ai_ok",
+        "father",
+        "employer_category",
+        "state",
+        "filed_on",
+        "ack_no"
+      ],
+      "label": "questions"
+    },
+    {
+      "name": "answer_defaults",
+      "type": "json",
+      "default": {
+        "resident": true,
+        "director": false,
+        "unlisted": false,
+        "foreign": false,
+        "agri": 0,
+        "loss_cf": false,
+        "parents_senior": false,
+        "disability": "",
+        "metro": false,
+        "ai_ok": false,
+        "father": "",
+        "employer_category": "",
+        "state": "",
+        "filed_on": "",
+        "ack_no": ""
+      },
+      "label": "answer defaults"
+    },
+    {
+      "name": "steps",
+      "type": "json",
+      "default": [
+        "gather",
+        "check",
+        "choose",
+        "review",
+        "file"
+      ],
+      "label": "steps"
+    },
+    {
+      "name": "kinds",
+      "type": "json",
+      "default": [
+        {
+          "id": "prefill",
+          "icon": "download",
+          "need": true
+        },
+        {
+          "id": "ais",
+          "icon": "eye",
+          "need": true
+        },
+        {
+          "id": "form16",
+          "icon": "doc",
+          "need": false
+        },
+        {
+          "id": "26as",
+          "icon": "check",
+          "need": false
+        }
+      ],
+      "label": "kinds"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "exts": "$exts",
+      "max_mb": "$max_mb",
+      "houses_max": "$houses_max",
+      "late_kinds": "$late_kinds",
+      "old_regime_kinds": "$old_regime_kinds",
+      "questions": "$questions",
+      "answer_defaults": "$answer_defaults",
+      "steps": "$steps",
+      "kinds": "$kinds"
+    }
+  },
+  "returns": "record",
+  "version": 4,
+  "status": "published",
+  "description_nl": "2026-10-06: what may be dropped in (types, size), how many houses, which filing kinds pay the late fee, the yes/no questions a person answers and their defaults, the five steps, and the documents asked for (need = the journey nudges for it).",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "exts": [
+          ".pdf",
+          ".json",
+          ".csv",
+          ".txt",
+          ".xlsx",
+          ".zip"
+        ],
+        "max_mb": 10,
+        "houses_max": 2,
+        "late_kinds": [
+          "belated"
+        ],
+        "old_regime_kinds": [
+          "original",
+          "revised"
+        ],
+        "questions": [
+          "resident",
+          "director",
+          "unlisted",
+          "foreign",
+          "agri",
+          "loss_cf",
+          "parents_senior",
+          "disability",
+          "metro",
+          "ai_ok",
+          "father",
+          "employer_category",
+          "state",
+          "filed_on",
+          "ack_no"
+        ],
+        "answer_defaults": {
+          "resident": true,
+          "director": false,
+          "unlisted": false,
+          "foreign": false,
+          "agri": 0,
+          "loss_cf": false,
+          "parents_senior": false,
+          "disability": "",
+          "metro": false,
+          "ai_ok": false,
+          "father": "",
+          "employer_category": "",
+          "state": "",
+          "filed_on": "",
+          "ack_no": ""
+        },
+        "steps": [
+          "gather",
+          "check",
+          "choose",
+          "review",
+          "file"
+        ],
+        "kinds": [
+          {
+            "id": "prefill",
+            "icon": "download",
+            "need": true
+          },
+          {
+            "id": "ais",
+            "icon": "eye",
+            "need": true
+          },
+          {
+            "id": "form16",
+            "icon": "doc",
+            "need": false
+          },
+          {
+            "id": "26as",
+            "icon": "check",
+            "need": false
+          }
+        ]
+      }
+    }
+  ]
+}

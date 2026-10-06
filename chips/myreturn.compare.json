@@ -1,0 +1,173 @@
+{
+  "chip_id": "myreturn.compare",
+  "kind": "accessor",
+  "set": "myreturn",
+  "label": "My return: the figures compared with the return as filed",
+  "aliases": [
+    "my return: the figures compared with the"
+  ],
+  "params": [
+    {
+      "name": "rows",
+      "type": "json",
+      "default": [
+        {
+          "key": "salary.gross",
+          "word": "cm_salary"
+        },
+        {
+          "key": "salary.income",
+          "word": "cm_salary_income"
+        },
+        {
+          "key": "hp.net",
+          "word": "cm_hp"
+        },
+        {
+          "key": "os.total",
+          "word": "cm_os"
+        },
+        {
+          "key": "gti",
+          "word": "cm_gti"
+        },
+        {
+          "key": "via.total",
+          "word": "cm_via"
+        },
+        {
+          "key": "total_income",
+          "word": "cm_total"
+        },
+        {
+          "key": "tax2.slab",
+          "word": "cm_tax"
+        },
+        {
+          "key": "tax2.rebate_all",
+          "word": "cm_rebate"
+        },
+        {
+          "key": "tax2.cess",
+          "word": "cm_cess"
+        },
+        {
+          "key": "tax2.gross",
+          "word": "cm_gross"
+        },
+        {
+          "key": "tax2.interest_fee",
+          "word": "cm_interest"
+        },
+        {
+          "key": "tax2.tds",
+          "word": "cm_tds"
+        },
+        {
+          "key": "tax2.paid",
+          "word": "cm_paid"
+        },
+        {
+          "key": "tax2.refund",
+          "word": "cm_refund"
+        },
+        {
+          "key": "tax2.payable",
+          "word": "cm_payable"
+        }
+      ],
+      "label": "rows"
+    },
+    {
+      "name": "tolerance",
+      "type": "json",
+      "default": 10,
+      "label": "tolerance"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "rows": "$rows",
+      "tolerance": "$tolerance"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-06: which figures of the filed return are set beside SimplyFile's (each found in the filed JSON where chip itr.map puts it), and the rupees of difference that do not matter (rounding).",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "rows": [
+          {
+            "key": "salary.gross",
+            "word": "cm_salary"
+          },
+          {
+            "key": "salary.income",
+            "word": "cm_salary_income"
+          },
+          {
+            "key": "hp.net",
+            "word": "cm_hp"
+          },
+          {
+            "key": "os.total",
+            "word": "cm_os"
+          },
+          {
+            "key": "gti",
+            "word": "cm_gti"
+          },
+          {
+            "key": "via.total",
+            "word": "cm_via"
+          },
+          {
+            "key": "total_income",
+            "word": "cm_total"
+          },
+          {
+            "key": "tax2.slab",
+            "word": "cm_tax"
+          },
+          {
+            "key": "tax2.rebate_all",
+            "word": "cm_rebate"
+          },
+          {
+            "key": "tax2.cess",
+            "word": "cm_cess"
+          },
+          {
+            "key": "tax2.gross",
+            "word": "cm_gross"
+          },
+          {
+            "key": "tax2.interest_fee",
+            "word": "cm_interest"
+          },
+          {
+            "key": "tax2.tds",
+            "word": "cm_tds"
+          },
+          {
+            "key": "tax2.paid",
+            "word": "cm_paid"
+          },
+          {
+            "key": "tax2.refund",
+            "word": "cm_refund"
+          },
+          {
+            "key": "tax2.payable",
+            "word": "cm_payable"
+          }
+        ],
+        "tolerance": 10
+      }
+    }
+  ]
+}

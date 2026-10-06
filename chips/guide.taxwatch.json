@@ -1,0 +1,109 @@
+{
+  "chip_id": "guide.taxwatch",
+  "kind": "accessor",
+  "set": "guide",
+  "label": "Guide me: Tax rules",
+  "aliases": [
+    "guide me: tax rules"
+  ],
+  "params": [
+    {
+      "name": "title",
+      "type": "text",
+      "default": "Tax rules",
+      "label": "title"
+    },
+    {
+      "name": "lede",
+      "type": "long",
+      "default": "Each new year's tax figures: fetch, compare, apply - the AI proposes, you decide.",
+      "label": "lede"
+    },
+    {
+      "name": "icon",
+      "type": "text",
+      "default": "refresh",
+      "label": "icon"
+    },
+    {
+      "name": "minutes",
+      "type": "json",
+      "default": 2,
+      "label": "minutes"
+    },
+    {
+      "name": "steps",
+      "type": "json",
+      "default": [
+        {
+          "title": "Live year",
+          "say": "The figures the portal computes with today, and the year they are for.",
+          "target": "#tw-head|main"
+        },
+        {
+          "title": "Fetch",
+          "say": "Pick the new year and fetch: Gemini reads official sources only and proposes every figure in the same shape.",
+          "target": "#tw-fetch|main"
+        },
+        {
+          "title": "Compare",
+          "say": "Each figure side by side - this year's and the new year's, what changed, and the source page for each.",
+          "target": "#tw-table|main"
+        },
+        {
+          "title": "Apply",
+          "say": "Tick what is right, edit anything by hand, then apply. Last year's slabs stay for past years, and every chip keeps its History.",
+          "target": "#tw-apply|main"
+        }
+      ],
+      "label": "steps"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "title": "$title",
+      "lede": "$lede",
+      "icon": "$icon",
+      "minutes": "$minutes",
+      "steps": "$steps"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-06: the Tax rules walk; tours/sf-taxwatch.json is made from it.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "title": "Tax rules",
+        "lede": "Each new year's tax figures: fetch, compare, apply - the AI proposes, you decide.",
+        "icon": "refresh",
+        "minutes": 2,
+        "steps": [
+          {
+            "title": "Live year",
+            "say": "The figures the portal computes with today, and the year they are for.",
+            "target": "#tw-head|main"
+          },
+          {
+            "title": "Fetch",
+            "say": "Pick the new year and fetch: Gemini reads official sources only and proposes every figure in the same shape.",
+            "target": "#tw-fetch|main"
+          },
+          {
+            "title": "Compare",
+            "say": "Each figure side by side - this year's and the new year's, what changed, and the source page for each.",
+            "target": "#tw-table|main"
+          },
+          {
+            "title": "Apply",
+            "say": "Tick what is right, edit anything by hand, then apply. Last year's slabs stay for past years, and every chip keeps its History.",
+            "target": "#tw-apply|main"
+          }
+        ]
+      }
+    }
+  ]
+}

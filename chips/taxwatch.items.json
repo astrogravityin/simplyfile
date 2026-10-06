@@ -1,0 +1,945 @@
+{
+  "chip_id": "taxwatch.items",
+  "kind": "accessor",
+  "set": "taxwatch",
+  "label": "Tax rules: the figures watched each year",
+  "aliases": [
+    "tax rules: the figures watched each year"
+  ],
+  "params": [
+    {
+      "name": "items",
+      "type": "json",
+      "default": [
+        {
+          "id": "slabs_new",
+          "group": "slabs",
+          "kind": "slabs_by_age",
+          "label": "New regime slabs (115BAC)",
+          "targets": [
+            {
+              "chip": "myreturn.rates",
+              "path": "slabs.new"
+            },
+            {
+              "chip": "compute.settings",
+              "path": "regimes[id=new].slabs",
+              "pick": "below60",
+              "archive": "regimes_by_ay"
+            }
+          ]
+        },
+        {
+          "id": "slabs_old",
+          "group": "slabs",
+          "kind": "slabs_by_age",
+          "label": "Old regime slabs (below 60, 60-80, 80+)",
+          "targets": [
+            {
+              "chip": "myreturn.rates",
+              "path": "slabs.old"
+            },
+            {
+              "chip": "compute.settings",
+              "path": "regimes[id=old].slabs",
+              "pick": "below60",
+              "archive": "regimes_by_ay"
+            }
+          ]
+        },
+        {
+          "id": "basic_new",
+          "group": "slabs",
+          "kind": "money_by_age",
+          "label": "Basic exemption - new regime",
+          "targets": [
+            {
+              "chip": "myreturn.rates",
+              "path": "basic.new"
+            }
+          ]
+        },
+        {
+          "id": "basic_old",
+          "group": "slabs",
+          "kind": "money_by_age",
+          "label": "Basic exemption - old regime",
+          "targets": [
+            {
+              "chip": "myreturn.rates",
+              "path": "basic.old"
+            }
+          ]
+        },
+        {
+          "id": "rebate_upto_new",
+          "group": "rebate",
+          "kind": "money",
+          "label": "87A rebate: total income up to - new regime",
+          "targets": [
+            {
+              "chip": "myreturn.rates",
+              "path": "rebate_upto.new"
+            },
+            {
+              "chip": "compute.settings",
+              "path": "regimes[id=new].rebate_upto",
+              "archive": "regimes_by_ay"
+            }
+          ]
+        },
+        {
+          "id": "rebate_most_new",
+          "group": "rebate",
+          "kind": "money",
+          "label": "87A rebate: at most - new regime",
+          "targets": [
+            {
+              "chip": "myreturn.rates",
+              "path": "rebate_most.new"
+            },
+            {
+              "chip": "compute.settings",
+              "path": "regimes[id=new].rebate_most",
+              "archive": "regimes_by_ay"
+            }
+          ]
+        },
+        {
+          "id": "rebate_upto_old",
+          "group": "rebate",
+          "kind": "money",
+          "label": "87A rebate: total income up to - old regime",
+          "targets": [
+            {
+              "chip": "myreturn.rates",
+              "path": "rebate_upto.old"
+            },
+            {
+              "chip": "compute.settings",
+              "path": "regimes[id=old].rebate_upto",
+              "archive": "regimes_by_ay"
+            }
+          ]
+        },
+        {
+          "id": "rebate_most_old",
+          "group": "rebate",
+          "kind": "money",
+          "label": "87A rebate: at most - old regime",
+          "targets": [
+            {
+              "chip": "myreturn.rates",
+              "path": "rebate_most.old"
+            },
+            {
+              "chip": "compute.settings",
+              "path": "regimes[id=old].rebate_most",
+              "archive": "regimes_by_ay"
+            }
+          ]
+        },
+        {
+          "id": "surcharge_new",
+          "group": "rebate",
+          "kind": "steps",
+          "label": "Surcharge - new regime (income above, rate %)",
+          "targets": [
+            {
+              "chip": "myreturn.rates",
+              "path": "surcharge.new"
+            },
+            {
+              "chip": "compute.settings",
+              "path": "regimes[id=new].surcharge",
+              "archive": "regimes_by_ay"
+            }
+          ]
+        },
+        {
+          "id": "surcharge_old",
+          "group": "rebate",
+          "kind": "steps",
+          "label": "Surcharge - old regime (income above, rate %)",
+          "targets": [
+            {
+              "chip": "myreturn.rates",
+              "path": "surcharge.old"
+            },
+            {
+              "chip": "compute.settings",
+              "path": "regimes[id=old].surcharge",
+              "archive": "regimes_by_ay"
+            }
+          ]
+        },
+        {
+          "id": "cess",
+          "group": "rebate",
+          "kind": "pct",
+          "label": "Health and education cess",
+          "targets": [
+            {
+              "chip": "myreturn.rates",
+              "path": "cess_pct"
+            },
+            {
+              "chip": "compute.settings",
+              "path": "cess_pct"
+            }
+          ]
+        },
+        {
+          "id": "std_new",
+          "group": "salary",
+          "kind": "money",
+          "label": "Standard deduction on salary - new regime",
+          "targets": [
+            {
+              "chip": "myreturn.rates",
+              "path": "std_deduction.new"
+            }
+          ]
+        },
+        {
+          "id": "std_old",
+          "group": "salary",
+          "kind": "money",
+          "label": "Standard deduction on salary - old regime",
+          "targets": [
+            {
+              "chip": "myreturn.rates",
+              "path": "std_deduction.old"
+            }
+          ]
+        },
+        {
+          "id": "family_pension",
+          "group": "salary",
+          "kind": "money_by_regime",
+          "label": "Family pension deduction cap 57(iia)",
+          "targets": [
+            {
+              "chip": "myreturn.rates",
+              "path": "family_pension_cap"
+            }
+          ]
+        },
+        {
+          "id": "self_interest",
+          "group": "salary",
+          "kind": "money_by_regime",
+          "label": "Interest on a self-occupied house, cap 24(b)",
+          "targets": [
+            {
+              "chip": "myreturn.rates",
+              "path": "self_interest_cap"
+            }
+          ]
+        },
+        {
+          "id": "rate_111a",
+          "group": "cg",
+          "kind": "pct",
+          "label": "Short-term gains on listed equity, 111A",
+          "targets": [
+            {
+              "chip": "myreturn.rates",
+              "path": "rate_111a"
+            }
+          ]
+        },
+        {
+          "id": "rate_112a",
+          "group": "cg",
+          "kind": "pct",
+          "label": "Long-term gains on listed equity, 112A",
+          "targets": [
+            {
+              "chip": "myreturn.rates",
+              "path": "rate_112a"
+            }
+          ]
+        },
+        {
+          "id": "exempt_112a",
+          "group": "cg",
+          "kind": "money",
+          "label": "112A gains exempt up to",
+          "targets": [
+            {
+              "chip": "myreturn.rates",
+              "path": "exempt_112a"
+            }
+          ]
+        },
+        {
+          "id": "rate_112",
+          "group": "cg",
+          "kind": "pct",
+          "label": "Other long-term gains, 112",
+          "targets": [
+            {
+              "chip": "myreturn.rates",
+              "path": "rate_112"
+            }
+          ]
+        },
+        {
+          "id": "cap_80c",
+          "group": "via",
+          "kind": "money",
+          "label": "80C + 80CCC + 80CCD(1) together",
+          "targets": [
+            {
+              "chip": "myreturn.rates",
+              "path": "cap_80c"
+            }
+          ]
+        },
+        {
+          "id": "cap_80ccd1b",
+          "group": "via",
+          "kind": "money",
+          "label": "80CCD(1B) NPS, own",
+          "targets": [
+            {
+              "chip": "myreturn.rates",
+              "path": "cap_80ccd1b"
+            }
+          ]
+        },
+        {
+          "id": "pct_80ccd2",
+          "group": "via",
+          "kind": "pct_by_regime",
+          "label": "80CCD(2) employer NPS, % of basic + DA",
+          "targets": [
+            {
+              "chip": "myreturn.rates",
+              "path": "pct_80ccd2"
+            }
+          ]
+        },
+        {
+          "id": "cap_80d",
+          "group": "via",
+          "kind": "money_map",
+          "label": "80D health cover caps",
+          "targets": [
+            {
+              "chip": "myreturn.rates",
+              "path": "cap_80d"
+            }
+          ]
+        },
+        {
+          "id": "cap_80tta",
+          "group": "via",
+          "kind": "money",
+          "label": "80TTA savings interest",
+          "targets": [
+            {
+              "chip": "myreturn.rates",
+              "path": "cap_80tta"
+            }
+          ]
+        },
+        {
+          "id": "cap_80ttb",
+          "group": "via",
+          "kind": "money",
+          "label": "80TTB interest, senior citizens",
+          "targets": [
+            {
+              "chip": "myreturn.rates",
+              "path": "cap_80ttb"
+            }
+          ]
+        },
+        {
+          "id": "itr1_income",
+          "group": "forms",
+          "kind": "money",
+          "label": "ITR-1: total income at most",
+          "targets": [
+            {
+              "chip": "myreturn.rates",
+              "path": "itr1_income_max"
+            }
+          ]
+        },
+        {
+          "id": "itr1_112a",
+          "group": "forms",
+          "kind": "money",
+          "label": "ITR-1: 112A gains at most",
+          "targets": [
+            {
+              "chip": "myreturn.rates",
+              "path": "itr1_ltcg112a_max"
+            }
+          ]
+        },
+        {
+          "id": "due",
+          "group": "dates",
+          "kind": "mmdd",
+          "label": "Due date - no audit (ITR-1, ITR-2)",
+          "targets": [
+            {
+              "chip": "close.dates",
+              "path": "due_mmdd"
+            }
+          ]
+        },
+        {
+          "id": "due_business",
+          "group": "dates",
+          "kind": "mmdd",
+          "label": "Due date - business, no audit (ITR-3, ITR-4)",
+          "targets": [
+            {
+              "chip": "close.dates",
+              "path": "due_business_mmdd"
+            }
+          ]
+        },
+        {
+          "id": "due_audit",
+          "group": "dates",
+          "kind": "mmdd",
+          "label": "Due date - tax audit",
+          "targets": [
+            {
+              "chip": "close.dates",
+              "path": "due_audit_mmdd"
+            }
+          ]
+        },
+        {
+          "id": "due_tp",
+          "group": "dates",
+          "kind": "mmdd",
+          "label": "Due date - transfer pricing (92E)",
+          "targets": [
+            {
+              "chip": "close.dates",
+              "path": "due_tp_mmdd"
+            }
+          ]
+        },
+        {
+          "id": "revise",
+          "group": "dates",
+          "kind": "mmdd",
+          "label": "Last day for a belated or revised return",
+          "targets": [
+            {
+              "chip": "close.dates",
+              "path": "revise_mmdd"
+            }
+          ]
+        },
+        {
+          "id": "updated_years",
+          "group": "dates",
+          "kind": "number",
+          "label": "Updated return (ITR-U): years allowed",
+          "targets": [
+            {
+              "chip": "close.dates",
+              "path": "updated_years_after"
+            }
+          ]
+        }
+      ],
+      "label": "items"
+    },
+    {
+      "name": "groups",
+      "type": "json",
+      "default": {
+        "slabs": "Slabs",
+        "rebate": "Rebate, surcharge, cess",
+        "salary": "Salary and house",
+        "cg": "Capital gains",
+        "via": "Deductions",
+        "forms": "Which form",
+        "dates": "Due dates"
+      },
+      "label": "groups"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "items": "$items",
+      "groups": "$groups"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-06: every figure Fetch asks for, its shape (kind) and where it lives (targets: chip + path; pick = take that part of the value; archive = before the first change, keep last year's whole param under that param's AY key, as compute.settings regimes_by_ay already does for the CA portal's past years).",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "items": [
+          {
+            "id": "slabs_new",
+            "group": "slabs",
+            "kind": "slabs_by_age",
+            "label": "New regime slabs (115BAC)",
+            "targets": [
+              {
+                "chip": "myreturn.rates",
+                "path": "slabs.new"
+              },
+              {
+                "chip": "compute.settings",
+                "path": "regimes[id=new].slabs",
+                "pick": "below60",
+                "archive": "regimes_by_ay"
+              }
+            ]
+          },
+          {
+            "id": "slabs_old",
+            "group": "slabs",
+            "kind": "slabs_by_age",
+            "label": "Old regime slabs (below 60, 60-80, 80+)",
+            "targets": [
+              {
+                "chip": "myreturn.rates",
+                "path": "slabs.old"
+              },
+              {
+                "chip": "compute.settings",
+                "path": "regimes[id=old].slabs",
+                "pick": "below60",
+                "archive": "regimes_by_ay"
+              }
+            ]
+          },
+          {
+            "id": "basic_new",
+            "group": "slabs",
+            "kind": "money_by_age",
+            "label": "Basic exemption - new regime",
+            "targets": [
+              {
+                "chip": "myreturn.rates",
+                "path": "basic.new"
+              }
+            ]
+          },
+          {
+            "id": "basic_old",
+            "group": "slabs",
+            "kind": "money_by_age",
+            "label": "Basic exemption - old regime",
+            "targets": [
+              {
+                "chip": "myreturn.rates",
+                "path": "basic.old"
+              }
+            ]
+          },
+          {
+            "id": "rebate_upto_new",
+            "group": "rebate",
+            "kind": "money",
+            "label": "87A rebate: total income up to - new regime",
+            "targets": [
+              {
+                "chip": "myreturn.rates",
+                "path": "rebate_upto.new"
+              },
+              {
+                "chip": "compute.settings",
+                "path": "regimes[id=new].rebate_upto",
+                "archive": "regimes_by_ay"
+              }
+            ]
+          },
+          {
+            "id": "rebate_most_new",
+            "group": "rebate",
+            "kind": "money",
+            "label": "87A rebate: at most - new regime",
+            "targets": [
+              {
+                "chip": "myreturn.rates",
+                "path": "rebate_most.new"
+              },
+              {
+                "chip": "compute.settings",
+                "path": "regimes[id=new].rebate_most",
+                "archive": "regimes_by_ay"
+              }
+            ]
+          },
+          {
+            "id": "rebate_upto_old",
+            "group": "rebate",
+            "kind": "money",
+            "label": "87A rebate: total income up to - old regime",
+            "targets": [
+              {
+                "chip": "myreturn.rates",
+                "path": "rebate_upto.old"
+              },
+              {
+                "chip": "compute.settings",
+                "path": "regimes[id=old].rebate_upto",
+                "archive": "regimes_by_ay"
+              }
+            ]
+          },
+          {
+            "id": "rebate_most_old",
+            "group": "rebate",
+            "kind": "money",
+            "label": "87A rebate: at most - old regime",
+            "targets": [
+              {
+                "chip": "myreturn.rates",
+                "path": "rebate_most.old"
+              },
+              {
+                "chip": "compute.settings",
+                "path": "regimes[id=old].rebate_most",
+                "archive": "regimes_by_ay"
+              }
+            ]
+          },
+          {
+            "id": "surcharge_new",
+            "group": "rebate",
+            "kind": "steps",
+            "label": "Surcharge - new regime (income above, rate %)",
+            "targets": [
+              {
+                "chip": "myreturn.rates",
+                "path": "surcharge.new"
+              },
+              {
+                "chip": "compute.settings",
+                "path": "regimes[id=new].surcharge",
+                "archive": "regimes_by_ay"
+              }
+            ]
+          },
+          {
+            "id": "surcharge_old",
+            "group": "rebate",
+            "kind": "steps",
+            "label": "Surcharge - old regime (income above, rate %)",
+            "targets": [
+              {
+                "chip": "myreturn.rates",
+                "path": "surcharge.old"
+              },
+              {
+                "chip": "compute.settings",
+                "path": "regimes[id=old].surcharge",
+                "archive": "regimes_by_ay"
+              }
+            ]
+          },
+          {
+            "id": "cess",
+            "group": "rebate",
+            "kind": "pct",
+            "label": "Health and education cess",
+            "targets": [
+              {
+                "chip": "myreturn.rates",
+                "path": "cess_pct"
+              },
+              {
+                "chip": "compute.settings",
+                "path": "cess_pct"
+              }
+            ]
+          },
+          {
+            "id": "std_new",
+            "group": "salary",
+            "kind": "money",
+            "label": "Standard deduction on salary - new regime",
+            "targets": [
+              {
+                "chip": "myreturn.rates",
+                "path": "std_deduction.new"
+              }
+            ]
+          },
+          {
+            "id": "std_old",
+            "group": "salary",
+            "kind": "money",
+            "label": "Standard deduction on salary - old regime",
+            "targets": [
+              {
+                "chip": "myreturn.rates",
+                "path": "std_deduction.old"
+              }
+            ]
+          },
+          {
+            "id": "family_pension",
+            "group": "salary",
+            "kind": "money_by_regime",
+            "label": "Family pension deduction cap 57(iia)",
+            "targets": [
+              {
+                "chip": "myreturn.rates",
+                "path": "family_pension_cap"
+              }
+            ]
+          },
+          {
+            "id": "self_interest",
+            "group": "salary",
+            "kind": "money_by_regime",
+            "label": "Interest on a self-occupied house, cap 24(b)",
+            "targets": [
+              {
+                "chip": "myreturn.rates",
+                "path": "self_interest_cap"
+              }
+            ]
+          },
+          {
+            "id": "rate_111a",
+            "group": "cg",
+            "kind": "pct",
+            "label": "Short-term gains on listed equity, 111A",
+            "targets": [
+              {
+                "chip": "myreturn.rates",
+                "path": "rate_111a"
+              }
+            ]
+          },
+          {
+            "id": "rate_112a",
+            "group": "cg",
+            "kind": "pct",
+            "label": "Long-term gains on listed equity, 112A",
+            "targets": [
+              {
+                "chip": "myreturn.rates",
+                "path": "rate_112a"
+              }
+            ]
+          },
+          {
+            "id": "exempt_112a",
+            "group": "cg",
+            "kind": "money",
+            "label": "112A gains exempt up to",
+            "targets": [
+              {
+                "chip": "myreturn.rates",
+                "path": "exempt_112a"
+              }
+            ]
+          },
+          {
+            "id": "rate_112",
+            "group": "cg",
+            "kind": "pct",
+            "label": "Other long-term gains, 112",
+            "targets": [
+              {
+                "chip": "myreturn.rates",
+                "path": "rate_112"
+              }
+            ]
+          },
+          {
+            "id": "cap_80c",
+            "group": "via",
+            "kind": "money",
+            "label": "80C + 80CCC + 80CCD(1) together",
+            "targets": [
+              {
+                "chip": "myreturn.rates",
+                "path": "cap_80c"
+              }
+            ]
+          },
+          {
+            "id": "cap_80ccd1b",
+            "group": "via",
+            "kind": "money",
+            "label": "80CCD(1B) NPS, own",
+            "targets": [
+              {
+                "chip": "myreturn.rates",
+                "path": "cap_80ccd1b"
+              }
+            ]
+          },
+          {
+            "id": "pct_80ccd2",
+            "group": "via",
+            "kind": "pct_by_regime",
+            "label": "80CCD(2) employer NPS, % of basic + DA",
+            "targets": [
+              {
+                "chip": "myreturn.rates",
+                "path": "pct_80ccd2"
+              }
+            ]
+          },
+          {
+            "id": "cap_80d",
+            "group": "via",
+            "kind": "money_map",
+            "label": "80D health cover caps",
+            "targets": [
+              {
+                "chip": "myreturn.rates",
+                "path": "cap_80d"
+              }
+            ]
+          },
+          {
+            "id": "cap_80tta",
+            "group": "via",
+            "kind": "money",
+            "label": "80TTA savings interest",
+            "targets": [
+              {
+                "chip": "myreturn.rates",
+                "path": "cap_80tta"
+              }
+            ]
+          },
+          {
+            "id": "cap_80ttb",
+            "group": "via",
+            "kind": "money",
+            "label": "80TTB interest, senior citizens",
+            "targets": [
+              {
+                "chip": "myreturn.rates",
+                "path": "cap_80ttb"
+              }
+            ]
+          },
+          {
+            "id": "itr1_income",
+            "group": "forms",
+            "kind": "money",
+            "label": "ITR-1: total income at most",
+            "targets": [
+              {
+                "chip": "myreturn.rates",
+                "path": "itr1_income_max"
+              }
+            ]
+          },
+          {
+            "id": "itr1_112a",
+            "group": "forms",
+            "kind": "money",
+            "label": "ITR-1: 112A gains at most",
+            "targets": [
+              {
+                "chip": "myreturn.rates",
+                "path": "itr1_ltcg112a_max"
+              }
+            ]
+          },
+          {
+            "id": "due",
+            "group": "dates",
+            "kind": "mmdd",
+            "label": "Due date - no audit (ITR-1, ITR-2)",
+            "targets": [
+              {
+                "chip": "close.dates",
+                "path": "due_mmdd"
+              }
+            ]
+          },
+          {
+            "id": "due_business",
+            "group": "dates",
+            "kind": "mmdd",
+            "label": "Due date - business, no audit (ITR-3, ITR-4)",
+            "targets": [
+              {
+                "chip": "close.dates",
+                "path": "due_business_mmdd"
+              }
+            ]
+          },
+          {
+            "id": "due_audit",
+            "group": "dates",
+            "kind": "mmdd",
+            "label": "Due date - tax audit",
+            "targets": [
+              {
+                "chip": "close.dates",
+                "path": "due_audit_mmdd"
+              }
+            ]
+          },
+          {
+            "id": "due_tp",
+            "group": "dates",
+            "kind": "mmdd",
+            "label": "Due date - transfer pricing (92E)",
+            "targets": [
+              {
+                "chip": "close.dates",
+                "path": "due_tp_mmdd"
+              }
+            ]
+          },
+          {
+            "id": "revise",
+            "group": "dates",
+            "kind": "mmdd",
+            "label": "Last day for a belated or revised return",
+            "targets": [
+              {
+                "chip": "close.dates",
+                "path": "revise_mmdd"
+              }
+            ]
+          },
+          {
+            "id": "updated_years",
+            "group": "dates",
+            "kind": "number",
+            "label": "Updated return (ITR-U): years allowed",
+            "targets": [
+              {
+                "chip": "close.dates",
+                "path": "updated_years_after"
+              }
+            ]
+          }
+        ],
+        "groups": {
+          "slabs": "Slabs",
+          "rebate": "Rebate, surcharge, cess",
+          "salary": "Salary and house",
+          "cg": "Capital gains",
+          "via": "Deductions",
+          "forms": "Which form",
+          "dates": "Due dates"
+        }
+      }
+    }
+  ]
+}

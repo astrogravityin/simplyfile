@@ -84,18 +84,18 @@
             "phone",
             "email"
           ],
-          "docs_required": [
-            "owner_aadhaar",
+          "docs_required": [],
+          "docs_optional": [
             "pan_card"
           ],
-          "docs_optional": [],
           "first_role": "self",
           "max_clients": 1,
           "self_client": true,
           "client_status": {
             "P": "individual",
             "H": "huf"
-          }
+          },
+          "auto_approve": true
         }
       ],
       "label": "kinds"
@@ -338,9 +338,9 @@
     }
   },
   "returns": "record",
-  "version": 1,
+  "version": 2,
   "status": "published",
-  "description_nl": "2026-10-04 owner: a CA firm (or an individual filing their own return) signs up, gives PAN, TAN, GSTIN, the owner's masked Aadhaar and the phone linked to the tax papers, uploads the papers, and waits for the portal admin's approval (review_hours). verify_via is manual now; DigiLocker later. A firm of kind self holds one client: itself.",
+  "description_nl": "2026-10-04 owner: a CA firm (or an individual filing their own return) signs up, gives PAN, TAN, GSTIN, the owner's masked Aadhaar and the phone linked to the tax papers, uploads the papers, and waits for the portal admin's approval (review_hours). verify_via is manual now; DigiLocker later. A firm of kind self holds one client: itself. 2026-10-06: an individual filing their own return (kind self) is approved on submit (auto_approve) and needs no Aadhaar copy - one PAN, their own, nothing for a reviewer to check.",
   "test_cases": [
     {
       "args": {},
@@ -419,18 +419,18 @@
               "phone",
               "email"
             ],
-            "docs_required": [
-              "owner_aadhaar",
+            "docs_required": [],
+            "docs_optional": [
               "pan_card"
             ],
-            "docs_optional": [],
             "first_role": "self",
             "max_clients": 1,
             "self_client": true,
             "client_status": {
               "P": "individual",
               "H": "huf"
-            }
+            },
+            "auto_approve": true
           }
         ],
         "docs": [

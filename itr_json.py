@@ -345,7 +345,6 @@ def _book_profit(cid: str, ay: str) -> float:
 
 def build(cid: str, ay: str, kind: str = "itr") -> tuple[dict, dict]:
     """(the JSON, a report {form, valid, errors[], filled}) - kind itr (ITR-3 / ITR-5) or tar (Form 3CA/3CB-3CD)."""
-    import jsonschema  # noqa: PLC0415
     f = facts(cid, ay)
     if kind == "tar":
         f |= tar_facts(cid, ay)
@@ -358,6 +357,22 @@ def build(cid: str, ay: str, kind: str = "itr") -> tuple[dict, dict]:
         if not spec:
             raise HTTPException(409, say("itr_no_schema", form=form))
         m = engine.run("itr.map")["forms"].get(form) or []
+    doc, filled, s, root, wrap = _fill(f, spec, m)
+    bk = books(cid, ay, doc[wrap][root], s, root) if kind == "itr" else None
+    return doc, _checked(doc, s, spec, form, kind, filled) | {"books": bk}
+
+
+def assemble(f: dict, form: str) -> tuple[dict, dict]:
+    """The return as the department's JSON from facts gathered elsewhere (myreturn.facts: ITR-1 / ITR-2) - the same
+    skeleton, the same chip itr.map rows and the same schema check as an ITR-3 / ITR-5."""
+    spec = settings()["forms"].get(form)
+    if not spec:
+        raise HTTPException(409, say("itr_no_schema", form=form))
+    doc, filled, s, _root, _wrap = _fill(f, spec, engine.run("itr.map")["forms"].get(form) or [])
+    return doc, _checked(doc, s, spec, form, "itr", filled) | {"books": None}
+
+
+def _fill(f: dict, spec: dict, m: list) -> tuple:
     s, root, wrap = schema_at(spec["schema"]), spec["root"], spec.get("wrap", "ITR")
     doc = {wrap: {root: skeleton(s, {"$ref": f"#/definitions/{root}"})}}
     filled = 0
@@ -372,21 +387,31 @@ def build(cid: str, ay: str, kind: str = "itr") -> tuple[dict, dict]:
                         _put(one, p, v)
                 items.append(one)
             if items or row.get("always"):
+                if row["path"].startswith(root + ".") and _has(s, root, row["path"].split(".", 1)[1]):
+                    _seed(s, root, doc[wrap][root], row["path"].split(".", 1)[1])
                 _put(doc[wrap], row["path"], items)
                 filled += len(items)
             continue
         v = _get(f, row["from"])
         if v in (None, "") and row.get("skip_blank", True):
             continue
+        if row.get("skip_zero") and not v:              # an optional block stays out while its figure is nil
+            continue
+        if row["path"].startswith(root + ".") and _has(s, root, row["path"].split(".", 1)[1]):
+            _seed(s, root, doc[wrap][root], row["path"].split(".", 1)[1])   # an optional part gets its required fields first
         _put(doc[wrap], row["path"], v)
         filled += 1
-    bk = books(cid, ay, doc[wrap][root], s, root) if kind == "itr" else None
+    return doc, filled, s, root, wrap
+
+
+def _checked(doc: dict, s: dict, spec: dict, form: str, kind: str, filled: int) -> dict:
+    import jsonschema  # noqa: PLC0415
     errors = sorted(jsonschema.Draft4Validator(s).iter_errors(doc), key=lambda e: list(e.absolute_path))
     out = [{"path": ".".join(str(p) for p in e.absolute_path), "message": e.message[: settings()["error_chars"]],
             "field": _field(e), "what": say("itr_err_missing" if e.validator == "required" or e.instance in ("", 0, None) else "itr_err_bad")}
            for e in errors]
-    return doc, {"form": form, "valid": not out, "books": bk, "errors": out[: settings()["errors_shown"]], "error_count": len(out), "filled": filled,
-                 "schema": spec["schema"].split("/")[-1], "kind": kind}
+    return {"form": form, "valid": not out, "errors": out[: settings()["errors_shown"]], "error_count": len(out), "filled": filled,
+            "schema": spec["schema"].split("/")[-1], "kind": kind}
 
 
 def _field(e) -> str:

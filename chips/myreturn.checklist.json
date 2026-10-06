@@ -1,0 +1,285 @@
+{
+  "chip_id": "myreturn.checklist",
+  "kind": "accessor",
+  "set": "myreturn",
+  "label": "My return: the documents to keep handy",
+  "aliases": [
+    "my return: the documents to keep handy"
+  ],
+  "params": [
+    {
+      "name": "rows",
+      "type": "json",
+      "default": [
+        {
+          "id": "login",
+          "group": "start",
+          "label": "Your e-filing login (incometax.gov.in)",
+          "why": "To download the pre-filled JSON, AIS and 26AS, and to file.",
+          "kind": ""
+        },
+        {
+          "id": "pan_aadhaar",
+          "group": "start",
+          "label": "PAN, linked to Aadhaar - and the mobile number on Aadhaar",
+          "why": "An unlinked PAN is inoperative; e-verifying needs the Aadhaar OTP.",
+          "kind": ""
+        },
+        {
+          "id": "bank",
+          "group": "start",
+          "label": "Bank account for the refund - pre-validated on the e-filing portal",
+          "why": "A refund is paid only to a pre-validated account (Profile > My Bank Account).",
+          "kind": ""
+        },
+        {
+          "id": "prefill",
+          "group": "department",
+          "label": "Pre-filled JSON for AY 2026-27",
+          "why": "Your details, salary, TDS, taxes paid and bank accounts, from the department.",
+          "kind": "prefill"
+        },
+        {
+          "id": "ais",
+          "group": "department",
+          "label": "AIS (and TIS) for FY 2025-26",
+          "why": "Interest, dividends, share and fund sales, and every TDS reported on your PAN.",
+          "kind": "ais"
+        },
+        {
+          "id": "26as",
+          "group": "department",
+          "label": "Form 26AS",
+          "why": "Your tax credit as the department holds it - the return is checked against it.",
+          "kind": "26as"
+        },
+        {
+          "id": "form16",
+          "group": "salary",
+          "label": "Form 16 from every employer in the year",
+          "why": "Part A: TDS by quarter. Part B: salary, exempt allowances, deductions.",
+          "kind": "form16"
+        },
+        {
+          "id": "payslips",
+          "group": "salary",
+          "label": "Salary slips (basic + DA) - if you claim HRA",
+          "why": "HRA exemption is worked out on basic + DA.",
+          "kind": ""
+        },
+        {
+          "id": "rent",
+          "group": "salary",
+          "label": "Rent receipts and the landlord's PAN (rent above 1 lakh a year)",
+          "why": "HRA (old regime) or 80GG when there is no HRA.",
+          "kind": ""
+        },
+        {
+          "id": "home_loan",
+          "group": "house",
+          "label": "Home-loan interest certificate; rent and municipal tax of a house let out",
+          "why": "Section 24(b) interest, and income from a house let out.",
+          "kind": ""
+        },
+        {
+          "id": "interest",
+          "group": "other",
+          "label": "Interest certificates for savings and deposits (if AIS seems short)",
+          "why": "Interest is taxable in full; 80TTA / 80TTB take a part off (old regime).",
+          "kind": ""
+        },
+        {
+          "id": "cg",
+          "group": "other",
+          "label": "Capital-gains statement from your broker and CAMS / KFintech",
+          "why": "Shares and funds sold in the year: 111A, 112A and other gains (ITR-2 above 1.25 lakh of 112A).",
+          "kind": ""
+        },
+        {
+          "id": "deductions",
+          "group": "deductions",
+          "label": "Proofs: 80C (PPF, ELSS, LIC, tuition), 80D health cover, NPS, donations with the donee's PAN",
+          "why": "Old regime only, except the employer's NPS (80CCD(2)).",
+          "kind": ""
+        },
+        {
+          "id": "challans",
+          "group": "taxes",
+          "label": "Advance-tax and self-assessment challans (BSR code, date, serial no.)",
+          "why": "Tax you paid yourself counts only with its challan details.",
+          "kind": ""
+        },
+        {
+          "id": "last_return",
+          "group": "taxes",
+          "label": "Last year's return - and this year's, if you filed and want to compare",
+          "why": "Losses carried forward, and a check of what was filed.",
+          "kind": "filed"
+        },
+        {
+          "id": "foreign",
+          "group": "taxes",
+          "label": "Foreign assets or income, if any (bank, shares, RSUs abroad)",
+          "why": "Schedule FA - this makes it an ITR-2.",
+          "kind": ""
+        }
+      ],
+      "label": "rows"
+    },
+    {
+      "name": "groups",
+      "type": "json",
+      "default": {
+        "start": "Before anything",
+        "department": "From the e-filing portal",
+        "salary": "From your employer",
+        "house": "Your home",
+        "other": "Interest and investments",
+        "deductions": "Deductions",
+        "taxes": "Taxes and past returns"
+      },
+      "label": "groups"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "rows": "$rows",
+      "groups": "$groups"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-06: what to have to hand before starting, grouped the way a person gathers them; a row whose kind is read ticks itself, the rest the person ticks. Words live here because the list IS the content (owner: 'clearly mention what documents one should keep handy').",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "rows": [
+          {
+            "id": "login",
+            "group": "start",
+            "label": "Your e-filing login (incometax.gov.in)",
+            "why": "To download the pre-filled JSON, AIS and 26AS, and to file.",
+            "kind": ""
+          },
+          {
+            "id": "pan_aadhaar",
+            "group": "start",
+            "label": "PAN, linked to Aadhaar - and the mobile number on Aadhaar",
+            "why": "An unlinked PAN is inoperative; e-verifying needs the Aadhaar OTP.",
+            "kind": ""
+          },
+          {
+            "id": "bank",
+            "group": "start",
+            "label": "Bank account for the refund - pre-validated on the e-filing portal",
+            "why": "A refund is paid only to a pre-validated account (Profile > My Bank Account).",
+            "kind": ""
+          },
+          {
+            "id": "prefill",
+            "group": "department",
+            "label": "Pre-filled JSON for AY 2026-27",
+            "why": "Your details, salary, TDS, taxes paid and bank accounts, from the department.",
+            "kind": "prefill"
+          },
+          {
+            "id": "ais",
+            "group": "department",
+            "label": "AIS (and TIS) for FY 2025-26",
+            "why": "Interest, dividends, share and fund sales, and every TDS reported on your PAN.",
+            "kind": "ais"
+          },
+          {
+            "id": "26as",
+            "group": "department",
+            "label": "Form 26AS",
+            "why": "Your tax credit as the department holds it - the return is checked against it.",
+            "kind": "26as"
+          },
+          {
+            "id": "form16",
+            "group": "salary",
+            "label": "Form 16 from every employer in the year",
+            "why": "Part A: TDS by quarter. Part B: salary, exempt allowances, deductions.",
+            "kind": "form16"
+          },
+          {
+            "id": "payslips",
+            "group": "salary",
+            "label": "Salary slips (basic + DA) - if you claim HRA",
+            "why": "HRA exemption is worked out on basic + DA.",
+            "kind": ""
+          },
+          {
+            "id": "rent",
+            "group": "salary",
+            "label": "Rent receipts and the landlord's PAN (rent above 1 lakh a year)",
+            "why": "HRA (old regime) or 80GG when there is no HRA.",
+            "kind": ""
+          },
+          {
+            "id": "home_loan",
+            "group": "house",
+            "label": "Home-loan interest certificate; rent and municipal tax of a house let out",
+            "why": "Section 24(b) interest, and income from a house let out.",
+            "kind": ""
+          },
+          {
+            "id": "interest",
+            "group": "other",
+            "label": "Interest certificates for savings and deposits (if AIS seems short)",
+            "why": "Interest is taxable in full; 80TTA / 80TTB take a part off (old regime).",
+            "kind": ""
+          },
+          {
+            "id": "cg",
+            "group": "other",
+            "label": "Capital-gains statement from your broker and CAMS / KFintech",
+            "why": "Shares and funds sold in the year: 111A, 112A and other gains (ITR-2 above 1.25 lakh of 112A).",
+            "kind": ""
+          },
+          {
+            "id": "deductions",
+            "group": "deductions",
+            "label": "Proofs: 80C (PPF, ELSS, LIC, tuition), 80D health cover, NPS, donations with the donee's PAN",
+            "why": "Old regime only, except the employer's NPS (80CCD(2)).",
+            "kind": ""
+          },
+          {
+            "id": "challans",
+            "group": "taxes",
+            "label": "Advance-tax and self-assessment challans (BSR code, date, serial no.)",
+            "why": "Tax you paid yourself counts only with its challan details.",
+            "kind": ""
+          },
+          {
+            "id": "last_return",
+            "group": "taxes",
+            "label": "Last year's return - and this year's, if you filed and want to compare",
+            "why": "Losses carried forward, and a check of what was filed.",
+            "kind": "filed"
+          },
+          {
+            "id": "foreign",
+            "group": "taxes",
+            "label": "Foreign assets or income, if any (bank, shares, RSUs abroad)",
+            "why": "Schedule FA - this makes it an ITR-2.",
+            "kind": ""
+          }
+        ],
+        "groups": {
+          "start": "Before anything",
+          "department": "From the e-filing portal",
+          "salary": "From your employer",
+          "house": "Your home",
+          "other": "Interest and investments",
+          "deductions": "Deductions",
+          "taxes": "Taxes and past returns"
+        }
+      }
+    }
+  ]
+}

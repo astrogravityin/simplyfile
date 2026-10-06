@@ -1,0 +1,100 @@
+{
+  "chip_id": "myreturn.sources",
+  "kind": "accessor",
+  "set": "myreturn",
+  "label": "My return: which document a figure is taken from",
+  "aliases": [
+    "my return: which document a figure is ta"
+  ],
+  "params": [
+    {
+      "name": "order",
+      "type": "json",
+      "default": {
+        "person": [
+          "prefill",
+          "ais",
+          "form16"
+        ],
+        "employers": [
+          "form16",
+          "prefill"
+        ],
+        "other": [
+          "ais",
+          "prefill"
+        ],
+        "cg": [
+          "ais",
+          "prefill"
+        ],
+        "via": [
+          "form16",
+          "prefill"
+        ],
+        "tds": [
+          "26as",
+          "ais",
+          "prefill",
+          "form16"
+        ],
+        "paid": [
+          "26as",
+          "ais",
+          "prefill"
+        ],
+        "banks": [
+          "prefill"
+        ]
+      },
+      "label": "for each part of the return, the documents in the order they are trusted"
+    }
+  ],
+  "expr": "$order",
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-06: salary from Form 16 (each employer's own certificate), interest and dividends from the AIS, tax credit as 26AS shows it (it is what the department checks against), personal details and refund banks from the pre-filled JSON. A figure the person types wins over all.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "person": [
+          "prefill",
+          "ais",
+          "form16"
+        ],
+        "employers": [
+          "form16",
+          "prefill"
+        ],
+        "other": [
+          "ais",
+          "prefill"
+        ],
+        "cg": [
+          "ais",
+          "prefill"
+        ],
+        "via": [
+          "form16",
+          "prefill"
+        ],
+        "tds": [
+          "26as",
+          "ais",
+          "prefill",
+          "form16"
+        ],
+        "paid": [
+          "26as",
+          "ais",
+          "prefill"
+        ],
+        "banks": [
+          "prefill"
+        ]
+      }
+    }
+  ]
+}

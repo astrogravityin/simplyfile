@@ -1,0 +1,325 @@
+{
+  "chip_id": "myreturn.form",
+  "kind": "accessor",
+  "set": "myreturn",
+  "label": "My return: ITR-1 or ITR-2, and why",
+  "aliases": [
+    "my return: itr-1 or itr-2, and why"
+  ],
+  "params": [
+    {
+      "name": "resident",
+      "type": "boolean",
+      "default": true,
+      "label": "resident (ordinarily)"
+    },
+    {
+      "name": "total",
+      "type": "number",
+      "default": 0,
+      "label": "total income"
+    },
+    {
+      "name": "houses",
+      "type": "number",
+      "default": 0,
+      "label": "house properties"
+    },
+    {
+      "name": "ltcg_112a",
+      "type": "number",
+      "default": 0,
+      "label": "112A gains"
+    },
+    {
+      "name": "other_cg",
+      "type": "boolean",
+      "default": false,
+      "label": "any other capital gain or loss (111A, 112, a loss)"
+    },
+    {
+      "name": "agri",
+      "type": "number",
+      "default": 0,
+      "label": "agricultural income"
+    },
+    {
+      "name": "director",
+      "type": "boolean",
+      "default": false,
+      "label": "a company director"
+    },
+    {
+      "name": "unlisted",
+      "type": "boolean",
+      "default": false,
+      "label": "held unlisted shares in the year"
+    },
+    {
+      "name": "foreign",
+      "type": "boolean",
+      "default": false,
+      "label": "foreign assets or income"
+    },
+    {
+      "name": "loss_cf",
+      "type": "boolean",
+      "default": false,
+      "label": "losses brought or carried forward"
+    },
+    {
+      "name": "other",
+      "type": "boolean",
+      "default": false,
+      "label": "lottery, ESOP deferral, a second set of specials"
+    }
+  ],
+  "expr": {
+    "vop": "choose",
+    "cases": [
+      {
+        "when": {
+          "op": "not",
+          "item": {
+            "op": "eq",
+            "left": "$resident",
+            "right": true
+          }
+        },
+        "then": {
+          "vop": "record",
+          "fields": {
+            "form": "ITR-2",
+            "why": "why_nonres"
+          }
+        }
+      },
+      {
+        "when": {
+          "op": "gt",
+          "left": "$total",
+          "right": {
+            "vop": "get",
+            "value": {
+              "chip": "myreturn.rates",
+              "args": {}
+            },
+            "path": "itr1_income_max"
+          }
+        },
+        "then": {
+          "vop": "record",
+          "fields": {
+            "form": "ITR-2",
+            "why": "why_income"
+          }
+        }
+      },
+      {
+        "when": {
+          "op": "gt",
+          "left": "$houses",
+          "right": {
+            "vop": "get",
+            "value": {
+              "chip": "myreturn.rates",
+              "args": {}
+            },
+            "path": "itr1_houses_max"
+          }
+        },
+        "then": {
+          "vop": "record",
+          "fields": {
+            "form": "ITR-2",
+            "why": "why_houses"
+          }
+        }
+      },
+      {
+        "when": {
+          "op": "any",
+          "items": [
+            {
+              "op": "gt",
+              "left": "$ltcg_112a",
+              "right": {
+                "vop": "get",
+                "value": {
+                  "chip": "myreturn.rates",
+                  "args": {}
+                },
+                "path": "itr1_ltcg112a_max"
+              }
+            },
+            {
+              "op": "eq",
+              "left": "$other_cg",
+              "right": true
+            }
+          ]
+        },
+        "then": {
+          "vop": "record",
+          "fields": {
+            "form": "ITR-2",
+            "why": "why_cg"
+          }
+        }
+      },
+      {
+        "when": {
+          "op": "gt",
+          "left": "$agri",
+          "right": {
+            "vop": "get",
+            "value": {
+              "chip": "myreturn.rates",
+              "args": {}
+            },
+            "path": "itr1_agri_max"
+          }
+        },
+        "then": {
+          "vop": "record",
+          "fields": {
+            "form": "ITR-2",
+            "why": "why_agri"
+          }
+        }
+      },
+      {
+        "when": {
+          "op": "any",
+          "items": [
+            {
+              "op": "eq",
+              "left": "$director",
+              "right": true
+            },
+            {
+              "op": "eq",
+              "left": "$unlisted",
+              "right": true
+            }
+          ]
+        },
+        "then": {
+          "vop": "record",
+          "fields": {
+            "form": "ITR-2",
+            "why": "why_director"
+          }
+        }
+      },
+      {
+        "when": {
+          "op": "eq",
+          "left": "$foreign",
+          "right": true
+        },
+        "then": {
+          "vop": "record",
+          "fields": {
+            "form": "ITR-2",
+            "why": "why_foreign"
+          }
+        }
+      },
+      {
+        "when": {
+          "op": "any",
+          "items": [
+            {
+              "op": "eq",
+              "left": "$loss_cf",
+              "right": true
+            },
+            {
+              "op": "eq",
+              "left": "$other",
+              "right": true
+            }
+          ]
+        },
+        "then": {
+          "vop": "record",
+          "fields": {
+            "form": "ITR-2",
+            "why": "why_other"
+          }
+        }
+      }
+    ],
+    "else": {
+      "vop": "record",
+      "fields": {
+        "form": "ITR-1",
+        "why": "why_simple"
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-06: ITR-1 (Sahaj): a resident with total income up to 50 lakh from salary or pension, up to two houses, other sources, 112A gains up to 1.25 lakh and farm income up to 5,000; anything else - not resident, more income, other gains or losses, a directorship, unlisted shares, foreign assets, losses carried - is ITR-2. The first reason that applies is the one shown.",
+  "test_cases": [
+    {
+      "args": {
+        "total": 1400000,
+        "houses": 1
+      },
+      "expect_value": {
+        "form": "ITR-1",
+        "why": "why_simple"
+      }
+    },
+    {
+      "args": {
+        "total": 1400000,
+        "ltcg_112a": 90000
+      },
+      "expect_value": {
+        "form": "ITR-1",
+        "why": "why_simple"
+      }
+    },
+    {
+      "args": {
+        "total": 1400000,
+        "ltcg_112a": 200000
+      },
+      "expect_value": {
+        "form": "ITR-2",
+        "why": "why_cg"
+      }
+    },
+    {
+      "args": {
+        "total": 6000000
+      },
+      "expect_value": {
+        "form": "ITR-2",
+        "why": "why_income"
+      }
+    },
+    {
+      "args": {
+        "resident": false
+      },
+      "expect_value": {
+        "form": "ITR-2",
+        "why": "why_nonres"
+      }
+    },
+    {
+      "args": {
+        "director": true
+      },
+      "expect_value": {
+        "form": "ITR-2",
+        "why": "why_director"
+      }
+    }
+  ]
+}

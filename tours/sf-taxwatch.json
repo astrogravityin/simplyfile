@@ -1,0 +1,76 @@
+{
+  "prod_base": "https://sf.valuestream.in",
+  "voice": "en-IN-NeerjaNeural",
+  "rate": "+0%",
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "blur": [
+    "#whoami",
+    "#userpop .head"
+  ],
+  "page_key": "sf-taxwatch",
+  "title": "Tax rules",
+  "start_url": "/#/taxwatch",
+  "covers": [
+    "fetch the new year",
+    "what changed",
+    "apply with history"
+  ],
+  "steps": [
+    {
+      "chapter": "Tax rules",
+      "say": "Each new year's tax figures: fetch, compare, apply - the AI proposes, you decide.",
+      "do": [
+        {
+          "wait": 1
+        }
+      ]
+    },
+    {
+      "chapter": "Live year",
+      "say": "The figures the portal computes with today, and the year they are for.",
+      "do": [
+        {
+          "highlight_target": "#tw-head|main",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Fetch",
+      "say": "Pick the new year and fetch: Gemini reads official sources only and proposes every figure in the same shape.",
+      "do": [
+        {
+          "highlight_target": "#tw-fetch|main",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Compare",
+      "say": "Each figure side by side - this year's and the new year's, what changed, and the source page for each.",
+      "do": [
+        {
+          "highlight_target": "#tw-table|main",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Apply",
+      "say": "Tick what is right, edit anything by hand, then apply. Last year's slabs stay for past years, and every chip keeps its History.",
+      "do": [
+        {
+          "highlight_target": "#tw-apply|main",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,429 @@
+{
+  "chip_id": "myreturn.cyla",
+  "kind": "accessor",
+  "set": "myreturn",
+  "label": "My return: the house loss set off this year",
+  "aliases": [
+    "my return: house loss set off"
+  ],
+  "params": [
+    {
+      "name": "hp",
+      "type": "number",
+      "default": 0,
+      "label": "house property head (after the cap)"
+    },
+    {
+      "name": "salary",
+      "type": "number",
+      "default": 0,
+      "label": "income from salary"
+    },
+    {
+      "name": "os",
+      "type": "number",
+      "default": 0,
+      "label": "income from other sources"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "loss": {
+        "vop": "largest",
+        "values": [
+          0,
+          {
+            "vop": "sub",
+            "a": 0,
+            "b": "$hp"
+          }
+        ]
+      },
+      "hp_income": {
+        "vop": "largest",
+        "values": [
+          0,
+          "$hp"
+        ]
+      },
+      "salary": {
+        "vop": "smallest",
+        "values": [
+          {
+            "vop": "largest",
+            "values": [
+              0,
+              {
+                "vop": "sub",
+                "a": 0,
+                "b": "$hp"
+              }
+            ]
+          },
+          {
+            "vop": "largest",
+            "values": [
+              0,
+              "$salary"
+            ]
+          }
+        ]
+      },
+      "salary_after": {
+        "vop": "sub",
+        "a": "$salary",
+        "b": {
+          "vop": "smallest",
+          "values": [
+            {
+              "vop": "largest",
+              "values": [
+                0,
+                {
+                  "vop": "sub",
+                  "a": 0,
+                  "b": "$hp"
+                }
+              ]
+            },
+            {
+              "vop": "largest",
+              "values": [
+                0,
+                "$salary"
+              ]
+            }
+          ]
+        }
+      },
+      "os": {
+        "vop": "smallest",
+        "values": [
+          {
+            "vop": "sub",
+            "a": {
+              "vop": "largest",
+              "values": [
+                0,
+                {
+                  "vop": "sub",
+                  "a": 0,
+                  "b": "$hp"
+                }
+              ]
+            },
+            "b": {
+              "vop": "smallest",
+              "values": [
+                {
+                  "vop": "largest",
+                  "values": [
+                    0,
+                    {
+                      "vop": "sub",
+                      "a": 0,
+                      "b": "$hp"
+                    }
+                  ]
+                },
+                {
+                  "vop": "largest",
+                  "values": [
+                    0,
+                    "$salary"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "vop": "largest",
+            "values": [
+              0,
+              "$os"
+            ]
+          }
+        ]
+      },
+      "os_after": {
+        "vop": "sub",
+        "a": "$os",
+        "b": {
+          "vop": "smallest",
+          "values": [
+            {
+              "vop": "sub",
+              "a": {
+                "vop": "largest",
+                "values": [
+                  0,
+                  {
+                    "vop": "sub",
+                    "a": 0,
+                    "b": "$hp"
+                  }
+                ]
+              },
+              "b": {
+                "vop": "smallest",
+                "values": [
+                  {
+                    "vop": "largest",
+                    "values": [
+                      0,
+                      {
+                        "vop": "sub",
+                        "a": 0,
+                        "b": "$hp"
+                      }
+                    ]
+                  },
+                  {
+                    "vop": "largest",
+                    "values": [
+                      0,
+                      "$salary"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "vop": "largest",
+              "values": [
+                0,
+                "$os"
+              ]
+            }
+          ]
+        }
+      },
+      "used": {
+        "vop": "total",
+        "values": [
+          {
+            "vop": "smallest",
+            "values": [
+              {
+                "vop": "largest",
+                "values": [
+                  0,
+                  {
+                    "vop": "sub",
+                    "a": 0,
+                    "b": "$hp"
+                  }
+                ]
+              },
+              {
+                "vop": "largest",
+                "values": [
+                  0,
+                  "$salary"
+                ]
+              }
+            ]
+          },
+          {
+            "vop": "smallest",
+            "values": [
+              {
+                "vop": "sub",
+                "a": {
+                  "vop": "largest",
+                  "values": [
+                    0,
+                    {
+                      "vop": "sub",
+                      "a": 0,
+                      "b": "$hp"
+                    }
+                  ]
+                },
+                "b": {
+                  "vop": "smallest",
+                  "values": [
+                    {
+                      "vop": "largest",
+                      "values": [
+                        0,
+                        {
+                          "vop": "sub",
+                          "a": 0,
+                          "b": "$hp"
+                        }
+                      ]
+                    },
+                    {
+                      "vop": "largest",
+                      "values": [
+                        0,
+                        "$salary"
+                      ]
+                    }
+                  ]
+                }
+              },
+              {
+                "vop": "largest",
+                "values": [
+                  0,
+                  "$os"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "left": {
+        "vop": "sub",
+        "a": {
+          "vop": "largest",
+          "values": [
+            0,
+            {
+              "vop": "sub",
+              "a": 0,
+              "b": "$hp"
+            }
+          ]
+        },
+        "b": {
+          "vop": "total",
+          "values": [
+            {
+              "vop": "smallest",
+              "values": [
+                {
+                  "vop": "largest",
+                  "values": [
+                    0,
+                    {
+                      "vop": "sub",
+                      "a": 0,
+                      "b": "$hp"
+                    }
+                  ]
+                },
+                {
+                  "vop": "largest",
+                  "values": [
+                    0,
+                    "$salary"
+                  ]
+                }
+              ]
+            },
+            {
+              "vop": "smallest",
+              "values": [
+                {
+                  "vop": "sub",
+                  "a": {
+                    "vop": "largest",
+                    "values": [
+                      0,
+                      {
+                        "vop": "sub",
+                        "a": 0,
+                        "b": "$hp"
+                      }
+                    ]
+                  },
+                  "b": {
+                    "vop": "smallest",
+                    "values": [
+                      {
+                        "vop": "largest",
+                        "values": [
+                          0,
+                          {
+                            "vop": "sub",
+                            "a": 0,
+                            "b": "$hp"
+                          }
+                        ]
+                      },
+                      {
+                        "vop": "largest",
+                        "values": [
+                          0,
+                          "$salary"
+                        ]
+                      }
+                    ]
+                  }
+                },
+                {
+                  "vop": "largest",
+                  "values": [
+                    0,
+                    "$os"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-06: Schedule CYLA - a loss under house property (already capped by myreturn.hp_total) is set off against salary first, then other sources; whatever is left is not set off this year. Gains are left alone (ponytail: a loss larger than salary + other sources would also go against capital gains - rare for an ITR-2 filer).",
+  "test_cases": [
+    {
+      "args": {
+        "hp": -200000,
+        "salary": 900000,
+        "os": 20000
+      },
+      "expect_value": {
+        "loss": 200000,
+        "hp_income": 0,
+        "salary": 200000,
+        "salary_after": 700000,
+        "os": 0,
+        "os_after": 20000,
+        "used": 200000,
+        "left": 0
+      }
+    },
+    {
+      "args": {
+        "hp": -200000,
+        "salary": 150000,
+        "os": 20000
+      },
+      "expect_value": {
+        "loss": 200000,
+        "hp_income": 0,
+        "salary": 150000,
+        "salary_after": 0,
+        "os": 20000,
+        "os_after": 0,
+        "used": 170000,
+        "left": 30000
+      }
+    },
+    {
+      "args": {
+        "hp": 96000,
+        "salary": 900000,
+        "os": 0
+      },
+      "expect_value": {
+        "loss": 0,
+        "hp_income": 96000,
+        "salary": 0,
+        "salary_after": 900000,
+        "os": 0,
+        "os_after": 0,
+        "used": 0,
+        "left": 0
+      }
+    }
+  ]
+}

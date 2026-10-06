@@ -1,0 +1,137 @@
+{
+  "chip_id": "myreturn.checks",
+  "kind": "accessor",
+  "set": "myreturn",
+  "label": "My return: does a figure agree with the other document",
+  "aliases": [
+    "my return: does a figure agree with the "
+  ],
+  "params": [
+    {
+      "name": "what",
+      "type": "text",
+      "default": "tds",
+      "label": "which figure"
+    },
+    {
+      "name": "a",
+      "type": "number",
+      "default": 0,
+      "label": "in the return"
+    },
+    {
+      "name": "b",
+      "type": "number",
+      "default": 0,
+      "label": "in the other document"
+    },
+    {
+      "name": "tolerance",
+      "type": "json",
+      "default": {
+        "tds": 10,
+        "salary": 100,
+        "savings": 100,
+        "deposits": 100,
+        "dividend": 100
+      },
+      "label": "rupees of difference that do not matter, per figure"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "what": "$what",
+      "gap": {
+        "vop": "round_to",
+        "value": {
+          "vop": "sub",
+          "a": "$a",
+          "b": "$b"
+        }
+      },
+      "level": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "le",
+              "left": {
+                "vop": "largest",
+                "values": [
+                  {
+                    "vop": "sub",
+                    "a": "$a",
+                    "b": "$b"
+                  },
+                  {
+                    "vop": "sub",
+                    "a": "$b",
+                    "b": "$a"
+                  }
+                ]
+              },
+              "right": {
+                "vop": "get",
+                "value": "$tolerance",
+                "path": "$what"
+              }
+            },
+            "then": "ok"
+          },
+          {
+            "when": {
+              "op": "eq",
+              "left": "$b",
+              "right": 0
+            },
+            "then": "amber"
+          }
+        ],
+        "else": "red"
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-06: the same figure in two documents: within the tolerance it agrees; missing from the other one is worth a look (amber); otherwise it disagrees (red) and the person decides which is right before filing.",
+  "test_cases": [
+    {
+      "args": {
+        "what": "tds",
+        "a": 120000,
+        "b": 120005
+      },
+      "expect_value": {
+        "what": "tds",
+        "gap": -5,
+        "level": "ok"
+      }
+    },
+    {
+      "args": {
+        "what": "tds",
+        "a": 120000,
+        "b": 100000
+      },
+      "expect_value": {
+        "what": "tds",
+        "gap": 20000,
+        "level": "red"
+      }
+    },
+    {
+      "args": {
+        "what": "savings",
+        "a": 8000,
+        "b": 0
+      },
+      "expect_value": {
+        "what": "savings",
+        "gap": 8000,
+        "level": "amber"
+      }
+    }
+  ]
+}

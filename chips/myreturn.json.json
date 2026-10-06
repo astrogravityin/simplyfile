@@ -1,0 +1,103 @@
+{
+  "chip_id": "myreturn.json",
+  "kind": "accessor",
+  "set": "myreturn",
+  "label": "My return: codes the department's JSON uses",
+  "aliases": [
+    "my return: codes the department's json u"
+  ],
+  "params": [
+    {
+      "name": "os_codes",
+      "type": "json",
+      "default": {
+        "savings": "SAV",
+        "deposits": "IFD",
+        "refund_interest": "TAX",
+        "dividend": "DIV",
+        "other": "OTH"
+      },
+      "label": "os codes"
+    },
+    {
+      "name": "os_words",
+      "type": "json",
+      "default": {
+        "OTH": "Other income"
+      },
+      "label": "os words"
+    },
+    {
+      "name": "family_pension_code",
+      "type": "json",
+      "default": "FAP",
+      "label": "family pension code"
+    },
+    {
+      "name": "employer_default",
+      "type": "json",
+      "default": "OTH",
+      "label": "employer default"
+    },
+    {
+      "name": "employer_categories",
+      "type": "json",
+      "default": [
+        "CGOV",
+        "SGOV",
+        "PSU",
+        "PE",
+        "PESG",
+        "PEPS",
+        "PEO",
+        "OTH",
+        "NA"
+      ],
+      "label": "employer categories"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "os_codes": "$os_codes",
+      "os_words": "$os_words",
+      "family_pension_code": "$family_pension_code",
+      "employer_default": "$employer_default",
+      "employer_categories": "$employer_categories"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-06: other-sources nature codes (SAV savings, IFD deposits, TAX refund interest, DIV dividend, FAP family pension, OTH other), and the employer category (OTH = private employer) when the person has not picked one.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "os_codes": {
+          "savings": "SAV",
+          "deposits": "IFD",
+          "refund_interest": "TAX",
+          "dividend": "DIV",
+          "other": "OTH"
+        },
+        "os_words": {
+          "OTH": "Other income"
+        },
+        "family_pension_code": "FAP",
+        "employer_default": "OTH",
+        "employer_categories": [
+          "CGOV",
+          "SGOV",
+          "PSU",
+          "PE",
+          "PESG",
+          "PEPS",
+          "PEO",
+          "OTH",
+          "NA"
+        ]
+      }
+    }
+  ]
+}
