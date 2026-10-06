@@ -59,8 +59,8 @@ def card_html(sc: dict, k: dict, w: int, h: int) -> str:
     steps = "".join(f'<li><b>{i + 1}</b>{e(t)}</li>' for i, t in enumerate(sc.get("steps") or []))
     return f"""<!doctype html><meta charset="utf-8"><style>
 body{{margin:0;width:{w}px;height:{h}px;font-family:'Segoe UI',system-ui,sans-serif;color:{k['on_night']};
-  background:radial-gradient(1100px 560px at 80% 0%,rgba(76,110,245,.30),transparent 60%),
-  radial-gradient(800px 480px at 0% 100%,rgba(246,196,83,.16),transparent 55%),{k['night']};
+  background:radial-gradient(1100px 560px at 80% 0%,color-mix(in srgb,{k['brand']} 32%,transparent),transparent 60%),
+  radial-gradient(800px 480px at 0% 100%,color-mix(in srgb,{k['gold']} 16%,transparent),transparent 55%),{k['night']};
   display:flex;flex-direction:column;justify-content:center;padding:0 120px;box-sizing:border-box}}
 .eb{{color:{k['gold']};font-weight:700;letter-spacing:.14em;text-transform:uppercase;font-size:24px;margin-bottom:22px}}
 h1{{font-size:92px;line-height:1.02;margin:0 0 26px;font-weight:800;letter-spacing:-.025em}}
@@ -69,7 +69,7 @@ ol{{list-style:none;padding:0;margin:34px 0 0;display:flex;gap:22px}}
 li{{flex:1;background:{k['night_2']};border:1px solid rgba(255,255,255,.10);border-radius:16px;padding:26px 24px;font-size:28px;font-weight:600}}
 li b{{display:inline-grid;place-items:center;width:44px;height:44px;border-radius:50%;background:{k['brand']};margin-right:14px;font-size:24px}}
 .btn{{display:inline-block;margin-top:40px;background:{k['brand']};padding:22px 40px;border-radius:12px;font-size:34px;font-weight:700;
-  box-shadow:0 14px 34px -12px rgba(59,91,219,.9)}}
+  box-shadow:0 14px 34px -12px color-mix(in srgb,{k['brand']} 90%,transparent)}}
 .url{{margin-top:22px;font-size:34px;color:{k['gold']};font-weight:600}}
 .note{{position:absolute;bottom:44px;left:120px;font-size:22px;color:{k['on_night_2']}}}
 </style><div class="eb">{e(sc.get('eyebrow'))}</div><h1>{e(sc.get('title'))}</h1>{f"<p>{e(sc['sub'])}</p>" if sc.get('sub') else ''}

@@ -1,0 +1,240 @@
+{
+  "chip_id": "promo.film",
+  "kind": "accessor",
+  "set": "promo",
+  "label": "The public marketing film: its scenes, words, voice and the footage each scene uses",
+  "aliases": [
+    "marketing video",
+    "promo film",
+    "public video"
+  ],
+  "params": [
+    {
+      "name": "out",
+      "type": "text",
+      "default": "sf-promo",
+      "label": "out"
+    },
+    {
+      "name": "out_dir",
+      "type": "text",
+      "default": "static/tour",
+      "label": "out_dir"
+    },
+    {
+      "name": "sources_dir",
+      "type": "text",
+      "default": "static/showcase",
+      "label": "sources_dir"
+    },
+    {
+      "name": "voice",
+      "type": "text",
+      "default": "en-IN-NeerjaNeural",
+      "label": "voice"
+    },
+    {
+      "name": "rate",
+      "type": "text",
+      "default": "+0%",
+      "label": "rate"
+    },
+    {
+      "name": "size",
+      "type": "json",
+      "default": [
+        1440,
+        900
+      ],
+      "label": "size"
+    },
+    {
+      "name": "fps",
+      "type": "number",
+      "default": 30,
+      "label": "fps"
+    },
+    {
+      "name": "pad_seconds",
+      "type": "number",
+      "default": 0.7,
+      "label": "pad_seconds"
+    },
+    {
+      "name": "fade_seconds",
+      "type": "number",
+      "default": 0.35,
+      "label": "fade_seconds"
+    },
+    {
+      "name": "skin",
+      "type": "json",
+      "default": {
+        "night": "#071426",
+        "night_2": "#0c1e38",
+        "brand": "#059669",
+        "gold": "#fbbf24",
+        "on_night": "#eef4ff",
+        "on_night_2": "#a9b8d0"
+      },
+      "label": "skin"
+    },
+    {
+      "name": "scenes",
+      "type": "json",
+      "default": [
+        {
+          "kind": "card",
+          "eyebrow": "For CA firms",
+          "title": "Tax season runs on retyping.",
+          "sub": "The client's Tally export. 26AS, AIS and TIS. Then the official utility, by hand.",
+          "say": "Every tax season, a CA firm types the same figures again and again: the client's Tally export, the 26AS, AIS and TIS, and then the official utility, by hand."
+        },
+        {
+          "kind": "card",
+          "eyebrow": "SimplyFile",
+          "title": "Books in. Return out.",
+          "steps": [
+            "Intake and map",
+            "Reconcile",
+            "Compute",
+            "The department's JSON"
+          ],
+          "say": "SimplyFile takes the client's books in, maps every figure, reconciles it with the portal, computes the tax, and fills the department's own format, ready for the partner to sign."
+        },
+        {
+          "kind": "clip",
+          "source": "sf-part1.mp4",
+          "start": 144.9,
+          "label": "Every row mapped in one click",
+          "say": "Upload the client's statement straight from Excel. SimplyFile has already suggested where almost every row belongs. Accept them all in one click."
+        },
+        {
+          "kind": "clip",
+          "source": "sf-part1.mp4",
+          "start": 202.7,
+          "label": "Books against 26AS, AIS and TIS",
+          "say": "Then the books against the portal, deductor by deductor. One red: the books claim more TDS than the 26AS shows. Explain it, and the year moves on by itself."
+        },
+        {
+          "kind": "clip",
+          "source": "sf-part1.mp4",
+          "start": 250.5,
+          "label": "The department's own format",
+          "say": "The computation, the ITR JSON and the Form 3CB-3CD, in the income-tax department's own format, each checked against its schema, ready for the partner to sign off."
+        },
+        {
+          "kind": "card",
+          "eyebrow": "SimplyFile",
+          "title": "Try it live.",
+          "sub": "Income-tax work for CA firms - from the client's Excel to the department's JSON.",
+          "button": "Try the demo",
+          "url": "demo.valuestream.in/tax",
+          "note": "The demo firm and every client in it are made up.",
+          "say": "SimplyFile. From the client's Excel to the department's JSON, for your whole practice. Try it live, with a made-up firm, on the demo."
+        }
+      ],
+      "label": "scenes"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "out": "$out",
+      "out_dir": "$out_dir",
+      "sources_dir": "$sources_dir",
+      "voice": "$voice",
+      "rate": "$rate",
+      "size": "$size",
+      "fps": "$fps",
+      "pad_seconds": "$pad_seconds",
+      "fade_seconds": "$fade_seconds",
+      "skin": "$skin",
+      "scenes": "$scenes"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "Piece 10 of the domain portal (skill domain-portal): a 60-90 s public cut - the problem, the steps, the three wow moments from the recorded showcase films, and Try the demo. A card scene is drawn from its words in the skin's colours; a clip scene takes `start` seconds into a showcase film for as long as its voice-over runs (plus pad_seconds); sources come from sources_dir. tools/showcase/promo_film.py renders it to <out_dir>/<out>.{mp4,jpg,vtt}; out_dir static/tour is where the login pitch plays it (chip edition.settings tour). Promise only what the product does: SimplyFile fills the department's format - never 'files the return'. Change the film here, never in the script.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "out": "sf-promo",
+        "out_dir": "static/tour",
+        "sources_dir": "static/showcase",
+        "voice": "en-IN-NeerjaNeural",
+        "rate": "+0%",
+        "size": [
+          1440,
+          900
+        ],
+        "fps": 30,
+        "pad_seconds": 0.7,
+        "fade_seconds": 0.35,
+        "skin": {
+          "night": "#071426",
+          "night_2": "#0c1e38",
+          "brand": "#059669",
+          "gold": "#fbbf24",
+          "on_night": "#eef4ff",
+          "on_night_2": "#a9b8d0"
+        },
+        "scenes": [
+          {
+            "kind": "card",
+            "eyebrow": "For CA firms",
+            "title": "Tax season runs on retyping.",
+            "sub": "The client's Tally export. 26AS, AIS and TIS. Then the official utility, by hand.",
+            "say": "Every tax season, a CA firm types the same figures again and again: the client's Tally export, the 26AS, AIS and TIS, and then the official utility, by hand."
+          },
+          {
+            "kind": "card",
+            "eyebrow": "SimplyFile",
+            "title": "Books in. Return out.",
+            "steps": [
+              "Intake and map",
+              "Reconcile",
+              "Compute",
+              "The department's JSON"
+            ],
+            "say": "SimplyFile takes the client's books in, maps every figure, reconciles it with the portal, computes the tax, and fills the department's own format, ready for the partner to sign."
+          },
+          {
+            "kind": "clip",
+            "source": "sf-part1.mp4",
+            "start": 144.9,
+            "label": "Every row mapped in one click",
+            "say": "Upload the client's statement straight from Excel. SimplyFile has already suggested where almost every row belongs. Accept them all in one click."
+          },
+          {
+            "kind": "clip",
+            "source": "sf-part1.mp4",
+            "start": 202.7,
+            "label": "Books against 26AS, AIS and TIS",
+            "say": "Then the books against the portal, deductor by deductor. One red: the books claim more TDS than the 26AS shows. Explain it, and the year moves on by itself."
+          },
+          {
+            "kind": "clip",
+            "source": "sf-part1.mp4",
+            "start": 250.5,
+            "label": "The department's own format",
+            "say": "The computation, the ITR JSON and the Form 3CB-3CD, in the income-tax department's own format, each checked against its schema, ready for the partner to sign off."
+          },
+          {
+            "kind": "card",
+            "eyebrow": "SimplyFile",
+            "title": "Try it live.",
+            "sub": "Income-tax work for CA firms - from the client's Excel to the department's JSON.",
+            "button": "Try the demo",
+            "url": "demo.valuestream.in/tax",
+            "note": "The demo firm and every client in it are made up.",
+            "say": "SimplyFile. From the client's Excel to the department's JSON, for your whole practice. Try it live, with a made-up firm, on the demo."
+          }
+        ]
+      }
+    }
+  ],
+  "weight_basis": "Wording and footage choices only - no business rule."
+}
