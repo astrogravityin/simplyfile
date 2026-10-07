@@ -117,7 +117,7 @@ def build() -> str:
     todo = todo_list()
     todo_html = "".join(f"<li><span class='k'>{e(h)}</span> {e(t)}</li>" for h, t in todo)
     today = datetime.date.today().strftime("%d %b %Y")
-    return f"""<title>SimplyFile Rule Book</title>
+    return f"""<title>SimplyFy Rule Book</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,600&family=Public+Sans:wght@400;600&family=JetBrains+Mono:wght@400&display=swap">
 <style>
@@ -159,7 +159,7 @@ details {{ margin-top:12px; font-size:13px; color:var(--muted) }} summary {{ cur
 @media (prefers-reduced-motion: no-preference) {{ html {{ scroll-behavior:smooth }} }}
 </style>
 <div class="top">
-  <div class="eyebrow">SimplyFile · My return · AY 2026-27</div>
+  <div class="eyebrow">SimplyFy · My return · AY 2026-27</div>
   <h1>The rule book</h1>
   <p class="lede">Every rule the tax engine follows, in the order a return is worked: which form, each head of income, deductions, tax, interest and the balance. For each: the section of the Act, what it does in plain words, the figures it uses and the worked examples it is tested on. It is generated from the engine itself, so it is exactly what the engine does today.</p>
   <div class="facts"><span><b>{len(rows)}</b> rules</span><span><b>{n_tests}</b> worked examples, all passing</span><span>made <b>{today}</b></span></div>
@@ -178,6 +178,6 @@ details {{ margin-top:12px; font-size:13px; color:var(--muted) }} summary {{ cur
 if __name__ == "__main__":  # ponytail: the page builds and the Indian grouping holds
     import store  # noqa: F401 - registers the portal's chips
     page = build()
-    assert "<title>SimplyFile Rule Book</title>" in page and "R1" in page and "Not built yet" in page
+    assert "<title>SimplyFy Rule Book</title>" in page and "R1" in page and "Not built yet" in page
     assert inr(1234567) == "12,34,567" and inr(500) == "500" and inr(12.5) == "12.5", inr(1234567)
     print("rulebook self-check OK")

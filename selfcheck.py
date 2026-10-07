@@ -1,11 +1,11 @@
-"""SimplyFile self-check - proves the whole portal works, with no paid call and nothing kept afterwards.
+"""SimplyFy self-check - proves the whole portal works, with no paid call and nothing kept afterwards.
 
     python selfcheck.py
 
-1. every module's own self-check (the framework's core/*.py and SimplyFile's *.py that carry one)
+1. every module's own self-check (the framework's core/*.py and SimplyFy's *.py that carry one)
 2. every chip certified (core/chips + chips): references resolve, every test case holds
 3. the browser side: every page module the shell imports exists, and no page imports one that is not here
-4. the API, on a throw-away data folder: the owner's first account, the menu is SimplyFile's eleven screens, every
+4. the API, on a throw-away data folder: the owner's first account, the menu is SimplyFy's eleven screens, every
    screen's GET routes answer without a server error, and Clients -> Intake & map -> Reconcile end to end
 """
 from __future__ import annotations
@@ -54,7 +54,7 @@ def static_checks() -> None:
     views = re.search(r"views: \{([^}]*)\}", app_js).group(1)
     assert sorted(x.split(":")[0].strip() for x in views.split(",") if x.strip()) == sorted(SCREENS), views
     # 2026-10-06 the marketing film (chip promo.film, tools/showcase/promo_film.py) plays on the login pitch (edition.settings
-    # tour): the pitch never points at a missing file, and the film's chip never names footage that is not here (from Justify)
+    # tour): the pitch never points at a missing file, and the film's chip never names footage that is not here (from JustyFy)
     ed = json.loads((HERE / "chips" / "edition.settings.json").read_text(encoding="utf-8"))["test_cases"][0]["expect_value"]
     for row in ed["rows"]:
         for k in ("video", "captions", "poster") if row.get("tour") else ():
@@ -95,7 +95,7 @@ def api_check() -> None:
         c = TestClient(app.app)
         boot = c.get("/api/bootstrap").json()
         assert boot["needs_first_account"] is True
-        assert "<title>SimplyFile" in c.get("/").text
+        assert "<title>SimplyFy" in c.get("/").text
         # 2026-10-05 owner: the public showcase is the landing for a visitor (chip showcase.page); Start here -> /start
         assert "showcase.js" in c.get("/").text and "showcase.js" not in c.get("/start").text, "a visitor lands on the showcase; /start is the portal"
         sc_ = c.get("/api/showcase").json()
@@ -111,7 +111,7 @@ def api_check() -> None:
         assert "showcase.js" not in r_.get("/").text and "showcase.js" in r_.get("/showcase").text, "a returning visitor opens on sign-in"
         assert boot.get("showcase") is True, "the sign-in pitch knows this site has a showcase"
         assert "Make anything" not in (HERE / "static" / "showcase.js").read_text(encoding="utf-8"), "the showcase page holds no words of its own"
-        # 2026-10-05 owner "more commercial": skin "ledger", how it works, who it's for, questions. SimplyFile fills the utility;
+        # 2026-10-05 owner "more commercial": skin "ledger", how it works, who it's for, questions. SimplyFy fills the utility;
         # the CA uploads it - the pitch (showcase + sign-in words) must never promise a filed return
         js_, css_ = ((HERE / "static" / f"showcase.{x}").read_text(encoding="utf-8") for x in ("js", "css"))
         for k_ in ("trust", "steps", "desks", "faq", "pillars", "checks", "modules", "features", "play"):
@@ -140,7 +140,7 @@ if (ok.some((x) => !x)) { console.log(JSON.stringify(ok)); process.exit(1); }"""
             assert r_.returncode == 0, f"Watch find: a typo, a plural or a half word must still find the film; others must not ({r_.stdout or r_.stderr})"
         said_ = (json.dumps(sc_) + (HERE / "chips" / "ui.app.json").read_text(encoding="utf-8")).lower()
         for over_ in ("filed return", "click to file", "files the return for you"):
-            assert over_ not in said_, f"the pitch promises '{over_}' - SimplyFile fills the utility, the CA files"
+            assert over_ not in said_, f"the pitch promises '{over_}' - SimplyFy fills the utility, the CA files"
         assert c.get("/health").text == "ok"
         assert c.get("/api/clients/settings").status_code == 401, "signed-out callers get nothing"
         r = c.post("/api/auth/first-account", json={"email": "owner@example.com", "password": "a-good-password"})
@@ -476,13 +476,13 @@ def guides_tours_check() -> None:
         d = {p["name"]: p["default"] for p in g["params"]}
         t = json.loads((HERE / "tours" / f"sf-{sc}.json").read_text(encoding="utf-8"))
         says = [x["say"] for x in t["steps"]]
-        want = [d["lede"].replace("{product}", "SimplyFile")] + [x["say"].replace("{product}", "SimplyFile") for x in d["steps"]]
+        want = [d["lede"].replace("{product}", "SimplyFy")] + [x["say"].replace("{product}", "SimplyFy") for x in d["steps"]]
         assert says == want, f"tours/sf-{sc}.json is not the Guide me walk of {sc} - rebuild it from chip guide.{sc}"
     print(f"  guides and tours: {len(GUIDED)} screens, each tour = its Guide me OK")
 
 
 if __name__ == "__main__":
-    print("SimplyFile - self-check")
+    print("SimplyFy - self-check")
     module_checks()
     static_checks()
     chips_first_check()

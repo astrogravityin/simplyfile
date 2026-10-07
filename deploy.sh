@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-# SimplyFile update on the VPS: pull, install, self-check, restart, health.
+# SimplyFy update on the VPS: pull, install, self-check, restart, health.
 # Run on the VPS: bash /opt/simplyfile/deploy.sh    From Windows: Deploy-To-VPS.cmd
 # Stops BEFORE the restart if the pull, the install or the self-check fails, so the running site is never
 # replaced by code that does not pass.
 set -euo pipefail
 cd "$(dirname "$0")"
-[ -n "${DEPLOY_PULLED:-}" ] || echo "=== SimplyFile deploy on $(hostname) in $(pwd) ==="
+[ -n "${DEPLOY_PULLED:-}" ] || echo "=== SimplyFy deploy on $(hostname) in $(pwd) ==="
 SERVICE=${SF_SERVICE:-simplyfile}
 # The port the service really listens on (VPS Console's New site writes Environment=PORT= into the unit), else 8830.
 PORT=${SF_PORT:-$(grep -oP '^Environment=PORT=\K[0-9]+' "/etc/systemd/system/$SERVICE.service" 2>/dev/null || echo 8830)}

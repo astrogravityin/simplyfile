@@ -58,7 +58,7 @@ def main() -> None:
         with tarfile.open(SNAP) as t:
             t.extractall(DATA, filter="data")
     (DATA / "smtp.json").write_text(json.dumps({"host": "127.0.0.1", "port": str(SINK), "security": "none", "username": "",
-                                                "password": "", "from_email": "demo@valuestream.in", "from_name": "SimplyFile demo"}))
+                                                "password": "", "from_email": "demo@valuestream.in", "from_name": "SimplyFy demo"}))
     socketserver.ThreadingTCPServer.allow_reuse_address = True
     sink = socketserver.ThreadingTCPServer(("127.0.0.1", SINK), Mail)
     threading.Thread(target=sink.serve_forever, daemon=True).start()

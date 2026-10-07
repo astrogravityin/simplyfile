@@ -1,5 +1,5 @@
 @echo off
-REM SimplyFile (sf.valuestream.in) - Windows. First run installs what it needs into .venv.
+REM SimplyFy (sf.valuestream.in) - Windows. First run installs what it needs into .venv.
 REM
 REM 2026-09-17: never `call .venv\Scripts\activate.bat`. Python from the Microsoft Store builds a
 REM venv with python.exe and pip but NO activate scripts, so activating failed and the portal
@@ -31,7 +31,7 @@ if not exist "%PY%" (
 if "%TV_PORT%"=="" set TV_PORT=8830
 if "%PORTAL_COOKIE%"=="" set PORTAL_COOKIE=sf_session
 echo.
-echo   SimplyFile  -^>  http://localhost:%TV_PORT%
+echo   SimplyFy  -^>  http://localhost:%TV_PORT%
 echo   Stop it with Ctrl+C.
 echo.
 "%PY%" -m uvicorn app:app --host 0.0.0.0 --port %TV_PORT%

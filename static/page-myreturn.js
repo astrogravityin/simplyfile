@@ -3,7 +3,7 @@
 // figure from two documents, side by side), Choose (both regimes worked out, the cheaper one marked), Review (every
 // figure with where it came from, and the person's own over it), File (the department's JSON, checked against its schema).
 // myreturn.py decides and adds up (chips myreturn.*); this draws. Pictures: myreturn-art.js. Words: chip ui.myreturn.
-import { api, BASE, esc, toast, busy, pageHead, t, loadWords, dropZone, wireDrops, modal } from './app.js';
+import { api, BASE, esc, toast, busy, pageHead, t, loadWords, dropZone, wireDrops, modal, confirmDialog } from './app.js';
 import { icon } from './icons.js';
 import { historyButton, wireHistory } from './changes.js';
 import { stepper, docArt, waterfall, regimeBars, tdsMap, askArt } from './myreturn-art.js';
@@ -227,7 +227,7 @@ export async function myReturnPage(host) {
           S.d = r; toast(w('read_done', { kind: w(`k_${S.d.added.kind}`) }), 'ok'); draw();
         } catch (err) { toast(err.message, 'bad', 10); }
       };
-      host.querySelectorAll('[data-del]').forEach((b) => { b.onclick = (e) => busy(e.currentTarget, async () => { try { S.d = await api(url(`/docs/${b.dataset.del}`), { method: 'DELETE' }); draw(); } catch (err) { toast(err.message, 'bad', 8); } }); });
+      host.querySelectorAll('[data-del]').forEach((b) => { b.onclick = () => confirmDialog(w('del_doc_title'), w('del_doc_body'), async () => { try { S.d = await api(url(`/docs/${b.dataset.del}`), { method: 'DELETE' }); draw(); } catch (err) { toast(err.message, 'bad', 8); } }, w('remove')); });
     }
     host.querySelectorAll('[data-accept]').forEach((b) => { b.onclick = () => put({ accept: b.dataset.accept }); });
     host.querySelectorAll('[data-ready]').forEach((i) => { i.onchange = () => put({ ready: [...host.querySelectorAll('[data-ready]:checked:not(:disabled)')].map((x) => x.dataset.ready) }, true); });

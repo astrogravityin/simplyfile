@@ -1234,7 +1234,7 @@
     {
       "name": "file_note",
       "type": "text",
-      "default": "SimplyFile prepares the return; you file it yourself on the e-filing portal. Keep the documents you used - the department may ask for them.",
+      "default": "SimplyFy prepares the return; you file it yourself on the e-filing portal. Keep the documents you used - the department may ask for them.",
       "label": "file_note"
     },
     {
@@ -3166,19 +3166,19 @@
     {
       "name": "ca_audit_turnover",
       "type": "text",
-      "default": "Receipts of {receipts} are over the {limit} tax-audit limit (section 44AB): the accounts must be audited by a chartered accountant and the audit report filed before the return. My return does not do audits - get a CA. SimplyFile's CA-firm side (Intake, Reconcile, Compute, Tax audit) handles them.",
+      "default": "Receipts of {receipts} are over the {limit} tax-audit limit (section 44AB): the accounts must be audited by a chartered accountant and the audit report filed before the return. My return does not do audits - get a CA. SimplyFy's CA-firm side (Intake, Reconcile, Compute, Tax audit) handles them.",
       "label": "ca audit turnover"
     },
     {
       "name": "ca_audit_lower",
       "type": "text",
-      "default": "The profit typed ({net}) is below the presumptive {deemed} and your income is above the basic exemption: section 44AB(e) needs a tax audit by a chartered accountant. My return does not do audits - get a CA (SimplyFile's CA-firm side handles them), or take the presumptive basis.",
+      "default": "The profit typed ({net}) is below the presumptive {deemed} and your income is above the basic exemption: section 44AB(e) needs a tax audit by a chartered accountant. My return does not do audits - get a CA (SimplyFy's CA-firm side handles them), or take the presumptive basis.",
       "label": "ca audit lower"
     },
     {
       "name": "ca_loss",
       "type": "text",
-      "default": "A business loss ({net}) is carried forward only with books of account and a return a CA prepares - My return does not file it. Get a CA (SimplyFile's CA-firm side handles books, audits and losses).",
+      "default": "A business loss ({net}) is carried forward only with books of account and a return a CA prepares - My return does not file it. Get a CA (SimplyFy's CA-firm side handles books, audits and losses).",
       "label": "ca loss"
     },
     {
@@ -3484,7 +3484,7 @@
     {
       "name": "ca_foreign_business",
       "type": "text",
-      "default": "Income from a business or profession abroad needs books of account and ITR-3 Schedule BP - My return does not file it. Get a CA (SimplyFile's CA-firm side handles books and business income).",
+      "default": "Income from a business or profession abroad needs books of account and ITR-3 Schedule BP - My return does not file it. Get a CA (SimplyFy's CA-firm side handles books and business income).",
       "label": "ca_foreign_business"
     },
     {
@@ -4072,7 +4072,7 @@
     {
       "name": "iu_no_schema",
       "type": "text",
-      "default": "SimplyFile does not make the ITR-U JSON: the department's ITR-U schema (and AY {ay}'s ITR schemas) is not in schemas/itr. The computation and the steps are above - file it on the portal, or add the schema to have the JSON made.",
+      "default": "SimplyFy does not make the ITR-U JSON: the department's ITR-U schema (and AY {ay}'s ITR schemas) is not in schemas/itr. The computation and the steps are above - file it on the portal, or add the schema to have the JSON made.",
       "label": "iu_no_schema"
     },
     {
@@ -4092,6 +4092,18 @@
       "type": "text",
       "default": "1=Return previously not filed|2=Income not reported correctly|3=Wrong heads of income chosen|4=Reduction of carried forward loss|5=Reduction of unabsorbed depreciation|6=Reduction of tax credit u/s 115JB / 115JD|7=Wrong rate of tax|8=Others",
       "label": "iu_reasons"
+    },
+    {
+      "name": "del_doc_title",
+      "type": "text",
+      "default": "Remove this document?",
+      "label": "del doc title"
+    },
+    {
+      "name": "del_doc_body",
+      "type": "text",
+      "default": "It leaves this return, with what was read from it. Its file is kept for History, and you can add it again.",
+      "label": "del doc body"
     }
   ],
   "expr": {
@@ -4777,13 +4789,15 @@
       "iu_no_schema": "$iu_no_schema",
       "iu_none": "$iu_none",
       "iu_reasons_h": "$iu_reasons_h",
-      "iu_reasons": "$iu_reasons"
+      "iu_reasons": "$iu_reasons",
+      "del_doc_title": "$del_doc_title",
+      "del_doc_body": "$del_doc_body"
     }
   },
   "returns": "record",
-  "version": 27,
+  "version": 28,
   "status": "published",
-  "description_nl": "2026-10-06: every word of My return - the steps, the documents and how to get each, the checks, the regimes, the review fields, the form and how to file it. 2026-10-06: start from documents. 2026-10-06: an Other card for files not read, so a locked one can be removed. 2026-10-06: how_h / how_steps - the step-by-step shown on Gather. 2026-10-06: rv_paid / pd_* - tax the person paid themselves, typed on Check. 2026-10-06: ask_* - the two questions before a file goes in: a return already under way (carry on / start again) and a second AIS / 26AS (replace / keep both). 2026-10-06: the business card on Check (44ADA / 44AD), the ITR-4 reasons, and where each document comes from. 2026-10-06: pd_bsr / pd_challan - a typed payment's BSR code and challan number; f10iea. 2026-10-06: k_bank_how, bank_kept, src_issuer, src_gives. 2026-10-06: the bank statement's figures on its card and on the business card. 2026-10-06: pw_show / pw_hide - the eye on the PDF password. 2026-10-06: back_to - the Back button on each step. 2026-10-06: from_filed / from_filed_done / from_filed_none. 2026-10-06: why_huf. 2026-10-06: the Karta's fields for an HUF. 2026-10-06: the More deductions panel on Check. 2026-10-07: co-owned houses, winnings and virtual digital assets, agricultural income, 44AE vehicles, the 80EE / 80EEA check, and the address and contact fields. 2026-10-07: what the readers found: a VDA sold, the person's address (AIS), the employer's address (Form 16). 2026-10-07: capital gains in full: each sale, exemptions, the indexation choice, losses brought forward, gifts, pre-construction interest, the statements. 2026-10-07: ITR-3 from My return: the own-profit-and-loss kinds and fields, why_biz_books, and the CA messages (tax audit s.44AB, a business loss). 2026-10-07: wave 3: residential status, foreign income and assets, clubbing, salary arrears (s.89), the updated return (ITR-U).",
+  "description_nl": "2026-10-06: every word of My return - the steps, the documents and how to get each, the checks, the regimes, the review fields, the form and how to file it. 2026-10-06: start from documents. 2026-10-06: an Other card for files not read, so a locked one can be removed. 2026-10-06: how_h / how_steps - the step-by-step shown on Gather. 2026-10-06: rv_paid / pd_* - tax the person paid themselves, typed on Check. 2026-10-06: ask_* - the two questions before a file goes in: a return already under way (carry on / start again) and a second AIS / 26AS (replace / keep both). 2026-10-06: the business card on Check (44ADA / 44AD), the ITR-4 reasons, and where each document comes from. 2026-10-06: pd_bsr / pd_challan - a typed payment's BSR code and challan number; f10iea. 2026-10-06: k_bank_how, bank_kept, src_issuer, src_gives. 2026-10-06: the bank statement's figures on its card and on the business card. 2026-10-06: pw_show / pw_hide - the eye on the PDF password. 2026-10-06: back_to - the Back button on each step. 2026-10-06: from_filed / from_filed_done / from_filed_none. 2026-10-06: why_huf. 2026-10-06: the Karta's fields for an HUF. 2026-10-06: the More deductions panel on Check. 2026-10-07: co-owned houses, winnings and virtual digital assets, agricultural income, 44AE vehicles, the 80EE / 80EEA check, and the address and contact fields. 2026-10-07: what the readers found: a VDA sold, the person's address (AIS), the employer's address (Form 16). 2026-10-07: capital gains in full: each sale, exemptions, the indexation choice, losses brought forward, gifts, pre-construction interest, the statements. 2026-10-07: ITR-3 from My return: the own-profit-and-loss kinds and fields, why_biz_books, and the CA messages (tax audit s.44AB, a business loss). 2026-10-07: wave 3: residential status, foreign income and assets, clubbing, salary arrears (s.89), the updated return (ITR-U). 2026-10-08: words for the app's own warning before a delete / remove (never silently).",
   "test_cases": [
     {
       "args": {},
@@ -4992,7 +5006,7 @@
         "download": "Download {form} JSON",
         "upload_h": "Then file it",
         "upload_steps": "Sign in at incometax.gov.in|e-File > Income Tax Returns > File Income Tax Return|AY 2026-27 · Online · your status · the form shown here|Choose 'Upload JSON' (or open it in the department's offline utility) and pick this file|Check the pages, pay any tax due first, then submit|e-Verify with Aadhaar OTP within 30 days",
-        "file_note": "SimplyFile prepares the return; you file it yourself on the e-filing portal. Keep the documents you used - the department may ask for them.",
+        "file_note": "SimplyFy prepares the return; you file it yourself on the e-filing portal. Keep the documents you used - the department may ask for them.",
         "bad_ext": "That kind of file is not read here - send {exts}.",
         "too_big": "That file is over {mb} MB.",
         "no_doc": "That document is not in this return.",
@@ -5314,9 +5328,9 @@
         "biz_cash_in_hand": "Cash in hand (31 March)",
         "pl_income": "Business income {income} (net profit) on receipts {receipts}",
         "ca_h": "This return needs a chartered accountant",
-        "ca_audit_turnover": "Receipts of {receipts} are over the {limit} tax-audit limit (section 44AB): the accounts must be audited by a chartered accountant and the audit report filed before the return. My return does not do audits - get a CA. SimplyFile's CA-firm side (Intake, Reconcile, Compute, Tax audit) handles them.",
-        "ca_audit_lower": "The profit typed ({net}) is below the presumptive {deemed} and your income is above the basic exemption: section 44AB(e) needs a tax audit by a chartered accountant. My return does not do audits - get a CA (SimplyFile's CA-firm side handles them), or take the presumptive basis.",
-        "ca_loss": "A business loss ({net}) is carried forward only with books of account and a return a CA prepares - My return does not file it. Get a CA (SimplyFile's CA-firm side handles books, audits and losses).",
+        "ca_audit_turnover": "Receipts of {receipts} are over the {limit} tax-audit limit (section 44AB): the accounts must be audited by a chartered accountant and the audit report filed before the return. My return does not do audits - get a CA. SimplyFy's CA-firm side (Intake, Reconcile, Compute, Tax audit) handles them.",
+        "ca_audit_lower": "The profit typed ({net}) is below the presumptive {deemed} and your income is above the basic exemption: section 44AB(e) needs a tax audit by a chartered accountant. My return does not do audits - get a CA (SimplyFy's CA-firm side handles them), or take the presumptive basis.",
+        "ca_loss": "A business loss ({net}) is carried forward only with books of account and a return a CA prepares - My return does not file it. Get a CA (SimplyFy's CA-firm side handles books, audits and losses).",
         "rs_h": "Residential status",
         "rs_p": "Where you lived in FY 2025-26 decides what India taxes. Type the days you were in India (the day you arrive and the day you leave both count) - or leave them blank if you lived in India all year.",
         "f_days_fy": "Days in India, FY 2025-26",
@@ -5367,7 +5381,7 @@
         "fi_not": "Not taxed in India for you ({status}).",
         "fi_relief": "Relief for tax paid abroad: {amount} (s.90 / 90A {dtaa}, s.91 {other}) - the lower of the foreign tax and the Indian tax on it at your average rate.",
         "fi_form67": "File Form 67 (with proof of the tax paid abroad) on the e-filing portal before 31 March 2027 - without it the relief is refused (rule 128(9)).",
-        "ca_foreign_business": "Income from a business or profession abroad needs books of account and ITR-3 Schedule BP - My return does not file it. Get a CA (SimplyFile's CA-firm side handles books and business income).",
+        "ca_foreign_business": "Income from a business or profession abroad needs books of account and ITR-3 Schedule BP - My return does not file it. Get a CA (SimplyFy's CA-firm side handles books and business income).",
         "fa_h": "Foreign assets (Schedule FA)",
         "fa_p": "As a resident and ordinarily resident, list everything held abroad at any time in the calendar year 1 January - 31 December 2025: bank and custodial accounts, shares and debt, insurance, property, other assets - even with no income from it. Rupee values at the SBI TT buying rate. Leaving it out can cost 10 lakh (Black Money Act).",
         "fa_kinds": "bank=Bank account (A1)|custodial=Custodial / brokerage account (A2)|equity=Shares, ESOPs, debt (A3)|insurance=Cash-value insurance (A4)|property=Immovable property (B)|other=Other capital asset (C)",
@@ -5465,10 +5479,12 @@
         "iu_lines": "Tax on the income before|Tax on the updated income|Further tax (less TDS on the income added)|Interest u/s 234A|Interest u/s 234B|Additional tax u/s 140B ({pct}%)|Late fee u/s 234F|To pay",
         "iu_ok": "Allowed: file it by {by}.",
         "iu_steps": "Pay the amount above first: incometax.gov.in > e-File > e-Pay Tax > Income Tax, AY {ay}, Self-Assessment Tax|e-File > Income Tax Returns > File Income Tax Return > AY {ay} > Online, filing section 139(8A) - Updated return|Part A ITR-U: the reason for updating, the previous return's acknowledgement and date (if any)|Part B-ATI: the income added, the tax, the interest, the additional tax and the challan|Verify (Aadhaar OTP / EVC) within 30 days",
-        "iu_no_schema": "SimplyFile does not make the ITR-U JSON: the department's ITR-U schema (and AY {ay}'s ITR schemas) is not in schemas/itr. The computation and the steps are above - file it on the portal, or add the schema to have the JSON made.",
+        "iu_no_schema": "SimplyFy does not make the ITR-U JSON: the department's ITR-U schema (and AY {ay}'s ITR schemas) is not in schemas/itr. The computation and the steps are above - file it on the portal, or add the schema to have the JSON made.",
         "iu_none": "Pick a year to work one out.",
         "iu_reasons_h": "Reason",
-        "iu_reasons": "1=Return previously not filed|2=Income not reported correctly|3=Wrong heads of income chosen|4=Reduction of carried forward loss|5=Reduction of unabsorbed depreciation|6=Reduction of tax credit u/s 115JB / 115JD|7=Wrong rate of tax|8=Others"
+        "iu_reasons": "1=Return previously not filed|2=Income not reported correctly|3=Wrong heads of income chosen|4=Reduction of carried forward loss|5=Reduction of unabsorbed depreciation|6=Reduction of tax credit u/s 115JB / 115JD|7=Wrong rate of tax|8=Others",
+        "del_doc_title": "Remove this document?",
+        "del_doc_body": "It leaves this return, with what was read from it. Its file is kept for History, and you can add it again."
       }
     }
   ]
