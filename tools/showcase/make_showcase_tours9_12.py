@@ -1,6 +1,6 @@
 """Showcase parts 9-12 (2026-10-07) as narrated Tour Videos -> tmp/tour_video/showcase9.json .. showcase12.json:
   9  My return from documents - a self-filer drops in the pre-filled JSON, Form 16, a locked AIS, 26AS, a CAMS statement and a bank
-     statement; the "already here" question; History with the old version; check; both regimes.     (TOUR_LOGIN=selfer)
+     statement; the "already here" question (26AS again); History with the old version; check; both regimes.     (TOUR_LOGIN=selfer)
  10  My return, the review and filing - capital gains (CAMS + a plot with the cheaper rate and 54EC), a co-owned flat, losses brought
      forward, gifts, winnings and crypto, tax paid, clubbing, s.89, farm income; ITR-2 JSON checked; ITR-U.  (selfer, after pre10.py)
  11  An HUF and a consultant, from a CA firm - start from documents, the Karta, 44ADA from the bank statement -> ITR-4, own P&L -> ITR-3.
@@ -20,7 +20,7 @@ SELF = "showcase/self/"
 F = {"pre": SELF + "01 Pre-filled JSON - ZZDPK0042Q - AY 2026-27.json", "f16": SELF + "02 Form 16 - Demo Software - AY 2026-27.pdf",
      "ais": SELF + "03 AIS - ZZDPK0042Q - FY 2025-26.pdf", "26as": SELF + "04 26AS - ZZDPK0042Q - AY 2026-27.txt",
      "cams": SELF + "05 CAMS capital gains - ZZDPK0042Q - FY 2025-26.csv", "bank": SELF + "06 Bank statement - Demo Bank - FY 2025-26.csv",
-     "again": "showcase/self-again/Form 16 - Demo Software - reissued.pdf", "huf": "showcase/huf/Pre-filled JSON - ZZDHF0045L - AY 2026-27.json",
+     "again": "showcase/self-again/26AS - ZZDPK0042Q - AY 2026-27 - downloaded again.txt", "huf": "showcase/huf/Pre-filled JSON - ZZDHF0045L - AY 2026-27.json",
      "kavya": "showcase/kavya/Pre-filled JSON - ZZDPC0044K - AY 2026-27.json", "kbank": "showcase/kavya/Bank statement - Demo Bank - Kavya - FY 2025-26.csv"}
 
 
@@ -38,7 +38,7 @@ def typed(sel, text):   # a field saves when it is left; the page draws again - 
 
 P9 = [S("Your own return", "Part nine: your own return. Anil Kumar Demo - made up, like everyone in these films - is salaried and holds a few "
         "mutual funds. He signed up as an individual, was approved at once, and his one client is himself. He opens My return.",
-        {"goto": "/#/myreturn"}, {"wait_for": ".mr-rail-card"}, {"wait": 1}),
+        {"goto": "/#/myreturn"}, {"wait_for": ".mr-rail-card"}, node("gather"), {"wait": 1}),
       S("Five steps", "Five steps: gather, check, choose, review and file. Each ticks itself off as it is done.", O(highlight=".mr-rail-card")),
       S("Keep these handy", "First, a checklist of what to keep handy. Each line ticks itself as the document comes in.", O(highlight=".mr-ready")),
       S("Where each document comes from", "And where each document comes from: who issues it, and what it gives the return.",
@@ -55,11 +55,11 @@ P9 = [S("Your own return", "Part nine: your own return. Anil Kumar Demo - made u
       S("What each one gave", "Every document shows what was read from it: salary and tax deducted from Form 16, interest and dividends from the "
         "A I S, four sales from C A M S, and the interest in his bank statement.", {"scroll_to": ".mr-dgrid"}, O(highlight=".mr-dgrid"),
         O(highlight=".mr-dcard.is-in >> nth=4")),
-      S("Already here?", "Then his employer sends Form 16 again. He drops it in - and is asked first: replace the one he has, or keep both. "
+      S("Already here?", "Later he downloads the 26 A S again and drops it in - and is asked first: replace the one he has, or keep both. "
         "Nothing is overwritten without asking.", {"scroll_to": "[data-drop='mr-file']"}, {"upload": "#mr-file", "files": [F["again"]]},
         click("#mr-up"), {"wait_for": ".ask-modal"}, {"wait": 1}, O(highlight=".ask-modal .ask-choices"), {"wait": 1},
         click(".ask-modal [data-pick='replace']"), {"wait": 2.5}),
-      S("History", "History keeps it all: each document added, the Form 16 replaced - and the old one kept, ready to download.",
+      S("History", "History keeps it all: each document added, the 26 A S replaced - and the old one kept, ready to download.",
         {"scroll_to": "[data-history]"}, click("[data-history]"), {"wait_for": ".modal:has(.ch-lede)"}, {"wait": 1.5},
         O(highlight=".modal:has(.ch-lede) .body"), {"wait": 1}, click(".modal:has(.ch-lede) [data-close]", optional=True)),
       S("At a glance", "At the top, his return at a glance: total income, tax, and the refund due - kept up to date with every document.",
@@ -123,7 +123,7 @@ P11 = [S("Families and consultants", "Part eleven: My return at a CA firm, for a
          "makes her too.", {"goto": "/#/myreturn"}, {"wait_for": "#mr-new"}, {"scroll_to": "[data-drop='mr-new']"},
          *up("kavya", 1, "#mr-new", "#mr-new-up"), {"wait_for": ".mr-rail-card"}, {"wait": 1.5}),
        S("Her bank statement", "Her bank statement: fifteen lakh ninety thousand of receipts, sixty thousand in cash - interest and her own "
-         "transfers kept apart.", {"scroll_to": "[data-drop='mr-file']"}, *up("kbank", 3), {"scroll_to": ".mr-dgrid"},
+         "transfers kept apart.", node("gather"), {"wait": 1}, {"scroll_to": "[data-drop='mr-file']"}, *up("kbank", 3), {"scroll_to": ".mr-dgrid"},
          O(highlight=".mr-dcard.is-in >> nth=1")),
        S("Presumptive income", "On review, her work: a profession under 44 A D A. One click takes the receipts from the bank statement, and half "
          "of them is her income.", node("review"), {"wait_for": "#b-kind"}, {"scroll_to": "#b-kind"}, {"select": "#b-kind", "value": "44ADA"},

@@ -129,7 +129,7 @@ s26 = "\n".join([
 
 
 # --- 2026-10-07, showcase parts 9-11: a CAMS capital-gains CSV and a bank statement for the same person; the employer's Form 16
-# issued again (the "already here - replace it?" question); an HUF and a consultant who start from their pre-filled JSON --------
+# downloaded again (the "already here - replace it?" question); an HUF and a consultant who start from their pre-filled JSON --------
 def csv(rows: list[list[str]]) -> bytes:
     return ("\n".join(",".join(f'"{c}"' for c in r) for r in rows) + "\n").encode()
 
@@ -154,9 +154,11 @@ BANK = [["Date", "Narration", "Chq/Ref No", "Withdrawal Amt", "Deposit Amt", "Cl
         ["31/03/2026", "INT.PD:0000000000:01-01-2026 TO 31-03-2026", "", "", "4,600.00", "3,84,200.00"]]
 (OUT / "06 Bank statement - Demo Bank - FY 2025-26.csv").write_bytes(csv(BANK))
 
-AGAIN = OUT.parent / "self-again"       # the employer sends Form 16 again, corrected: same figures, a later date
+AGAIN = OUT.parent / "self-again"       # 26AS downloaded again later in the year (one per return: the "already here" question)
 AGAIN.mkdir(exist_ok=True)
-(AGAIN / "Form 16 - Demo Software - reissued.pdf").write_bytes(pdf([x.replace("Last updated on 10-Jun-2026", "Last updated on 20-Jun-2026") for x in f16]))
+for old in AGAIN.iterdir():
+    old.unlink()
+(AGAIN / "26AS - ZZDPK0042Q - AY 2026-27 - downloaded again.txt").write_text(s26, encoding="utf-8")
 
 
 def prefill_of(first: str, last: str, pan: str, dob: str, n: int, sal: list, oth: list, interest: dict) -> dict:
