@@ -1302,12 +1302,129 @@ def get(value: Any = None, path: Any = "") -> Any:
     return cur
 
 
+# --- server facts (2026-10-07 ValueStream CC VPS Console, from AstroStage access_ops) ----------------
+
+def _n0(v: Any) -> float:
+    n = _num(v)
+    return n if n is not None else 0.0
+
+
+def _many(v: Any) -> list:
+    return v if isinstance(v, list) else ([] if v in (None, "") else [v])
+
+
+def list_prefer(items: Any = None, preferred: Any = None, fallback_first: Any = True) -> Any:
+    """The first of `preferred` that is among `items`; else the first item (fallback_first) or None."""
+    it = _many(items)
+    for p in _many(preferred):
+        if p not in (None, "") and p in it:
+            return p
+    return it[0] if it and _truthy(fallback_first) else None
+
+
+def number_series(start: Any = 0, step: Any = 1, count: Any = 1, modulo: Any = None) -> list:
+    """[start, start+step, ...] `count` numbers, each wrapped by `modulo` when given (hours of a day: 24)."""
+    a, b, n = _n0(start), _n0(step), int(_n0(count))
+    m = _n0(modulo)
+    out = [a + k * b for k in range(max(0, n))]
+    return [_tidy(v % m if m else v) for v in out]
+
+
+def path_refusal(path: Any = "", keep: Any = None, under: Any = None, parts: Any = None, also: Any = None,
+                 words: Any = None) -> str:
+    """Why a '/'-separated path may NOT be acted on; '' = allowed. keep: paths that may be neither hit nor contained
+    (acting on /opt would take /opt/app with it); under: trees nothing inside may be hit; parts: components refused
+    anywhere ('..', '.git'); also: the caller's own roots, added to both. words: {absolute, part, keep, under} with
+    {path} and {rule}. The lists ARE the policy - they live in the chip."""
+    w = words if isinstance(words, dict) else {}
+    p = str(path or "")
+    norm = re.sub(r"/+", "/", p).rstrip("/") or "/"
+    say = lambda k, rule="": str(w.get(k) or k).replace("{path}", norm).replace("{rule}", rule)  # noqa: E731
+    if not p.startswith("/") or "\n" in p or "\0" in p:
+        return say("absolute")
+    bad = [x for x in p.split("/") if x in [str(b) for b in _many(parts)]]
+    if bad:
+        return say("part", bad[0])
+    roots = [str(a).rstrip("/") for a in _many(also) if str(a).strip("/")]
+    for k in [str(k).rstrip("/") or "/" for k in _many(keep)] + roots:
+        if norm == k or norm == "/" or k.startswith(norm + "/"):
+            return say("keep", k)
+    for t in [str(t).rstrip("/") for t in _many(under)] + roots:
+        if t and norm.startswith(t + "/"):
+            return say("under", t)
+    return ""
+
+
+def parts_of_whole(rows: Any = None, key: Any = "size", whole: Any = None, top: Any = None, rest: Any = None,
+                   extra: Any = None, extra_value: Any = None) -> list:
+    """Rows as shares of a whole; each row gains `pct` (one decimal). top: only the N biggest; extra: a row for a part
+    not in rows (free space) worth `extra_value`, listed last; rest: a row for the whole minus every listed part,
+    before extra, dropped when nothing is left. whole blank = the sum of the parts."""
+    k = str(key or "size")
+    rs = [dict(r) for r in _many(rows) if isinstance(r, dict)]
+    if top not in (None, ""):
+        rs = sorted(rs, key=lambda r: _n0(r.get(k)), reverse=True)[:int(_n0(top))]
+    ex = [{**extra, k: _tidy(_n0(extra_value))}] if isinstance(extra, dict) else []
+    w = _n0(whole) if whole not in (None, "") else sum(_n0(r.get(k)) for r in rs + ex)
+    left = w - sum(_n0(r.get(k)) for r in rs + ex)
+    out = rs + ([{**rest, k: _tidy(left)}] if isinstance(rest, dict) and left > 0 else []) + ex
+    for r in out:
+        r["pct"] = round(_n0(r.get(k)) / w * 100, 1) if w else 0.0
+    return out
+
+
+def _clip_time(rows: Any, time_key: str, start: Any, end: Any) -> list:
+    lo, hi = str(start or "")[:10], str(end or "")[:10]
+    keep = [r for r in _many(rows) if isinstance(r, dict) and str(r.get(time_key) or "")[:10]]
+    keep = [r for r in keep if not (lo and str(r[time_key])[:10] < lo) and not (hi and str(r[time_key])[:10] > hi)]
+    return sorted(keep, key=lambda r: str(r.get(time_key)))
+
+
+def series_bucket(rows: Any = None, time_key: Any = "at", grain: Any = "day", values: Any = None, start: Any = None,
+                  end: Any = None) -> list:
+    """Readings over time -> one row per day | week (keyed by its Monday) | month: the LAST reading in each, plus
+    `<value>_change` against the bucket before (None for the first). start/end (ISO dates, inclusive) clip first."""
+    from datetime import date as _d, timedelta  # noqa: PLC0415
+    tk, g = str(time_key or "at"), str(grain or "day")
+    last: dict = {}
+    for r in _clip_time(rows, tk, start, end):
+        try:
+            d = _d.fromisoformat(str(r.get(tk))[:10])
+        except ValueError:
+            continue
+        b = d.strftime("%Y-%m") if g == "month" else (d - timedelta(days=d.weekday())).isoformat() if g == "week" else d.isoformat()
+        last[b] = r
+    out, prev = [], None
+    for b in sorted(last):
+        row = {"bucket": b, tk: last[b].get(tk)}
+        for v in [str(x) for x in _many(values)]:
+            row[v] = _tidy(_n0(last[b].get(v)))
+            row[f"{v}_change"] = None if prev is None else _tidy(row[v] - prev[v])
+        out.append(row)
+        prev = row
+    return out
+
+
+def rows_delta(rows: Any = None, time_key: Any = "at", id_key: Any = "name", value_key: Any = "size", start: Any = None,
+               end: Any = None) -> list:
+    """Per id: its value at the FIRST reading inside start..end, at the LAST, and the change (to - from)."""
+    tk, ik, vk = str(time_key or "at"), str(id_key or "name"), str(value_key or "size")
+    first: dict = {}
+    last: dict = {}
+    for r in _clip_time(rows, tk, start, end):
+        first.setdefault(r.get(ik), r)
+        last[r.get(ik)] = r
+    return [{ik: i, "from": _tidy(_n0(first[i].get(vk))), "to": _tidy(_n0(last[i].get(vk))),
+             "change": _tidy(_n0(last[i].get(vk)) - _n0(first[i].get(vk)))} for i in last]
+
+
 OPS = {f.__name__: f for f in (
     add, sub, mul, div, pct, round_to, floor_to, first_free_slot, clamp, largest, smallest, first_at_least, slab_tax, step_rate, median, median_shift,
     template, starts_with_any, ends_with_any, text_length, matches, split_text, key_sentences, pattern_hits, shared_runs, replace_once, first_with, html_texts, html_put_texts, script_of, script_shift, same_members, search, text_pick, values_matching, cut_at_any,
     truncate, sub_text, contains, ip_network, first_matching, epoch_date,
     pluck, slice_list, months_part, date_shift, first_index_matching, missing, count, last, compact, coalesce, json_in_text, fit_count, match_case, stable_hash, hash_hex, strings_in, total, first_named, pack_text, trim_to_sentence, after_heading, last_line, pack_words, name_value_lines, ease, filter_rows, rank_rows, rows_view, fuzzy_rows, match_rows, rows_math, group_rows, rows_aggregate,
     rows_product, rows_band, rows_index, rows_lookup, rows_check, rows_having, decision_table, doc_problems, literal, record, merge, get,
+    list_prefer, number_series, path_refusal, parts_of_whole, series_bucket, rows_delta,
 )}
 
 
@@ -1496,5 +1613,17 @@ if __name__ == "__main__":
     crit = [{"fact": "a", "good": 10, "fair": 5}, {"fact": "a", "good": 2, "fair": 20, "higher_better": "false"},
             {"fact": "b", "good": 1, "fair": 0}, {"fact": "a", "good": 30, "fair": 20}]
     assert [(r["band"], r["score"]) for r in rows_band(crit, {"a": 12})] == [("good", 100), ("fair", 60), ("unknown", None), ("weak", 25)]
+    # 2026-10-07 VPS Console (CC): server facts as generic ops, the same answers as AstroStage access_ops
+    s_ = parts_of_whole([{"name": "a", "size": 40}, {"name": "b", "size": 20}], "size", 200, 1, {"name": "rest"}, {"name": "free"}, 110)
+    assert [(r["name"], r["pct"]) for r in s_] == [("a", 20.0), ("rest", 25.0), ("free", 55.0)], s_
+    assert list_prefer(["me", "org"], ["org"]) == "org" and list_prefer(["me"], ["x"]) == "me" and list_prefer([1, 2], [5], False) is None
+    R_ = [{"at": "2026-10-01T05:00:00Z", "u": 10}, {"at": "2026-10-01T23:00:00Z", "u": 12}, {"at": "2026-10-06T01:00:00Z", "u": 15}]
+    assert [(r["bucket"], r["u"], r["u_change"]) for r in series_bucket(R_, "at", "day", ["u"])] == [("2026-10-01", 12, None), ("2026-10-06", 15, 3)]
+    assert [r["bucket"] for r in series_bucket(R_, "at", "week", ["u"])] == ["2026-09-28", "2026-10-05"]
+    assert [r["bucket"] for r in series_bucket(R_, "at", "month", ["u"], "2026-10-02")] == ["2026-10"]
+    assert rows_delta([{"at": "2026-10-01", "p": "/v", "s": 5}, {"at": "2026-10-03", "p": "/v", "s": 9}], "at", "p", "s") == [{"p": "/v", "from": 5, "to": 9, "change": 4}]
+    assert number_series(2, 4, 6, 24) == [2, 6, 10, 14, 18, 22] and number_series(22, 4, 3, 24) == [22, 2, 6]
+    assert path_refusal("/opt", ["/opt"]) and path_refusal("/opt/app/x", [], [], [], "/opt/app") and path_refusal("/a/../b", [], [], [".."])
+    assert path_refusal("rel/x") == "absolute" and path_refusal("/var/backups/x.tar.gz", ["/var"], ["/etc"], [".git"]) == ""
     assert {o["op"] for o in catalog()} == set(OPS)
     print("core.ops self-check OK")

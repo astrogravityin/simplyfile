@@ -11,7 +11,7 @@ $ErrorActionPreference = 'Stop'
 # What deploy.sh pulls is what GitHub has - warn if this machine has commits GitHub has not seen.
 Set-Location (Split-Path -Parent $MyInvocation.MyCommand.Path)
 Write-Host ''
-Write-Host '=== SimplyFile: Deploy to VPS ===' -ForegroundColor Cyan
+Write-Host '=== SimplyFy: Deploy to VPS ===' -ForegroundColor Cyan
 Write-Host "  From   : $((Get-Location).Path)  (GitHub: $(try { git remote get-url origin 2>&1 } catch { }))"
 Write-Host "  To     : ${Server}:$Dir  (runs $Dir/deploy.sh there)"
 Write-Host ''
@@ -28,7 +28,11 @@ if ([int]$ahead -gt 0) {
 
 $sshArgs = @('-o', 'StrictHostKeyChecking=accept-new')
 if ($Key -and (Test-Path $Key)) { $sshArgs += @('-i', $Key) }
-Write-Host "Deploying SimplyFile on $Server ($Dir)..." -ForegroundColor Cyan
-ssh @sshArgs $Server "bash $Dir/deploy.sh"
+Write-Host "Deploying SimplyFy on $Server ($Dir)..." -ForegroundColor Cyan
+# exit 3 = the site was never set up on the VPS (no deploy.sh there): updates need a first setup by New site
+ssh @sshArgs $Server "test -f $Dir/deploy.sh || exit 3; bash $Dir/deploy.sh"
+if ($LASTEXITCODE -eq 3) {
+    throw "$Dir on the VPS has no deploy.sh - the site was never set up there. First setup: VPS Console -> New site -> App (Create), then use Deploy-To-VPS.cmd for every update."
+}
 if ($LASTEXITCODE -ne 0) { throw "Deploy failed on the VPS (exit $LASTEXITCODE) - read the lines above." }
 Write-Host 'Live: https://sf.valuestream.in' -ForegroundColor Green

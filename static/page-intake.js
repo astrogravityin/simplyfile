@@ -270,7 +270,8 @@ async function mapper(host, cid, ay, fid) {
   const guard = (e) => { if (unsaved()) { e.preventDefault(); e.returnValue = ''; } };
   window.addEventListener('beforeunload', guard);
   window.addEventListener('hashchange', () => window.removeEventListener('beforeunload', guard), { once: true });
-  const leave = () => { if (!unsaved() || window.confirm(w('leave_unsaved'))) { window.removeEventListener('beforeunload', guard); go({ c: cid, ay }); } };
+  const out = () => { window.removeEventListener('beforeunload', guard); go({ c: cid, ay }); };
+  const leave = () => (unsaved() ? confirmDialog(w('leave_title'), w('leave_unsaved'), out, w('leave_yes'), { tone: 'warn' }) : out());
   host.querySelector('#in-back').onclick = leave;
   const foldAll = (shut) => () => {
     body.querySelectorAll('[data-g]').forEach((sec) => {

@@ -14,7 +14,7 @@ $RepoRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
 Set-Location $RepoRoot
 # Say where this runs before anything else: the product, this folder, its branch and where it pushes.
 Write-Host ''
-Write-Host '=== SimplyFile: Commit to GitHub ===' -ForegroundColor Cyan
+Write-Host '=== SimplyFy: Commit to GitHub ===' -ForegroundColor Cyan
 Write-Host "  Folder : $RepoRoot"
 Write-Host "  Branch : $(try { git -C $RepoRoot branch --show-current 2>&1 } catch { })"
 Write-Host "  GitHub : $(try { git -C $RepoRoot remote get-url origin 2>&1 } catch { })"
@@ -30,7 +30,7 @@ function Assert-Ok([string]$What) {
     if ($LASTEXITCODE -ne 0) { throw "$What failed (exit $LASTEXITCODE). Stopped here." }
 }
 
-if (-not (Test-Path '.git')) { throw 'Run this from the SimplyFile git folder (D:\Simplyfile).' }
+if (-not (Test-Path '.git')) { throw 'Run this from the SimplyFy git folder (D:\Simplyfile).' }
 $Python = if (Test-Path '.venv\Scripts\python.exe') { '.venv\Scripts\python.exe' } else { 'python' }
 $branch = (git branch --show-current).Trim()
 if (-not $branch) { throw 'Could not detect the current git branch.' }

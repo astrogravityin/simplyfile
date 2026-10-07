@@ -398,6 +398,18 @@
       "label": "leave unsaved"
     },
     {
+      "name": "leave_title",
+      "type": "text",
+      "default": "Unsaved SF Refs",
+      "label": "leave title"
+    },
+    {
+      "name": "leave_yes",
+      "type": "text",
+      "default": "Leave",
+      "label": "leave yes"
+    },
+    {
       "name": "group_count",
       "type": "text",
       "default": "{n} {n:row|rows}",
@@ -628,6 +640,8 @@
       "pick_count": "$pick_count",
       "no_heading": "$no_heading",
       "leave_unsaved": "$leave_unsaved",
+      "leave_title": "$leave_title",
+      "leave_yes": "$leave_yes",
       "group_count": "$group_count",
       "enter_hint": "$enter_hint",
       "expand_all": "$expand_all",
@@ -658,9 +672,9 @@
     }
   },
   "returns": "record",
-  "version": 1,
+  "version": 2,
   "status": "published",
-  "description_nl": "The words of the Intake & map screen and its error sentences. 2026-10-04: what Intake can and cannot read, said plainly at upload. 2026-10-04: the find box over a statement's rows.",
+  "description_nl": "The words of the Intake & map screen and its error sentences. 2026-10-04: what Intake can and cannot read, said plainly at upload. 2026-10-04: the find box over a statement's rows. 2026-10-08: leave_title / leave_yes - Back with unsaved SF Refs asks in the app's own warning, never the browser's.",
   "test_cases": [
     {
       "args": {},
@@ -730,6 +744,8 @@
         "pick_count": "{n} {n:client|clients}",
         "no_heading": "Rows",
         "leave_unsaved": "You have unsaved SF Refs. Leave without saving?",
+        "leave_title": "Unsaved SF Refs",
+        "leave_yes": "Leave",
         "group_count": "{n} {n:row|rows}",
         "enter_hint": "Enter moves to the next row",
         "expand_all": "Expand all",
