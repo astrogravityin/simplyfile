@@ -1,0 +1,95 @@
+{
+  "chip_id": "compute.due_234a",
+  "kind": "accessor",
+  "set": "compute",
+  "label": "Compute: the date s.234A interest counts from",
+  "aliases": [
+    "234a due date",
+    "extended due date interest"
+  ],
+  "params": [
+    {
+      "name": "due",
+      "type": "number",
+      "default": 0,
+      "label": "the due date as extended (YYYYMMDD)"
+    },
+    {
+      "name": "due_rule",
+      "type": "number",
+      "default": 0,
+      "label": "the due date without the extension (YYYYMMDD)"
+    },
+    {
+      "name": "owed",
+      "type": "number",
+      "default": 0,
+      "label": "tax on total income less advance tax, TDS/TCS and reliefs"
+    },
+    {
+      "name": "above",
+      "type": "number",
+      "default": 100000,
+      "label": "over this, 234A runs from the rule's own date (Explanation 1 to s.234A, as CBDT's extension orders say)"
+    }
+  ],
+  "expr": {
+    "vop": "choose",
+    "cases": [
+      {
+        "when": {
+          "op": "all",
+          "items": [
+            {
+              "op": "gt",
+              "left": "$due",
+              "right": "$due_rule"
+            },
+            {
+              "op": "gt",
+              "left": "$due_rule",
+              "right": 0
+            },
+            {
+              "op": "gt",
+              "left": "$owed",
+              "right": "$above"
+            }
+          ]
+        },
+        "then": "$due_rule"
+      }
+    ],
+    "else": "$due"
+  },
+  "returns": "number",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-07: when CBDT extends a due date by circular, s.234A interest still runs from the original date if the tax owed (after advance tax, TDS/TCS, reliefs) is over 1 lakh - as CBDT's extension orders (9/2021, 17/2021) say; Circular 07/2026 is silent, so the safer reading is kept. Otherwise from the extended date.",
+  "test_cases": [
+    {
+      "args": {
+        "due": 20261121,
+        "due_rule": 20261031,
+        "owed": 250000
+      },
+      "expect_value": 20261031
+    },
+    {
+      "args": {
+        "due": 20261121,
+        "due_rule": 20261031,
+        "owed": 90000
+      },
+      "expect_value": 20261121
+    },
+    {
+      "args": {
+        "due": 20260731,
+        "due_rule": 20260731,
+        "owed": 900000
+      },
+      "expect_value": 20260731
+    }
+  ]
+}

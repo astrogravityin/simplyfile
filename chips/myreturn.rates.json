@@ -553,6 +553,30 @@
       "type": "json",
       "default": 150000,
       "label": "80EEB: interest on an electric-vehicle loan sanctioned FY 2019-20 to 2022-23"
+    },
+    {
+      "name": "rate_115bb",
+      "type": "json",
+      "default": 30,
+      "label": "115BB: winnings from lottery, crossword puzzle, races (horse races), card games, gambling, betting - flat rate"
+    },
+    {
+      "name": "rate_115bbj",
+      "type": "json",
+      "default": 30,
+      "label": "115BBJ: net winnings from online games - flat rate"
+    },
+    {
+      "name": "rate_115bbh",
+      "type": "json",
+      "default": 30,
+      "label": "115BBH: income from transfer of virtual digital assets (crypto, NFT) - flat rate"
+    },
+    {
+      "name": "agri_integrate_above",
+      "type": "json",
+      "default": 5000,
+      "label": "net agricultural income above this is added for rate purposes (Finance Act, Part I - partial integration)"
     }
   ],
   "expr": {
@@ -601,13 +625,17 @@
       "cap_80ddb": "$cap_80ddb",
       "cap_80ee": "$cap_80ee",
       "cap_80eea": "$cap_80eea",
-      "cap_80eeb": "$cap_80eeb"
+      "cap_80eeb": "$cap_80eeb",
+      "rate_115bb": "$rate_115bb",
+      "rate_115bbj": "$rate_115bbj",
+      "rate_115bbh": "$rate_115bbh",
+      "agri_integrate_above": "$agri_integrate_above"
     }
   },
   "returns": "record",
-  "version": 3,
+  "version": 4,
   "status": "published",
-  "description_nl": "2026-10-06: every number the individual return uses for AY 2026-27 (FY 2025-26), both regimes - slabs by age, 87A, surcharge, cess, the 111A/112A rates and 1.25 lakh exemption, standard deduction, family pension, house property, Chapter VI-A caps, HRA percentages and the ITR-1 limits. A new year = a new row of numbers here, nothing else. 2026-10-06: via_status - an HUF claims 80C, 80D (for a member), 80G and 80TTA; 80CCC / 80CCD, 80E, 80U and 80TTB are for individuals. 2026-10-06: 80DD, 80DDB, 80EE, 80EEA, 80EEB, 80GG, 80GGC - old regime only; an HUF claims 80DD, 80DDB and 80GGC too.",
+  "description_nl": "2026-10-06: every number the individual return uses for AY 2026-27 (FY 2025-26), both regimes - slabs by age, 87A, surcharge, cess, the 111A/112A rates and 1.25 lakh exemption, standard deduction, family pension, house property, Chapter VI-A caps, HRA percentages and the ITR-1 limits. A new year = a new row of numbers here, nothing else. 2026-10-06: via_status - an HUF claims 80C, 80D (for a member), 80G and 80TTA; 80CCC / 80CCD, 80E, 80U and 80TTB are for individuals. 2026-10-06: 80DD, 80DDB, 80EE, 80EEA, 80EEB, 80GG, 80GGC - old regime only; an HUF claims 80DD, 80DDB and 80GGC too. 2026-10-07: rate_115bb / rate_115bbj / rate_115bbh (30%, both regimes, no basic exemption, no 87A, no Chapter VI-A against them) and agri_integrate_above 5,000 (partial integration, both regimes).",
   "test_cases": [
     {
       "args": {},
@@ -938,7 +966,11 @@
         },
         "cap_80ee": 50000,
         "cap_80eea": 150000,
-        "cap_80eeb": 150000
+        "cap_80eeb": 150000,
+        "rate_115bb": 30,
+        "rate_115bbj": 30,
+        "rate_115bbh": 30,
+        "agri_integrate_above": 5000
       }
     }
   ]

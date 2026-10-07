@@ -1,0 +1,355 @@
+{
+  "chip_id": "myreturn.foreign_row",
+  "kind": "accessor",
+  "set": "myreturn",
+  "label": "My return: one row of foreign income - does it count?",
+  "aliases": [
+    "foreign income",
+    "rnor",
+    "s.5"
+  ],
+  "params": [
+    {
+      "name": "status",
+      "type": "text",
+      "default": "ROR",
+      "label": "ROR / RNOR / NR (chip myreturn.residence)"
+    },
+    {
+      "name": "head",
+      "type": "text",
+      "default": "other",
+      "label": "salary / house / interest / dividend / other / stcg / ltcg / business"
+    },
+    {
+      "name": "amount",
+      "type": "number",
+      "default": 0,
+      "label": "the income in rupees (rule 115)"
+    },
+    {
+      "name": "controlled",
+      "type": "boolean",
+      "default": false,
+      "label": "RNOR: from a business controlled in / a profession set up in India"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "counts": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "any",
+              "items": [
+                {
+                  "op": "in_set",
+                  "value": "$head",
+                  "set": {
+                    "vop": "get",
+                    "value": {
+                      "vop": "get",
+                      "value": {
+                        "chip": "myreturn.res_rules",
+                        "args": {}
+                      },
+                      "path": "foreign_counts"
+                    },
+                    "path": "$status"
+                  }
+                },
+                {
+                  "op": "all",
+                  "items": [
+                    {
+                      "op": "eq",
+                      "left": "$status",
+                      "right": "RNOR"
+                    },
+                    {
+                      "op": "eq",
+                      "left": "$controlled",
+                      "right": true
+                    },
+                    {
+                      "op": "in_set",
+                      "value": "$head",
+                      "set": {
+                        "vop": "get",
+                        "value": {
+                          "chip": "myreturn.res_rules",
+                          "args": {}
+                        },
+                        "path": "rnor_controlled"
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            "then": true
+          }
+        ],
+        "else": false
+      },
+      "to": {
+        "vop": "get",
+        "value": {
+          "vop": "get",
+          "value": {
+            "chip": "myreturn.foreign_rules",
+            "args": {}
+          },
+          "path": "heads"
+        },
+        "path": {
+          "vop": "template",
+          "text": "{h}.to",
+          "values": {
+            "vop": "record",
+            "fields": {
+              "h": "$head"
+            }
+          }
+        }
+      },
+      "fsi": {
+        "vop": "get",
+        "value": {
+          "vop": "get",
+          "value": {
+            "chip": "myreturn.foreign_rules",
+            "args": {}
+          },
+          "path": "heads"
+        },
+        "path": {
+          "vop": "template",
+          "text": "{h}.fsi",
+          "values": {
+            "vop": "record",
+            "fields": {
+              "h": "$head"
+            }
+          }
+        }
+      },
+      "amount": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "any",
+              "items": [
+                {
+                  "op": "in_set",
+                  "value": "$head",
+                  "set": {
+                    "vop": "get",
+                    "value": {
+                      "vop": "get",
+                      "value": {
+                        "chip": "myreturn.res_rules",
+                        "args": {}
+                      },
+                      "path": "foreign_counts"
+                    },
+                    "path": "$status"
+                  }
+                },
+                {
+                  "op": "all",
+                  "items": [
+                    {
+                      "op": "eq",
+                      "left": "$status",
+                      "right": "RNOR"
+                    },
+                    {
+                      "op": "eq",
+                      "left": "$controlled",
+                      "right": true
+                    },
+                    {
+                      "op": "in_set",
+                      "value": "$head",
+                      "set": {
+                        "vop": "get",
+                        "value": {
+                          "chip": "myreturn.res_rules",
+                          "args": {}
+                        },
+                        "path": "rnor_controlled"
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            "then": "$amount"
+          }
+        ],
+        "else": 0
+      },
+      "ca": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "any",
+                  "items": [
+                    {
+                      "op": "in_set",
+                      "value": "$head",
+                      "set": {
+                        "vop": "get",
+                        "value": {
+                          "vop": "get",
+                          "value": {
+                            "chip": "myreturn.res_rules",
+                            "args": {}
+                          },
+                          "path": "foreign_counts"
+                        },
+                        "path": "$status"
+                      }
+                    },
+                    {
+                      "op": "all",
+                      "items": [
+                        {
+                          "op": "eq",
+                          "left": "$status",
+                          "right": "RNOR"
+                        },
+                        {
+                          "op": "eq",
+                          "left": "$controlled",
+                          "right": true
+                        },
+                        {
+                          "op": "in_set",
+                          "value": "$head",
+                          "set": {
+                            "vop": "get",
+                            "value": {
+                              "chip": "myreturn.res_rules",
+                              "args": {}
+                            },
+                            "path": "rnor_controlled"
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "op": "eq",
+                  "left": "$head",
+                  "right": "business"
+                }
+              ]
+            },
+            "then": true
+          }
+        ],
+        "else": false
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-07: s.5: a resident and ordinarily resident is taxed on foreign income of every head; a not-ordinarily resident only on foreign income from a business controlled in / a profession set up in India; a non-resident on none of it. A foreign business or profession's income is a CA's job (books, ITR-3 Schedule BP).",
+  "test_cases": [
+    {
+      "args": {
+        "head": "salary",
+        "amount": 100
+      },
+      "expect_value": {
+        "counts": true,
+        "to": "salary",
+        "fsi": "IncFromSal",
+        "amount": 100,
+        "ca": false
+      }
+    },
+    {
+      "args": {
+        "status": "RNOR",
+        "head": "salary",
+        "amount": 100
+      },
+      "expect_value": {
+        "counts": false,
+        "to": "salary",
+        "fsi": "IncFromSal",
+        "amount": 0,
+        "ca": false
+      }
+    },
+    {
+      "args": {
+        "status": "RNOR",
+        "head": "business",
+        "amount": 100,
+        "controlled": true
+      },
+      "expect_value": {
+        "counts": true,
+        "to": "business",
+        "fsi": "",
+        "amount": 100,
+        "ca": true
+      }
+    },
+    {
+      "args": {
+        "status": "RNOR",
+        "head": "interest",
+        "amount": 100,
+        "controlled": true
+      },
+      "expect_value": {
+        "counts": false,
+        "to": "interest",
+        "fsi": "IncOthSrc",
+        "amount": 0,
+        "ca": false
+      }
+    },
+    {
+      "args": {
+        "status": "NR",
+        "head": "dividend",
+        "amount": 100
+      },
+      "expect_value": {
+        "counts": false,
+        "to": "dividend",
+        "fsi": "IncOthSrc",
+        "amount": 0,
+        "ca": false
+      }
+    },
+    {
+      "args": {
+        "head": "ltcg",
+        "amount": 100
+      },
+      "expect_value": {
+        "counts": true,
+        "to": "ltcg_112",
+        "fsi": "IncCapGain",
+        "amount": 100,
+        "ca": false
+      }
+    }
+  ]
+}

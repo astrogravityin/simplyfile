@@ -1,0 +1,425 @@
+{
+  "chip_id": "myreturn.arrear_row",
+  "kind": "accessor",
+  "set": "myreturn",
+  "label": "My return: salary arrears of one earlier year (Form 10E table A)",
+  "aliases": [
+    "form 10e",
+    "section 89",
+    "arrears"
+  ],
+  "params": [
+    {
+      "name": "fy",
+      "type": "number",
+      "default": 2019,
+      "label": "the year the arrears belong to (the year it starts)"
+    },
+    {
+      "name": "regime",
+      "type": "text",
+      "default": "",
+      "label": "that year's regime (blank: old before FY 2023-24, new from it)"
+    },
+    {
+      "name": "band",
+      "type": "text",
+      "default": "below60",
+      "label": "age band that year"
+    },
+    {
+      "name": "income",
+      "type": "number",
+      "default": 0,
+      "label": "that year's total income as assessed (without the arrears)"
+    },
+    {
+      "name": "amount",
+      "type": "number",
+      "default": 0,
+      "label": "the arrears of that year received now"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "regime": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "eq",
+              "left": "$regime",
+              "right": ""
+            },
+            "then": {
+              "vop": "choose",
+              "cases": [
+                {
+                  "when": {
+                    "op": "ge",
+                    "left": "$fy",
+                    "right": {
+                      "vop": "get",
+                      "value": {
+                        "chip": "myreturn.slabs_by_year",
+                        "args": {}
+                      },
+                      "path": "new_default_from"
+                    }
+                  },
+                  "then": "new"
+                }
+              ],
+              "else": "old"
+            }
+          }
+        ],
+        "else": "$regime"
+      },
+      "known": {
+        "vop": "get",
+        "value": {
+          "chip": "myreturn.tax_of_year",
+          "args": {
+            "fy": "$fy",
+            "regime": {
+              "vop": "choose",
+              "cases": [
+                {
+                  "when": {
+                    "op": "eq",
+                    "left": "$regime",
+                    "right": ""
+                  },
+                  "then": {
+                    "vop": "choose",
+                    "cases": [
+                      {
+                        "when": {
+                          "op": "ge",
+                          "left": "$fy",
+                          "right": {
+                            "vop": "get",
+                            "value": {
+                              "chip": "myreturn.slabs_by_year",
+                              "args": {}
+                            },
+                            "path": "new_default_from"
+                          }
+                        },
+                        "then": "new"
+                      }
+                    ],
+                    "else": "old"
+                  }
+                }
+              ],
+              "else": "$regime"
+            },
+            "band": "$band",
+            "income": "$income"
+          }
+        },
+        "path": "known"
+      },
+      "before": {
+        "vop": "get",
+        "value": {
+          "chip": "myreturn.tax_of_year",
+          "args": {
+            "fy": "$fy",
+            "regime": {
+              "vop": "choose",
+              "cases": [
+                {
+                  "when": {
+                    "op": "eq",
+                    "left": "$regime",
+                    "right": ""
+                  },
+                  "then": {
+                    "vop": "choose",
+                    "cases": [
+                      {
+                        "when": {
+                          "op": "ge",
+                          "left": "$fy",
+                          "right": {
+                            "vop": "get",
+                            "value": {
+                              "chip": "myreturn.slabs_by_year",
+                              "args": {}
+                            },
+                            "path": "new_default_from"
+                          }
+                        },
+                        "then": "new"
+                      }
+                    ],
+                    "else": "old"
+                  }
+                }
+              ],
+              "else": "$regime"
+            },
+            "band": "$band",
+            "income": "$income"
+          }
+        },
+        "path": "tax"
+      },
+      "after": {
+        "vop": "get",
+        "value": {
+          "chip": "myreturn.tax_of_year",
+          "args": {
+            "fy": "$fy",
+            "regime": {
+              "vop": "choose",
+              "cases": [
+                {
+                  "when": {
+                    "op": "eq",
+                    "left": "$regime",
+                    "right": ""
+                  },
+                  "then": {
+                    "vop": "choose",
+                    "cases": [
+                      {
+                        "when": {
+                          "op": "ge",
+                          "left": "$fy",
+                          "right": {
+                            "vop": "get",
+                            "value": {
+                              "chip": "myreturn.slabs_by_year",
+                              "args": {}
+                            },
+                            "path": "new_default_from"
+                          }
+                        },
+                        "then": "new"
+                      }
+                    ],
+                    "else": "old"
+                  }
+                }
+              ],
+              "else": "$regime"
+            },
+            "band": "$band",
+            "income": {
+              "vop": "add",
+              "a": "$income",
+              "b": "$amount"
+            }
+          }
+        },
+        "path": "tax"
+      },
+      "extra": {
+        "vop": "sub",
+        "a": {
+          "vop": "get",
+          "value": {
+            "chip": "myreturn.tax_of_year",
+            "args": {
+              "fy": "$fy",
+              "regime": {
+                "vop": "choose",
+                "cases": [
+                  {
+                    "when": {
+                      "op": "eq",
+                      "left": "$regime",
+                      "right": ""
+                    },
+                    "then": {
+                      "vop": "choose",
+                      "cases": [
+                        {
+                          "when": {
+                            "op": "ge",
+                            "left": "$fy",
+                            "right": {
+                              "vop": "get",
+                              "value": {
+                                "chip": "myreturn.slabs_by_year",
+                                "args": {}
+                              },
+                              "path": "new_default_from"
+                            }
+                          },
+                          "then": "new"
+                        }
+                      ],
+                      "else": "old"
+                    }
+                  }
+                ],
+                "else": "$regime"
+              },
+              "band": "$band",
+              "income": {
+                "vop": "add",
+                "a": "$income",
+                "b": "$amount"
+              }
+            }
+          },
+          "path": "tax"
+        },
+        "b": {
+          "vop": "get",
+          "value": {
+            "chip": "myreturn.tax_of_year",
+            "args": {
+              "fy": "$fy",
+              "regime": {
+                "vop": "choose",
+                "cases": [
+                  {
+                    "when": {
+                      "op": "eq",
+                      "left": "$regime",
+                      "right": ""
+                    },
+                    "then": {
+                      "vop": "choose",
+                      "cases": [
+                        {
+                          "when": {
+                            "op": "ge",
+                            "left": "$fy",
+                            "right": {
+                              "vop": "get",
+                              "value": {
+                                "chip": "myreturn.slabs_by_year",
+                                "args": {}
+                              },
+                              "path": "new_default_from"
+                            }
+                          },
+                          "then": "new"
+                        }
+                      ],
+                      "else": "old"
+                    }
+                  }
+                ],
+                "else": "$regime"
+              },
+              "band": "$band",
+              "income": "$income"
+            }
+          },
+          "path": "tax"
+        }
+      },
+      "over": {
+        "vop": "get",
+        "value": {
+          "chip": "myreturn.tax_of_year",
+          "args": {
+            "fy": "$fy",
+            "regime": {
+              "vop": "choose",
+              "cases": [
+                {
+                  "when": {
+                    "op": "eq",
+                    "left": "$regime",
+                    "right": ""
+                  },
+                  "then": {
+                    "vop": "choose",
+                    "cases": [
+                      {
+                        "when": {
+                          "op": "ge",
+                          "left": "$fy",
+                          "right": {
+                            "vop": "get",
+                            "value": {
+                              "chip": "myreturn.slabs_by_year",
+                              "args": {}
+                            },
+                            "path": "new_default_from"
+                          }
+                        },
+                        "then": "new"
+                      }
+                    ],
+                    "else": "old"
+                  }
+                }
+              ],
+              "else": "$regime"
+            },
+            "band": "$band",
+            "income": {
+              "vop": "add",
+              "a": "$income",
+              "b": "$amount"
+            }
+          }
+        },
+        "path": "over"
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-07: Form 10E, Annexure I table A: for each earlier year, the tax on that year's income with the arrears less the tax without them.",
+  "test_cases": [
+    {
+      "args": {
+        "fy": 2019,
+        "income": 600000,
+        "amount": 200000
+      },
+      "expect_value": {
+        "regime": "old",
+        "known": true,
+        "before": 33800,
+        "after": 75400,
+        "extra": 41600,
+        "over": false
+      }
+    },
+    {
+      "args": {
+        "fy": 2023,
+        "income": 600000,
+        "amount": 200000
+      },
+      "expect_value": {
+        "regime": "new",
+        "known": true,
+        "before": 0,
+        "after": 36400,
+        "extra": 36400,
+        "over": false
+      }
+    },
+    {
+      "args": {
+        "fy": 2021,
+        "regime": "new",
+        "income": 600000,
+        "amount": 100000
+      },
+      "expect_value": {
+        "regime": "new",
+        "known": true,
+        "before": 23400,
+        "after": 33800,
+        "extra": 10400,
+        "over": false
+      }
+    }
+  ]
+}

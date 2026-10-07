@@ -1,0 +1,124 @@
+{
+  "chip_id": "myreturn.itru_rules",
+  "kind": "accessor",
+  "set": "myreturn",
+  "label": "My return: updated return (ITR-U) - the rules",
+  "aliases": [
+    "itr-u",
+    "updated return",
+    "139(8a)",
+    "140b"
+  ],
+  "params": [
+    {
+      "name": "bars",
+      "type": "json",
+      "default": [
+        "search",
+        "survey",
+        "requisition",
+        "assessment",
+        "prosecution",
+        "other_law",
+        "already_updated",
+        "loss_return",
+        "lower_tax"
+      ],
+      "label": "s.139(8A) provisos - no updated return: a search (s.132) or requisition (s.132A) started, a survey (s.133A), an assessment / reassessment / revision pending or made for the year, prosecution started, information under another law (PMLA, Black Money, Benami, SAFEMA) held, already updated once for that year, a return of loss, or one that lowers the tax / raises the refund / raises a loss. (Finance Act 2025: after a s.148A notice only where the officer ordered it is not a fit case for reassessment.)"
+    },
+    {
+      "name": "rate_pm",
+      "type": "number",
+      "default": 1,
+      "label": "s.234A(1A) / s.234B(1A): 1% a month or part of a month on the further tax"
+    },
+    {
+      "name": "floor_step",
+      "type": "number",
+      "default": 100,
+      "label": "rule 119A: the tax interest is worked on is rounded down to a multiple of 100"
+    },
+    {
+      "name": "b_min",
+      "type": "number",
+      "default": 10000,
+      "label": "s.208 / s.234B: advance tax due when the year's tax, less TDS, is 10,000 or more"
+    },
+    {
+      "name": "b_pct",
+      "type": "number",
+      "default": 90,
+      "label": "s.234B: interest when the advance tax paid is less than 90% of the assessed tax"
+    },
+    {
+      "name": "reasons",
+      "type": "json",
+      "default": {
+        "1": "Return previously not filed",
+        "2": "Income not reported correctly",
+        "3": "Wrong heads of income chosen",
+        "4": "Reduction of carried forward loss",
+        "5": "Reduction of unabsorbed depreciation",
+        "6": "Reduction of tax credit u/s 115JB / 115JD",
+        "7": "Wrong rate of tax",
+        "8": "Others"
+      },
+      "label": "ITR-U Part A: the reasons for updating the income (the department's codes)"
+    },
+    {
+      "name": "schema_have",
+      "type": "boolean",
+      "default": false,
+      "label": "the department's ITR-U schema for an earlier AY is not in schemas/itr - the JSON is not made (the computation and the steps are given)"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "bars": "$bars",
+      "rate_pm": "$rate_pm",
+      "floor_step": "$floor_step",
+      "b_min": "$b_min",
+      "b_pct": "$b_pct",
+      "reasons": "$reasons",
+      "schema_have": "$schema_have"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-07: The updated return (s.139(8A), Finance Act 2022; 48 months from the end of the AY and 60% / 70% for the third / fourth year by the Finance Act 2025 - the additional tax is chip close.itr_u's): who may not file one, the interest, the reason codes.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "bars": [
+          "search",
+          "survey",
+          "requisition",
+          "assessment",
+          "prosecution",
+          "other_law",
+          "already_updated",
+          "loss_return",
+          "lower_tax"
+        ],
+        "rate_pm": 1,
+        "floor_step": 100,
+        "b_min": 10000,
+        "b_pct": 90,
+        "reasons": {
+          "1": "Return previously not filed",
+          "2": "Income not reported correctly",
+          "3": "Wrong heads of income chosen",
+          "4": "Reduction of carried forward loss",
+          "5": "Reduction of unabsorbed depreciation",
+          "6": "Reduction of tax credit u/s 115JB / 115JD",
+          "7": "Wrong rate of tax",
+          "8": "Others"
+        },
+        "schema_have": false
+      }
+    }
+  ]
+}

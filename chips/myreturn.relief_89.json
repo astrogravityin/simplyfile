@@ -1,0 +1,228 @@
+{
+  "chip_id": "myreturn.relief_89",
+  "kind": "accessor",
+  "set": "myreturn",
+  "label": "My return: relief u/s 89 - salary received in arrears (Form 10E)",
+  "aliases": [
+    "section 89",
+    "form 10e",
+    "arrears relief"
+  ],
+  "params": [
+    {
+      "name": "now_with",
+      "type": "number",
+      "default": 0,
+      "label": "this year's tax with the arrears"
+    },
+    {
+      "name": "now_without",
+      "type": "number",
+      "default": 0,
+      "label": "this year's tax without them"
+    },
+    {
+      "name": "past",
+      "type": "number",
+      "default": 0,
+      "label": "the earlier years' extra tax had the arrears been taxed then (Form 10E table A, summed)"
+    },
+    {
+      "name": "unknown",
+      "type": "boolean",
+      "default": false,
+      "label": "a year whose tax cannot be worked out (no such year / regime, or over 50 lakh)"
+    },
+    {
+      "name": "huf",
+      "type": "boolean",
+      "default": false,
+      "label": "an HUF (no s.89 - it has no salary)"
+    },
+    {
+      "name": "salary",
+      "type": "number",
+      "default": 0,
+      "label": "this year's salary"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "now_extra": {
+        "vop": "largest",
+        "values": [
+          0,
+          {
+            "vop": "sub",
+            "a": "$now_with",
+            "b": "$now_without"
+          }
+        ]
+      },
+      "relief": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "any",
+              "items": [
+                {
+                  "op": "eq",
+                  "left": "$unknown",
+                  "right": true
+                },
+                {
+                  "op": "eq",
+                  "left": "$huf",
+                  "right": true
+                },
+                {
+                  "op": "le",
+                  "left": "$salary",
+                  "right": 0
+                }
+              ]
+            },
+            "then": 0
+          }
+        ],
+        "else": {
+          "vop": "largest",
+          "values": [
+            0,
+            {
+              "vop": "sub",
+              "a": {
+                "vop": "largest",
+                "values": [
+                  0,
+                  {
+                    "vop": "sub",
+                    "a": "$now_with",
+                    "b": "$now_without"
+                  }
+                ]
+              },
+              "b": "$past"
+            }
+          ]
+        }
+      },
+      "form10e": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "not",
+                  "item": {
+                    "op": "eq",
+                    "left": "$unknown",
+                    "right": true
+                  }
+                },
+                {
+                  "op": "gt",
+                  "left": {
+                    "vop": "sub",
+                    "a": {
+                      "vop": "largest",
+                      "values": [
+                        0,
+                        {
+                          "vop": "sub",
+                          "a": "$now_with",
+                          "b": "$now_without"
+                        }
+                      ]
+                    },
+                    "b": "$past"
+                  },
+                  "right": 0
+                }
+              ]
+            },
+            "then": true
+          }
+        ],
+        "else": false
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-07: s.89 / rule 21A: the extra tax this year because the arrears are taxed now, less the extra tax there would have been in the years they belong to - nil when that is more. Form 10E is filed before the return (the relief is refused without it). Available in the new regime too: s.115BAC(2) takes away exemptions and deductions, not relief u/s 89 (CBDT: the relief is a relief from tax). Not for an HUF; needs salary.",
+  "test_cases": [
+    {
+      "args": {
+        "now_with": 135200,
+        "now_without": 72800,
+        "past": 41600,
+        "salary": 1
+      },
+      "expect_value": {
+        "now_extra": 62400,
+        "relief": 20800,
+        "form10e": true
+      }
+    },
+    {
+      "args": {
+        "now_with": 135200,
+        "now_without": 72800,
+        "past": 70000,
+        "salary": 1
+      },
+      "expect_value": {
+        "now_extra": 62400,
+        "relief": 0,
+        "form10e": false
+      }
+    },
+    {
+      "args": {
+        "now_with": 135200,
+        "now_without": 72800,
+        "past": 41600,
+        "salary": 0
+      },
+      "expect_value": {
+        "now_extra": 62400,
+        "relief": 0,
+        "form10e": true
+      }
+    },
+    {
+      "args": {
+        "now_with": 135200,
+        "now_without": 72800,
+        "past": 0,
+        "unknown": true,
+        "salary": 1
+      },
+      "expect_value": {
+        "now_extra": 62400,
+        "relief": 0,
+        "form10e": false
+      }
+    },
+    {
+      "args": {
+        "now_with": 135200,
+        "now_without": 72800,
+        "past": 0,
+        "huf": true,
+        "salary": 1
+      },
+      "expect_value": {
+        "now_extra": 62400,
+        "relief": 0,
+        "form10e": true
+      }
+    }
+  ]
+}

@@ -23,6 +23,8 @@ function show(kind, v, other) {
     case 'pct': return `${esc(v)}%`;
     case 'number': return esc(v);
     case 'mmdd': return esc(`${v % 100} ${MON[Math.floor(v / 100) - 1] || '?'}`);
+    case 'date': { const [y, m, dd] = String(v).split('-'); return esc(`${+dd} ${MON[+m - 1] || '?'} ${y}`); }
+    case 'dates': return v.map((x) => `<span class="tw-slab${other && !other.includes(x) ? ' tw-diff' : ''}">${show('date', x)}</span>`).join('');
     case 'money_by_age': case 'money_by_regime': case 'money_map': case 'pct_by_regime':
       return Object.entries(v).map(([k, x]) => `<span class="tw-slab${other ? diff(x, other[k]) : ''}">${esc(named(k))} <b>${esc(kind === 'pct_by_regime' ? `${x}%` : L(x))}</b></span>`).join('');
     default: return `<code>${esc(JSON.stringify(v))}</code>`;
@@ -48,6 +50,7 @@ export const rulewatchPage = (name) => async (host) => {
     const can = S.can;
     host.innerHTML = pageHead(w('title'), esc(w('lede')))
       + `<section class="card tw-head" id="tw-head"><div class="tw-live">${icon('check', 15)} <b>${esc(w('live', { ay: d.live_ay }))}</b></div>
+        ${can && d.check_due ? `<p class="small" style="color:var(--warn)">${icon('alert', 13)} ${esc(d.last_check ? w('check_due', { days: d.check_every_days }) : w('check_never'))}</p>` : ''}
         <div class="tw-fetch" id="tw-fetch"><label>${esc(w('target'))} <select id="tw-ay">${years.map((y) => `<option value="${esc(y)}"${y === d.ay ? ' selected' : ''}>${esc(y === d.live_ay ? w('recheck', { ay: y }) : y)}</option>`).join('')}</select></label>
           ${can ? `<label>${esc(w('ai_pick'))} <select id="tw-ai"><option value="">${esc(w('ai_auto'))}</option>${(S.ais || []).map((a) => `<option value="${esc(a.provider)}" ${S.ai === a.provider ? 'selected' : ''}>${esc(a.label)} · ${esc(w(a.ready ? 'ai_ready' : 'ai_resting'))}</option>`).join('')}</select></label>` : ''}
           ${can ? `<button class="btn primary" id="tw-go" data-work="${esc(w('fetching'))}">${icon('refresh', 14)} ${esc(w('fetch'))}</button>` : `<span class="sv-pill" style="--c:var(--muted)">${icon('lock', 12)} ${esc(w('ro_tag'))}</span>`}

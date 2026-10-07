@@ -1,0 +1,315 @@
+{
+  "chip_id": "myreturn.cg_choice",
+  "kind": "accessor",
+  "set": "myreturn",
+  "label": "My return: land / building - with or without indexation",
+  "aliases": [
+    "indexation",
+    "112",
+    "23 july 2024",
+    "excess tax"
+  ],
+  "params": [
+    {
+      "name": "gain",
+      "type": "number",
+      "default": 0,
+      "label": "the long-term gain without indexation, after the exemption"
+    },
+    {
+      "name": "gain_indexed",
+      "type": "number",
+      "default": 0,
+      "label": "the gain with indexation, after the exemption"
+    },
+    {
+      "name": "index_ok",
+      "type": "boolean",
+      "default": false,
+      "label": "the choice is open (resident, land / building bought before 23 July 2024)"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "tax_plain": {
+        "vop": "round_to",
+        "value": {
+          "vop": "mul",
+          "a": {
+            "vop": "largest",
+            "values": [
+              "$gain",
+              0
+            ]
+          },
+          "b": {
+            "vop": "div",
+            "a": {
+              "vop": "get",
+              "value": {
+                "chip": "myreturn.rates",
+                "args": {}
+              },
+              "path": "rate_112"
+            },
+            "b": 100
+          }
+        }
+      },
+      "tax_indexed": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "eq",
+              "left": "$index_ok",
+              "right": true
+            },
+            "then": {
+              "vop": "round_to",
+              "value": {
+                "vop": "mul",
+                "a": {
+                  "vop": "largest",
+                  "values": [
+                    "$gain_indexed",
+                    0
+                  ]
+                },
+                "b": {
+                  "vop": "div",
+                  "a": {
+                    "vop": "get",
+                    "value": {
+                      "chip": "myreturn.cg_rules",
+                      "args": {}
+                    },
+                    "path": "rate_indexed"
+                  },
+                  "b": 100
+                }
+              }
+            }
+          }
+        ],
+        "else": 0
+      },
+      "excess": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "eq",
+              "left": "$index_ok",
+              "right": true
+            },
+            "then": {
+              "vop": "largest",
+              "values": [
+                {
+                  "vop": "sub",
+                  "a": {
+                    "vop": "round_to",
+                    "value": {
+                      "vop": "mul",
+                      "a": {
+                        "vop": "largest",
+                        "values": [
+                          "$gain",
+                          0
+                        ]
+                      },
+                      "b": {
+                        "vop": "div",
+                        "a": {
+                          "vop": "get",
+                          "value": {
+                            "chip": "myreturn.rates",
+                            "args": {}
+                          },
+                          "path": "rate_112"
+                        },
+                        "b": 100
+                      }
+                    }
+                  },
+                  "b": {
+                    "vop": "round_to",
+                    "value": {
+                      "vop": "mul",
+                      "a": {
+                        "vop": "largest",
+                        "values": [
+                          "$gain_indexed",
+                          0
+                        ]
+                      },
+                      "b": {
+                        "vop": "div",
+                        "a": {
+                          "vop": "get",
+                          "value": {
+                            "chip": "myreturn.cg_rules",
+                            "args": {}
+                          },
+                          "path": "rate_indexed"
+                        },
+                        "b": 100
+                      }
+                    }
+                  }
+                },
+                0
+              ]
+            }
+          }
+        ],
+        "else": 0
+      },
+      "chosen": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "gt",
+              "left": {
+                "vop": "choose",
+                "cases": [
+                  {
+                    "when": {
+                      "op": "eq",
+                      "left": "$index_ok",
+                      "right": true
+                    },
+                    "then": {
+                      "vop": "largest",
+                      "values": [
+                        {
+                          "vop": "sub",
+                          "a": {
+                            "vop": "round_to",
+                            "value": {
+                              "vop": "mul",
+                              "a": {
+                                "vop": "largest",
+                                "values": [
+                                  "$gain",
+                                  0
+                                ]
+                              },
+                              "b": {
+                                "vop": "div",
+                                "a": {
+                                  "vop": "get",
+                                  "value": {
+                                    "chip": "myreturn.rates",
+                                    "args": {}
+                                  },
+                                  "path": "rate_112"
+                                },
+                                "b": 100
+                              }
+                            }
+                          },
+                          "b": {
+                            "vop": "round_to",
+                            "value": {
+                              "vop": "mul",
+                              "a": {
+                                "vop": "largest",
+                                "values": [
+                                  "$gain_indexed",
+                                  0
+                                ]
+                              },
+                              "b": {
+                                "vop": "div",
+                                "a": {
+                                  "vop": "get",
+                                  "value": {
+                                    "chip": "myreturn.cg_rules",
+                                    "args": {}
+                                  },
+                                  "path": "rate_indexed"
+                                },
+                                "b": 100
+                              }
+                            }
+                          }
+                        },
+                        0
+                      ]
+                    }
+                  }
+                ],
+                "else": 0
+              },
+              "right": 0
+            },
+            "then": "indexed"
+          }
+        ],
+        "else": "plain"
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-07: Proviso to s.112(1)(a) (Finance (No.2) Act 2024): for land / building bought before 23 July 2024 by a resident individual / HUF, the tax on the gain is the lower of 12.5% without indexation and 20% with indexation - the return shows the gain without indexation and the excess (Schedule CG B1e: TaxSec1121a - TaxSec1121aiiB, ExcessAmtSec1121a) is left out of the tax.",
+  "test_cases": [
+    {
+      "args": {
+        "gain": 6900000,
+        "gain_indexed": 2905352,
+        "index_ok": true
+      },
+      "expect_value": {
+        "tax_plain": 862500,
+        "tax_indexed": 581070,
+        "excess": 281430,
+        "chosen": "indexed"
+      }
+    },
+    {
+      "args": {
+        "gain": 2000000,
+        "gain_indexed": 1500000,
+        "index_ok": true
+      },
+      "expect_value": {
+        "tax_plain": 250000,
+        "tax_indexed": 300000,
+        "excess": 0,
+        "chosen": "plain"
+      }
+    },
+    {
+      "args": {
+        "gain": 2000000,
+        "gain_indexed": -100000,
+        "index_ok": true
+      },
+      "expect_value": {
+        "tax_plain": 250000,
+        "tax_indexed": 0,
+        "excess": 250000,
+        "chosen": "indexed"
+      }
+    },
+    {
+      "args": {
+        "gain": 2000000,
+        "gain_indexed": 1000000,
+        "index_ok": false
+      },
+      "expect_value": {
+        "tax_plain": 250000,
+        "tax_indexed": 0,
+        "excess": 0,
+        "chosen": "plain"
+      }
+    }
+  ]
+}

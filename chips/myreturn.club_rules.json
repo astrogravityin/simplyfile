@@ -1,0 +1,161 @@
+{
+  "chip_id": "myreturn.club_rules",
+  "kind": "accessor",
+  "set": "myreturn",
+  "label": "My return: clubbing - the rules (s.64)",
+  "aliases": [
+    "clubbing",
+    "section 64",
+    "minor child income",
+    "10(32)",
+    "schedule spi"
+  ],
+  "params": [
+    {
+      "name": "relations",
+      "type": "json",
+      "default": {
+        "minor_child": {
+          "sec": "64(1A)",
+          "owner": "MI"
+        },
+        "spouse": {
+          "sec": "64(1)(iv)",
+          "owner": "SP"
+        },
+        "son_wife": {
+          "sec": "64(1)(vi)",
+          "owner": "OT"
+        }
+      },
+      "label": "whose income is clubbed: a minor child (s.64(1A) - all of it, with the parent whose income is the greater); the spouse (s.64(1)(iv)) and the son's wife (s.64(1)(vi)) - the income from assets transferred to them without adequate consideration. owner: Schedule HP's PropertyOwner code (MI minor, SP spouse, OT other)"
+    },
+    {
+      "name": "heads",
+      "type": "json",
+      "default": {
+        "interest": {
+          "to": "interest",
+          "spi": "OS"
+        },
+        "dividend": {
+          "to": "dividend",
+          "spi": "OS"
+        },
+        "other": {
+          "to": "other",
+          "spi": "OS"
+        },
+        "house": {
+          "to": "house",
+          "spi": "HP"
+        },
+        "stcg_111a": {
+          "to": "stcg_111a",
+          "spi": "CG"
+        },
+        "stcg": {
+          "to": "stcg_other",
+          "spi": "CG"
+        },
+        "ltcg_112": {
+          "to": "ltcg_112",
+          "spi": "CG"
+        },
+        "ltcg_112a": {
+          "to": "ltcg_112a",
+          "spi": "CG"
+        }
+      },
+      "label": "the head the clubbed income is taxed under, and its Schedule SPI code"
+    },
+    {
+      "name": "minor_exempt",
+      "type": "number",
+      "default": 1500,
+      "label": "s.10(32): a minor child's income clubbed is exempt up to 1,500 a child"
+    },
+    {
+      "name": "ei_category",
+      "type": "json",
+      "default": [
+        "SRSC",
+        "10(32)"
+      ],
+      "label": "ITR-2 Schedule EI: the 10(32) exemption's category and sub-category"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "relations": "$relations",
+      "heads": "$heads",
+      "minor_exempt": "$minor_exempt",
+      "ei_category": "$ei_category"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-07: Clubbing of income (s.64): whose, which head, the s.10(32) exemption of 1,500 a minor child, Schedule SPI / EI codes.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "relations": {
+          "minor_child": {
+            "sec": "64(1A)",
+            "owner": "MI"
+          },
+          "spouse": {
+            "sec": "64(1)(iv)",
+            "owner": "SP"
+          },
+          "son_wife": {
+            "sec": "64(1)(vi)",
+            "owner": "OT"
+          }
+        },
+        "heads": {
+          "interest": {
+            "to": "interest",
+            "spi": "OS"
+          },
+          "dividend": {
+            "to": "dividend",
+            "spi": "OS"
+          },
+          "other": {
+            "to": "other",
+            "spi": "OS"
+          },
+          "house": {
+            "to": "house",
+            "spi": "HP"
+          },
+          "stcg_111a": {
+            "to": "stcg_111a",
+            "spi": "CG"
+          },
+          "stcg": {
+            "to": "stcg_other",
+            "spi": "CG"
+          },
+          "ltcg_112": {
+            "to": "ltcg_112",
+            "spi": "CG"
+          },
+          "ltcg_112a": {
+            "to": "ltcg_112a",
+            "spi": "CG"
+          }
+        },
+        "minor_exempt": 1500,
+        "ei_category": [
+          "SRSC",
+          "10(32)"
+        ]
+      }
+    }
+  ]
+}

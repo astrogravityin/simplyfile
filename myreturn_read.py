@@ -96,13 +96,15 @@ def read(name: str, data: bytes, password: str = "", user: dict | None = None, a
     if head[:5] == b"%PDF-":
         return _pdf(data, password, pan, dob, ay, user, ai_ok)
     if head[:8] == b"\xd0\xcf\x11\xe0\xa1\xb1\x1a\xe1":     # an old .xls
-        return bank_book(data, ".xls")
+        return cg_book(data, ".xls") or bank_book(data, ".xls")
     text = data.decode("utf-8-sig", errors="replace")
     low = text[:6000].lower()
     if any(w in low for w in k["words_26as"]):
         return form26as(data, ".txt" if "^" in text[:6000] else ".csv")
     if any(w in low for w in k["words_ais"]):
         return ais_rows(text)
+    if any(w in low for w in k["cg_statement"]["words"]) and (got := cg_book(data, ".csv")):
+        return got
     if any(w in low for w in k["words_bank"]) or any(w in low[:3000] for w in k["bank"]["credit_words"][:2]):
         return bank_book(data, ".csv")
     return _unknown()
@@ -114,8 +116,8 @@ def _unknown() -> dict:
 
 def _zip(data: bytes, password: str, pan: str, dob: str, ay: str) -> dict:
     z = zipfile.ZipFile(io.BytesIO(data))
-    if "xl/workbook.xml" in z.namelist():              # an Excel workbook is a zip too - a bank statement, here
-        return bank_book(data, ".xlsx")
+    if "xl/workbook.xml" in z.namelist():              # an Excel workbook is a zip too - a capital-gains statement or a bank statement
+        return cg_book(data, ".xlsx") or bank_book(data, ".xlsx")
     inner = next((n for n in z.namelist() if n.lower().endswith((".txt", ".csv", ".pdf", ".json"))), None)
     if not inner:
         return _unknown()
@@ -231,11 +233,13 @@ def filed(doc: dict, pan: str, ay: str) -> dict:
     their_pan = str(got.get("fd_pan") or "")
     if pan and their_pan and their_pan.upper() != pan.upper():
         problems.append(say("pan_mismatch", theirs=their_pan, ours=pan.upper()))
-    if got.get("fd_ay") and ay and str(got["fd_ay"]) != ay[:4]:
+    # 2026-10-07: last year's return (its AY the year before this one) is kept for what it carries forward - its losses (Schedule CFL)
+    prev = bool(got.get("fd_ay") and ay and str(got["fd_ay"]) == str(int(ay[:4]) - 1))
+    if got.get("fd_ay") and ay and str(got["fd_ay"]) != ay[:4] and not prev:
         problems.append(say("ay_mismatch", theirs=got["fd_ay"], ours=ay))
     found = [{"label": say("fd_form"), "value": form}] + [{"label": say(w), "value": _inr(_num(v)) if isinstance(v, (int, float)) else str(v)}
                                                          for w, v in got.items() if w not in ("fd_ay",)]
-    return {"kind": "filed", "method": "json", "facts": {"filed_json": doc, "form": form}, "found": found, "problems": problems}
+    return {"kind": "filed_prev" if prev else "filed", "method": "json", "facts": {"filed_json": doc, "form": form}, "found": found, "problems": problems}
 
 
 # --- AIS -----------------------------------------------------------------------------------------------------------------
@@ -278,9 +282,17 @@ def _ais_add(facts: dict, field: str, amount: float, src: str = "", tds: float =
         facts.setdefault("salary", {"gross": 0.0})["gross"] += amount
         if tds:
             facts.setdefault("tds", []).append({"kind": "salary", "tan": src, "name": "", "income": amount, "tds": tds, "section": "192"})
-    elif field in ("savings", "deposits", "dividend", "refund_interest", "other"):
+    elif field in ("savings", "deposits", "dividend", "refund_interest", "other", "lottery", "online_games"):
         facts.setdefault("other", {}).setdefault(field, 0.0)
         facts["other"][field] += amount
+    elif field == "vda_sale":                                # 194S: what a virtual digital asset sold for - the gain is typed
+        facts["vda_seen"] = facts.get("vda_seen", 0.0) + amount
+    elif field == "property_tds":                            # 2026-10-07: 194IA - the buyer's TDS on a property sold (Form 26QB)
+        pan = src if re.fullmatch(settings()["pan_pattern"].replace(r"\b", ""), src or "") else ""
+        facts.setdefault("tds_194ia", []).append({"pan": pan, "name": "", "income": amount, "tds": tds, "section": "194IA"})
+        facts["property_seen"] = facts.get("property_seen", 0.0) + amount
+    elif field == "property_sft":                            # SFT-012: the sub-registrar's report of a property sold
+        facts["property_sft"] = facts.get("property_sft", 0.0) + amount
     elif field == "sales":
         facts.setdefault("sales", 0.0)
         facts["sales"] = facts["sales"] + amount
@@ -304,6 +316,13 @@ def ais_json(doc: dict) -> dict:
                 if f:
                     _ais_add(facts, f, _num(row[ca]) if ca is not None and ca < len(row) else 0.0, str(el.get("infoSrcId") or ""),
                              _num(row[ct]) if ct is not None and ct < len(row) and ct != ca else 0.0)
+    k = settings()["ais_header"]["json"]
+    part_a = doc.get("partA") or doc.get("PartA") or {}
+    flat = {str(x).lower(): v for d in [part_a] + [v for v in part_a.values() if isinstance(v, dict)] if isinstance(d, dict) for x, v in d.items()}
+    got = {f: next((str(flat[n.lower()]) for n in names if flat.get(n.lower()) not in (None, "") and not isinstance(flat[n.lower()], dict)), "")
+           for f, names in k.items()}
+    if person := _person(got.get("address", ""), got.get("email", ""), got.get("mobile", "")):
+        facts["person"] = person
     return _ais_result(facts, "json")
 
 
@@ -407,6 +426,73 @@ def bank(book: dict) -> dict:
     return {"kind": "bank", "method": "text", "facts": facts, "found": found, "problems": []}
 
 
+# --- capital-gains statement (2026-10-07) --------------------------------------------------------------------------------
+
+def cg_book(data: bytes, ext: str) -> dict | None:
+    """A broker's / registrar's capital-gains statement (CSV, Excel) - None when the book holds no such table."""
+    import intake  # noqa: PLC0415
+    try:
+        return cg_statement(intake.read_book(data, ext))
+    except Exception:  # noqa: BLE001 - not a readable book: let the next reader try
+        return None
+
+
+def cg_day(v) -> str:
+    """A statement's date -> YYYY-MM-DD: 15/06/2025, 15-06-2025, 15.06.25 (Excel, as intake reads it), 15-Jun-2025, 2025-06-15."""
+    k = settings()["cg_statement"]
+    s = str(v or "").strip()
+    if m := re.fullmatch(r"(\d{4})-(\d{2})-(\d{2}).*", s):
+        return f"{m[1]}-{m[2]}-{m[3]}"
+    if m := re.fullmatch(r"(\d{1,2})[/.\-]([A-Za-z]{3}|\d{1,2})[/.\-](\d{2}|\d{4})", s):
+        mon = m[2] if m[2].isdigit() else str(k["months"].get(m[2][:3].title(), 0))
+        y = int(m[3]) if len(m[3]) == 4 else int(m[3]) + (k["two_digit_base"] if int(m[3]) < k["two_digit_pivot"] else k["two_digit_base"] - 100)
+        return f"{y:04d}-{int(mon):02d}-{int(m[1]):02d}" if 1 <= int(mon) <= 12 else ""
+    return ""
+
+
+def cg_statement(book: dict) -> dict | None:
+    """One row per sale from a CAMS / KFintech consolidated capital-gains statement or a broker's tax P&L: the table is found by
+    its heading words (chip myreturn.read cg_statement cols - the first row holding the needed columns), each later row with a
+    sale value is a sale. A scheme or category naming debt (liquid, gilt ...) is a debt fund; the rest is the statement's default
+    (listed equity / equity funds). FMV on 31-01-2018 given per unit (a NAV, a price) is made the total. None = no such table."""
+    k = settings()["cg_statement"]
+    low = lambda c: re.sub(r"\s+", " ", c).strip().lower() if isinstance(c, str) else ""  # noqa: E731
+    num = lambda c: float(c) if isinstance(c, (int, float)) and not isinstance(c, bool) else _num(c) if isinstance(c, str) and re.fullmatch(r"[\d,.\s-]+", c) else 0.0  # noqa: E731
+    out, heads = [], 0
+    for rows in book.values():
+        head = None
+        for r in rows:
+            cells = [low(c) for c in r]
+            if head is None:
+                cols: dict = {}
+                for field, words in k["cols"].items():
+                    i = next((i for i, c in enumerate(cells) if i not in cols.values() and any(w in c for w in words)), None)
+                    if i is not None:
+                        cols[field] = i
+                if all(f in cols for f in k["need"]) and any(f in cols for f in k["need_one"]):
+                    head, heads = cols, heads + 1
+                    per_unit = "fmv" in cols and any(w in cells[cols["fmv"]] for w in k["per_unit_words"])
+                continue
+            at = lambda f: r[head[f]] if f in head and head[f] < len(r) else None  # noqa: E731
+            text = " ".join(c for c in cells if c)
+            if not num(at("sale")) or any(text.startswith(w) for w in k["skip_words"]):
+                continue
+            isin = str(at("isin") or "").strip().upper() or next((m.group(0) for c in r if isinstance(c, str) for m in [re.search(k["isin_pattern"], c.upper())] if m), "")
+            name = str(at("name") or "").strip()
+            kind = low(at("category") or "") + " " + name.lower()
+            asset = next((a for a, words in k["asset_words"].items() if any(w in kind for w in words)), k["default_asset"])
+            units = num(at("units"))
+            fmv = num(at("fmv"))
+            out.append({"asset": asset, "name": name[:125], "isin": isin if re.fullmatch(k["isin_pattern"], isin) else "", "units": units,
+                        "acquired": cg_day(at("acquired")), "sold": cg_day(at("sold")), "sale": round(num(at("sale")), 2), "cost": round(num(at("cost")), 2),
+                        "fmv": round(fmv * units if per_unit else fmv, 2), "expenses": round(num(at("expenses")), 2)})
+    if not heads:
+        return None
+    sale = sum(x["sale"] for x in out)
+    found = [{"label": say("fd_cg_rows"), "value": str(len(out))}, {"label": say("fd_cg_sale"), "value": _inr(sale)}]
+    return {"kind": "cg", "method": "text", "facts": {"cg_rows": out}, "found": found, "problems": [] if out else [say("no_cg_rows")]}
+
+
 def ais_paid(text: str, ay: str = "") -> list[dict]:
     """AIS Part B3: tax the person paid - advance or self-assessment - with its BSR, date and challan (chip myreturn.read
     ais_paid). Only the return's own financial year counts: a payment for an earlier year (paid this year) is not this return's."""
@@ -432,6 +518,12 @@ def ais_rows(text: str, ay: str = "") -> dict:
     if paid := ais_paid(text, ay):
         facts["paid"] = paid
     k = settings()
+    h = k["ais_header"]
+    head = re.sub(r"\s+", " ", re.split(h["end"], text, maxsplit=1)[0])
+    if any(w in head.lower() for w in h["start_words"]):
+        grab = lambda pat: (m.group(1).strip() if (m := re.search(pat, head)) else "")  # noqa: E731
+        if person := _person(grab(h["address"]), grab(h["email"]), grab(h["mobile"])):
+            facts["person"] = person
     for line in text.splitlines():
         m = re.search(k["ais_code_pattern"], line)
         if not m:
@@ -443,7 +535,10 @@ def ais_rows(text: str, ay: str = "") -> dict:
         if not nums:
             continue
         f = _code_field(m.group(0), line)
-        if f:
+        if f == "property_tds":                              # 194IA: the amount, then the tax deducted when the line has it; the buyer's PAN
+            pan = re.search(k["pan_pattern"], line[m.end():])
+            _ais_add(facts, f, nums[0], pan.group(0) if pan else "", nums[1] if len(nums) > 1 else 0.0)
+        elif f:
             _ais_add(facts, f, nums[-1])
     return _ais_result(facts, "text")
 
@@ -458,9 +553,73 @@ def tis_rows(text: str) -> dict:
     return _ais_result(facts, "tis")
 
 
+def _address(text: str) -> dict:
+    """An address line -> {address, city, pin, state}: the PIN, the state it names (chip myreturn.read state_names) or, failing
+    that, the state its PIN belongs to (pin_states), and the city - the last part before the PIN that is not the state."""
+    from core import ops  # noqa: PLC0415
+    k = settings()
+    text = re.sub(r"\s+", " ", text or "").strip(" ,-")
+    if not text:
+        return {}
+    pins = list(re.finditer(k["employer_block"]["pin"], text))
+    pin = pins[-1].group(0) if pins else ""
+    state = ops.first_matching(text, k["state_names"], "pattern", "code", "") or (ops.first_matching(pin, k["pin_states"], "pattern", "code", "") if pin else "")
+    before = text[: pins[-1].start()] if pins else text
+    chunks = [x.strip(" -") for x in before.split(",") if x.strip(" -")]
+    city, at = "", len(chunks)
+    for n in range(len(chunks) - 1, -1, -1):
+        left = chunks[n]
+        for row in k["state_names"]:
+            left = re.sub(row["pattern"], "", left)
+        if left.strip(" -"):
+            city, at = left.strip(" -"), n
+            break
+    return {"address": ", ".join(chunks[:at]) or text, "city": city, "pin": pin, "state": state}
+
+
+def _person(address: str, email: str, mobile: str) -> dict:
+    a = _address(address)
+    lines = [x.strip() for x in a.get("address", "").split(",") if x.strip()]
+    out = {"flat": lines[0] if lines else "", "area": ", ".join(lines[1:]), "city": a["city"], "pin": a["pin"], "state": a["state"]} if a else {}
+    return {f: v for f, v in (out | {"email": email.strip(), "mobile": re.sub(r"\D", "", mobile)[-10:]}).items() if v}
+
+
+def employer_block(text: str) -> dict:
+    """Form 16 Part A: the lines under "Name and address of the Employer" - the employer's address (its left column when the
+    page is laid out in two), its e-mail; the state from the address (chip myreturn.read employer_block, state_names, pin_states)."""
+    k, kb = settings(), settings()["employer_block"]
+    raw = text.splitlines()
+    at = next((n for n, ln in enumerate(raw) if re.search(k["employer_anchor"], ln, re.I)), None)
+    if at is None:
+        return {}
+    col = re.search(kb["employee_anchor"], raw[at], re.I)
+    cut = col.start() if col and col.start() > 0 else None
+    lines = []
+    for ln in raw[at + 1: at + 1 + int(kb["lines_max"])]:
+        if re.search(kb["stop"], ln):
+            break
+        left = (ln[:cut] if cut else ln).strip()
+        left = re.split(kb["column_gap"], left)[0].strip() if cut else left
+        if left:
+            lines.append(left)
+    email = next((m.group(0) for ln in lines if (m := re.search(kb["email"], ln))), "")
+    body = [ln for ln in lines if not re.search(kb["email"], ln) and not re.fullmatch(kb["phone"], ln)]
+    if not body:
+        return {}
+    first = body[0].split(",", 1)                         # the name, then (on the same line) the address
+    addr = ", ".join(([first[1]] if len(first) > 1 else []) + body[1:])
+    a = _address(addr)
+    return {"address": a.get("address", ""), "city": a.get("city", ""), "pin": a.get("pin", ""), "state": a.get("state", ""), "email": email} if a else {}
+
+
 def _ais_result(facts: dict, method: str) -> dict:
     o = facts.get("other") or {}
     found = [{"label": say(f"f_{f}"), "value": _inr(v)} for f, v in o.items() if v]
+    found += [{"label": say("fd_vda_seen"), "value": _inr(facts["vda_seen"])}] if facts.get("vda_seen") else []
+    found += [{"label": say("fd_property_seen"), "value": _inr(facts["property_seen"])}] if facts.get("property_seen") else []
+    found += [{"label": say("fd_tds_194ia"), "value": _inr(sum(x["tds"] for x in facts["tds_194ia"]))}] if any(x["tds"] for x in facts.get("tds_194ia") or []) else []
+    found += [{"label": say("fd_property_sft"), "value": _inr(facts["property_sft"])}] if facts.get("property_sft") else []
+    found += [{"label": say("fd_address"), "value": ", ".join(x for x in (facts["person"].get("city"), facts["person"].get("pin")) if x) or facts["person"].get("email", "")}] if facts.get("person") else []
     if (facts.get("salary") or {}).get("gross"):
         found.insert(0, {"label": say("fd_salary"), "value": _inr(facts["salary"]["gross"])})
     found += [{"label": say("fd_paid"), "value": _inr(sum(p["amount"] for p in facts["paid"]))}] if facts.get("paid") else []
@@ -621,12 +780,15 @@ def form16(text: str, data: bytes, user: dict | None, ai_ok: bool, pan: str, ay:
            "profit_17_3": got.get("profit_17_3", 0.0), "exempt_all": got.get("exempt_total", 0.0) or sum(got.get(f, 0.0) for f in k["exempt_fields"]),
            "exempt_new": exempt_new, "hra": got.get("hra", 0.0), "prof_tax": got.get("prof_tax", 0.0), "tds": e.get("tds", got.get("tds", 0.0)),
            "regime_used": regime, "exempt_rows": [{"code": k["exempt_codes"][f], "amount": got[f]} for f in k["exempt_fields"] if got.get(f)]}
+    blk = employer_block(text)                                # 2026-10-07: the employer's address, city, PIN and state (Schedule S)
+    emp |= {f: blk[f] for f in ("address", "city", "state", "pin") if blk.get(f)}
     via = {f: got[f] for f in ("c80c", "c80ccc", "c80ccd1", "c80ccd1b", "c80ccd2", "c80d_self", "c80d_parents", "c80e", "c80g") if got.get(f)}
     tds = [{"kind": "salary", "tan": e["tan"], "name": e["name"], "income": emp["gross_17_1"] + emp["perq_17_2"] + emp["profit_17_3"],
             "tds": emp["tds"], "section": "192"}] if emp["tds"] else []
     found = [x for x in (
         {"label": say("fd_employer"), "value": e["name"]} if e["name"] else None,
         {"label": say("fd_tan"), "value": e["tan"]} if e["tan"] else None,
+        {"label": say("fd_employer_at"), "value": ", ".join(x for x in (blk.get("city"), blk.get("pin")) if x)} if blk.get("city") or blk.get("pin") else None,
         {"label": say("fd_salary"), "value": _inr(emp["gross_17_1"] + emp["perq_17_2"] + emp["profit_17_3"])} if emp["gross_17_1"] else None,
         {"label": say("fd_tds"), "value": _inr(emp["tds"])} if emp["tds"] else None,
         {"label": say("fd_via"), "value": _inr(sum(via.values()))} if via else None,

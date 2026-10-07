@@ -1,0 +1,105 @@
+{
+  "chip_id": "myreturn.fy_of",
+  "kind": "accessor",
+  "set": "myreturn",
+  "label": "My return: the financial year a day falls in",
+  "aliases": [
+    "financial year",
+    "fy"
+  ],
+  "params": [
+    {
+      "name": "date",
+      "type": "text",
+      "default": "",
+      "label": "a day, YYYY-MM-DD"
+    },
+    {
+      "name": "year_starts_month",
+      "type": "number",
+      "default": 4,
+      "label": "the financial year starts in April"
+    }
+  ],
+  "expr": {
+    "vop": "choose",
+    "cases": [
+      {
+        "when": {
+          "op": "not",
+          "item": {
+            "vop": "matches",
+            "text": "$date",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+          }
+        },
+        "then": null
+      },
+      {
+        "when": {
+          "op": "ge",
+          "left": {
+            "vop": "text_pick",
+            "text": "$date",
+            "pattern": "^\\d{4}-(\\d{2})"
+          },
+          "right": "$year_starts_month"
+        },
+        "then": {
+          "vop": "add",
+          "a": {
+            "vop": "text_pick",
+            "text": "$date",
+            "pattern": "^(\\d{4})"
+          },
+          "b": 0
+        }
+      }
+    ],
+    "else": {
+      "vop": "sub",
+      "a": {
+        "vop": "text_pick",
+        "text": "$date",
+        "pattern": "^(\\d{4})"
+      },
+      "b": 1
+    }
+  },
+  "returns": "number",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-07: The year a financial year starts in (1 April 2025 to 31 March 2026 -> 2025); blank for a day that is not YYYY-MM-DD.",
+  "test_cases": [
+    {
+      "args": {
+        "date": "2025-04-01"
+      },
+      "expect_value": 2025
+    },
+    {
+      "args": {
+        "date": "2026-03-31"
+      },
+      "expect_value": 2025
+    },
+    {
+      "args": {
+        "date": "2010-06-15"
+      },
+      "expect_value": 2010
+    },
+    {
+      "args": {
+        "date": "2016-01-10"
+      },
+      "expect_value": 2015
+    },
+    {
+      "args": {
+        "date": ""
+      },
+      "expect_value": null
+    }
+  ]
+}

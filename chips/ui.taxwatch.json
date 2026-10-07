@@ -474,6 +474,18 @@
       "type": "text",
       "default": "/api/rulebook",
       "label": "rulebook_url"
+    },
+    {
+      "name": "check_due",
+      "type": "text",
+      "default": "Not checked for {days} days or more: the department may have published a circular or notification since. Fetch the year being filed again.",
+      "label": "check due"
+    },
+    {
+      "name": "check_never",
+      "type": "text",
+      "default": "This year has not been checked yet.",
+      "label": "check never"
     }
   ],
   "expr": {
@@ -556,13 +568,15 @@
       "recheck_p": "$recheck_p",
       "log_note": "$log_note",
       "snapshot": "$snapshot",
-      "rulebook_url": "$rulebook_url"
+      "rulebook_url": "$rulebook_url",
+      "check_due": "$check_due",
+      "check_never": "$check_never"
     }
   },
   "returns": "record",
-  "version": 7,
+  "version": 8,
   "status": "published",
-  "description_nl": "2026-10-06: every word on Tax rules (Fetch, Compare, Apply). 2026-10-06: new_h / new_p / new_who / new_none - the changes Fetch found that are not a figure. 2026-10-06: ro_note / ro_tag - what everyone but the owner sees. 2026-10-06: rulebook / rulebook_sub - the Rule book button. 2026-10-06: ai_pick / ai_auto / ai_none / ai_ready / ai_resting - the AI choice beside Fetch. 2026-10-06: recheck / ext_why / recheck_p - checking the live year again. 2026-10-07: log_note / snapshot / rulebook_url (empty hides the link) - the shared rule watch.",
+  "description_nl": "2026-10-06: every word on Tax rules (Fetch, Compare, Apply). 2026-10-06: new_h / new_p / new_who / new_none - the changes Fetch found that are not a figure. 2026-10-06: ro_note / ro_tag - what everyone but the owner sees. 2026-10-06: rulebook / rulebook_sub - the Rule book button. 2026-10-06: ai_pick / ai_auto / ai_none / ai_ready / ai_resting - the AI choice beside Fetch. 2026-10-06: recheck / ext_why / recheck_p - checking the live year again. 2026-10-07: log_note / snapshot / rulebook_url (empty hides the link) - the shared rule watch. 2026-10-07: check_due / check_never - the re-check nudge.",
   "test_cases": [
     {
       "args": {},
@@ -644,7 +658,9 @@
         "recheck_p": "Checks the year being filed for anything the department published since - a circular extending a due date, a notification. A date it extends is changed for this year only.",
         "log_note": "{day}: AY {ay} figures applied from Tax rules ({ids}) by {who}.",
         "snapshot": "Tax rules: AY {ay}",
-        "rulebook_url": "/api/rulebook"
+        "rulebook_url": "/api/rulebook",
+        "check_due": "Not checked for {days} days or more: the department may have published a circular or notification since. Fetch the year being filed again.",
+        "check_never": "This year has not been checked yet."
       }
     }
   ]

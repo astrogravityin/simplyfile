@@ -1,0 +1,511 @@
+{
+  "chip_id": "myreturn.audit_44ab",
+  "kind": "accessor",
+  "set": "myreturn",
+  "label": "My return: does the business need a tax audit (s.44AB)?",
+  "aliases": [
+    "tax audit",
+    "44ab",
+    "audit limit"
+  ],
+  "params": [
+    {
+      "name": "pl",
+      "type": "boolean",
+      "default": false,
+      "label": "income from the person's own profit and loss (chip myreturn.business_pl)"
+    },
+    {
+      "name": "profession",
+      "type": "boolean",
+      "default": false,
+      "label": "a profession (s.44AB(b)) rather than a business (s.44AB(a))"
+    },
+    {
+      "name": "turnover",
+      "type": "number",
+      "default": 0,
+      "label": "receipts / turnover of the year"
+    },
+    {
+      "name": "cash",
+      "type": "number",
+      "default": 0,
+      "label": "of which in cash"
+    },
+    {
+      "name": "net",
+      "type": "number",
+      "default": 0,
+      "label": "net profit"
+    },
+    {
+      "name": "deemed",
+      "type": "number",
+      "default": 0,
+      "label": "what the presumptive scheme would have made it (6% / 8%, 50%)"
+    },
+    {
+      "name": "presumptive_open",
+      "type": "boolean",
+      "default": false,
+      "label": "the presumptive scheme was open (within its limit) and not chosen"
+    },
+    {
+      "name": "above_exemption",
+      "type": "boolean",
+      "default": false,
+      "label": "total income above the amount not chargeable to tax"
+    },
+    {
+      "name": "cash_pct_max",
+      "type": "number",
+      "default": 5,
+      "label": "s.44AB provisos: cash at most this percent of receipts lifts the limit"
+    },
+    {
+      "name": "biz_limit",
+      "type": "number",
+      "default": 10000000,
+      "label": "s.44AB(a): business turnover above 1 crore"
+    },
+    {
+      "name": "biz_limit_low_cash",
+      "type": "number",
+      "default": 100000000,
+      "label": "s.44AB(a) proviso: 10 crore when cash is 5% or less"
+    },
+    {
+      "name": "prof_limit",
+      "type": "number",
+      "default": 5000000,
+      "label": "s.44AB(b): professional receipts above 50 lakh"
+    },
+    {
+      "name": "prof_limit_low_cash",
+      "type": "number",
+      "default": 7500000,
+      "label": "s.44AB(b) proviso: 75 lakh when cash is 5% or less"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "audit": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "any",
+              "items": [
+                {
+                  "op": "all",
+                  "items": [
+                    {
+                      "op": "eq",
+                      "left": "$pl",
+                      "right": true
+                    },
+                    {
+                      "op": "gt",
+                      "left": "$turnover",
+                      "right": {
+                        "vop": "choose",
+                        "cases": [
+                          {
+                            "when": {
+                              "op": "all",
+                              "items": [
+                                {
+                                  "op": "eq",
+                                  "left": "$profession",
+                                  "right": true
+                                },
+                                {
+                                  "op": "any",
+                                  "items": [
+                                    {
+                                      "op": "le",
+                                      "left": "$turnover",
+                                      "right": 0
+                                    },
+                                    {
+                                      "op": "le",
+                                      "left": {
+                                        "vop": "div",
+                                        "a": {
+                                          "vop": "mul",
+                                          "a": "$cash",
+                                          "b": 100
+                                        },
+                                        "b": "$turnover"
+                                      },
+                                      "right": "$cash_pct_max"
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            "then": "$prof_limit_low_cash"
+                          },
+                          {
+                            "when": {
+                              "op": "eq",
+                              "left": "$profession",
+                              "right": true
+                            },
+                            "then": "$prof_limit"
+                          },
+                          {
+                            "when": {
+                              "op": "any",
+                              "items": [
+                                {
+                                  "op": "le",
+                                  "left": "$turnover",
+                                  "right": 0
+                                },
+                                {
+                                  "op": "le",
+                                  "left": {
+                                    "vop": "div",
+                                    "a": {
+                                      "vop": "mul",
+                                      "a": "$cash",
+                                      "b": 100
+                                    },
+                                    "b": "$turnover"
+                                  },
+                                  "right": "$cash_pct_max"
+                                }
+                              ]
+                            },
+                            "then": "$biz_limit_low_cash"
+                          }
+                        ],
+                        "else": "$biz_limit"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "op": "all",
+                  "items": [
+                    {
+                      "op": "eq",
+                      "left": "$pl",
+                      "right": true
+                    },
+                    {
+                      "op": "eq",
+                      "left": "$presumptive_open",
+                      "right": true
+                    },
+                    {
+                      "op": "lt",
+                      "left": "$net",
+                      "right": "$deemed"
+                    },
+                    {
+                      "op": "eq",
+                      "left": "$above_exemption",
+                      "right": true
+                    }
+                  ]
+                }
+              ]
+            },
+            "then": true
+          }
+        ],
+        "else": false
+      },
+      "limit": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "eq",
+                  "left": "$profession",
+                  "right": true
+                },
+                {
+                  "op": "any",
+                  "items": [
+                    {
+                      "op": "le",
+                      "left": "$turnover",
+                      "right": 0
+                    },
+                    {
+                      "op": "le",
+                      "left": {
+                        "vop": "div",
+                        "a": {
+                          "vop": "mul",
+                          "a": "$cash",
+                          "b": 100
+                        },
+                        "b": "$turnover"
+                      },
+                      "right": "$cash_pct_max"
+                    }
+                  ]
+                }
+              ]
+            },
+            "then": "$prof_limit_low_cash"
+          },
+          {
+            "when": {
+              "op": "eq",
+              "left": "$profession",
+              "right": true
+            },
+            "then": "$prof_limit"
+          },
+          {
+            "when": {
+              "op": "any",
+              "items": [
+                {
+                  "op": "le",
+                  "left": "$turnover",
+                  "right": 0
+                },
+                {
+                  "op": "le",
+                  "left": {
+                    "vop": "div",
+                    "a": {
+                      "vop": "mul",
+                      "a": "$cash",
+                      "b": 100
+                    },
+                    "b": "$turnover"
+                  },
+                  "right": "$cash_pct_max"
+                }
+              ]
+            },
+            "then": "$biz_limit_low_cash"
+          }
+        ],
+        "else": "$biz_limit"
+      },
+      "why": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "eq",
+                  "left": "$pl",
+                  "right": true
+                },
+                {
+                  "op": "gt",
+                  "left": "$turnover",
+                  "right": {
+                    "vop": "choose",
+                    "cases": [
+                      {
+                        "when": {
+                          "op": "all",
+                          "items": [
+                            {
+                              "op": "eq",
+                              "left": "$profession",
+                              "right": true
+                            },
+                            {
+                              "op": "any",
+                              "items": [
+                                {
+                                  "op": "le",
+                                  "left": "$turnover",
+                                  "right": 0
+                                },
+                                {
+                                  "op": "le",
+                                  "left": {
+                                    "vop": "div",
+                                    "a": {
+                                      "vop": "mul",
+                                      "a": "$cash",
+                                      "b": 100
+                                    },
+                                    "b": "$turnover"
+                                  },
+                                  "right": "$cash_pct_max"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        "then": "$prof_limit_low_cash"
+                      },
+                      {
+                        "when": {
+                          "op": "eq",
+                          "left": "$profession",
+                          "right": true
+                        },
+                        "then": "$prof_limit"
+                      },
+                      {
+                        "when": {
+                          "op": "any",
+                          "items": [
+                            {
+                              "op": "le",
+                              "left": "$turnover",
+                              "right": 0
+                            },
+                            {
+                              "op": "le",
+                              "left": {
+                                "vop": "div",
+                                "a": {
+                                  "vop": "mul",
+                                  "a": "$cash",
+                                  "b": 100
+                                },
+                                "b": "$turnover"
+                              },
+                              "right": "$cash_pct_max"
+                            }
+                          ]
+                        },
+                        "then": "$biz_limit_low_cash"
+                      }
+                    ],
+                    "else": "$biz_limit"
+                  }
+                }
+              ]
+            },
+            "then": "ca_audit_turnover"
+          },
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "eq",
+                  "left": "$pl",
+                  "right": true
+                },
+                {
+                  "op": "eq",
+                  "left": "$presumptive_open",
+                  "right": true
+                },
+                {
+                  "op": "lt",
+                  "left": "$net",
+                  "right": "$deemed"
+                },
+                {
+                  "op": "eq",
+                  "left": "$above_exemption",
+                  "right": true
+                }
+              ]
+            },
+            "then": "ca_audit_lower"
+          }
+        ],
+        "else": ""
+      }
+    }
+  },
+  "returns": "record",
+  "version": 2,
+  "status": "published",
+  "description_nl": "2026-10-07: s.44AB for an individual / HUF filing from My return: (a) business turnover over 1 crore (10 crore when cash receipts are 5% or less), (b) professional receipts over 50 lakh (75 lakh), (d) / (e) the presumptive scheme open but a lower profit declared with income above the basic exemption. Any of them: the accounts are audited by a chartered accountant - My return does not file it (the CA-firm side: Intake, Reconcile, Compute, Tax audit). ponytail: cash payments are not asked - the cash receipts stand for both (the proviso asks both at 5% or less); 44AD(4) (left the scheme within five years) not asked.",
+  "test_cases": [
+    {
+      "args": {
+        "pl": true,
+        "turnover": 15000000,
+        "cash": 3000000,
+        "net": 1200000
+      },
+      "expect_value": {
+        "audit": true,
+        "limit": 10000000,
+        "why": "ca_audit_turnover"
+      }
+    },
+    {
+      "args": {
+        "pl": true,
+        "turnover": 15000000,
+        "cash": 0,
+        "net": 1200000
+      },
+      "expect_value": {
+        "audit": false,
+        "limit": 100000000,
+        "why": ""
+      }
+    },
+    {
+      "args": {
+        "pl": true,
+        "profession": true,
+        "turnover": 6000000,
+        "cash": 1000000,
+        "net": 2000000
+      },
+      "expect_value": {
+        "audit": true,
+        "limit": 5000000,
+        "why": "ca_audit_turnover"
+      }
+    },
+    {
+      "args": {
+        "pl": true,
+        "turnover": 2000000,
+        "net": 50000,
+        "deemed": 120000,
+        "presumptive_open": true,
+        "above_exemption": true
+      },
+      "expect_value": {
+        "audit": true,
+        "limit": 100000000,
+        "why": "ca_audit_lower"
+      }
+    },
+    {
+      "args": {
+        "pl": true,
+        "turnover": 2000000,
+        "net": 50000,
+        "deemed": 120000,
+        "presumptive_open": true
+      },
+      "expect_value": {
+        "audit": false,
+        "limit": 100000000,
+        "why": ""
+      }
+    },
+    {
+      "args": {},
+      "expect_value": {
+        "audit": false,
+        "limit": 100000000,
+        "why": ""
+      }
+    }
+  ]
+}

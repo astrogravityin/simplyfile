@@ -1,0 +1,133 @@
+{
+  "chip_id": "myreturn.check_fa",
+  "kind": "accessor",
+  "set": "myreturn",
+  "label": "My return: foreign assets not listed (Schedule FA)",
+  "aliases": [
+    "schedule fa",
+    "foreign assets",
+    "black money act"
+  ],
+  "params": [
+    {
+      "name": "status",
+      "type": "text",
+      "default": "ROR",
+      "label": "residential status"
+    },
+    {
+      "name": "foreign_income",
+      "type": "boolean",
+      "default": false,
+      "label": "foreign income included in the return"
+    },
+    {
+      "name": "flag",
+      "type": "boolean",
+      "default": false,
+      "label": "the person said they hold foreign assets"
+    },
+    {
+      "name": "fa_rows",
+      "type": "number",
+      "default": 0,
+      "label": "foreign assets typed"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "what": "fa_missing",
+      "a": "$fa_rows",
+      "b": 0,
+      "gap": 0,
+      "word": "lv_fa_missing",
+      "level": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "eq",
+                  "left": "$status",
+                  "right": "ROR"
+                },
+                {
+                  "op": "any",
+                  "items": [
+                    {
+                      "op": "eq",
+                      "left": "$foreign_income",
+                      "right": true
+                    },
+                    {
+                      "op": "eq",
+                      "left": "$flag",
+                      "right": true
+                    }
+                  ]
+                },
+                {
+                  "op": "le",
+                  "left": "$fa_rows",
+                  "right": 0
+                }
+              ]
+            },
+            "then": "red"
+          }
+        ],
+        "else": "ok"
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-07: A resident and ordinarily resident with foreign income or foreign assets lists every foreign account, holding, property and interest held at any time in the calendar year 2025 in Schedule FA (s.139(1) fourth proviso; the Black Money Act's penalty of 10 lakh for leaving it out).",
+  "test_cases": [
+    {
+      "args": {
+        "foreign_income": true
+      },
+      "expect_value": {
+        "what": "fa_missing",
+        "a": 0,
+        "b": 0,
+        "gap": 0,
+        "word": "lv_fa_missing",
+        "level": "red"
+      }
+    },
+    {
+      "args": {
+        "foreign_income": true,
+        "fa_rows": 1
+      },
+      "expect_value": {
+        "what": "fa_missing",
+        "a": 1,
+        "b": 0,
+        "gap": 0,
+        "word": "lv_fa_missing",
+        "level": "ok"
+      }
+    },
+    {
+      "args": {
+        "status": "RNOR",
+        "flag": true
+      },
+      "expect_value": {
+        "what": "fa_missing",
+        "a": 0,
+        "b": 0,
+        "gap": 0,
+        "word": "lv_fa_missing",
+        "level": "ok"
+      }
+    }
+  ]
+}

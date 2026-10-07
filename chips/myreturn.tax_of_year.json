@@ -1,0 +1,1427 @@
+{
+  "chip_id": "myreturn.tax_of_year",
+  "kind": "accessor",
+  "set": "myreturn",
+  "label": "My return: an individual's tax for an earlier year",
+  "aliases": [
+    "earlier year tax",
+    "form 10e",
+    "section 89"
+  ],
+  "params": [
+    {
+      "name": "fy",
+      "type": "number",
+      "default": 2025,
+      "label": "the financial year (the year it starts: 2019 = FY 2019-20)"
+    },
+    {
+      "name": "regime",
+      "type": "text",
+      "default": "old",
+      "label": "old / new (new from FY 2020-21)"
+    },
+    {
+      "name": "band",
+      "type": "text",
+      "default": "below60",
+      "label": "age band that year"
+    },
+    {
+      "name": "income",
+      "type": "number",
+      "default": 0,
+      "label": "total income (at the slab rates)"
+    },
+    {
+      "name": "resident",
+      "type": "boolean",
+      "default": true,
+      "label": "resident that year (87A)"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "known": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "ge",
+              "left": {
+                "vop": "get",
+                "value": {
+                  "chip": "myreturn.slabs_by_year",
+                  "args": {}
+                },
+                "path": {
+                  "vop": "template",
+                  "text": "years.{y}.{r}.rebate_upto",
+                  "values": {
+                    "vop": "record",
+                    "fields": {
+                      "y": "$fy",
+                      "r": "$regime"
+                    }
+                  }
+                }
+              },
+              "right": 0
+            },
+            "then": true
+          }
+        ],
+        "else": false
+      },
+      "slab": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "ge",
+              "left": {
+                "vop": "get",
+                "value": {
+                  "chip": "myreturn.slabs_by_year",
+                  "args": {}
+                },
+                "path": {
+                  "vop": "template",
+                  "text": "years.{y}.{r}.rebate_upto",
+                  "values": {
+                    "vop": "record",
+                    "fields": {
+                      "y": "$fy",
+                      "r": "$regime"
+                    }
+                  }
+                }
+              },
+              "right": 0
+            },
+            "then": {
+              "vop": "round_to",
+              "value": {
+                "vop": "slab_tax",
+                "amount": {
+                  "vop": "largest",
+                  "values": [
+                    "$income",
+                    0
+                  ]
+                },
+                "slabs": {
+                  "vop": "get",
+                  "value": {
+                    "chip": "myreturn.slabs_by_year",
+                    "args": {}
+                  },
+                  "path": {
+                    "vop": "template",
+                    "text": "years.{y}.{r}.slabs.{b}",
+                    "values": {
+                      "vop": "record",
+                      "fields": {
+                        "y": "$fy",
+                        "r": "$regime",
+                        "b": "$band"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "else": 0
+      },
+      "rebate": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "ge",
+              "left": {
+                "vop": "get",
+                "value": {
+                  "chip": "myreturn.slabs_by_year",
+                  "args": {}
+                },
+                "path": {
+                  "vop": "template",
+                  "text": "years.{y}.{r}.rebate_upto",
+                  "values": {
+                    "vop": "record",
+                    "fields": {
+                      "y": "$fy",
+                      "r": "$regime"
+                    }
+                  }
+                }
+              },
+              "right": 0
+            },
+            "then": {
+              "vop": "choose",
+              "cases": [
+                {
+                  "when": {
+                    "op": "eq",
+                    "left": "$resident",
+                    "right": false
+                  },
+                  "then": 0
+                },
+                {
+                  "when": {
+                    "op": "le",
+                    "left": "$income",
+                    "right": {
+                      "vop": "get",
+                      "value": {
+                        "chip": "myreturn.slabs_by_year",
+                        "args": {}
+                      },
+                      "path": {
+                        "vop": "template",
+                        "text": "years.{y}.{r}.rebate_upto",
+                        "values": {
+                          "vop": "record",
+                          "fields": {
+                            "y": "$fy",
+                            "r": "$regime"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "then": {
+                    "vop": "smallest",
+                    "values": [
+                      {
+                        "vop": "round_to",
+                        "value": {
+                          "vop": "slab_tax",
+                          "amount": {
+                            "vop": "largest",
+                            "values": [
+                              "$income",
+                              0
+                            ]
+                          },
+                          "slabs": {
+                            "vop": "get",
+                            "value": {
+                              "chip": "myreturn.slabs_by_year",
+                              "args": {}
+                            },
+                            "path": {
+                              "vop": "template",
+                              "text": "years.{y}.{r}.slabs.{b}",
+                              "values": {
+                                "vop": "record",
+                                "fields": {
+                                  "y": "$fy",
+                                  "r": "$regime",
+                                  "b": "$band"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      },
+                      {
+                        "vop": "get",
+                        "value": {
+                          "chip": "myreturn.slabs_by_year",
+                          "args": {}
+                        },
+                        "path": {
+                          "vop": "template",
+                          "text": "years.{y}.{r}.rebate_most",
+                          "values": {
+                            "vop": "record",
+                            "fields": {
+                              "y": "$fy",
+                              "r": "$regime"
+                            }
+                          }
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "when": {
+                    "op": "all",
+                    "items": [
+                      {
+                        "op": "eq",
+                        "left": {
+                          "vop": "get",
+                          "value": {
+                            "chip": "myreturn.slabs_by_year",
+                            "args": {}
+                          },
+                          "path": {
+                            "vop": "template",
+                            "text": "years.{y}.{r}.marginal",
+                            "values": {
+                              "vop": "record",
+                              "fields": {
+                                "y": "$fy",
+                                "r": "$regime"
+                              }
+                            }
+                          }
+                        },
+                        "right": true
+                      },
+                      {
+                        "op": "gt",
+                        "left": "$income",
+                        "right": {
+                          "vop": "get",
+                          "value": {
+                            "chip": "myreturn.slabs_by_year",
+                            "args": {}
+                          },
+                          "path": {
+                            "vop": "template",
+                            "text": "years.{y}.{r}.rebate_upto",
+                            "values": {
+                              "vop": "record",
+                              "fields": {
+                                "y": "$fy",
+                                "r": "$regime"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  "then": {
+                    "vop": "largest",
+                    "values": [
+                      0,
+                      {
+                        "vop": "sub",
+                        "a": {
+                          "vop": "round_to",
+                          "value": {
+                            "vop": "slab_tax",
+                            "amount": {
+                              "vop": "largest",
+                              "values": [
+                                "$income",
+                                0
+                              ]
+                            },
+                            "slabs": {
+                              "vop": "get",
+                              "value": {
+                                "chip": "myreturn.slabs_by_year",
+                                "args": {}
+                              },
+                              "path": {
+                                "vop": "template",
+                                "text": "years.{y}.{r}.slabs.{b}",
+                                "values": {
+                                  "vop": "record",
+                                  "fields": {
+                                    "y": "$fy",
+                                    "r": "$regime",
+                                    "b": "$band"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "b": {
+                          "vop": "sub",
+                          "a": "$income",
+                          "b": {
+                            "vop": "get",
+                            "value": {
+                              "chip": "myreturn.slabs_by_year",
+                              "args": {}
+                            },
+                            "path": {
+                              "vop": "template",
+                              "text": "years.{y}.{r}.rebate_upto",
+                              "values": {
+                                "vop": "record",
+                                "fields": {
+                                  "y": "$fy",
+                                  "r": "$regime"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              ],
+              "else": 0
+            }
+          }
+        ],
+        "else": 0
+      },
+      "cess": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "ge",
+              "left": {
+                "vop": "get",
+                "value": {
+                  "chip": "myreturn.slabs_by_year",
+                  "args": {}
+                },
+                "path": {
+                  "vop": "template",
+                  "text": "years.{y}.{r}.rebate_upto",
+                  "values": {
+                    "vop": "record",
+                    "fields": {
+                      "y": "$fy",
+                      "r": "$regime"
+                    }
+                  }
+                }
+              },
+              "right": 0
+            },
+            "then": {
+              "vop": "round_to",
+              "value": {
+                "vop": "mul",
+                "a": {
+                  "vop": "sub",
+                  "a": {
+                    "vop": "round_to",
+                    "value": {
+                      "vop": "slab_tax",
+                      "amount": {
+                        "vop": "largest",
+                        "values": [
+                          "$income",
+                          0
+                        ]
+                      },
+                      "slabs": {
+                        "vop": "get",
+                        "value": {
+                          "chip": "myreturn.slabs_by_year",
+                          "args": {}
+                        },
+                        "path": {
+                          "vop": "template",
+                          "text": "years.{y}.{r}.slabs.{b}",
+                          "values": {
+                            "vop": "record",
+                            "fields": {
+                              "y": "$fy",
+                              "r": "$regime",
+                              "b": "$band"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "b": {
+                    "vop": "choose",
+                    "cases": [
+                      {
+                        "when": {
+                          "op": "eq",
+                          "left": "$resident",
+                          "right": false
+                        },
+                        "then": 0
+                      },
+                      {
+                        "when": {
+                          "op": "le",
+                          "left": "$income",
+                          "right": {
+                            "vop": "get",
+                            "value": {
+                              "chip": "myreturn.slabs_by_year",
+                              "args": {}
+                            },
+                            "path": {
+                              "vop": "template",
+                              "text": "years.{y}.{r}.rebate_upto",
+                              "values": {
+                                "vop": "record",
+                                "fields": {
+                                  "y": "$fy",
+                                  "r": "$regime"
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "then": {
+                          "vop": "smallest",
+                          "values": [
+                            {
+                              "vop": "round_to",
+                              "value": {
+                                "vop": "slab_tax",
+                                "amount": {
+                                  "vop": "largest",
+                                  "values": [
+                                    "$income",
+                                    0
+                                  ]
+                                },
+                                "slabs": {
+                                  "vop": "get",
+                                  "value": {
+                                    "chip": "myreturn.slabs_by_year",
+                                    "args": {}
+                                  },
+                                  "path": {
+                                    "vop": "template",
+                                    "text": "years.{y}.{r}.slabs.{b}",
+                                    "values": {
+                                      "vop": "record",
+                                      "fields": {
+                                        "y": "$fy",
+                                        "r": "$regime",
+                                        "b": "$band"
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            },
+                            {
+                              "vop": "get",
+                              "value": {
+                                "chip": "myreturn.slabs_by_year",
+                                "args": {}
+                              },
+                              "path": {
+                                "vop": "template",
+                                "text": "years.{y}.{r}.rebate_most",
+                                "values": {
+                                  "vop": "record",
+                                  "fields": {
+                                    "y": "$fy",
+                                    "r": "$regime"
+                                  }
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "when": {
+                          "op": "all",
+                          "items": [
+                            {
+                              "op": "eq",
+                              "left": {
+                                "vop": "get",
+                                "value": {
+                                  "chip": "myreturn.slabs_by_year",
+                                  "args": {}
+                                },
+                                "path": {
+                                  "vop": "template",
+                                  "text": "years.{y}.{r}.marginal",
+                                  "values": {
+                                    "vop": "record",
+                                    "fields": {
+                                      "y": "$fy",
+                                      "r": "$regime"
+                                    }
+                                  }
+                                }
+                              },
+                              "right": true
+                            },
+                            {
+                              "op": "gt",
+                              "left": "$income",
+                              "right": {
+                                "vop": "get",
+                                "value": {
+                                  "chip": "myreturn.slabs_by_year",
+                                  "args": {}
+                                },
+                                "path": {
+                                  "vop": "template",
+                                  "text": "years.{y}.{r}.rebate_upto",
+                                  "values": {
+                                    "vop": "record",
+                                    "fields": {
+                                      "y": "$fy",
+                                      "r": "$regime"
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          ]
+                        },
+                        "then": {
+                          "vop": "largest",
+                          "values": [
+                            0,
+                            {
+                              "vop": "sub",
+                              "a": {
+                                "vop": "round_to",
+                                "value": {
+                                  "vop": "slab_tax",
+                                  "amount": {
+                                    "vop": "largest",
+                                    "values": [
+                                      "$income",
+                                      0
+                                    ]
+                                  },
+                                  "slabs": {
+                                    "vop": "get",
+                                    "value": {
+                                      "chip": "myreturn.slabs_by_year",
+                                      "args": {}
+                                    },
+                                    "path": {
+                                      "vop": "template",
+                                      "text": "years.{y}.{r}.slabs.{b}",
+                                      "values": {
+                                        "vop": "record",
+                                        "fields": {
+                                          "y": "$fy",
+                                          "r": "$regime",
+                                          "b": "$band"
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              },
+                              "b": {
+                                "vop": "sub",
+                                "a": "$income",
+                                "b": {
+                                  "vop": "get",
+                                  "value": {
+                                    "chip": "myreturn.slabs_by_year",
+                                    "args": {}
+                                  },
+                                  "path": {
+                                    "vop": "template",
+                                    "text": "years.{y}.{r}.rebate_upto",
+                                    "values": {
+                                      "vop": "record",
+                                      "fields": {
+                                        "y": "$fy",
+                                        "r": "$regime"
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ],
+                    "else": 0
+                  }
+                },
+                "b": {
+                  "vop": "div",
+                  "a": {
+                    "vop": "get",
+                    "value": {
+                      "chip": "myreturn.slabs_by_year",
+                      "args": {}
+                    },
+                    "path": {
+                      "vop": "template",
+                      "text": "years.{y}.{r}.cess",
+                      "values": {
+                        "vop": "record",
+                        "fields": {
+                          "y": "$fy",
+                          "r": "$regime"
+                        }
+                      }
+                    }
+                  },
+                  "b": 100
+                }
+              }
+            }
+          }
+        ],
+        "else": 0
+      },
+      "tax": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "ge",
+              "left": {
+                "vop": "get",
+                "value": {
+                  "chip": "myreturn.slabs_by_year",
+                  "args": {}
+                },
+                "path": {
+                  "vop": "template",
+                  "text": "years.{y}.{r}.rebate_upto",
+                  "values": {
+                    "vop": "record",
+                    "fields": {
+                      "y": "$fy",
+                      "r": "$regime"
+                    }
+                  }
+                }
+              },
+              "right": 0
+            },
+            "then": {
+              "vop": "add",
+              "a": {
+                "vop": "sub",
+                "a": {
+                  "vop": "round_to",
+                  "value": {
+                    "vop": "slab_tax",
+                    "amount": {
+                      "vop": "largest",
+                      "values": [
+                        "$income",
+                        0
+                      ]
+                    },
+                    "slabs": {
+                      "vop": "get",
+                      "value": {
+                        "chip": "myreturn.slabs_by_year",
+                        "args": {}
+                      },
+                      "path": {
+                        "vop": "template",
+                        "text": "years.{y}.{r}.slabs.{b}",
+                        "values": {
+                          "vop": "record",
+                          "fields": {
+                            "y": "$fy",
+                            "r": "$regime",
+                            "b": "$band"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "b": {
+                  "vop": "choose",
+                  "cases": [
+                    {
+                      "when": {
+                        "op": "eq",
+                        "left": "$resident",
+                        "right": false
+                      },
+                      "then": 0
+                    },
+                    {
+                      "when": {
+                        "op": "le",
+                        "left": "$income",
+                        "right": {
+                          "vop": "get",
+                          "value": {
+                            "chip": "myreturn.slabs_by_year",
+                            "args": {}
+                          },
+                          "path": {
+                            "vop": "template",
+                            "text": "years.{y}.{r}.rebate_upto",
+                            "values": {
+                              "vop": "record",
+                              "fields": {
+                                "y": "$fy",
+                                "r": "$regime"
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "then": {
+                        "vop": "smallest",
+                        "values": [
+                          {
+                            "vop": "round_to",
+                            "value": {
+                              "vop": "slab_tax",
+                              "amount": {
+                                "vop": "largest",
+                                "values": [
+                                  "$income",
+                                  0
+                                ]
+                              },
+                              "slabs": {
+                                "vop": "get",
+                                "value": {
+                                  "chip": "myreturn.slabs_by_year",
+                                  "args": {}
+                                },
+                                "path": {
+                                  "vop": "template",
+                                  "text": "years.{y}.{r}.slabs.{b}",
+                                  "values": {
+                                    "vop": "record",
+                                    "fields": {
+                                      "y": "$fy",
+                                      "r": "$regime",
+                                      "b": "$band"
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "vop": "get",
+                            "value": {
+                              "chip": "myreturn.slabs_by_year",
+                              "args": {}
+                            },
+                            "path": {
+                              "vop": "template",
+                              "text": "years.{y}.{r}.rebate_most",
+                              "values": {
+                                "vop": "record",
+                                "fields": {
+                                  "y": "$fy",
+                                  "r": "$regime"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "when": {
+                        "op": "all",
+                        "items": [
+                          {
+                            "op": "eq",
+                            "left": {
+                              "vop": "get",
+                              "value": {
+                                "chip": "myreturn.slabs_by_year",
+                                "args": {}
+                              },
+                              "path": {
+                                "vop": "template",
+                                "text": "years.{y}.{r}.marginal",
+                                "values": {
+                                  "vop": "record",
+                                  "fields": {
+                                    "y": "$fy",
+                                    "r": "$regime"
+                                  }
+                                }
+                              }
+                            },
+                            "right": true
+                          },
+                          {
+                            "op": "gt",
+                            "left": "$income",
+                            "right": {
+                              "vop": "get",
+                              "value": {
+                                "chip": "myreturn.slabs_by_year",
+                                "args": {}
+                              },
+                              "path": {
+                                "vop": "template",
+                                "text": "years.{y}.{r}.rebate_upto",
+                                "values": {
+                                  "vop": "record",
+                                  "fields": {
+                                    "y": "$fy",
+                                    "r": "$regime"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      "then": {
+                        "vop": "largest",
+                        "values": [
+                          0,
+                          {
+                            "vop": "sub",
+                            "a": {
+                              "vop": "round_to",
+                              "value": {
+                                "vop": "slab_tax",
+                                "amount": {
+                                  "vop": "largest",
+                                  "values": [
+                                    "$income",
+                                    0
+                                  ]
+                                },
+                                "slabs": {
+                                  "vop": "get",
+                                  "value": {
+                                    "chip": "myreturn.slabs_by_year",
+                                    "args": {}
+                                  },
+                                  "path": {
+                                    "vop": "template",
+                                    "text": "years.{y}.{r}.slabs.{b}",
+                                    "values": {
+                                      "vop": "record",
+                                      "fields": {
+                                        "y": "$fy",
+                                        "r": "$regime",
+                                        "b": "$band"
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            },
+                            "b": {
+                              "vop": "sub",
+                              "a": "$income",
+                              "b": {
+                                "vop": "get",
+                                "value": {
+                                  "chip": "myreturn.slabs_by_year",
+                                  "args": {}
+                                },
+                                "path": {
+                                  "vop": "template",
+                                  "text": "years.{y}.{r}.rebate_upto",
+                                  "values": {
+                                    "vop": "record",
+                                    "fields": {
+                                      "y": "$fy",
+                                      "r": "$regime"
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ],
+                  "else": 0
+                }
+              },
+              "b": {
+                "vop": "round_to",
+                "value": {
+                  "vop": "mul",
+                  "a": {
+                    "vop": "sub",
+                    "a": {
+                      "vop": "round_to",
+                      "value": {
+                        "vop": "slab_tax",
+                        "amount": {
+                          "vop": "largest",
+                          "values": [
+                            "$income",
+                            0
+                          ]
+                        },
+                        "slabs": {
+                          "vop": "get",
+                          "value": {
+                            "chip": "myreturn.slabs_by_year",
+                            "args": {}
+                          },
+                          "path": {
+                            "vop": "template",
+                            "text": "years.{y}.{r}.slabs.{b}",
+                            "values": {
+                              "vop": "record",
+                              "fields": {
+                                "y": "$fy",
+                                "r": "$regime",
+                                "b": "$band"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "b": {
+                      "vop": "choose",
+                      "cases": [
+                        {
+                          "when": {
+                            "op": "eq",
+                            "left": "$resident",
+                            "right": false
+                          },
+                          "then": 0
+                        },
+                        {
+                          "when": {
+                            "op": "le",
+                            "left": "$income",
+                            "right": {
+                              "vop": "get",
+                              "value": {
+                                "chip": "myreturn.slabs_by_year",
+                                "args": {}
+                              },
+                              "path": {
+                                "vop": "template",
+                                "text": "years.{y}.{r}.rebate_upto",
+                                "values": {
+                                  "vop": "record",
+                                  "fields": {
+                                    "y": "$fy",
+                                    "r": "$regime"
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          "then": {
+                            "vop": "smallest",
+                            "values": [
+                              {
+                                "vop": "round_to",
+                                "value": {
+                                  "vop": "slab_tax",
+                                  "amount": {
+                                    "vop": "largest",
+                                    "values": [
+                                      "$income",
+                                      0
+                                    ]
+                                  },
+                                  "slabs": {
+                                    "vop": "get",
+                                    "value": {
+                                      "chip": "myreturn.slabs_by_year",
+                                      "args": {}
+                                    },
+                                    "path": {
+                                      "vop": "template",
+                                      "text": "years.{y}.{r}.slabs.{b}",
+                                      "values": {
+                                        "vop": "record",
+                                        "fields": {
+                                          "y": "$fy",
+                                          "r": "$regime",
+                                          "b": "$band"
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              },
+                              {
+                                "vop": "get",
+                                "value": {
+                                  "chip": "myreturn.slabs_by_year",
+                                  "args": {}
+                                },
+                                "path": {
+                                  "vop": "template",
+                                  "text": "years.{y}.{r}.rebate_most",
+                                  "values": {
+                                    "vop": "record",
+                                    "fields": {
+                                      "y": "$fy",
+                                      "r": "$regime"
+                                    }
+                                  }
+                                }
+                              }
+                            ]
+                          }
+                        },
+                        {
+                          "when": {
+                            "op": "all",
+                            "items": [
+                              {
+                                "op": "eq",
+                                "left": {
+                                  "vop": "get",
+                                  "value": {
+                                    "chip": "myreturn.slabs_by_year",
+                                    "args": {}
+                                  },
+                                  "path": {
+                                    "vop": "template",
+                                    "text": "years.{y}.{r}.marginal",
+                                    "values": {
+                                      "vop": "record",
+                                      "fields": {
+                                        "y": "$fy",
+                                        "r": "$regime"
+                                      }
+                                    }
+                                  }
+                                },
+                                "right": true
+                              },
+                              {
+                                "op": "gt",
+                                "left": "$income",
+                                "right": {
+                                  "vop": "get",
+                                  "value": {
+                                    "chip": "myreturn.slabs_by_year",
+                                    "args": {}
+                                  },
+                                  "path": {
+                                    "vop": "template",
+                                    "text": "years.{y}.{r}.rebate_upto",
+                                    "values": {
+                                      "vop": "record",
+                                      "fields": {
+                                        "y": "$fy",
+                                        "r": "$regime"
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            ]
+                          },
+                          "then": {
+                            "vop": "largest",
+                            "values": [
+                              0,
+                              {
+                                "vop": "sub",
+                                "a": {
+                                  "vop": "round_to",
+                                  "value": {
+                                    "vop": "slab_tax",
+                                    "amount": {
+                                      "vop": "largest",
+                                      "values": [
+                                        "$income",
+                                        0
+                                      ]
+                                    },
+                                    "slabs": {
+                                      "vop": "get",
+                                      "value": {
+                                        "chip": "myreturn.slabs_by_year",
+                                        "args": {}
+                                      },
+                                      "path": {
+                                        "vop": "template",
+                                        "text": "years.{y}.{r}.slabs.{b}",
+                                        "values": {
+                                          "vop": "record",
+                                          "fields": {
+                                            "y": "$fy",
+                                            "r": "$regime",
+                                            "b": "$band"
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                },
+                                "b": {
+                                  "vop": "sub",
+                                  "a": "$income",
+                                  "b": {
+                                    "vop": "get",
+                                    "value": {
+                                      "chip": "myreturn.slabs_by_year",
+                                      "args": {}
+                                    },
+                                    "path": {
+                                      "vop": "template",
+                                      "text": "years.{y}.{r}.rebate_upto",
+                                      "values": {
+                                        "vop": "record",
+                                        "fields": {
+                                          "y": "$fy",
+                                          "r": "$regime"
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            ]
+                          }
+                        }
+                      ],
+                      "else": 0
+                    }
+                  },
+                  "b": {
+                    "vop": "div",
+                    "a": {
+                      "vop": "get",
+                      "value": {
+                        "chip": "myreturn.slabs_by_year",
+                        "args": {}
+                      },
+                      "path": {
+                        "vop": "template",
+                        "text": "years.{y}.{r}.cess",
+                        "values": {
+                          "vop": "record",
+                          "fields": {
+                            "y": "$fy",
+                            "r": "$regime"
+                          }
+                        }
+                      }
+                    },
+                    "b": 100
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "else": 0
+      },
+      "over": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "gt",
+              "left": "$income",
+              "right": {
+                "vop": "get",
+                "value": {
+                  "chip": "myreturn.slabs_by_year",
+                  "args": {}
+                },
+                "path": "surcharge_above"
+              }
+            },
+            "then": true
+          }
+        ],
+        "else": false
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-07: The tax on an individual's total income of an earlier year at that year's slabs, less that year's 87A rebate (with the new regime's marginal relief from FY 2023-24), with that year's cess (chip myreturn.slabs_by_year). No surcharge: over 50 lakh is flagged. known false - no such year / regime.",
+  "test_cases": [
+    {
+      "args": {
+        "fy": 2019,
+        "income": 800000
+      },
+      "expect_value": {
+        "known": true,
+        "slab": 72500,
+        "rebate": 0,
+        "cess": 2900,
+        "tax": 75400,
+        "over": false
+      }
+    },
+    {
+      "args": {
+        "fy": 2019,
+        "income": 480000
+      },
+      "expect_value": {
+        "known": true,
+        "slab": 11500,
+        "rebate": 11500,
+        "cess": 0,
+        "tax": 0,
+        "over": false
+      }
+    },
+    {
+      "args": {
+        "fy": 2016,
+        "income": 800000
+      },
+      "expect_value": {
+        "known": true,
+        "slab": 85000,
+        "rebate": 0,
+        "cess": 2550,
+        "tax": 87550,
+        "over": false
+      }
+    },
+    {
+      "args": {
+        "fy": 2017,
+        "income": 340000,
+        "band": "below60"
+      },
+      "expect_value": {
+        "known": true,
+        "slab": 4500,
+        "rebate": 2500,
+        "cess": 60,
+        "tax": 2060,
+        "over": false
+      }
+    },
+    {
+      "args": {
+        "fy": 2021,
+        "regime": "new",
+        "income": 1200000
+      },
+      "expect_value": {
+        "known": true,
+        "slab": 115000,
+        "rebate": 0,
+        "cess": 4600,
+        "tax": 119600,
+        "over": false
+      }
+    },
+    {
+      "args": {
+        "fy": 2023,
+        "regime": "new",
+        "income": 710000
+      },
+      "expect_value": {
+        "known": true,
+        "slab": 26000,
+        "rebate": 16000,
+        "cess": 400,
+        "tax": 10400,
+        "over": false
+      }
+    },
+    {
+      "args": {
+        "fy": 2024,
+        "regime": "new",
+        "income": 1000000
+      },
+      "expect_value": {
+        "known": true,
+        "slab": 50000,
+        "rebate": 0,
+        "cess": 2000,
+        "tax": 52000,
+        "over": false
+      }
+    },
+    {
+      "args": {
+        "fy": 2025,
+        "regime": "new",
+        "income": 1300000
+      },
+      "expect_value": {
+        "known": true,
+        "slab": 75000,
+        "rebate": 0,
+        "cess": 3000,
+        "tax": 78000,
+        "over": false
+      }
+    },
+    {
+      "args": {
+        "fy": 2025,
+        "regime": "new",
+        "income": 1200000
+      },
+      "expect_value": {
+        "known": true,
+        "slab": 60000,
+        "rebate": 60000,
+        "cess": 0,
+        "tax": 0,
+        "over": false
+      }
+    },
+    {
+      "args": {
+        "fy": 2019,
+        "regime": "new",
+        "income": 800000
+      },
+      "expect_value": {
+        "known": false,
+        "slab": 0,
+        "rebate": 0,
+        "cess": 0,
+        "tax": 0,
+        "over": false
+      }
+    },
+    {
+      "args": {
+        "fy": 2019,
+        "income": 480000,
+        "resident": false
+      },
+      "expect_value": {
+        "known": true,
+        "slab": 11500,
+        "rebate": 0,
+        "cess": 460,
+        "tax": 11960,
+        "over": false
+      }
+    },
+    {
+      "args": {
+        "fy": 2019,
+        "income": 6000000,
+        "band": "60to80"
+      },
+      "expect_value": {
+        "known": true,
+        "slab": 1610000,
+        "rebate": 0,
+        "cess": 64400,
+        "tax": 1674400,
+        "over": true
+      }
+    }
+  ]
+}

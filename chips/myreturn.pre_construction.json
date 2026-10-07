@@ -1,0 +1,206 @@
+{
+  "chip_id": "myreturn.pre_construction",
+  "kind": "accessor",
+  "set": "myreturn",
+  "label": "My return: interest before construction - this year's share",
+  "aliases": [
+    "pre-construction interest",
+    "24(b)",
+    "1/5"
+  ],
+  "params": [
+    {
+      "name": "total",
+      "type": "number",
+      "default": 0,
+      "label": "interest on the loan for the years before the house was bought / built"
+    },
+    {
+      "name": "completed",
+      "type": "text",
+      "default": "",
+      "label": "the day it was bought / finished, YYYY-MM-DD"
+    },
+    {
+      "name": "fy",
+      "type": "number",
+      "default": 2025,
+      "label": "this return's financial year (the year it starts)"
+    },
+    {
+      "name": "parts",
+      "type": "number",
+      "default": 5,
+      "label": "s.24(b) Explanation: in five equal parts"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "this_year": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "vop": "matches",
+                  "text": "$completed",
+                  "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                },
+                {
+                  "op": "ge",
+                  "left": {
+                    "vop": "sub",
+                    "a": "$fy",
+                    "b": {
+                      "chip": "myreturn.fy_of",
+                      "args": {
+                        "date": "$completed"
+                      }
+                    }
+                  },
+                  "right": 0
+                },
+                {
+                  "op": "lt",
+                  "left": {
+                    "vop": "sub",
+                    "a": "$fy",
+                    "b": {
+                      "chip": "myreturn.fy_of",
+                      "args": {
+                        "date": "$completed"
+                      }
+                    }
+                  },
+                  "right": "$parts"
+                }
+              ]
+            },
+            "then": {
+              "vop": "round_to",
+              "value": {
+                "vop": "div",
+                "a": "$total",
+                "b": "$parts"
+              }
+            }
+          }
+        ],
+        "else": 0
+      },
+      "years_left": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "vop": "matches",
+                  "text": "$completed",
+                  "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                },
+                {
+                  "op": "ge",
+                  "left": {
+                    "vop": "sub",
+                    "a": "$fy",
+                    "b": {
+                      "chip": "myreturn.fy_of",
+                      "args": {
+                        "date": "$completed"
+                      }
+                    }
+                  },
+                  "right": 0
+                },
+                {
+                  "op": "lt",
+                  "left": {
+                    "vop": "sub",
+                    "a": "$fy",
+                    "b": {
+                      "chip": "myreturn.fy_of",
+                      "args": {
+                        "date": "$completed"
+                      }
+                    }
+                  },
+                  "right": "$parts"
+                }
+              ]
+            },
+            "then": {
+              "vop": "sub",
+              "a": {
+                "vop": "sub",
+                "a": "$parts",
+                "b": 1
+              },
+              "b": {
+                "vop": "sub",
+                "a": "$fy",
+                "b": {
+                  "chip": "myreturn.fy_of",
+                  "args": {
+                    "date": "$completed"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "else": 0
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-07: s.24(b) Explanation: interest for the period before the year a house was bought or built is allowed in five equal parts, from that year on. For a self-occupied house it sits inside the 2 lakh cap (chip myreturn.house).",
+  "test_cases": [
+    {
+      "args": {
+        "total": 250000,
+        "completed": "2023-09-01"
+      },
+      "expect_value": {
+        "this_year": 50000,
+        "years_left": 2
+      }
+    },
+    {
+      "args": {
+        "total": 250000,
+        "completed": "2019-09-01"
+      },
+      "expect_value": {
+        "this_year": 0,
+        "years_left": 0
+      }
+    },
+    {
+      "args": {
+        "total": 250000,
+        "completed": "2025-04-10"
+      },
+      "expect_value": {
+        "this_year": 50000,
+        "years_left": 4
+      }
+    },
+    {
+      "args": {
+        "total": 250000,
+        "completed": ""
+      },
+      "expect_value": {
+        "this_year": 0,
+        "years_left": 0
+      }
+    }
+  ]
+}

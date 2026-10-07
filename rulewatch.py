@@ -206,7 +206,17 @@ class Watch:
         return {"live_ay": k["live_ay"], "ay": ay, "fetched": bool(d), "at": d.get("at"), "by": d.get("by", ""), "model": d.get("model", ""),
                 "pages": d.get("pages", []), "new_rules": d.get("new_rules", []), "rows": rows, "count": count,
                 "groups": engine.run(f"{self.name}.items")["groups"], "next": next_period(k["live_ay"]),
-                "years": [next_period(k["live_ay"], n) for n in range(4)]}   # the live period first: check it again
+                "years": [next_period(k["live_ay"], n) for n in range(4)]} | self._last_check(k)   # the live period first: check it again
+
+    def _last_check(self, k: dict) -> dict:
+        """When the live period or the next was last fetched, and whether a re-check is due (settings check_every_days) - the
+        department publishes circulars all year; Fetch costs the owner's AI key and its answer needs a person, so nothing runs
+        by itself: the page says so."""
+        import datetime  # noqa: PLC0415
+        at = max((self.draft(p).get("at") or "" for p in (k["live_ay"], next_period(k["live_ay"]))), default="")
+        days = (datetime.date.today() - datetime.date.fromisoformat(at[:10])).days if at else None
+        every = int(k.get("check_every_days") or 0)
+        return {"last_check": at, "check_due": bool(every) and (days is None or days >= every), "check_every_days": every}
 
     # --- apply ------------------------------------------------------------------------------------------------------
 

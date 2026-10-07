@@ -18,6 +18,12 @@
       "type": "text",
       "default": "individual",
       "label": "individual / huf"
+    },
+    {
+      "name": "resident",
+      "type": "boolean",
+      "default": true,
+      "label": "resident in India (a non-resident has no senior / very senior basic exemption, 80TTB or senior 80D)"
     }
   ],
   "expr": {
@@ -26,8 +32,8 @@
       {
         "when": {
           "op": "eq",
-          "left": "$status",
-          "right": "huf"
+          "left": "$resident",
+          "right": false
         },
         "then": "below60"
       }
@@ -37,42 +43,55 @@
       "cases": [
         {
           "when": {
-            "op": "ge",
-            "left": "$age",
-            "right": {
-              "vop": "get",
-              "value": {
-                "chip": "myreturn.rates",
-                "args": {}
-              },
-              "path": "very_senior_age"
-            }
+            "op": "eq",
+            "left": "$status",
+            "right": "huf"
           },
-          "then": "80plus"
-        },
-        {
-          "when": {
-            "op": "ge",
-            "left": "$age",
-            "right": {
-              "vop": "get",
-              "value": {
-                "chip": "myreturn.rates",
-                "args": {}
-              },
-              "path": "senior_age"
-            }
-          },
-          "then": "60to80"
+          "then": "below60"
         }
       ],
-      "else": "below60"
+      "else": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "ge",
+              "left": "$age",
+              "right": {
+                "vop": "get",
+                "value": {
+                  "chip": "myreturn.rates",
+                  "args": {}
+                },
+                "path": "very_senior_age"
+              }
+            },
+            "then": "80plus"
+          },
+          {
+            "when": {
+              "op": "ge",
+              "left": "$age",
+              "right": {
+                "vop": "get",
+                "value": {
+                  "chip": "myreturn.rates",
+                  "args": {}
+                },
+                "path": "senior_age"
+              }
+            },
+            "then": "60to80"
+          }
+        ],
+        "else": "below60"
+      }
     }
   },
   "returns": "record",
-  "version": 2,
+  "version": 3,
   "status": "published",
-  "description_nl": "2026-10-06: below 60, 60 to 80 (senior) and 80 or more (very senior) - the old regime's basic exemption and 80D/80TTB follow it. 2026-10-06: an HUF has no age - always the below-60 slabs.",
+  "description_nl": "2026-10-06: below 60, 60 to 80 (senior) and 80 or more (very senior) - the old regime's basic exemption and 80D/80TTB follow it. 2026-10-06: an HUF has no age - always the below-60 slabs. 2026-10-07: resident: a non-resident is in the below-60 band whatever the age - the old regime's 3 / 5 lakh basic exemption, 80TTB and the senior citizen's 80D limit are for an individual resident in India (Finance Act Part I; s.80TTB, s.80D(4)).",
   "test_cases": [
     {
       "args": {
@@ -96,6 +115,26 @@
       "args": {
         "age": 70,
         "status": "huf"
+      },
+      "expect_value": "below60"
+    },
+    {
+      "args": {
+        "age": 65,
+        "resident": false
+      },
+      "expect_value": "below60"
+    },
+    {
+      "args": {
+        "age": 65
+      },
+      "expect_value": "60to80"
+    },
+    {
+      "args": {
+        "age": 85,
+        "resident": false
       },
       "expect_value": "below60"
     }

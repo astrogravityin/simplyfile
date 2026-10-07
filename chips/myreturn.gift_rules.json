@@ -1,0 +1,90 @@
+{
+  "chip_id": "myreturn.gift_rules",
+  "kind": "accessor",
+  "set": "myreturn",
+  "label": "My return: gifts - the rules (s.56(2)(x))",
+  "aliases": [
+    "gift",
+    "56(2)(x)"
+  ],
+  "params": [
+    {
+      "name": "relatives",
+      "type": "json",
+      "default": [
+        "spouse",
+        "brother",
+        "sister",
+        "spouse_sibling",
+        "parent_sibling",
+        "lineal",
+        "spouse_lineal",
+        "sibling_spouse",
+        "huf_member"
+      ],
+      "label": "s.56(2)(x) Explanation (e): relatives - spouse; brother or sister; brother or sister of the spouse; brother or sister of either parent; any lineal ascendant or descendant; any lineal ascendant or descendant of the spouse; the spouse of any of these; for an HUF, any member"
+    },
+    {
+      "name": "exempt_occasions",
+      "type": "json",
+      "default": [
+        "marriage",
+        "will",
+        "inheritance",
+        "death"
+      ],
+      "label": "s.56(2)(x) proviso: on the person's marriage, under a will or by inheritance, in contemplation of the payer's death"
+    },
+    {
+      "name": "threshold",
+      "type": "number",
+      "default": 50000,
+      "label": "s.56(2)(x): taxable when more than this (sums and movable property in the year together, each immovable property alone)"
+    },
+    {
+      "name": "inadequate_pct",
+      "type": "number",
+      "default": 10,
+      "label": "s.56(2)(x)(b)(B): immovable property bought for less - taxable when the stamp value beats the price by more than the higher of 50,000 and this % of the price"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "relatives": "$relatives",
+      "exempt_occasions": "$exempt_occasions",
+      "threshold": "$threshold",
+      "inadequate_pct": "$inadequate_pct"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-07: Who is a relative, which occasions are exempt and the thresholds for gifts taxed as other sources (s.56(2)(x)).",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "relatives": [
+          "spouse",
+          "brother",
+          "sister",
+          "spouse_sibling",
+          "parent_sibling",
+          "lineal",
+          "spouse_lineal",
+          "sibling_spouse",
+          "huf_member"
+        ],
+        "exempt_occasions": [
+          "marriage",
+          "will",
+          "inheritance",
+          "death"
+        ],
+        "threshold": 50000,
+        "inadequate_pct": 10
+      }
+    }
+  ]
+}

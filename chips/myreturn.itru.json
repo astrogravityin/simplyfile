@@ -1,0 +1,1597 @@
+{
+  "chip_id": "myreturn.itru",
+  "kind": "accessor",
+  "set": "myreturn",
+  "label": "My return: an updated return (ITR-U) - allowed?, interest, additional tax",
+  "aliases": [
+    "itr-u",
+    "updated return",
+    "140b",
+    "additional tax"
+  ],
+  "params": [
+    {
+      "name": "filed_on",
+      "type": "number",
+      "default": 0,
+      "label": "the day it is filed (yyyymmdd)"
+    },
+    {
+      "name": "updated_by",
+      "type": "number",
+      "default": 0,
+      "label": "the last day for it (chip close.dates updated_by: 48 months from the end of the AY)"
+    },
+    {
+      "name": "months",
+      "type": "number",
+      "default": 0,
+      "label": "months from the end of the AY to the day of filing (a part month counts)"
+    },
+    {
+      "name": "months_a",
+      "type": "number",
+      "default": 0,
+      "label": "234A(1A): months from the day after the due date"
+    },
+    {
+      "name": "months_b",
+      "type": "number",
+      "default": 0,
+      "label": "234B(1A): months from 1 April of the AY"
+    },
+    {
+      "name": "extra_tax",
+      "type": "number",
+      "default": 0,
+      "label": "the further tax: tax on the updated income less the tax on the income of the return before, less TDS on the income added"
+    },
+    {
+      "name": "tax_after",
+      "type": "number",
+      "default": 0,
+      "label": "tax on the updated income"
+    },
+    {
+      "name": "tds",
+      "type": "number",
+      "default": 0,
+      "label": "that year's TDS / TCS in all"
+    },
+    {
+      "name": "advance",
+      "type": "number",
+      "default": 0,
+      "label": "advance tax paid that year"
+    },
+    {
+      "name": "bars",
+      "type": "json",
+      "default": [],
+      "label": "the bars that apply (chip myreturn.itru_rules bars)"
+    },
+    {
+      "name": "known",
+      "type": "boolean",
+      "default": true,
+      "label": "that year's tax can be worked out here (chip myreturn.tax_of_year known, and not over its surcharge line)"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "why": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "gt",
+              "left": "$filed_on",
+              "right": "$updated_by"
+            },
+            "then": "itru_late"
+          },
+          {
+            "when": {
+              "op": "gt",
+              "left": {
+                "vop": "count",
+                "items": "$bars"
+              },
+              "right": 0
+            },
+            "then": {
+              "vop": "template",
+              "text": "itru_bar_{b}",
+              "values": {
+                "vop": "record",
+                "fields": {
+                  "b": {
+                    "vop": "coalesce",
+                    "values": "$bars"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "when": {
+              "op": "not",
+              "item": {
+                "op": "eq",
+                "left": "$known",
+                "right": true
+              }
+            },
+            "then": "itru_bar_year_unknown"
+          },
+          {
+            "when": {
+              "op": "le",
+              "left": "$extra_tax",
+              "right": 0
+            },
+            "then": "itru_not_more"
+          }
+        ],
+        "else": ""
+      },
+      "ok": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "eq",
+              "left": {
+                "vop": "choose",
+                "cases": [
+                  {
+                    "when": {
+                      "op": "gt",
+                      "left": "$filed_on",
+                      "right": "$updated_by"
+                    },
+                    "then": "itru_late"
+                  },
+                  {
+                    "when": {
+                      "op": "gt",
+                      "left": {
+                        "vop": "count",
+                        "items": "$bars"
+                      },
+                      "right": 0
+                    },
+                    "then": {
+                      "vop": "template",
+                      "text": "itru_bar_{b}",
+                      "values": {
+                        "vop": "record",
+                        "fields": {
+                          "b": {
+                            "vop": "coalesce",
+                            "values": "$bars"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "when": {
+                      "op": "not",
+                      "item": {
+                        "op": "eq",
+                        "left": "$known",
+                        "right": true
+                      }
+                    },
+                    "then": "itru_bar_year_unknown"
+                  },
+                  {
+                    "when": {
+                      "op": "le",
+                      "left": "$extra_tax",
+                      "right": 0
+                    },
+                    "then": "itru_not_more"
+                  }
+                ],
+                "else": ""
+              },
+              "right": ""
+            },
+            "then": true
+          }
+        ],
+        "else": false
+      },
+      "i234a": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "gt",
+              "left": "$extra_tax",
+              "right": 0
+            },
+            "then": {
+              "vop": "round_to",
+              "value": {
+                "vop": "mul",
+                "a": {
+                  "vop": "mul",
+                  "a": {
+                    "vop": "floor_to",
+                    "value": {
+                      "vop": "largest",
+                      "values": [
+                        "$extra_tax",
+                        0
+                      ]
+                    },
+                    "step": {
+                      "vop": "get",
+                      "value": {
+                        "chip": "myreturn.itru_rules",
+                        "args": {}
+                      },
+                      "path": "floor_step"
+                    }
+                  },
+                  "b": {
+                    "vop": "div",
+                    "a": {
+                      "vop": "get",
+                      "value": {
+                        "chip": "myreturn.itru_rules",
+                        "args": {}
+                      },
+                      "path": "rate_pm"
+                    },
+                    "b": 100
+                  }
+                },
+                "b": {
+                  "vop": "largest",
+                  "values": [
+                    "$months_a",
+                    0
+                  ]
+                }
+              }
+            }
+          }
+        ],
+        "else": 0
+      },
+      "i234b": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "all",
+                  "items": [
+                    {
+                      "op": "ge",
+                      "left": {
+                        "vop": "sub",
+                        "a": "$tax_after",
+                        "b": "$tds"
+                      },
+                      "right": {
+                        "vop": "get",
+                        "value": {
+                          "chip": "myreturn.itru_rules",
+                          "args": {}
+                        },
+                        "path": "b_min"
+                      }
+                    },
+                    {
+                      "op": "lt",
+                      "left": "$advance",
+                      "right": {
+                        "vop": "mul",
+                        "a": {
+                          "vop": "sub",
+                          "a": "$tax_after",
+                          "b": "$tds"
+                        },
+                        "b": {
+                          "vop": "div",
+                          "a": {
+                            "vop": "get",
+                            "value": {
+                              "chip": "myreturn.itru_rules",
+                              "args": {}
+                            },
+                            "path": "b_pct"
+                          },
+                          "b": 100
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "op": "gt",
+                  "left": "$extra_tax",
+                  "right": 0
+                }
+              ]
+            },
+            "then": {
+              "vop": "round_to",
+              "value": {
+                "vop": "mul",
+                "a": {
+                  "vop": "mul",
+                  "a": {
+                    "vop": "floor_to",
+                    "value": {
+                      "vop": "largest",
+                      "values": [
+                        "$extra_tax",
+                        0
+                      ]
+                    },
+                    "step": {
+                      "vop": "get",
+                      "value": {
+                        "chip": "myreturn.itru_rules",
+                        "args": {}
+                      },
+                      "path": "floor_step"
+                    }
+                  },
+                  "b": {
+                    "vop": "div",
+                    "a": {
+                      "vop": "get",
+                      "value": {
+                        "chip": "myreturn.itru_rules",
+                        "args": {}
+                      },
+                      "path": "rate_pm"
+                    },
+                    "b": 100
+                  }
+                },
+                "b": {
+                  "vop": "largest",
+                  "values": [
+                    "$months_b",
+                    0
+                  ]
+                }
+              }
+            }
+          }
+        ],
+        "else": 0
+      },
+      "base": {
+        "vop": "total",
+        "values": [
+          {
+            "vop": "largest",
+            "values": [
+              "$extra_tax",
+              0
+            ]
+          },
+          {
+            "vop": "choose",
+            "cases": [
+              {
+                "when": {
+                  "op": "gt",
+                  "left": "$extra_tax",
+                  "right": 0
+                },
+                "then": {
+                  "vop": "round_to",
+                  "value": {
+                    "vop": "mul",
+                    "a": {
+                      "vop": "mul",
+                      "a": {
+                        "vop": "floor_to",
+                        "value": {
+                          "vop": "largest",
+                          "values": [
+                            "$extra_tax",
+                            0
+                          ]
+                        },
+                        "step": {
+                          "vop": "get",
+                          "value": {
+                            "chip": "myreturn.itru_rules",
+                            "args": {}
+                          },
+                          "path": "floor_step"
+                        }
+                      },
+                      "b": {
+                        "vop": "div",
+                        "a": {
+                          "vop": "get",
+                          "value": {
+                            "chip": "myreturn.itru_rules",
+                            "args": {}
+                          },
+                          "path": "rate_pm"
+                        },
+                        "b": 100
+                      }
+                    },
+                    "b": {
+                      "vop": "largest",
+                      "values": [
+                        "$months_a",
+                        0
+                      ]
+                    }
+                  }
+                }
+              }
+            ],
+            "else": 0
+          },
+          {
+            "vop": "choose",
+            "cases": [
+              {
+                "when": {
+                  "op": "all",
+                  "items": [
+                    {
+                      "op": "all",
+                      "items": [
+                        {
+                          "op": "ge",
+                          "left": {
+                            "vop": "sub",
+                            "a": "$tax_after",
+                            "b": "$tds"
+                          },
+                          "right": {
+                            "vop": "get",
+                            "value": {
+                              "chip": "myreturn.itru_rules",
+                              "args": {}
+                            },
+                            "path": "b_min"
+                          }
+                        },
+                        {
+                          "op": "lt",
+                          "left": "$advance",
+                          "right": {
+                            "vop": "mul",
+                            "a": {
+                              "vop": "sub",
+                              "a": "$tax_after",
+                              "b": "$tds"
+                            },
+                            "b": {
+                              "vop": "div",
+                              "a": {
+                                "vop": "get",
+                                "value": {
+                                  "chip": "myreturn.itru_rules",
+                                  "args": {}
+                                },
+                                "path": "b_pct"
+                              },
+                              "b": 100
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "op": "gt",
+                      "left": "$extra_tax",
+                      "right": 0
+                    }
+                  ]
+                },
+                "then": {
+                  "vop": "round_to",
+                  "value": {
+                    "vop": "mul",
+                    "a": {
+                      "vop": "mul",
+                      "a": {
+                        "vop": "floor_to",
+                        "value": {
+                          "vop": "largest",
+                          "values": [
+                            "$extra_tax",
+                            0
+                          ]
+                        },
+                        "step": {
+                          "vop": "get",
+                          "value": {
+                            "chip": "myreturn.itru_rules",
+                            "args": {}
+                          },
+                          "path": "floor_step"
+                        }
+                      },
+                      "b": {
+                        "vop": "div",
+                        "a": {
+                          "vop": "get",
+                          "value": {
+                            "chip": "myreturn.itru_rules",
+                            "args": {}
+                          },
+                          "path": "rate_pm"
+                        },
+                        "b": 100
+                      }
+                    },
+                    "b": {
+                      "vop": "largest",
+                      "values": [
+                        "$months_b",
+                        0
+                      ]
+                    }
+                  }
+                }
+              }
+            ],
+            "else": 0
+          }
+        ]
+      },
+      "pct": {
+        "vop": "get",
+        "value": {
+          "chip": "close.itr_u",
+          "args": {
+            "net_now": {
+              "vop": "total",
+              "values": [
+                {
+                  "vop": "largest",
+                  "values": [
+                    "$extra_tax",
+                    0
+                  ]
+                },
+                {
+                  "vop": "choose",
+                  "cases": [
+                    {
+                      "when": {
+                        "op": "gt",
+                        "left": "$extra_tax",
+                        "right": 0
+                      },
+                      "then": {
+                        "vop": "round_to",
+                        "value": {
+                          "vop": "mul",
+                          "a": {
+                            "vop": "mul",
+                            "a": {
+                              "vop": "floor_to",
+                              "value": {
+                                "vop": "largest",
+                                "values": [
+                                  "$extra_tax",
+                                  0
+                                ]
+                              },
+                              "step": {
+                                "vop": "get",
+                                "value": {
+                                  "chip": "myreturn.itru_rules",
+                                  "args": {}
+                                },
+                                "path": "floor_step"
+                              }
+                            },
+                            "b": {
+                              "vop": "div",
+                              "a": {
+                                "vop": "get",
+                                "value": {
+                                  "chip": "myreturn.itru_rules",
+                                  "args": {}
+                                },
+                                "path": "rate_pm"
+                              },
+                              "b": 100
+                            }
+                          },
+                          "b": {
+                            "vop": "largest",
+                            "values": [
+                              "$months_a",
+                              0
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  ],
+                  "else": 0
+                },
+                {
+                  "vop": "choose",
+                  "cases": [
+                    {
+                      "when": {
+                        "op": "all",
+                        "items": [
+                          {
+                            "op": "all",
+                            "items": [
+                              {
+                                "op": "ge",
+                                "left": {
+                                  "vop": "sub",
+                                  "a": "$tax_after",
+                                  "b": "$tds"
+                                },
+                                "right": {
+                                  "vop": "get",
+                                  "value": {
+                                    "chip": "myreturn.itru_rules",
+                                    "args": {}
+                                  },
+                                  "path": "b_min"
+                                }
+                              },
+                              {
+                                "op": "lt",
+                                "left": "$advance",
+                                "right": {
+                                  "vop": "mul",
+                                  "a": {
+                                    "vop": "sub",
+                                    "a": "$tax_after",
+                                    "b": "$tds"
+                                  },
+                                  "b": {
+                                    "vop": "div",
+                                    "a": {
+                                      "vop": "get",
+                                      "value": {
+                                        "chip": "myreturn.itru_rules",
+                                        "args": {}
+                                      },
+                                      "path": "b_pct"
+                                    },
+                                    "b": 100
+                                  }
+                                }
+                              }
+                            ]
+                          },
+                          {
+                            "op": "gt",
+                            "left": "$extra_tax",
+                            "right": 0
+                          }
+                        ]
+                      },
+                      "then": {
+                        "vop": "round_to",
+                        "value": {
+                          "vop": "mul",
+                          "a": {
+                            "vop": "mul",
+                            "a": {
+                              "vop": "floor_to",
+                              "value": {
+                                "vop": "largest",
+                                "values": [
+                                  "$extra_tax",
+                                  0
+                                ]
+                              },
+                              "step": {
+                                "vop": "get",
+                                "value": {
+                                  "chip": "myreturn.itru_rules",
+                                  "args": {}
+                                },
+                                "path": "floor_step"
+                              }
+                            },
+                            "b": {
+                              "vop": "div",
+                              "a": {
+                                "vop": "get",
+                                "value": {
+                                  "chip": "myreturn.itru_rules",
+                                  "args": {}
+                                },
+                                "path": "rate_pm"
+                              },
+                              "b": 100
+                            }
+                          },
+                          "b": {
+                            "vop": "largest",
+                            "values": [
+                              "$months_b",
+                              0
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  ],
+                  "else": 0
+                }
+              ]
+            },
+            "net_before": 0,
+            "months": "$months"
+          }
+        },
+        "path": "pct"
+      },
+      "additional": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "eq",
+              "left": {
+                "vop": "choose",
+                "cases": [
+                  {
+                    "when": {
+                      "op": "gt",
+                      "left": "$filed_on",
+                      "right": "$updated_by"
+                    },
+                    "then": "itru_late"
+                  },
+                  {
+                    "when": {
+                      "op": "gt",
+                      "left": {
+                        "vop": "count",
+                        "items": "$bars"
+                      },
+                      "right": 0
+                    },
+                    "then": {
+                      "vop": "template",
+                      "text": "itru_bar_{b}",
+                      "values": {
+                        "vop": "record",
+                        "fields": {
+                          "b": {
+                            "vop": "coalesce",
+                            "values": "$bars"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "when": {
+                      "op": "not",
+                      "item": {
+                        "op": "eq",
+                        "left": "$known",
+                        "right": true
+                      }
+                    },
+                    "then": "itru_bar_year_unknown"
+                  },
+                  {
+                    "when": {
+                      "op": "le",
+                      "left": "$extra_tax",
+                      "right": 0
+                    },
+                    "then": "itru_not_more"
+                  }
+                ],
+                "else": ""
+              },
+              "right": ""
+            },
+            "then": {
+              "vop": "get",
+              "value": {
+                "chip": "close.itr_u",
+                "args": {
+                  "net_now": {
+                    "vop": "total",
+                    "values": [
+                      {
+                        "vop": "largest",
+                        "values": [
+                          "$extra_tax",
+                          0
+                        ]
+                      },
+                      {
+                        "vop": "choose",
+                        "cases": [
+                          {
+                            "when": {
+                              "op": "gt",
+                              "left": "$extra_tax",
+                              "right": 0
+                            },
+                            "then": {
+                              "vop": "round_to",
+                              "value": {
+                                "vop": "mul",
+                                "a": {
+                                  "vop": "mul",
+                                  "a": {
+                                    "vop": "floor_to",
+                                    "value": {
+                                      "vop": "largest",
+                                      "values": [
+                                        "$extra_tax",
+                                        0
+                                      ]
+                                    },
+                                    "step": {
+                                      "vop": "get",
+                                      "value": {
+                                        "chip": "myreturn.itru_rules",
+                                        "args": {}
+                                      },
+                                      "path": "floor_step"
+                                    }
+                                  },
+                                  "b": {
+                                    "vop": "div",
+                                    "a": {
+                                      "vop": "get",
+                                      "value": {
+                                        "chip": "myreturn.itru_rules",
+                                        "args": {}
+                                      },
+                                      "path": "rate_pm"
+                                    },
+                                    "b": 100
+                                  }
+                                },
+                                "b": {
+                                  "vop": "largest",
+                                  "values": [
+                                    "$months_a",
+                                    0
+                                  ]
+                                }
+                              }
+                            }
+                          }
+                        ],
+                        "else": 0
+                      },
+                      {
+                        "vop": "choose",
+                        "cases": [
+                          {
+                            "when": {
+                              "op": "all",
+                              "items": [
+                                {
+                                  "op": "all",
+                                  "items": [
+                                    {
+                                      "op": "ge",
+                                      "left": {
+                                        "vop": "sub",
+                                        "a": "$tax_after",
+                                        "b": "$tds"
+                                      },
+                                      "right": {
+                                        "vop": "get",
+                                        "value": {
+                                          "chip": "myreturn.itru_rules",
+                                          "args": {}
+                                        },
+                                        "path": "b_min"
+                                      }
+                                    },
+                                    {
+                                      "op": "lt",
+                                      "left": "$advance",
+                                      "right": {
+                                        "vop": "mul",
+                                        "a": {
+                                          "vop": "sub",
+                                          "a": "$tax_after",
+                                          "b": "$tds"
+                                        },
+                                        "b": {
+                                          "vop": "div",
+                                          "a": {
+                                            "vop": "get",
+                                            "value": {
+                                              "chip": "myreturn.itru_rules",
+                                              "args": {}
+                                            },
+                                            "path": "b_pct"
+                                          },
+                                          "b": 100
+                                        }
+                                      }
+                                    }
+                                  ]
+                                },
+                                {
+                                  "op": "gt",
+                                  "left": "$extra_tax",
+                                  "right": 0
+                                }
+                              ]
+                            },
+                            "then": {
+                              "vop": "round_to",
+                              "value": {
+                                "vop": "mul",
+                                "a": {
+                                  "vop": "mul",
+                                  "a": {
+                                    "vop": "floor_to",
+                                    "value": {
+                                      "vop": "largest",
+                                      "values": [
+                                        "$extra_tax",
+                                        0
+                                      ]
+                                    },
+                                    "step": {
+                                      "vop": "get",
+                                      "value": {
+                                        "chip": "myreturn.itru_rules",
+                                        "args": {}
+                                      },
+                                      "path": "floor_step"
+                                    }
+                                  },
+                                  "b": {
+                                    "vop": "div",
+                                    "a": {
+                                      "vop": "get",
+                                      "value": {
+                                        "chip": "myreturn.itru_rules",
+                                        "args": {}
+                                      },
+                                      "path": "rate_pm"
+                                    },
+                                    "b": 100
+                                  }
+                                },
+                                "b": {
+                                  "vop": "largest",
+                                  "values": [
+                                    "$months_b",
+                                    0
+                                  ]
+                                }
+                              }
+                            }
+                          }
+                        ],
+                        "else": 0
+                      }
+                    ]
+                  },
+                  "net_before": 0,
+                  "months": "$months"
+                }
+              },
+              "path": "additional"
+            }
+          }
+        ],
+        "else": 0
+      },
+      "total": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "eq",
+              "left": {
+                "vop": "choose",
+                "cases": [
+                  {
+                    "when": {
+                      "op": "gt",
+                      "left": "$filed_on",
+                      "right": "$updated_by"
+                    },
+                    "then": "itru_late"
+                  },
+                  {
+                    "when": {
+                      "op": "gt",
+                      "left": {
+                        "vop": "count",
+                        "items": "$bars"
+                      },
+                      "right": 0
+                    },
+                    "then": {
+                      "vop": "template",
+                      "text": "itru_bar_{b}",
+                      "values": {
+                        "vop": "record",
+                        "fields": {
+                          "b": {
+                            "vop": "coalesce",
+                            "values": "$bars"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "when": {
+                      "op": "not",
+                      "item": {
+                        "op": "eq",
+                        "left": "$known",
+                        "right": true
+                      }
+                    },
+                    "then": "itru_bar_year_unknown"
+                  },
+                  {
+                    "when": {
+                      "op": "le",
+                      "left": "$extra_tax",
+                      "right": 0
+                    },
+                    "then": "itru_not_more"
+                  }
+                ],
+                "else": ""
+              },
+              "right": ""
+            },
+            "then": {
+              "vop": "add",
+              "a": {
+                "vop": "total",
+                "values": [
+                  {
+                    "vop": "largest",
+                    "values": [
+                      "$extra_tax",
+                      0
+                    ]
+                  },
+                  {
+                    "vop": "choose",
+                    "cases": [
+                      {
+                        "when": {
+                          "op": "gt",
+                          "left": "$extra_tax",
+                          "right": 0
+                        },
+                        "then": {
+                          "vop": "round_to",
+                          "value": {
+                            "vop": "mul",
+                            "a": {
+                              "vop": "mul",
+                              "a": {
+                                "vop": "floor_to",
+                                "value": {
+                                  "vop": "largest",
+                                  "values": [
+                                    "$extra_tax",
+                                    0
+                                  ]
+                                },
+                                "step": {
+                                  "vop": "get",
+                                  "value": {
+                                    "chip": "myreturn.itru_rules",
+                                    "args": {}
+                                  },
+                                  "path": "floor_step"
+                                }
+                              },
+                              "b": {
+                                "vop": "div",
+                                "a": {
+                                  "vop": "get",
+                                  "value": {
+                                    "chip": "myreturn.itru_rules",
+                                    "args": {}
+                                  },
+                                  "path": "rate_pm"
+                                },
+                                "b": 100
+                              }
+                            },
+                            "b": {
+                              "vop": "largest",
+                              "values": [
+                                "$months_a",
+                                0
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    ],
+                    "else": 0
+                  },
+                  {
+                    "vop": "choose",
+                    "cases": [
+                      {
+                        "when": {
+                          "op": "all",
+                          "items": [
+                            {
+                              "op": "all",
+                              "items": [
+                                {
+                                  "op": "ge",
+                                  "left": {
+                                    "vop": "sub",
+                                    "a": "$tax_after",
+                                    "b": "$tds"
+                                  },
+                                  "right": {
+                                    "vop": "get",
+                                    "value": {
+                                      "chip": "myreturn.itru_rules",
+                                      "args": {}
+                                    },
+                                    "path": "b_min"
+                                  }
+                                },
+                                {
+                                  "op": "lt",
+                                  "left": "$advance",
+                                  "right": {
+                                    "vop": "mul",
+                                    "a": {
+                                      "vop": "sub",
+                                      "a": "$tax_after",
+                                      "b": "$tds"
+                                    },
+                                    "b": {
+                                      "vop": "div",
+                                      "a": {
+                                        "vop": "get",
+                                        "value": {
+                                          "chip": "myreturn.itru_rules",
+                                          "args": {}
+                                        },
+                                        "path": "b_pct"
+                                      },
+                                      "b": 100
+                                    }
+                                  }
+                                }
+                              ]
+                            },
+                            {
+                              "op": "gt",
+                              "left": "$extra_tax",
+                              "right": 0
+                            }
+                          ]
+                        },
+                        "then": {
+                          "vop": "round_to",
+                          "value": {
+                            "vop": "mul",
+                            "a": {
+                              "vop": "mul",
+                              "a": {
+                                "vop": "floor_to",
+                                "value": {
+                                  "vop": "largest",
+                                  "values": [
+                                    "$extra_tax",
+                                    0
+                                  ]
+                                },
+                                "step": {
+                                  "vop": "get",
+                                  "value": {
+                                    "chip": "myreturn.itru_rules",
+                                    "args": {}
+                                  },
+                                  "path": "floor_step"
+                                }
+                              },
+                              "b": {
+                                "vop": "div",
+                                "a": {
+                                  "vop": "get",
+                                  "value": {
+                                    "chip": "myreturn.itru_rules",
+                                    "args": {}
+                                  },
+                                  "path": "rate_pm"
+                                },
+                                "b": 100
+                              }
+                            },
+                            "b": {
+                              "vop": "largest",
+                              "values": [
+                                "$months_b",
+                                0
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    ],
+                    "else": 0
+                  }
+                ]
+              },
+              "b": {
+                "vop": "get",
+                "value": {
+                  "chip": "close.itr_u",
+                  "args": {
+                    "net_now": {
+                      "vop": "total",
+                      "values": [
+                        {
+                          "vop": "largest",
+                          "values": [
+                            "$extra_tax",
+                            0
+                          ]
+                        },
+                        {
+                          "vop": "choose",
+                          "cases": [
+                            {
+                              "when": {
+                                "op": "gt",
+                                "left": "$extra_tax",
+                                "right": 0
+                              },
+                              "then": {
+                                "vop": "round_to",
+                                "value": {
+                                  "vop": "mul",
+                                  "a": {
+                                    "vop": "mul",
+                                    "a": {
+                                      "vop": "floor_to",
+                                      "value": {
+                                        "vop": "largest",
+                                        "values": [
+                                          "$extra_tax",
+                                          0
+                                        ]
+                                      },
+                                      "step": {
+                                        "vop": "get",
+                                        "value": {
+                                          "chip": "myreturn.itru_rules",
+                                          "args": {}
+                                        },
+                                        "path": "floor_step"
+                                      }
+                                    },
+                                    "b": {
+                                      "vop": "div",
+                                      "a": {
+                                        "vop": "get",
+                                        "value": {
+                                          "chip": "myreturn.itru_rules",
+                                          "args": {}
+                                        },
+                                        "path": "rate_pm"
+                                      },
+                                      "b": 100
+                                    }
+                                  },
+                                  "b": {
+                                    "vop": "largest",
+                                    "values": [
+                                      "$months_a",
+                                      0
+                                    ]
+                                  }
+                                }
+                              }
+                            }
+                          ],
+                          "else": 0
+                        },
+                        {
+                          "vop": "choose",
+                          "cases": [
+                            {
+                              "when": {
+                                "op": "all",
+                                "items": [
+                                  {
+                                    "op": "all",
+                                    "items": [
+                                      {
+                                        "op": "ge",
+                                        "left": {
+                                          "vop": "sub",
+                                          "a": "$tax_after",
+                                          "b": "$tds"
+                                        },
+                                        "right": {
+                                          "vop": "get",
+                                          "value": {
+                                            "chip": "myreturn.itru_rules",
+                                            "args": {}
+                                          },
+                                          "path": "b_min"
+                                        }
+                                      },
+                                      {
+                                        "op": "lt",
+                                        "left": "$advance",
+                                        "right": {
+                                          "vop": "mul",
+                                          "a": {
+                                            "vop": "sub",
+                                            "a": "$tax_after",
+                                            "b": "$tds"
+                                          },
+                                          "b": {
+                                            "vop": "div",
+                                            "a": {
+                                              "vop": "get",
+                                              "value": {
+                                                "chip": "myreturn.itru_rules",
+                                                "args": {}
+                                              },
+                                              "path": "b_pct"
+                                            },
+                                            "b": 100
+                                          }
+                                        }
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "op": "gt",
+                                    "left": "$extra_tax",
+                                    "right": 0
+                                  }
+                                ]
+                              },
+                              "then": {
+                                "vop": "round_to",
+                                "value": {
+                                  "vop": "mul",
+                                  "a": {
+                                    "vop": "mul",
+                                    "a": {
+                                      "vop": "floor_to",
+                                      "value": {
+                                        "vop": "largest",
+                                        "values": [
+                                          "$extra_tax",
+                                          0
+                                        ]
+                                      },
+                                      "step": {
+                                        "vop": "get",
+                                        "value": {
+                                          "chip": "myreturn.itru_rules",
+                                          "args": {}
+                                        },
+                                        "path": "floor_step"
+                                      }
+                                    },
+                                    "b": {
+                                      "vop": "div",
+                                      "a": {
+                                        "vop": "get",
+                                        "value": {
+                                          "chip": "myreturn.itru_rules",
+                                          "args": {}
+                                        },
+                                        "path": "rate_pm"
+                                      },
+                                      "b": 100
+                                    }
+                                  },
+                                  "b": {
+                                    "vop": "largest",
+                                    "values": [
+                                      "$months_b",
+                                      0
+                                    ]
+                                  }
+                                }
+                              }
+                            }
+                          ],
+                          "else": 0
+                        }
+                      ]
+                    },
+                    "net_before": 0,
+                    "months": "$months"
+                  }
+                },
+                "path": "additional"
+              }
+            }
+          }
+        ],
+        "else": 0
+      }
+    }
+  },
+  "returns": "record",
+  "version": 2,
+  "status": "published",
+  "description_nl": "2026-10-07: s.139(8A): within 48 months of the end of the AY, unless a bar applies; s.140B: the further tax with interest u/s 234A(1A) (from the day after the due date) and 234B(1A) (from 1 April of the AY, when advance tax fell short) on it, then the additional tax - 25% / 50% / 60% / 70% of that tax and interest within 12 / 24 / 36 / 48 months (chip close.itr_u). The return's own tax was paid with it; the further tax is the base.",
+  "test_cases": [
+    {
+      "args": {
+        "filed_on": 20261007,
+        "updated_by": 20290331,
+        "months": 19,
+        "months_a": 15,
+        "months_b": 19,
+        "extra_tax": 31200,
+        "tax_after": 31200
+      },
+      "expect_value": {
+        "why": "",
+        "ok": true,
+        "i234a": 4680,
+        "i234b": 5928,
+        "base": 41808.0,
+        "pct": 50,
+        "additional": 20904,
+        "total": 62712
+      }
+    },
+    {
+      "args": {
+        "filed_on": 20261007,
+        "updated_by": 20290331,
+        "months": 7,
+        "months_a": 2,
+        "months_b": 7,
+        "extra_tax": 5000,
+        "tax_after": 5000
+      },
+      "expect_value": {
+        "why": "",
+        "ok": true,
+        "i234a": 100,
+        "i234b": 0,
+        "base": 5100.0,
+        "pct": 25,
+        "additional": 1275,
+        "total": 6375
+      }
+    },
+    {
+      "args": {
+        "filed_on": 20261007,
+        "updated_by": 20260331,
+        "months": 55,
+        "extra_tax": 5000
+      },
+      "expect_value": {
+        "why": "itru_late",
+        "ok": false,
+        "i234a": 0,
+        "i234b": 0,
+        "base": 5000.0,
+        "pct": 70,
+        "additional": 0,
+        "total": 0
+      }
+    },
+    {
+      "args": {
+        "filed_on": 20261007,
+        "updated_by": 20290331,
+        "months": 19,
+        "extra_tax": 5000,
+        "bars": [
+          "search"
+        ]
+      },
+      "expect_value": {
+        "why": "itru_bar_search",
+        "ok": false,
+        "i234a": 0,
+        "i234b": 0,
+        "base": 5000.0,
+        "pct": 50,
+        "additional": 0,
+        "total": 0
+      }
+    },
+    {
+      "args": {
+        "filed_on": 20261007,
+        "updated_by": 20290331,
+        "months": 19,
+        "extra_tax": 0
+      },
+      "expect_value": {
+        "why": "itru_not_more",
+        "ok": false,
+        "i234a": 0,
+        "i234b": 0,
+        "base": 0.0,
+        "pct": 50,
+        "additional": 0,
+        "total": 0
+      }
+    },
+    {
+      "args": {
+        "filed_on": 20261007,
+        "updated_by": 20290331,
+        "months": 19,
+        "extra_tax": 5000,
+        "known": false
+      },
+      "expect_value": {
+        "why": "itru_bar_year_unknown",
+        "ok": false,
+        "i234a": 0,
+        "i234b": 0,
+        "base": 5000.0,
+        "pct": 50,
+        "additional": 0,
+        "total": 0
+      }
+    },
+    {
+      "args": {
+        "filed_on": 20261007,
+        "updated_by": 20290331,
+        "months": 40,
+        "months_a": 38,
+        "months_b": 40,
+        "extra_tax": 100000,
+        "tax_after": 300000,
+        "tds": 0,
+        "advance": 280000
+      },
+      "expect_value": {
+        "why": "",
+        "ok": true,
+        "i234a": 38000,
+        "i234b": 0,
+        "base": 138000.0,
+        "pct": 70,
+        "additional": 96600,
+        "total": 234600
+      }
+    }
+  ]
+}

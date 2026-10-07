@@ -1,0 +1,135 @@
+{
+  "chip_id": "myreturn.cii",
+  "kind": "accessor",
+  "set": "myreturn",
+  "label": "My return: cost inflation index",
+  "aliases": [
+    "cii",
+    "indexation",
+    "cost inflation index"
+  ],
+  "params": [
+    {
+      "name": "date",
+      "type": "text",
+      "default": "",
+      "label": "a day, YYYY-MM-DD (the year it falls in is looked up)"
+    },
+    {
+      "name": "table",
+      "type": "json",
+      "default": {
+        "2001": 100,
+        "2002": 105,
+        "2003": 109,
+        "2004": 113,
+        "2005": 117,
+        "2006": 122,
+        "2007": 129,
+        "2008": 137,
+        "2009": 148,
+        "2010": 167,
+        "2011": 184,
+        "2012": 200,
+        "2013": 220,
+        "2014": 240,
+        "2015": 254,
+        "2016": 264,
+        "2017": 272,
+        "2018": 280,
+        "2019": 289,
+        "2020": 301,
+        "2021": 317,
+        "2022": 331,
+        "2023": 348,
+        "2024": 363,
+        "2025": 376
+      },
+      "label": "the cost inflation index by financial year (the year it starts), CBDT notifications - base 2001-02 = 100; 2025-26 = 376 (Notification 70/2025)"
+    }
+  ],
+  "expr": {
+    "vop": "choose",
+    "cases": [
+      {
+        "when": {
+          "op": "not",
+          "item": {
+            "vop": "matches",
+            "text": "$date",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+          }
+        },
+        "then": null
+      }
+    ],
+    "else": {
+      "vop": "get",
+      "value": "$table",
+      "path": {
+        "vop": "template",
+        "text": "{y}",
+        "values": {
+          "vop": "record",
+          "fields": {
+            "y": {
+              "vop": "largest",
+              "values": [
+                {
+                  "chip": "myreturn.fy_of",
+                  "args": {
+                    "date": "$date"
+                  }
+                },
+                {
+                  "vop": "get",
+                  "value": {
+                    "chip": "myreturn.cg_rules",
+                    "args": {}
+                  },
+                  "path": "cii_base_year"
+                }
+              ]
+            }
+          }
+        }
+      }
+    }
+  },
+  "returns": "number",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-07: The cost inflation index for the financial year a day falls in; a day before 1 April 2001 takes 2001-02 (= 100, cost being the FMV on 1 April 2001).",
+  "test_cases": [
+    {
+      "args": {
+        "date": "2025-11-20"
+      },
+      "expect_value": 376
+    },
+    {
+      "args": {
+        "date": "2010-06-15"
+      },
+      "expect_value": 167
+    },
+    {
+      "args": {
+        "date": "2015-08-01"
+      },
+      "expect_value": 254
+    },
+    {
+      "args": {
+        "date": "1995-05-01"
+      },
+      "expect_value": 100
+    },
+    {
+      "args": {
+        "date": ""
+      },
+      "expect_value": null
+    }
+  ]
+}

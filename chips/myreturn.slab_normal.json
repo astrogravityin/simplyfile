@@ -1,0 +1,434 @@
+{
+  "chip_id": "myreturn.slab_normal",
+  "kind": "accessor",
+  "set": "myreturn",
+  "label": "My return: slab tax on normal income, agricultural income integrated",
+  "aliases": [
+    "partial integration",
+    "agricultural income rate"
+  ],
+  "params": [
+    {
+      "name": "normal",
+      "type": "number",
+      "default": 0,
+      "label": "income charged at the slab rates"
+    },
+    {
+      "name": "agri",
+      "type": "number",
+      "default": 0,
+      "label": "net agricultural income"
+    },
+    {
+      "name": "total",
+      "type": "number",
+      "default": 0,
+      "label": "total income (every head, special rates too)"
+    },
+    {
+      "name": "regime",
+      "type": "text",
+      "default": "new",
+      "label": "regime"
+    },
+    {
+      "name": "band",
+      "type": "text",
+      "default": "below60",
+      "label": "age band"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "tax": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "gt",
+                  "left": "$agri",
+                  "right": {
+                    "vop": "get",
+                    "value": {
+                      "chip": "myreturn.rates",
+                      "args": {}
+                    },
+                    "path": "agri_integrate_above"
+                  }
+                },
+                {
+                  "op": "gt",
+                  "left": "$total",
+                  "right": {
+                    "vop": "get",
+                    "value": {
+                      "chip": "myreturn.rates",
+                      "args": {}
+                    },
+                    "path": {
+                      "vop": "template",
+                      "text": "basic.{a}.{b}",
+                      "values": {
+                        "vop": "record",
+                        "fields": {
+                          "a": "$regime",
+                          "b": "$band"
+                        }
+                      }
+                    }
+                  }
+                }
+              ]
+            },
+            "then": {
+              "vop": "largest",
+              "values": [
+                {
+                  "vop": "sub",
+                  "a": {
+                    "vop": "slab_tax",
+                    "amount": {
+                      "vop": "add",
+                      "a": "$normal",
+                      "b": "$agri"
+                    },
+                    "slabs": {
+                      "vop": "get",
+                      "value": {
+                        "chip": "myreturn.rates",
+                        "args": {}
+                      },
+                      "path": {
+                        "vop": "template",
+                        "text": "slabs.{a}.{b}",
+                        "values": {
+                          "vop": "record",
+                          "fields": {
+                            "a": "$regime",
+                            "b": "$band"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "b": {
+                    "vop": "slab_tax",
+                    "amount": {
+                      "vop": "add",
+                      "a": {
+                        "vop": "get",
+                        "value": {
+                          "chip": "myreturn.rates",
+                          "args": {}
+                        },
+                        "path": {
+                          "vop": "template",
+                          "text": "basic.{a}.{b}",
+                          "values": {
+                            "vop": "record",
+                            "fields": {
+                              "a": "$regime",
+                              "b": "$band"
+                            }
+                          }
+                        }
+                      },
+                      "b": "$agri"
+                    },
+                    "slabs": {
+                      "vop": "get",
+                      "value": {
+                        "chip": "myreturn.rates",
+                        "args": {}
+                      },
+                      "path": {
+                        "vop": "template",
+                        "text": "slabs.{a}.{b}",
+                        "values": {
+                          "vop": "record",
+                          "fields": {
+                            "a": "$regime",
+                            "b": "$band"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                0
+              ]
+            }
+          }
+        ],
+        "else": {
+          "vop": "slab_tax",
+          "amount": "$normal",
+          "slabs": {
+            "vop": "get",
+            "value": {
+              "chip": "myreturn.rates",
+              "args": {}
+            },
+            "path": {
+              "vop": "template",
+              "text": "slabs.{a}.{b}",
+              "values": {
+                "vop": "record",
+                "fields": {
+                  "a": "$regime",
+                  "b": "$band"
+                }
+              }
+            }
+          }
+        }
+      },
+      "aggregate": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "gt",
+                  "left": "$agri",
+                  "right": {
+                    "vop": "get",
+                    "value": {
+                      "chip": "myreturn.rates",
+                      "args": {}
+                    },
+                    "path": "agri_integrate_above"
+                  }
+                },
+                {
+                  "op": "gt",
+                  "left": "$total",
+                  "right": {
+                    "vop": "get",
+                    "value": {
+                      "chip": "myreturn.rates",
+                      "args": {}
+                    },
+                    "path": {
+                      "vop": "template",
+                      "text": "basic.{a}.{b}",
+                      "values": {
+                        "vop": "record",
+                        "fields": {
+                          "a": "$regime",
+                          "b": "$band"
+                        }
+                      }
+                    }
+                  }
+                }
+              ]
+            },
+            "then": {
+              "vop": "slab_tax",
+              "amount": {
+                "vop": "add",
+                "a": "$normal",
+                "b": "$agri"
+              },
+              "slabs": {
+                "vop": "get",
+                "value": {
+                  "chip": "myreturn.rates",
+                  "args": {}
+                },
+                "path": {
+                  "vop": "template",
+                  "text": "slabs.{a}.{b}",
+                  "values": {
+                    "vop": "record",
+                    "fields": {
+                      "a": "$regime",
+                      "b": "$band"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "else": {
+          "vop": "slab_tax",
+          "amount": "$normal",
+          "slabs": {
+            "vop": "get",
+            "value": {
+              "chip": "myreturn.rates",
+              "args": {}
+            },
+            "path": {
+              "vop": "template",
+              "text": "slabs.{a}.{b}",
+              "values": {
+                "vop": "record",
+                "fields": {
+                  "a": "$regime",
+                  "b": "$band"
+                }
+              }
+            }
+          }
+        }
+      },
+      "rebate": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "gt",
+                  "left": "$agri",
+                  "right": {
+                    "vop": "get",
+                    "value": {
+                      "chip": "myreturn.rates",
+                      "args": {}
+                    },
+                    "path": "agri_integrate_above"
+                  }
+                },
+                {
+                  "op": "gt",
+                  "left": "$total",
+                  "right": {
+                    "vop": "get",
+                    "value": {
+                      "chip": "myreturn.rates",
+                      "args": {}
+                    },
+                    "path": {
+                      "vop": "template",
+                      "text": "basic.{a}.{b}",
+                      "values": {
+                        "vop": "record",
+                        "fields": {
+                          "a": "$regime",
+                          "b": "$band"
+                        }
+                      }
+                    }
+                  }
+                }
+              ]
+            },
+            "then": {
+              "vop": "slab_tax",
+              "amount": {
+                "vop": "add",
+                "a": {
+                  "vop": "get",
+                  "value": {
+                    "chip": "myreturn.rates",
+                    "args": {}
+                  },
+                  "path": {
+                    "vop": "template",
+                    "text": "basic.{a}.{b}",
+                    "values": {
+                      "vop": "record",
+                      "fields": {
+                        "a": "$regime",
+                        "b": "$band"
+                      }
+                    }
+                  }
+                },
+                "b": "$agri"
+              },
+              "slabs": {
+                "vop": "get",
+                "value": {
+                  "chip": "myreturn.rates",
+                  "args": {}
+                },
+                "path": {
+                  "vop": "template",
+                  "text": "slabs.{a}.{b}",
+                  "values": {
+                    "vop": "record",
+                    "fields": {
+                      "a": "$regime",
+                      "b": "$band"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "else": 0
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-07: Finance Act 2025, Part I (both regimes - s.115BAC keeps the integration): net agricultural income above 5,000 with total income above the basic exemption - tax on (normal income + agricultural income) less tax on (basic exemption + agricultural income). Otherwise the slab tax on normal income. aggregate / rebate are what Part B-TTI shows (tax on the aggregate, rebate on agricultural income).",
+  "test_cases": [
+    {
+      "args": {
+        "normal": 600000,
+        "agri": 100000,
+        "total": 600000,
+        "regime": "old"
+      },
+      "expect_value": {
+        "tax": 47500,
+        "aggregate": 52500,
+        "rebate": 5000
+      }
+    },
+    {
+      "args": {
+        "normal": 600000,
+        "agri": 4000,
+        "total": 600000,
+        "regime": "old"
+      },
+      "expect_value": {
+        "tax": 32500,
+        "aggregate": 32500,
+        "rebate": 0
+      }
+    },
+    {
+      "args": {
+        "normal": 200000,
+        "agri": 100000,
+        "total": 200000,
+        "regime": "old"
+      },
+      "expect_value": {
+        "tax": 0,
+        "aggregate": 0,
+        "rebate": 0
+      }
+    },
+    {
+      "args": {
+        "normal": 1000000,
+        "agri": 300000,
+        "total": 1000000
+      },
+      "expect_value": {
+        "tax": 60000,
+        "aggregate": 75000,
+        "rebate": 15000
+      }
+    }
+  ]
+}

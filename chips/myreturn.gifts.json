@@ -1,0 +1,244 @@
+{
+  "chip_id": "myreturn.gifts",
+  "kind": "accessor",
+  "set": "myreturn",
+  "label": "My return: gifts taxed as other sources",
+  "aliases": [
+    "gift",
+    "56(2)(x)",
+    "schedule os"
+  ],
+  "params": [
+    {
+      "name": "money",
+      "type": "number",
+      "default": 0,
+      "label": "sums received in the year that count"
+    },
+    {
+      "name": "movable_free",
+      "type": "number",
+      "default": 0,
+      "label": "movable property received free - its FMV, in the year"
+    },
+    {
+      "name": "movable_less",
+      "type": "number",
+      "default": 0,
+      "label": "movable property bought for less - FMV less the price, in the year"
+    },
+    {
+      "name": "property_free",
+      "type": "number",
+      "default": 0,
+      "label": "immovable property received free - taxable already"
+    },
+    {
+      "name": "property_less",
+      "type": "number",
+      "default": 0,
+      "label": "immovable property bought for less - taxable already"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "money": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "gt",
+              "left": "$money",
+              "right": {
+                "vop": "get",
+                "value": {
+                  "chip": "myreturn.gift_rules",
+                  "args": {}
+                },
+                "path": "threshold"
+              }
+            },
+            "then": "$money"
+          }
+        ],
+        "else": 0
+      },
+      "movable_free": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "gt",
+              "left": "$movable_free",
+              "right": {
+                "vop": "get",
+                "value": {
+                  "chip": "myreturn.gift_rules",
+                  "args": {}
+                },
+                "path": "threshold"
+              }
+            },
+            "then": "$movable_free"
+          }
+        ],
+        "else": 0
+      },
+      "movable_less": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "gt",
+              "left": "$movable_less",
+              "right": {
+                "vop": "get",
+                "value": {
+                  "chip": "myreturn.gift_rules",
+                  "args": {}
+                },
+                "path": "threshold"
+              }
+            },
+            "then": "$movable_less"
+          }
+        ],
+        "else": 0
+      },
+      "property_free": "$property_free",
+      "property_less": "$property_less",
+      "total": {
+        "vop": "total",
+        "values": [
+          {
+            "vop": "choose",
+            "cases": [
+              {
+                "when": {
+                  "op": "gt",
+                  "left": "$money",
+                  "right": {
+                    "vop": "get",
+                    "value": {
+                      "chip": "myreturn.gift_rules",
+                      "args": {}
+                    },
+                    "path": "threshold"
+                  }
+                },
+                "then": "$money"
+              }
+            ],
+            "else": 0
+          },
+          {
+            "vop": "choose",
+            "cases": [
+              {
+                "when": {
+                  "op": "gt",
+                  "left": "$movable_free",
+                  "right": {
+                    "vop": "get",
+                    "value": {
+                      "chip": "myreturn.gift_rules",
+                      "args": {}
+                    },
+                    "path": "threshold"
+                  }
+                },
+                "then": "$movable_free"
+              }
+            ],
+            "else": 0
+          },
+          {
+            "vop": "choose",
+            "cases": [
+              {
+                "when": {
+                  "op": "gt",
+                  "left": "$movable_less",
+                  "right": {
+                    "vop": "get",
+                    "value": {
+                      "chip": "myreturn.gift_rules",
+                      "args": {}
+                    },
+                    "path": "threshold"
+                  }
+                },
+                "then": "$movable_less"
+              }
+            ],
+            "else": 0
+          },
+          "$property_free",
+          "$property_less"
+        ]
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-07: s.56(2)(x): sums received without consideration in the year, more than 50,000 together - all of them; movable property received free, FMV together more than 50,000 - all of it; bought for less by more than 50,000 together - the shortfall; immovable property as chip myreturn.gift_row says. Schedule OS 1d (i) to (v).",
+  "test_cases": [
+    {
+      "args": {
+        "money": 40000
+      },
+      "expect_value": {
+        "money": 0,
+        "movable_free": 0,
+        "movable_less": 0,
+        "property_free": 0,
+        "property_less": 0,
+        "total": 0.0
+      }
+    },
+    {
+      "args": {
+        "money": 60000
+      },
+      "expect_value": {
+        "money": 60000,
+        "movable_free": 0,
+        "movable_less": 0,
+        "property_free": 0,
+        "property_less": 0,
+        "total": 60000.0
+      }
+    },
+    {
+      "args": {
+        "money": 30000,
+        "movable_free": 30000
+      },
+      "expect_value": {
+        "money": 0,
+        "movable_free": 0,
+        "movable_less": 0,
+        "property_free": 0,
+        "property_less": 0,
+        "total": 0.0
+      }
+    },
+    {
+      "args": {
+        "money": 60000,
+        "property_free": 3000000,
+        "movable_less": 70000
+      },
+      "expect_value": {
+        "money": 60000,
+        "movable_free": 0,
+        "movable_less": 70000,
+        "property_free": 3000000,
+        "property_less": 0,
+        "total": 3130000.0
+      }
+    }
+  ]
+}

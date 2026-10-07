@@ -125,6 +125,7 @@ def facts(cid: str, ay: str) -> dict:
                    "residential": yn(c.get("nri"), "residential"), "capacity": fc["capacity"].get(c["status"], ""),
                    "verifier": c.get("relation") or c["name"], "verifier_father": c.get("father") or ""},
         "filing": {"section": codes["return_sec"].get(kind, 11), "due": _iso(d["dates"]["due"]),
+                   "due_rule": _iso(d["dates"].get("due_rule") or d["dates"]["due"]),   # the Act's date: the schema's enum
                    "orig_ack": (cur or {}).get("ack_no", ""), "orig_date": (cur or {}).get("filed_on", ""),
                    "business": yn(heads.get(codes["business_head"])), "audit": yn(y.get("audit")),
                    "books": yn(heads.get(codes["business_head"]))},
@@ -294,12 +295,12 @@ def tar_facts(cid: str, ay: str) -> dict:
     import firms  # noqa: PLC0415
     fm = next((x for x in firms._all() if x["id"] == c.get("firm_id")), None) or {}  # noqa: SLF001
     owner = (fm.get("owner_name") or "").split()
-    apin = (re.findall(r"[1-9][0-9]{5}", fm.get("address") or "") or [""])[-1]
-    aparts = [q.strip() for q in re.sub(r"[1-9][0-9]{5}", "", fm.get("address") or "").split(",") if q.strip()]
+    apin = (re.findall(r"\b[1-9][0-9]{5}\b", fm.get("address") or "") or [""])[-1]
+    aparts = [q.strip() for q in re.sub(r"\b[1-9][0-9]{5}\b", "", fm.get("address") or "").split(",") if q.strip()]
     form = ts["form_by_status"].get(c["status"], ts["default_form"])
     return lists | {
         "tar": {"form": form, "form_name": ts["forms"][form]["wrap"], "status": tc["statuses"].get(c["status"]), "ay": ay,
-                "pin": (re.findall(r"[1-9][0-9]{5}", c.get("address") or "") or [""])[-1], "gst_flag": yn(c.get("gst")),
+                "pin": (re.findall(r"\b[1-9][0-9]{5}\b", c.get("address") or "") or [""])[-1], "gst_flag": yn(c.get("gst")),
                 "start": _iso(compute.year_day(ay, "start", -1)), "end": _iso(compute.year_day(ay, "end")),
                 "year": int(str(compute.year_day(ay, "end"))[:4]), "year_text": str(compute.year_day(ay, "end"))[:4],
                 "type_of_account": tc["type_of_account"],
@@ -363,13 +364,19 @@ def build(cid: str, ay: str, kind: str = "itr") -> tuple[dict, dict]:
 
 
 def assemble(f: dict, form: str) -> tuple[dict, dict]:
-    """The return as the department's JSON from facts gathered elsewhere (myreturn.facts: ITR-1 / ITR-2) - the same
-    skeleton, the same chip itr.map rows and the same schema check as an ITR-3 / ITR-5."""
+    """The return as the department's JSON from facts gathered elsewhere (myreturn.facts: ITR-1 / ITR-2 / ITR-3 / ITR-4) - the
+    same skeleton, the same chip itr.map rows and the same schema check as the CA side's ITR-3 / ITR-5. A form the CA side fills
+    from books has My return's own rows (chip itr.settings own_maps: ITR-3 -> "ITR-3 myreturn")."""
     spec = settings()["forms"].get(form)
     if not spec:
         raise HTTPException(409, say("itr_no_schema", form=form))
-    doc, filled, s, _root, _wrap = _fill(f, spec, engine.run("itr.map")["forms"].get(form) or [])
+    doc, filled, s, _root, _wrap = _fill(f, spec, own_rows(form))
     return doc, _checked(doc, s, spec, form, "itr", filled) | {"books": None}
+
+
+def own_rows(form: str) -> list:
+    """Chip itr.map's rows for a return built from My return's facts (not the CA side's trial balance)."""
+    return engine.run("itr.map")["forms"].get(settings()["own_maps"].get(form, form)) or []
 
 
 def _fill(f: dict, spec: dict, m: list) -> tuple:

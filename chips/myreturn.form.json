@@ -90,6 +90,24 @@
       "type": "boolean",
       "default": false,
       "label": "a Hindu undivided family"
+    },
+    {
+      "name": "special",
+      "type": "boolean",
+      "default": false,
+      "label": "winnings (115BB / 115BBJ) or virtual digital assets (115BBH)"
+    },
+    {
+      "name": "books",
+      "type": "boolean",
+      "default": false,
+      "label": "business / profession income from the person's own profit and loss (not presumptive)"
+    },
+    {
+      "name": "clubbing",
+      "type": "boolean",
+      "default": false,
+      "label": "a spouse's / minor child's income clubbed (s.64) - shown in Schedule SPI, which ITR-1 / ITR-4 do not have"
     }
   ],
   "expr": {
@@ -116,6 +134,30 @@
           "fields": {
             "form": "ITR-3",
             "why": "why_biz_limit"
+          }
+        }
+      },
+      {
+        "when": {
+          "op": "all",
+          "items": [
+            {
+              "op": "eq",
+              "left": "$business",
+              "right": true
+            },
+            {
+              "op": "eq",
+              "left": "$books",
+              "right": true
+            }
+          ]
+        },
+        "then": {
+          "vop": "record",
+          "fields": {
+            "form": "ITR-3",
+            "why": "why_biz_books"
           }
         }
       },
@@ -227,6 +269,20 @@
                     },
                     {
                       "when": {
+                        "op": "eq",
+                        "left": "$special",
+                        "right": true
+                      },
+                      "then": {
+                        "vop": "record",
+                        "fields": {
+                          "form": "ITR-2",
+                          "why": "why_special"
+                        }
+                      }
+                    },
+                    {
+                      "when": {
                         "op": "gt",
                         "left": "$agri",
                         "right": {
@@ -281,6 +337,20 @@
                         "fields": {
                           "form": "ITR-2",
                           "why": "why_foreign"
+                        }
+                      }
+                    },
+                    {
+                      "when": {
+                        "op": "eq",
+                        "left": "$clubbing",
+                        "right": true
+                      },
+                      "then": {
+                        "vop": "record",
+                        "fields": {
+                          "form": "ITR-2",
+                          "why": "why_club"
                         }
                       }
                     },
@@ -453,6 +523,20 @@
                     },
                     {
                       "when": {
+                        "op": "eq",
+                        "left": "$special",
+                        "right": true
+                      },
+                      "then": {
+                        "vop": "record",
+                        "fields": {
+                          "form": "ITR-2",
+                          "why": "why_special"
+                        }
+                      }
+                    },
+                    {
+                      "when": {
                         "op": "gt",
                         "left": "$agri",
                         "right": {
@@ -507,6 +591,20 @@
                         "fields": {
                           "form": "ITR-2",
                           "why": "why_foreign"
+                        }
+                      }
+                    },
+                    {
+                      "when": {
+                        "op": "eq",
+                        "left": "$clubbing",
+                        "right": true
+                      },
+                      "then": {
+                        "vop": "record",
+                        "fields": {
+                          "form": "ITR-2",
+                          "why": "why_club"
                         }
                       }
                     },
@@ -653,6 +751,20 @@
         },
         {
           "when": {
+            "op": "eq",
+            "left": "$special",
+            "right": true
+          },
+          "then": {
+            "vop": "record",
+            "fields": {
+              "form": "ITR-2",
+              "why": "why_special"
+            }
+          }
+        },
+        {
+          "when": {
             "op": "gt",
             "left": "$agri",
             "right": {
@@ -712,6 +824,20 @@
         },
         {
           "when": {
+            "op": "eq",
+            "left": "$clubbing",
+            "right": true
+          },
+          "then": {
+            "vop": "record",
+            "fields": {
+              "form": "ITR-2",
+              "why": "why_club"
+            }
+          }
+        },
+        {
+          "when": {
             "op": "any",
             "items": [
               {
@@ -745,9 +871,9 @@
     }
   },
   "returns": "record",
-  "version": 4,
+  "version": 8,
   "status": "published",
-  "description_nl": "2026-10-06: ITR-1 (Sahaj): a resident with total income up to 50 lakh from salary or pension, up to two houses, other sources, 112A gains up to 1.25 lakh and farm income up to 5,000; anything else - not resident, more income, other gains or losses, a directorship, unlisted shares, foreign assets, losses carried - is ITR-2. The first reason that applies is the one shown. 2026-10-06: presumptive business or profession income (44AD / 44ADA) with nothing ITR-1 would refuse is ITR-4 (Sugam); with more (other gains, a third house, foreign assets ...) or receipts over the limit it is ITR-3. 2026-10-06: huf - ITR-1 is for individuals; an HUF without business files ITR-2 (with presumptive business, ITR-4).",
+  "description_nl": "2026-10-06: ITR-1 (Sahaj): a resident with total income up to 50 lakh from salary or pension, up to two houses, other sources, 112A gains up to 1.25 lakh and farm income up to 5,000; anything else - not resident, more income, other gains or losses, a directorship, unlisted shares, foreign assets, losses carried - is ITR-2. The first reason that applies is the one shown. 2026-10-06: presumptive business or profession income (44AD / 44ADA) with nothing ITR-1 would refuse is ITR-4 (Sugam); with more (other gains, a third house, foreign assets ...) or receipts over the limit it is ITR-3. 2026-10-06: huf - ITR-1 is for individuals; an HUF without business files ITR-2 (with presumptive business, ITR-4). 2026-10-07: winnings from lottery / races / gambling / online games, or a virtual digital asset transferred: ITR-1 and ITR-4 cannot hold them - ITR-2 (ITR-3 with business income). 2026-10-07: test cases for AY 2026-27 ITR-1 / ITR-4: 112A gains up to 1.25 lakh only with no capital loss brought or carried forward; any other capital gain - ITR-2 (ITR-3 with a business). 2026-10-07: books - business or profession income from the person's own profit and loss (no presumptive basis): ITR-3 (why_biz_books). 2026-10-07: clubbing (s.64): income of a spouse / minor child clubbed - ITR-2 (ITR-3 with a business), for Schedule SPI; ITR-1 / ITR-4 are open to clubbed income but have no schedule naming whose it is - My return files ITR-2, which any individual may file instead. resident means resident AND ordinarily resident: an RNOR or a non-resident files ITR-2 / ITR-3 (ITR-1 / ITR-4 are for an ordinarily resident).",
   "test_cases": [
     {
       "args": {
@@ -857,6 +983,133 @@
       "expect_value": {
         "form": "ITR-4",
         "why": "why_presumptive"
+      }
+    },
+    {
+      "args": {
+        "total": 900000,
+        "special": true
+      },
+      "expect_value": {
+        "form": "ITR-2",
+        "why": "why_special"
+      }
+    },
+    {
+      "args": {
+        "total": 900000,
+        "special": true,
+        "business": true
+      },
+      "expect_value": {
+        "form": "ITR-3",
+        "why": "why_biz_more"
+      }
+    },
+    {
+      "args": {
+        "total": 900000,
+        "agri": 60000
+      },
+      "expect_value": {
+        "form": "ITR-2",
+        "why": "why_agri"
+      }
+    },
+    {
+      "args": {
+        "total": 900000,
+        "ltcg_112a": 100000,
+        "loss_cf": true
+      },
+      "expect_value": {
+        "form": "ITR-2",
+        "why": "why_other"
+      }
+    },
+    {
+      "args": {
+        "total": 900000,
+        "ltcg_112a": 100000
+      },
+      "expect_value": {
+        "form": "ITR-1",
+        "why": "why_simple"
+      }
+    },
+    {
+      "args": {
+        "total": 900000,
+        "other_cg": true,
+        "business": true
+      },
+      "expect_value": {
+        "form": "ITR-3",
+        "why": "why_biz_more"
+      }
+    },
+    {
+      "args": {
+        "total": 900000,
+        "ltcg_112a": 100000,
+        "business": true
+      },
+      "expect_value": {
+        "form": "ITR-4",
+        "why": "why_presumptive"
+      }
+    },
+    {
+      "args": {
+        "total": 900000,
+        "business": true,
+        "books": true
+      },
+      "expect_value": {
+        "form": "ITR-3",
+        "why": "why_biz_books"
+      }
+    },
+    {
+      "args": {
+        "total": 900000,
+        "clubbing": true
+      },
+      "expect_value": {
+        "form": "ITR-2",
+        "why": "why_club"
+      }
+    },
+    {
+      "args": {
+        "total": 900000,
+        "clubbing": true,
+        "business": true
+      },
+      "expect_value": {
+        "form": "ITR-3",
+        "why": "why_biz_more"
+      }
+    },
+    {
+      "args": {
+        "total": 900000,
+        "resident": false,
+        "business": true
+      },
+      "expect_value": {
+        "form": "ITR-3",
+        "why": "why_biz_more"
+      }
+    },
+    {
+      "args": {
+        "total": 900000,
+        "foreign": true
+      },
+      "expect_value": {
+        "form": "ITR-2",
+        "why": "why_foreign"
       }
     }
   ]

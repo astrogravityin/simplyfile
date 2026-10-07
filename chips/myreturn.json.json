@@ -72,6 +72,480 @@
         "huf": "K"
       },
       "label": "Verification.Capacity: S self, K Karta"
+    },
+    {
+      "name": "si_codes",
+      "type": "json",
+      "default": {
+        "stcg_111a": [
+          "1A",
+          20
+        ],
+        "ltcg_112a": [
+          "2A",
+          12.5
+        ],
+        "ltcg_112": [
+          "21",
+          12.5
+        ],
+        "lottery": [
+          "5BB",
+          30
+        ],
+        "online_games": [
+          "5BBJ",
+          30
+        ],
+        "vda": [
+          "5BBH",
+          30
+        ]
+      },
+      "label": "Schedule SI: a figure -> [section code, rate]"
+    },
+    {
+      "name": "quarters",
+      "type": "json",
+      "default": [
+        [
+          "Upto15Of6",
+          "0615"
+        ],
+        [
+          "Upto15Of9",
+          "0915"
+        ],
+        [
+          "Up16Of9To15Of12",
+          "1215"
+        ],
+        [
+          "Up16Of12To15Of3",
+          "0315"
+        ],
+        [
+          "Up16Of3To31Of3",
+          "0331"
+        ]
+      ],
+      "label": "the advance-tax periods a special income is shown by (Schedule OS / CG date ranges): [field, up to MMDD]"
+    },
+    {
+      "name": "quarter_default",
+      "type": "text",
+      "default": "Upto15Of6",
+      "label": "a winning with no date: the first period (no 234C relief claimed for it)"
+    },
+    {
+      "name": "agri_category",
+      "type": "text",
+      "default": "AGRI",
+      "label": "exempt income: agricultural (ITR-1 Category)"
+    },
+    {
+      "name": "co_owned",
+      "type": "json",
+      "default": {
+        "true": "YES",
+        "false": "NO"
+      },
+      "label": "Schedule HP: co-owned flag"
+    },
+    {
+      "name": "vda_head",
+      "type": "text",
+      "default": "CG",
+      "label": "Schedule VDA: head the income is taxed under (an investor's - capital gains)"
+    },
+    {
+      "name": "vehicle_own",
+      "type": "json",
+      "default": {
+        "own": "OWN",
+        "lease": "LEASE",
+        "hired": "HIRED"
+      },
+      "label": "44AE: owned / leased / hired"
+    },
+    {
+      "name": "gift_code",
+      "type": "text",
+      "default": "OTH",
+      "label": "ITR-1 / ITR-4 Schedule OS: gifts (s.56(2)(x)) go in as any other income"
+    },
+    {
+      "name": "gift_words",
+      "type": "text",
+      "default": "Gifts taxable u/s 56(2)(x)",
+      "label": "ITR-1 / ITR-4 Schedule OS: the words beside the gifts"
+    },
+    {
+      "name": "tds3_sections",
+      "type": "json",
+      "default": [
+        "4IA",
+        "4-IA",
+        "4IB",
+        "4-IB",
+        "94M",
+        "94S"
+      ],
+      "label": "TDS a buyer or tenant deducts on Form 26QB / 26QC / 26QD / 26QE - Schedule TDS3, not TDS2"
+    },
+    {
+      "name": "tds3_head",
+      "type": "text",
+      "default": "CG",
+      "label": "Schedule TDS3: 194IA (property sold) is capital gains"
+    },
+    {
+      "name": "mf_111a_code",
+      "type": "text",
+      "default": "1A",
+      "label": "Schedule CG A2: 111A (shares / equity fund units, STT paid)"
+    },
+    {
+      "name": "share_before",
+      "type": "json",
+      "default": {
+        "true": "BE",
+        "false": "AE"
+      },
+      "label": "Schedule 112A: bought on or before 31 January 2018 (BE) or after (AE)"
+    },
+    {
+      "name": "isin_none",
+      "type": "text",
+      "default": "INNOTREQUIRD",
+      "label": "Schedule 112A: the department's ISIN for a line with none"
+    },
+    {
+      "name": "typed_name",
+      "type": "text",
+      "default": "Total of 112A gains typed on Review",
+      "label": "Schedule 112A: the line for a total typed without the scrips"
+    },
+    {
+      "name": "country_india",
+      "type": "text",
+      "default": "91",
+      "label": "Schedule CG: the buyer's country (India)"
+    },
+    {
+      "name": "cfl_blocks",
+      "type": "json",
+      "default": [
+        "LossCFFromPrevYrToAY",
+        "LossCFFromPrev2ndYearFromAY",
+        "LossCFFromPrev3rdYearFromAY",
+        "LossCFFromPrev4thYearFromAY",
+        "LossCFFromPrev5thYearFromAY",
+        "LossCFFromPrev6thYearFromAY",
+        "LossCFFromPrev7thYearFromAY",
+        "LossCFFromPrev8thYearFromAY"
+      ],
+      "label": "Schedule CFL: the eight earlier years, last year first"
+    },
+    {
+      "name": "cfl_fields",
+      "type": "json",
+      "default": {
+        "stcl": "TotalSTCGPTILossCF",
+        "ltcl": "TotalLTCGPTILossCF",
+        "hp": "TotalHPPTILossCF"
+      },
+      "label": "Schedule CFL: short-term, long-term and house-property loss"
+    },
+    {
+      "name": "cfl_detail",
+      "type": "text",
+      "default": "CarryFwdLossDetail",
+      "label": "Schedule CFL: a year's block"
+    },
+    {
+      "name": "cfl_date",
+      "type": "text",
+      "default": "DateOfFiling",
+      "label": "Schedule CFL: the date that year's return was filed"
+    },
+    {
+      "name": "cfl_date_default",
+      "type": "text",
+      "default": "07-31",
+      "label": "Schedule CFL: a year's filing date when none is typed - that year's 31 July"
+    },
+    {
+      "name": "cfl_summary",
+      "type": "text",
+      "default": "LossSummaryDetail",
+      "label": "Schedule CFL: a total's block"
+    },
+    {
+      "name": "cfl_bf_total",
+      "type": "text",
+      "default": "TotalOfBFLossesEarlierYrs",
+      "label": "Schedule CFL: brought forward"
+    },
+    {
+      "name": "cfl_adjusted",
+      "type": "text",
+      "default": "AdjTotBFLossInBFLA",
+      "label": "Schedule CFL: set off this year (Schedule BFLA)"
+    },
+    {
+      "name": "cfl_current",
+      "type": "text",
+      "default": "CurrentAYloss",
+      "label": "Schedule CFL: this year's loss"
+    },
+    {
+      "name": "cfl_total",
+      "type": "text",
+      "default": "TotalLossCFSummary",
+      "label": "Schedule CFL: carried forward to next year"
+    },
+    {
+      "name": "tds_heads",
+      "type": "json",
+      "default": {
+        "business": "BP",
+        "other": "OS"
+      },
+      "label": "Schedule TDS2 head of income: a business receipt (194J, 194C ...) or other sources"
+    },
+    {
+      "name": "yn",
+      "type": "json",
+      "default": {
+        "true": "Y",
+        "false": "N"
+      },
+      "label": "a yes / no flag in the department's JSON"
+    },
+    {
+      "name": "cfl_blocks_itr3",
+      "type": "json",
+      "default": [
+        "LossCFCurrentAssmntYear2026",
+        "LossCFCurrentAssmntYear2025",
+        "LossCFCurrentAssmntYear2024",
+        "LossCFCurrentAssmntYear2023",
+        "LossCFCurrentAssmntYear2022",
+        "LossCFCurrentAssmntYear2021",
+        "LossCFCurrentAssmntYear",
+        "LossCFFromPrevYrToAY"
+      ],
+      "label": "ITR-3 Schedule CFL: the block of the 1st ... 8th year before (named by the loss's AY: 2025-26 ... 2018-19)"
+    },
+    {
+      "name": "cfl_summary_zero_itr3",
+      "type": "json",
+      "default": [
+        "BusLossOthThanSpecLossCF",
+        "LossFrmSpecBusCF",
+        "LossFrmSpecifiedBusCF",
+        "OthSrcLossRaceHorseCF"
+      ],
+      "label": "ITR-3 Schedule CFL summaries: the business-loss and race-horse columns My return never carries (nil)"
+    },
+    {
+      "name": "code_54f",
+      "type": "text",
+      "default": "54F",
+      "label": "the 54F exemption's code in ITR-3's ExemptionOrDednUs54 tables"
+    },
+    {
+      "name": "foreign_state",
+      "type": "text",
+      "default": "99",
+      "label": "Schedule S / HP: the state code of a place outside India (99 - Foreign)"
+    },
+    {
+      "name": "foreign_category",
+      "type": "text",
+      "default": "OTH",
+      "label": "Schedule S: a foreign employer's nature of employment (Others)"
+    },
+    {
+      "name": "owner_self",
+      "type": "text",
+      "default": "SE",
+      "label": "Schedule HP PropertyOwner: the person's own (SE); a minor's MI, a spouse's SP, another's OT (chip myreturn.club_rules)"
+    },
+    {
+      "name": "tin_none",
+      "type": "text",
+      "default": "NA",
+      "label": "Schedule FSI / TR / FilingStatus: the foreign TIN when the person has none to give"
+    },
+    {
+      "name": "h115_no",
+      "type": "text",
+      "default": "N",
+      "label": "FilingStatus.BenefitUs115HFlg: a resident (ROR / RNOR) answers whether 115H is claimed - N (ITR-2 validation rule 83)"
+    },
+    {
+      "name": "fsi_blocks",
+      "type": "json",
+      "default": [
+        "IncFromSal",
+        "IncFromHP",
+        "IncCapGain",
+        "IncOthSrc"
+      ],
+      "label": "ITR-2 Schedule FSI: the heads of a country's row"
+    },
+    {
+      "name": "fsi_blocks_itr3",
+      "type": "json",
+      "default": [
+        "IncFromSal",
+        "IncFromHP",
+        "IncFromBusiness",
+        "IncCapGain",
+        "IncOthSrc"
+      ],
+      "label": "ITR-3 Schedule FSI: the heads of a country's row"
+    },
+    {
+      "name": "tr_refunded_no",
+      "type": "text",
+      "default": "NO",
+      "label": "Schedule TR: tax paid abroad on which relief was allowed has since been refunded - NO"
+    },
+    {
+      "name": "fa_kinds",
+      "type": "json",
+      "default": {
+        "bank": {
+          "list": "DetailsForiegnBank",
+          "map": {
+            "Bankname": "name",
+            "AddressOfBank": "address",
+            "ZipCode": "zip",
+            "ForeignAccountNumber": "account",
+            "OwnerStatus": "status",
+            "AccOpenDate": "opened",
+            "PeakBalanceDuringYear": "peak",
+            "ClosingBalance": "closing",
+            "IntrstAccured": "income"
+          },
+          "defaults": {
+            "status": "OWNER"
+          }
+        },
+        "custodial": {
+          "list": "DtlsForeignCustodialAcc",
+          "map": {
+            "FinancialInstName": "name",
+            "FinancialInstAddress": "address",
+            "ZipCode": "zip",
+            "AccountNumber": "account",
+            "Status": "status",
+            "AccOpenDate": "opened",
+            "PeakBalanceDuringPeriod": "peak",
+            "ClosingBalance": "closing",
+            "GrossAmtPaidCredited": "income",
+            "NatureOfAmount": "nature"
+          },
+          "defaults": {
+            "status": "OWNER",
+            "nature": "N"
+          }
+        },
+        "equity": {
+          "list": "DtlsForeignEquityDebtInterest",
+          "map": {
+            "NameOfEntity": "name",
+            "AddressOfEntity": "address",
+            "ZipCode": "zip",
+            "NatureOfEntity": "nature",
+            "InterestAcquiringDate": "opened",
+            "InitialValOfInvstmnt": "cost",
+            "PeakBalanceDuringPeriod": "peak",
+            "ClosingBalance": "closing",
+            "TotGrossAmtPaidCredited": "income",
+            "TotGrossProceeds": "proceeds"
+          },
+          "defaults": {
+            "nature": "Company"
+          }
+        },
+        "insurance": {
+          "list": "DtlsForeignCashValueInsurance",
+          "map": {
+            "FinancialInstName": "name",
+            "FinancialInstAddress": "address",
+            "ZipCode": "zip",
+            "ContractDate": "opened",
+            "CashValOrSurrenderVal": "closing",
+            "TotGrossAmtPaidCredited": "income"
+          }
+        },
+        "property": {
+          "list": "DetailsImmovableProperty",
+          "map": {
+            "ZipCode": "zip",
+            "AddressOfProperty": "address",
+            "Ownership": "status",
+            "DateOfAcq": "opened",
+            "TotalInvestment": "cost",
+            "IncDrvProperty": "income",
+            "NatureOfInc": "nature",
+            "IncTaxAmt": "taxed",
+            "IncTaxSch": "sch",
+            "IncTaxSchNo": "sch_no"
+          },
+          "defaults": {
+            "status": "DIRECT",
+            "nature": "Rent",
+            "sch": "NI"
+          }
+        },
+        "other": {
+          "list": "DetailsOthAssets",
+          "map": {
+            "ZipCode": "zip",
+            "NatureOfAsset": "name",
+            "Ownership": "status",
+            "DateOfAcq": "opened",
+            "TotalInvestment": "cost",
+            "IncDrvAsset": "income",
+            "NatureOfInc": "nature",
+            "IncTaxAmt": "taxed",
+            "IncTaxSch": "sch",
+            "IncTaxSchNo": "sch_no"
+          },
+          "defaults": {
+            "status": "DIRECT",
+            "nature": "None",
+            "sch": "NI"
+          }
+        }
+      },
+      "label": "Schedule FA: each kind of foreign asset - the department's table (A1 bank accounts, A2 custodial accounts, A3 equity and debt interests, A4 cash-value insurance, B immovable property, C other capital assets) and which of the row's fields goes in each column"
+    },
+    {
+      "name": "fa_defaults",
+      "type": "json",
+      "default": {
+        "text": "-",
+        "zip": "NA",
+        "country": "",
+        "sch_no": "-"
+      },
+      "label": "Schedule FA: what a blank text column says"
+    },
+    {
+      "name": "club_words",
+      "type": "json",
+      "default": {
+        "minor_child": "Minor child",
+        "spouse": "Spouse",
+        "son_wife": "Son's wife"
+      },
+      "label": "Schedule SPI: the relationship"
     }
   ],
   "expr": {
@@ -83,13 +557,55 @@
       "employer_default": "$employer_default",
       "employer_categories": "$employer_categories",
       "status_codes": "$status_codes",
-      "capacity": "$capacity"
+      "capacity": "$capacity",
+      "si_codes": "$si_codes",
+      "quarters": "$quarters",
+      "quarter_default": "$quarter_default",
+      "agri_category": "$agri_category",
+      "co_owned": "$co_owned",
+      "vda_head": "$vda_head",
+      "vehicle_own": "$vehicle_own",
+      "gift_code": "$gift_code",
+      "gift_words": "$gift_words",
+      "tds3_sections": "$tds3_sections",
+      "tds3_head": "$tds3_head",
+      "mf_111a_code": "$mf_111a_code",
+      "share_before": "$share_before",
+      "isin_none": "$isin_none",
+      "typed_name": "$typed_name",
+      "country_india": "$country_india",
+      "cfl_blocks": "$cfl_blocks",
+      "cfl_fields": "$cfl_fields",
+      "cfl_detail": "$cfl_detail",
+      "cfl_date": "$cfl_date",
+      "cfl_date_default": "$cfl_date_default",
+      "cfl_summary": "$cfl_summary",
+      "cfl_bf_total": "$cfl_bf_total",
+      "cfl_adjusted": "$cfl_adjusted",
+      "cfl_current": "$cfl_current",
+      "cfl_total": "$cfl_total",
+      "tds_heads": "$tds_heads",
+      "yn": "$yn",
+      "cfl_blocks_itr3": "$cfl_blocks_itr3",
+      "cfl_summary_zero_itr3": "$cfl_summary_zero_itr3",
+      "code_54f": "$code_54f",
+      "foreign_state": "$foreign_state",
+      "foreign_category": "$foreign_category",
+      "owner_self": "$owner_self",
+      "tin_none": "$tin_none",
+      "h115_no": "$h115_no",
+      "fsi_blocks": "$fsi_blocks",
+      "fsi_blocks_itr3": "$fsi_blocks_itr3",
+      "tr_refunded_no": "$tr_refunded_no",
+      "fa_kinds": "$fa_kinds",
+      "fa_defaults": "$fa_defaults",
+      "club_words": "$club_words"
     }
   },
   "returns": "record",
-  "version": 3,
+  "version": 8,
   "status": "published",
-  "description_nl": "2026-10-06: other-sources nature codes (SAV savings, IFD deposits, TAX refund interest, DIV dividend, FAP family pension, OTH other), and the employer category (OTH = private employer) when the person has not picked one. 2026-10-06: status_codes - I for an individual, H for an HUF. 2026-10-06: capacity - an HUF's return is verified by its Karta (K).",
+  "description_nl": "2026-10-06: other-sources nature codes (SAV savings, IFD deposits, TAX refund interest, DIV dividend, FAP family pension, OTH other), and the employer category (OTH = private employer) when the person has not picked one. 2026-10-06: status_codes - I for an individual, H for an HUF. 2026-10-06: capacity - an HUF's return is verified by its Karta (K). 2026-10-07: Schedule SI codes and rates, the special-income date ranges, agricultural (AGRI), co-owned YES/NO, VDA head CG, 44AE owned / leased / hired. 2026-10-07: capital gains: Schedule 112A (BE / AE, INNOTREQUIRD), 111A code, Schedule CFL's blocks and fields, Schedule TDS3 sections (26QB ...), gifts in ITR-1 / ITR-4. 2026-10-07: tds_heads (ITR-3 Schedule TDS2: BP for a receipt of the business, OS otherwise); yn. 2026-10-07: tds_heads (ITR-3 Schedule TDS2: BP for a receipt of the business, OS otherwise); yn; ITR-3 Schedule CFL block names (by AY) and its nil business-loss columns; code_54f. 2026-10-07: wave 3: foreign state / employer codes, Schedule FSI blocks (ITR-2 / ITR-3), Schedule TR flag, Schedule FA tables, Schedule SPI words, 115H.",
   "test_cases": [
     {
       "args": {},
@@ -124,6 +640,270 @@
         "capacity": {
           "individual": "S",
           "huf": "K"
+        },
+        "si_codes": {
+          "stcg_111a": [
+            "1A",
+            20
+          ],
+          "ltcg_112a": [
+            "2A",
+            12.5
+          ],
+          "ltcg_112": [
+            "21",
+            12.5
+          ],
+          "lottery": [
+            "5BB",
+            30
+          ],
+          "online_games": [
+            "5BBJ",
+            30
+          ],
+          "vda": [
+            "5BBH",
+            30
+          ]
+        },
+        "quarters": [
+          [
+            "Upto15Of6",
+            "0615"
+          ],
+          [
+            "Upto15Of9",
+            "0915"
+          ],
+          [
+            "Up16Of9To15Of12",
+            "1215"
+          ],
+          [
+            "Up16Of12To15Of3",
+            "0315"
+          ],
+          [
+            "Up16Of3To31Of3",
+            "0331"
+          ]
+        ],
+        "quarter_default": "Upto15Of6",
+        "agri_category": "AGRI",
+        "co_owned": {
+          "true": "YES",
+          "false": "NO"
+        },
+        "vda_head": "CG",
+        "vehicle_own": {
+          "own": "OWN",
+          "lease": "LEASE",
+          "hired": "HIRED"
+        },
+        "gift_code": "OTH",
+        "gift_words": "Gifts taxable u/s 56(2)(x)",
+        "tds3_sections": [
+          "4IA",
+          "4-IA",
+          "4IB",
+          "4-IB",
+          "94M",
+          "94S"
+        ],
+        "tds3_head": "CG",
+        "mf_111a_code": "1A",
+        "share_before": {
+          "true": "BE",
+          "false": "AE"
+        },
+        "isin_none": "INNOTREQUIRD",
+        "typed_name": "Total of 112A gains typed on Review",
+        "country_india": "91",
+        "cfl_blocks": [
+          "LossCFFromPrevYrToAY",
+          "LossCFFromPrev2ndYearFromAY",
+          "LossCFFromPrev3rdYearFromAY",
+          "LossCFFromPrev4thYearFromAY",
+          "LossCFFromPrev5thYearFromAY",
+          "LossCFFromPrev6thYearFromAY",
+          "LossCFFromPrev7thYearFromAY",
+          "LossCFFromPrev8thYearFromAY"
+        ],
+        "cfl_fields": {
+          "stcl": "TotalSTCGPTILossCF",
+          "ltcl": "TotalLTCGPTILossCF",
+          "hp": "TotalHPPTILossCF"
+        },
+        "cfl_detail": "CarryFwdLossDetail",
+        "cfl_date": "DateOfFiling",
+        "cfl_date_default": "07-31",
+        "cfl_summary": "LossSummaryDetail",
+        "cfl_bf_total": "TotalOfBFLossesEarlierYrs",
+        "cfl_adjusted": "AdjTotBFLossInBFLA",
+        "cfl_current": "CurrentAYloss",
+        "cfl_total": "TotalLossCFSummary",
+        "tds_heads": {
+          "business": "BP",
+          "other": "OS"
+        },
+        "yn": {
+          "true": "Y",
+          "false": "N"
+        },
+        "cfl_blocks_itr3": [
+          "LossCFCurrentAssmntYear2026",
+          "LossCFCurrentAssmntYear2025",
+          "LossCFCurrentAssmntYear2024",
+          "LossCFCurrentAssmntYear2023",
+          "LossCFCurrentAssmntYear2022",
+          "LossCFCurrentAssmntYear2021",
+          "LossCFCurrentAssmntYear",
+          "LossCFFromPrevYrToAY"
+        ],
+        "cfl_summary_zero_itr3": [
+          "BusLossOthThanSpecLossCF",
+          "LossFrmSpecBusCF",
+          "LossFrmSpecifiedBusCF",
+          "OthSrcLossRaceHorseCF"
+        ],
+        "code_54f": "54F",
+        "foreign_state": "99",
+        "foreign_category": "OTH",
+        "owner_self": "SE",
+        "tin_none": "NA",
+        "h115_no": "N",
+        "fsi_blocks": [
+          "IncFromSal",
+          "IncFromHP",
+          "IncCapGain",
+          "IncOthSrc"
+        ],
+        "fsi_blocks_itr3": [
+          "IncFromSal",
+          "IncFromHP",
+          "IncFromBusiness",
+          "IncCapGain",
+          "IncOthSrc"
+        ],
+        "tr_refunded_no": "NO",
+        "fa_kinds": {
+          "bank": {
+            "list": "DetailsForiegnBank",
+            "map": {
+              "Bankname": "name",
+              "AddressOfBank": "address",
+              "ZipCode": "zip",
+              "ForeignAccountNumber": "account",
+              "OwnerStatus": "status",
+              "AccOpenDate": "opened",
+              "PeakBalanceDuringYear": "peak",
+              "ClosingBalance": "closing",
+              "IntrstAccured": "income"
+            },
+            "defaults": {
+              "status": "OWNER"
+            }
+          },
+          "custodial": {
+            "list": "DtlsForeignCustodialAcc",
+            "map": {
+              "FinancialInstName": "name",
+              "FinancialInstAddress": "address",
+              "ZipCode": "zip",
+              "AccountNumber": "account",
+              "Status": "status",
+              "AccOpenDate": "opened",
+              "PeakBalanceDuringPeriod": "peak",
+              "ClosingBalance": "closing",
+              "GrossAmtPaidCredited": "income",
+              "NatureOfAmount": "nature"
+            },
+            "defaults": {
+              "status": "OWNER",
+              "nature": "N"
+            }
+          },
+          "equity": {
+            "list": "DtlsForeignEquityDebtInterest",
+            "map": {
+              "NameOfEntity": "name",
+              "AddressOfEntity": "address",
+              "ZipCode": "zip",
+              "NatureOfEntity": "nature",
+              "InterestAcquiringDate": "opened",
+              "InitialValOfInvstmnt": "cost",
+              "PeakBalanceDuringPeriod": "peak",
+              "ClosingBalance": "closing",
+              "TotGrossAmtPaidCredited": "income",
+              "TotGrossProceeds": "proceeds"
+            },
+            "defaults": {
+              "nature": "Company"
+            }
+          },
+          "insurance": {
+            "list": "DtlsForeignCashValueInsurance",
+            "map": {
+              "FinancialInstName": "name",
+              "FinancialInstAddress": "address",
+              "ZipCode": "zip",
+              "ContractDate": "opened",
+              "CashValOrSurrenderVal": "closing",
+              "TotGrossAmtPaidCredited": "income"
+            }
+          },
+          "property": {
+            "list": "DetailsImmovableProperty",
+            "map": {
+              "ZipCode": "zip",
+              "AddressOfProperty": "address",
+              "Ownership": "status",
+              "DateOfAcq": "opened",
+              "TotalInvestment": "cost",
+              "IncDrvProperty": "income",
+              "NatureOfInc": "nature",
+              "IncTaxAmt": "taxed",
+              "IncTaxSch": "sch",
+              "IncTaxSchNo": "sch_no"
+            },
+            "defaults": {
+              "status": "DIRECT",
+              "nature": "Rent",
+              "sch": "NI"
+            }
+          },
+          "other": {
+            "list": "DetailsOthAssets",
+            "map": {
+              "ZipCode": "zip",
+              "NatureOfAsset": "name",
+              "Ownership": "status",
+              "DateOfAcq": "opened",
+              "TotalInvestment": "cost",
+              "IncDrvAsset": "income",
+              "NatureOfInc": "nature",
+              "IncTaxAmt": "taxed",
+              "IncTaxSch": "sch",
+              "IncTaxSchNo": "sch_no"
+            },
+            "defaults": {
+              "status": "DIRECT",
+              "nature": "None",
+              "sch": "NI"
+            }
+          }
+        },
+        "fa_defaults": {
+          "text": "-",
+          "zip": "NA",
+          "country": "",
+          "sch_no": "-"
+        },
+        "club_words": {
+          "minor_child": "Minor child",
+          "spouse": "Spouse",
+          "son_wife": "Son's wife"
         }
       }
     }

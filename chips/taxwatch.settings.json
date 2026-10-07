@@ -90,6 +90,12 @@
       "type": "number",
       "default": 240,
       "label": "seconds a Fetch may take (the AI searches the web first)"
+    },
+    {
+      "name": "check_every_days",
+      "type": "number",
+      "default": 30,
+      "label": "check every days"
     }
   ],
   "expr": {
@@ -106,13 +112,14 @@
       "archive_key": "$archive_key",
       "new_most": "$new_most",
       "ais": "$ais",
-      "ai_timeout": "$ai_timeout"
+      "ai_timeout": "$ai_timeout",
+      "check_every_days": "$check_every_days"
     }
   },
   "returns": "record",
-  "version": 5,
+  "version": 6,
   "status": "published",
-  "description_nl": "2026-10-06: the AY the portal's live figures are for (live_ay - Apply moves it on), the AI that fetches (Gemini with Google Search, official sources only), its prompt, and how its answer is read. Apply publishes through the Ops & chips builder layer (data/builder/chips), so a deploy never undoes it and each chip keeps its History. 2026-10-06: the prompt also asks for the changes that are not one of the items (\"_new\") - they cannot be applied as a figure; Compare shows them as needs building. new_most: how many are kept. 2026-10-06: ais - the models Fetch may ask, each searching the web itself; Automatic takes the first whose key works. 2026-10-06: ai_timeout - how long a Fetch may take. 2026-10-06: fence is the fence marks only (json_in_text removes what it matches - the old pattern took the answer with it).",
+  "description_nl": "2026-10-06: the AY the portal's live figures are for (live_ay - Apply moves it on), the AI that fetches (Gemini with Google Search, official sources only), its prompt, and how its answer is read. Apply publishes through the Ops & chips builder layer (data/builder/chips), so a deploy never undoes it and each chip keeps its History. 2026-10-06: the prompt also asks for the changes that are not one of the items (\"_new\") - they cannot be applied as a figure; Compare shows them as needs building. new_most: how many are kept. 2026-10-06: ais - the models Fetch may ask, each searching the web itself; Automatic takes the first whose key works. 2026-10-06: ai_timeout - how long a Fetch may take. 2026-10-06: fence is the fence marks only (json_in_text removes what it matches - the old pattern took the answer with it). 2026-10-07: check_every_days - Tax rules asks for a re-check of the live year when the last Fetch is older (circulars come all year).",
   "test_cases": [
     {
       "args": {},
@@ -140,7 +147,8 @@
             "tool": "web_search"
           }
         ],
-        "ai_timeout": 240
+        "ai_timeout": 240,
+        "check_every_days": 30
       }
     }
   ]

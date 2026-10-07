@@ -1,0 +1,629 @@
+{
+  "chip_id": "myreturn.waterfall",
+  "kind": "accessor",
+  "set": "myreturn",
+  "label": "My return: a loss against gains, in order",
+  "aliases": [
+    "set off",
+    "loss",
+    "cyla",
+    "bfla"
+  ],
+  "params": [
+    {
+      "name": "loss",
+      "type": "number",
+      "default": 0,
+      "label": "the loss to set off"
+    },
+    {
+      "name": "gains",
+      "type": "json",
+      "default": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "label": "the gains it may be set off against, in the order the law (or the person) takes them - up to four"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "used": [
+        {
+          "vop": "smallest",
+          "values": [
+            {
+              "vop": "largest",
+              "values": [
+                {
+                  "vop": "get",
+                  "value": "$gains",
+                  "path": "0"
+                },
+                0
+              ]
+            },
+            {
+              "vop": "largest",
+              "values": [
+                0,
+                "$loss"
+              ]
+            }
+          ]
+        },
+        {
+          "vop": "smallest",
+          "values": [
+            {
+              "vop": "largest",
+              "values": [
+                {
+                  "vop": "get",
+                  "value": "$gains",
+                  "path": "1"
+                },
+                0
+              ]
+            },
+            {
+              "vop": "largest",
+              "values": [
+                0,
+                {
+                  "vop": "sub",
+                  "a": "$loss",
+                  "b": {
+                    "vop": "total",
+                    "values": [
+                      {
+                        "vop": "largest",
+                        "values": [
+                          {
+                            "vop": "get",
+                            "value": "$gains",
+                            "path": "0"
+                          },
+                          0
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "vop": "smallest",
+          "values": [
+            {
+              "vop": "largest",
+              "values": [
+                {
+                  "vop": "get",
+                  "value": "$gains",
+                  "path": "2"
+                },
+                0
+              ]
+            },
+            {
+              "vop": "largest",
+              "values": [
+                0,
+                {
+                  "vop": "sub",
+                  "a": "$loss",
+                  "b": {
+                    "vop": "total",
+                    "values": [
+                      {
+                        "vop": "largest",
+                        "values": [
+                          {
+                            "vop": "get",
+                            "value": "$gains",
+                            "path": "0"
+                          },
+                          0
+                        ]
+                      },
+                      {
+                        "vop": "largest",
+                        "values": [
+                          {
+                            "vop": "get",
+                            "value": "$gains",
+                            "path": "1"
+                          },
+                          0
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "vop": "smallest",
+          "values": [
+            {
+              "vop": "largest",
+              "values": [
+                {
+                  "vop": "get",
+                  "value": "$gains",
+                  "path": "3"
+                },
+                0
+              ]
+            },
+            {
+              "vop": "largest",
+              "values": [
+                0,
+                {
+                  "vop": "sub",
+                  "a": "$loss",
+                  "b": {
+                    "vop": "total",
+                    "values": [
+                      {
+                        "vop": "largest",
+                        "values": [
+                          {
+                            "vop": "get",
+                            "value": "$gains",
+                            "path": "0"
+                          },
+                          0
+                        ]
+                      },
+                      {
+                        "vop": "largest",
+                        "values": [
+                          {
+                            "vop": "get",
+                            "value": "$gains",
+                            "path": "1"
+                          },
+                          0
+                        ]
+                      },
+                      {
+                        "vop": "largest",
+                        "values": [
+                          {
+                            "vop": "get",
+                            "value": "$gains",
+                            "path": "2"
+                          },
+                          0
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "left": {
+        "vop": "largest",
+        "values": [
+          0,
+          {
+            "vop": "sub",
+            "a": "$loss",
+            "b": {
+              "vop": "total",
+              "values": [
+                {
+                  "vop": "largest",
+                  "values": [
+                    {
+                      "vop": "get",
+                      "value": "$gains",
+                      "path": "0"
+                    },
+                    0
+                  ]
+                },
+                {
+                  "vop": "largest",
+                  "values": [
+                    {
+                      "vop": "get",
+                      "value": "$gains",
+                      "path": "1"
+                    },
+                    0
+                  ]
+                },
+                {
+                  "vop": "largest",
+                  "values": [
+                    {
+                      "vop": "get",
+                      "value": "$gains",
+                      "path": "2"
+                    },
+                    0
+                  ]
+                },
+                {
+                  "vop": "largest",
+                  "values": [
+                    {
+                      "vop": "get",
+                      "value": "$gains",
+                      "path": "3"
+                    },
+                    0
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "rest": [
+        {
+          "vop": "sub",
+          "a": {
+            "vop": "largest",
+            "values": [
+              {
+                "vop": "get",
+                "value": "$gains",
+                "path": "0"
+              },
+              0
+            ]
+          },
+          "b": {
+            "vop": "smallest",
+            "values": [
+              {
+                "vop": "largest",
+                "values": [
+                  {
+                    "vop": "get",
+                    "value": "$gains",
+                    "path": "0"
+                  },
+                  0
+                ]
+              },
+              {
+                "vop": "largest",
+                "values": [
+                  0,
+                  "$loss"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "vop": "sub",
+          "a": {
+            "vop": "largest",
+            "values": [
+              {
+                "vop": "get",
+                "value": "$gains",
+                "path": "1"
+              },
+              0
+            ]
+          },
+          "b": {
+            "vop": "smallest",
+            "values": [
+              {
+                "vop": "largest",
+                "values": [
+                  {
+                    "vop": "get",
+                    "value": "$gains",
+                    "path": "1"
+                  },
+                  0
+                ]
+              },
+              {
+                "vop": "largest",
+                "values": [
+                  0,
+                  {
+                    "vop": "sub",
+                    "a": "$loss",
+                    "b": {
+                      "vop": "total",
+                      "values": [
+                        {
+                          "vop": "largest",
+                          "values": [
+                            {
+                              "vop": "get",
+                              "value": "$gains",
+                              "path": "0"
+                            },
+                            0
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "vop": "sub",
+          "a": {
+            "vop": "largest",
+            "values": [
+              {
+                "vop": "get",
+                "value": "$gains",
+                "path": "2"
+              },
+              0
+            ]
+          },
+          "b": {
+            "vop": "smallest",
+            "values": [
+              {
+                "vop": "largest",
+                "values": [
+                  {
+                    "vop": "get",
+                    "value": "$gains",
+                    "path": "2"
+                  },
+                  0
+                ]
+              },
+              {
+                "vop": "largest",
+                "values": [
+                  0,
+                  {
+                    "vop": "sub",
+                    "a": "$loss",
+                    "b": {
+                      "vop": "total",
+                      "values": [
+                        {
+                          "vop": "largest",
+                          "values": [
+                            {
+                              "vop": "get",
+                              "value": "$gains",
+                              "path": "0"
+                            },
+                            0
+                          ]
+                        },
+                        {
+                          "vop": "largest",
+                          "values": [
+                            {
+                              "vop": "get",
+                              "value": "$gains",
+                              "path": "1"
+                            },
+                            0
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "vop": "sub",
+          "a": {
+            "vop": "largest",
+            "values": [
+              {
+                "vop": "get",
+                "value": "$gains",
+                "path": "3"
+              },
+              0
+            ]
+          },
+          "b": {
+            "vop": "smallest",
+            "values": [
+              {
+                "vop": "largest",
+                "values": [
+                  {
+                    "vop": "get",
+                    "value": "$gains",
+                    "path": "3"
+                  },
+                  0
+                ]
+              },
+              {
+                "vop": "largest",
+                "values": [
+                  0,
+                  {
+                    "vop": "sub",
+                    "a": "$loss",
+                    "b": {
+                      "vop": "total",
+                      "values": [
+                        {
+                          "vop": "largest",
+                          "values": [
+                            {
+                              "vop": "get",
+                              "value": "$gains",
+                              "path": "0"
+                            },
+                            0
+                          ]
+                        },
+                        {
+                          "vop": "largest",
+                          "values": [
+                            {
+                              "vop": "get",
+                              "value": "$gains",
+                              "path": "1"
+                            },
+                            0
+                          ]
+                        },
+                        {
+                          "vop": "largest",
+                          "values": [
+                            {
+                              "vop": "get",
+                              "value": "$gains",
+                              "path": "2"
+                            },
+                            0
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-07: A loss set off against up to four gains, the first first: each takes what it can of what is left (s.70, s.71, s.74, s.71B - the order is chip myreturn.cg_rules stcl_order / ltcl_order). used = what each gain absorbed, left = the loss not set off, rest = each gain after.",
+  "test_cases": [
+    {
+      "args": {
+        "loss": 150,
+        "gains": [
+          100,
+          30,
+          50,
+          0
+        ]
+      },
+      "expect_value": {
+        "used": [
+          100,
+          30,
+          20,
+          0
+        ],
+        "left": 0,
+        "rest": [
+          0,
+          0,
+          30,
+          0
+        ]
+      }
+    },
+    {
+      "args": {
+        "loss": 300,
+        "gains": [
+          100,
+          30,
+          50,
+          0
+        ]
+      },
+      "expect_value": {
+        "used": [
+          100,
+          30,
+          50,
+          0
+        ],
+        "left": 120,
+        "rest": [
+          0,
+          0,
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "args": {
+        "loss": 0,
+        "gains": [
+          100,
+          30,
+          50,
+          0
+        ]
+      },
+      "expect_value": {
+        "used": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "left": 0,
+        "rest": [
+          100,
+          30,
+          50,
+          0
+        ]
+      }
+    },
+    {
+      "args": {
+        "loss": 50,
+        "gains": [
+          0,
+          0,
+          80,
+          10
+        ]
+      },
+      "expect_value": {
+        "used": [
+          0,
+          0,
+          50,
+          0
+        ],
+        "left": 0,
+        "rest": [
+          0,
+          0,
+          30,
+          10
+        ]
+      }
+    }
+  ]
+}

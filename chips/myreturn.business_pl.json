@@ -1,0 +1,624 @@
+{
+  "chip_id": "myreturn.business_pl",
+  "kind": "accessor",
+  "set": "myreturn",
+  "label": "My return: presumptive income or the person's own profit and loss (no regular books)",
+  "aliases": [
+    "no books of account",
+    "business profit and loss",
+    "noaccountcase"
+  ],
+  "params": [
+    {
+      "name": "kind",
+      "type": "text",
+      "default": "",
+      "label": "44ADA / 44AD / 44AE (presumptive), business / profession (own profit and loss), or empty"
+    },
+    {
+      "name": "over_limit",
+      "type": "boolean",
+      "default": false,
+      "label": "presumptive income closed (receipts over the limit, more than 10 goods carriages) - chip myreturn.business"
+    },
+    {
+      "name": "presumptive_income",
+      "type": "number",
+      "default": 0,
+      "label": "the presumptive income (chip myreturn.business)"
+    },
+    {
+      "name": "digital",
+      "type": "number",
+      "default": 0,
+      "label": "receipts by bank / digital modes"
+    },
+    {
+      "name": "cash",
+      "type": "number",
+      "default": 0,
+      "label": "receipts in cash"
+    },
+    {
+      "name": "gp",
+      "type": "number",
+      "default": 0,
+      "label": "gross profit typed"
+    },
+    {
+      "name": "expenses",
+      "type": "number",
+      "default": 0,
+      "label": "expenses typed"
+    },
+    {
+      "name": "np",
+      "type": "number",
+      "default": 0,
+      "label": "net profit typed (blank: gross profit less expenses)"
+    },
+    {
+      "name": "pl_kinds",
+      "type": "json",
+      "default": [
+        "business",
+        "profession"
+      ],
+      "label": "kinds worked out from the person's own profit and loss"
+    },
+    {
+      "name": "prof_kinds",
+      "type": "json",
+      "default": [
+        "44ADA",
+        "profession"
+      ],
+      "label": "kinds that are a profession (Part A-P&L 64(ii), s.44AA(1))"
+    },
+    {
+      "name": "books_prof_receipts",
+      "type": "number",
+      "default": 150000,
+      "label": "s.44AA(1) / Rule 6F: a profession with receipts above this keeps books"
+    },
+    {
+      "name": "books_income",
+      "type": "number",
+      "default": 250000,
+      "label": "s.44AA(2)(i): business income above this - books"
+    },
+    {
+      "name": "books_turnover",
+      "type": "number",
+      "default": 2500000,
+      "label": "s.44AA(2)(i): turnover above this - books"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "pl": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "any",
+              "items": [
+                {
+                  "op": "in_set",
+                  "value": "$kind",
+                  "set": "$pl_kinds"
+                },
+                {
+                  "op": "all",
+                  "items": [
+                    {
+                      "op": "not",
+                      "item": {
+                        "op": "eq",
+                        "left": "$kind",
+                        "right": ""
+                      }
+                    },
+                    {
+                      "op": "eq",
+                      "left": "$over_limit",
+                      "right": true
+                    }
+                  ]
+                }
+              ]
+            },
+            "then": true
+          }
+        ],
+        "else": false
+      },
+      "presumptive": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "all",
+                  "items": [
+                    {
+                      "op": "not",
+                      "item": {
+                        "op": "eq",
+                        "left": "$kind",
+                        "right": ""
+                      }
+                    }
+                  ]
+                },
+                {
+                  "op": "not",
+                  "item": {
+                    "op": "any",
+                    "items": [
+                      {
+                        "op": "in_set",
+                        "value": "$kind",
+                        "set": "$pl_kinds"
+                      },
+                      {
+                        "op": "all",
+                        "items": [
+                          {
+                            "op": "not",
+                            "item": {
+                              "op": "eq",
+                              "left": "$kind",
+                              "right": ""
+                            }
+                          },
+                          {
+                            "op": "eq",
+                            "left": "$over_limit",
+                            "right": true
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            "then": true
+          }
+        ],
+        "else": false
+      },
+      "profession": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "in_set",
+              "value": "$kind",
+              "set": "$prof_kinds"
+            },
+            "then": true
+          }
+        ],
+        "else": false
+      },
+      "turnover": {
+        "vop": "add",
+        "a": "$digital",
+        "b": "$cash"
+      },
+      "net": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "any",
+              "items": [
+                {
+                  "op": "in_set",
+                  "value": "$kind",
+                  "set": "$pl_kinds"
+                },
+                {
+                  "op": "all",
+                  "items": [
+                    {
+                      "op": "not",
+                      "item": {
+                        "op": "eq",
+                        "left": "$kind",
+                        "right": ""
+                      }
+                    },
+                    {
+                      "op": "eq",
+                      "left": "$over_limit",
+                      "right": true
+                    }
+                  ]
+                }
+              ]
+            },
+            "then": {
+              "vop": "choose",
+              "cases": [
+                {
+                  "when": {
+                    "op": "not",
+                    "item": {
+                      "op": "eq",
+                      "left": "$np",
+                      "right": 0
+                    }
+                  },
+                  "then": "$np"
+                }
+              ],
+              "else": {
+                "vop": "sub",
+                "a": "$gp",
+                "b": "$expenses"
+              }
+            }
+          }
+        ],
+        "else": 0
+      },
+      "income": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "any",
+              "items": [
+                {
+                  "op": "in_set",
+                  "value": "$kind",
+                  "set": "$pl_kinds"
+                },
+                {
+                  "op": "all",
+                  "items": [
+                    {
+                      "op": "not",
+                      "item": {
+                        "op": "eq",
+                        "left": "$kind",
+                        "right": ""
+                      }
+                    },
+                    {
+                      "op": "eq",
+                      "left": "$over_limit",
+                      "right": true
+                    }
+                  ]
+                }
+              ]
+            },
+            "then": {
+              "vop": "choose",
+              "cases": [
+                {
+                  "when": {
+                    "op": "not",
+                    "item": {
+                      "op": "eq",
+                      "left": "$np",
+                      "right": 0
+                    }
+                  },
+                  "then": "$np"
+                }
+              ],
+              "else": {
+                "vop": "sub",
+                "a": "$gp",
+                "b": "$expenses"
+              }
+            }
+          },
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "not",
+                  "item": {
+                    "op": "eq",
+                    "left": "$kind",
+                    "right": ""
+                  }
+                }
+              ]
+            },
+            "then": "$presumptive_income"
+          }
+        ],
+        "else": 0
+      },
+      "loss": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "any",
+                  "items": [
+                    {
+                      "op": "in_set",
+                      "value": "$kind",
+                      "set": "$pl_kinds"
+                    },
+                    {
+                      "op": "all",
+                      "items": [
+                        {
+                          "op": "not",
+                          "item": {
+                            "op": "eq",
+                            "left": "$kind",
+                            "right": ""
+                          }
+                        },
+                        {
+                          "op": "eq",
+                          "left": "$over_limit",
+                          "right": true
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "op": "lt",
+                  "left": {
+                    "vop": "choose",
+                    "cases": [
+                      {
+                        "when": {
+                          "op": "not",
+                          "item": {
+                            "op": "eq",
+                            "left": "$np",
+                            "right": 0
+                          }
+                        },
+                        "then": "$np"
+                      }
+                    ],
+                    "else": {
+                      "vop": "sub",
+                      "a": "$gp",
+                      "b": "$expenses"
+                    }
+                  },
+                  "right": 0
+                }
+              ]
+            },
+            "then": true
+          }
+        ],
+        "else": false
+      },
+      "liable_44aa": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "any",
+                  "items": [
+                    {
+                      "op": "in_set",
+                      "value": "$kind",
+                      "set": "$pl_kinds"
+                    },
+                    {
+                      "op": "all",
+                      "items": [
+                        {
+                          "op": "not",
+                          "item": {
+                            "op": "eq",
+                            "left": "$kind",
+                            "right": ""
+                          }
+                        },
+                        {
+                          "op": "eq",
+                          "left": "$over_limit",
+                          "right": true
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "op": "any",
+                  "items": [
+                    {
+                      "op": "all",
+                      "items": [
+                        {
+                          "op": "in_set",
+                          "value": "$kind",
+                          "set": "$prof_kinds"
+                        },
+                        {
+                          "op": "gt",
+                          "left": {
+                            "vop": "add",
+                            "a": "$digital",
+                            "b": "$cash"
+                          },
+                          "right": "$books_prof_receipts"
+                        }
+                      ]
+                    },
+                    {
+                      "op": "all",
+                      "items": [
+                        {
+                          "op": "not",
+                          "item": {
+                            "op": "in_set",
+                            "value": "$kind",
+                            "set": "$prof_kinds"
+                          }
+                        },
+                        {
+                          "op": "any",
+                          "items": [
+                            {
+                              "op": "gt",
+                              "left": {
+                                "vop": "choose",
+                                "cases": [
+                                  {
+                                    "when": {
+                                      "op": "not",
+                                      "item": {
+                                        "op": "eq",
+                                        "left": "$np",
+                                        "right": 0
+                                      }
+                                    },
+                                    "then": "$np"
+                                  }
+                                ],
+                                "else": {
+                                  "vop": "sub",
+                                  "a": "$gp",
+                                  "b": "$expenses"
+                                }
+                              },
+                              "right": "$books_income"
+                            },
+                            {
+                              "op": "gt",
+                              "left": {
+                                "vop": "add",
+                                "a": "$digital",
+                                "b": "$cash"
+                              },
+                              "right": "$books_turnover"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            "then": true
+          }
+        ],
+        "else": false
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-07: which basis the business income is on. 44ADA / 44AD / 44AE within their limits: presumptive (chip myreturn.business). Over the limit (44AD / 44ADA receipts, more than 10 goods carriages for 44AE) or a business / profession the person reports on their own figures: the net profit typed (or gross profit less expenses) - ITR-3 Part A-P&L item 64 (\"no regular books of account\"), Schedule BP. loss: a net loss - not carried in My return (a CA). liable_44aa: s.44AA - a profession with receipts over 1.5 lakh, a business with income over 2.5 lakh or turnover over 25 lakh keeps books (ITR-3 Part A-GEN2 LiableSec44AAflg).",
+  "test_cases": [
+    {
+      "args": {
+        "kind": "44ADA",
+        "presumptive_income": 900000,
+        "digital": 1800000
+      },
+      "expect_value": {
+        "pl": false,
+        "presumptive": true,
+        "profession": true,
+        "turnover": 1800000,
+        "net": 0,
+        "income": 900000,
+        "loss": false,
+        "liable_44aa": false
+      }
+    },
+    {
+      "args": {
+        "kind": "44AE",
+        "over_limit": true,
+        "presumptive_income": 900000,
+        "digital": 4800000,
+        "gp": 1500000,
+        "expenses": 600000,
+        "np": 900000
+      },
+      "expect_value": {
+        "pl": true,
+        "presumptive": false,
+        "profession": false,
+        "turnover": 4800000,
+        "net": 900000,
+        "income": 900000,
+        "loss": false,
+        "liable_44aa": true
+      }
+    },
+    {
+      "args": {
+        "kind": "business",
+        "digital": 2000000,
+        "gp": 400000,
+        "expenses": 250000
+      },
+      "expect_value": {
+        "pl": true,
+        "presumptive": false,
+        "profession": false,
+        "turnover": 2000000,
+        "net": 150000,
+        "income": 150000,
+        "loss": false,
+        "liable_44aa": false
+      }
+    },
+    {
+      "args": {
+        "kind": "profession",
+        "digital": 900000,
+        "gp": 900000,
+        "expenses": 1000000
+      },
+      "expect_value": {
+        "pl": true,
+        "presumptive": false,
+        "profession": true,
+        "turnover": 900000,
+        "net": -100000,
+        "income": -100000,
+        "loss": true,
+        "liable_44aa": true
+      }
+    },
+    {
+      "args": {},
+      "expect_value": {
+        "pl": false,
+        "presumptive": false,
+        "profession": false,
+        "turnover": 0,
+        "net": 0,
+        "income": 0,
+        "loss": false,
+        "liable_44aa": false
+      }
+    }
+  ]
+}

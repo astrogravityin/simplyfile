@@ -1,0 +1,223 @@
+{
+  "chip_id": "myreturn.res_rules",
+  "kind": "accessor",
+  "set": "myreturn",
+  "label": "My return: residential status - the rules (s.6)",
+  "aliases": [
+    "residential status",
+    "nri",
+    "rnor",
+    "182 days",
+    "section 6"
+  ],
+  "params": [
+    {
+      "name": "stay_days",
+      "type": "number",
+      "default": 182,
+      "label": "s.6(1)(a): in India 182 days or more in the year - resident"
+    },
+    {
+      "name": "short_days",
+      "type": "number",
+      "default": 60,
+      "label": "s.6(1)(c): 60 days or more in the year ..."
+    },
+    {
+      "name": "prior_days",
+      "type": "number",
+      "default": 365,
+      "label": "s.6(1)(c): ... and 365 days or more in the 4 years before"
+    },
+    {
+      "name": "visitor_days",
+      "type": "number",
+      "default": 120,
+      "label": "s.6(1) Explanation 1(b) (Finance Act 2020): an Indian citizen / person of Indian origin visiting India with total income, other than from foreign sources, over 15 lakh - 120 days in place of 60"
+    },
+    {
+      "name": "rich_income",
+      "type": "number",
+      "default": 1500000,
+      "label": "s.6(1) Explanation 1(b) and s.6(1A): total income other than income from foreign sources, more than this"
+    },
+    {
+      "name": "nr_years_rnor",
+      "type": "number",
+      "default": 9,
+      "label": "s.6(6)(a): non-resident in 9 out of the 10 years before - not ordinarily resident"
+    },
+    {
+      "name": "days_7y_rnor",
+      "type": "number",
+      "default": 729,
+      "label": "s.6(6)(a): in India 729 days or less in the 7 years before - not ordinarily resident"
+    },
+    {
+      "name": "codes",
+      "type": "json",
+      "default": {
+        "ROR": "RES",
+        "RNOR": "NOR",
+        "NR": "NRI"
+      },
+      "label": "ITR-2 / ITR-3 FilingStatus.ResidentialStatus"
+    },
+    {
+      "name": "conditions",
+      "type": "json",
+      "default": {
+        "stay": "1",
+        "short": "2",
+        "nr9": "3",
+        "d729": "4",
+        "nr": "5",
+        "visitor": "6",
+        "deemed": "7"
+      },
+      "label": "ITR-2 / ITR-3 FilingStatus.ConditionsResStatus: the condition the status rests on (the schema's codes)"
+    },
+    {
+      "name": "foreign_counts",
+      "type": "json",
+      "default": {
+        "ROR": [
+          "salary",
+          "house",
+          "interest",
+          "dividend",
+          "other",
+          "stcg",
+          "ltcg",
+          "business"
+        ],
+        "RNOR": [],
+        "NR": []
+      },
+      "label": "s.5: a resident (ordinarily) is taxed on income from anywhere; a not-ordinarily resident and a non-resident only on income received / arising in India - for an RNOR also foreign income from a business controlled in, or a profession set up in, India (s.5(1)(c) proviso)"
+    },
+    {
+      "name": "rnor_controlled",
+      "type": "json",
+      "default": [
+        "business"
+      ],
+      "label": "s.5(1)(c) proviso: the foreign income an RNOR is taxed on when it comes from a business controlled / profession set up in India"
+    },
+    {
+      "name": "fa_for",
+      "type": "json",
+      "default": [
+        "ROR"
+      ],
+      "label": "Schedule FA (foreign assets) - for a resident and ordinarily resident (the ITR-2 instructions: not for RNOR / non-resident)"
+    },
+    {
+      "name": "fsi_for",
+      "type": "json",
+      "default": [
+        "ROR",
+        "RNOR"
+      ],
+      "label": "Schedule FSI / TR - not for a non-resident (ITR-2 validation rules 443, 453)"
+    },
+    {
+      "name": "nr_no",
+      "type": "json",
+      "default": [
+        "87A",
+        "80TTB",
+        "80DD",
+        "80DDB",
+        "80U",
+        "senior_slabs",
+        "207(2)"
+      ],
+      "label": "what a non-resident does not get: the 87A rebate, 80TTB, 80DD / 80DDB / 80U (resident individuals only), the higher basic exemption of a senior / very senior citizen (old regime - for residents), freedom from advance tax at 60+ (s.207(2))"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "stay_days": "$stay_days",
+      "short_days": "$short_days",
+      "prior_days": "$prior_days",
+      "visitor_days": "$visitor_days",
+      "rich_income": "$rich_income",
+      "nr_years_rnor": "$nr_years_rnor",
+      "days_7y_rnor": "$days_7y_rnor",
+      "codes": "$codes",
+      "conditions": "$conditions",
+      "foreign_counts": "$foreign_counts",
+      "rnor_controlled": "$rnor_controlled",
+      "fa_for": "$fa_for",
+      "fsi_for": "$fsi_for",
+      "nr_no": "$nr_no"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-07: Residential status for AY 2026-27 (s.6 as amended by the Finance Act 2020): the day counts, the 15 lakh line, the RNOR tests, the schema codes, which foreign income each status is taxed on (s.5) and what a non-resident does not get.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "stay_days": 182,
+        "short_days": 60,
+        "prior_days": 365,
+        "visitor_days": 120,
+        "rich_income": 1500000,
+        "nr_years_rnor": 9,
+        "days_7y_rnor": 729,
+        "codes": {
+          "ROR": "RES",
+          "RNOR": "NOR",
+          "NR": "NRI"
+        },
+        "conditions": {
+          "stay": "1",
+          "short": "2",
+          "nr9": "3",
+          "d729": "4",
+          "nr": "5",
+          "visitor": "6",
+          "deemed": "7"
+        },
+        "foreign_counts": {
+          "ROR": [
+            "salary",
+            "house",
+            "interest",
+            "dividend",
+            "other",
+            "stcg",
+            "ltcg",
+            "business"
+          ],
+          "RNOR": [],
+          "NR": []
+        },
+        "rnor_controlled": [
+          "business"
+        ],
+        "fa_for": [
+          "ROR"
+        ],
+        "fsi_for": [
+          "ROR",
+          "RNOR"
+        ],
+        "nr_no": [
+          "87A",
+          "80TTB",
+          "80DD",
+          "80DDB",
+          "80U",
+          "senior_slabs",
+          "207(2)"
+        ]
+      }
+    }
+  ]
+}

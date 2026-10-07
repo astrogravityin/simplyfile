@@ -1,0 +1,90 @@
+{
+  "chip_id": "myreturn.check_80ee",
+  "kind": "accessor",
+  "set": "myreturn",
+  "label": "My return: 80EE and 80EEA both claimed",
+  "aliases": [
+    "80ee 80eea"
+  ],
+  "params": [
+    {
+      "name": "c80ee",
+      "type": "number",
+      "default": 0,
+      "label": "80EE claimed"
+    },
+    {
+      "name": "c80eea",
+      "type": "number",
+      "default": 0,
+      "label": "80EEA claimed"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "what": "ee_both",
+      "a": "$c80ee",
+      "b": "$c80eea",
+      "gap": "$c80eea",
+      "word": "lv_ee_both",
+      "level": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "gt",
+                  "left": "$c80ee",
+                  "right": 0
+                },
+                {
+                  "op": "gt",
+                  "left": "$c80eea",
+                  "right": 0
+                }
+              ]
+            },
+            "then": "red"
+          }
+        ],
+        "else": "ok"
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-07: s.80EEA(4)(b): 80EEA is for one not eligible under 80EE - both claimed is a red check (the return keeps 80EE and drops 80EEA, chip myreturn.deductions).",
+  "test_cases": [
+    {
+      "args": {
+        "c80ee": 40000,
+        "c80eea": 150000
+      },
+      "expect_value": {
+        "what": "ee_both",
+        "a": 40000,
+        "b": 150000,
+        "gap": 150000,
+        "word": "lv_ee_both",
+        "level": "red"
+      }
+    },
+    {
+      "args": {
+        "c80eea": 150000
+      },
+      "expect_value": {
+        "what": "ee_both",
+        "a": 0,
+        "b": 150000,
+        "gap": 150000,
+        "word": "lv_ee_both",
+        "level": "ok"
+      }
+    }
+  ]
+}

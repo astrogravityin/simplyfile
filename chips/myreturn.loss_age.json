@@ -1,0 +1,146 @@
+{
+  "chip_id": "myreturn.loss_age",
+  "kind": "accessor",
+  "set": "myreturn",
+  "label": "My return: a loss brought forward - still in time?",
+  "aliases": [
+    "carry forward",
+    "cfl",
+    "8 years"
+  ],
+  "params": [
+    {
+      "name": "loss_ay",
+      "type": "text",
+      "default": "",
+      "label": "the assessment year the loss was first worked out in (2019-20)"
+    },
+    {
+      "name": "ay",
+      "type": "text",
+      "default": "2026-27",
+      "label": "this return's assessment year"
+    },
+    {
+      "name": "kind",
+      "type": "text",
+      "default": "stcl",
+      "label": "stcl / ltcl / hp"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "age": {
+        "vop": "sub",
+        "a": {
+          "vop": "text_pick",
+          "text": "$ay",
+          "pattern": "^(\\d{4})"
+        },
+        "b": {
+          "vop": "text_pick",
+          "text": "$loss_ay",
+          "pattern": "^(\\d{4})"
+        }
+      },
+      "usable": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "ge",
+                  "left": {
+                    "vop": "sub",
+                    "a": {
+                      "vop": "text_pick",
+                      "text": "$ay",
+                      "pattern": "^(\\d{4})"
+                    },
+                    "b": {
+                      "vop": "text_pick",
+                      "text": "$loss_ay",
+                      "pattern": "^(\\d{4})"
+                    }
+                  },
+                  "right": 1
+                },
+                {
+                  "op": "le",
+                  "left": {
+                    "vop": "sub",
+                    "a": {
+                      "vop": "text_pick",
+                      "text": "$ay",
+                      "pattern": "^(\\d{4})"
+                    },
+                    "b": {
+                      "vop": "text_pick",
+                      "text": "$loss_ay",
+                      "pattern": "^(\\d{4})"
+                    }
+                  },
+                  "right": {
+                    "vop": "get",
+                    "value": {
+                      "chip": "myreturn.cg_rules",
+                      "args": {}
+                    },
+                    "path": "loss_years"
+                  }
+                }
+              ]
+            },
+            "then": true
+          }
+        ],
+        "else": false
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-07: s.74(1) / s.71B: a capital or house-property loss is carried forward to the 8 assessment years after the one it was worked out in; the 9th year on it is gone. age 1 = last year's.",
+  "test_cases": [
+    {
+      "args": {
+        "loss_ay": "2025-26"
+      },
+      "expect_value": {
+        "age": 1,
+        "usable": true
+      }
+    },
+    {
+      "args": {
+        "loss_ay": "2018-19"
+      },
+      "expect_value": {
+        "age": 8,
+        "usable": true
+      }
+    },
+    {
+      "args": {
+        "loss_ay": "2017-18"
+      },
+      "expect_value": {
+        "age": 9,
+        "usable": false
+      }
+    },
+    {
+      "args": {
+        "loss_ay": "2026-27"
+      },
+      "expect_value": {
+        "age": 0,
+        "usable": false
+      }
+    }
+  ]
+}

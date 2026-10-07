@@ -1,0 +1,303 @@
+{
+  "chip_id": "myreturn.club_row",
+  "kind": "accessor",
+  "set": "myreturn",
+  "label": "My return: one row of clubbed income",
+  "aliases": [
+    "clubbing",
+    "section 64"
+  ],
+  "params": [
+    {
+      "name": "relation",
+      "type": "text",
+      "default": "minor_child",
+      "label": "minor_child / spouse / son_wife"
+    },
+    {
+      "name": "head",
+      "type": "text",
+      "default": "interest",
+      "label": "chip myreturn.club_rules heads"
+    },
+    {
+      "name": "amount",
+      "type": "number",
+      "default": 0,
+      "label": "the income"
+    },
+    {
+      "name": "skill",
+      "type": "boolean",
+      "default": false,
+      "label": "a minor's income from manual work, a skill, talent or specialised knowledge - not clubbed (s.64(1A) proviso)"
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false,
+      "label": "a minor with a disability of the kind in s.80U - not clubbed (s.64(1A) proviso)"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "counts": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "gt",
+                  "left": "$amount",
+                  "right": 0
+                },
+                {
+                  "op": "not",
+                  "item": {
+                    "op": "all",
+                    "items": [
+                      {
+                        "op": "eq",
+                        "left": "$relation",
+                        "right": "minor_child"
+                      },
+                      {
+                        "op": "any",
+                        "items": [
+                          {
+                            "op": "eq",
+                            "left": "$skill",
+                            "right": true
+                          },
+                          {
+                            "op": "eq",
+                            "left": "$disabled",
+                            "right": true
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            "then": true
+          }
+        ],
+        "else": false
+      },
+      "amount": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "gt",
+                  "left": "$amount",
+                  "right": 0
+                },
+                {
+                  "op": "not",
+                  "item": {
+                    "op": "all",
+                    "items": [
+                      {
+                        "op": "eq",
+                        "left": "$relation",
+                        "right": "minor_child"
+                      },
+                      {
+                        "op": "any",
+                        "items": [
+                          {
+                            "op": "eq",
+                            "left": "$skill",
+                            "right": true
+                          },
+                          {
+                            "op": "eq",
+                            "left": "$disabled",
+                            "right": true
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            "then": "$amount"
+          }
+        ],
+        "else": 0
+      },
+      "to": {
+        "vop": "get",
+        "value": {
+          "vop": "get",
+          "value": {
+            "chip": "myreturn.club_rules",
+            "args": {}
+          },
+          "path": "heads"
+        },
+        "path": {
+          "vop": "template",
+          "text": "{h}.to",
+          "values": {
+            "vop": "record",
+            "fields": {
+              "h": "$head"
+            }
+          }
+        }
+      },
+      "spi": {
+        "vop": "get",
+        "value": {
+          "vop": "get",
+          "value": {
+            "chip": "myreturn.club_rules",
+            "args": {}
+          },
+          "path": "heads"
+        },
+        "path": {
+          "vop": "template",
+          "text": "{h}.spi",
+          "values": {
+            "vop": "record",
+            "fields": {
+              "h": "$head"
+            }
+          }
+        }
+      },
+      "sec": {
+        "vop": "get",
+        "value": {
+          "vop": "get",
+          "value": {
+            "chip": "myreturn.club_rules",
+            "args": {}
+          },
+          "path": "relations"
+        },
+        "path": {
+          "vop": "template",
+          "text": "{r}.sec",
+          "values": {
+            "vop": "record",
+            "fields": {
+              "r": "$relation"
+            }
+          }
+        }
+      },
+      "owner": {
+        "vop": "get",
+        "value": {
+          "vop": "get",
+          "value": {
+            "chip": "myreturn.club_rules",
+            "args": {}
+          },
+          "path": "relations"
+        },
+        "path": {
+          "vop": "template",
+          "text": "{r}.owner",
+          "values": {
+            "vop": "record",
+            "fields": {
+              "r": "$relation"
+            }
+          }
+        }
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-07: s.64: a minor child's income joins the parent's (not what the child earns by manual work, skill or talent, nor a child with an 80U disability); the spouse's / son's wife's income from assets transferred without adequate consideration joins the transferor's - under the head it is.",
+  "test_cases": [
+    {
+      "args": {
+        "amount": 50000
+      },
+      "expect_value": {
+        "counts": true,
+        "amount": 50000,
+        "to": "interest",
+        "spi": "OS",
+        "sec": "64(1A)",
+        "owner": "MI"
+      }
+    },
+    {
+      "args": {
+        "amount": 50000,
+        "skill": true
+      },
+      "expect_value": {
+        "counts": false,
+        "amount": 0,
+        "to": "interest",
+        "spi": "OS",
+        "sec": "64(1A)",
+        "owner": "MI"
+      }
+    },
+    {
+      "args": {
+        "amount": 50000,
+        "disabled": true
+      },
+      "expect_value": {
+        "counts": false,
+        "amount": 0,
+        "to": "interest",
+        "spi": "OS",
+        "sec": "64(1A)",
+        "owner": "MI"
+      }
+    },
+    {
+      "args": {
+        "relation": "spouse",
+        "head": "house",
+        "amount": 240000,
+        "skill": true
+      },
+      "expect_value": {
+        "counts": true,
+        "amount": 240000,
+        "to": "house",
+        "spi": "HP",
+        "sec": "64(1)(iv)",
+        "owner": "SP"
+      }
+    },
+    {
+      "args": {
+        "relation": "son_wife",
+        "head": "ltcg_112a",
+        "amount": 10
+      },
+      "expect_value": {
+        "counts": true,
+        "amount": 10,
+        "to": "ltcg_112a",
+        "spi": "CG",
+        "sec": "64(1)(vi)",
+        "owner": "OT"
+      }
+    }
+  ]
+}

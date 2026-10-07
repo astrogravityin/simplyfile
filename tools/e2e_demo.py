@@ -86,7 +86,7 @@ def _():
 
 @step("4 Portal admin: queue, papers, return with note, resubmit, approve")
 def _():
-    q = admin.get("/api/approvals?state=submitted").json()["rows"]
+    q = admin.get("/api/lists/firm_requests", params={"state": "submitted"}).json()["rows"]
     assert len(q) == 1 and q[0]["sla"] == "on_time"
     assert admin.get(f"/api/firm/{S['fid']}/docs/{q[0]['docs'][0]['id']}").status_code == 200
     assert admin.post(f"/api/firm/{S['fid']}/move", json={"action": "return"}).status_code == 400
@@ -107,7 +107,7 @@ def _():
         assert s.get("/api/clients/settings").status_code == 403, "must change the one-time password first"
         assert s.post("/api/auth/password", json={"current": r["password"], "password": f"{role}-own-Pass-9", "confirm": f"{role}-own-Pass-9"}).status_code == 200
         S[role] = s
-    return f"team: {[m['role'] for m in ca.get('/api/firm').json()['team']]}"
+    return f"team: {[m['role'] for m in ca.get('/api/lists/firm_team').json()['rows']]}"   # /api/firm gives the count; the people: list.firm_team
 
 
 @step("6 Clients: preparer adds the HUF; admin cannot see it")
@@ -244,9 +244,12 @@ def _():
                              "aadhaar_last4": "1111", "phone": "9800012345", "email": "ganesh@huf.test", "consent": True})
     st = g.post(f"/api/firm/{fid}/move", json={"action": "submit"}).json()
     assert st.get("state") == "approved", f"an individual is approved on submit, no papers: {st}"
-    rows = g.get("/api/lists/clients").json()["rows"]
-    assert [r["pan"] for r in rows] == ["AAAHG4321K"], rows
-    assert g.post("/api/clients", json={"name": "Other", "status": "individual", "pan": "ABCPX1234K"}).status_code == 409
+    # 2026-10-06: a self-filer works on My return (grants firm, myreturn, taxwatch) - no Clients screen
+    home = g.get("/api/myreturn").json()
+    rows = home["clients"]
+    assert home["self"] and [r["pan"] for r in rows] == ["AAAHG4321K"], home
+    assert g.get("/api/lists/clients").status_code == 403, "no Clients screen for a self-filer"
+    assert g.post("/api/clients", json={"name": "Other", "status": "individual", "pan": "ABCPX1234K"}).status_code == 403
     assert S["preparer"].get(f"/api/clients/{rows[0]['id']}").status_code == 404, "the CA firm cannot see the self-filer"
 
 

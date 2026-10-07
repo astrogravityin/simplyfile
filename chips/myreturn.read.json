@@ -94,6 +94,46 @@
       "type": "json",
       "default": [
         {
+          "code": "TDS-194IA.*",
+          "field": "property_tds"
+        },
+        {
+          "code": "SFT-012.*",
+          "field": "property_sft"
+        },
+        {
+          "title": "transfer of (certain )?immovable property",
+          "field": "property_tds"
+        },
+        {
+          "code": "TDS-194BB.*",
+          "field": "lottery"
+        },
+        {
+          "code": "TDS-194BA.*",
+          "field": "online_games"
+        },
+        {
+          "code": "TDS-194B",
+          "field": "lottery"
+        },
+        {
+          "code": "TDS-194S.*",
+          "field": "vda_sale"
+        },
+        {
+          "title": "winnings? from (lotter|crossword|horse race|card game|gambling|betting)",
+          "field": "lottery"
+        },
+        {
+          "title": "winnings? from online game",
+          "field": "online_games"
+        },
+        {
+          "title": "virtual digital asset",
+          "field": "vda_sale"
+        },
+        {
           "code": "SFT-016\\s*\\(SB\\)",
           "field": "savings"
         },
@@ -454,7 +494,10 @@
       "type": "json",
       "default": {
         "194A": "deposits",
-        "194": "dividend"
+        "194": "dividend",
+        "194B": "lottery",
+        "194BB": "lottery",
+        "194BA": "online_games"
       },
       "label": "26AS section to income"
     },
@@ -641,6 +684,548 @@
         ]
       },
       "label": "bank"
+    },
+    {
+      "name": "ais_header",
+      "type": "json",
+      "default": {
+        "start_words": [
+          "part a",
+          "general information",
+          "annual information statement"
+        ],
+        "end": "(?i)\\bPART\\s*B\\b",
+        "mobile": "(?i)mobile(?:\\s*(?:number|no\\.?))?\\s*:?\\s*(?:\\+?91[\\s-]*)?([6-9]\\d{9})\\b",
+        "email": "(?i)e-?\\s*mail(?:\\s*(?:address|id))?\\s*:?\\s*([\\w.+-]+@[\\w-]+(?:\\.[\\w-]+)+)",
+        "address": "(?i)\\baddress\\s*:?\\s*(.+?)(?=\\s+(?:mobile|e-?\\s*mail|date of birth|pan|aadhaar)\\b|$)",
+        "json": {
+          "mobile": [
+            "mobileNo",
+            "mobileNumber",
+            "mobile"
+          ],
+          "email": [
+            "emailId",
+            "emailAddress",
+            "email"
+          ],
+          "address": [
+            "address",
+            "addressLine"
+          ]
+        }
+      },
+      "label": "the taxpayer's mobile, e-mail and address in the AIS's general information (Part A) - fills what the pre-filled JSON lacks"
+    },
+    {
+      "name": "employer_block",
+      "type": "json",
+      "default": {
+        "stop": "(?i)PAN of the Deductor|TAN of the Deductor|Name and address of the Employee|Certificate No|Period with the Employer",
+        "column_gap": "\\s{3,}",
+        "email": "[\\w.+-]+@[\\w-]+(?:\\.[\\w-]+)+",
+        "phone": "^\\+?\\(?\\d[\\d()\\s-]{6,}$",
+        "pin": "\\b[1-9][0-9]{5}\\b",
+        "employee_anchor": "Name and address of the Employee",
+        "lines_max": 8
+      },
+      "label": "Form 16 Part A: the employer's address block (the lines under 'Name and address of the Employer', left column) - address, city, PIN, state"
+    },
+    {
+      "name": "state_names",
+      "type": "json",
+      "default": [
+        {
+          "pattern": "(?i)\\bAndaman (?:and|&) Nicobar Islands\\b",
+          "code": "01"
+        },
+        {
+          "pattern": "(?i)\\bDadra (?:and|&) Nagar Haveli\\b",
+          "code": "07"
+        },
+        {
+          "pattern": "(?i)\\bArunachal Pradesh\\b",
+          "code": "03"
+        },
+        {
+          "pattern": "(?i)\\bJammu (?:and|&) Kashmir\\b",
+          "code": "14"
+        },
+        {
+          "pattern": "(?i)\\bHimachal Pradesh\\b",
+          "code": "13"
+        },
+        {
+          "pattern": "(?i)\\bAndhra Pradesh\\b",
+          "code": "02"
+        },
+        {
+          "pattern": "(?i)\\bMadhya Pradesh\\b",
+          "code": "18"
+        },
+        {
+          "pattern": "(?i)\\bDaman (?:and|&) Diu\\b",
+          "code": "08"
+        },
+        {
+          "pattern": "(?i)\\bUttar Pradesh\\b",
+          "code": "31"
+        },
+        {
+          "pattern": "(?i)\\bChhattisgarh\\b",
+          "code": "33"
+        },
+        {
+          "pattern": "(?i)\\bLakshadweep\\b",
+          "code": "17"
+        },
+        {
+          "pattern": "(?i)\\bMaharashtra\\b",
+          "code": "19"
+        },
+        {
+          "pattern": "(?i)\\bWest Bengal\\b",
+          "code": "32"
+        },
+        {
+          "pattern": "(?i)\\bUttarakhand\\b",
+          "code": "34"
+        },
+        {
+          "pattern": "(?i)\\bChandigarh\\b",
+          "code": "06"
+        },
+        {
+          "pattern": "(?i)\\bPuducherry\\b",
+          "code": "25"
+        },
+        {
+          "pattern": "(?i)\\bTamil Nadu\\b",
+          "code": "29"
+        },
+        {
+          "pattern": "(?i)\\bKarnataka\\b",
+          "code": "15"
+        },
+        {
+          "pattern": "(?i)\\bMeghalaya\\b",
+          "code": "21"
+        },
+        {
+          "pattern": "(?i)\\bRajasthan\\b",
+          "code": "27"
+        },
+        {
+          "pattern": "(?i)\\bJharkhand\\b",
+          "code": "35"
+        },
+        {
+          "pattern": "(?i)\\bTelangana\\b",
+          "code": "36"
+        },
+        {
+          "pattern": "(?i)\\bNagaland\\b",
+          "code": "23"
+        },
+        {
+          "pattern": "(?i)\\bGujarat\\b",
+          "code": "11"
+        },
+        {
+          "pattern": "(?i)\\bHaryana\\b",
+          "code": "12"
+        },
+        {
+          "pattern": "(?i)\\bManipur\\b",
+          "code": "20"
+        },
+        {
+          "pattern": "(?i)\\bMizoram\\b",
+          "code": "22"
+        },
+        {
+          "pattern": "(?i)\\bTripura\\b",
+          "code": "30"
+        },
+        {
+          "pattern": "(?i)\\bKerala\\b",
+          "code": "16"
+        },
+        {
+          "pattern": "(?i)\\bOdisha\\b",
+          "code": "24"
+        },
+        {
+          "pattern": "(?i)\\bPunjab\\b",
+          "code": "26"
+        },
+        {
+          "pattern": "(?i)\\bSikkim\\b",
+          "code": "28"
+        },
+        {
+          "pattern": "(?i)\\bLadakh\\b",
+          "code": "37"
+        },
+        {
+          "pattern": "(?i)\\bAssam\\b",
+          "code": "04"
+        },
+        {
+          "pattern": "(?i)\\bBihar\\b",
+          "code": "05"
+        },
+        {
+          "pattern": "(?i)\\bDelhi\\b",
+          "code": "09"
+        },
+        {
+          "pattern": "(?i)\\bGoa\\b",
+          "code": "10"
+        },
+        {
+          "pattern": "(?i)\\bOrissa\\b",
+          "code": "24"
+        },
+        {
+          "pattern": "(?i)\\bPondicherry\\b",
+          "code": "25"
+        },
+        {
+          "pattern": "(?i)\\bNew Delhi\\b",
+          "code": "09"
+        },
+        {
+          "pattern": "(?i)\\bBombay\\b",
+          "code": "19"
+        }
+      ],
+      "label": "a state named in an address -> the department's state code"
+    },
+    {
+      "name": "pin_states",
+      "type": "json",
+      "default": [
+        {
+          "pattern": "^(?:160)",
+          "code": "06"
+        },
+        {
+          "pattern": "^(?:194)",
+          "code": "37"
+        },
+        {
+          "pattern": "^(?:403)",
+          "code": "10"
+        },
+        {
+          "pattern": "^(?:605)",
+          "code": "25"
+        },
+        {
+          "pattern": "^(?:68255)",
+          "code": "17"
+        },
+        {
+          "pattern": "^(?:737)",
+          "code": "28"
+        },
+        {
+          "pattern": "^(?:744)",
+          "code": "01"
+        },
+        {
+          "pattern": "^(?:79[0-2])",
+          "code": "03"
+        },
+        {
+          "pattern": "^(?:79[34])",
+          "code": "21"
+        },
+        {
+          "pattern": "^(?:795)",
+          "code": "20"
+        },
+        {
+          "pattern": "^(?:796)",
+          "code": "22"
+        },
+        {
+          "pattern": "^(?:79[78])",
+          "code": "23"
+        },
+        {
+          "pattern": "^(?:799)",
+          "code": "30"
+        },
+        {
+          "pattern": "^(?:24[6-9])",
+          "code": "34"
+        },
+        {
+          "pattern": "^(?:263)",
+          "code": "34"
+        },
+        {
+          "pattern": "^(?:396)",
+          "code": "08"
+        },
+        {
+          "pattern": "^(?:11)",
+          "code": "09"
+        },
+        {
+          "pattern": "^(?:1[23])",
+          "code": "12"
+        },
+        {
+          "pattern": "^(?:1[456])",
+          "code": "26"
+        },
+        {
+          "pattern": "^(?:17)",
+          "code": "13"
+        },
+        {
+          "pattern": "^(?:1[89])",
+          "code": "14"
+        },
+        {
+          "pattern": "^(?:2[0-8])",
+          "code": "31"
+        },
+        {
+          "pattern": "^(?:3[0-4])",
+          "code": "27"
+        },
+        {
+          "pattern": "^(?:3[6-9])",
+          "code": "11"
+        },
+        {
+          "pattern": "^(?:4[0-4])",
+          "code": "19"
+        },
+        {
+          "pattern": "^(?:4[5-8])",
+          "code": "18"
+        },
+        {
+          "pattern": "^(?:49)",
+          "code": "33"
+        },
+        {
+          "pattern": "^(?:50)",
+          "code": "36"
+        },
+        {
+          "pattern": "^(?:5[1-3])",
+          "code": "02"
+        },
+        {
+          "pattern": "^(?:5[6-9])",
+          "code": "15"
+        },
+        {
+          "pattern": "^(?:6[0-4])",
+          "code": "29"
+        },
+        {
+          "pattern": "^(?:6[7-9])",
+          "code": "16"
+        },
+        {
+          "pattern": "^(?:7[0-4])",
+          "code": "32"
+        },
+        {
+          "pattern": "^(?:7[5-7])",
+          "code": "24"
+        },
+        {
+          "pattern": "^(?:78)",
+          "code": "04"
+        },
+        {
+          "pattern": "^(?:83)",
+          "code": "35"
+        },
+        {
+          "pattern": "^(?:8[0-2]|8[45])",
+          "code": "05"
+        }
+      ],
+      "label": "a guess of the state from the PIN when the address names none (postal circles; the person can correct it)"
+    },
+    {
+      "name": "cg_statement",
+      "type": "json",
+      "default": {
+        "words": [
+          "isin",
+          "capital gain",
+          "scheme name",
+          "scrip",
+          "redemption",
+          "sale value",
+          "sell value",
+          "long term",
+          "short term",
+          "tax p&l",
+          "realised"
+        ],
+        "cols": {
+          "isin": [
+            "isin"
+          ],
+          "fmv": [
+            "fair market value",
+            "fmv",
+            "market value as on 31",
+            "nav as on 31",
+            "price as on 31",
+            "grandfathered",
+            "31/01/2018",
+            "31-01-2018",
+            "31.01.2018"
+          ],
+          "sold": [
+            "sale date",
+            "sell date",
+            "redemption date",
+            "date of sale",
+            "date of transfer",
+            "transfer date",
+            "date of redemption",
+            "sold on"
+          ],
+          "acquired": [
+            "purchase date",
+            "buy date",
+            "date of acquisition",
+            "acquisition date",
+            "date of purchase",
+            "bought on"
+          ],
+          "sale": [
+            "sale value",
+            "sell value",
+            "redemption amount",
+            "redemption value",
+            "sale consideration",
+            "full value of consideration",
+            "sale amount",
+            "sell amount",
+            "sales value",
+            "consideration"
+          ],
+          "cost": [
+            "purchase value",
+            "buy value",
+            "cost of acquisition",
+            "purchase amount",
+            "acquisition cost",
+            "buy amount",
+            "purchase cost",
+            "cost"
+          ],
+          "units": [
+            "units",
+            "quantity",
+            "qty",
+            "no. of shares",
+            "shares"
+          ],
+          "expenses": [
+            "expenses",
+            "brokerage",
+            "charges",
+            "transfer cost"
+          ],
+          "category": [
+            "asset class",
+            "category",
+            "scheme type",
+            "fund type",
+            "asset type",
+            "type"
+          ],
+          "name": [
+            "scheme name",
+            "scrip name",
+            "security name",
+            "stock name",
+            "company name",
+            "scheme",
+            "scrip",
+            "security",
+            "symbol",
+            "stock",
+            "name",
+            "description"
+          ]
+        },
+        "need": [
+          "sale",
+          "cost"
+        ],
+        "need_one": [
+          "isin",
+          "name"
+        ],
+        "per_unit_words": [
+          "nav",
+          "per unit",
+          "price",
+          "rate"
+        ],
+        "skip_words": [
+          "total",
+          "grand total",
+          "sub total",
+          "subtotal"
+        ],
+        "isin_pattern": "IN[0-9A-Z]{10}",
+        "asset_words": {
+          "debt_mf": [
+            "debt",
+            "liquid",
+            "gilt",
+            "money market",
+            "overnight",
+            "bond fund",
+            "income fund",
+            "corporate bond",
+            "banking & psu",
+            "short duration"
+          ],
+          "equity": [
+            "equity",
+            "elss",
+            "index fund",
+            "etf",
+            "shares"
+          ]
+        },
+        "default_asset": "equity",
+        "months": {
+          "Jan": 1,
+          "Feb": 2,
+          "Mar": 3,
+          "Apr": 4,
+          "May": 5,
+          "Jun": 6,
+          "Jul": 7,
+          "Aug": 8,
+          "Sep": 9,
+          "Oct": 10,
+          "Nov": 11,
+          "Dec": 12
+        },
+        "two_digit_base": 2000,
+        "two_digit_pivot": 50
+      },
+      "label": "a broker's / registrar's capital-gains statement: the words that tell one, each column's heading words (the first column whose heading has one), which are needed, a debt fund by its words, the FMV on 31-01-2018 per unit when its heading says so, dates written dd-mm-yy"
     }
   ],
   "expr": {
@@ -681,13 +1266,18 @@
       "tis": "$tis",
       "ais_paid": "$ais_paid",
       "words_bank": "$words_bank",
-      "bank": "$bank"
+      "bank": "$bank",
+      "ais_header": "$ais_header",
+      "employer_block": "$employer_block",
+      "state_names": "$state_names",
+      "pin_states": "$pin_states",
+      "cg_statement": "$cg_statement"
     }
   },
   "returns": "record",
-  "version": 13,
+  "version": 16,
   "status": "published",
-  "description_nl": "2026-10-06: the pre-filled JSON's keys (camelCase, e-filing portal), the words that tell a Form 16, an AIS and a 26AS apart, the AIS JSON's encryption (PBKDF2-SHA256 over PAN + pepper + DDMMYYYY, AES-256-CBC), AIS information codes -> fields (SFT-016 SB/TD interest, SFT-015 dividend, TDS-192 salary; TDS-194/194A are the same income again and are left out), Form 16's line anchors (the figure is the last amount on the line), and the AI fallback's model, fields and prompt. 2026-10-06: employee_pan_pattern - the employee's PAN in a TRACES Form 16 (TAN and PAN on lines of their own), so a return can start from it. 2026-10-06: pdf26as - the TRACES Annual Tax Statement as a PDF: Part I, each deductor's total line (name, TAN, paid, deducted, deposited) and its entries' section. 2026-10-06: income_of - a 26AS section whose amount paid is that kind of other income (used when no AIS or pre-filled JSON is there). 2026-10-06: ais_amount_tail - an AIS PDF line's amount when it has no comma (654), the last number on the line. 2026-10-06: tis - the Taxpayer Information Summary PDF: its first table, one line per category (processed, accepted); the accepted total is used, read as the AIS. 2026-10-06: ais_paid - AIS Part B3, tax the person paid (advance, self-assessment): a row's financial year, minor head words, total, BSR, date, challan. Only the return's own year counts. 2026-10-06: words_bank - a bank statement (kept with the return: the receipts of a business or profession with no TDS; its credits are typed). 2026-10-06: bank - a bank statement (PDF / Excel / CSV): its table found by the date and credit column words; a credit is then sorted by the first kind whose words its narration has (interest, tax refund, salary, reversal, own transfer, cash) - else a receipt. Where the columns run together (a PDF) the running balance says what came in. 2026-10-06: bank amount_words / type_words / credit_marks - one Amount column with a Dr / Cr column beside it.",
+  "description_nl": "2026-10-06: the pre-filled JSON's keys (camelCase, e-filing portal), the words that tell a Form 16, an AIS and a 26AS apart, the AIS JSON's encryption (PBKDF2-SHA256 over PAN + pepper + DDMMYYYY, AES-256-CBC), AIS information codes -> fields (SFT-016 SB/TD interest, SFT-015 dividend, TDS-192 salary; TDS-194/194A are the same income again and are left out), Form 16's line anchors (the figure is the last amount on the line), and the AI fallback's model, fields and prompt. 2026-10-06: employee_pan_pattern - the employee's PAN in a TRACES Form 16 (TAN and PAN on lines of their own), so a return can start from it. 2026-10-06: pdf26as - the TRACES Annual Tax Statement as a PDF: Part I, each deductor's total line (name, TAN, paid, deducted, deposited) and its entries' section. 2026-10-06: income_of - a 26AS section whose amount paid is that kind of other income (used when no AIS or pre-filled JSON is there). 2026-10-06: ais_amount_tail - an AIS PDF line's amount when it has no comma (654), the last number on the line. 2026-10-06: tis - the Taxpayer Information Summary PDF: its first table, one line per category (processed, accepted); the accepted total is used, read as the AIS. 2026-10-06: ais_paid - AIS Part B3, tax the person paid (advance, self-assessment): a row's financial year, minor head words, total, BSR, date, challan. Only the return's own year counts. 2026-10-06: words_bank - a bank statement (kept with the return: the receipts of a business or profession with no TDS; its credits are typed). 2026-10-06: bank - a bank statement (PDF / Excel / CSV): its table found by the date and credit column words; a credit is then sorted by the first kind whose words its narration has (interest, tax refund, salary, reversal, own transfer, cash) - else a receipt. Where the columns run together (a PDF) the running balance says what came in. 2026-10-06: bank amount_words / type_words / credit_marks - one Amount column with a Dr / Cr column beside it. 2026-10-07: AIS TDS-194B / 194BB (winnings - 115BB), 194BA (online games - 115BBJ), 194S (a VDA transferred - the sale value, shown beside the rows typed); 26AS 194B / 194BB / 194BA; the AIS header's mobile, e-mail and address; Form 16's employer address block, a state from its name or PIN. 2026-10-07: employer_block: the employee's column (left of it is the employer's), at most 8 lines. 2026-10-07: AIS TDS-194IA (the buyer's TDS on a property sold: amount, TDS, the buyer's PAN) and SFT-012 (the sub-registrar's report); cg_statement - a CAMS / KFintech consolidated capital-gains statement or a broker's tax P&L (CSV / Excel), one row per sale.",
   "test_cases": [
     {
       "args": {},
@@ -740,6 +1330,46 @@
         },
         "ais_code_pattern": "\\b(?:SFT|TDS|TCS)-\\d{3}[A-Z]{0,2}(?:\\s*\\([A-Z]+\\))?",
         "ais_codes": [
+          {
+            "code": "TDS-194IA.*",
+            "field": "property_tds"
+          },
+          {
+            "code": "SFT-012.*",
+            "field": "property_sft"
+          },
+          {
+            "title": "transfer of (certain )?immovable property",
+            "field": "property_tds"
+          },
+          {
+            "code": "TDS-194BB.*",
+            "field": "lottery"
+          },
+          {
+            "code": "TDS-194BA.*",
+            "field": "online_games"
+          },
+          {
+            "code": "TDS-194B",
+            "field": "lottery"
+          },
+          {
+            "code": "TDS-194S.*",
+            "field": "vda_sale"
+          },
+          {
+            "title": "winnings? from (lotter|crossword|horse race|card game|gambling|betting)",
+            "field": "lottery"
+          },
+          {
+            "title": "winnings? from online game",
+            "field": "online_games"
+          },
+          {
+            "title": "virtual digital asset",
+            "field": "vda_sale"
+          },
           {
             "code": "SFT-016\\s*\\(SB\\)",
             "field": "savings"
@@ -986,7 +1616,10 @@
         },
         "income_of": {
           "194A": "deposits",
-          "194": "dividend"
+          "194": "dividend",
+          "194B": "lottery",
+          "194BB": "lottery",
+          "194BA": "online_games"
         },
         "ais_amount_tail": "(?<![\\w.])(\\d[\\d,]*(?:\\.\\d+)?)\\s*$",
         "tis": {
@@ -1146,6 +1779,523 @@
             "c",
             "credit"
           ]
+        },
+        "ais_header": {
+          "start_words": [
+            "part a",
+            "general information",
+            "annual information statement"
+          ],
+          "end": "(?i)\\bPART\\s*B\\b",
+          "mobile": "(?i)mobile(?:\\s*(?:number|no\\.?))?\\s*:?\\s*(?:\\+?91[\\s-]*)?([6-9]\\d{9})\\b",
+          "email": "(?i)e-?\\s*mail(?:\\s*(?:address|id))?\\s*:?\\s*([\\w.+-]+@[\\w-]+(?:\\.[\\w-]+)+)",
+          "address": "(?i)\\baddress\\s*:?\\s*(.+?)(?=\\s+(?:mobile|e-?\\s*mail|date of birth|pan|aadhaar)\\b|$)",
+          "json": {
+            "mobile": [
+              "mobileNo",
+              "mobileNumber",
+              "mobile"
+            ],
+            "email": [
+              "emailId",
+              "emailAddress",
+              "email"
+            ],
+            "address": [
+              "address",
+              "addressLine"
+            ]
+          }
+        },
+        "employer_block": {
+          "stop": "(?i)PAN of the Deductor|TAN of the Deductor|Name and address of the Employee|Certificate No|Period with the Employer",
+          "column_gap": "\\s{3,}",
+          "email": "[\\w.+-]+@[\\w-]+(?:\\.[\\w-]+)+",
+          "phone": "^\\+?\\(?\\d[\\d()\\s-]{6,}$",
+          "pin": "\\b[1-9][0-9]{5}\\b",
+          "employee_anchor": "Name and address of the Employee",
+          "lines_max": 8
+        },
+        "state_names": [
+          {
+            "pattern": "(?i)\\bAndaman (?:and|&) Nicobar Islands\\b",
+            "code": "01"
+          },
+          {
+            "pattern": "(?i)\\bDadra (?:and|&) Nagar Haveli\\b",
+            "code": "07"
+          },
+          {
+            "pattern": "(?i)\\bArunachal Pradesh\\b",
+            "code": "03"
+          },
+          {
+            "pattern": "(?i)\\bJammu (?:and|&) Kashmir\\b",
+            "code": "14"
+          },
+          {
+            "pattern": "(?i)\\bHimachal Pradesh\\b",
+            "code": "13"
+          },
+          {
+            "pattern": "(?i)\\bAndhra Pradesh\\b",
+            "code": "02"
+          },
+          {
+            "pattern": "(?i)\\bMadhya Pradesh\\b",
+            "code": "18"
+          },
+          {
+            "pattern": "(?i)\\bDaman (?:and|&) Diu\\b",
+            "code": "08"
+          },
+          {
+            "pattern": "(?i)\\bUttar Pradesh\\b",
+            "code": "31"
+          },
+          {
+            "pattern": "(?i)\\bChhattisgarh\\b",
+            "code": "33"
+          },
+          {
+            "pattern": "(?i)\\bLakshadweep\\b",
+            "code": "17"
+          },
+          {
+            "pattern": "(?i)\\bMaharashtra\\b",
+            "code": "19"
+          },
+          {
+            "pattern": "(?i)\\bWest Bengal\\b",
+            "code": "32"
+          },
+          {
+            "pattern": "(?i)\\bUttarakhand\\b",
+            "code": "34"
+          },
+          {
+            "pattern": "(?i)\\bChandigarh\\b",
+            "code": "06"
+          },
+          {
+            "pattern": "(?i)\\bPuducherry\\b",
+            "code": "25"
+          },
+          {
+            "pattern": "(?i)\\bTamil Nadu\\b",
+            "code": "29"
+          },
+          {
+            "pattern": "(?i)\\bKarnataka\\b",
+            "code": "15"
+          },
+          {
+            "pattern": "(?i)\\bMeghalaya\\b",
+            "code": "21"
+          },
+          {
+            "pattern": "(?i)\\bRajasthan\\b",
+            "code": "27"
+          },
+          {
+            "pattern": "(?i)\\bJharkhand\\b",
+            "code": "35"
+          },
+          {
+            "pattern": "(?i)\\bTelangana\\b",
+            "code": "36"
+          },
+          {
+            "pattern": "(?i)\\bNagaland\\b",
+            "code": "23"
+          },
+          {
+            "pattern": "(?i)\\bGujarat\\b",
+            "code": "11"
+          },
+          {
+            "pattern": "(?i)\\bHaryana\\b",
+            "code": "12"
+          },
+          {
+            "pattern": "(?i)\\bManipur\\b",
+            "code": "20"
+          },
+          {
+            "pattern": "(?i)\\bMizoram\\b",
+            "code": "22"
+          },
+          {
+            "pattern": "(?i)\\bTripura\\b",
+            "code": "30"
+          },
+          {
+            "pattern": "(?i)\\bKerala\\b",
+            "code": "16"
+          },
+          {
+            "pattern": "(?i)\\bOdisha\\b",
+            "code": "24"
+          },
+          {
+            "pattern": "(?i)\\bPunjab\\b",
+            "code": "26"
+          },
+          {
+            "pattern": "(?i)\\bSikkim\\b",
+            "code": "28"
+          },
+          {
+            "pattern": "(?i)\\bLadakh\\b",
+            "code": "37"
+          },
+          {
+            "pattern": "(?i)\\bAssam\\b",
+            "code": "04"
+          },
+          {
+            "pattern": "(?i)\\bBihar\\b",
+            "code": "05"
+          },
+          {
+            "pattern": "(?i)\\bDelhi\\b",
+            "code": "09"
+          },
+          {
+            "pattern": "(?i)\\bGoa\\b",
+            "code": "10"
+          },
+          {
+            "pattern": "(?i)\\bOrissa\\b",
+            "code": "24"
+          },
+          {
+            "pattern": "(?i)\\bPondicherry\\b",
+            "code": "25"
+          },
+          {
+            "pattern": "(?i)\\bNew Delhi\\b",
+            "code": "09"
+          },
+          {
+            "pattern": "(?i)\\bBombay\\b",
+            "code": "19"
+          }
+        ],
+        "pin_states": [
+          {
+            "pattern": "^(?:160)",
+            "code": "06"
+          },
+          {
+            "pattern": "^(?:194)",
+            "code": "37"
+          },
+          {
+            "pattern": "^(?:403)",
+            "code": "10"
+          },
+          {
+            "pattern": "^(?:605)",
+            "code": "25"
+          },
+          {
+            "pattern": "^(?:68255)",
+            "code": "17"
+          },
+          {
+            "pattern": "^(?:737)",
+            "code": "28"
+          },
+          {
+            "pattern": "^(?:744)",
+            "code": "01"
+          },
+          {
+            "pattern": "^(?:79[0-2])",
+            "code": "03"
+          },
+          {
+            "pattern": "^(?:79[34])",
+            "code": "21"
+          },
+          {
+            "pattern": "^(?:795)",
+            "code": "20"
+          },
+          {
+            "pattern": "^(?:796)",
+            "code": "22"
+          },
+          {
+            "pattern": "^(?:79[78])",
+            "code": "23"
+          },
+          {
+            "pattern": "^(?:799)",
+            "code": "30"
+          },
+          {
+            "pattern": "^(?:24[6-9])",
+            "code": "34"
+          },
+          {
+            "pattern": "^(?:263)",
+            "code": "34"
+          },
+          {
+            "pattern": "^(?:396)",
+            "code": "08"
+          },
+          {
+            "pattern": "^(?:11)",
+            "code": "09"
+          },
+          {
+            "pattern": "^(?:1[23])",
+            "code": "12"
+          },
+          {
+            "pattern": "^(?:1[456])",
+            "code": "26"
+          },
+          {
+            "pattern": "^(?:17)",
+            "code": "13"
+          },
+          {
+            "pattern": "^(?:1[89])",
+            "code": "14"
+          },
+          {
+            "pattern": "^(?:2[0-8])",
+            "code": "31"
+          },
+          {
+            "pattern": "^(?:3[0-4])",
+            "code": "27"
+          },
+          {
+            "pattern": "^(?:3[6-9])",
+            "code": "11"
+          },
+          {
+            "pattern": "^(?:4[0-4])",
+            "code": "19"
+          },
+          {
+            "pattern": "^(?:4[5-8])",
+            "code": "18"
+          },
+          {
+            "pattern": "^(?:49)",
+            "code": "33"
+          },
+          {
+            "pattern": "^(?:50)",
+            "code": "36"
+          },
+          {
+            "pattern": "^(?:5[1-3])",
+            "code": "02"
+          },
+          {
+            "pattern": "^(?:5[6-9])",
+            "code": "15"
+          },
+          {
+            "pattern": "^(?:6[0-4])",
+            "code": "29"
+          },
+          {
+            "pattern": "^(?:6[7-9])",
+            "code": "16"
+          },
+          {
+            "pattern": "^(?:7[0-4])",
+            "code": "32"
+          },
+          {
+            "pattern": "^(?:7[5-7])",
+            "code": "24"
+          },
+          {
+            "pattern": "^(?:78)",
+            "code": "04"
+          },
+          {
+            "pattern": "^(?:83)",
+            "code": "35"
+          },
+          {
+            "pattern": "^(?:8[0-2]|8[45])",
+            "code": "05"
+          }
+        ],
+        "cg_statement": {
+          "words": [
+            "isin",
+            "capital gain",
+            "scheme name",
+            "scrip",
+            "redemption",
+            "sale value",
+            "sell value",
+            "long term",
+            "short term",
+            "tax p&l",
+            "realised"
+          ],
+          "cols": {
+            "isin": [
+              "isin"
+            ],
+            "fmv": [
+              "fair market value",
+              "fmv",
+              "market value as on 31",
+              "nav as on 31",
+              "price as on 31",
+              "grandfathered",
+              "31/01/2018",
+              "31-01-2018",
+              "31.01.2018"
+            ],
+            "sold": [
+              "sale date",
+              "sell date",
+              "redemption date",
+              "date of sale",
+              "date of transfer",
+              "transfer date",
+              "date of redemption",
+              "sold on"
+            ],
+            "acquired": [
+              "purchase date",
+              "buy date",
+              "date of acquisition",
+              "acquisition date",
+              "date of purchase",
+              "bought on"
+            ],
+            "sale": [
+              "sale value",
+              "sell value",
+              "redemption amount",
+              "redemption value",
+              "sale consideration",
+              "full value of consideration",
+              "sale amount",
+              "sell amount",
+              "sales value",
+              "consideration"
+            ],
+            "cost": [
+              "purchase value",
+              "buy value",
+              "cost of acquisition",
+              "purchase amount",
+              "acquisition cost",
+              "buy amount",
+              "purchase cost",
+              "cost"
+            ],
+            "units": [
+              "units",
+              "quantity",
+              "qty",
+              "no. of shares",
+              "shares"
+            ],
+            "expenses": [
+              "expenses",
+              "brokerage",
+              "charges",
+              "transfer cost"
+            ],
+            "category": [
+              "asset class",
+              "category",
+              "scheme type",
+              "fund type",
+              "asset type",
+              "type"
+            ],
+            "name": [
+              "scheme name",
+              "scrip name",
+              "security name",
+              "stock name",
+              "company name",
+              "scheme",
+              "scrip",
+              "security",
+              "symbol",
+              "stock",
+              "name",
+              "description"
+            ]
+          },
+          "need": [
+            "sale",
+            "cost"
+          ],
+          "need_one": [
+            "isin",
+            "name"
+          ],
+          "per_unit_words": [
+            "nav",
+            "per unit",
+            "price",
+            "rate"
+          ],
+          "skip_words": [
+            "total",
+            "grand total",
+            "sub total",
+            "subtotal"
+          ],
+          "isin_pattern": "IN[0-9A-Z]{10}",
+          "asset_words": {
+            "debt_mf": [
+              "debt",
+              "liquid",
+              "gilt",
+              "money market",
+              "overnight",
+              "bond fund",
+              "income fund",
+              "corporate bond",
+              "banking & psu",
+              "short duration"
+            ],
+            "equity": [
+              "equity",
+              "elss",
+              "index fund",
+              "etf",
+              "shares"
+            ]
+          },
+          "default_asset": "equity",
+          "months": {
+            "Jan": 1,
+            "Feb": 2,
+            "Mar": 3,
+            "Apr": 4,
+            "May": 5,
+            "Jun": 6,
+            "Jul": 7,
+            "Aug": 8,
+            "Sep": 9,
+            "Oct": 10,
+            "Nov": 11,
+            "Dec": 12
+          },
+          "two_digit_base": 2000,
+          "two_digit_pivot": 50
         }
       }
     }

@@ -1,0 +1,965 @@
+{
+  "chip_id": "myreturn.cg_exempt",
+  "kind": "accessor",
+  "set": "myreturn",
+  "label": "My return: exemption 54 / 54EC / 54F on one sale",
+  "aliases": [
+    "54",
+    "54ec",
+    "54f",
+    "exemption",
+    "capital gains account scheme"
+  ],
+  "params": [
+    {
+      "name": "kind",
+      "type": "text",
+      "default": "",
+      "label": "54 / 54EC / 54F, or blank"
+    },
+    {
+      "name": "asset",
+      "type": "text",
+      "default": "house",
+      "label": "the asset sold (chip myreturn.cg_rules assets: which exemptions it may claim)"
+    },
+    {
+      "name": "term",
+      "type": "text",
+      "default": "long",
+      "label": "long / short"
+    },
+    {
+      "name": "gain",
+      "type": "number",
+      "default": 0,
+      "label": "the long-term gain"
+    },
+    {
+      "name": "net",
+      "type": "number",
+      "default": 0,
+      "label": "net consideration: the value taken less transfer expenses (54F)"
+    },
+    {
+      "name": "invested",
+      "type": "number",
+      "default": 0,
+      "label": "the new house's cost (54 / 54F) or the bonds bought (54EC)"
+    },
+    {
+      "name": "cgas",
+      "type": "number",
+      "default": 0,
+      "label": "deposited in the Capital Gains Account Scheme by the return's due date (54 / 54F)"
+    },
+    {
+      "name": "ec_room",
+      "type": "number",
+      "default": 5000000,
+      "label": "54EC: what is left of the 50 lakh in the year"
+    },
+    {
+      "name": "other_houses",
+      "type": "number",
+      "default": 0,
+      "label": "54F: other residential houses owned on the day of transfer"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "amount": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "all",
+                  "items": [
+                    {
+                      "op": "in_set",
+                      "value": "$kind",
+                      "set": {
+                        "vop": "get",
+                        "value": {
+                          "chip": "myreturn.cg_rules",
+                          "args": {}
+                        },
+                        "path": {
+                          "vop": "template",
+                          "text": "assets.{a}.ex",
+                          "values": {
+                            "vop": "record",
+                            "fields": {
+                              "a": "$asset"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "op": "eq",
+                      "left": "$term",
+                      "right": "long"
+                    },
+                    {
+                      "op": "gt",
+                      "left": "$gain",
+                      "right": 0
+                    }
+                  ]
+                },
+                {
+                  "op": "eq",
+                  "left": "$kind",
+                  "right": "54"
+                }
+              ]
+            },
+            "then": {
+              "vop": "smallest",
+              "values": [
+                "$gain",
+                {
+                  "vop": "add",
+                  "a": "$invested",
+                  "b": "$cgas"
+                },
+                {
+                  "vop": "get",
+                  "value": {
+                    "chip": "myreturn.cg_rules",
+                    "args": {}
+                  },
+                  "path": "cap_54"
+                }
+              ]
+            }
+          },
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "all",
+                  "items": [
+                    {
+                      "op": "in_set",
+                      "value": "$kind",
+                      "set": {
+                        "vop": "get",
+                        "value": {
+                          "chip": "myreturn.cg_rules",
+                          "args": {}
+                        },
+                        "path": {
+                          "vop": "template",
+                          "text": "assets.{a}.ex",
+                          "values": {
+                            "vop": "record",
+                            "fields": {
+                              "a": "$asset"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "op": "eq",
+                      "left": "$term",
+                      "right": "long"
+                    },
+                    {
+                      "op": "gt",
+                      "left": "$gain",
+                      "right": 0
+                    }
+                  ]
+                },
+                {
+                  "op": "eq",
+                  "left": "$kind",
+                  "right": "54EC"
+                }
+              ]
+            },
+            "then": {
+              "vop": "smallest",
+              "values": [
+                "$gain",
+                "$invested",
+                {
+                  "vop": "largest",
+                  "values": [
+                    "$ec_room",
+                    0
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "all",
+                  "items": [
+                    {
+                      "op": "in_set",
+                      "value": "$kind",
+                      "set": {
+                        "vop": "get",
+                        "value": {
+                          "chip": "myreturn.cg_rules",
+                          "args": {}
+                        },
+                        "path": {
+                          "vop": "template",
+                          "text": "assets.{a}.ex",
+                          "values": {
+                            "vop": "record",
+                            "fields": {
+                              "a": "$asset"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "op": "eq",
+                      "left": "$term",
+                      "right": "long"
+                    },
+                    {
+                      "op": "gt",
+                      "left": "$gain",
+                      "right": 0
+                    }
+                  ]
+                },
+                {
+                  "op": "eq",
+                  "left": "$kind",
+                  "right": "54F"
+                },
+                {
+                  "op": "le",
+                  "left": "$other_houses",
+                  "right": {
+                    "vop": "get",
+                    "value": {
+                      "chip": "myreturn.cg_rules",
+                      "args": {}
+                    },
+                    "path": "f54_houses_max"
+                  }
+                },
+                {
+                  "op": "ge",
+                  "left": {
+                    "vop": "smallest",
+                    "values": [
+                      {
+                        "vop": "add",
+                        "a": "$invested",
+                        "b": "$cgas"
+                      },
+                      {
+                        "vop": "get",
+                        "value": {
+                          "chip": "myreturn.cg_rules",
+                          "args": {}
+                        },
+                        "path": "cap_54"
+                      }
+                    ]
+                  },
+                  "right": "$net"
+                }
+              ]
+            },
+            "then": "$gain"
+          },
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "all",
+                  "items": [
+                    {
+                      "op": "in_set",
+                      "value": "$kind",
+                      "set": {
+                        "vop": "get",
+                        "value": {
+                          "chip": "myreturn.cg_rules",
+                          "args": {}
+                        },
+                        "path": {
+                          "vop": "template",
+                          "text": "assets.{a}.ex",
+                          "values": {
+                            "vop": "record",
+                            "fields": {
+                              "a": "$asset"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "op": "eq",
+                      "left": "$term",
+                      "right": "long"
+                    },
+                    {
+                      "op": "gt",
+                      "left": "$gain",
+                      "right": 0
+                    }
+                  ]
+                },
+                {
+                  "op": "eq",
+                  "left": "$kind",
+                  "right": "54F"
+                },
+                {
+                  "op": "le",
+                  "left": "$other_houses",
+                  "right": {
+                    "vop": "get",
+                    "value": {
+                      "chip": "myreturn.cg_rules",
+                      "args": {}
+                    },
+                    "path": "f54_houses_max"
+                  }
+                },
+                {
+                  "op": "gt",
+                  "left": "$net",
+                  "right": 0
+                }
+              ]
+            },
+            "then": {
+              "vop": "smallest",
+              "values": [
+                "$gain",
+                {
+                  "vop": "round_to",
+                  "value": {
+                    "vop": "div",
+                    "a": {
+                      "vop": "mul",
+                      "a": "$gain",
+                      "b": {
+                        "vop": "smallest",
+                        "values": [
+                          {
+                            "vop": "add",
+                            "a": "$invested",
+                            "b": "$cgas"
+                          },
+                          {
+                            "vop": "get",
+                            "value": {
+                              "chip": "myreturn.cg_rules",
+                              "args": {}
+                            },
+                            "path": "cap_54"
+                          }
+                        ]
+                      }
+                    },
+                    "b": "$net"
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "else": 0
+      },
+      "ok": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "gt",
+              "left": {
+                "vop": "choose",
+                "cases": [
+                  {
+                    "when": {
+                      "op": "all",
+                      "items": [
+                        {
+                          "op": "all",
+                          "items": [
+                            {
+                              "op": "in_set",
+                              "value": "$kind",
+                              "set": {
+                                "vop": "get",
+                                "value": {
+                                  "chip": "myreturn.cg_rules",
+                                  "args": {}
+                                },
+                                "path": {
+                                  "vop": "template",
+                                  "text": "assets.{a}.ex",
+                                  "values": {
+                                    "vop": "record",
+                                    "fields": {
+                                      "a": "$asset"
+                                    }
+                                  }
+                                }
+                              }
+                            },
+                            {
+                              "op": "eq",
+                              "left": "$term",
+                              "right": "long"
+                            },
+                            {
+                              "op": "gt",
+                              "left": "$gain",
+                              "right": 0
+                            }
+                          ]
+                        },
+                        {
+                          "op": "eq",
+                          "left": "$kind",
+                          "right": "54"
+                        }
+                      ]
+                    },
+                    "then": {
+                      "vop": "smallest",
+                      "values": [
+                        "$gain",
+                        {
+                          "vop": "add",
+                          "a": "$invested",
+                          "b": "$cgas"
+                        },
+                        {
+                          "vop": "get",
+                          "value": {
+                            "chip": "myreturn.cg_rules",
+                            "args": {}
+                          },
+                          "path": "cap_54"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "when": {
+                      "op": "all",
+                      "items": [
+                        {
+                          "op": "all",
+                          "items": [
+                            {
+                              "op": "in_set",
+                              "value": "$kind",
+                              "set": {
+                                "vop": "get",
+                                "value": {
+                                  "chip": "myreturn.cg_rules",
+                                  "args": {}
+                                },
+                                "path": {
+                                  "vop": "template",
+                                  "text": "assets.{a}.ex",
+                                  "values": {
+                                    "vop": "record",
+                                    "fields": {
+                                      "a": "$asset"
+                                    }
+                                  }
+                                }
+                              }
+                            },
+                            {
+                              "op": "eq",
+                              "left": "$term",
+                              "right": "long"
+                            },
+                            {
+                              "op": "gt",
+                              "left": "$gain",
+                              "right": 0
+                            }
+                          ]
+                        },
+                        {
+                          "op": "eq",
+                          "left": "$kind",
+                          "right": "54EC"
+                        }
+                      ]
+                    },
+                    "then": {
+                      "vop": "smallest",
+                      "values": [
+                        "$gain",
+                        "$invested",
+                        {
+                          "vop": "largest",
+                          "values": [
+                            "$ec_room",
+                            0
+                          ]
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "when": {
+                      "op": "all",
+                      "items": [
+                        {
+                          "op": "all",
+                          "items": [
+                            {
+                              "op": "in_set",
+                              "value": "$kind",
+                              "set": {
+                                "vop": "get",
+                                "value": {
+                                  "chip": "myreturn.cg_rules",
+                                  "args": {}
+                                },
+                                "path": {
+                                  "vop": "template",
+                                  "text": "assets.{a}.ex",
+                                  "values": {
+                                    "vop": "record",
+                                    "fields": {
+                                      "a": "$asset"
+                                    }
+                                  }
+                                }
+                              }
+                            },
+                            {
+                              "op": "eq",
+                              "left": "$term",
+                              "right": "long"
+                            },
+                            {
+                              "op": "gt",
+                              "left": "$gain",
+                              "right": 0
+                            }
+                          ]
+                        },
+                        {
+                          "op": "eq",
+                          "left": "$kind",
+                          "right": "54F"
+                        },
+                        {
+                          "op": "le",
+                          "left": "$other_houses",
+                          "right": {
+                            "vop": "get",
+                            "value": {
+                              "chip": "myreturn.cg_rules",
+                              "args": {}
+                            },
+                            "path": "f54_houses_max"
+                          }
+                        },
+                        {
+                          "op": "ge",
+                          "left": {
+                            "vop": "smallest",
+                            "values": [
+                              {
+                                "vop": "add",
+                                "a": "$invested",
+                                "b": "$cgas"
+                              },
+                              {
+                                "vop": "get",
+                                "value": {
+                                  "chip": "myreturn.cg_rules",
+                                  "args": {}
+                                },
+                                "path": "cap_54"
+                              }
+                            ]
+                          },
+                          "right": "$net"
+                        }
+                      ]
+                    },
+                    "then": "$gain"
+                  },
+                  {
+                    "when": {
+                      "op": "all",
+                      "items": [
+                        {
+                          "op": "all",
+                          "items": [
+                            {
+                              "op": "in_set",
+                              "value": "$kind",
+                              "set": {
+                                "vop": "get",
+                                "value": {
+                                  "chip": "myreturn.cg_rules",
+                                  "args": {}
+                                },
+                                "path": {
+                                  "vop": "template",
+                                  "text": "assets.{a}.ex",
+                                  "values": {
+                                    "vop": "record",
+                                    "fields": {
+                                      "a": "$asset"
+                                    }
+                                  }
+                                }
+                              }
+                            },
+                            {
+                              "op": "eq",
+                              "left": "$term",
+                              "right": "long"
+                            },
+                            {
+                              "op": "gt",
+                              "left": "$gain",
+                              "right": 0
+                            }
+                          ]
+                        },
+                        {
+                          "op": "eq",
+                          "left": "$kind",
+                          "right": "54F"
+                        },
+                        {
+                          "op": "le",
+                          "left": "$other_houses",
+                          "right": {
+                            "vop": "get",
+                            "value": {
+                              "chip": "myreturn.cg_rules",
+                              "args": {}
+                            },
+                            "path": "f54_houses_max"
+                          }
+                        },
+                        {
+                          "op": "gt",
+                          "left": "$net",
+                          "right": 0
+                        }
+                      ]
+                    },
+                    "then": {
+                      "vop": "smallest",
+                      "values": [
+                        "$gain",
+                        {
+                          "vop": "round_to",
+                          "value": {
+                            "vop": "div",
+                            "a": {
+                              "vop": "mul",
+                              "a": "$gain",
+                              "b": {
+                                "vop": "smallest",
+                                "values": [
+                                  {
+                                    "vop": "add",
+                                    "a": "$invested",
+                                    "b": "$cgas"
+                                  },
+                                  {
+                                    "vop": "get",
+                                    "value": {
+                                      "chip": "myreturn.cg_rules",
+                                      "args": {}
+                                    },
+                                    "path": "cap_54"
+                                  }
+                                ]
+                              }
+                            },
+                            "b": "$net"
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ],
+                "else": 0
+              },
+              "right": 0
+            },
+            "then": true
+          }
+        ],
+        "else": false
+      },
+      "why": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "eq",
+              "left": "$kind",
+              "right": ""
+            },
+            "then": ""
+          },
+          {
+            "when": {
+              "op": "not",
+              "item": {
+                "op": "in_set",
+                "value": "$kind",
+                "set": {
+                  "vop": "get",
+                  "value": {
+                    "chip": "myreturn.cg_rules",
+                    "args": {}
+                  },
+                  "path": {
+                    "vop": "template",
+                    "text": "assets.{a}.ex",
+                    "values": {
+                      "vop": "record",
+                      "fields": {
+                        "a": "$asset"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "then": "ex_not_for"
+          },
+          {
+            "when": {
+              "op": "not",
+              "item": {
+                "op": "eq",
+                "left": "$term",
+                "right": "long"
+              }
+            },
+            "then": "ex_short"
+          },
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "eq",
+                  "left": "$kind",
+                  "right": "54F"
+                },
+                {
+                  "op": "not",
+                  "item": {
+                    "op": "le",
+                    "left": "$other_houses",
+                    "right": {
+                      "vop": "get",
+                      "value": {
+                        "chip": "myreturn.cg_rules",
+                        "args": {}
+                      },
+                      "path": "f54_houses_max"
+                    }
+                  }
+                }
+              ]
+            },
+            "then": "ex_houses"
+          },
+          {
+            "when": {
+              "op": "le",
+              "left": "$gain",
+              "right": 0
+            },
+            "then": "ex_no_gain"
+          }
+        ],
+        "else": ""
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-07: s.54: a residential house sold, long-term - the gain up to the cost of the new house (bought 1 year before / 2 years after, or built in 3), at most 10 crore counted. s.54EC: land / building, long-term - the gain up to the bonds bought within 6 months, at most 50 lakh. s.54F: any other long-term asset - the gain x the new house's cost (at most 10 crore) / the net consideration, all of it when the cost is as much; not for one who owns more than one other house. An amount deposited in the Capital Gains Account Scheme by the due date counts as the cost (54 / 54F).",
+  "test_cases": [
+    {
+      "args": {
+        "kind": "54",
+        "gain": 6900000,
+        "invested": 5000000,
+        "cgas": 1000000
+      },
+      "expect_value": {
+        "amount": 6000000,
+        "ok": true,
+        "why": ""
+      }
+    },
+    {
+      "args": {
+        "kind": "54",
+        "gain": 200000000,
+        "invested": 150000000
+      },
+      "expect_value": {
+        "amount": 100000000,
+        "ok": true,
+        "why": ""
+      }
+    },
+    {
+      "args": {
+        "kind": "54EC",
+        "asset": "land",
+        "gain": 6900000,
+        "invested": 6000000,
+        "ec_room": 5000000
+      },
+      "expect_value": {
+        "amount": 5000000,
+        "ok": true,
+        "why": ""
+      }
+    },
+    {
+      "args": {
+        "kind": "54EC",
+        "asset": "land",
+        "gain": 6900000,
+        "invested": 6000000,
+        "ec_room": 1000000
+      },
+      "expect_value": {
+        "amount": 1000000,
+        "ok": true,
+        "why": ""
+      }
+    },
+    {
+      "args": {
+        "kind": "54F",
+        "asset": "equity",
+        "gain": 1000000,
+        "net": 3000000,
+        "invested": 1500000
+      },
+      "expect_value": {
+        "amount": 500000,
+        "ok": true,
+        "why": ""
+      }
+    },
+    {
+      "args": {
+        "kind": "54F",
+        "asset": "equity",
+        "gain": 1000000,
+        "net": 3000000,
+        "invested": 2000000,
+        "cgas": 1000000
+      },
+      "expect_value": {
+        "amount": 1000000,
+        "ok": true,
+        "why": ""
+      }
+    },
+    {
+      "args": {
+        "kind": "54F",
+        "asset": "equity",
+        "gain": 1000000,
+        "net": 3000000,
+        "invested": 1500000,
+        "other_houses": 2
+      },
+      "expect_value": {
+        "amount": 0,
+        "ok": false,
+        "why": "ex_houses"
+      }
+    },
+    {
+      "args": {
+        "kind": "54",
+        "asset": "equity",
+        "gain": 1000000,
+        "invested": 1500000
+      },
+      "expect_value": {
+        "amount": 0,
+        "ok": false,
+        "why": "ex_not_for"
+      }
+    },
+    {
+      "args": {
+        "kind": "54",
+        "term": "short",
+        "gain": 1000000,
+        "invested": 1500000
+      },
+      "expect_value": {
+        "amount": 0,
+        "ok": false,
+        "why": "ex_short"
+      }
+    },
+    {
+      "args": {
+        "kind": "54F",
+        "asset": "house",
+        "gain": 1000000,
+        "net": 2000000,
+        "invested": 2000000
+      },
+      "expect_value": {
+        "amount": 0,
+        "ok": false,
+        "why": "ex_not_for"
+      }
+    },
+    {
+      "args": {
+        "kind": "",
+        "gain": 1000000
+      },
+      "expect_value": {
+        "amount": 0,
+        "ok": false,
+        "why": ""
+      }
+    }
+  ]
+}

@@ -71,7 +71,26 @@
         "ack_no",
         "karta_name",
         "karta_pan",
-        "formed_on"
+        "formed_on",
+        "address",
+        "city",
+        "pin",
+        "email",
+        "mobile",
+        "lottery_on",
+        "games_on",
+        "days_fy",
+        "days_4y",
+        "citizen",
+        "pio",
+        "visiting",
+        "left_for_job",
+        "indian_income",
+        "taxed_elsewhere",
+        "nr_years",
+        "days_7y",
+        "res_country",
+        "res_tin"
       ],
       "label": "questions"
     },
@@ -96,7 +115,26 @@
         "ack_no": "",
         "karta_name": "",
         "karta_pan": "",
-        "formed_on": ""
+        "formed_on": "",
+        "address": "",
+        "city": "",
+        "pin": "",
+        "email": "",
+        "mobile": "",
+        "lottery_on": "",
+        "games_on": "",
+        "days_fy": "",
+        "days_4y": "",
+        "citizen": false,
+        "pio": false,
+        "visiting": false,
+        "left_for_job": false,
+        "indian_income": "",
+        "taxed_elsewhere": false,
+        "nr_years": "",
+        "days_7y": "",
+        "res_country": "",
+        "res_tin": ""
       },
       "label": "answer defaults"
     },
@@ -170,7 +208,8 @@
         "prefill",
         "ais",
         "26as",
-        "filed"
+        "filed",
+        "filed_prev"
       ],
       "label": "kinds a return holds one of - another asks: replace or keep both"
     },
@@ -204,6 +243,127 @@
         "ack_digits": 15
       },
       "label": "where a filed return keeps its date and challans"
+    },
+    {
+      "name": "vda_max",
+      "type": "json",
+      "default": 50,
+      "label": "virtual digital asset transfers typed, at most"
+    },
+    {
+      "name": "vehicles_max",
+      "type": "json",
+      "default": 20,
+      "label": "goods carriages typed, at most (44AE allows 10; more is shown, and closes 44AE)"
+    },
+    {
+      "name": "cg_max",
+      "type": "number",
+      "default": 300,
+      "label": "sales typed on Review, at most"
+    },
+    {
+      "name": "losses_max",
+      "type": "number",
+      "default": 40,
+      "label": "losses brought forward typed, at most"
+    },
+    {
+      "name": "gifts_max",
+      "type": "number",
+      "default": 40,
+      "label": "gifts typed, at most"
+    },
+    {
+      "name": "from_prev",
+      "type": "json",
+      "default": {
+        "cfl": "ScheduleCFL",
+        "detail": "CarryFwdLossDetail",
+        "summary": "LossSummaryDetail",
+        "filed": "DateOfFiling",
+        "adjusted": "AdjTotBFLossInBFLA",
+        "current": "CurrentAYloss",
+        "fields": {
+          "stcl": "TotalSTCGPTILossCF",
+          "ltcl": "TotalLTCGPTILossCF",
+          "hp": "TotalHPPTILossCF"
+        },
+        "date": [
+          "Verification.Date",
+          "PartA_GEN1.FilingStatus.OrigRetFiledDate"
+        ]
+      },
+      "label": "last year's filed return: where its Schedule CFL keeps each year's loss, what it set off, its own loss, and the day it was filed"
+    },
+    {
+      "name": "biz_kinds",
+      "type": "json",
+      "default": [
+        "",
+        "44ADA",
+        "44AD",
+        "44AE",
+        "business",
+        "profession"
+      ],
+      "label": "business kinds a person may pick"
+    },
+    {
+      "name": "pl_as",
+      "type": "json",
+      "default": {
+        "business": "44AD",
+        "profession": "44ADA"
+      },
+      "label": "own-P&L kinds: the presumptive section that would have applied (limits, s.44AB(e))"
+    },
+    {
+      "name": "pl_codes",
+      "type": "json",
+      "default": {
+        "business": [
+          "ITR-3",
+          "PartA_GEN2.NatOfBus.NatureOfBusiness",
+          "Code"
+        ],
+        "profession": [
+          "ITR-3",
+          "PartA_GEN2.NatOfBus.NatureOfBusiness",
+          "Code"
+        ]
+      },
+      "label": "own-P&L kinds: where the department's ITR-3 schema lists the nature-of-business codes [form, path, field]"
+    },
+    {
+      "name": "foreign_max",
+      "type": "number",
+      "default": 40,
+      "label": "foreign income rows typed, at most"
+    },
+    {
+      "name": "fa_max",
+      "type": "number",
+      "default": 60,
+      "label": "foreign assets typed, at most"
+    },
+    {
+      "name": "club_max",
+      "type": "number",
+      "default": 20,
+      "label": "clubbed income rows typed, at most"
+    },
+    {
+      "name": "arrears_max",
+      "type": "number",
+      "default": 15,
+      "label": "years of salary arrears typed (Form 10E), at most"
+    },
+    {
+      "name": "countries_from",
+      "type": "text",
+      "default": "CountryCodeExcludingIndia",
+      "label": "the department's country list: the ITR-2 schema definition that holds it (code: name)"
     }
   ],
   "expr": {
@@ -222,13 +382,27 @@
       "paid_minor": "$paid_minor",
       "one_per_kind": "$one_per_kind",
       "business_sections": "$business_sections",
-      "from_filed": "$from_filed"
+      "from_filed": "$from_filed",
+      "vda_max": "$vda_max",
+      "vehicles_max": "$vehicles_max",
+      "cg_max": "$cg_max",
+      "losses_max": "$losses_max",
+      "gifts_max": "$gifts_max",
+      "from_prev": "$from_prev",
+      "biz_kinds": "$biz_kinds",
+      "pl_as": "$pl_as",
+      "pl_codes": "$pl_codes",
+      "foreign_max": "$foreign_max",
+      "fa_max": "$fa_max",
+      "club_max": "$club_max",
+      "arrears_max": "$arrears_max",
+      "countries_from": "$countries_from"
     }
   },
   "returns": "record",
-  "version": 11,
+  "version": 15,
   "status": "published",
-  "description_nl": "2026-10-06: what may be dropped in (types, size), how many houses, which filing kinds pay the late fee, the yes/no questions a person answers and their defaults, the five steps, and the documents asked for (need = the journey nudges for it). 2026-10-06: who - where a filed return (JSON) names the person, so a return can start from documents and the client is made from them. 2026-10-06: paid_minor - a payment typed on Check as its challan minor head (100 advance, 300 self-assessment). 2026-10-06: one_per_kind - a second AIS / 26AS / pre-filled JSON / filed return asks first: replace it (the old kept in History) or keep both. 2026-10-06: business_sections - TDS sections whose amount paid is a receipt of a business or profession (shown beside the receipts typed). 2026-10-06: .xls (an old Excel bank statement). 2026-10-06: from_filed - this year's filed return gives the filing date (Verification Date), the acknowledgement (its file name) and each challan (Schedule IT). 2026-10-06: karta_name / karta_pan / formed_on - an HUF's Karta signs its return; its date of formation stands where a person's birth date does.",
+  "description_nl": "2026-10-06: what may be dropped in (types, size), how many houses, which filing kinds pay the late fee, the yes/no questions a person answers and their defaults, the five steps, and the documents asked for (need = the journey nudges for it). 2026-10-06: who - where a filed return (JSON) names the person, so a return can start from documents and the client is made from them. 2026-10-06: paid_minor - a payment typed on Check as its challan minor head (100 advance, 300 self-assessment). 2026-10-06: one_per_kind - a second AIS / 26AS / pre-filled JSON / filed return asks first: replace it (the old kept in History) or keep both. 2026-10-06: business_sections - TDS sections whose amount paid is a receipt of a business or profession (shown beside the receipts typed). 2026-10-06: .xls (an old Excel bank statement). 2026-10-06: from_filed - this year's filed return gives the filing date (Verification Date), the acknowledgement (its file name) and each challan (Schedule IT). 2026-10-06: karta_name / karta_pan / formed_on - an HUF's Karta signs its return; its date of formation stands where a person's birth date does. 2026-10-07: the person's address, city, PIN, e-mail and mobile (typed on Review when no document has them - a typed answer wins), the dates of winnings (lottery_on, games_on), vda_max, vehicles_max. 2026-10-07: cg_max / losses_max / gifts_max; filed_prev (last year's return) is one document; from_prev - its Schedule CFL. 2026-10-07: biz_kinds (business / profession on the person's own profit and loss, besides 44ADA / 44AD / 44AE); pl_as (their presumptive twin, for the limits and s.44AB(e)); pl_codes (their nature-of-business codes, from the ITR-3 schema). 2026-10-07: wave 3: residential-status questions (days in India this year / the 4 and 7 years before, years as a non-resident, citizen / person of Indian origin, visiting, left for a job, taxed elsewhere, income other than from foreign sources, country of residence and TIN); foreign_max / fa_max / club_max / arrears_max; countries_from.",
   "test_cases": [
     {
       "args": {},
@@ -269,7 +443,26 @@
           "ack_no",
           "karta_name",
           "karta_pan",
-          "formed_on"
+          "formed_on",
+          "address",
+          "city",
+          "pin",
+          "email",
+          "mobile",
+          "lottery_on",
+          "games_on",
+          "days_fy",
+          "days_4y",
+          "citizen",
+          "pio",
+          "visiting",
+          "left_for_job",
+          "indian_income",
+          "taxed_elsewhere",
+          "nr_years",
+          "days_7y",
+          "res_country",
+          "res_tin"
         ],
         "answer_defaults": {
           "resident": true,
@@ -289,7 +482,26 @@
           "ack_no": "",
           "karta_name": "",
           "karta_pan": "",
-          "formed_on": ""
+          "formed_on": "",
+          "address": "",
+          "city": "",
+          "pin": "",
+          "email": "",
+          "mobile": "",
+          "lottery_on": "",
+          "games_on": "",
+          "days_fy": "",
+          "days_4y": "",
+          "citizen": false,
+          "pio": false,
+          "visiting": false,
+          "left_for_job": false,
+          "indian_income": "",
+          "taxed_elsewhere": false,
+          "nr_years": "",
+          "days_7y": "",
+          "res_country": "",
+          "res_tin": ""
         },
         "steps": [
           "gather",
@@ -338,7 +550,8 @@
           "prefill",
           "ais",
           "26as",
-          "filed"
+          "filed",
+          "filed_prev"
         ],
         "business_sections": [
           "194J",
@@ -360,7 +573,58 @@
           "no": "SrlNoOfChaln",
           "amount": "Amt",
           "ack_digits": 15
-        }
+        },
+        "vda_max": 50,
+        "vehicles_max": 20,
+        "cg_max": 300,
+        "losses_max": 40,
+        "gifts_max": 40,
+        "from_prev": {
+          "cfl": "ScheduleCFL",
+          "detail": "CarryFwdLossDetail",
+          "summary": "LossSummaryDetail",
+          "filed": "DateOfFiling",
+          "adjusted": "AdjTotBFLossInBFLA",
+          "current": "CurrentAYloss",
+          "fields": {
+            "stcl": "TotalSTCGPTILossCF",
+            "ltcl": "TotalLTCGPTILossCF",
+            "hp": "TotalHPPTILossCF"
+          },
+          "date": [
+            "Verification.Date",
+            "PartA_GEN1.FilingStatus.OrigRetFiledDate"
+          ]
+        },
+        "biz_kinds": [
+          "",
+          "44ADA",
+          "44AD",
+          "44AE",
+          "business",
+          "profession"
+        ],
+        "pl_as": {
+          "business": "44AD",
+          "profession": "44ADA"
+        },
+        "pl_codes": {
+          "business": [
+            "ITR-3",
+            "PartA_GEN2.NatOfBus.NatureOfBusiness",
+            "Code"
+          ],
+          "profession": [
+            "ITR-3",
+            "PartA_GEN2.NatOfBus.NatureOfBusiness",
+            "Code"
+          ]
+        },
+        "foreign_max": 40,
+        "fa_max": 60,
+        "club_max": 20,
+        "arrears_max": 15,
+        "countries_from": "CountryCodeExcludingIndia"
       }
     }
   ]

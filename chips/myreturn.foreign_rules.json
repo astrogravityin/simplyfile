@@ -1,0 +1,152 @@
+{
+  "chip_id": "myreturn.foreign_rules",
+  "kind": "accessor",
+  "set": "myreturn",
+  "label": "My return: foreign income - the rules",
+  "aliases": [
+    "foreign income",
+    "dtaa",
+    "schedule fsi",
+    "schedule tr",
+    "form 67",
+    "rule 115"
+  ],
+  "params": [
+    {
+      "name": "heads",
+      "type": "json",
+      "default": {
+        "salary": {
+          "to": "salary",
+          "fsi": "IncFromSal"
+        },
+        "house": {
+          "to": "house",
+          "fsi": "IncFromHP"
+        },
+        "interest": {
+          "to": "interest",
+          "fsi": "IncOthSrc"
+        },
+        "dividend": {
+          "to": "dividend",
+          "fsi": "IncOthSrc"
+        },
+        "other": {
+          "to": "other",
+          "fsi": "IncOthSrc"
+        },
+        "stcg": {
+          "to": "stcg_other",
+          "fsi": "IncCapGain"
+        },
+        "ltcg": {
+          "to": "ltcg_112",
+          "fsi": "IncCapGain"
+        },
+        "business": {
+          "to": "business",
+          "fsi": ""
+        }
+      },
+      "label": "foreign income by head: where it joins the return (salary - Schedule S; house - Schedule HP, the 30% and interest; interest / dividend / other - Schedule OS; a short-term gain at the slab rates, a long-term gain at 12.5% u/s 112 - Schedule CG; business - a CA) and its Schedule FSI block"
+    },
+    {
+      "name": "relief_secs",
+      "type": "json",
+      "default": [
+        "90",
+        "90A",
+        "91"
+      ],
+      "label": "s.90 (a DTAA with the country), s.90A (an agreement between specified associations), s.91 (no agreement)"
+    },
+    {
+      "name": "dtaa_secs",
+      "type": "json",
+      "default": [
+        "90",
+        "90A"
+      ],
+      "label": "Schedule TR: relief where a DTAA applies (the rest is s.91)"
+    },
+    {
+      "name": "rate_rule",
+      "type": "text",
+      "default": "rule 115",
+      "label": "the foreign income is typed in rupees - rule 115: at the SBI telegraphic-transfer buying rate on the last day of the month before the month the income is received / accrues (salary, interest, dividend)"
+    },
+    {
+      "name": "form67",
+      "type": "text",
+      "default": "Form 67",
+      "label": "rule 128(9): Form 67 (with proof of the foreign tax) is filed on the e-filing portal on or before the end of the AY - 31 March 2027 - for the relief to be allowed"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "heads": "$heads",
+      "relief_secs": "$relief_secs",
+      "dtaa_secs": "$dtaa_secs",
+      "rate_rule": "$rate_rule",
+      "form67": "$form67"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-07: Foreign income for AY 2026-27: where each head joins the return, the relief sections (90 / 90A / 91), the rupee rate (rule 115) and Form 67 (rule 128).",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "heads": {
+          "salary": {
+            "to": "salary",
+            "fsi": "IncFromSal"
+          },
+          "house": {
+            "to": "house",
+            "fsi": "IncFromHP"
+          },
+          "interest": {
+            "to": "interest",
+            "fsi": "IncOthSrc"
+          },
+          "dividend": {
+            "to": "dividend",
+            "fsi": "IncOthSrc"
+          },
+          "other": {
+            "to": "other",
+            "fsi": "IncOthSrc"
+          },
+          "stcg": {
+            "to": "stcg_other",
+            "fsi": "IncCapGain"
+          },
+          "ltcg": {
+            "to": "ltcg_112",
+            "fsi": "IncCapGain"
+          },
+          "business": {
+            "to": "business",
+            "fsi": ""
+          }
+        },
+        "relief_secs": [
+          "90",
+          "90A",
+          "91"
+        ],
+        "dtaa_secs": [
+          "90",
+          "90A"
+        ],
+        "rate_rule": "rule 115",
+        "form67": "Form 67"
+      }
+    }
+  ]
+}

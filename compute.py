@@ -68,7 +68,7 @@ def _day(s: str) -> int:
 
 
 def interest_234(cid: str, ay: str, k: dict, assessed: float, paid: list[dict], exempt: bool = False, filed_on: int = 0, due: int = 0,
-                 presumptive: bool | None = None) -> dict:
+                 presumptive: bool | None = None, due_rule: int = 0) -> dict:
     """Interest u/s 234A / 234B / 234C (chip compute.interest). Here: which challan is advance tax and which self-assessment
     (chip compute.paid_kind), what was paid by each instalment date, and the months - counted by op months_part."""
     import datetime  # noqa: PLC0415
@@ -77,15 +77,18 @@ def interest_234(cid: str, ay: str, k: dict, assessed: float, paid: list[dict], 
     y = clients.year_of(cid, ay)
     cur = current_filing(y)
     filing = filed_on or (_day(cur["filed_on"]) if cur and cur.get("filed_on") and not y.get("revising") else _day(datetime.date.today().isoformat()))
-    due = due or dates(cid, ay)["due"]       # My return passes its own form's due date and the day it was (or will be) filed
+    if not due:                              # My return passes its own form's due dates and the day it was (or will be) filed
+        dd = dates(cid, ay)
+        due, due_rule = dd["due"], dd["due_rule"]
     rows = [{"on": _day(e["date"]), "amount": e["tax"] or e["gross"],
              "kind": engine.run("compute.paid_kind", {"minor": str(e.get("minor") or ""), "paid_on": _day(e["date"]), "fy_end": year_day(ay, "end")})}
             for e in paid]
     adv = [r for r in rows if r["kind"] == "advance"]
     sat = [r for r in rows if r["kind"] == "self"]
     cut = [(ayy + yy) * 10000 + md for yy, md in k["advance_due"]]
-    after_due = int((datetime.date(due // 10000, due // 100 % 100, due % 100) + datetime.timedelta(days=1)).strftime("%Y%m%d"))
     adv_total = sum(r["amount"] for r in adv)
+    due_a = engine.run("compute.due_234a", {"due": due, "due_rule": due_rule or due, "owed": assessed - adv_total})   # an extended year: 234A may count from the rule's date
+    after_due = int((datetime.date(due_a // 10000, due_a // 100 % 100, due_a % 100) + datetime.timedelta(days=1)).strftime("%Y%m%d"))
 
     step = float(engine.knobs("compute.interest")["floor_step"]) or 1.0
 
@@ -100,15 +103,15 @@ def interest_234(cid: str, ay: str, k: dict, assessed: float, paid: list[dict], 
             out.append(r | {"amount": take})
         return out
     sat_b = upto(sat, assessed - adv_total)
-    before = sum(r["amount"] for r in sat_b if r["on"] <= due)
-    sat_a = upto([r for r in sat if r["on"] > due], assessed - adv_total - before)
+    before = sum(r["amount"] for r in sat_b if r["on"] <= due_a)
+    sat_a = upto([r for r in sat if r["on"] > due_a], assessed - adv_total - before)
     return engine.run("compute.interest", {
         "assessed": assessed, "adv_by": [sum(r["amount"] for r in adv if r["on"] <= c) for c in cut],
         "adv_total": adv_total, "sat_total": sum(r["amount"] for r in sat_b), "sat_before_due": before,
         "sat_im": sum(r["amount"] * months_part(year_day(ay, "start"), r["on"]) for r in sat_b),
         "sat_after_due": sum(r["amount"] for r in sat_a), "sat_after_im": sum(r["amount"] * months_part(after_due, r["on"]) for r in sat_a),
         "months_b": months_part(year_day(ay, "start"), filing), "months_a": months_part(after_due, filing),
-        "presumptive": bool(y.get("presumptive")) if presumptive is None else presumptive, "exempt": exempt}) | {"filing_day": filing, "exempt": exempt, "due": due}
+        "presumptive": bool(y.get("presumptive")) if presumptive is None else presumptive, "exempt": exempt}) | {"filing_day": filing, "exempt": exempt, "due": due, "due_234a": due_a}
 
 
 def refund_interest(ay: str, st: dict, auto: dict, refund: float, tax_total: float) -> dict:

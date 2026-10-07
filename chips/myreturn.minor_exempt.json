@@ -1,0 +1,106 @@
+{
+  "chip_id": "myreturn.minor_exempt",
+  "kind": "accessor",
+  "set": "myreturn",
+  "label": "My return: a minor child's income - the 1,500 exemption (s.10(32))",
+  "aliases": [
+    "10(32)",
+    "minor child"
+  ],
+  "params": [
+    {
+      "name": "income",
+      "type": "number",
+      "default": 0,
+      "label": "the child's income clubbed in the year"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "exempt": {
+        "vop": "smallest",
+        "values": [
+          {
+            "vop": "largest",
+            "values": [
+              "$income",
+              0
+            ]
+          },
+          {
+            "vop": "get",
+            "value": {
+              "chip": "myreturn.club_rules",
+              "args": {}
+            },
+            "path": "minor_exempt"
+          }
+        ]
+      },
+      "included": {
+        "vop": "sub",
+        "a": {
+          "vop": "largest",
+          "values": [
+            "$income",
+            0
+          ]
+        },
+        "b": {
+          "vop": "smallest",
+          "values": [
+            {
+              "vop": "largest",
+              "values": [
+                "$income",
+                0
+              ]
+            },
+            {
+              "vop": "get",
+              "value": {
+                "chip": "myreturn.club_rules",
+                "args": {}
+              },
+              "path": "minor_exempt"
+            }
+          ]
+        }
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-07: s.10(32): where a minor child's income is clubbed u/s 64(1A), the parent is exempt on it up to 1,500 for each child.",
+  "test_cases": [
+    {
+      "args": {
+        "income": 50000
+      },
+      "expect_value": {
+        "exempt": 1500,
+        "included": 48500
+      }
+    },
+    {
+      "args": {
+        "income": 1000
+      },
+      "expect_value": {
+        "exempt": 1000,
+        "included": 0
+      }
+    },
+    {
+      "args": {
+        "income": 0
+      },
+      "expect_value": {
+        "exempt": 0,
+        "included": 0
+      }
+    }
+  ]
+}

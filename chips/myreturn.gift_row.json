@@ -1,0 +1,884 @@
+{
+  "chip_id": "myreturn.gift_row",
+  "kind": "accessor",
+  "set": "myreturn",
+  "label": "My return: one gift received",
+  "aliases": [
+    "gift",
+    "56(2)(x)"
+  ],
+  "params": [
+    {
+      "name": "relation",
+      "type": "text",
+      "default": "",
+      "label": "who gave it (chip myreturn.gift_rules relatives), blank for anyone else"
+    },
+    {
+      "name": "occasion",
+      "type": "text",
+      "default": "",
+      "label": "marriage / will / inheritance / death, or blank"
+    },
+    {
+      "name": "kind",
+      "type": "text",
+      "default": "money",
+      "label": "money / property (immovable: land, building) / movable (shares, jewellery, art ...)"
+    },
+    {
+      "name": "value",
+      "type": "number",
+      "default": 0,
+      "label": "the sum, or the stamp-duty value (property), or the fair market value (movable)"
+    },
+    {
+      "name": "paid",
+      "type": "number",
+      "default": 0,
+      "label": "what the person paid for it"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "counts": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "not",
+                  "item": {
+                    "op": "in_set",
+                    "value": "$relation",
+                    "set": {
+                      "vop": "get",
+                      "value": {
+                        "chip": "myreturn.gift_rules",
+                        "args": {}
+                      },
+                      "path": "relatives"
+                    }
+                  }
+                },
+                {
+                  "op": "not",
+                  "item": {
+                    "op": "in_set",
+                    "value": "$occasion",
+                    "set": {
+                      "vop": "get",
+                      "value": {
+                        "chip": "myreturn.gift_rules",
+                        "args": {}
+                      },
+                      "path": "exempt_occasions"
+                    }
+                  }
+                }
+              ]
+            },
+            "then": true
+          }
+        ],
+        "else": false
+      },
+      "money": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "all",
+                  "items": [
+                    {
+                      "op": "not",
+                      "item": {
+                        "op": "in_set",
+                        "value": "$relation",
+                        "set": {
+                          "vop": "get",
+                          "value": {
+                            "chip": "myreturn.gift_rules",
+                            "args": {}
+                          },
+                          "path": "relatives"
+                        }
+                      }
+                    },
+                    {
+                      "op": "not",
+                      "item": {
+                        "op": "in_set",
+                        "value": "$occasion",
+                        "set": {
+                          "vop": "get",
+                          "value": {
+                            "chip": "myreturn.gift_rules",
+                            "args": {}
+                          },
+                          "path": "exempt_occasions"
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "op": "eq",
+                  "left": "$kind",
+                  "right": "money"
+                }
+              ]
+            },
+            "then": "$value"
+          }
+        ],
+        "else": 0
+      },
+      "movable_free": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "all",
+                  "items": [
+                    {
+                      "op": "not",
+                      "item": {
+                        "op": "in_set",
+                        "value": "$relation",
+                        "set": {
+                          "vop": "get",
+                          "value": {
+                            "chip": "myreturn.gift_rules",
+                            "args": {}
+                          },
+                          "path": "relatives"
+                        }
+                      }
+                    },
+                    {
+                      "op": "not",
+                      "item": {
+                        "op": "in_set",
+                        "value": "$occasion",
+                        "set": {
+                          "vop": "get",
+                          "value": {
+                            "chip": "myreturn.gift_rules",
+                            "args": {}
+                          },
+                          "path": "exempt_occasions"
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "op": "eq",
+                  "left": "$kind",
+                  "right": "movable"
+                },
+                {
+                  "op": "le",
+                  "left": "$paid",
+                  "right": 0
+                }
+              ]
+            },
+            "then": "$value"
+          }
+        ],
+        "else": 0
+      },
+      "movable_less": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "all",
+                  "items": [
+                    {
+                      "op": "not",
+                      "item": {
+                        "op": "in_set",
+                        "value": "$relation",
+                        "set": {
+                          "vop": "get",
+                          "value": {
+                            "chip": "myreturn.gift_rules",
+                            "args": {}
+                          },
+                          "path": "relatives"
+                        }
+                      }
+                    },
+                    {
+                      "op": "not",
+                      "item": {
+                        "op": "in_set",
+                        "value": "$occasion",
+                        "set": {
+                          "vop": "get",
+                          "value": {
+                            "chip": "myreturn.gift_rules",
+                            "args": {}
+                          },
+                          "path": "exempt_occasions"
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "op": "eq",
+                  "left": "$kind",
+                  "right": "movable"
+                },
+                {
+                  "op": "gt",
+                  "left": "$paid",
+                  "right": 0
+                }
+              ]
+            },
+            "then": {
+              "vop": "largest",
+              "values": [
+                {
+                  "vop": "sub",
+                  "a": "$value",
+                  "b": "$paid"
+                },
+                0
+              ]
+            }
+          }
+        ],
+        "else": 0
+      },
+      "movable_paid": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "all",
+                  "items": [
+                    {
+                      "op": "not",
+                      "item": {
+                        "op": "in_set",
+                        "value": "$relation",
+                        "set": {
+                          "vop": "get",
+                          "value": {
+                            "chip": "myreturn.gift_rules",
+                            "args": {}
+                          },
+                          "path": "relatives"
+                        }
+                      }
+                    },
+                    {
+                      "op": "not",
+                      "item": {
+                        "op": "in_set",
+                        "value": "$occasion",
+                        "set": {
+                          "vop": "get",
+                          "value": {
+                            "chip": "myreturn.gift_rules",
+                            "args": {}
+                          },
+                          "path": "exempt_occasions"
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "op": "eq",
+                  "left": "$kind",
+                  "right": "movable"
+                },
+                {
+                  "op": "gt",
+                  "left": "$paid",
+                  "right": 0
+                }
+              ]
+            },
+            "then": "$paid"
+          }
+        ],
+        "else": 0
+      },
+      "property_free": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "eq",
+                  "left": "$kind",
+                  "right": "property"
+                },
+                {
+                  "op": "le",
+                  "left": "$paid",
+                  "right": 0
+                }
+              ]
+            },
+            "then": {
+              "vop": "choose",
+              "cases": [
+                {
+                  "when": {
+                    "op": "all",
+                    "items": [
+                      {
+                        "op": "all",
+                        "items": [
+                          {
+                            "op": "not",
+                            "item": {
+                              "op": "in_set",
+                              "value": "$relation",
+                              "set": {
+                                "vop": "get",
+                                "value": {
+                                  "chip": "myreturn.gift_rules",
+                                  "args": {}
+                                },
+                                "path": "relatives"
+                              }
+                            }
+                          },
+                          {
+                            "op": "not",
+                            "item": {
+                              "op": "in_set",
+                              "value": "$occasion",
+                              "set": {
+                                "vop": "get",
+                                "value": {
+                                  "chip": "myreturn.gift_rules",
+                                  "args": {}
+                                },
+                                "path": "exempt_occasions"
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "op": "eq",
+                        "left": "$kind",
+                        "right": "property"
+                      },
+                      {
+                        "op": "le",
+                        "left": "$paid",
+                        "right": 0
+                      },
+                      {
+                        "op": "gt",
+                        "left": "$value",
+                        "right": {
+                          "vop": "get",
+                          "value": {
+                            "chip": "myreturn.gift_rules",
+                            "args": {}
+                          },
+                          "path": "threshold"
+                        }
+                      }
+                    ]
+                  },
+                  "then": "$value"
+                },
+                {
+                  "when": {
+                    "op": "all",
+                    "items": [
+                      {
+                        "op": "all",
+                        "items": [
+                          {
+                            "op": "not",
+                            "item": {
+                              "op": "in_set",
+                              "value": "$relation",
+                              "set": {
+                                "vop": "get",
+                                "value": {
+                                  "chip": "myreturn.gift_rules",
+                                  "args": {}
+                                },
+                                "path": "relatives"
+                              }
+                            }
+                          },
+                          {
+                            "op": "not",
+                            "item": {
+                              "op": "in_set",
+                              "value": "$occasion",
+                              "set": {
+                                "vop": "get",
+                                "value": {
+                                  "chip": "myreturn.gift_rules",
+                                  "args": {}
+                                },
+                                "path": "exempt_occasions"
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "op": "eq",
+                        "left": "$kind",
+                        "right": "property"
+                      },
+                      {
+                        "op": "gt",
+                        "left": "$paid",
+                        "right": 0
+                      },
+                      {
+                        "op": "gt",
+                        "left": {
+                          "vop": "largest",
+                          "values": [
+                            {
+                              "vop": "sub",
+                              "a": "$value",
+                              "b": "$paid"
+                            },
+                            0
+                          ]
+                        },
+                        "right": {
+                          "vop": "largest",
+                          "values": [
+                            {
+                              "vop": "get",
+                              "value": {
+                                "chip": "myreturn.gift_rules",
+                                "args": {}
+                              },
+                              "path": "threshold"
+                            },
+                            {
+                              "vop": "round_to",
+                              "value": {
+                                "vop": "mul",
+                                "a": "$paid",
+                                "b": {
+                                  "vop": "div",
+                                  "a": {
+                                    "vop": "get",
+                                    "value": {
+                                      "chip": "myreturn.gift_rules",
+                                      "args": {}
+                                    },
+                                    "path": "inadequate_pct"
+                                  },
+                                  "b": 100
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  },
+                  "then": {
+                    "vop": "largest",
+                    "values": [
+                      {
+                        "vop": "sub",
+                        "a": "$value",
+                        "b": "$paid"
+                      },
+                      0
+                    ]
+                  }
+                }
+              ],
+              "else": 0
+            }
+          }
+        ],
+        "else": 0
+      },
+      "property_less": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "eq",
+                  "left": "$kind",
+                  "right": "property"
+                },
+                {
+                  "op": "gt",
+                  "left": "$paid",
+                  "right": 0
+                }
+              ]
+            },
+            "then": {
+              "vop": "choose",
+              "cases": [
+                {
+                  "when": {
+                    "op": "all",
+                    "items": [
+                      {
+                        "op": "all",
+                        "items": [
+                          {
+                            "op": "not",
+                            "item": {
+                              "op": "in_set",
+                              "value": "$relation",
+                              "set": {
+                                "vop": "get",
+                                "value": {
+                                  "chip": "myreturn.gift_rules",
+                                  "args": {}
+                                },
+                                "path": "relatives"
+                              }
+                            }
+                          },
+                          {
+                            "op": "not",
+                            "item": {
+                              "op": "in_set",
+                              "value": "$occasion",
+                              "set": {
+                                "vop": "get",
+                                "value": {
+                                  "chip": "myreturn.gift_rules",
+                                  "args": {}
+                                },
+                                "path": "exempt_occasions"
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "op": "eq",
+                        "left": "$kind",
+                        "right": "property"
+                      },
+                      {
+                        "op": "le",
+                        "left": "$paid",
+                        "right": 0
+                      },
+                      {
+                        "op": "gt",
+                        "left": "$value",
+                        "right": {
+                          "vop": "get",
+                          "value": {
+                            "chip": "myreturn.gift_rules",
+                            "args": {}
+                          },
+                          "path": "threshold"
+                        }
+                      }
+                    ]
+                  },
+                  "then": "$value"
+                },
+                {
+                  "when": {
+                    "op": "all",
+                    "items": [
+                      {
+                        "op": "all",
+                        "items": [
+                          {
+                            "op": "not",
+                            "item": {
+                              "op": "in_set",
+                              "value": "$relation",
+                              "set": {
+                                "vop": "get",
+                                "value": {
+                                  "chip": "myreturn.gift_rules",
+                                  "args": {}
+                                },
+                                "path": "relatives"
+                              }
+                            }
+                          },
+                          {
+                            "op": "not",
+                            "item": {
+                              "op": "in_set",
+                              "value": "$occasion",
+                              "set": {
+                                "vop": "get",
+                                "value": {
+                                  "chip": "myreturn.gift_rules",
+                                  "args": {}
+                                },
+                                "path": "exempt_occasions"
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "op": "eq",
+                        "left": "$kind",
+                        "right": "property"
+                      },
+                      {
+                        "op": "gt",
+                        "left": "$paid",
+                        "right": 0
+                      },
+                      {
+                        "op": "gt",
+                        "left": {
+                          "vop": "largest",
+                          "values": [
+                            {
+                              "vop": "sub",
+                              "a": "$value",
+                              "b": "$paid"
+                            },
+                            0
+                          ]
+                        },
+                        "right": {
+                          "vop": "largest",
+                          "values": [
+                            {
+                              "vop": "get",
+                              "value": {
+                                "chip": "myreturn.gift_rules",
+                                "args": {}
+                              },
+                              "path": "threshold"
+                            },
+                            {
+                              "vop": "round_to",
+                              "value": {
+                                "vop": "mul",
+                                "a": "$paid",
+                                "b": {
+                                  "vop": "div",
+                                  "a": {
+                                    "vop": "get",
+                                    "value": {
+                                      "chip": "myreturn.gift_rules",
+                                      "args": {}
+                                    },
+                                    "path": "inadequate_pct"
+                                  },
+                                  "b": 100
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  },
+                  "then": {
+                    "vop": "largest",
+                    "values": [
+                      {
+                        "vop": "sub",
+                        "a": "$value",
+                        "b": "$paid"
+                      },
+                      0
+                    ]
+                  }
+                }
+              ],
+              "else": 0
+            }
+          }
+        ],
+        "else": 0
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-07: One gift (s.56(2)(x)): from a relative, or on marriage, by will or inheritance, or in contemplation of death - nothing. Otherwise a sum or movable property counts towards the year's total (chip myreturn.gifts); an immovable property is taxed on its own - received free, its stamp-duty value when more than 50,000; bought for less, the shortfall when more than the higher of 50,000 and 10% of the price.",
+  "test_cases": [
+    {
+      "args": {
+        "relation": "brother",
+        "kind": "money",
+        "value": 500000
+      },
+      "expect_value": {
+        "counts": false,
+        "money": 0,
+        "movable_free": 0,
+        "movable_less": 0,
+        "movable_paid": 0,
+        "property_free": 0,
+        "property_less": 0
+      }
+    },
+    {
+      "args": {
+        "kind": "money",
+        "value": 40000
+      },
+      "expect_value": {
+        "counts": true,
+        "money": 40000,
+        "movable_free": 0,
+        "movable_less": 0,
+        "movable_paid": 0,
+        "property_free": 0,
+        "property_less": 0
+      }
+    },
+    {
+      "args": {
+        "kind": "money",
+        "value": 200000,
+        "occasion": "marriage"
+      },
+      "expect_value": {
+        "counts": false,
+        "money": 0,
+        "movable_free": 0,
+        "movable_less": 0,
+        "movable_paid": 0,
+        "property_free": 0,
+        "property_less": 0
+      }
+    },
+    {
+      "args": {
+        "kind": "property",
+        "value": 3000000
+      },
+      "expect_value": {
+        "counts": true,
+        "money": 0,
+        "movable_free": 0,
+        "movable_less": 0,
+        "movable_paid": 0,
+        "property_free": 3000000,
+        "property_less": 0
+      }
+    },
+    {
+      "args": {
+        "kind": "property",
+        "value": 3000000,
+        "paid": 2800000
+      },
+      "expect_value": {
+        "counts": true,
+        "money": 0,
+        "movable_free": 0,
+        "movable_less": 0,
+        "movable_paid": 0,
+        "property_free": 0,
+        "property_less": 0
+      }
+    },
+    {
+      "args": {
+        "kind": "property",
+        "value": 3000000,
+        "paid": 2500000
+      },
+      "expect_value": {
+        "counts": true,
+        "money": 0,
+        "movable_free": 0,
+        "movable_less": 0,
+        "movable_paid": 0,
+        "property_free": 0,
+        "property_less": 500000
+      }
+    },
+    {
+      "args": {
+        "kind": "property",
+        "value": 40000
+      },
+      "expect_value": {
+        "counts": true,
+        "money": 0,
+        "movable_free": 0,
+        "movable_less": 0,
+        "movable_paid": 0,
+        "property_free": 0,
+        "property_less": 0
+      }
+    },
+    {
+      "args": {
+        "kind": "movable",
+        "value": 80000
+      },
+      "expect_value": {
+        "counts": true,
+        "money": 0,
+        "movable_free": 80000,
+        "movable_less": 0,
+        "movable_paid": 0,
+        "property_free": 0,
+        "property_less": 0
+      }
+    },
+    {
+      "args": {
+        "kind": "movable",
+        "value": 80000,
+        "paid": 20000
+      },
+      "expect_value": {
+        "counts": true,
+        "money": 0,
+        "movable_free": 0,
+        "movable_less": 60000,
+        "movable_paid": 20000,
+        "property_free": 0,
+        "property_less": 0
+      }
+    }
+  ]
+}

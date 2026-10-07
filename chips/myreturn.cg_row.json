@@ -1,0 +1,4876 @@
+{
+  "chip_id": "myreturn.cg_row",
+  "kind": "accessor",
+  "set": "myreturn",
+  "label": "My return: one capital-gains sale",
+  "aliases": [
+    "capital gain",
+    "grandfathering",
+    "indexation",
+    "50c",
+    "50aa",
+    "112a"
+  ],
+  "params": [
+    {
+      "name": "asset",
+      "type": "text",
+      "default": "equity",
+      "label": "the kind of asset (chip myreturn.cg_rules assets)"
+    },
+    {
+      "name": "acquired",
+      "type": "text",
+      "default": "",
+      "label": "bought on, YYYY-MM-DD"
+    },
+    {
+      "name": "sold",
+      "type": "text",
+      "default": "",
+      "label": "sold / transferred on, YYYY-MM-DD"
+    },
+    {
+      "name": "term",
+      "type": "text",
+      "default": "",
+      "label": "long / short, typed when the dates are not known"
+    },
+    {
+      "name": "sale",
+      "type": "number",
+      "default": 0,
+      "label": "full value of consideration received"
+    },
+    {
+      "name": "cost",
+      "type": "number",
+      "default": 0,
+      "label": "cost of acquisition (FMV on 1 April 2001 for an asset bought before)"
+    },
+    {
+      "name": "improve",
+      "type": "number",
+      "default": 0,
+      "label": "cost of improvement"
+    },
+    {
+      "name": "improve_on",
+      "type": "text",
+      "default": "",
+      "label": "improvement made on, YYYY-MM-DD"
+    },
+    {
+      "name": "fmv",
+      "type": "number",
+      "default": 0,
+      "label": "112A: total FMV on 31 January 2018"
+    },
+    {
+      "name": "expenses",
+      "type": "number",
+      "default": 0,
+      "label": "expenses wholly on the transfer (brokerage, stamp duty paid by the seller)"
+    },
+    {
+      "name": "stamp",
+      "type": "number",
+      "default": 0,
+      "label": "s.50C: the stamp-duty value of land / building"
+    },
+    {
+      "name": "resident",
+      "type": "boolean",
+      "default": true,
+      "label": "the person is resident"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "term": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "any",
+              "items": [
+                {
+                  "op": "eq",
+                  "left": {
+                    "vop": "get",
+                    "value": {
+                      "chip": "myreturn.cg_rules",
+                      "args": {}
+                    },
+                    "path": {
+                      "vop": "template",
+                      "text": "assets.{a}.always_short",
+                      "values": {
+                        "vop": "record",
+                        "fields": {
+                          "a": "$asset"
+                        }
+                      }
+                    }
+                  },
+                  "right": true
+                },
+                {
+                  "op": "all",
+                  "items": [
+                    {
+                      "op": "ne",
+                      "left": {
+                        "vop": "get",
+                        "value": {
+                          "chip": "myreturn.cg_rules",
+                          "args": {}
+                        },
+                        "path": {
+                          "vop": "template",
+                          "text": "assets.{a}.aa50_bought_from",
+                          "values": {
+                            "vop": "record",
+                            "fields": {
+                              "a": "$asset"
+                            }
+                          }
+                        }
+                      },
+                      "right": ""
+                    },
+                    {
+                      "vop": "matches",
+                      "text": "$acquired",
+                      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                    },
+                    {
+                      "op": "ge",
+                      "left": "$acquired",
+                      "right": {
+                        "vop": "get",
+                        "value": {
+                          "chip": "myreturn.cg_rules",
+                          "args": {}
+                        },
+                        "path": {
+                          "vop": "template",
+                          "text": "assets.{a}.aa50_bought_from",
+                          "values": {
+                            "vop": "record",
+                            "fields": {
+                              "a": "$asset"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "op": "all",
+                  "items": [
+                    {
+                      "op": "ne",
+                      "left": {
+                        "vop": "get",
+                        "value": {
+                          "chip": "myreturn.cg_rules",
+                          "args": {}
+                        },
+                        "path": {
+                          "vop": "template",
+                          "text": "assets.{a}.aa50_sold_from",
+                          "values": {
+                            "vop": "record",
+                            "fields": {
+                              "a": "$asset"
+                            }
+                          }
+                        }
+                      },
+                      "right": ""
+                    },
+                    {
+                      "vop": "matches",
+                      "text": "$sold",
+                      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                    },
+                    {
+                      "op": "ge",
+                      "left": "$sold",
+                      "right": {
+                        "vop": "get",
+                        "value": {
+                          "chip": "myreturn.cg_rules",
+                          "args": {}
+                        },
+                        "path": {
+                          "vop": "template",
+                          "text": "assets.{a}.aa50_sold_from",
+                          "values": {
+                            "vop": "record",
+                            "fields": {
+                              "a": "$asset"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            "then": "short"
+          },
+          {
+            "when": {
+              "op": "in_set",
+              "value": "$term",
+              "set": [
+                "long",
+                "short"
+              ]
+            },
+            "then": "$term"
+          },
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "all",
+                  "items": [
+                    {
+                      "vop": "matches",
+                      "text": "$acquired",
+                      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                    },
+                    {
+                      "vop": "matches",
+                      "text": "$sold",
+                      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                    }
+                  ]
+                },
+                {
+                  "op": "gt",
+                  "left": "$sold",
+                  "right": {
+                    "vop": "date_shift",
+                    "date": "$acquired",
+                    "months": {
+                      "vop": "get",
+                      "value": {
+                        "chip": "myreturn.cg_rules",
+                        "args": {}
+                      },
+                      "path": {
+                        "vop": "template",
+                        "text": "assets.{a}.months",
+                        "values": {
+                          "vop": "record",
+                          "fields": {
+                            "a": "$asset"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              ]
+            },
+            "then": "long"
+          }
+        ],
+        "else": "short"
+      },
+      "bucket": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "eq",
+              "left": {
+                "vop": "choose",
+                "cases": [
+                  {
+                    "when": {
+                      "op": "any",
+                      "items": [
+                        {
+                          "op": "eq",
+                          "left": {
+                            "vop": "get",
+                            "value": {
+                              "chip": "myreturn.cg_rules",
+                              "args": {}
+                            },
+                            "path": {
+                              "vop": "template",
+                              "text": "assets.{a}.always_short",
+                              "values": {
+                                "vop": "record",
+                                "fields": {
+                                  "a": "$asset"
+                                }
+                              }
+                            }
+                          },
+                          "right": true
+                        },
+                        {
+                          "op": "all",
+                          "items": [
+                            {
+                              "op": "ne",
+                              "left": {
+                                "vop": "get",
+                                "value": {
+                                  "chip": "myreturn.cg_rules",
+                                  "args": {}
+                                },
+                                "path": {
+                                  "vop": "template",
+                                  "text": "assets.{a}.aa50_bought_from",
+                                  "values": {
+                                    "vop": "record",
+                                    "fields": {
+                                      "a": "$asset"
+                                    }
+                                  }
+                                }
+                              },
+                              "right": ""
+                            },
+                            {
+                              "vop": "matches",
+                              "text": "$acquired",
+                              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                            },
+                            {
+                              "op": "ge",
+                              "left": "$acquired",
+                              "right": {
+                                "vop": "get",
+                                "value": {
+                                  "chip": "myreturn.cg_rules",
+                                  "args": {}
+                                },
+                                "path": {
+                                  "vop": "template",
+                                  "text": "assets.{a}.aa50_bought_from",
+                                  "values": {
+                                    "vop": "record",
+                                    "fields": {
+                                      "a": "$asset"
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "op": "all",
+                          "items": [
+                            {
+                              "op": "ne",
+                              "left": {
+                                "vop": "get",
+                                "value": {
+                                  "chip": "myreturn.cg_rules",
+                                  "args": {}
+                                },
+                                "path": {
+                                  "vop": "template",
+                                  "text": "assets.{a}.aa50_sold_from",
+                                  "values": {
+                                    "vop": "record",
+                                    "fields": {
+                                      "a": "$asset"
+                                    }
+                                  }
+                                }
+                              },
+                              "right": ""
+                            },
+                            {
+                              "vop": "matches",
+                              "text": "$sold",
+                              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                            },
+                            {
+                              "op": "ge",
+                              "left": "$sold",
+                              "right": {
+                                "vop": "get",
+                                "value": {
+                                  "chip": "myreturn.cg_rules",
+                                  "args": {}
+                                },
+                                "path": {
+                                  "vop": "template",
+                                  "text": "assets.{a}.aa50_sold_from",
+                                  "values": {
+                                    "vop": "record",
+                                    "fields": {
+                                      "a": "$asset"
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    "then": "short"
+                  },
+                  {
+                    "when": {
+                      "op": "in_set",
+                      "value": "$term",
+                      "set": [
+                        "long",
+                        "short"
+                      ]
+                    },
+                    "then": "$term"
+                  },
+                  {
+                    "when": {
+                      "op": "all",
+                      "items": [
+                        {
+                          "op": "all",
+                          "items": [
+                            {
+                              "vop": "matches",
+                              "text": "$acquired",
+                              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                            },
+                            {
+                              "vop": "matches",
+                              "text": "$sold",
+                              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                            }
+                          ]
+                        },
+                        {
+                          "op": "gt",
+                          "left": "$sold",
+                          "right": {
+                            "vop": "date_shift",
+                            "date": "$acquired",
+                            "months": {
+                              "vop": "get",
+                              "value": {
+                                "chip": "myreturn.cg_rules",
+                                "args": {}
+                              },
+                              "path": {
+                                "vop": "template",
+                                "text": "assets.{a}.months",
+                                "values": {
+                                  "vop": "record",
+                                  "fields": {
+                                    "a": "$asset"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    "then": "long"
+                  }
+                ],
+                "else": "short"
+              },
+              "right": "long"
+            },
+            "then": {
+              "vop": "get",
+              "value": {
+                "chip": "myreturn.cg_rules",
+                "args": {}
+              },
+              "path": {
+                "vop": "template",
+                "text": "assets.{a}.long",
+                "values": {
+                  "vop": "record",
+                  "fields": {
+                    "a": "$asset"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "else": {
+          "vop": "get",
+          "value": {
+            "chip": "myreturn.cg_rules",
+            "args": {}
+          },
+          "path": {
+            "vop": "template",
+            "text": "assets.{a}.short",
+            "values": {
+              "vop": "record",
+              "fields": {
+                "a": "$asset"
+              }
+            }
+          }
+        }
+      },
+      "deemed_50aa": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "any",
+              "items": [
+                {
+                  "op": "eq",
+                  "left": {
+                    "vop": "get",
+                    "value": {
+                      "chip": "myreturn.cg_rules",
+                      "args": {}
+                    },
+                    "path": {
+                      "vop": "template",
+                      "text": "assets.{a}.always_short",
+                      "values": {
+                        "vop": "record",
+                        "fields": {
+                          "a": "$asset"
+                        }
+                      }
+                    }
+                  },
+                  "right": true
+                },
+                {
+                  "op": "all",
+                  "items": [
+                    {
+                      "op": "ne",
+                      "left": {
+                        "vop": "get",
+                        "value": {
+                          "chip": "myreturn.cg_rules",
+                          "args": {}
+                        },
+                        "path": {
+                          "vop": "template",
+                          "text": "assets.{a}.aa50_bought_from",
+                          "values": {
+                            "vop": "record",
+                            "fields": {
+                              "a": "$asset"
+                            }
+                          }
+                        }
+                      },
+                      "right": ""
+                    },
+                    {
+                      "vop": "matches",
+                      "text": "$acquired",
+                      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                    },
+                    {
+                      "op": "ge",
+                      "left": "$acquired",
+                      "right": {
+                        "vop": "get",
+                        "value": {
+                          "chip": "myreturn.cg_rules",
+                          "args": {}
+                        },
+                        "path": {
+                          "vop": "template",
+                          "text": "assets.{a}.aa50_bought_from",
+                          "values": {
+                            "vop": "record",
+                            "fields": {
+                              "a": "$asset"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "op": "all",
+                  "items": [
+                    {
+                      "op": "ne",
+                      "left": {
+                        "vop": "get",
+                        "value": {
+                          "chip": "myreturn.cg_rules",
+                          "args": {}
+                        },
+                        "path": {
+                          "vop": "template",
+                          "text": "assets.{a}.aa50_sold_from",
+                          "values": {
+                            "vop": "record",
+                            "fields": {
+                              "a": "$asset"
+                            }
+                          }
+                        }
+                      },
+                      "right": ""
+                    },
+                    {
+                      "vop": "matches",
+                      "text": "$sold",
+                      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                    },
+                    {
+                      "op": "ge",
+                      "left": "$sold",
+                      "right": {
+                        "vop": "get",
+                        "value": {
+                          "chip": "myreturn.cg_rules",
+                          "args": {}
+                        },
+                        "path": {
+                          "vop": "template",
+                          "text": "assets.{a}.aa50_sold_from",
+                          "values": {
+                            "vop": "record",
+                            "fields": {
+                              "a": "$asset"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            "then": true
+          }
+        ],
+        "else": false
+      },
+      "dated": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "vop": "matches",
+                  "text": "$acquired",
+                  "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                },
+                {
+                  "vop": "matches",
+                  "text": "$sold",
+                  "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                }
+              ]
+            },
+            "then": true
+          }
+        ],
+        "else": false
+      },
+      "property": {
+        "vop": "get",
+        "value": {
+          "chip": "myreturn.cg_rules",
+          "args": {}
+        },
+        "path": {
+          "vop": "template",
+          "text": "assets.{a}.property",
+          "values": {
+            "vop": "record",
+            "fields": {
+              "a": "$asset"
+            }
+          }
+        }
+      },
+      "consideration": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "eq",
+                  "left": {
+                    "vop": "get",
+                    "value": {
+                      "chip": "myreturn.cg_rules",
+                      "args": {}
+                    },
+                    "path": {
+                      "vop": "template",
+                      "text": "assets.{a}.s50c",
+                      "values": {
+                        "vop": "record",
+                        "fields": {
+                          "a": "$asset"
+                        }
+                      }
+                    }
+                  },
+                  "right": true
+                },
+                {
+                  "op": "gt",
+                  "left": "$stamp",
+                  "right": {
+                    "vop": "mul",
+                    "a": "$sale",
+                    "b": {
+                      "vop": "add",
+                      "a": 1,
+                      "b": {
+                        "vop": "div",
+                        "a": {
+                          "vop": "get",
+                          "value": {
+                            "chip": "myreturn.cg_rules",
+                            "args": {}
+                          },
+                          "path": "s50c_tolerance_pct"
+                        },
+                        "b": 100
+                      }
+                    }
+                  }
+                }
+              ]
+            },
+            "then": "$stamp"
+          }
+        ],
+        "else": "$sale"
+      },
+      "s50c": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "eq",
+                  "left": {
+                    "vop": "get",
+                    "value": {
+                      "chip": "myreturn.cg_rules",
+                      "args": {}
+                    },
+                    "path": {
+                      "vop": "template",
+                      "text": "assets.{a}.s50c",
+                      "values": {
+                        "vop": "record",
+                        "fields": {
+                          "a": "$asset"
+                        }
+                      }
+                    }
+                  },
+                  "right": true
+                },
+                {
+                  "op": "gt",
+                  "left": "$stamp",
+                  "right": {
+                    "vop": "mul",
+                    "a": "$sale",
+                    "b": {
+                      "vop": "add",
+                      "a": 1,
+                      "b": {
+                        "vop": "div",
+                        "a": {
+                          "vop": "get",
+                          "value": {
+                            "chip": "myreturn.cg_rules",
+                            "args": {}
+                          },
+                          "path": "s50c_tolerance_pct"
+                        },
+                        "b": 100
+                      }
+                    }
+                  }
+                }
+              ]
+            },
+            "then": true
+          }
+        ],
+        "else": false
+      },
+      "grandfathered": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "eq",
+                  "left": {
+                    "vop": "get",
+                    "value": {
+                      "chip": "myreturn.cg_rules",
+                      "args": {}
+                    },
+                    "path": {
+                      "vop": "template",
+                      "text": "assets.{a}.grandfather",
+                      "values": {
+                        "vop": "record",
+                        "fields": {
+                          "a": "$asset"
+                        }
+                      }
+                    }
+                  },
+                  "right": true
+                },
+                {
+                  "op": "eq",
+                  "left": {
+                    "vop": "choose",
+                    "cases": [
+                      {
+                        "when": {
+                          "op": "any",
+                          "items": [
+                            {
+                              "op": "eq",
+                              "left": {
+                                "vop": "get",
+                                "value": {
+                                  "chip": "myreturn.cg_rules",
+                                  "args": {}
+                                },
+                                "path": {
+                                  "vop": "template",
+                                  "text": "assets.{a}.always_short",
+                                  "values": {
+                                    "vop": "record",
+                                    "fields": {
+                                      "a": "$asset"
+                                    }
+                                  }
+                                }
+                              },
+                              "right": true
+                            },
+                            {
+                              "op": "all",
+                              "items": [
+                                {
+                                  "op": "ne",
+                                  "left": {
+                                    "vop": "get",
+                                    "value": {
+                                      "chip": "myreturn.cg_rules",
+                                      "args": {}
+                                    },
+                                    "path": {
+                                      "vop": "template",
+                                      "text": "assets.{a}.aa50_bought_from",
+                                      "values": {
+                                        "vop": "record",
+                                        "fields": {
+                                          "a": "$asset"
+                                        }
+                                      }
+                                    }
+                                  },
+                                  "right": ""
+                                },
+                                {
+                                  "vop": "matches",
+                                  "text": "$acquired",
+                                  "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                                },
+                                {
+                                  "op": "ge",
+                                  "left": "$acquired",
+                                  "right": {
+                                    "vop": "get",
+                                    "value": {
+                                      "chip": "myreturn.cg_rules",
+                                      "args": {}
+                                    },
+                                    "path": {
+                                      "vop": "template",
+                                      "text": "assets.{a}.aa50_bought_from",
+                                      "values": {
+                                        "vop": "record",
+                                        "fields": {
+                                          "a": "$asset"
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              ]
+                            },
+                            {
+                              "op": "all",
+                              "items": [
+                                {
+                                  "op": "ne",
+                                  "left": {
+                                    "vop": "get",
+                                    "value": {
+                                      "chip": "myreturn.cg_rules",
+                                      "args": {}
+                                    },
+                                    "path": {
+                                      "vop": "template",
+                                      "text": "assets.{a}.aa50_sold_from",
+                                      "values": {
+                                        "vop": "record",
+                                        "fields": {
+                                          "a": "$asset"
+                                        }
+                                      }
+                                    }
+                                  },
+                                  "right": ""
+                                },
+                                {
+                                  "vop": "matches",
+                                  "text": "$sold",
+                                  "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                                },
+                                {
+                                  "op": "ge",
+                                  "left": "$sold",
+                                  "right": {
+                                    "vop": "get",
+                                    "value": {
+                                      "chip": "myreturn.cg_rules",
+                                      "args": {}
+                                    },
+                                    "path": {
+                                      "vop": "template",
+                                      "text": "assets.{a}.aa50_sold_from",
+                                      "values": {
+                                        "vop": "record",
+                                        "fields": {
+                                          "a": "$asset"
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        "then": "short"
+                      },
+                      {
+                        "when": {
+                          "op": "in_set",
+                          "value": "$term",
+                          "set": [
+                            "long",
+                            "short"
+                          ]
+                        },
+                        "then": "$term"
+                      },
+                      {
+                        "when": {
+                          "op": "all",
+                          "items": [
+                            {
+                              "op": "all",
+                              "items": [
+                                {
+                                  "vop": "matches",
+                                  "text": "$acquired",
+                                  "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                                },
+                                {
+                                  "vop": "matches",
+                                  "text": "$sold",
+                                  "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                                }
+                              ]
+                            },
+                            {
+                              "op": "gt",
+                              "left": "$sold",
+                              "right": {
+                                "vop": "date_shift",
+                                "date": "$acquired",
+                                "months": {
+                                  "vop": "get",
+                                  "value": {
+                                    "chip": "myreturn.cg_rules",
+                                    "args": {}
+                                  },
+                                  "path": {
+                                    "vop": "template",
+                                    "text": "assets.{a}.months",
+                                    "values": {
+                                      "vop": "record",
+                                      "fields": {
+                                        "a": "$asset"
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          ]
+                        },
+                        "then": "long"
+                      }
+                    ],
+                    "else": "short"
+                  },
+                  "right": "long"
+                },
+                {
+                  "vop": "matches",
+                  "text": "$acquired",
+                  "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                },
+                {
+                  "op": "lt",
+                  "left": "$acquired",
+                  "right": {
+                    "vop": "get",
+                    "value": {
+                      "chip": "myreturn.cg_rules",
+                      "args": {}
+                    },
+                    "path": "grandfather_before"
+                  }
+                }
+              ]
+            },
+            "then": true
+          }
+        ],
+        "else": false
+      },
+      "cost_used": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "eq",
+                  "left": {
+                    "vop": "get",
+                    "value": {
+                      "chip": "myreturn.cg_rules",
+                      "args": {}
+                    },
+                    "path": {
+                      "vop": "template",
+                      "text": "assets.{a}.grandfather",
+                      "values": {
+                        "vop": "record",
+                        "fields": {
+                          "a": "$asset"
+                        }
+                      }
+                    }
+                  },
+                  "right": true
+                },
+                {
+                  "op": "eq",
+                  "left": {
+                    "vop": "choose",
+                    "cases": [
+                      {
+                        "when": {
+                          "op": "any",
+                          "items": [
+                            {
+                              "op": "eq",
+                              "left": {
+                                "vop": "get",
+                                "value": {
+                                  "chip": "myreturn.cg_rules",
+                                  "args": {}
+                                },
+                                "path": {
+                                  "vop": "template",
+                                  "text": "assets.{a}.always_short",
+                                  "values": {
+                                    "vop": "record",
+                                    "fields": {
+                                      "a": "$asset"
+                                    }
+                                  }
+                                }
+                              },
+                              "right": true
+                            },
+                            {
+                              "op": "all",
+                              "items": [
+                                {
+                                  "op": "ne",
+                                  "left": {
+                                    "vop": "get",
+                                    "value": {
+                                      "chip": "myreturn.cg_rules",
+                                      "args": {}
+                                    },
+                                    "path": {
+                                      "vop": "template",
+                                      "text": "assets.{a}.aa50_bought_from",
+                                      "values": {
+                                        "vop": "record",
+                                        "fields": {
+                                          "a": "$asset"
+                                        }
+                                      }
+                                    }
+                                  },
+                                  "right": ""
+                                },
+                                {
+                                  "vop": "matches",
+                                  "text": "$acquired",
+                                  "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                                },
+                                {
+                                  "op": "ge",
+                                  "left": "$acquired",
+                                  "right": {
+                                    "vop": "get",
+                                    "value": {
+                                      "chip": "myreturn.cg_rules",
+                                      "args": {}
+                                    },
+                                    "path": {
+                                      "vop": "template",
+                                      "text": "assets.{a}.aa50_bought_from",
+                                      "values": {
+                                        "vop": "record",
+                                        "fields": {
+                                          "a": "$asset"
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              ]
+                            },
+                            {
+                              "op": "all",
+                              "items": [
+                                {
+                                  "op": "ne",
+                                  "left": {
+                                    "vop": "get",
+                                    "value": {
+                                      "chip": "myreturn.cg_rules",
+                                      "args": {}
+                                    },
+                                    "path": {
+                                      "vop": "template",
+                                      "text": "assets.{a}.aa50_sold_from",
+                                      "values": {
+                                        "vop": "record",
+                                        "fields": {
+                                          "a": "$asset"
+                                        }
+                                      }
+                                    }
+                                  },
+                                  "right": ""
+                                },
+                                {
+                                  "vop": "matches",
+                                  "text": "$sold",
+                                  "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                                },
+                                {
+                                  "op": "ge",
+                                  "left": "$sold",
+                                  "right": {
+                                    "vop": "get",
+                                    "value": {
+                                      "chip": "myreturn.cg_rules",
+                                      "args": {}
+                                    },
+                                    "path": {
+                                      "vop": "template",
+                                      "text": "assets.{a}.aa50_sold_from",
+                                      "values": {
+                                        "vop": "record",
+                                        "fields": {
+                                          "a": "$asset"
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        "then": "short"
+                      },
+                      {
+                        "when": {
+                          "op": "in_set",
+                          "value": "$term",
+                          "set": [
+                            "long",
+                            "short"
+                          ]
+                        },
+                        "then": "$term"
+                      },
+                      {
+                        "when": {
+                          "op": "all",
+                          "items": [
+                            {
+                              "op": "all",
+                              "items": [
+                                {
+                                  "vop": "matches",
+                                  "text": "$acquired",
+                                  "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                                },
+                                {
+                                  "vop": "matches",
+                                  "text": "$sold",
+                                  "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                                }
+                              ]
+                            },
+                            {
+                              "op": "gt",
+                              "left": "$sold",
+                              "right": {
+                                "vop": "date_shift",
+                                "date": "$acquired",
+                                "months": {
+                                  "vop": "get",
+                                  "value": {
+                                    "chip": "myreturn.cg_rules",
+                                    "args": {}
+                                  },
+                                  "path": {
+                                    "vop": "template",
+                                    "text": "assets.{a}.months",
+                                    "values": {
+                                      "vop": "record",
+                                      "fields": {
+                                        "a": "$asset"
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          ]
+                        },
+                        "then": "long"
+                      }
+                    ],
+                    "else": "short"
+                  },
+                  "right": "long"
+                },
+                {
+                  "vop": "matches",
+                  "text": "$acquired",
+                  "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                },
+                {
+                  "op": "lt",
+                  "left": "$acquired",
+                  "right": {
+                    "vop": "get",
+                    "value": {
+                      "chip": "myreturn.cg_rules",
+                      "args": {}
+                    },
+                    "path": "grandfather_before"
+                  }
+                }
+              ]
+            },
+            "then": {
+              "vop": "largest",
+              "values": [
+                "$cost",
+                {
+                  "vop": "smallest",
+                  "values": [
+                    "$fmv",
+                    {
+                      "vop": "choose",
+                      "cases": [
+                        {
+                          "when": {
+                            "op": "all",
+                            "items": [
+                              {
+                                "op": "eq",
+                                "left": {
+                                  "vop": "get",
+                                  "value": {
+                                    "chip": "myreturn.cg_rules",
+                                    "args": {}
+                                  },
+                                  "path": {
+                                    "vop": "template",
+                                    "text": "assets.{a}.s50c",
+                                    "values": {
+                                      "vop": "record",
+                                      "fields": {
+                                        "a": "$asset"
+                                      }
+                                    }
+                                  }
+                                },
+                                "right": true
+                              },
+                              {
+                                "op": "gt",
+                                "left": "$stamp",
+                                "right": {
+                                  "vop": "mul",
+                                  "a": "$sale",
+                                  "b": {
+                                    "vop": "add",
+                                    "a": 1,
+                                    "b": {
+                                      "vop": "div",
+                                      "a": {
+                                        "vop": "get",
+                                        "value": {
+                                          "chip": "myreturn.cg_rules",
+                                          "args": {}
+                                        },
+                                        "path": "s50c_tolerance_pct"
+                                      },
+                                      "b": 100
+                                    }
+                                  }
+                                }
+                              }
+                            ]
+                          },
+                          "then": "$stamp"
+                        }
+                      ],
+                      "else": "$sale"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "else": "$cost"
+      },
+      "gain": {
+        "vop": "sub",
+        "a": {
+          "vop": "sub",
+          "a": {
+            "vop": "sub",
+            "a": {
+              "vop": "choose",
+              "cases": [
+                {
+                  "when": {
+                    "op": "all",
+                    "items": [
+                      {
+                        "op": "eq",
+                        "left": {
+                          "vop": "get",
+                          "value": {
+                            "chip": "myreturn.cg_rules",
+                            "args": {}
+                          },
+                          "path": {
+                            "vop": "template",
+                            "text": "assets.{a}.s50c",
+                            "values": {
+                              "vop": "record",
+                              "fields": {
+                                "a": "$asset"
+                              }
+                            }
+                          }
+                        },
+                        "right": true
+                      },
+                      {
+                        "op": "gt",
+                        "left": "$stamp",
+                        "right": {
+                          "vop": "mul",
+                          "a": "$sale",
+                          "b": {
+                            "vop": "add",
+                            "a": 1,
+                            "b": {
+                              "vop": "div",
+                              "a": {
+                                "vop": "get",
+                                "value": {
+                                  "chip": "myreturn.cg_rules",
+                                  "args": {}
+                                },
+                                "path": "s50c_tolerance_pct"
+                              },
+                              "b": 100
+                            }
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  "then": "$stamp"
+                }
+              ],
+              "else": "$sale"
+            },
+            "b": {
+              "vop": "choose",
+              "cases": [
+                {
+                  "when": {
+                    "op": "all",
+                    "items": [
+                      {
+                        "op": "eq",
+                        "left": {
+                          "vop": "get",
+                          "value": {
+                            "chip": "myreturn.cg_rules",
+                            "args": {}
+                          },
+                          "path": {
+                            "vop": "template",
+                            "text": "assets.{a}.grandfather",
+                            "values": {
+                              "vop": "record",
+                              "fields": {
+                                "a": "$asset"
+                              }
+                            }
+                          }
+                        },
+                        "right": true
+                      },
+                      {
+                        "op": "eq",
+                        "left": {
+                          "vop": "choose",
+                          "cases": [
+                            {
+                              "when": {
+                                "op": "any",
+                                "items": [
+                                  {
+                                    "op": "eq",
+                                    "left": {
+                                      "vop": "get",
+                                      "value": {
+                                        "chip": "myreturn.cg_rules",
+                                        "args": {}
+                                      },
+                                      "path": {
+                                        "vop": "template",
+                                        "text": "assets.{a}.always_short",
+                                        "values": {
+                                          "vop": "record",
+                                          "fields": {
+                                            "a": "$asset"
+                                          }
+                                        }
+                                      }
+                                    },
+                                    "right": true
+                                  },
+                                  {
+                                    "op": "all",
+                                    "items": [
+                                      {
+                                        "op": "ne",
+                                        "left": {
+                                          "vop": "get",
+                                          "value": {
+                                            "chip": "myreturn.cg_rules",
+                                            "args": {}
+                                          },
+                                          "path": {
+                                            "vop": "template",
+                                            "text": "assets.{a}.aa50_bought_from",
+                                            "values": {
+                                              "vop": "record",
+                                              "fields": {
+                                                "a": "$asset"
+                                              }
+                                            }
+                                          }
+                                        },
+                                        "right": ""
+                                      },
+                                      {
+                                        "vop": "matches",
+                                        "text": "$acquired",
+                                        "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                                      },
+                                      {
+                                        "op": "ge",
+                                        "left": "$acquired",
+                                        "right": {
+                                          "vop": "get",
+                                          "value": {
+                                            "chip": "myreturn.cg_rules",
+                                            "args": {}
+                                          },
+                                          "path": {
+                                            "vop": "template",
+                                            "text": "assets.{a}.aa50_bought_from",
+                                            "values": {
+                                              "vop": "record",
+                                              "fields": {
+                                                "a": "$asset"
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "op": "all",
+                                    "items": [
+                                      {
+                                        "op": "ne",
+                                        "left": {
+                                          "vop": "get",
+                                          "value": {
+                                            "chip": "myreturn.cg_rules",
+                                            "args": {}
+                                          },
+                                          "path": {
+                                            "vop": "template",
+                                            "text": "assets.{a}.aa50_sold_from",
+                                            "values": {
+                                              "vop": "record",
+                                              "fields": {
+                                                "a": "$asset"
+                                              }
+                                            }
+                                          }
+                                        },
+                                        "right": ""
+                                      },
+                                      {
+                                        "vop": "matches",
+                                        "text": "$sold",
+                                        "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                                      },
+                                      {
+                                        "op": "ge",
+                                        "left": "$sold",
+                                        "right": {
+                                          "vop": "get",
+                                          "value": {
+                                            "chip": "myreturn.cg_rules",
+                                            "args": {}
+                                          },
+                                          "path": {
+                                            "vop": "template",
+                                            "text": "assets.{a}.aa50_sold_from",
+                                            "values": {
+                                              "vop": "record",
+                                              "fields": {
+                                                "a": "$asset"
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              "then": "short"
+                            },
+                            {
+                              "when": {
+                                "op": "in_set",
+                                "value": "$term",
+                                "set": [
+                                  "long",
+                                  "short"
+                                ]
+                              },
+                              "then": "$term"
+                            },
+                            {
+                              "when": {
+                                "op": "all",
+                                "items": [
+                                  {
+                                    "op": "all",
+                                    "items": [
+                                      {
+                                        "vop": "matches",
+                                        "text": "$acquired",
+                                        "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                                      },
+                                      {
+                                        "vop": "matches",
+                                        "text": "$sold",
+                                        "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "op": "gt",
+                                    "left": "$sold",
+                                    "right": {
+                                      "vop": "date_shift",
+                                      "date": "$acquired",
+                                      "months": {
+                                        "vop": "get",
+                                        "value": {
+                                          "chip": "myreturn.cg_rules",
+                                          "args": {}
+                                        },
+                                        "path": {
+                                          "vop": "template",
+                                          "text": "assets.{a}.months",
+                                          "values": {
+                                            "vop": "record",
+                                            "fields": {
+                                              "a": "$asset"
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                ]
+                              },
+                              "then": "long"
+                            }
+                          ],
+                          "else": "short"
+                        },
+                        "right": "long"
+                      },
+                      {
+                        "vop": "matches",
+                        "text": "$acquired",
+                        "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                      },
+                      {
+                        "op": "lt",
+                        "left": "$acquired",
+                        "right": {
+                          "vop": "get",
+                          "value": {
+                            "chip": "myreturn.cg_rules",
+                            "args": {}
+                          },
+                          "path": "grandfather_before"
+                        }
+                      }
+                    ]
+                  },
+                  "then": {
+                    "vop": "largest",
+                    "values": [
+                      "$cost",
+                      {
+                        "vop": "smallest",
+                        "values": [
+                          "$fmv",
+                          {
+                            "vop": "choose",
+                            "cases": [
+                              {
+                                "when": {
+                                  "op": "all",
+                                  "items": [
+                                    {
+                                      "op": "eq",
+                                      "left": {
+                                        "vop": "get",
+                                        "value": {
+                                          "chip": "myreturn.cg_rules",
+                                          "args": {}
+                                        },
+                                        "path": {
+                                          "vop": "template",
+                                          "text": "assets.{a}.s50c",
+                                          "values": {
+                                            "vop": "record",
+                                            "fields": {
+                                              "a": "$asset"
+                                            }
+                                          }
+                                        }
+                                      },
+                                      "right": true
+                                    },
+                                    {
+                                      "op": "gt",
+                                      "left": "$stamp",
+                                      "right": {
+                                        "vop": "mul",
+                                        "a": "$sale",
+                                        "b": {
+                                          "vop": "add",
+                                          "a": 1,
+                                          "b": {
+                                            "vop": "div",
+                                            "a": {
+                                              "vop": "get",
+                                              "value": {
+                                                "chip": "myreturn.cg_rules",
+                                                "args": {}
+                                              },
+                                              "path": "s50c_tolerance_pct"
+                                            },
+                                            "b": 100
+                                          }
+                                        }
+                                      }
+                                    }
+                                  ]
+                                },
+                                "then": "$stamp"
+                              }
+                            ],
+                            "else": "$sale"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ],
+              "else": "$cost"
+            }
+          },
+          "b": "$improve"
+        },
+        "b": "$expenses"
+      },
+      "index_ok": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "eq",
+                  "left": {
+                    "vop": "get",
+                    "value": {
+                      "chip": "myreturn.cg_rules",
+                      "args": {}
+                    },
+                    "path": {
+                      "vop": "template",
+                      "text": "assets.{a}.index_option",
+                      "values": {
+                        "vop": "record",
+                        "fields": {
+                          "a": "$asset"
+                        }
+                      }
+                    }
+                  },
+                  "right": true
+                },
+                {
+                  "op": "eq",
+                  "left": {
+                    "vop": "choose",
+                    "cases": [
+                      {
+                        "when": {
+                          "op": "any",
+                          "items": [
+                            {
+                              "op": "eq",
+                              "left": {
+                                "vop": "get",
+                                "value": {
+                                  "chip": "myreturn.cg_rules",
+                                  "args": {}
+                                },
+                                "path": {
+                                  "vop": "template",
+                                  "text": "assets.{a}.always_short",
+                                  "values": {
+                                    "vop": "record",
+                                    "fields": {
+                                      "a": "$asset"
+                                    }
+                                  }
+                                }
+                              },
+                              "right": true
+                            },
+                            {
+                              "op": "all",
+                              "items": [
+                                {
+                                  "op": "ne",
+                                  "left": {
+                                    "vop": "get",
+                                    "value": {
+                                      "chip": "myreturn.cg_rules",
+                                      "args": {}
+                                    },
+                                    "path": {
+                                      "vop": "template",
+                                      "text": "assets.{a}.aa50_bought_from",
+                                      "values": {
+                                        "vop": "record",
+                                        "fields": {
+                                          "a": "$asset"
+                                        }
+                                      }
+                                    }
+                                  },
+                                  "right": ""
+                                },
+                                {
+                                  "vop": "matches",
+                                  "text": "$acquired",
+                                  "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                                },
+                                {
+                                  "op": "ge",
+                                  "left": "$acquired",
+                                  "right": {
+                                    "vop": "get",
+                                    "value": {
+                                      "chip": "myreturn.cg_rules",
+                                      "args": {}
+                                    },
+                                    "path": {
+                                      "vop": "template",
+                                      "text": "assets.{a}.aa50_bought_from",
+                                      "values": {
+                                        "vop": "record",
+                                        "fields": {
+                                          "a": "$asset"
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              ]
+                            },
+                            {
+                              "op": "all",
+                              "items": [
+                                {
+                                  "op": "ne",
+                                  "left": {
+                                    "vop": "get",
+                                    "value": {
+                                      "chip": "myreturn.cg_rules",
+                                      "args": {}
+                                    },
+                                    "path": {
+                                      "vop": "template",
+                                      "text": "assets.{a}.aa50_sold_from",
+                                      "values": {
+                                        "vop": "record",
+                                        "fields": {
+                                          "a": "$asset"
+                                        }
+                                      }
+                                    }
+                                  },
+                                  "right": ""
+                                },
+                                {
+                                  "vop": "matches",
+                                  "text": "$sold",
+                                  "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                                },
+                                {
+                                  "op": "ge",
+                                  "left": "$sold",
+                                  "right": {
+                                    "vop": "get",
+                                    "value": {
+                                      "chip": "myreturn.cg_rules",
+                                      "args": {}
+                                    },
+                                    "path": {
+                                      "vop": "template",
+                                      "text": "assets.{a}.aa50_sold_from",
+                                      "values": {
+                                        "vop": "record",
+                                        "fields": {
+                                          "a": "$asset"
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        "then": "short"
+                      },
+                      {
+                        "when": {
+                          "op": "in_set",
+                          "value": "$term",
+                          "set": [
+                            "long",
+                            "short"
+                          ]
+                        },
+                        "then": "$term"
+                      },
+                      {
+                        "when": {
+                          "op": "all",
+                          "items": [
+                            {
+                              "op": "all",
+                              "items": [
+                                {
+                                  "vop": "matches",
+                                  "text": "$acquired",
+                                  "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                                },
+                                {
+                                  "vop": "matches",
+                                  "text": "$sold",
+                                  "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                                }
+                              ]
+                            },
+                            {
+                              "op": "gt",
+                              "left": "$sold",
+                              "right": {
+                                "vop": "date_shift",
+                                "date": "$acquired",
+                                "months": {
+                                  "vop": "get",
+                                  "value": {
+                                    "chip": "myreturn.cg_rules",
+                                    "args": {}
+                                  },
+                                  "path": {
+                                    "vop": "template",
+                                    "text": "assets.{a}.months",
+                                    "values": {
+                                      "vop": "record",
+                                      "fields": {
+                                        "a": "$asset"
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          ]
+                        },
+                        "then": "long"
+                      }
+                    ],
+                    "else": "short"
+                  },
+                  "right": "long"
+                },
+                {
+                  "op": "all",
+                  "items": [
+                    {
+                      "vop": "matches",
+                      "text": "$acquired",
+                      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                    },
+                    {
+                      "vop": "matches",
+                      "text": "$sold",
+                      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                    }
+                  ]
+                },
+                {
+                  "op": "lt",
+                  "left": "$acquired",
+                  "right": {
+                    "vop": "get",
+                    "value": {
+                      "chip": "myreturn.cg_rules",
+                      "args": {}
+                    },
+                    "path": "index_before"
+                  }
+                },
+                {
+                  "op": "any",
+                  "items": [
+                    {
+                      "op": "eq",
+                      "left": "$resident",
+                      "right": true
+                    },
+                    {
+                      "op": "eq",
+                      "left": {
+                        "vop": "get",
+                        "value": {
+                          "chip": "myreturn.cg_rules",
+                          "args": {}
+                        },
+                        "path": "index_residents_only"
+                      },
+                      "right": false
+                    }
+                  ]
+                }
+              ]
+            },
+            "then": true
+          }
+        ],
+        "else": false
+      },
+      "cii_sell": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "eq",
+                  "left": {
+                    "vop": "get",
+                    "value": {
+                      "chip": "myreturn.cg_rules",
+                      "args": {}
+                    },
+                    "path": {
+                      "vop": "template",
+                      "text": "assets.{a}.index_option",
+                      "values": {
+                        "vop": "record",
+                        "fields": {
+                          "a": "$asset"
+                        }
+                      }
+                    }
+                  },
+                  "right": true
+                },
+                {
+                  "op": "eq",
+                  "left": {
+                    "vop": "choose",
+                    "cases": [
+                      {
+                        "when": {
+                          "op": "any",
+                          "items": [
+                            {
+                              "op": "eq",
+                              "left": {
+                                "vop": "get",
+                                "value": {
+                                  "chip": "myreturn.cg_rules",
+                                  "args": {}
+                                },
+                                "path": {
+                                  "vop": "template",
+                                  "text": "assets.{a}.always_short",
+                                  "values": {
+                                    "vop": "record",
+                                    "fields": {
+                                      "a": "$asset"
+                                    }
+                                  }
+                                }
+                              },
+                              "right": true
+                            },
+                            {
+                              "op": "all",
+                              "items": [
+                                {
+                                  "op": "ne",
+                                  "left": {
+                                    "vop": "get",
+                                    "value": {
+                                      "chip": "myreturn.cg_rules",
+                                      "args": {}
+                                    },
+                                    "path": {
+                                      "vop": "template",
+                                      "text": "assets.{a}.aa50_bought_from",
+                                      "values": {
+                                        "vop": "record",
+                                        "fields": {
+                                          "a": "$asset"
+                                        }
+                                      }
+                                    }
+                                  },
+                                  "right": ""
+                                },
+                                {
+                                  "vop": "matches",
+                                  "text": "$acquired",
+                                  "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                                },
+                                {
+                                  "op": "ge",
+                                  "left": "$acquired",
+                                  "right": {
+                                    "vop": "get",
+                                    "value": {
+                                      "chip": "myreturn.cg_rules",
+                                      "args": {}
+                                    },
+                                    "path": {
+                                      "vop": "template",
+                                      "text": "assets.{a}.aa50_bought_from",
+                                      "values": {
+                                        "vop": "record",
+                                        "fields": {
+                                          "a": "$asset"
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              ]
+                            },
+                            {
+                              "op": "all",
+                              "items": [
+                                {
+                                  "op": "ne",
+                                  "left": {
+                                    "vop": "get",
+                                    "value": {
+                                      "chip": "myreturn.cg_rules",
+                                      "args": {}
+                                    },
+                                    "path": {
+                                      "vop": "template",
+                                      "text": "assets.{a}.aa50_sold_from",
+                                      "values": {
+                                        "vop": "record",
+                                        "fields": {
+                                          "a": "$asset"
+                                        }
+                                      }
+                                    }
+                                  },
+                                  "right": ""
+                                },
+                                {
+                                  "vop": "matches",
+                                  "text": "$sold",
+                                  "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                                },
+                                {
+                                  "op": "ge",
+                                  "left": "$sold",
+                                  "right": {
+                                    "vop": "get",
+                                    "value": {
+                                      "chip": "myreturn.cg_rules",
+                                      "args": {}
+                                    },
+                                    "path": {
+                                      "vop": "template",
+                                      "text": "assets.{a}.aa50_sold_from",
+                                      "values": {
+                                        "vop": "record",
+                                        "fields": {
+                                          "a": "$asset"
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        "then": "short"
+                      },
+                      {
+                        "when": {
+                          "op": "in_set",
+                          "value": "$term",
+                          "set": [
+                            "long",
+                            "short"
+                          ]
+                        },
+                        "then": "$term"
+                      },
+                      {
+                        "when": {
+                          "op": "all",
+                          "items": [
+                            {
+                              "op": "all",
+                              "items": [
+                                {
+                                  "vop": "matches",
+                                  "text": "$acquired",
+                                  "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                                },
+                                {
+                                  "vop": "matches",
+                                  "text": "$sold",
+                                  "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                                }
+                              ]
+                            },
+                            {
+                              "op": "gt",
+                              "left": "$sold",
+                              "right": {
+                                "vop": "date_shift",
+                                "date": "$acquired",
+                                "months": {
+                                  "vop": "get",
+                                  "value": {
+                                    "chip": "myreturn.cg_rules",
+                                    "args": {}
+                                  },
+                                  "path": {
+                                    "vop": "template",
+                                    "text": "assets.{a}.months",
+                                    "values": {
+                                      "vop": "record",
+                                      "fields": {
+                                        "a": "$asset"
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          ]
+                        },
+                        "then": "long"
+                      }
+                    ],
+                    "else": "short"
+                  },
+                  "right": "long"
+                },
+                {
+                  "op": "all",
+                  "items": [
+                    {
+                      "vop": "matches",
+                      "text": "$acquired",
+                      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                    },
+                    {
+                      "vop": "matches",
+                      "text": "$sold",
+                      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                    }
+                  ]
+                },
+                {
+                  "op": "lt",
+                  "left": "$acquired",
+                  "right": {
+                    "vop": "get",
+                    "value": {
+                      "chip": "myreturn.cg_rules",
+                      "args": {}
+                    },
+                    "path": "index_before"
+                  }
+                },
+                {
+                  "op": "any",
+                  "items": [
+                    {
+                      "op": "eq",
+                      "left": "$resident",
+                      "right": true
+                    },
+                    {
+                      "op": "eq",
+                      "left": {
+                        "vop": "get",
+                        "value": {
+                          "chip": "myreturn.cg_rules",
+                          "args": {}
+                        },
+                        "path": "index_residents_only"
+                      },
+                      "right": false
+                    }
+                  ]
+                }
+              ]
+            },
+            "then": {
+              "chip": "myreturn.cii",
+              "args": {
+                "date": "$sold"
+              }
+            }
+          }
+        ],
+        "else": 0
+      },
+      "cii_buy": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "eq",
+                  "left": {
+                    "vop": "get",
+                    "value": {
+                      "chip": "myreturn.cg_rules",
+                      "args": {}
+                    },
+                    "path": {
+                      "vop": "template",
+                      "text": "assets.{a}.index_option",
+                      "values": {
+                        "vop": "record",
+                        "fields": {
+                          "a": "$asset"
+                        }
+                      }
+                    }
+                  },
+                  "right": true
+                },
+                {
+                  "op": "eq",
+                  "left": {
+                    "vop": "choose",
+                    "cases": [
+                      {
+                        "when": {
+                          "op": "any",
+                          "items": [
+                            {
+                              "op": "eq",
+                              "left": {
+                                "vop": "get",
+                                "value": {
+                                  "chip": "myreturn.cg_rules",
+                                  "args": {}
+                                },
+                                "path": {
+                                  "vop": "template",
+                                  "text": "assets.{a}.always_short",
+                                  "values": {
+                                    "vop": "record",
+                                    "fields": {
+                                      "a": "$asset"
+                                    }
+                                  }
+                                }
+                              },
+                              "right": true
+                            },
+                            {
+                              "op": "all",
+                              "items": [
+                                {
+                                  "op": "ne",
+                                  "left": {
+                                    "vop": "get",
+                                    "value": {
+                                      "chip": "myreturn.cg_rules",
+                                      "args": {}
+                                    },
+                                    "path": {
+                                      "vop": "template",
+                                      "text": "assets.{a}.aa50_bought_from",
+                                      "values": {
+                                        "vop": "record",
+                                        "fields": {
+                                          "a": "$asset"
+                                        }
+                                      }
+                                    }
+                                  },
+                                  "right": ""
+                                },
+                                {
+                                  "vop": "matches",
+                                  "text": "$acquired",
+                                  "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                                },
+                                {
+                                  "op": "ge",
+                                  "left": "$acquired",
+                                  "right": {
+                                    "vop": "get",
+                                    "value": {
+                                      "chip": "myreturn.cg_rules",
+                                      "args": {}
+                                    },
+                                    "path": {
+                                      "vop": "template",
+                                      "text": "assets.{a}.aa50_bought_from",
+                                      "values": {
+                                        "vop": "record",
+                                        "fields": {
+                                          "a": "$asset"
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              ]
+                            },
+                            {
+                              "op": "all",
+                              "items": [
+                                {
+                                  "op": "ne",
+                                  "left": {
+                                    "vop": "get",
+                                    "value": {
+                                      "chip": "myreturn.cg_rules",
+                                      "args": {}
+                                    },
+                                    "path": {
+                                      "vop": "template",
+                                      "text": "assets.{a}.aa50_sold_from",
+                                      "values": {
+                                        "vop": "record",
+                                        "fields": {
+                                          "a": "$asset"
+                                        }
+                                      }
+                                    }
+                                  },
+                                  "right": ""
+                                },
+                                {
+                                  "vop": "matches",
+                                  "text": "$sold",
+                                  "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                                },
+                                {
+                                  "op": "ge",
+                                  "left": "$sold",
+                                  "right": {
+                                    "vop": "get",
+                                    "value": {
+                                      "chip": "myreturn.cg_rules",
+                                      "args": {}
+                                    },
+                                    "path": {
+                                      "vop": "template",
+                                      "text": "assets.{a}.aa50_sold_from",
+                                      "values": {
+                                        "vop": "record",
+                                        "fields": {
+                                          "a": "$asset"
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        "then": "short"
+                      },
+                      {
+                        "when": {
+                          "op": "in_set",
+                          "value": "$term",
+                          "set": [
+                            "long",
+                            "short"
+                          ]
+                        },
+                        "then": "$term"
+                      },
+                      {
+                        "when": {
+                          "op": "all",
+                          "items": [
+                            {
+                              "op": "all",
+                              "items": [
+                                {
+                                  "vop": "matches",
+                                  "text": "$acquired",
+                                  "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                                },
+                                {
+                                  "vop": "matches",
+                                  "text": "$sold",
+                                  "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                                }
+                              ]
+                            },
+                            {
+                              "op": "gt",
+                              "left": "$sold",
+                              "right": {
+                                "vop": "date_shift",
+                                "date": "$acquired",
+                                "months": {
+                                  "vop": "get",
+                                  "value": {
+                                    "chip": "myreturn.cg_rules",
+                                    "args": {}
+                                  },
+                                  "path": {
+                                    "vop": "template",
+                                    "text": "assets.{a}.months",
+                                    "values": {
+                                      "vop": "record",
+                                      "fields": {
+                                        "a": "$asset"
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          ]
+                        },
+                        "then": "long"
+                      }
+                    ],
+                    "else": "short"
+                  },
+                  "right": "long"
+                },
+                {
+                  "op": "all",
+                  "items": [
+                    {
+                      "vop": "matches",
+                      "text": "$acquired",
+                      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                    },
+                    {
+                      "vop": "matches",
+                      "text": "$sold",
+                      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                    }
+                  ]
+                },
+                {
+                  "op": "lt",
+                  "left": "$acquired",
+                  "right": {
+                    "vop": "get",
+                    "value": {
+                      "chip": "myreturn.cg_rules",
+                      "args": {}
+                    },
+                    "path": "index_before"
+                  }
+                },
+                {
+                  "op": "any",
+                  "items": [
+                    {
+                      "op": "eq",
+                      "left": "$resident",
+                      "right": true
+                    },
+                    {
+                      "op": "eq",
+                      "left": {
+                        "vop": "get",
+                        "value": {
+                          "chip": "myreturn.cg_rules",
+                          "args": {}
+                        },
+                        "path": "index_residents_only"
+                      },
+                      "right": false
+                    }
+                  ]
+                }
+              ]
+            },
+            "then": {
+              "chip": "myreturn.cii",
+              "args": {
+                "date": "$acquired"
+              }
+            }
+          }
+        ],
+        "else": 0
+      },
+      "cii_improve": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "all",
+                  "items": [
+                    {
+                      "op": "eq",
+                      "left": {
+                        "vop": "get",
+                        "value": {
+                          "chip": "myreturn.cg_rules",
+                          "args": {}
+                        },
+                        "path": {
+                          "vop": "template",
+                          "text": "assets.{a}.index_option",
+                          "values": {
+                            "vop": "record",
+                            "fields": {
+                              "a": "$asset"
+                            }
+                          }
+                        }
+                      },
+                      "right": true
+                    },
+                    {
+                      "op": "eq",
+                      "left": {
+                        "vop": "choose",
+                        "cases": [
+                          {
+                            "when": {
+                              "op": "any",
+                              "items": [
+                                {
+                                  "op": "eq",
+                                  "left": {
+                                    "vop": "get",
+                                    "value": {
+                                      "chip": "myreturn.cg_rules",
+                                      "args": {}
+                                    },
+                                    "path": {
+                                      "vop": "template",
+                                      "text": "assets.{a}.always_short",
+                                      "values": {
+                                        "vop": "record",
+                                        "fields": {
+                                          "a": "$asset"
+                                        }
+                                      }
+                                    }
+                                  },
+                                  "right": true
+                                },
+                                {
+                                  "op": "all",
+                                  "items": [
+                                    {
+                                      "op": "ne",
+                                      "left": {
+                                        "vop": "get",
+                                        "value": {
+                                          "chip": "myreturn.cg_rules",
+                                          "args": {}
+                                        },
+                                        "path": {
+                                          "vop": "template",
+                                          "text": "assets.{a}.aa50_bought_from",
+                                          "values": {
+                                            "vop": "record",
+                                            "fields": {
+                                              "a": "$asset"
+                                            }
+                                          }
+                                        }
+                                      },
+                                      "right": ""
+                                    },
+                                    {
+                                      "vop": "matches",
+                                      "text": "$acquired",
+                                      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                                    },
+                                    {
+                                      "op": "ge",
+                                      "left": "$acquired",
+                                      "right": {
+                                        "vop": "get",
+                                        "value": {
+                                          "chip": "myreturn.cg_rules",
+                                          "args": {}
+                                        },
+                                        "path": {
+                                          "vop": "template",
+                                          "text": "assets.{a}.aa50_bought_from",
+                                          "values": {
+                                            "vop": "record",
+                                            "fields": {
+                                              "a": "$asset"
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  ]
+                                },
+                                {
+                                  "op": "all",
+                                  "items": [
+                                    {
+                                      "op": "ne",
+                                      "left": {
+                                        "vop": "get",
+                                        "value": {
+                                          "chip": "myreturn.cg_rules",
+                                          "args": {}
+                                        },
+                                        "path": {
+                                          "vop": "template",
+                                          "text": "assets.{a}.aa50_sold_from",
+                                          "values": {
+                                            "vop": "record",
+                                            "fields": {
+                                              "a": "$asset"
+                                            }
+                                          }
+                                        }
+                                      },
+                                      "right": ""
+                                    },
+                                    {
+                                      "vop": "matches",
+                                      "text": "$sold",
+                                      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                                    },
+                                    {
+                                      "op": "ge",
+                                      "left": "$sold",
+                                      "right": {
+                                        "vop": "get",
+                                        "value": {
+                                          "chip": "myreturn.cg_rules",
+                                          "args": {}
+                                        },
+                                        "path": {
+                                          "vop": "template",
+                                          "text": "assets.{a}.aa50_sold_from",
+                                          "values": {
+                                            "vop": "record",
+                                            "fields": {
+                                              "a": "$asset"
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            "then": "short"
+                          },
+                          {
+                            "when": {
+                              "op": "in_set",
+                              "value": "$term",
+                              "set": [
+                                "long",
+                                "short"
+                              ]
+                            },
+                            "then": "$term"
+                          },
+                          {
+                            "when": {
+                              "op": "all",
+                              "items": [
+                                {
+                                  "op": "all",
+                                  "items": [
+                                    {
+                                      "vop": "matches",
+                                      "text": "$acquired",
+                                      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                                    },
+                                    {
+                                      "vop": "matches",
+                                      "text": "$sold",
+                                      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "op": "gt",
+                                  "left": "$sold",
+                                  "right": {
+                                    "vop": "date_shift",
+                                    "date": "$acquired",
+                                    "months": {
+                                      "vop": "get",
+                                      "value": {
+                                        "chip": "myreturn.cg_rules",
+                                        "args": {}
+                                      },
+                                      "path": {
+                                        "vop": "template",
+                                        "text": "assets.{a}.months",
+                                        "values": {
+                                          "vop": "record",
+                                          "fields": {
+                                            "a": "$asset"
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              ]
+                            },
+                            "then": "long"
+                          }
+                        ],
+                        "else": "short"
+                      },
+                      "right": "long"
+                    },
+                    {
+                      "op": "all",
+                      "items": [
+                        {
+                          "vop": "matches",
+                          "text": "$acquired",
+                          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                        },
+                        {
+                          "vop": "matches",
+                          "text": "$sold",
+                          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                        }
+                      ]
+                    },
+                    {
+                      "op": "lt",
+                      "left": "$acquired",
+                      "right": {
+                        "vop": "get",
+                        "value": {
+                          "chip": "myreturn.cg_rules",
+                          "args": {}
+                        },
+                        "path": "index_before"
+                      }
+                    },
+                    {
+                      "op": "any",
+                      "items": [
+                        {
+                          "op": "eq",
+                          "left": "$resident",
+                          "right": true
+                        },
+                        {
+                          "op": "eq",
+                          "left": {
+                            "vop": "get",
+                            "value": {
+                              "chip": "myreturn.cg_rules",
+                              "args": {}
+                            },
+                            "path": "index_residents_only"
+                          },
+                          "right": false
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "op": "gt",
+                  "left": "$improve",
+                  "right": 0
+                }
+              ]
+            },
+            "then": {
+              "chip": "myreturn.cii",
+              "args": {
+                "date": {
+                  "vop": "choose",
+                  "cases": [
+                    {
+                      "when": {
+                        "vop": "matches",
+                        "text": "$improve_on",
+                        "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                      },
+                      "then": "$improve_on"
+                    }
+                  ],
+                  "else": "$acquired"
+                }
+              }
+            }
+          }
+        ],
+        "else": 0
+      },
+      "cost_indexed": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "eq",
+                  "left": {
+                    "vop": "get",
+                    "value": {
+                      "chip": "myreturn.cg_rules",
+                      "args": {}
+                    },
+                    "path": {
+                      "vop": "template",
+                      "text": "assets.{a}.index_option",
+                      "values": {
+                        "vop": "record",
+                        "fields": {
+                          "a": "$asset"
+                        }
+                      }
+                    }
+                  },
+                  "right": true
+                },
+                {
+                  "op": "eq",
+                  "left": {
+                    "vop": "choose",
+                    "cases": [
+                      {
+                        "when": {
+                          "op": "any",
+                          "items": [
+                            {
+                              "op": "eq",
+                              "left": {
+                                "vop": "get",
+                                "value": {
+                                  "chip": "myreturn.cg_rules",
+                                  "args": {}
+                                },
+                                "path": {
+                                  "vop": "template",
+                                  "text": "assets.{a}.always_short",
+                                  "values": {
+                                    "vop": "record",
+                                    "fields": {
+                                      "a": "$asset"
+                                    }
+                                  }
+                                }
+                              },
+                              "right": true
+                            },
+                            {
+                              "op": "all",
+                              "items": [
+                                {
+                                  "op": "ne",
+                                  "left": {
+                                    "vop": "get",
+                                    "value": {
+                                      "chip": "myreturn.cg_rules",
+                                      "args": {}
+                                    },
+                                    "path": {
+                                      "vop": "template",
+                                      "text": "assets.{a}.aa50_bought_from",
+                                      "values": {
+                                        "vop": "record",
+                                        "fields": {
+                                          "a": "$asset"
+                                        }
+                                      }
+                                    }
+                                  },
+                                  "right": ""
+                                },
+                                {
+                                  "vop": "matches",
+                                  "text": "$acquired",
+                                  "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                                },
+                                {
+                                  "op": "ge",
+                                  "left": "$acquired",
+                                  "right": {
+                                    "vop": "get",
+                                    "value": {
+                                      "chip": "myreturn.cg_rules",
+                                      "args": {}
+                                    },
+                                    "path": {
+                                      "vop": "template",
+                                      "text": "assets.{a}.aa50_bought_from",
+                                      "values": {
+                                        "vop": "record",
+                                        "fields": {
+                                          "a": "$asset"
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              ]
+                            },
+                            {
+                              "op": "all",
+                              "items": [
+                                {
+                                  "op": "ne",
+                                  "left": {
+                                    "vop": "get",
+                                    "value": {
+                                      "chip": "myreturn.cg_rules",
+                                      "args": {}
+                                    },
+                                    "path": {
+                                      "vop": "template",
+                                      "text": "assets.{a}.aa50_sold_from",
+                                      "values": {
+                                        "vop": "record",
+                                        "fields": {
+                                          "a": "$asset"
+                                        }
+                                      }
+                                    }
+                                  },
+                                  "right": ""
+                                },
+                                {
+                                  "vop": "matches",
+                                  "text": "$sold",
+                                  "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                                },
+                                {
+                                  "op": "ge",
+                                  "left": "$sold",
+                                  "right": {
+                                    "vop": "get",
+                                    "value": {
+                                      "chip": "myreturn.cg_rules",
+                                      "args": {}
+                                    },
+                                    "path": {
+                                      "vop": "template",
+                                      "text": "assets.{a}.aa50_sold_from",
+                                      "values": {
+                                        "vop": "record",
+                                        "fields": {
+                                          "a": "$asset"
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        "then": "short"
+                      },
+                      {
+                        "when": {
+                          "op": "in_set",
+                          "value": "$term",
+                          "set": [
+                            "long",
+                            "short"
+                          ]
+                        },
+                        "then": "$term"
+                      },
+                      {
+                        "when": {
+                          "op": "all",
+                          "items": [
+                            {
+                              "op": "all",
+                              "items": [
+                                {
+                                  "vop": "matches",
+                                  "text": "$acquired",
+                                  "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                                },
+                                {
+                                  "vop": "matches",
+                                  "text": "$sold",
+                                  "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                                }
+                              ]
+                            },
+                            {
+                              "op": "gt",
+                              "left": "$sold",
+                              "right": {
+                                "vop": "date_shift",
+                                "date": "$acquired",
+                                "months": {
+                                  "vop": "get",
+                                  "value": {
+                                    "chip": "myreturn.cg_rules",
+                                    "args": {}
+                                  },
+                                  "path": {
+                                    "vop": "template",
+                                    "text": "assets.{a}.months",
+                                    "values": {
+                                      "vop": "record",
+                                      "fields": {
+                                        "a": "$asset"
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          ]
+                        },
+                        "then": "long"
+                      }
+                    ],
+                    "else": "short"
+                  },
+                  "right": "long"
+                },
+                {
+                  "op": "all",
+                  "items": [
+                    {
+                      "vop": "matches",
+                      "text": "$acquired",
+                      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                    },
+                    {
+                      "vop": "matches",
+                      "text": "$sold",
+                      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                    }
+                  ]
+                },
+                {
+                  "op": "lt",
+                  "left": "$acquired",
+                  "right": {
+                    "vop": "get",
+                    "value": {
+                      "chip": "myreturn.cg_rules",
+                      "args": {}
+                    },
+                    "path": "index_before"
+                  }
+                },
+                {
+                  "op": "any",
+                  "items": [
+                    {
+                      "op": "eq",
+                      "left": "$resident",
+                      "right": true
+                    },
+                    {
+                      "op": "eq",
+                      "left": {
+                        "vop": "get",
+                        "value": {
+                          "chip": "myreturn.cg_rules",
+                          "args": {}
+                        },
+                        "path": "index_residents_only"
+                      },
+                      "right": false
+                    }
+                  ]
+                }
+              ]
+            },
+            "then": {
+              "vop": "round_to",
+              "value": {
+                "vop": "div",
+                "a": {
+                  "vop": "mul",
+                  "a": "$cost",
+                  "b": {
+                    "chip": "myreturn.cii",
+                    "args": {
+                      "date": "$sold"
+                    }
+                  }
+                },
+                "b": {
+                  "chip": "myreturn.cii",
+                  "args": {
+                    "date": "$acquired"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "else": "$cost"
+      },
+      "improve_indexed": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "all",
+                  "items": [
+                    {
+                      "op": "eq",
+                      "left": {
+                        "vop": "get",
+                        "value": {
+                          "chip": "myreturn.cg_rules",
+                          "args": {}
+                        },
+                        "path": {
+                          "vop": "template",
+                          "text": "assets.{a}.index_option",
+                          "values": {
+                            "vop": "record",
+                            "fields": {
+                              "a": "$asset"
+                            }
+                          }
+                        }
+                      },
+                      "right": true
+                    },
+                    {
+                      "op": "eq",
+                      "left": {
+                        "vop": "choose",
+                        "cases": [
+                          {
+                            "when": {
+                              "op": "any",
+                              "items": [
+                                {
+                                  "op": "eq",
+                                  "left": {
+                                    "vop": "get",
+                                    "value": {
+                                      "chip": "myreturn.cg_rules",
+                                      "args": {}
+                                    },
+                                    "path": {
+                                      "vop": "template",
+                                      "text": "assets.{a}.always_short",
+                                      "values": {
+                                        "vop": "record",
+                                        "fields": {
+                                          "a": "$asset"
+                                        }
+                                      }
+                                    }
+                                  },
+                                  "right": true
+                                },
+                                {
+                                  "op": "all",
+                                  "items": [
+                                    {
+                                      "op": "ne",
+                                      "left": {
+                                        "vop": "get",
+                                        "value": {
+                                          "chip": "myreturn.cg_rules",
+                                          "args": {}
+                                        },
+                                        "path": {
+                                          "vop": "template",
+                                          "text": "assets.{a}.aa50_bought_from",
+                                          "values": {
+                                            "vop": "record",
+                                            "fields": {
+                                              "a": "$asset"
+                                            }
+                                          }
+                                        }
+                                      },
+                                      "right": ""
+                                    },
+                                    {
+                                      "vop": "matches",
+                                      "text": "$acquired",
+                                      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                                    },
+                                    {
+                                      "op": "ge",
+                                      "left": "$acquired",
+                                      "right": {
+                                        "vop": "get",
+                                        "value": {
+                                          "chip": "myreturn.cg_rules",
+                                          "args": {}
+                                        },
+                                        "path": {
+                                          "vop": "template",
+                                          "text": "assets.{a}.aa50_bought_from",
+                                          "values": {
+                                            "vop": "record",
+                                            "fields": {
+                                              "a": "$asset"
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  ]
+                                },
+                                {
+                                  "op": "all",
+                                  "items": [
+                                    {
+                                      "op": "ne",
+                                      "left": {
+                                        "vop": "get",
+                                        "value": {
+                                          "chip": "myreturn.cg_rules",
+                                          "args": {}
+                                        },
+                                        "path": {
+                                          "vop": "template",
+                                          "text": "assets.{a}.aa50_sold_from",
+                                          "values": {
+                                            "vop": "record",
+                                            "fields": {
+                                              "a": "$asset"
+                                            }
+                                          }
+                                        }
+                                      },
+                                      "right": ""
+                                    },
+                                    {
+                                      "vop": "matches",
+                                      "text": "$sold",
+                                      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                                    },
+                                    {
+                                      "op": "ge",
+                                      "left": "$sold",
+                                      "right": {
+                                        "vop": "get",
+                                        "value": {
+                                          "chip": "myreturn.cg_rules",
+                                          "args": {}
+                                        },
+                                        "path": {
+                                          "vop": "template",
+                                          "text": "assets.{a}.aa50_sold_from",
+                                          "values": {
+                                            "vop": "record",
+                                            "fields": {
+                                              "a": "$asset"
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            "then": "short"
+                          },
+                          {
+                            "when": {
+                              "op": "in_set",
+                              "value": "$term",
+                              "set": [
+                                "long",
+                                "short"
+                              ]
+                            },
+                            "then": "$term"
+                          },
+                          {
+                            "when": {
+                              "op": "all",
+                              "items": [
+                                {
+                                  "op": "all",
+                                  "items": [
+                                    {
+                                      "vop": "matches",
+                                      "text": "$acquired",
+                                      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                                    },
+                                    {
+                                      "vop": "matches",
+                                      "text": "$sold",
+                                      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "op": "gt",
+                                  "left": "$sold",
+                                  "right": {
+                                    "vop": "date_shift",
+                                    "date": "$acquired",
+                                    "months": {
+                                      "vop": "get",
+                                      "value": {
+                                        "chip": "myreturn.cg_rules",
+                                        "args": {}
+                                      },
+                                      "path": {
+                                        "vop": "template",
+                                        "text": "assets.{a}.months",
+                                        "values": {
+                                          "vop": "record",
+                                          "fields": {
+                                            "a": "$asset"
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              ]
+                            },
+                            "then": "long"
+                          }
+                        ],
+                        "else": "short"
+                      },
+                      "right": "long"
+                    },
+                    {
+                      "op": "all",
+                      "items": [
+                        {
+                          "vop": "matches",
+                          "text": "$acquired",
+                          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                        },
+                        {
+                          "vop": "matches",
+                          "text": "$sold",
+                          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                        }
+                      ]
+                    },
+                    {
+                      "op": "lt",
+                      "left": "$acquired",
+                      "right": {
+                        "vop": "get",
+                        "value": {
+                          "chip": "myreturn.cg_rules",
+                          "args": {}
+                        },
+                        "path": "index_before"
+                      }
+                    },
+                    {
+                      "op": "any",
+                      "items": [
+                        {
+                          "op": "eq",
+                          "left": "$resident",
+                          "right": true
+                        },
+                        {
+                          "op": "eq",
+                          "left": {
+                            "vop": "get",
+                            "value": {
+                              "chip": "myreturn.cg_rules",
+                              "args": {}
+                            },
+                            "path": "index_residents_only"
+                          },
+                          "right": false
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "op": "gt",
+                  "left": "$improve",
+                  "right": 0
+                }
+              ]
+            },
+            "then": {
+              "vop": "round_to",
+              "value": {
+                "vop": "div",
+                "a": {
+                  "vop": "mul",
+                  "a": "$improve",
+                  "b": {
+                    "chip": "myreturn.cii",
+                    "args": {
+                      "date": "$sold"
+                    }
+                  }
+                },
+                "b": {
+                  "chip": "myreturn.cii",
+                  "args": {
+                    "date": {
+                      "vop": "choose",
+                      "cases": [
+                        {
+                          "when": {
+                            "vop": "matches",
+                            "text": "$improve_on",
+                            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                          },
+                          "then": "$improve_on"
+                        }
+                      ],
+                      "else": "$acquired"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "else": "$improve"
+      },
+      "gain_indexed": {
+        "vop": "sub",
+        "a": {
+          "vop": "sub",
+          "a": {
+            "vop": "sub",
+            "a": {
+              "vop": "choose",
+              "cases": [
+                {
+                  "when": {
+                    "op": "all",
+                    "items": [
+                      {
+                        "op": "eq",
+                        "left": {
+                          "vop": "get",
+                          "value": {
+                            "chip": "myreturn.cg_rules",
+                            "args": {}
+                          },
+                          "path": {
+                            "vop": "template",
+                            "text": "assets.{a}.s50c",
+                            "values": {
+                              "vop": "record",
+                              "fields": {
+                                "a": "$asset"
+                              }
+                            }
+                          }
+                        },
+                        "right": true
+                      },
+                      {
+                        "op": "gt",
+                        "left": "$stamp",
+                        "right": {
+                          "vop": "mul",
+                          "a": "$sale",
+                          "b": {
+                            "vop": "add",
+                            "a": 1,
+                            "b": {
+                              "vop": "div",
+                              "a": {
+                                "vop": "get",
+                                "value": {
+                                  "chip": "myreturn.cg_rules",
+                                  "args": {}
+                                },
+                                "path": "s50c_tolerance_pct"
+                              },
+                              "b": 100
+                            }
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  "then": "$stamp"
+                }
+              ],
+              "else": "$sale"
+            },
+            "b": {
+              "vop": "choose",
+              "cases": [
+                {
+                  "when": {
+                    "op": "all",
+                    "items": [
+                      {
+                        "op": "eq",
+                        "left": {
+                          "vop": "get",
+                          "value": {
+                            "chip": "myreturn.cg_rules",
+                            "args": {}
+                          },
+                          "path": {
+                            "vop": "template",
+                            "text": "assets.{a}.index_option",
+                            "values": {
+                              "vop": "record",
+                              "fields": {
+                                "a": "$asset"
+                              }
+                            }
+                          }
+                        },
+                        "right": true
+                      },
+                      {
+                        "op": "eq",
+                        "left": {
+                          "vop": "choose",
+                          "cases": [
+                            {
+                              "when": {
+                                "op": "any",
+                                "items": [
+                                  {
+                                    "op": "eq",
+                                    "left": {
+                                      "vop": "get",
+                                      "value": {
+                                        "chip": "myreturn.cg_rules",
+                                        "args": {}
+                                      },
+                                      "path": {
+                                        "vop": "template",
+                                        "text": "assets.{a}.always_short",
+                                        "values": {
+                                          "vop": "record",
+                                          "fields": {
+                                            "a": "$asset"
+                                          }
+                                        }
+                                      }
+                                    },
+                                    "right": true
+                                  },
+                                  {
+                                    "op": "all",
+                                    "items": [
+                                      {
+                                        "op": "ne",
+                                        "left": {
+                                          "vop": "get",
+                                          "value": {
+                                            "chip": "myreturn.cg_rules",
+                                            "args": {}
+                                          },
+                                          "path": {
+                                            "vop": "template",
+                                            "text": "assets.{a}.aa50_bought_from",
+                                            "values": {
+                                              "vop": "record",
+                                              "fields": {
+                                                "a": "$asset"
+                                              }
+                                            }
+                                          }
+                                        },
+                                        "right": ""
+                                      },
+                                      {
+                                        "vop": "matches",
+                                        "text": "$acquired",
+                                        "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                                      },
+                                      {
+                                        "op": "ge",
+                                        "left": "$acquired",
+                                        "right": {
+                                          "vop": "get",
+                                          "value": {
+                                            "chip": "myreturn.cg_rules",
+                                            "args": {}
+                                          },
+                                          "path": {
+                                            "vop": "template",
+                                            "text": "assets.{a}.aa50_bought_from",
+                                            "values": {
+                                              "vop": "record",
+                                              "fields": {
+                                                "a": "$asset"
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "op": "all",
+                                    "items": [
+                                      {
+                                        "op": "ne",
+                                        "left": {
+                                          "vop": "get",
+                                          "value": {
+                                            "chip": "myreturn.cg_rules",
+                                            "args": {}
+                                          },
+                                          "path": {
+                                            "vop": "template",
+                                            "text": "assets.{a}.aa50_sold_from",
+                                            "values": {
+                                              "vop": "record",
+                                              "fields": {
+                                                "a": "$asset"
+                                              }
+                                            }
+                                          }
+                                        },
+                                        "right": ""
+                                      },
+                                      {
+                                        "vop": "matches",
+                                        "text": "$sold",
+                                        "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                                      },
+                                      {
+                                        "op": "ge",
+                                        "left": "$sold",
+                                        "right": {
+                                          "vop": "get",
+                                          "value": {
+                                            "chip": "myreturn.cg_rules",
+                                            "args": {}
+                                          },
+                                          "path": {
+                                            "vop": "template",
+                                            "text": "assets.{a}.aa50_sold_from",
+                                            "values": {
+                                              "vop": "record",
+                                              "fields": {
+                                                "a": "$asset"
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              "then": "short"
+                            },
+                            {
+                              "when": {
+                                "op": "in_set",
+                                "value": "$term",
+                                "set": [
+                                  "long",
+                                  "short"
+                                ]
+                              },
+                              "then": "$term"
+                            },
+                            {
+                              "when": {
+                                "op": "all",
+                                "items": [
+                                  {
+                                    "op": "all",
+                                    "items": [
+                                      {
+                                        "vop": "matches",
+                                        "text": "$acquired",
+                                        "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                                      },
+                                      {
+                                        "vop": "matches",
+                                        "text": "$sold",
+                                        "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "op": "gt",
+                                    "left": "$sold",
+                                    "right": {
+                                      "vop": "date_shift",
+                                      "date": "$acquired",
+                                      "months": {
+                                        "vop": "get",
+                                        "value": {
+                                          "chip": "myreturn.cg_rules",
+                                          "args": {}
+                                        },
+                                        "path": {
+                                          "vop": "template",
+                                          "text": "assets.{a}.months",
+                                          "values": {
+                                            "vop": "record",
+                                            "fields": {
+                                              "a": "$asset"
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                ]
+                              },
+                              "then": "long"
+                            }
+                          ],
+                          "else": "short"
+                        },
+                        "right": "long"
+                      },
+                      {
+                        "op": "all",
+                        "items": [
+                          {
+                            "vop": "matches",
+                            "text": "$acquired",
+                            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                          },
+                          {
+                            "vop": "matches",
+                            "text": "$sold",
+                            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                          }
+                        ]
+                      },
+                      {
+                        "op": "lt",
+                        "left": "$acquired",
+                        "right": {
+                          "vop": "get",
+                          "value": {
+                            "chip": "myreturn.cg_rules",
+                            "args": {}
+                          },
+                          "path": "index_before"
+                        }
+                      },
+                      {
+                        "op": "any",
+                        "items": [
+                          {
+                            "op": "eq",
+                            "left": "$resident",
+                            "right": true
+                          },
+                          {
+                            "op": "eq",
+                            "left": {
+                              "vop": "get",
+                              "value": {
+                                "chip": "myreturn.cg_rules",
+                                "args": {}
+                              },
+                              "path": "index_residents_only"
+                            },
+                            "right": false
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  "then": {
+                    "vop": "round_to",
+                    "value": {
+                      "vop": "div",
+                      "a": {
+                        "vop": "mul",
+                        "a": "$cost",
+                        "b": {
+                          "chip": "myreturn.cii",
+                          "args": {
+                            "date": "$sold"
+                          }
+                        }
+                      },
+                      "b": {
+                        "chip": "myreturn.cii",
+                        "args": {
+                          "date": "$acquired"
+                        }
+                      }
+                    }
+                  }
+                }
+              ],
+              "else": "$cost"
+            }
+          },
+          "b": {
+            "vop": "choose",
+            "cases": [
+              {
+                "when": {
+                  "op": "all",
+                  "items": [
+                    {
+                      "op": "all",
+                      "items": [
+                        {
+                          "op": "eq",
+                          "left": {
+                            "vop": "get",
+                            "value": {
+                              "chip": "myreturn.cg_rules",
+                              "args": {}
+                            },
+                            "path": {
+                              "vop": "template",
+                              "text": "assets.{a}.index_option",
+                              "values": {
+                                "vop": "record",
+                                "fields": {
+                                  "a": "$asset"
+                                }
+                              }
+                            }
+                          },
+                          "right": true
+                        },
+                        {
+                          "op": "eq",
+                          "left": {
+                            "vop": "choose",
+                            "cases": [
+                              {
+                                "when": {
+                                  "op": "any",
+                                  "items": [
+                                    {
+                                      "op": "eq",
+                                      "left": {
+                                        "vop": "get",
+                                        "value": {
+                                          "chip": "myreturn.cg_rules",
+                                          "args": {}
+                                        },
+                                        "path": {
+                                          "vop": "template",
+                                          "text": "assets.{a}.always_short",
+                                          "values": {
+                                            "vop": "record",
+                                            "fields": {
+                                              "a": "$asset"
+                                            }
+                                          }
+                                        }
+                                      },
+                                      "right": true
+                                    },
+                                    {
+                                      "op": "all",
+                                      "items": [
+                                        {
+                                          "op": "ne",
+                                          "left": {
+                                            "vop": "get",
+                                            "value": {
+                                              "chip": "myreturn.cg_rules",
+                                              "args": {}
+                                            },
+                                            "path": {
+                                              "vop": "template",
+                                              "text": "assets.{a}.aa50_bought_from",
+                                              "values": {
+                                                "vop": "record",
+                                                "fields": {
+                                                  "a": "$asset"
+                                                }
+                                              }
+                                            }
+                                          },
+                                          "right": ""
+                                        },
+                                        {
+                                          "vop": "matches",
+                                          "text": "$acquired",
+                                          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                                        },
+                                        {
+                                          "op": "ge",
+                                          "left": "$acquired",
+                                          "right": {
+                                            "vop": "get",
+                                            "value": {
+                                              "chip": "myreturn.cg_rules",
+                                              "args": {}
+                                            },
+                                            "path": {
+                                              "vop": "template",
+                                              "text": "assets.{a}.aa50_bought_from",
+                                              "values": {
+                                                "vop": "record",
+                                                "fields": {
+                                                  "a": "$asset"
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "op": "all",
+                                      "items": [
+                                        {
+                                          "op": "ne",
+                                          "left": {
+                                            "vop": "get",
+                                            "value": {
+                                              "chip": "myreturn.cg_rules",
+                                              "args": {}
+                                            },
+                                            "path": {
+                                              "vop": "template",
+                                              "text": "assets.{a}.aa50_sold_from",
+                                              "values": {
+                                                "vop": "record",
+                                                "fields": {
+                                                  "a": "$asset"
+                                                }
+                                              }
+                                            }
+                                          },
+                                          "right": ""
+                                        },
+                                        {
+                                          "vop": "matches",
+                                          "text": "$sold",
+                                          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                                        },
+                                        {
+                                          "op": "ge",
+                                          "left": "$sold",
+                                          "right": {
+                                            "vop": "get",
+                                            "value": {
+                                              "chip": "myreturn.cg_rules",
+                                              "args": {}
+                                            },
+                                            "path": {
+                                              "vop": "template",
+                                              "text": "assets.{a}.aa50_sold_from",
+                                              "values": {
+                                                "vop": "record",
+                                                "fields": {
+                                                  "a": "$asset"
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                },
+                                "then": "short"
+                              },
+                              {
+                                "when": {
+                                  "op": "in_set",
+                                  "value": "$term",
+                                  "set": [
+                                    "long",
+                                    "short"
+                                  ]
+                                },
+                                "then": "$term"
+                              },
+                              {
+                                "when": {
+                                  "op": "all",
+                                  "items": [
+                                    {
+                                      "op": "all",
+                                      "items": [
+                                        {
+                                          "vop": "matches",
+                                          "text": "$acquired",
+                                          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                                        },
+                                        {
+                                          "vop": "matches",
+                                          "text": "$sold",
+                                          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "op": "gt",
+                                      "left": "$sold",
+                                      "right": {
+                                        "vop": "date_shift",
+                                        "date": "$acquired",
+                                        "months": {
+                                          "vop": "get",
+                                          "value": {
+                                            "chip": "myreturn.cg_rules",
+                                            "args": {}
+                                          },
+                                          "path": {
+                                            "vop": "template",
+                                            "text": "assets.{a}.months",
+                                            "values": {
+                                              "vop": "record",
+                                              "fields": {
+                                                "a": "$asset"
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  ]
+                                },
+                                "then": "long"
+                              }
+                            ],
+                            "else": "short"
+                          },
+                          "right": "long"
+                        },
+                        {
+                          "op": "all",
+                          "items": [
+                            {
+                              "vop": "matches",
+                              "text": "$acquired",
+                              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                            },
+                            {
+                              "vop": "matches",
+                              "text": "$sold",
+                              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                            }
+                          ]
+                        },
+                        {
+                          "op": "lt",
+                          "left": "$acquired",
+                          "right": {
+                            "vop": "get",
+                            "value": {
+                              "chip": "myreturn.cg_rules",
+                              "args": {}
+                            },
+                            "path": "index_before"
+                          }
+                        },
+                        {
+                          "op": "any",
+                          "items": [
+                            {
+                              "op": "eq",
+                              "left": "$resident",
+                              "right": true
+                            },
+                            {
+                              "op": "eq",
+                              "left": {
+                                "vop": "get",
+                                "value": {
+                                  "chip": "myreturn.cg_rules",
+                                  "args": {}
+                                },
+                                "path": "index_residents_only"
+                              },
+                              "right": false
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "op": "gt",
+                      "left": "$improve",
+                      "right": 0
+                    }
+                  ]
+                },
+                "then": {
+                  "vop": "round_to",
+                  "value": {
+                    "vop": "div",
+                    "a": {
+                      "vop": "mul",
+                      "a": "$improve",
+                      "b": {
+                        "chip": "myreturn.cii",
+                        "args": {
+                          "date": "$sold"
+                        }
+                      }
+                    },
+                    "b": {
+                      "chip": "myreturn.cii",
+                      "args": {
+                        "date": {
+                          "vop": "choose",
+                          "cases": [
+                            {
+                              "when": {
+                                "vop": "matches",
+                                "text": "$improve_on",
+                                "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                              },
+                              "then": "$improve_on"
+                            }
+                          ],
+                          "else": "$acquired"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            ],
+            "else": "$improve"
+          }
+        },
+        "b": "$expenses"
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-07: One transfer of a capital asset (s.45 / s.48): short- or long-term by the months it was held (more than 12 / 24 months is long), s.50AA (always short-term), the bucket it is taxed in (111A 20%, 112A 12.5% over 1.25 lakh, 112 12.5%, or the slab rates), s.50C for land / building (the stamp-duty value when it is more than 110% of the price), 112A grandfathering for shares bought before 1 February 2018, and for land / building bought before 23 July 2024 by a resident the gain with indexation too (cost x CII of the year of sale / CII of the year bought).",
+  "test_cases": [
+    {
+      "args": {
+        "asset": "equity",
+        "acquired": "2017-06-01",
+        "sold": "2025-09-10",
+        "sale": 300000,
+        "cost": 100000,
+        "fmv": 250000
+      },
+      "expect_value": {
+        "term": "long",
+        "bucket": "ltcg_112a",
+        "deemed_50aa": false,
+        "dated": true,
+        "property": false,
+        "consideration": 300000,
+        "s50c": false,
+        "grandfathered": true,
+        "cost_used": 250000,
+        "gain": 50000,
+        "index_ok": false,
+        "cii_sell": 0,
+        "cii_buy": 0,
+        "cii_improve": 0,
+        "cost_indexed": 100000,
+        "improve_indexed": 0,
+        "gain_indexed": 200000
+      }
+    },
+    {
+      "args": {
+        "asset": "equity",
+        "acquired": "2017-06-01",
+        "sold": "2025-09-10",
+        "sale": 200000,
+        "cost": 100000,
+        "fmv": 250000
+      },
+      "expect_value": {
+        "term": "long",
+        "bucket": "ltcg_112a",
+        "deemed_50aa": false,
+        "dated": true,
+        "property": false,
+        "consideration": 200000,
+        "s50c": false,
+        "grandfathered": true,
+        "cost_used": 200000,
+        "gain": 0,
+        "index_ok": false,
+        "cii_sell": 0,
+        "cii_buy": 0,
+        "cii_improve": 0,
+        "cost_indexed": 100000,
+        "improve_indexed": 0,
+        "gain_indexed": 100000
+      }
+    },
+    {
+      "args": {
+        "asset": "equity",
+        "acquired": "2019-06-01",
+        "sold": "2025-09-10",
+        "sale": 200000,
+        "cost": 100000,
+        "fmv": 250000,
+        "expenses": 500
+      },
+      "expect_value": {
+        "term": "long",
+        "bucket": "ltcg_112a",
+        "deemed_50aa": false,
+        "dated": true,
+        "property": false,
+        "consideration": 200000,
+        "s50c": false,
+        "grandfathered": false,
+        "cost_used": 100000,
+        "gain": 99500,
+        "index_ok": false,
+        "cii_sell": 0,
+        "cii_buy": 0,
+        "cii_improve": 0,
+        "cost_indexed": 100000,
+        "improve_indexed": 0,
+        "gain_indexed": 99500
+      }
+    },
+    {
+      "args": {
+        "asset": "equity",
+        "acquired": "2025-01-10",
+        "sold": "2025-08-10",
+        "sale": 150000,
+        "cost": 120000
+      },
+      "expect_value": {
+        "term": "short",
+        "bucket": "stcg_111a",
+        "deemed_50aa": false,
+        "dated": true,
+        "property": false,
+        "consideration": 150000,
+        "s50c": false,
+        "grandfathered": false,
+        "cost_used": 120000,
+        "gain": 30000,
+        "index_ok": false,
+        "cii_sell": 0,
+        "cii_buy": 0,
+        "cii_improve": 0,
+        "cost_indexed": 120000,
+        "improve_indexed": 0,
+        "gain_indexed": 30000
+      }
+    },
+    {
+      "args": {
+        "asset": "equity",
+        "acquired": "2024-08-10",
+        "sold": "2025-08-10",
+        "sale": 150000,
+        "cost": 120000
+      },
+      "expect_value": {
+        "term": "short",
+        "bucket": "stcg_111a",
+        "deemed_50aa": false,
+        "dated": true,
+        "property": false,
+        "consideration": 150000,
+        "s50c": false,
+        "grandfathered": false,
+        "cost_used": 120000,
+        "gain": 30000,
+        "index_ok": false,
+        "cii_sell": 0,
+        "cii_buy": 0,
+        "cii_improve": 0,
+        "cost_indexed": 120000,
+        "improve_indexed": 0,
+        "gain_indexed": 30000
+      }
+    },
+    {
+      "args": {
+        "asset": "equity",
+        "acquired": "2024-08-10",
+        "sold": "2025-08-11",
+        "sale": 150000,
+        "cost": 120000
+      },
+      "expect_value": {
+        "term": "long",
+        "bucket": "ltcg_112a",
+        "deemed_50aa": false,
+        "dated": true,
+        "property": false,
+        "consideration": 150000,
+        "s50c": false,
+        "grandfathered": false,
+        "cost_used": 120000,
+        "gain": 30000,
+        "index_ok": false,
+        "cii_sell": 0,
+        "cii_buy": 0,
+        "cii_improve": 0,
+        "cost_indexed": 120000,
+        "improve_indexed": 0,
+        "gain_indexed": 30000
+      }
+    },
+    {
+      "args": {
+        "asset": "debt_mf",
+        "acquired": "2023-05-01",
+        "sold": "2025-12-01",
+        "sale": 550000,
+        "cost": 500000
+      },
+      "expect_value": {
+        "term": "short",
+        "bucket": "stcg_app",
+        "deemed_50aa": true,
+        "dated": true,
+        "property": false,
+        "consideration": 550000,
+        "s50c": false,
+        "grandfathered": false,
+        "cost_used": 500000,
+        "gain": 50000,
+        "index_ok": false,
+        "cii_sell": 0,
+        "cii_buy": 0,
+        "cii_improve": 0,
+        "cost_indexed": 500000,
+        "improve_indexed": 0,
+        "gain_indexed": 50000
+      }
+    },
+    {
+      "args": {
+        "asset": "debt_mf",
+        "acquired": "2022-01-10",
+        "sold": "2025-12-01",
+        "sale": 600000,
+        "cost": 500000
+      },
+      "expect_value": {
+        "term": "long",
+        "bucket": "ltcg_112",
+        "deemed_50aa": false,
+        "dated": true,
+        "property": false,
+        "consideration": 600000,
+        "s50c": false,
+        "grandfathered": false,
+        "cost_used": 500000,
+        "gain": 100000,
+        "index_ok": false,
+        "cii_sell": 0,
+        "cii_buy": 0,
+        "cii_improve": 0,
+        "cost_indexed": 500000,
+        "improve_indexed": 0,
+        "gain_indexed": 100000
+      }
+    },
+    {
+      "args": {
+        "asset": "debt_mf",
+        "acquired": "2024-01-10",
+        "sold": "2025-12-01",
+        "sale": 600000,
+        "cost": 500000
+      },
+      "expect_value": {
+        "term": "short",
+        "bucket": "stcg_app",
+        "deemed_50aa": true,
+        "dated": true,
+        "property": false,
+        "consideration": 600000,
+        "s50c": false,
+        "grandfathered": false,
+        "cost_used": 500000,
+        "gain": 100000,
+        "index_ok": false,
+        "cii_sell": 0,
+        "cii_buy": 0,
+        "cii_improve": 0,
+        "cost_indexed": 500000,
+        "improve_indexed": 0,
+        "gain_indexed": 100000
+      }
+    },
+    {
+      "args": {
+        "asset": "mld",
+        "acquired": "2020-01-10",
+        "sold": "2025-12-01",
+        "sale": 600000,
+        "cost": 500000
+      },
+      "expect_value": {
+        "term": "short",
+        "bucket": "stcg_app",
+        "deemed_50aa": true,
+        "dated": true,
+        "property": false,
+        "consideration": 600000,
+        "s50c": false,
+        "grandfathered": false,
+        "cost_used": 500000,
+        "gain": 100000,
+        "index_ok": false,
+        "cii_sell": 0,
+        "cii_buy": 0,
+        "cii_improve": 0,
+        "cost_indexed": 500000,
+        "improve_indexed": 0,
+        "gain_indexed": 100000
+      }
+    },
+    {
+      "args": {
+        "asset": "unlisted_bond",
+        "acquired": "2020-01-10",
+        "sold": "2025-12-01",
+        "sale": 600000,
+        "cost": 500000
+      },
+      "expect_value": {
+        "term": "short",
+        "bucket": "stcg_app",
+        "deemed_50aa": true,
+        "dated": true,
+        "property": false,
+        "consideration": 600000,
+        "s50c": false,
+        "grandfathered": false,
+        "cost_used": 500000,
+        "gain": 100000,
+        "index_ok": false,
+        "cii_sell": 0,
+        "cii_buy": 0,
+        "cii_improve": 0,
+        "cost_indexed": 500000,
+        "improve_indexed": 0,
+        "gain_indexed": 100000
+      }
+    },
+    {
+      "args": {
+        "asset": "house",
+        "acquired": "2010-06-15",
+        "sold": "2025-11-20",
+        "sale": 9000000,
+        "stamp": 10500000,
+        "cost": 3000000,
+        "improve": 500000,
+        "improve_on": "2015-08-01",
+        "expenses": 100000
+      },
+      "expect_value": {
+        "term": "long",
+        "bucket": "ltcg_112",
+        "deemed_50aa": false,
+        "dated": true,
+        "property": true,
+        "consideration": 10500000,
+        "s50c": true,
+        "grandfathered": false,
+        "cost_used": 3000000,
+        "gain": 6900000,
+        "index_ok": true,
+        "cii_sell": 376,
+        "cii_buy": 167,
+        "cii_improve": 254,
+        "cost_indexed": 6754491,
+        "improve_indexed": 740157,
+        "gain_indexed": 2905352
+      }
+    },
+    {
+      "args": {
+        "asset": "land",
+        "acquired": "2010-06-15",
+        "sold": "2025-11-20",
+        "sale": 9000000,
+        "stamp": 9500000,
+        "cost": 3000000
+      },
+      "expect_value": {
+        "term": "long",
+        "bucket": "ltcg_112",
+        "deemed_50aa": false,
+        "dated": true,
+        "property": true,
+        "consideration": 9000000,
+        "s50c": false,
+        "grandfathered": false,
+        "cost_used": 3000000,
+        "gain": 6000000,
+        "index_ok": true,
+        "cii_sell": 376,
+        "cii_buy": 167,
+        "cii_improve": 0,
+        "cost_indexed": 6754491,
+        "improve_indexed": 0,
+        "gain_indexed": 2245509
+      }
+    },
+    {
+      "args": {
+        "asset": "land",
+        "acquired": "2024-09-01",
+        "sold": "2025-10-01",
+        "sale": 5000000,
+        "cost": 4000000
+      },
+      "expect_value": {
+        "term": "short",
+        "bucket": "stcg_app",
+        "deemed_50aa": false,
+        "dated": true,
+        "property": true,
+        "consideration": 5000000,
+        "s50c": false,
+        "grandfathered": false,
+        "cost_used": 4000000,
+        "gain": 1000000,
+        "index_ok": false,
+        "cii_sell": 0,
+        "cii_buy": 0,
+        "cii_improve": 0,
+        "cost_indexed": 4000000,
+        "improve_indexed": 0,
+        "gain_indexed": 1000000
+      }
+    },
+    {
+      "args": {
+        "asset": "land",
+        "acquired": "2024-08-01",
+        "sold": "2026-10-01",
+        "sale": 5000000,
+        "cost": 4000000
+      },
+      "expect_value": {
+        "term": "long",
+        "bucket": "ltcg_112",
+        "deemed_50aa": false,
+        "dated": true,
+        "property": true,
+        "consideration": 5000000,
+        "s50c": false,
+        "grandfathered": false,
+        "cost_used": 4000000,
+        "gain": 1000000,
+        "index_ok": false,
+        "cii_sell": 0,
+        "cii_buy": 0,
+        "cii_improve": 0,
+        "cost_indexed": 4000000,
+        "improve_indexed": 0,
+        "gain_indexed": 1000000
+      }
+    },
+    {
+      "args": {
+        "asset": "house",
+        "acquired": "1995-05-01",
+        "sold": "2025-11-20",
+        "sale": 5000000,
+        "cost": 1000000
+      },
+      "expect_value": {
+        "term": "long",
+        "bucket": "ltcg_112",
+        "deemed_50aa": false,
+        "dated": true,
+        "property": true,
+        "consideration": 5000000,
+        "s50c": false,
+        "grandfathered": false,
+        "cost_used": 1000000,
+        "gain": 4000000,
+        "index_ok": true,
+        "cii_sell": 376,
+        "cii_buy": 100,
+        "cii_improve": 0,
+        "cost_indexed": 3760000,
+        "improve_indexed": 0,
+        "gain_indexed": 1240000
+      }
+    },
+    {
+      "args": {
+        "asset": "house",
+        "acquired": "2010-06-15",
+        "sold": "2025-11-20",
+        "sale": 9000000,
+        "cost": 3000000,
+        "resident": false
+      },
+      "expect_value": {
+        "term": "long",
+        "bucket": "ltcg_112",
+        "deemed_50aa": false,
+        "dated": true,
+        "property": true,
+        "consideration": 9000000,
+        "s50c": false,
+        "grandfathered": false,
+        "cost_used": 3000000,
+        "gain": 6000000,
+        "index_ok": false,
+        "cii_sell": 0,
+        "cii_buy": 0,
+        "cii_improve": 0,
+        "cost_indexed": 3000000,
+        "improve_indexed": 0,
+        "gain_indexed": 6000000
+      }
+    },
+    {
+      "args": {
+        "asset": "equity",
+        "term": "long",
+        "sale": 90000,
+        "cost": 10000
+      },
+      "expect_value": {
+        "term": "long",
+        "bucket": "ltcg_112a",
+        "deemed_50aa": false,
+        "dated": false,
+        "property": false,
+        "consideration": 90000,
+        "s50c": false,
+        "grandfathered": false,
+        "cost_used": 10000,
+        "gain": 80000,
+        "index_ok": false,
+        "cii_sell": 0,
+        "cii_buy": 0,
+        "cii_improve": 0,
+        "cost_indexed": 10000,
+        "improve_indexed": 0,
+        "gain_indexed": 80000
+      }
+    },
+    {
+      "args": {
+        "asset": "other",
+        "acquired": "2021-01-01",
+        "sold": "2025-06-01",
+        "sale": 100000,
+        "cost": 130000
+      },
+      "expect_value": {
+        "term": "long",
+        "bucket": "ltcg_112",
+        "deemed_50aa": false,
+        "dated": true,
+        "property": false,
+        "consideration": 100000,
+        "s50c": false,
+        "grandfathered": false,
+        "cost_used": 130000,
+        "gain": -30000,
+        "index_ok": false,
+        "cii_sell": 0,
+        "cii_buy": 0,
+        "cii_improve": 0,
+        "cost_indexed": 130000,
+        "improve_indexed": 0,
+        "gain_indexed": -30000
+      }
+    }
+  ]
+}

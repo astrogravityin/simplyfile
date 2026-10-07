@@ -86,6 +86,24 @@
       "type": "number",
       "default": 0,
       "label": "receipts the department saw (TDS 194J, 194C ...)"
+    },
+    {
+      "name": "ae_income",
+      "type": "number",
+      "default": 0,
+      "label": "44AE: the goods carriages' presumptive income (each chip myreturn.vehicle_44ae)"
+    },
+    {
+      "name": "vehicles",
+      "type": "number",
+      "default": 0,
+      "label": "44AE: goods carriages owned at any time in the year"
+    },
+    {
+      "name": "ae_max_vehicles",
+      "type": "number",
+      "default": 10,
+      "label": "44AE: at most this many goods carriages at any time in the year"
     }
   ],
   "expr": {
@@ -148,6 +166,14 @@
                   "b": 100
                 }
               }
+            },
+            {
+              "when": {
+                "op": "eq",
+                "left": "$kind",
+                "right": "44AE"
+              },
+              "then": "$ae_income"
             }
           ],
           "else": 0
@@ -208,6 +234,14 @@
                       "b": 100
                     }
                   }
+                },
+                {
+                  "when": {
+                    "op": "eq",
+                    "left": "$kind",
+                    "right": "44AE"
+                  },
+                  "then": "$ae_income"
                 }
               ],
               "else": 0
@@ -318,6 +352,14 @@
               ],
               "else": "$ad_limit"
             }
+          },
+          {
+            "when": {
+              "op": "eq",
+              "left": "$kind",
+              "right": "44AE"
+            },
+            "then": "$ae_max_vehicles"
           }
         ],
         "else": 0
@@ -327,123 +369,154 @@
         "cases": [
           {
             "when": {
-              "op": "gt",
-              "left": {
-                "vop": "add",
-                "a": "$digital",
-                "b": "$cash"
-              },
-              "right": {
-                "vop": "choose",
-                "cases": [
-                  {
-                    "when": {
-                      "op": "eq",
-                      "left": "$kind",
-                      "right": "44ADA"
-                    },
-                    "then": {
-                      "vop": "choose",
-                      "cases": [
-                        {
-                          "when": {
-                            "op": "le",
-                            "left": {
-                              "vop": "choose",
-                              "cases": [
-                                {
-                                  "when": {
-                                    "op": "gt",
-                                    "left": {
-                                      "vop": "add",
-                                      "a": "$digital",
-                                      "b": "$cash"
-                                    },
-                                    "right": 0
-                                  },
-                                  "then": {
-                                    "vop": "div",
-                                    "a": {
-                                      "vop": "mul",
-                                      "a": "$cash",
-                                      "b": 100
-                                    },
-                                    "b": {
-                                      "vop": "add",
-                                      "a": "$digital",
-                                      "b": "$cash"
-                                    }
-                                  }
-                                }
-                              ],
-                              "else": 0
-                            },
-                            "right": "$cash_pct_max"
-                          },
-                          "then": "$ada_limit_low_cash"
-                        }
-                      ],
-                      "else": "$ada_limit"
-                    }
-                  },
-                  {
-                    "when": {
-                      "op": "eq",
-                      "left": "$kind",
-                      "right": "44AD"
-                    },
-                    "then": {
-                      "vop": "choose",
-                      "cases": [
-                        {
-                          "when": {
-                            "op": "le",
-                            "left": {
-                              "vop": "choose",
-                              "cases": [
-                                {
-                                  "when": {
-                                    "op": "gt",
-                                    "left": {
-                                      "vop": "add",
-                                      "a": "$digital",
-                                      "b": "$cash"
-                                    },
-                                    "right": 0
-                                  },
-                                  "then": {
-                                    "vop": "div",
-                                    "a": {
-                                      "vop": "mul",
-                                      "a": "$cash",
-                                      "b": 100
-                                    },
-                                    "b": {
-                                      "vop": "add",
-                                      "a": "$digital",
-                                      "b": "$cash"
-                                    }
-                                  }
-                                }
-                              ],
-                              "else": 0
-                            },
-                            "right": "$cash_pct_max"
-                          },
-                          "then": "$ad_limit_low_cash"
-                        }
-                      ],
-                      "else": "$ad_limit"
-                    }
-                  }
-                ],
-                "else": 0
-              }
+              "op": "all",
+              "items": [
+                {
+                  "op": "eq",
+                  "left": "$kind",
+                  "right": "44AE"
+                },
+                {
+                  "op": "gt",
+                  "left": "$vehicles",
+                  "right": "$ae_max_vehicles"
+                }
+              ]
             },
             "then": true
+          },
+          {
+            "when": {
+              "op": "eq",
+              "left": "$kind",
+              "right": "44AE"
+            },
+            "then": false
           }
         ],
-        "else": false
+        "else": {
+          "vop": "choose",
+          "cases": [
+            {
+              "when": {
+                "op": "gt",
+                "left": {
+                  "vop": "add",
+                  "a": "$digital",
+                  "b": "$cash"
+                },
+                "right": {
+                  "vop": "choose",
+                  "cases": [
+                    {
+                      "when": {
+                        "op": "eq",
+                        "left": "$kind",
+                        "right": "44ADA"
+                      },
+                      "then": {
+                        "vop": "choose",
+                        "cases": [
+                          {
+                            "when": {
+                              "op": "le",
+                              "left": {
+                                "vop": "choose",
+                                "cases": [
+                                  {
+                                    "when": {
+                                      "op": "gt",
+                                      "left": {
+                                        "vop": "add",
+                                        "a": "$digital",
+                                        "b": "$cash"
+                                      },
+                                      "right": 0
+                                    },
+                                    "then": {
+                                      "vop": "div",
+                                      "a": {
+                                        "vop": "mul",
+                                        "a": "$cash",
+                                        "b": 100
+                                      },
+                                      "b": {
+                                        "vop": "add",
+                                        "a": "$digital",
+                                        "b": "$cash"
+                                      }
+                                    }
+                                  }
+                                ],
+                                "else": 0
+                              },
+                              "right": "$cash_pct_max"
+                            },
+                            "then": "$ada_limit_low_cash"
+                          }
+                        ],
+                        "else": "$ada_limit"
+                      }
+                    },
+                    {
+                      "when": {
+                        "op": "eq",
+                        "left": "$kind",
+                        "right": "44AD"
+                      },
+                      "then": {
+                        "vop": "choose",
+                        "cases": [
+                          {
+                            "when": {
+                              "op": "le",
+                              "left": {
+                                "vop": "choose",
+                                "cases": [
+                                  {
+                                    "when": {
+                                      "op": "gt",
+                                      "left": {
+                                        "vop": "add",
+                                        "a": "$digital",
+                                        "b": "$cash"
+                                      },
+                                      "right": 0
+                                    },
+                                    "then": {
+                                      "vop": "div",
+                                      "a": {
+                                        "vop": "mul",
+                                        "a": "$cash",
+                                        "b": 100
+                                      },
+                                      "b": {
+                                        "vop": "add",
+                                        "a": "$digital",
+                                        "b": "$cash"
+                                      }
+                                    }
+                                  }
+                                ],
+                                "else": 0
+                              },
+                              "right": "$cash_pct_max"
+                            },
+                            "then": "$ad_limit_low_cash"
+                          }
+                        ],
+                        "else": "$ad_limit"
+                      }
+                    }
+                  ],
+                  "else": 0
+                }
+              },
+              "then": true
+            }
+          ],
+          "else": false
+        }
       },
       "cash_share": {
         "vop": "round_to",
@@ -510,9 +583,9 @@
     }
   },
   "returns": "record",
-  "version": 2,
+  "version": 3,
   "status": "published",
-  "description_nl": "2026-10-06: presumptive income of a profession (44ADA: 50% of receipts) or a business (44AD: 6% of digital, 8% of cash turnover), or what the person declares if more. The limit: 44ADA 50 lakh (75 lakh when cash is 5% or less), 44AD 2 crore (3 crore). Over the limit, presumptive income is not open - books and ITR-3. short: receipts typed below what the department saw paid (TDS 194J / 194C ...) - the bank statement is the check.",
+  "description_nl": "2026-10-06: presumptive income of a profession (44ADA: 50% of receipts) or a business (44AD: 6% of digital, 8% of cash turnover), or what the person declares if more. The limit: 44ADA 50 lakh (75 lakh when cash is 5% or less), 44AD 2 crore (3 crore). Over the limit, presumptive income is not open - books and ITR-3. short: receipts typed below what the department saw paid (TDS 194J / 194C ...) - the bank statement is the check. 2026-10-07: 44AE (goods carriages): the income is the vehicles' presumptive income (chip myreturn.vehicle_44ae) or more if declared; more than 10 goods carriages at any time in the year closes 44AE - books and ITR-3.",
   "test_cases": [
     {
       "args": {
@@ -604,6 +677,55 @@
         "over_limit": false,
         "cash_share": 0,
         "short": true
+      }
+    },
+    {
+      "args": {
+        "kind": "44AE",
+        "ae_income": 282000,
+        "vehicles": 2
+      },
+      "expect_value": {
+        "receipts": 0,
+        "deemed": 282000,
+        "income": 282000,
+        "limit": 10,
+        "over_limit": false,
+        "cash_share": 0.0,
+        "short": false
+      }
+    },
+    {
+      "args": {
+        "kind": "44AE",
+        "ae_income": 282000,
+        "vehicles": 2,
+        "declared": 300000
+      },
+      "expect_value": {
+        "receipts": 0,
+        "deemed": 282000,
+        "income": 300000,
+        "limit": 10,
+        "over_limit": false,
+        "cash_share": 0.0,
+        "short": false
+      }
+    },
+    {
+      "args": {
+        "kind": "44AE",
+        "ae_income": 900000,
+        "vehicles": 11
+      },
+      "expect_value": {
+        "receipts": 0,
+        "deemed": 900000,
+        "income": 900000,
+        "limit": 10,
+        "over_limit": true,
+        "cash_share": 0.0,
+        "short": false
       }
     }
   ]

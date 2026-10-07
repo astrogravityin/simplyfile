@@ -36,12 +36,37 @@
       "type": "text",
       "default": "new",
       "label": "regime"
+    },
+    {
+      "name": "share",
+      "type": "number",
+      "default": 100,
+      "label": "the person's share of the property, percent (s.26: each co-owner is assessed on their share)"
+    },
+    {
+      "name": "pre_total",
+      "type": "number",
+      "default": 0,
+      "label": "s.24(b): interest for the period before the house was bought / built"
+    },
+    {
+      "name": "completed",
+      "type": "text",
+      "default": "",
+      "label": "the day the house was bought / finished, YYYY-MM-DD"
+    },
+    {
+      "name": "fy",
+      "type": "number",
+      "default": 2025,
+      "label": "this return's financial year (the year it starts)"
     }
   ],
   "expr": {
     "vop": "record",
     "fields": {
-      "nav": {
+      "share": "$share",
+      "balance": {
         "vop": "choose",
         "cases": [
           {
@@ -60,6 +85,52 @@
               "vop": "sub",
               "a": "$rent",
               "b": "$municipal_tax"
+            },
+            0
+          ]
+        }
+      },
+      "nav": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "eq",
+              "left": "$kind",
+              "right": "self"
+            },
+            "then": 0
+          }
+        ],
+        "else": {
+          "vop": "largest",
+          "values": [
+            {
+              "vop": "sub",
+              "a": {
+                "vop": "round_to",
+                "value": {
+                  "vop": "div",
+                  "a": {
+                    "vop": "mul",
+                    "a": "$rent",
+                    "b": "$share"
+                  },
+                  "b": 100
+                }
+              },
+              "b": {
+                "vop": "round_to",
+                "value": {
+                  "vop": "div",
+                  "a": {
+                    "vop": "mul",
+                    "a": "$municipal_tax",
+                    "b": "$share"
+                  },
+                  "b": 100
+                }
+              }
             },
             0
           ]
@@ -86,8 +157,30 @@
               "values": [
                 {
                   "vop": "sub",
-                  "a": "$rent",
-                  "b": "$municipal_tax"
+                  "a": {
+                    "vop": "round_to",
+                    "value": {
+                      "vop": "div",
+                      "a": {
+                        "vop": "mul",
+                        "a": "$rent",
+                        "b": "$share"
+                      },
+                      "b": 100
+                    }
+                  },
+                  "b": {
+                    "vop": "round_to",
+                    "value": {
+                      "vop": "div",
+                      "a": {
+                        "vop": "mul",
+                        "a": "$municipal_tax",
+                        "b": "$share"
+                      },
+                      "b": 100
+                    }
+                  }
                 },
                 0
               ]
@@ -119,7 +212,33 @@
             "then": {
               "vop": "smallest",
               "values": [
-                "$interest",
+                {
+                  "vop": "round_to",
+                  "value": {
+                    "vop": "div",
+                    "a": {
+                      "vop": "mul",
+                      "a": {
+                        "vop": "add",
+                        "a": "$interest",
+                        "b": {
+                          "vop": "get",
+                          "value": {
+                            "chip": "myreturn.pre_construction",
+                            "args": {
+                              "total": "$pre_total",
+                              "completed": "$completed",
+                              "fy": "$fy"
+                            }
+                          },
+                          "path": "this_year"
+                        }
+                      },
+                      "b": "$share"
+                    },
+                    "b": 100
+                  }
+                },
                 {
                   "vop": "get",
                   "value": {
@@ -141,7 +260,33 @@
             }
           }
         ],
-        "else": "$interest"
+        "else": {
+          "vop": "round_to",
+          "value": {
+            "vop": "div",
+            "a": {
+              "vop": "mul",
+              "a": {
+                "vop": "add",
+                "a": "$interest",
+                "b": {
+                  "vop": "get",
+                  "value": {
+                    "chip": "myreturn.pre_construction",
+                    "args": {
+                      "total": "$pre_total",
+                      "completed": "$completed",
+                      "fy": "$fy"
+                    }
+                  },
+                  "path": "this_year"
+                }
+              },
+              "b": "$share"
+            },
+            "b": 100
+          }
+        }
       },
       "net": {
         "vop": "sub",
@@ -164,8 +309,30 @@
               "values": [
                 {
                   "vop": "sub",
-                  "a": "$rent",
-                  "b": "$municipal_tax"
+                  "a": {
+                    "vop": "round_to",
+                    "value": {
+                      "vop": "div",
+                      "a": {
+                        "vop": "mul",
+                        "a": "$rent",
+                        "b": "$share"
+                      },
+                      "b": 100
+                    }
+                  },
+                  "b": {
+                    "vop": "round_to",
+                    "value": {
+                      "vop": "div",
+                      "a": {
+                        "vop": "mul",
+                        "a": "$municipal_tax",
+                        "b": "$share"
+                      },
+                      "b": 100
+                    }
+                  }
                 },
                 0
               ]
@@ -192,8 +359,30 @@
                   "values": [
                     {
                       "vop": "sub",
-                      "a": "$rent",
-                      "b": "$municipal_tax"
+                      "a": {
+                        "vop": "round_to",
+                        "value": {
+                          "vop": "div",
+                          "a": {
+                            "vop": "mul",
+                            "a": "$rent",
+                            "b": "$share"
+                          },
+                          "b": 100
+                        }
+                      },
+                      "b": {
+                        "vop": "round_to",
+                        "value": {
+                          "vop": "div",
+                          "a": {
+                            "vop": "mul",
+                            "a": "$municipal_tax",
+                            "b": "$share"
+                          },
+                          "b": 100
+                        }
+                      }
                     },
                     0
                   ]
@@ -226,7 +415,33 @@
               "then": {
                 "vop": "smallest",
                 "values": [
-                  "$interest",
+                  {
+                    "vop": "round_to",
+                    "value": {
+                      "vop": "div",
+                      "a": {
+                        "vop": "mul",
+                        "a": {
+                          "vop": "add",
+                          "a": "$interest",
+                          "b": {
+                            "vop": "get",
+                            "value": {
+                              "chip": "myreturn.pre_construction",
+                              "args": {
+                                "total": "$pre_total",
+                                "completed": "$completed",
+                                "fy": "$fy"
+                              }
+                            },
+                            "path": "this_year"
+                          }
+                        },
+                        "b": "$share"
+                      },
+                      "b": 100
+                    }
+                  },
                   {
                     "vop": "get",
                     "value": {
@@ -248,15 +463,41 @@
               }
             }
           ],
-          "else": "$interest"
+          "else": {
+            "vop": "round_to",
+            "value": {
+              "vop": "div",
+              "a": {
+                "vop": "mul",
+                "a": {
+                  "vop": "add",
+                  "a": "$interest",
+                  "b": {
+                    "vop": "get",
+                    "value": {
+                      "chip": "myreturn.pre_construction",
+                      "args": {
+                        "total": "$pre_total",
+                        "completed": "$completed",
+                        "fy": "$fy"
+                      }
+                    },
+                    "path": "this_year"
+                  }
+                },
+                "b": "$share"
+              },
+              "b": 100
+            }
+          }
         }
       }
     }
   },
   "returns": "record",
-  "version": 1,
+  "version": 3,
   "status": "published",
-  "description_nl": "2026-10-06: self-occupied: annual value nil, interest up to 2 lakh (old regime; nil in the new). Let out: rent less municipal tax, 30% off, then interest in full.",
+  "description_nl": "2026-10-06: self-occupied: annual value nil, interest up to 2 lakh (old regime; nil in the new). Let out: rent less municipal tax, 30% off, then interest in full. 2026-10-07: co-owned (s.26): rent, municipal tax and loan interest each by the person's share; the 30% is on the share's annual value; a self-occupied house's 2 lakh cap applies to each co-owner on their share. balance is the whole property's annual value (Schedule HP BalanceALV), nav the share. 2026-10-07: pre-construction interest (s.24(b) Explanation): one fifth of it in each of five years from the year the house was bought / finished (chip myreturn.pre_construction), added to the year's interest - inside the 2 lakh cap for a self-occupied house, by the share for a co-owner.",
   "test_cases": [
     {
       "args": {
@@ -265,6 +506,8 @@
         "regime": "old"
       },
       "expect_value": {
+        "share": 100,
+        "balance": 0,
         "nav": 0,
         "std": 0,
         "interest": 200000,
@@ -278,6 +521,8 @@
         "regime": "new"
       },
       "expect_value": {
+        "share": 100,
+        "balance": 0,
         "nav": 0,
         "std": 0,
         "interest": 0,
@@ -293,10 +538,101 @@
         "regime": "new"
       },
       "expect_value": {
+        "share": 100,
+        "balance": 280000,
         "nav": 280000,
         "std": 84000,
         "interest": 100000,
         "net": 96000
+      }
+    },
+    {
+      "args": {
+        "kind": "self",
+        "interest": 500000,
+        "regime": "old",
+        "share": 50
+      },
+      "expect_value": {
+        "share": 50,
+        "balance": 0,
+        "nav": 0,
+        "std": 0,
+        "interest": 200000,
+        "net": -200000
+      }
+    },
+    {
+      "args": {
+        "kind": "let",
+        "rent": 300000,
+        "municipal_tax": 20000,
+        "interest": 100000,
+        "regime": "old",
+        "share": 50
+      },
+      "expect_value": {
+        "share": 50,
+        "balance": 280000,
+        "nav": 140000,
+        "std": 42000,
+        "interest": 50000,
+        "net": 48000
+      }
+    },
+    {
+      "args": {
+        "kind": "self",
+        "interest": 180000,
+        "regime": "old",
+        "pre_total": 250000,
+        "completed": "2023-09-01"
+      },
+      "expect_value": {
+        "share": 100,
+        "balance": 0,
+        "nav": 0,
+        "std": 0,
+        "interest": 200000,
+        "net": -200000
+      }
+    },
+    {
+      "args": {
+        "kind": "let",
+        "rent": 300000,
+        "municipal_tax": 0,
+        "interest": 100000,
+        "regime": "new",
+        "pre_total": 250000,
+        "completed": "2023-09-01"
+      },
+      "expect_value": {
+        "share": 100,
+        "balance": 300000,
+        "nav": 300000,
+        "std": 90000,
+        "interest": 150000,
+        "net": 60000
+      }
+    },
+    {
+      "args": {
+        "kind": "let",
+        "rent": 300000,
+        "interest": 100000,
+        "regime": "new",
+        "pre_total": 250000,
+        "completed": "2023-09-01",
+        "share": 50
+      },
+      "expect_value": {
+        "share": 50,
+        "balance": 300000,
+        "nav": 150000,
+        "std": 45000,
+        "interest": 75000,
+        "net": 30000
       }
     }
   ]

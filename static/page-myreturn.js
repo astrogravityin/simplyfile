@@ -1,4 +1,4 @@
-// My return - #/myreturn[?c=<client>&ay=<year>]. An individual's own ITR-1 / ITR-2 as one journey of five steps:
+// My return - #/myreturn[?c=<client>&ay=<year>]. An individual's own ITR-1 / 2 / 3 / 4 as one journey of five steps:
 // Gather (drop the pre-filled JSON, the AIS, each Form 16, 26AS - each is read and says what it found), Check (the same
 // figure from two documents, side by side), Choose (both regimes worked out, the cheaper one marked), Review (every
 // figure with where it came from, and the person's own over it), File (the department's JSON, checked against its schema).
@@ -7,6 +7,7 @@ import { api, BASE, esc, toast, busy, pageHead, t, loadWords, dropZone, wireDrop
 import { icon } from './icons.js';
 import { historyButton, wireHistory } from './changes.js';
 import { stepper, docArt, waterfall, regimeBars, tdsMap, askArt } from './myreturn-art.js';
+import { resCard, foreignCard, faCard, clubCard, arrearCard, itruCard, wireWave3 } from './myreturn-wave3.js';
 
 const w = (k, v) => t('myreturn', k, v);
 const money = (n) => `₹${Math.round(Number(n || 0)).toLocaleString('en-IN')}`;
@@ -33,7 +34,7 @@ export async function myReturnPage(host) {
     const rail = `<div class="card mr-rail-card">${stepper(STEPS.map((s) => ({ id: s, label: w(`s_${s}`) })), step, d.steps.done, S.W)}</div>`;
     const glance = `<div class="mr-glance">${[
       ['income', w('g_income'), money(g.tax.total)],
-      ['tax', w('g_tax'), money(g.tax.tax)],
+      ['tax', w('g_tax'), money(g.net_tax ?? g.tax.tax)],
       [g.balance > 0 ? 'pay' : 'refund', w(g.balance > 0 ? 'g_pay' : 'g_refund'), money(Math.abs(g.balance))],
       ['regime', w('g_regime'), w(`r_${d.regime}`)],
     ].map(([k, l, v]) => `<div class="mr-kpi k-${k}"><span>${esc(l)}</span><b>${esc(v)}</b></div>`).join('')}</div>`;
@@ -55,7 +56,7 @@ export async function myReturnPage(host) {
   };
 
   const gather = (d) => {
-    const kinds = ['prefill', 'ais', 'form16', '26as', 'filed'].concat(['bank', 'other'].filter((k2) => d.docs.some((x) => x.kind === k2)));
+    const kinds = ['prefill', 'ais', 'form16', '26as', 'filed', 'cg', 'filed_prev'].concat(['bank', 'other'].filter((k2) => d.docs.some((x) => x.kind === k2)));
     const cards = kinds.map((k) => {
       const docs = d.docs.filter((x) => x.kind === k);
       return `<article class="mr-dcard ${docs.length ? 'is-in' : ''}">${docArt(k, docs.length > 0)}
@@ -89,7 +90,7 @@ export async function myReturnPage(host) {
     const others = d.checks.filter((c) => c.what !== 'tds');
     const list = d.checks.map((c) => `<div class="mr-chk lv-${esc(c.accepted ? 'ok' : c.level)}">
         <span class="mr-chk-dot">${icon(c.level === 'ok' || c.accepted ? 'check' : 'alert', 13)}</span>
-        <div><b>${esc(w(`c_${c.what}`, { tan: c.tan || '' }))}</b><div class="small muted">${esc(w(`lv_${c.level}`, { a: money(c.a), b: money(c.b), gap: money(Math.abs(c.gap)) }))}</div></div>
+        <div><b>${esc(w(`c_${c.what}`, { tan: c.tan || '' }))}</b><div class="small muted">${esc(w(c.word || `lv_${c.level}`, { a: money(c.a), b: money(c.b), gap: money(Math.abs(c.gap)) }))}</div></div>
         ${c.level !== 'ok' && !c.accepted ? `<button type="button" class="small" data-accept="${esc(c.key)}">${esc(w('accept'))}</button>` : ''}</div>`).join('');
     return `<section class="card"><h3 class="rc-h">${icon('check', 15)} ${esc(w('check_h'))}</h3><p class="small muted">${esc(w('check_p'))}</p>
         ${rows.length ? tdsMap(rows, { title: w('check_h'), left: w('c_left'), right: w('c_right') }, S.W) : ''}
@@ -113,14 +114,14 @@ export async function myReturnPage(host) {
     const side = (r, id) => `<article class="mr-reg ${d.regime === id ? 'is-on' : ''} ${b.better === id ? 'is-best' : ''}">
         <header><h4>${esc(w(`r_${id}`))}</h4>${b.better === id ? `<span class="tag ok">${esc(w('cheaper'))}</span>` : ''}</header>
         <dl class="mr-dl">${[['d_income', r.tax.total], ['d_via', r.via.total], ['d_tax', r.tax.on_normal + r.tax.on_special], ['d_rebate', -(r.tax.rebate + r.tax.relief_87a)],
-          ['d_sur', r.tax.surcharge], ['d_cess', r.tax.cess], ['d_fee', r.fee_234f + r.interest.total]].filter(([, v]) => v).map(([k, v]) => `<dt>${esc(w(k))}</dt><dd>${esc(money(v))}</dd>`).join('')}
-          <dt class="mr-tot">${esc(w('d_total'))}</dt><dd class="mr-tot">${esc(money(r.tax.tax + r.fee_234f + r.interest.total))}</dd></dl>
+          ['d_sur', r.tax.surcharge], ['d_cess', r.tax.cess], ['d_relief', -((r.relief || {}).total || 0)], ['d_fee', r.fee_234f + r.interest.total]].filter(([, v]) => v).map(([k, v]) => `<dt>${esc(w(k))}</dt><dd>${esc(money(v))}</dd>`).join('')}
+          <dt class="mr-tot">${esc(w('d_total'))}</dt><dd class="mr-tot">${esc(money((r.net_tax ?? r.tax.tax) + r.fee_234f + r.interest.total))}</dd></dl>
         ${id === 'old' && !d.old_ok ? `<p class="small mr-warn">${icon('lock', 12)} ${esc(w('old_closed_short'))}</p>`
           : `<button type="button" class="${d.regime === id ? 'primary' : ''}" data-regime="${id}">${esc(w(d.regime === id ? 'chosen' : 'choose_this'))}</button>`}</article>`;
     return `<section class="card"><h3 class="rc-h">${icon('money', 15)} ${esc(w('choose_h'))}</h3>
         <p class="mr-verdict">${esc(b.saving ? w('verdict', { regime: w(`r_${b.better}`), saving: money(b.saving) }) : w('verdict_same'))}</p>
         ${d.old_ok ? '' : `<p class="small muted">${icon('info', 12)} ${esc(w('old_closed'))}</p>`}
-        ${regimeBars({ label: w('r_new'), tax: n.tax.tax + n.fee_234f + n.interest.total }, { label: w('r_old'), tax: o.tax.tax + o.fee_234f + o.interest.total }, b.better, { best: w('cheaper') }, S.W)}
+        ${regimeBars({ label: w('r_new'), tax: (n.net_tax ?? n.tax.tax) + n.fee_234f + n.interest.total }, { label: w('r_old'), tax: (o.net_tax ?? o.tax.tax) + o.fee_234f + o.interest.total }, b.better, { best: w('cheaper') }, S.W)}
         <div class="mr-regs">${side(n, 'new')}${side(o, 'old')}</div></section>
       <section class="card"><h3 class="rc-h">${icon('pulse', 15)} ${esc(w('flow_h', { regime: w(`r_${d.regime}`) }))}</h3>${waterfall(flow(d.regimes[d.regime]), S.W)}</section>
       ${next('review', { regime_seen: true })}`;
@@ -138,7 +139,13 @@ export async function myReturnPage(host) {
           <input id="emp-${i}-${k}" inputmode="decimal" data-emp="${i}" data-k="${k}" value="${e[k] ? Math.round(e[k]) : ''}" placeholder="0"/></div>`).join('')}</div></div>`).join('');
     const houses = (r.houses || []).map((h, i) => `<div class="grid four mr-house" data-house="${i}">
         <div class="field"><label for="h-${i}-kind">${esc(w('f_kind'))}</label><select id="h-${i}-kind" data-h="kind"><option value="self" ${h.kind === 'self' ? 'selected' : ''}>${esc(w('h_self'))}</option><option value="let" ${h.kind === 'let' ? 'selected' : ''}>${esc(w('h_let'))}</option></select></div>
-        ${['rent', 'municipal_tax', 'interest'].map((k) => `<div class="field"><label for="h-${i}-${k}">${esc(w(`f_${k}`))}</label><input id="h-${i}-${k}" inputmode="decimal" data-h="${k}" value="${h[k] ? Math.round(h[k]) : ''}" placeholder="0"/></div>`).join('')}</div>`).join('');
+        ${['rent', 'municipal_tax', 'interest'].map((k) => `<div class="field"><label for="h-${i}-${k}">${esc(w(`f_${k}`))}</label><input id="h-${i}-${k}" inputmode="decimal" data-h="${k}" value="${h[k] ? Math.round(h[k]) : ''}" placeholder="0"/></div>`).join('')}
+        <div class="field"><label for="h-${i}-share">${esc(w('f_share'))}</label><input id="h-${i}-share" inputmode="decimal" data-h="share" value="${h.share && h.share !== 100 ? h.share : ''}" placeholder="100"/></div>
+        <div class="field"><label for="h-${i}-co_name">${esc(w('f_co_name'))}</label><input id="h-${i}-co_name" data-h="co_name" maxlength="125" value="${esc(((h.co_owners || [])[0] || {}).name || '')}" autocomplete="off"/></div>
+        <div class="field"><label for="h-${i}-co_pan">${esc(w('f_co_pan'))}</label><input id="h-${i}-co_pan" data-h="co_pan" maxlength="10" style="text-transform:uppercase" value="${esc(((h.co_owners || [])[0] || {}).pan || '')}" autocomplete="off"/></div>
+        <div class="field"><label for="h-${i}-pre_total">${esc(w('f_pre_total'))}</label><input id="h-${i}-pre_total" inputmode="decimal" data-h="pre_total" value="${h.pre_total ? Math.round(h.pre_total) : ''}" placeholder="0"/></div>
+        <div class="field"><label for="h-${i}-completed">${esc(w('f_completed'))}</label><input id="h-${i}-completed" type="date" data-h="completed" value="${esc(h.completed || '')}"/></div></div>
+        ${h.share && h.share < 100 ? `<p class="small muted">${esc(w('h_co_p'))}</p>` : ''}`).join('');
     const paid = (r.paid_typed || []).map((x, i) => `<div class="grid three mr-paid" data-paid="${i}">
         <div class="field"><label for="p-${i}-kind">${esc(w('pd_kind'))}</label><select id="p-${i}-kind" data-p="kind">${['self', 'advance'].map((o) => `<option value="${o}" ${x.kind === o ? 'selected' : ''}>${esc(w(`pd_${o}`))}</option>`).join('')}</select></div>
         <div class="field"><label for="p-${i}-date">${esc(w('pd_on'))}</label><input id="p-${i}-date" type="date" data-p="date" value="${esc(x.date || '')}"/></div>
@@ -150,22 +157,25 @@ export async function myReturnPage(host) {
     const karta = huf ? `<div class="grid three mr-who">${[['karta_name', 'q_karta_name', 'text'], ['karta_pan', 'q_karta_pan', 'text'], ['formed_on', 'q_formed_on', 'date']].map(([k2, l, ty]) => `<div class="field"><label for="q-${k2}">${esc(w(l))}</label><input id="q-${k2}" type="${ty}" data-qt="${k2}" value="${esc(d.answers[k2] || '')}" autocomplete="off" ${k2 === 'karta_pan' ? 'maxlength="10" style="text-transform:uppercase"' : ''}/></div>`).join('')}</div>` : '';
     const who = `${karta}<div class="grid three mr-who"><div class="field"><label for="q-father">${esc(w(huf ? 'q_father_karta' : 'q_father'))}</label><input id="q-father" data-qt="father" value="${esc(d.answers.father || '')}" autocomplete="off"/></div>
       <div class="field"><label for="q-state">${esc(w('q_state'))}</label><select id="q-state" data-qt="state"><option value="">${esc(w('pick'))}</option>${w('states').split('|').map((x) => { const [c, n] = x.split('='); return `<option value="${esc(c)}" ${String(d.answers.state || d.return.person.state || '') === c ? 'selected' : ''}>${esc(n)}</option>`; }).join('')}</select></div>
+      ${['address', 'city', 'pin', 'email', 'mobile'].map((k2) => `<div class="field"><label for="q-${k2}">${esc(w(`q_${k2}`))}</label><input id="q-${k2}" data-qt="${k2}" ${k2 === 'pin' || k2 === 'mobile' ? 'inputmode="numeric"' : ''} value="${esc(d.answers[k2] || (k2 === 'address' ? d.return.person.flat : d.return.person[k2]) || '')}" placeholder="${esc(k2 === 'address' ? d.return.person.flat || '' : '')}" autocomplete="off"/></div>`).join('')}
+      <div class="field"><label for="q-agri">${esc(w('f_agri'))}</label><input id="q-agri" inputmode="decimal" data-qt="agri" value="${d.answers.agri ? Math.round(d.answers.agri) : ''}" placeholder="0"/><span class="small muted">${esc(w('agri_p'))}</span></div>
       <div class="field"><label for="q-emp">${esc(w('q_employer_category'))}</label><select id="q-emp" data-qt="employer_category">${w('emp_cats').split('|').map((x) => { const [c, n] = x.split('='); return `<option value="${esc(c)}" ${(d.answers.employer_category || 'OTH') === c ? 'selected' : ''}>${esc(n)}</option>`; }).join('')}</select></div></div>`;
     return `<section class="card"><h3 class="rc-h">${icon('users', 15)} ${esc(w('rv_salary'))} ${src('employers')}</h3>${emp || `<p class="muted small">${esc(w('no_salary'))}</p>`}
         <button type="button" class="small ghost" id="mr-emp-add">${icon('plus', 12)} ${esc(w('add_employer'))}</button></section>
+      ${resCard(d)}${arrearCard(r, d)}${foreignCard(r, d)}${faCard(r, d)}${clubCard(r, d)}
       <section class="card"><h3 class="rc-h">${icon('folder', 15)} ${esc(w('rv_house'))}</h3>${houses || `<p class="muted small">${esc(w('no_house'))}</p>`}
         <button type="button" class="small ghost" id="mr-house-add">${icon('plus', 12)} ${esc(w('add_house'))}</button></section>
       ${bizCard(r, d)}
       <section class="card"><h3 class="rc-h">${icon('money', 15)} ${esc(w('rv_other'))} ${src('other')}</h3>
         <div class="grid three">${['savings', 'deposits', 'dividend', 'family_pension', 'refund_interest', 'other'].map((k) => field('other', k, r.other[k], r.typed.other.includes(k))).join('')}</div></section>
+      ${specialCard(r, d)}
       <section class="card"><h3 class="rc-h">${icon('money', 15)} ${esc(w('rv_paid'))}</h3><p class="small muted">${esc(w('rv_paid_p'))} ${esc(w('pd_bsr_p'))}</p>${paid || `<p class="muted small">${esc(w('pd_none'))}</p>`}
         <button type="button" class="small ghost" id="mr-paid-add">${icon('plus', 12)} ${esc(w('pd_add'))}</button></section>
-      <section class="card"><h3 class="rc-h">${icon('pulse', 15)} ${esc(w('rv_cg'))} ${src('cg')}</h3><p class="small muted">${esc(w('rv_cg_p'))}</p>
-        <div class="grid four">${['stcg_111a', 'ltcg_112a', 'ltcg_112', 'stcg_other'].map((k) => field('cg', k, r.cg[k], r.typed.cg.includes(k))).join('')}</div></section>
+      ${cgCard(r, d, field)}${lossCard(r, d)}${giftCard(r, d)}
       <section class="card"><h3 class="rc-h">${icon('shield', 15)} ${esc(w('rv_via'))} ${src('via')}</h3><p class="small muted">${esc(w('rv_via_p'))}</p>
         <div class="grid three">${['c80c', 'c80ccc', 'c80ccd1', 'c80ccd1b', 'c80ccd2', 'c80d_self', 'c80d_parents', 'c80e', 'c80g'].map((k) => field('via', k, r.via[k], r.typed.via.includes(k))).join('')}</div>
         ${moreVia(r)}</section>
-      <section class="card"><h3 class="rc-h">${icon('info', 15)} ${esc(w('rv_q'))}</h3>${who}<div class="mr-qs">${qs}</div></section>
+      <section class="card"><h3 class="rc-h">${icon('info', 15)} ${esc(w('rv_q'))}</h3><p class="small muted">${esc(w('q_contact_p'))}</p>${who}<div class="mr-qs">${qs}</div></section>
       ${next('file', { reviewed: true })}`;
   };
 
@@ -176,10 +186,10 @@ export async function myReturnPage(host) {
       ${d.has_filed ? `<div class="row tight"><button type="button" class="small ghost" id="mr-from-filed">${icon('refresh', 12)} ${esc(w('from_filed'))}</button></div><div id="mr-cmp" class="small muted">…</div>` : `<p class="small muted">${esc(w('k_filed_why'))}</p>`}</section>`;
   const file = (d) => filedCard(d) + `<section class="card mr-file"><div class="mr-form">${docArt('prefill', true)}<div>
         <h3>${esc(w('file_h', { form: d.form.form }))}</h3><p>${esc(w(d.form.why))}</p>
-        <div id="mr-schema" class="small muted">${esc(w('schema_wait'))}</div></div></div>
-      <div class="row tight mr-acts"><button type="button" class="primary" id="mr-json">${icon('download', 14)} ${esc(w('download', { form: d.form.form }))}</button></div>
+        ${d.ca_needed ? caNote(d.ca_needed) : `<div id="mr-schema" class="small muted">${esc(w('schema_wait'))}</div>`}</div></div>
+      ${d.ca_needed ? '' : `<div class="row tight mr-acts"><button type="button" class="primary" id="mr-json">${icon('download', 14)} ${esc(w('download', { form: d.form.form }))}</button></div>`}
       <h4>${esc(w('upload_h'))}</h4><ol class="mr-up">${w('upload_steps').split('|').map((s) => `<li>${esc(s)}</li>`).join('')}</ol>
-      <p class="small muted">${esc(w('file_note'))}</p></section><div class="row tight mr-next">${back('file')}<span></span></div>`;
+      <p class="small muted">${esc(w('file_note'))}</p></section>${itruCard(d)}<div class="row tight mr-next">${back('file')}<span></span></div>`;
 
   const back = (at) => { const prev = STEPS[STEPS.indexOf(at) - 1]; return prev ? `<button type="button" class="mr-back" data-back="${prev}">${icon('left', 14)} ${esc(w('back_to', { step: w(`s_${prev}`) }))}</button>` : '<span></span>'; };
   const next = (to, flags) => `<div class="row tight mr-next">${back(STEPS[STEPS.indexOf(to) - 1])}<button type="button" class="primary" data-next="${to}" data-flags='${flags ? esc(JSON.stringify(flags)) : ''}'>${esc(w(`go_${to}`))} ${icon('right', 14)}</button></div>`;
@@ -237,12 +247,32 @@ export async function myReturnPage(host) {
       const one = Object.fromEntries([...host.querySelectorAll(`[data-loan="${sec}"]`)].map((x) => [x.dataset.lk, x.value]));
       put({ via_more: { [`loan_${sec}`]: one } });
     }; });
+    const vdas = () => [...host.querySelectorAll('[data-vda]')].map((el) => Object.fromEntries([...el.querySelectorAll('[data-v]')].map((x) => [x.dataset.v, x.value])));
+    host.querySelectorAll('[data-v]').forEach((i) => { i.onchange = () => put({ vda: vdas() }); });
+    if ($('#mr-vda-add')) $('#mr-vda-add').onclick = () => put({ vda: [...vdas(), {}] });
+    // 2026-10-07: each sale typed (statement rows are read, not typed), losses brought forward, gifts
+    const rowsOf = (sel, key) => [...host.querySelectorAll(`[${sel}]`)].map((el) => Object.fromEntries([...el.querySelectorAll(`[${key}]`)].map((x) => [x.getAttribute(key), x.value])));
+    const cgs = () => rowsOf('data-cg', 'data-c');
+    host.querySelectorAll('[data-c]').forEach((i) => { i.onchange = () => put({ cg_rows: cgs() }); });
+    if ($('#mr-cg-add')) $('#mr-cg-add').onclick = () => put({ cg_rows: [...cgs(), { asset: 'equity' }] });
+    host.querySelectorAll('[data-cg-del]').forEach((b) => { b.onclick = () => put({ cg_rows: cgs().filter((_, n) => n !== Number(b.dataset.cgDel)) }); });
+    const losses = () => rowsOf('data-loss', 'data-l');
+    host.querySelectorAll('[data-l]').forEach((i) => { i.onchange = () => put({ losses_bf: losses() }); });
+    if ($('#mr-loss-add')) $('#mr-loss-add').onclick = () => put({ losses_bf: [...losses(), { kind: 'stcl' }] });
+    if ($('#mr-loss-prev')) $('#mr-loss-prev').onclick = () => put({ losses_from_prev: true });
+    const gifts = () => rowsOf('data-gift', 'data-gf');
+    host.querySelectorAll('[data-gf]').forEach((i) => { i.onchange = () => put({ gifts: gifts() }); });
+    if ($('#mr-gift-add')) $('#mr-gift-add').onclick = () => put({ gifts: [...gifts(), { kind: 'money' }] });
+    const cars = () => [...host.querySelectorAll('[data-ae]')].map((el) => Object.fromEntries([...el.querySelectorAll('[data-a]')].map((x) => [x.dataset.a, x.value])));
     const biz = () => Object.fromEntries([...host.querySelectorAll('[data-b]')].map((x) => [x.dataset.b, x.value]));
+    host.querySelectorAll('[data-a]').forEach((i) => { i.onchange = () => put({ business: { ...biz(), vehicles: cars() } }); });
+    if ($('#mr-ae-add')) $('#mr-ae-add').onclick = () => put({ business: { ...biz(), vehicles: [...cars(), { months: 12, own: 'own' }] } });
     host.querySelectorAll('[data-b]').forEach((i) => { i.onchange = () => put({ business: biz() }); });
     if ($('#mr-biz-bank')) $('#mr-biz-bank').onclick = (e) => put({ business: { ...biz(), digital: e.currentTarget.dataset.receipts, cash: e.currentTarget.dataset.cash } });
+    wireWave3(host, S, put);                          // 2026-10-07 wave 3: residence, foreign income / assets, clubbing, arrears, ITR-U
     if ($('#mr-emp-add')) $('#mr-emp-add').onclick = () => put({ employers: { [S.d.return.employers.length]: { name: w('employer_n', { n: S.d.return.employers.length + 1 }) } } });
     if (step === 'file') {
-      $('#mr-json').onclick = () => { location.href = `${BASE}${url('/itr.json')}`; };
+      if ($('#mr-json')) $('#mr-json').onclick = () => { location.href = `${BASE}${url('/itr.json')}`; };
       if (S.d.has_filed) api(url('/compare')).then((c) => {
         const el = $('#mr-cmp'); if (!el) return;
         el.className = 'mr-cmp';
@@ -253,7 +283,7 @@ export async function myReturnPage(host) {
             <td class="num">${x.theirs === null ? `<span class="muted small">${esc(w('cmp_missing'))}</span>` : money(x.theirs)}</td>
             <td class="num">${x.level === 'ok' ? icon('check', 12) : money(x.gap)}</td></tr>`).join('')}</tbody></table>`;
       }).catch((e) => toast(e.message, 'bad', 8));
-      api(url('/itr-check')).then((r) => {
+      if (!S.d.ca_needed) api(url('/itr-check')).then((r) => {
         const el = $('#mr-schema'); if (!el) return;
         el.className = `small ${r.valid ? 'mr-ok' : 'mr-warn'}`;
         el.innerHTML = r.valid ? `${icon('check', 12)} ${esc(w('schema_ok', { schema: r.schema }))}`
@@ -331,27 +361,58 @@ function askFirst(q, fname, ay) {
 function bizCard(r, d) {
   const b = r.business;
   const g = d.regimes[d.regime].business;
-  const kinds = [['', w('biz_none')], ['44ADA', w('biz_ada')], ['44AD', w('biz_ad')]];
+  const kinds = [['', w('biz_none')], ['44ADA', w('biz_ada')], ['44AD', w('biz_ad')], ['44AE', w('biz_ae')], ['business', w('biz_business')], ['profession', w('biz_profession')]];
+  const ownKind = b.kind === 'business' || b.kind === 'profession';   // 2026-10-07: own profit and loss, not presumptive (ITR-3)
   const codes = (d.biz_codes || {})[b.kind] || [];
   const num = (k) => `<div class="field"><label for="b-${k}">${esc(w(`biz_${k}`))}</label><input id="b-${k}" inputmode="decimal" data-b="${k}" value="${b[k] ? Math.round(b[k]) : ''}" placeholder="0"/></div>`;
   const txt = (k, max) => `<div class="field"><label for="b-${k}">${esc(w(`biz_${k}`))}</label><input id="b-${k}" data-b="${k}" maxlength="${max}" value="${esc(b[k] || '')}" autocomplete="off"/></div>`;
   const notes = [];
-  if (b.kind) notes.push(`<p class="small"><b>${esc(w('biz_income', { income: money(g.income), receipts: money(g.receipts) }))}</b></p>`);
+  if (b.kind) notes.push(`<p class="small"><b>${esc(w(g.pl ? 'pl_income' : 'biz_income', { income: money(g.income), receipts: money(g.receipts) }))}</b></p>`);
+  if (d.ca_needed) notes.push(caNote(d.ca_needed));
   if (b.kind && r.bank && r.bank.statements && (r.bank.receipts || r.bank.cash)) {
     notes.push(`<p class="small">${esc(w('biz_from_bank', { receipts: money(r.bank.receipts), cash: money(r.bank.cash) }))}
       <button type="button" class="small ghost" id="mr-biz-bank" data-receipts="${Math.round(r.bank.receipts)}" data-cash="${Math.round(r.bank.cash)}">${esc(w('biz_use_bank'))}</button></p>`);
   }
   if (b.seen) notes.push(`<p class="small muted">${esc(w('biz_seen', { amount: money(b.seen) }))}</p>`);
   if (b.kind && g.short) notes.push(`<p class="small mr-warn">${icon('alert', 12)} ${esc(w('biz_seen_more', { amount: money(b.seen) }))}</p>`);
-  if (b.kind && g.over_limit) notes.push(`<p class="small mr-warn">${icon('alert', 12)} ${esc(w('biz_over', { receipts: money(g.receipts), limit: money(g.limit) }))}</p>`);
+  if (b.kind && !ownKind && g.over_limit) notes.push(`<p class="small mr-warn">${icon('alert', 12)} ${esc(b.kind === '44AE' ? w('ae_over') : w('biz_over', { receipts: money(g.receipts), limit: money(g.limit) }))}</p>`);
+  const owns = w('ae_own').split('|').map((x) => x.split('='));
+  const ae = b.kind === '44AE' ? `<h4 class="small">${esc(w('ae_h'))}</h4>${(b.vehicles || []).map((x, i) => `<div class="grid four mr-ae" data-ae="${i}">
+      <div class="field"><label for="ae-${i}-reg">${esc(w('f_ae_reg'))}</label><input id="ae-${i}-reg" data-a="reg" maxlength="11" style="text-transform:uppercase" value="${esc(x.reg || '')}" autocomplete="off"/></div>
+      <div class="field"><label for="ae-${i}-weight_kg">${esc(w('f_ae_weight'))}</label><input id="ae-${i}-weight_kg" inputmode="numeric" data-a="weight_kg" value="${x.weight_kg ? Math.round(x.weight_kg) : ''}"/></div>
+      <div class="field"><label for="ae-${i}-months">${esc(w('f_ae_months'))}</label><input id="ae-${i}-months" inputmode="numeric" data-a="months" value="${x.months || 12}"/></div>
+      <div class="field"><label for="ae-${i}-own">${esc(w('f_ae_own'))}</label><select id="ae-${i}-own" data-a="own">${owns.map(([o, l]) => `<option value="${o}" ${(x.own || 'own') === o ? 'selected' : ''}>${esc(l)}</option>`).join('')}</select></div></div>`).join('')}
+    ${(g.vehicles || []).length ? `<p class="small"><b>${esc(w('ae_income', { income: money(g.income), n: g.vehicles.length }))}</b></p>` : ''}
+    <button type="button" class="small ghost" id="mr-ae-add">${icon('plus', 12)} ${esc(w('ae_add'))}</button>` : '';
   if (b.kind && d.regime === 'old') notes.push(`<p class="small mr-warn">${icon('alert', 12)} ${esc(w('f10iea'))}</p>`);
   return `<section class="card"><h3 class="rc-h">${icon('user', 15)} ${esc(w('rv_biz'))}</h3><p class="small muted">${esc(w('rv_biz_p'))}</p>
     <div class="grid three">
       <div class="field"><label for="b-kind">${esc(w('biz_kind'))}</label><select id="b-kind" data-b="kind">${kinds.map(([v, l]) => `<option value="${v}" ${b.kind === v ? 'selected' : ''}>${esc(l)}</option>`).join('')}</select></div>
       ${b.kind ? `<div class="field"><label for="b-code">${esc(w('biz_code'))}</label><select id="b-code" data-b="code"><option value="">${esc(w('biz_pick'))}</option>${codes.map(([c2, l]) => `<option value="${esc(c2)}" ${b.code === c2 ? 'selected' : ''}>${esc(c2)} - ${esc(l)}</option>`).join('')}</select></div>
       ${txt('name', 75)}` : ''}</div>
-    ${b.kind ? `<div class="grid three">${num('digital')}${num('cash')}${num('declared')}</div><div class="grid three">${txt('gstin', 15)}${num('gst_turnover')}</div>` : ''}
-    ${notes.join('')}</section>`;
+    ${b.kind ? `<div class="grid three">${num('digital')}${num('cash')}${g.pl ? '' : num('declared')}</div><div class="grid three">${txt('gstin', 15)}${num('gst_turnover')}</div>` : ''}
+    ${g.pl ? `<h4 class="small">${esc(w('pl_h'))}</h4><p class="small muted">${esc(w('pl_p'))}</p>
+      <div class="grid three">${num('gp')}${num('expenses')}${num('np')}</div><div class="grid four">${num('debtors')}${num('creditors')}${num('stock')}${num('cash_in_hand')}</div>` : ''}
+    ${ae}${notes.join('')}</section>`;
+}
+
+// 2026-10-07: a tax audit (s.44AB) or a business loss - My return does not file it; the CA-firm side does
+function caNote(ca) {
+  return `<div class="mr-warn mr-ca"><b>${icon('alert', 13)} ${esc(w('ca_h'))}</b><p class="small">${esc(w(ca.why, { receipts: money(ca.receipts), limit: money(ca.limit), net: money(ca.net), deemed: money(ca.deemed) }))}</p></div>`;
+}
+
+// --- Winnings and virtual digital assets (2026-10-07): 115BB / 115BBJ / 115BBH at 30% ------------------------------------
+function specialCard(r, d) {
+  const g = d.regimes[d.regime];
+  const num = (k) => `<div class="field mr-f"><label for="e-other-${k}">${esc(w(`f_${k}`))}${r.typed.other.includes(k) ? ` <span class="tag mr-you">${esc(w('you'))}</span>` : ''}</label><input id="e-other-${k}" inputmode="decimal" data-sec="other" data-k="${k}" value="${r.other[k] ? Math.round(r.other[k]) : ''}" placeholder="0"/></div>`;
+  const day = (k) => `<div class="field"><label for="q-${k}">${esc(w(`f_${k}`))}</label><input id="q-${k}" type="date" data-qt="${k}" value="${esc(d.answers[k] || '')}"/></div>`;
+  const rows = (r.vda || []).map((x, i) => `<div class="grid four mr-vda" data-vda="${i}">${[['name', 'text'], ['acquired', 'date'], ['transferred', 'date'], ['cost', 'num'], ['sale', 'num']].map(([k, ty]) => `<div class="field"><label for="v-${i}-${k}">${esc(w(`f_vda_${k}`))}</label><input id="v-${i}-${k}" ${ty === 'num' ? 'inputmode="decimal"' : `type="${ty}"`} data-v="${k}" value="${esc(ty === 'num' ? (x[k] ? Math.round(x[k]) : '') : (x[k] || ''))}" autocomplete="off"/></div>`).join('')}</div>`).join('');
+  return `<section class="card"><h3 class="rc-h">${icon('money', 15)} ${esc(w('rv_special_h'))}</h3><p class="small muted">${esc(w('rv_special_p'))}</p>
+    <div class="grid four">${num('lottery')}${day('lottery_on')}${num('online_games')}${day('games_on')}</div>
+    <h4 class="small">${esc(w('vda_h'))}</h4>${rows || `<p class="muted small">${esc(w('vda_none'))}</p>`}
+    ${(r.vda || []).length ? `<p class="small"><b>${esc(w('vda_total', { income: money(g.vda.income), loss: money(g.vda.loss_ignored) }))}</b></p>` : ''}
+    ${r.vda_seen ? `<p class="small muted">${esc(w('vda_seen', { amount: money(r.vda_seen) }))}</p>` : ''}
+    <button type="button" class="small ghost" id="mr-vda-add">${icon('plus', 12)} ${esc(w('vda_add'))}</button></section>`;
 }
 
 // --- More deductions (2026-10-06, wave 1): 80DD, 80DDB, 80EE, 80EEA, 80EEB, 80GG, 80GGC with the details their schedules ask for ---
@@ -379,4 +440,89 @@ function moreVia(r) {
     <div class="grid three">${num('c80gg')}${num('c80ggc')}</div>
     ${v.c80ggc ? `<h4 class="small">${esc(w('ggc_h'))}</h4><div class="grid three">${txt('ggc_party', 'text', 75)}${txt('ggc_pan', 'text', 10)}${txt('ggc_date', 'date')}${txt('ggc_ref')}${txt('ggc_ifsc', 'text', 11)}</div>` : ''}
   </details>`;
+}
+
+// --- Capital gains (2026-10-07, wave 3): each sale - typed, or read from a broker / CAMS / KFintech statement - its exemption,
+// the property's choice (12.5% without indexation or 20% with it), and the year after every set-off ----------------------------
+function cgCard(r, d, field) {
+  const cw = r.cgw || { rows: [], final: {}, cf: {}, bf_used: {} };
+  const typed = (r.cg_rows || []).filter((x) => !x.doc);
+  const read = (cw.rows || []).filter((x) => x.doc);
+  const assets = w('cg_assets').split('|').map((a) => a.split('='));
+  const sel = (i, k, opts, v) => `<div class="field"><label for="cg-${i}-${k}">${esc(w(`f_cg_${k}`))}</label><select id="cg-${i}-${k}" data-c="${k}">${opts.map(([o, l]) => `<option value="${esc(o)}" ${String(v || '') === o ? 'selected' : ''}>${esc(l)}</option>`).join('')}</select></div>`;
+  const inp = (i, k, x, ty = 'num', max = 60) => `<div class="field"><label for="cg-${i}-${k}">${esc(w(`f_cg_${k}`))}</label><input id="cg-${i}-${k}" data-c="${k}" ${ty === 'num' ? 'inputmode="decimal" placeholder="0"' : `type="${ty === 'date' ? 'date' : 'text'}" maxlength="${max}"`} value="${esc(ty === 'num' ? (x[k] ? Math.round(x[k] * 100) / 100 : '') : (x[k] || ''))}" autocomplete="off"/></div>`;
+  const res = (c) => {
+    if (!c) return '<span></span>';
+    const out = [`<b>${esc(w(`b_${c.bucket}`))}</b> - ${esc(w('cg_gain', { gain: money(c.final) }))}`];
+    if (c.deemed_50aa) out.push(esc(w('cg_res_50aa')));
+    if (c.grandfathered) out.push(esc(w('cg_res_gf', { cost: money(c.cost_used) })));
+    if (c.s50c) out.push(esc(w('cg_res_50c', { value: money(c.consideration) })));
+    if (c.exempt) out.push(esc(w('cg_res_ex', { amount: money(c.exempt), kind: c.ex_kind })));
+    if (c.ex_why) out.push(`<span class="mr-warn">${esc(w(c.ex_why))}</span>`);
+    if (c.index_ok) out.push(esc(w('cg_res_choice', { plain: money(c.tax_plain), indexed: money(c.tax_indexed), chosen: w(`cg_chosen_${c.chosen}`) })));
+    return `<p class="small">${out.join(' · ')}</p>`;
+  };
+  const exKinds = [['', w('ex_none')], ['54', w('ex_54')], ['54EC', w('ex_54EC')], ['54F', w('ex_54F')]];
+  const rows = typed.map((x, i) => {
+    const c = (cw.rows || [])[i];
+    const prop = ['land', 'house'].includes(x.asset);
+    return `<div class="mr-cg" data-cg="${i}"><div class="grid four">
+      ${sel(i, 'asset', assets, x.asset)}${inp(i, 'name', x, 'text', 125)}${x.asset === 'equity' ? inp(i, 'isin', x, 'text', 12) : ''}${prop ? '' : inp(i, 'units', x)}
+      ${inp(i, 'acquired', x, 'date')}${inp(i, 'sold', x, 'date')}${x.acquired && x.sold ? '' : sel(i, 'term', [['', w('cg_term_auto')], ['long', w('cg_term_long')], ['short', w('cg_term_short')]], x.term)}
+      ${inp(i, 'sale', x)}${inp(i, 'cost', x)}${inp(i, 'expenses', x)}${x.asset === 'equity' ? inp(i, 'fmv', x) : ''}
+      ${prop ? inp(i, 'stamp', x) + inp(i, 'improve', x) + inp(i, 'improve_on', x, 'date') + inp(i, 'buyer', x, 'text', 125) + inp(i, 'buyer_pan', x, 'text', 10) + inp(i, 'address', x, 'text', 200) + inp(i, 'pin', x, 'text', 6) + inp(i, 'tds', x) : ''}
+      ${sel(i, 'ex_kind', exKinds, x.ex_kind)}
+      ${x.ex_kind ? inp(i, 'ex_amount', x) + inp(i, 'ex_on', x, 'date') : ''}${x.ex_kind && x.ex_kind !== '54EC' ? inp(i, 'cgas', x) + inp(i, 'cgas_on', x, 'date') + inp(i, 'cgas_acc', x, 'text', 20) + inp(i, 'cgas_ifsc', x, 'text', 11) : ''}
+      ${x.ex_kind === '54F' ? inp(i, 'other_houses', x) : ''}</div>
+      <div class="row tight">${res(c)}<button type="button" class="small ghost" data-cg-del="${i}" aria-label="${esc(w('cg_remove'))}">${icon('trash', 12)}</button></div></div>`;
+  }).join('');
+  const readList = read.length ? `<h4 class="small">${esc(w('cg_read_h', { n: read.length }))}</h4><table class="mr-cmp-t"><thead><tr><th>${esc(w('f_cg_name'))}</th><th>${esc(w('f_cg_sold'))}</th><th class="num">${esc(w('f_cg_sale'))}</th><th>${esc(w('cg_bucket'))}</th><th class="num">${esc(w('cg_gain_h'))}</th></tr></thead>
+    <tbody>${read.slice(0, 200).map((c) => `<tr><td>${esc(c.name || c.isin || '-')}</td><td>${esc(c.sold || '')}</td><td class="num">${money(c.sale)}</td><td class="small">${esc(w(`b_${c.bucket}`))}</td><td class="num">${money(c.final)}</td></tr>`).join('')}</tbody></table>` : '';
+  const f = cw.final || {};
+  const after = cw.any ? `<h4 class="small">${esc(w('cg_sum_h'))}</h4><p class="small">${['stcg_111a', 'stcg_app', 'ltcg_112', 'ltcg_112a'].filter((b) => f[b]).map((b) => `${esc(w(`b_${b}`))} <b>${money(f[b])}</b>`).join(' · ') || esc(w('cg_sum_nil'))}</p>
+    ${cw.excess ? `<p class="small">${esc(w('cg_excess', { amount: money(cw.excess) }))}</p>` : ''}
+    ${cw.cf && (cw.cf.stcl || cw.cf.ltcl) ? `<p class="small ${cw.cf_ok === false ? 'mr-warn' : ''}">${esc(w(cw.cf_ok === false ? 'cg_cf_late' : 'cg_cf', { stcl: money(cw.cf.stcl), ltcl: money(cw.cf.ltcl) }))}</p>` : ''}` : '';
+  return `<section class="card"><h3 class="rc-h">${icon('pulse', 15)} ${esc(w('rv_cg'))}</h3><p class="small muted">${esc(w('rv_cg_p2'))}</p>
+    ${readList}<h4 class="small">${esc(w('cg_rows_h'))}</h4>${rows || `<p class="muted small">${esc(w('cg_none'))}</p>`}
+    <button type="button" class="small ghost" id="mr-cg-add">${icon('plus', 12)} ${esc(w('cg_add'))}</button>
+    ${after}
+    <details class="mr-more" ${['stcg_111a', 'ltcg_112a', 'ltcg_112', 'stcg_other'].some((k) => r.cg[k]) ? 'open' : ''}><summary>${esc(w('cg_totals_h'))}</summary>
+      <div class="grid four">${['stcg_111a', 'ltcg_112a', 'ltcg_112', 'stcg_other'].map((k) => field('cg', k, r.cg[k], r.typed.cg.includes(k))).join('')}</div></details></section>`;
+}
+
+function lossCard(r, d) {
+  const cw = r.cgw || { life: [] };
+  const y = Number(String(d.ay).slice(0, 4));
+  const ays = Array.from({ length: 8 }, (_, n) => `${y - n - 1}-${String((y - n) % 100).padStart(2, '0')}`);
+  const life = cw.life || [];
+  const rows = (r.losses_bf || []).map((x, i) => {
+    const lf = life[i] || {};
+    return `<div class="grid four mr-loss" data-loss="${i}">
+      <div class="field"><label for="ls-${i}-ay">${esc(w('f_loss_ay'))}</label><select id="ls-${i}-ay" data-l="ay">${[x.ay && !ays.includes(x.ay) ? x.ay : null, ...ays].filter(Boolean).map((a) => `<option value="${a}" ${x.ay === a ? 'selected' : ''}>${a}</option>`).join('')}</select></div>
+      <div class="field"><label for="ls-${i}-kind">${esc(w('f_loss_kind'))}</label><select id="ls-${i}-kind" data-l="kind">${['stcl', 'ltcl', 'hp'].map((k) => `<option value="${k}" ${x.kind === k ? 'selected' : ''}>${esc(w(`loss_${k}`))}</option>`).join('')}</select></div>
+      <div class="field"><label for="ls-${i}-amount">${esc(w('f_loss_amount'))}</label><input id="ls-${i}-amount" inputmode="decimal" data-l="amount" value="${x.amount ? Math.round(x.amount) : ''}" placeholder="0"/></div>
+      <div class="field"><label for="ls-${i}-filed_on">${esc(w('f_loss_filed_on'))}</label><input id="ls-${i}-filed_on" type="date" data-l="filed_on" value="${esc(x.filed_on || '')}"/></div>
+      ${lf.usable === false ? `<p class="small mr-warn">${icon('alert', 12)} ${esc(w('loss_gone', { ay: x.ay }))}</p>` : ''}</div>`;
+  }).join('');
+  const used = Object.values(cw.bf_used || {}).reduce((a, b) => a + b, 0) + ((d.regimes[d.regime].hp || {}).bf || 0);
+  const prev = d.docs.some((x) => x.kind === 'filed_prev');
+  return `<section class="card"><h3 class="rc-h">${icon('clock', 15)} ${esc(w('loss_h'))}</h3><p class="small muted">${esc(w('loss_p'))}</p>
+    ${rows || `<p class="muted small">${esc(w('loss_none'))}</p>`}${used ? `<p class="small"><b>${esc(w('loss_used', { amount: money(used) }))}</b></p>` : ''}
+    <div class="row tight"><button type="button" class="small ghost" id="mr-loss-add">${icon('plus', 12)} ${esc(w('loss_add'))}</button>
+    ${prev ? `<button type="button" class="small ghost" id="mr-loss-prev">${icon('refresh', 12)} ${esc(w('loss_prev'))}</button>` : `<span class="small muted">${esc(w('loss_prev_how'))}</span>`}</div></section>`;
+}
+
+function giftCard(r, d) {
+  const g = d.regimes[d.regime].gifts || { total: 0 };
+  const pairs = (key) => w(key).split('|').map((x) => x.split('='));
+  const opt = (v, list) => list.map(([o, l]) => `<option value="${esc(o)}" ${String(v || '') === o ? 'selected' : ''}>${esc(l)}</option>`).join('');
+  const sel = (i, k, x, key) => `<div class="field"><label for="gf-${i}-${k}">${esc(w(`f_gift_${k}`))}</label><select id="gf-${i}-${k}" data-gf="${k}">${opt(x[k], pairs(key))}</select></div>`;
+  const num = (i, k, x) => `<div class="field"><label for="gf-${i}-${k}">${esc(w(`f_gift_${k}`))}</label><input id="gf-${i}-${k}" inputmode="decimal" data-gf="${k}" value="${x[k] ? Math.round(x[k]) : ''}" placeholder="0"/></div>`;
+  const rows = (r.gifts || []).map((x, i) => `<div class="grid four mr-gift" data-gift="${i}">
+      <div class="field"><label for="gf-${i}-from">${esc(w('f_gift_from'))}</label><input id="gf-${i}-from" data-gf="from" maxlength="80" value="${esc(x.from || '')}" autocomplete="off"/></div>
+      ${sel(i, 'relation', x, 'gift_relations')}${sel(i, 'occasion', x, 'gift_occasions')}${sel(i, 'kind', x, 'gift_kinds')}${num(i, 'value', x)}${num(i, 'paid', x)}
+      <div class="field"><label for="gf-${i}-on">${esc(w('f_gift_on'))}</label><input id="gf-${i}-on" type="date" data-gf="on" value="${esc(x.on || '')}"/></div></div>`).join('');
+  return `<section class="card"><h3 class="rc-h">${icon('money', 15)} ${esc(w('gift_h'))}</h3><p class="small muted">${esc(w('gift_p'))}</p>
+    ${rows || `<p class="muted small">${esc(w('gift_none'))}</p>`}${(r.gifts || []).length ? `<p class="small"><b>${esc(w('gift_total', { amount: money(g.total) }))}</b></p>` : ''}
+    <button type="button" class="small ghost" id="mr-gift-add">${icon('plus', 12)} ${esc(w('gift_add'))}</button></section>`;
 }

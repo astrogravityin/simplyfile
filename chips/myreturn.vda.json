@@ -1,0 +1,153 @@
+{
+  "chip_id": "myreturn.vda",
+  "kind": "accessor",
+  "set": "myreturn",
+  "label": "My return: virtual digital assets (115BBH)",
+  "aliases": [
+    "crypto",
+    "vda",
+    "115bbh"
+  ],
+  "params": [
+    {
+      "name": "rows",
+      "type": "json",
+      "default": [],
+      "label": "each transfer: {cost, sale} (plus dates, kept as they are)"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "rows": {
+        "vop": "rows_math",
+        "rows": {
+          "vop": "rows_math",
+          "rows": "$rows",
+          "out": "gain",
+          "how": "sub",
+          "a": "sale",
+          "b": "cost"
+        },
+        "out": "income",
+        "how": "max",
+        "a": "gain",
+        "b": 0
+      },
+      "income": {
+        "vop": "coalesce",
+        "values": [
+          {
+            "vop": "rows_aggregate",
+            "rows": {
+              "vop": "rows_math",
+              "rows": {
+                "vop": "rows_math",
+                "rows": "$rows",
+                "out": "gain",
+                "how": "sub",
+                "a": "sale",
+                "b": "cost"
+              },
+              "out": "income",
+              "how": "max",
+              "a": "gain",
+              "b": 0
+            },
+            "agg": "sum",
+            "key": "income"
+          },
+          0
+        ]
+      },
+      "loss_ignored": {
+        "vop": "coalesce",
+        "values": [
+          {
+            "vop": "sub",
+            "a": {
+              "vop": "rows_aggregate",
+              "rows": {
+                "vop": "rows_math",
+                "rows": {
+                  "vop": "rows_math",
+                  "rows": "$rows",
+                  "out": "gain",
+                  "how": "sub",
+                  "a": "sale",
+                  "b": "cost"
+                },
+                "out": "income",
+                "how": "max",
+                "a": "gain",
+                "b": 0
+              },
+              "agg": "sum",
+              "key": "income"
+            },
+            "b": {
+              "vop": "rows_aggregate",
+              "rows": {
+                "vop": "rows_math",
+                "rows": "$rows",
+                "out": "gain",
+                "how": "sub",
+                "a": "sale",
+                "b": "cost"
+              },
+              "agg": "sum",
+              "key": "gain"
+            }
+          },
+          0
+        ]
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-07: s.115BBH: income from transferring a virtual digital asset is the sale value less the cost of acquisition - no other deduction or allowance; a loss on one transfer is not set off against any income (not even another VDA's gain) and is not carried forward. Each row: {cost, sale}; income is the sum of the gains.",
+  "test_cases": [
+    {
+      "args": {
+        "rows": [
+          {
+            "cost": 100000,
+            "sale": 250000
+          },
+          {
+            "cost": 80000,
+            "sale": 50000
+          }
+        ]
+      },
+      "expect_value": {
+        "rows": [
+          {
+            "cost": 100000,
+            "sale": 250000,
+            "gain": 150000,
+            "income": 150000
+          },
+          {
+            "cost": 80000,
+            "sale": 50000,
+            "gain": -30000,
+            "income": 0
+          }
+        ],
+        "income": 150000,
+        "loss_ignored": 30000
+      }
+    },
+    {
+      "args": {},
+      "expect_value": {
+        "rows": [],
+        "income": 0,
+        "loss_ignored": 0
+      }
+    }
+  ]
+}

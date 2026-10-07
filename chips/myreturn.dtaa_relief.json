@@ -1,0 +1,203 @@
+{
+  "chip_id": "myreturn.dtaa_relief",
+  "kind": "accessor",
+  "set": "myreturn",
+  "label": "My return: relief for tax paid abroad (s.90 / 90A / 91)",
+  "aliases": [
+    "dtaa relief",
+    "foreign tax credit",
+    "rule 128",
+    "section 91"
+  ],
+  "params": [
+    {
+      "name": "income",
+      "type": "number",
+      "default": 0,
+      "label": "the foreign income of one head from one country, included in total income"
+    },
+    {
+      "name": "tax_paid",
+      "type": "number",
+      "default": 0,
+      "label": "the tax paid on it abroad, in rupees"
+    },
+    {
+      "name": "tax_total",
+      "type": "number",
+      "default": 0,
+      "label": "the Indian tax on total income (after the 87A rebate, with surcharge and cess)"
+    },
+    {
+      "name": "income_total",
+      "type": "number",
+      "default": 0,
+      "label": "total income"
+    },
+    {
+      "name": "sec",
+      "type": "text",
+      "default": "90",
+      "label": "90 / 90A / 91"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "indian_tax": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "gt",
+              "left": "$income_total",
+              "right": 0
+            },
+            "then": {
+              "vop": "round_to",
+              "value": {
+                "vop": "div",
+                "a": {
+                  "vop": "mul",
+                  "a": {
+                    "vop": "largest",
+                    "values": [
+                      "$income",
+                      0
+                    ]
+                  },
+                  "b": "$tax_total"
+                },
+                "b": "$income_total"
+              }
+            }
+          }
+        ],
+        "else": 0
+      },
+      "relief": {
+        "vop": "largest",
+        "values": [
+          0,
+          {
+            "vop": "smallest",
+            "values": [
+              "$tax_paid",
+              {
+                "vop": "choose",
+                "cases": [
+                  {
+                    "when": {
+                      "op": "gt",
+                      "left": "$income_total",
+                      "right": 0
+                    },
+                    "then": {
+                      "vop": "round_to",
+                      "value": {
+                        "vop": "div",
+                        "a": {
+                          "vop": "mul",
+                          "a": {
+                            "vop": "largest",
+                            "values": [
+                              "$income",
+                              0
+                            ]
+                          },
+                          "b": "$tax_total"
+                        },
+                        "b": "$income_total"
+                      }
+                    }
+                  }
+                ],
+                "else": 0
+              }
+            ]
+          }
+        ]
+      },
+      "dtaa": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "in_set",
+              "value": "$sec",
+              "set": {
+                "vop": "get",
+                "value": {
+                  "chip": "myreturn.foreign_rules",
+                  "args": {}
+                },
+                "path": "dtaa_secs"
+              }
+            },
+            "then": true
+          }
+        ],
+        "else": false
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-07: Rule 128: the credit for foreign tax is the lower of the tax paid abroad and the Indian tax on that income - the income at the average rate of Indian tax (tax on total income / total income), source by source (Schedule FSI (e) = lower of (c) and (d)).",
+  "test_cases": [
+    {
+      "args": {
+        "income": 1000000,
+        "tax_paid": 200000,
+        "tax_total": 300000,
+        "income_total": 2000000
+      },
+      "expect_value": {
+        "indian_tax": 150000,
+        "relief": 150000,
+        "dtaa": true
+      }
+    },
+    {
+      "args": {
+        "income": 1000000,
+        "tax_paid": 100000,
+        "tax_total": 300000,
+        "income_total": 2000000,
+        "sec": "91"
+      },
+      "expect_value": {
+        "indian_tax": 150000,
+        "relief": 100000,
+        "dtaa": false
+      }
+    },
+    {
+      "args": {
+        "income": 1000000,
+        "tax_paid": 100000,
+        "tax_total": 0,
+        "income_total": 900000
+      },
+      "expect_value": {
+        "indian_tax": 0,
+        "relief": 0,
+        "dtaa": true
+      }
+    },
+    {
+      "args": {
+        "income": -50000,
+        "tax_paid": 1000,
+        "tax_total": 300000,
+        "income_total": 2000000
+      },
+      "expect_value": {
+        "indian_tax": 0,
+        "relief": 0,
+        "dtaa": true
+      }
+    }
+  ]
+}

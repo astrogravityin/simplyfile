@@ -1,0 +1,142 @@
+{
+  "chip_id": "myreturn.vehicle_44ae",
+  "kind": "accessor",
+  "set": "myreturn",
+  "label": "My return: one goods carriage, 44AE",
+  "aliases": [
+    "44ae",
+    "goods carriage",
+    "truck"
+  ],
+  "params": [
+    {
+      "name": "weight_kg",
+      "type": "number",
+      "default": 0,
+      "label": "gross vehicle weight, kg"
+    },
+    {
+      "name": "months",
+      "type": "number",
+      "default": 12,
+      "label": "months (or part of a month) owned or hired in the year"
+    },
+    {
+      "name": "heavy_above_kg",
+      "type": "number",
+      "default": 12000,
+      "label": "a heavy goods vehicle: gross vehicle weight above this"
+    },
+    {
+      "name": "per_ton",
+      "type": "number",
+      "default": 1000,
+      "label": "heavy goods vehicle: a month, per ton of gross vehicle weight"
+    },
+    {
+      "name": "per_vehicle",
+      "type": "number",
+      "default": 7500,
+      "label": "any other goods carriage: a month"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "heavy": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "gt",
+              "left": "$weight_kg",
+              "right": "$heavy_above_kg"
+            },
+            "then": true
+          }
+        ],
+        "else": false
+      },
+      "tons": {
+        "vop": "round_to",
+        "value": {
+          "vop": "div",
+          "a": "$weight_kg",
+          "b": 1000
+        }
+      },
+      "income": {
+        "vop": "round_to",
+        "value": {
+          "vop": "choose",
+          "cases": [
+            {
+              "when": {
+                "op": "gt",
+                "left": "$weight_kg",
+                "right": "$heavy_above_kg"
+              },
+              "then": {
+                "vop": "mul",
+                "a": {
+                  "vop": "mul",
+                  "a": "$per_ton",
+                  "b": {
+                    "vop": "div",
+                    "a": "$weight_kg",
+                    "b": 1000
+                  }
+                },
+                "b": "$months"
+              }
+            }
+          ],
+          "else": {
+            "vop": "mul",
+            "a": "$per_vehicle",
+            "b": "$months"
+          }
+        }
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-07: s.44AE: a goods carriage's presumptive income - a heavy goods vehicle (gross vehicle weight above 12,000 kg) 1,000 a month per ton of gross vehicle weight, any other 7,500 a month, for each month or part of a month it was owned or hired.",
+  "test_cases": [
+    {
+      "args": {
+        "weight_kg": 16000,
+        "months": 12
+      },
+      "expect_value": {
+        "heavy": true,
+        "tons": 16,
+        "income": 192000
+      }
+    },
+    {
+      "args": {
+        "weight_kg": 7500,
+        "months": 10
+      },
+      "expect_value": {
+        "heavy": false,
+        "tons": 8,
+        "income": 75000
+      }
+    },
+    {
+      "args": {
+        "weight_kg": 12000,
+        "months": 12
+      },
+      "expect_value": {
+        "heavy": false,
+        "tons": 12,
+        "income": 90000
+      }
+    }
+  ]
+}

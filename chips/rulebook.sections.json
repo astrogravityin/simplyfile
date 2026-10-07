@@ -45,6 +45,18 @@
           "label": "Interest, fees and the balance"
         },
         {
+          "id": "cg",
+          "label": "Capital gains and losses"
+        },
+        {
+          "id": "abroad",
+          "label": "Residence, foreign income and clubbing"
+        },
+        {
+          "id": "past",
+          "label": "Earlier years: arrears and updated returns"
+        },
+        {
           "id": "huf",
           "label": "Hindu undivided family (HUF)"
         },
@@ -68,7 +80,7 @@
           "area": "form",
           "law": "Rule 12, Income-tax Rules 1962; the ITR forms notified for AY 2026-27",
           "plain": "Picks ITR-1, ITR-2, ITR-3 or ITR-4 from what the return holds: residence, total income, houses, capital gains, farm income, directorship, unlisted shares, foreign assets, losses carried, and presumptive business income. The first reason that applies is shown to the person.",
-          "gaps": "Agricultural income is a typed answer; ITR-3 with books is only chosen, not built, in My return."
+          "gaps": ""
         },
         {
           "chip": "close.dates",
@@ -363,6 +375,153 @@
           "law": "-",
           "plain": "How each document is recognised and read: Form 16, 26AS (text or PDF), AIS / TIS (JSON, CSV or PDF), the pre-filled JSON, a filed return, a bank statement (PDF, Excel, CSV).",
           "gaps": ""
+        },
+        {
+          "chip": "compute.due_234a",
+          "area": "interest",
+          "law": "s.234A, Explanation 1; CBDT extension orders (e.g. 9/2021, 17/2021)",
+          "plain": "When CBDT extends a due date by circular, interest under s.234A still runs from the original date if the tax owed after advance tax, TDS/TCS and reliefs is over one lakh; otherwise from the extended date. Circular 07/2026 is silent on interest, so the safer reading is used.",
+          "gaps": "Ask a CA if the circular for a year says otherwise."
+        },
+        {
+          "chip": "myreturn.vda",
+          "area": "other",
+          "law": "s.115BBH (virtual digital assets)",
+          "plain": "Each transfer's gain is the sale less cost only, at 30%; a loss counts for nothing, is not set off even against another VDA's gain and is not carried forward.",
+          "gaps": ""
+        },
+        {
+          "chip": "myreturn.slab_normal",
+          "area": "tax",
+          "law": "Finance Act, First Schedule Part I (partial integration of agricultural income)",
+          "plain": "Agricultural income over 5,000, when other income is above the basic exemption: tax on (normal + agricultural) less tax on (basic exemption + agricultural), in both regimes; 87A then applies.",
+          "gaps": ""
+        },
+        {
+          "chip": "myreturn.vehicle_44ae",
+          "area": "business",
+          "law": "s.44AE",
+          "plain": "Goods carriages, up to ten at any time: 1,000 per ton of gross weight per month for a vehicle over 12,000 kg, 7,500 per month for others; a part month counts as a month; higher income may be declared. More than ten vehicles: books, ITR-3.",
+          "gaps": ""
+        },
+        {
+          "chip": "myreturn.check_80ee",
+          "area": "via",
+          "law": "s.80EEA(4)(b)",
+          "plain": "80EEA is not allowed when 80EE is claimed: the return keeps 80EE and the check is red.",
+          "gaps": ""
+        },
+        {
+          "chip": "myreturn.business_pl",
+          "area": "business",
+          "law": "s.44AA, ss.44AD/44ADA/44AE (beyond the limits)",
+          "plain": "When the presumptive limits are passed, or the business is not presumptive, the profit typed from the person's own P&L is the income and the books flag is set; ITR-3 is written with the no-books P&L and balance sheet.",
+          "gaps": "A business loss, depreciation and disallowances need a CA."
+        },
+        {
+          "chip": "myreturn.audit_44ab",
+          "area": "business",
+          "law": "s.44AB(a), (b), (e)",
+          "plain": "Tax audit needed when business turnover is over 1 crore (10 crore with cash at 5% or less), professional receipts over 50 lakh (75 lakh), or presumptive income is declared lower than allowed with income above the basic exemption. My return then says: get a CA.",
+          "gaps": ""
+        },
+        {
+          "chip": "myreturn.cg_rules",
+          "area": "cg",
+          "law": "ss.2(42A), 111A, 112, 112A, 50AA, 70-74; Finance (No.2) Act 2024",
+          "plain": "Holding periods (12 months listed, 24 months others), rates after 23 July 2024 (111A 20%, 112A 12.5% over 1.25 lakh, 112 12.5%), s.50AA debt funds and market-linked debentures always short-term at slab rates, and the set-off order: short-term loss against any gain, long-term loss only against long-term gain.",
+          "gaps": ""
+        },
+        {
+          "chip": "myreturn.cg_row",
+          "area": "cg",
+          "law": "ss.48, 49, 50C, 55(2)(ac) (grandfathering)",
+          "plain": "One sale's gain: price (or stamp value when over 110% of it), less cost, improvement and expenses; shares bought before 1 Feb 2018 use the higher of cost and the lower of the 31 Jan 2018 value and the price.",
+          "gaps": ""
+        },
+        {
+          "chip": "myreturn.cii",
+          "area": "cg",
+          "law": "s.48 Explanation (v); CBDT CII notifications",
+          "plain": "The cost inflation index from 2001-02 (100) to 2025-26 (376); an asset bought before 2001 uses its value on 1 April 2001.",
+          "gaps": ""
+        },
+        {
+          "chip": "myreturn.cg_choice",
+          "area": "cg",
+          "law": "s.112(1) proviso (Finance (No.2) Act 2024)",
+          "plain": "Land or building bought before 23 July 2024 sold by a resident individual or HUF: tax at 12.5% without indexation or 20% with it, whichever is lower; both are shown.",
+          "gaps": ""
+        },
+        {
+          "chip": "myreturn.cg_exempt",
+          "area": "cg",
+          "law": "ss.54, 54EC, 54F",
+          "plain": "54: house to house, cost up to 10 crore; 54EC: up to 50 lakh of bonds within six months; 54F: other asset to house in proportion, not with more than one other house; Capital Gains Account Scheme deposits count.",
+          "gaps": "Time limits are not checked; one exemption per sale row."
+        },
+        {
+          "chip": "myreturn.waterfall",
+          "area": "cg",
+          "law": "ss.70-72, 74 (set-off order)",
+          "plain": "Losses net within each rate first, then a short-term loss against slab gains first and 112A last; a long-term loss against 112 before 112A.",
+          "gaps": ""
+        },
+        {
+          "chip": "myreturn.loss_age",
+          "area": "cg",
+          "law": "ss.71B, 74, 80 (carry forward)",
+          "plain": "Capital and house losses carry forward eight years; a capital loss only from a return filed on time; a brought-forward house loss is set off only against house income.",
+          "gaps": ""
+        },
+        {
+          "chip": "myreturn.gifts",
+          "area": "other",
+          "law": "s.56(2)(x)",
+          "plain": "Gifts from relatives, on marriage, by will or inheritance are not taxed; money and valuables over 50,000 together in a year are; each property is tested on its own (stamp value, or shortfall over the higher of 50,000 and 10%).",
+          "gaps": ""
+        },
+        {
+          "chip": "myreturn.residence",
+          "area": "abroad",
+          "law": "s.6(1), 6(1A), 6(6)",
+          "plain": "Resident on 182 days, or 60 days and 365 in the four years before (182 for a citizen leaving for work or a visiting citizen/PIO; 120 when Indian income is over 15 lakh); deemed resident; RNOR by 9 of 10 years, 729 days in 7, the 120-day visitor and the deemed resident. A non-resident: no 87A, 80TTB, 80DD/DDB/U or senior limits; ITR-2/3 only.",
+          "gaps": ""
+        },
+        {
+          "chip": "myreturn.dtaa_relief",
+          "area": "abroad",
+          "law": "ss.90, 90A, 91; Rule 128 (Form 67)",
+          "plain": "For a resident and ordinarily resident: foreign income is taxed here, and relief per country and head is the lower of the tax paid abroad and the Indian tax at the average rate. Form 67 by 31 March of the assessment year.",
+          "gaps": ""
+        },
+        {
+          "chip": "myreturn.check_fa",
+          "area": "abroad",
+          "law": "Schedule FA; Black Money Act s.42-43",
+          "plain": "A resident and ordinarily resident with any foreign asset or foreign income must list the assets in Schedule FA: red check otherwise.",
+          "gaps": "Tables D-F (signing authority, trusts, other) are not asked."
+        },
+        {
+          "chip": "myreturn.club_row",
+          "area": "abroad",
+          "law": "s.64(1)(iv), 64(1)(vi), 64(1A), s.10(32)",
+          "plain": "A minor child's income (not from their own work or skill, nor a child with an 80U disability) is added to the parent's, less 1,500 per child; income from assets given to a spouse or son's wife without consideration is added under its head; Schedule SPI.",
+          "gaps": ""
+        },
+        {
+          "chip": "myreturn.relief_89",
+          "area": "past",
+          "law": "s.89, Rule 21A (Form 10E)",
+          "plain": "Salary arrears: tax this year with arrears less without, less the same difference for each earlier year at that year's slabs; never below nil; available in the new regime too.",
+          "gaps": "An earlier year with surcharge is flagged, not relieved."
+        },
+        {
+          "chip": "myreturn.itru",
+          "area": "past",
+          "law": "s.139(8A), s.140B, ss.234A(1A)/234B(1A) (Finance Act 2025: 48 months)",
+          "plain": "An updated return within 48 months: not a loss or lower-tax return, not after search, survey or assessment; the further tax plus interest plus 25/50/60/70% by the year since.",
+          "gaps": "No ITR-U JSON until its schema is added; 234C, surcharge and special rates of the earlier year are not computed."
         }
       ],
       "label": "each rule chip: area, law, plain sentence, what is not covered"
@@ -376,9 +535,9 @@
     }
   },
   "returns": "record",
-  "version": 1,
+  "version": 2,
   "status": "published",
-  "description_nl": "2026-10-06 owner: the rule book a CA reviews - for each rule chip the section of the Act it follows, what it does in plain words and what it does not cover yet. Figures, worked examples and the chip's own wording are read from the rule chips by tools/rulebook.py, so the book cannot drift from the engine.",
+  "description_nl": "2026-10-06 owner: the rule book a CA reviews - for each rule chip the section of the Act it follows, what it does in plain words and what it does not cover yet. Figures, worked examples and the chip's own wording are read from the rule chips by tools/rulebook.py, so the book cannot drift from the engine. 2026-10-07: 21 rules added (capital gains, residence and foreign income, clubbing, s.89, ITR-U, s.234A in an extended year, 44AE, agri, special rates).",
   "test_cases": [
     {
       "args": {},
@@ -417,6 +576,18 @@
             "label": "Interest, fees and the balance"
           },
           {
+            "id": "cg",
+            "label": "Capital gains and losses"
+          },
+          {
+            "id": "abroad",
+            "label": "Residence, foreign income and clubbing"
+          },
+          {
+            "id": "past",
+            "label": "Earlier years: arrears and updated returns"
+          },
+          {
             "id": "huf",
             "label": "Hindu undivided family (HUF)"
           },
@@ -435,7 +606,7 @@
             "area": "form",
             "law": "Rule 12, Income-tax Rules 1962; the ITR forms notified for AY 2026-27",
             "plain": "Picks ITR-1, ITR-2, ITR-3 or ITR-4 from what the return holds: residence, total income, houses, capital gains, farm income, directorship, unlisted shares, foreign assets, losses carried, and presumptive business income. The first reason that applies is shown to the person.",
-            "gaps": "Agricultural income is a typed answer; ITR-3 with books is only chosen, not built, in My return."
+            "gaps": ""
           },
           {
             "chip": "close.dates",
@@ -730,6 +901,153 @@
             "law": "-",
             "plain": "How each document is recognised and read: Form 16, 26AS (text or PDF), AIS / TIS (JSON, CSV or PDF), the pre-filled JSON, a filed return, a bank statement (PDF, Excel, CSV).",
             "gaps": ""
+          },
+          {
+            "chip": "compute.due_234a",
+            "area": "interest",
+            "law": "s.234A, Explanation 1; CBDT extension orders (e.g. 9/2021, 17/2021)",
+            "plain": "When CBDT extends a due date by circular, interest under s.234A still runs from the original date if the tax owed after advance tax, TDS/TCS and reliefs is over one lakh; otherwise from the extended date. Circular 07/2026 is silent on interest, so the safer reading is used.",
+            "gaps": "Ask a CA if the circular for a year says otherwise."
+          },
+          {
+            "chip": "myreturn.vda",
+            "area": "other",
+            "law": "s.115BBH (virtual digital assets)",
+            "plain": "Each transfer's gain is the sale less cost only, at 30%; a loss counts for nothing, is not set off even against another VDA's gain and is not carried forward.",
+            "gaps": ""
+          },
+          {
+            "chip": "myreturn.slab_normal",
+            "area": "tax",
+            "law": "Finance Act, First Schedule Part I (partial integration of agricultural income)",
+            "plain": "Agricultural income over 5,000, when other income is above the basic exemption: tax on (normal + agricultural) less tax on (basic exemption + agricultural), in both regimes; 87A then applies.",
+            "gaps": ""
+          },
+          {
+            "chip": "myreturn.vehicle_44ae",
+            "area": "business",
+            "law": "s.44AE",
+            "plain": "Goods carriages, up to ten at any time: 1,000 per ton of gross weight per month for a vehicle over 12,000 kg, 7,500 per month for others; a part month counts as a month; higher income may be declared. More than ten vehicles: books, ITR-3.",
+            "gaps": ""
+          },
+          {
+            "chip": "myreturn.check_80ee",
+            "area": "via",
+            "law": "s.80EEA(4)(b)",
+            "plain": "80EEA is not allowed when 80EE is claimed: the return keeps 80EE and the check is red.",
+            "gaps": ""
+          },
+          {
+            "chip": "myreturn.business_pl",
+            "area": "business",
+            "law": "s.44AA, ss.44AD/44ADA/44AE (beyond the limits)",
+            "plain": "When the presumptive limits are passed, or the business is not presumptive, the profit typed from the person's own P&L is the income and the books flag is set; ITR-3 is written with the no-books P&L and balance sheet.",
+            "gaps": "A business loss, depreciation and disallowances need a CA."
+          },
+          {
+            "chip": "myreturn.audit_44ab",
+            "area": "business",
+            "law": "s.44AB(a), (b), (e)",
+            "plain": "Tax audit needed when business turnover is over 1 crore (10 crore with cash at 5% or less), professional receipts over 50 lakh (75 lakh), or presumptive income is declared lower than allowed with income above the basic exemption. My return then says: get a CA.",
+            "gaps": ""
+          },
+          {
+            "chip": "myreturn.cg_rules",
+            "area": "cg",
+            "law": "ss.2(42A), 111A, 112, 112A, 50AA, 70-74; Finance (No.2) Act 2024",
+            "plain": "Holding periods (12 months listed, 24 months others), rates after 23 July 2024 (111A 20%, 112A 12.5% over 1.25 lakh, 112 12.5%), s.50AA debt funds and market-linked debentures always short-term at slab rates, and the set-off order: short-term loss against any gain, long-term loss only against long-term gain.",
+            "gaps": ""
+          },
+          {
+            "chip": "myreturn.cg_row",
+            "area": "cg",
+            "law": "ss.48, 49, 50C, 55(2)(ac) (grandfathering)",
+            "plain": "One sale's gain: price (or stamp value when over 110% of it), less cost, improvement and expenses; shares bought before 1 Feb 2018 use the higher of cost and the lower of the 31 Jan 2018 value and the price.",
+            "gaps": ""
+          },
+          {
+            "chip": "myreturn.cii",
+            "area": "cg",
+            "law": "s.48 Explanation (v); CBDT CII notifications",
+            "plain": "The cost inflation index from 2001-02 (100) to 2025-26 (376); an asset bought before 2001 uses its value on 1 April 2001.",
+            "gaps": ""
+          },
+          {
+            "chip": "myreturn.cg_choice",
+            "area": "cg",
+            "law": "s.112(1) proviso (Finance (No.2) Act 2024)",
+            "plain": "Land or building bought before 23 July 2024 sold by a resident individual or HUF: tax at 12.5% without indexation or 20% with it, whichever is lower; both are shown.",
+            "gaps": ""
+          },
+          {
+            "chip": "myreturn.cg_exempt",
+            "area": "cg",
+            "law": "ss.54, 54EC, 54F",
+            "plain": "54: house to house, cost up to 10 crore; 54EC: up to 50 lakh of bonds within six months; 54F: other asset to house in proportion, not with more than one other house; Capital Gains Account Scheme deposits count.",
+            "gaps": "Time limits are not checked; one exemption per sale row."
+          },
+          {
+            "chip": "myreturn.waterfall",
+            "area": "cg",
+            "law": "ss.70-72, 74 (set-off order)",
+            "plain": "Losses net within each rate first, then a short-term loss against slab gains first and 112A last; a long-term loss against 112 before 112A.",
+            "gaps": ""
+          },
+          {
+            "chip": "myreturn.loss_age",
+            "area": "cg",
+            "law": "ss.71B, 74, 80 (carry forward)",
+            "plain": "Capital and house losses carry forward eight years; a capital loss only from a return filed on time; a brought-forward house loss is set off only against house income.",
+            "gaps": ""
+          },
+          {
+            "chip": "myreturn.gifts",
+            "area": "other",
+            "law": "s.56(2)(x)",
+            "plain": "Gifts from relatives, on marriage, by will or inheritance are not taxed; money and valuables over 50,000 together in a year are; each property is tested on its own (stamp value, or shortfall over the higher of 50,000 and 10%).",
+            "gaps": ""
+          },
+          {
+            "chip": "myreturn.residence",
+            "area": "abroad",
+            "law": "s.6(1), 6(1A), 6(6)",
+            "plain": "Resident on 182 days, or 60 days and 365 in the four years before (182 for a citizen leaving for work or a visiting citizen/PIO; 120 when Indian income is over 15 lakh); deemed resident; RNOR by 9 of 10 years, 729 days in 7, the 120-day visitor and the deemed resident. A non-resident: no 87A, 80TTB, 80DD/DDB/U or senior limits; ITR-2/3 only.",
+            "gaps": ""
+          },
+          {
+            "chip": "myreturn.dtaa_relief",
+            "area": "abroad",
+            "law": "ss.90, 90A, 91; Rule 128 (Form 67)",
+            "plain": "For a resident and ordinarily resident: foreign income is taxed here, and relief per country and head is the lower of the tax paid abroad and the Indian tax at the average rate. Form 67 by 31 March of the assessment year.",
+            "gaps": ""
+          },
+          {
+            "chip": "myreturn.check_fa",
+            "area": "abroad",
+            "law": "Schedule FA; Black Money Act s.42-43",
+            "plain": "A resident and ordinarily resident with any foreign asset or foreign income must list the assets in Schedule FA: red check otherwise.",
+            "gaps": "Tables D-F (signing authority, trusts, other) are not asked."
+          },
+          {
+            "chip": "myreturn.club_row",
+            "area": "abroad",
+            "law": "s.64(1)(iv), 64(1)(vi), 64(1A), s.10(32)",
+            "plain": "A minor child's income (not from their own work or skill, nor a child with an 80U disability) is added to the parent's, less 1,500 per child; income from assets given to a spouse or son's wife without consideration is added under its head; Schedule SPI.",
+            "gaps": ""
+          },
+          {
+            "chip": "myreturn.relief_89",
+            "area": "past",
+            "law": "s.89, Rule 21A (Form 10E)",
+            "plain": "Salary arrears: tax this year with arrears less without, less the same difference for each earlier year at that year's slabs; never below nil; available in the new regime too.",
+            "gaps": "An earlier year with surcharge is flagged, not relieved."
+          },
+          {
+            "chip": "myreturn.itru",
+            "area": "past",
+            "law": "s.139(8A), s.140B, ss.234A(1A)/234B(1A) (Finance Act 2025: 48 months)",
+            "plain": "An updated return within 48 months: not a loss or lower-tax return, not after search, survey or assessment; the further tax plus interest plus 25/50/60/70% by the year since.",
+            "gaps": "No ITR-U JSON until its schema is added; 234C, surcharge and special rates of the earlier year are not computed."
           }
         ]
       }

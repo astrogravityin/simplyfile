@@ -1,0 +1,419 @@
+{
+  "chip_id": "myreturn.cg_rules",
+  "kind": "accessor",
+  "set": "myreturn",
+  "label": "My return: capital-gains rules",
+  "aliases": [
+    "capital gains",
+    "holding period",
+    "50aa",
+    "54",
+    "set off"
+  ],
+  "params": [
+    {
+      "name": "assets",
+      "type": "json",
+      "default": {
+        "equity": {
+          "months": 12,
+          "short": "stcg_111a",
+          "long": "ltcg_112a",
+          "grandfather": true,
+          "index_option": false,
+          "s50c": false,
+          "aa50_bought_from": "",
+          "aa50_sold_from": "",
+          "always_short": false,
+          "ex": [
+            "54F"
+          ],
+          "property": false
+        },
+        "listed": {
+          "months": 12,
+          "short": "stcg_app",
+          "long": "ltcg_112",
+          "grandfather": false,
+          "index_option": false,
+          "s50c": false,
+          "aa50_bought_from": "",
+          "aa50_sold_from": "",
+          "always_short": false,
+          "ex": [
+            "54F"
+          ],
+          "property": false
+        },
+        "debt_mf": {
+          "months": 24,
+          "short": "stcg_app",
+          "long": "ltcg_112",
+          "grandfather": false,
+          "index_option": false,
+          "s50c": false,
+          "aa50_bought_from": "2023-04-01",
+          "aa50_sold_from": "",
+          "always_short": false,
+          "ex": [
+            "54F"
+          ],
+          "property": false
+        },
+        "mld": {
+          "months": 12,
+          "short": "stcg_app",
+          "long": "ltcg_112",
+          "grandfather": false,
+          "index_option": false,
+          "s50c": false,
+          "aa50_bought_from": "",
+          "aa50_sold_from": "",
+          "always_short": true,
+          "ex": [],
+          "property": false
+        },
+        "unlisted_bond": {
+          "months": 24,
+          "short": "stcg_app",
+          "long": "ltcg_112",
+          "grandfather": false,
+          "index_option": false,
+          "s50c": false,
+          "aa50_bought_from": "",
+          "aa50_sold_from": "2024-07-23",
+          "always_short": false,
+          "ex": [],
+          "property": false
+        },
+        "land": {
+          "months": 24,
+          "short": "stcg_app",
+          "long": "ltcg_112",
+          "grandfather": false,
+          "index_option": true,
+          "s50c": true,
+          "aa50_bought_from": "",
+          "aa50_sold_from": "",
+          "always_short": false,
+          "ex": [
+            "54EC",
+            "54F"
+          ],
+          "property": true
+        },
+        "house": {
+          "months": 24,
+          "short": "stcg_app",
+          "long": "ltcg_112",
+          "grandfather": false,
+          "index_option": true,
+          "s50c": true,
+          "aa50_bought_from": "",
+          "aa50_sold_from": "",
+          "always_short": false,
+          "ex": [
+            "54",
+            "54EC"
+          ],
+          "property": true
+        },
+        "other": {
+          "months": 24,
+          "short": "stcg_app",
+          "long": "ltcg_112",
+          "grandfather": false,
+          "index_option": false,
+          "s50c": false,
+          "aa50_bought_from": "",
+          "aa50_sold_from": "",
+          "always_short": false,
+          "ex": [
+            "54F"
+          ],
+          "property": false
+        }
+      },
+      "label": "each kind of capital asset: months held to be long-term (s.2(42A) - 12 for listed securities other than units, equity-fund units and zero-coupon bonds, 24 for the rest), the bucket short / long, grandfathering (112A), the indexation option (land / building), s.50C, s.50AA (debt funds bought from 1 April 2023, market-linked debentures, unlisted bonds / debentures sold from 23 July 2024: always short-term at the slab rates) and the exemptions it may claim"
+    },
+    {
+      "name": "grandfather_before",
+      "type": "text",
+      "default": "2018-02-01",
+      "label": "112A grandfathering (s.55(2)(ac)): bought before this day - cost is the higher of cost and the lower of FMV on 31-01-2018 and the sale value"
+    },
+    {
+      "name": "index_before",
+      "type": "text",
+      "default": "2024-07-23",
+      "label": "proviso to s.112(1)(a): land / building bought before this day, by a resident individual / HUF - tax is the lower of 12.5% without indexation and 20% with it"
+    },
+    {
+      "name": "rate_indexed",
+      "type": "number",
+      "default": 20,
+      "label": "proviso to s.112(1)(a): the rate with indexation"
+    },
+    {
+      "name": "index_residents_only",
+      "type": "boolean",
+      "default": true,
+      "label": "the indexation choice is for residents only (rule 570 of the ITR-2 validations)"
+    },
+    {
+      "name": "s50c_tolerance_pct",
+      "type": "number",
+      "default": 10,
+      "label": "s.50C: the stamp-duty value is the sale value only when it is more than 110% of what was received"
+    },
+    {
+      "name": "cii_base_year",
+      "type": "number",
+      "default": 2001,
+      "label": "s.48 / s.55(2)(b): a capital asset bought before 1 April 2001 - cost is its FMV on that day, indexed from 2001-02"
+    },
+    {
+      "name": "cap_54",
+      "type": "number",
+      "default": 100000000,
+      "label": "s.54 / s.54F: the cost of the new house counted, at most (Finance Act 2023)"
+    },
+    {
+      "name": "cap_54ec",
+      "type": "number",
+      "default": 5000000,
+      "label": "s.54EC: bonds within 6 months, at most 50 lakh in the year and the next"
+    },
+    {
+      "name": "f54_houses_max",
+      "type": "number",
+      "default": 1,
+      "label": "s.54F: not more than one other residential house owned on the day of transfer (other than the new one)"
+    },
+    {
+      "name": "ec_months",
+      "type": "number",
+      "default": 6,
+      "label": "s.54EC: the bonds are bought within this many months of the transfer"
+    },
+    {
+      "name": "stcl_order",
+      "type": "json",
+      "default": [
+        "stcg_app",
+        "stcg_111a",
+        "ltcg_112",
+        "ltcg_112a"
+      ],
+      "label": "s.70(2) / s.74(1)(a): a short-term loss is set off against these gains, in this order (slab-rate gains first, the 1.25 lakh 112A exemption last)"
+    },
+    {
+      "name": "ltcl_order",
+      "type": "json",
+      "default": [
+        "ltcg_112",
+        "ltcg_112a"
+      ],
+      "label": "s.70(3) / s.74(1)(b): a long-term loss only against long-term gains, in this order"
+    },
+    {
+      "name": "loss_years",
+      "type": "number",
+      "default": 8,
+      "label": "s.74 / s.71B: a loss is carried forward for 8 assessment years"
+    },
+    {
+      "name": "cf_kinds",
+      "type": "json",
+      "default": [
+        "original",
+        "revised"
+      ],
+      "label": "s.80 / s.139(3): a capital loss is carried forward only when the return is filed by the due date (an original, or its revision)"
+    },
+    {
+      "name": "hp_cf_any",
+      "type": "boolean",
+      "default": true,
+      "label": "s.80 does not name s.71B: a house-property loss is carried forward from a belated return too"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "assets": "$assets",
+      "grandfather_before": "$grandfather_before",
+      "index_before": "$index_before",
+      "rate_indexed": "$rate_indexed",
+      "index_residents_only": "$index_residents_only",
+      "s50c_tolerance_pct": "$s50c_tolerance_pct",
+      "cii_base_year": "$cii_base_year",
+      "cap_54": "$cap_54",
+      "cap_54ec": "$cap_54ec",
+      "f54_houses_max": "$f54_houses_max",
+      "ec_months": "$ec_months",
+      "stcl_order": "$stcl_order",
+      "ltcl_order": "$ltcl_order",
+      "loss_years": "$loss_years",
+      "cf_kinds": "$cf_kinds",
+      "hp_cf_any": "$hp_cf_any"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-07: The capital-gains rules My return works by (Finance (No.2) Act 2024; AY 2026-27): holding periods, buckets, grandfathering, the indexation choice for land / building bought before 23 July 2024, s.50C, s.50AA, exemption caps, set-off order and carry-forward.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "assets": {
+          "equity": {
+            "months": 12,
+            "short": "stcg_111a",
+            "long": "ltcg_112a",
+            "grandfather": true,
+            "index_option": false,
+            "s50c": false,
+            "aa50_bought_from": "",
+            "aa50_sold_from": "",
+            "always_short": false,
+            "ex": [
+              "54F"
+            ],
+            "property": false
+          },
+          "listed": {
+            "months": 12,
+            "short": "stcg_app",
+            "long": "ltcg_112",
+            "grandfather": false,
+            "index_option": false,
+            "s50c": false,
+            "aa50_bought_from": "",
+            "aa50_sold_from": "",
+            "always_short": false,
+            "ex": [
+              "54F"
+            ],
+            "property": false
+          },
+          "debt_mf": {
+            "months": 24,
+            "short": "stcg_app",
+            "long": "ltcg_112",
+            "grandfather": false,
+            "index_option": false,
+            "s50c": false,
+            "aa50_bought_from": "2023-04-01",
+            "aa50_sold_from": "",
+            "always_short": false,
+            "ex": [
+              "54F"
+            ],
+            "property": false
+          },
+          "mld": {
+            "months": 12,
+            "short": "stcg_app",
+            "long": "ltcg_112",
+            "grandfather": false,
+            "index_option": false,
+            "s50c": false,
+            "aa50_bought_from": "",
+            "aa50_sold_from": "",
+            "always_short": true,
+            "ex": [],
+            "property": false
+          },
+          "unlisted_bond": {
+            "months": 24,
+            "short": "stcg_app",
+            "long": "ltcg_112",
+            "grandfather": false,
+            "index_option": false,
+            "s50c": false,
+            "aa50_bought_from": "",
+            "aa50_sold_from": "2024-07-23",
+            "always_short": false,
+            "ex": [],
+            "property": false
+          },
+          "land": {
+            "months": 24,
+            "short": "stcg_app",
+            "long": "ltcg_112",
+            "grandfather": false,
+            "index_option": true,
+            "s50c": true,
+            "aa50_bought_from": "",
+            "aa50_sold_from": "",
+            "always_short": false,
+            "ex": [
+              "54EC",
+              "54F"
+            ],
+            "property": true
+          },
+          "house": {
+            "months": 24,
+            "short": "stcg_app",
+            "long": "ltcg_112",
+            "grandfather": false,
+            "index_option": true,
+            "s50c": true,
+            "aa50_bought_from": "",
+            "aa50_sold_from": "",
+            "always_short": false,
+            "ex": [
+              "54",
+              "54EC"
+            ],
+            "property": true
+          },
+          "other": {
+            "months": 24,
+            "short": "stcg_app",
+            "long": "ltcg_112",
+            "grandfather": false,
+            "index_option": false,
+            "s50c": false,
+            "aa50_bought_from": "",
+            "aa50_sold_from": "",
+            "always_short": false,
+            "ex": [
+              "54F"
+            ],
+            "property": false
+          }
+        },
+        "grandfather_before": "2018-02-01",
+        "index_before": "2024-07-23",
+        "rate_indexed": 20,
+        "index_residents_only": true,
+        "s50c_tolerance_pct": 10,
+        "cii_base_year": 2001,
+        "cap_54": 100000000,
+        "cap_54ec": 5000000,
+        "f54_houses_max": 1,
+        "ec_months": 6,
+        "stcl_order": [
+          "stcg_app",
+          "stcg_111a",
+          "ltcg_112",
+          "ltcg_112a"
+        ],
+        "ltcl_order": [
+          "ltcg_112",
+          "ltcg_112a"
+        ],
+        "loss_years": 8,
+        "cf_kinds": [
+          "original",
+          "revised"
+        ],
+        "hp_cf_any": true
+      }
+    }
+  ]
+}
