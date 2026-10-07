@@ -15,7 +15,7 @@ KEEP=(users.json ledger.sqlite3 smtp.json settings.json)
 systemctl stop "$SERVICE"
 tmp=$(mktemp -d)
 for f in "${KEEP[@]}"; do [ -e "$ROOT/data/$f" ] && cp -a "$ROOT/data/$f" "$tmp/"; done
-rm -rf "$ROOT/data"
+rm -rf "$ROOT/data" "$ROOT/jobs"   # jobs/: DummyFy's upload folders (beside data/, never in a snapshot) - gone with the day's visitors
 cp -a "$ROOT/snapshot" "$ROOT/data"
 # the demo's dates move forward by the days since the snapshot was packed (where chip demo.host move_dates is on)
 (cd "/opt/$APP" && PORTAL_DATA="$ROOT/data" .venv/bin/python -m core.demo freshen "$ROOT/data" "$ROOT/snapshot") || echo "dates not moved"

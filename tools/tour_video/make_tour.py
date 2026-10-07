@@ -66,7 +66,7 @@ ACTION_KEYS = ACTIONS | {"nth", "text", "value", "files", "frame", "optional", "
 DEMO = TOOL   # upload "files" are relative to tools/tour_video/
 STEP_KEYS = {"say", "speak", "chapter", "do", "hold", "picture"}
 PICTURE = re.compile(r"^pictures/(?!\.\.?/)[\w.-]+/[0-9a-f]{8}\.(png|jpg)$")
-TOUR_KEYS = {"page_key", "title", "start_url", "prod_base", "also", "anonymous", "review", "covers", "voice", "rate", "viewport", "vars", "steps", "note", "blur", "settle_ms", "type_emails", "locale"}
+TOUR_KEYS = {"page_key", "title", "start_url", "prod_base", "also", "anonymous", "review", "covers", "voice", "rate", "viewport", "vars", "steps", "note", "blur", "settle_ms", "type_emails", "locale", "tags"}
 SETTING_KEYS = {"start_url", "anonymous", "vars", "before", "viewport", "voice", "rate", "prod_base", "blur", "note", "product", "settle_ms"}
 PROD_BASE = "https://astrostage.in"   # a tour on another production host (tedbook.in) says so in prod_base
 
@@ -220,6 +220,9 @@ def validate_tour(t: dict) -> list[str]:
     steps = t.get("steps")
     if not isinstance(steps, list) or not steps:
         return err + ["'steps' must be a non-empty list"]
+    # 2026-10-07 owner: every video carries several tags - the words people search a Watch section by (as AstroStage's make_tour)
+    if "tags" in t and not (isinstance(t["tags"], list) and len({str(x).strip().lower() for x in t["tags"] if isinstance(x, str) and x.strip()}) >= 3):
+        err.append("'tags' must list at least 3 different words people would search for")
     if "also" in t and not (isinstance(t["also"], list) and all(isinstance(x, str) for x in t["also"])):
         err.append("'also' must be a list of page keys this tour also covers")
     if "covers" in t and not (isinstance(t["covers"], list) and all(isinstance(x, str) and x.strip() for x in t["covers"])):
