@@ -14,15 +14,26 @@
   "title": "Tax rules",
   "start_url": "/#/taxwatch",
   "covers": [
-    "fetch the new year",
-    "what changed",
-    "apply with history"
+    "live year",
+    "which year",
+    "fetch",
+    "at a glance",
+    "compare",
+    "only changes",
+    "edit by hand",
+    "apply",
+    "changes it cannot apply",
+    "sources",
+    "rule book"
   ],
   "steps": [
     {
       "chapter": "Tax rules",
-      "say": "Each new year's tax figures: fetch, compare, apply - the AI proposes, you decide.",
+      "say": "The year's tax figures - slabs, rebates, caps and due dates - in one place. Everyone sees what every return uses; the portal owner fetches each year's, compares and applies.",
       "do": [
+        {
+          "wait_for": "#tw-head"
+        },
         {
           "wait": 1
         }
@@ -30,10 +41,21 @@
     },
     {
       "chapter": "Live year",
-      "say": "The figures the portal computes with today, and the year they are for.",
+      "say": "The figures every return on this portal uses today, and the year they are for. For everyone but the owner, this screen is read-only.",
       "do": [
         {
-          "highlight_target": "#tw-head|main",
+          "highlight_target": "#tw-head",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Which year",
+      "say": "The next year, or this year again: the department publishes circulars all year, so a re-check can move a due date. A reminder shows when a re-check is due.",
+      "do": [
+        {
+          "highlight_target": "#tw-ay",
           "optional": true,
           "timeout": 5
         }
@@ -41,10 +63,21 @@
     },
     {
       "chapter": "Fetch",
-      "say": "Pick the new year and fetch: Gemini reads official sources only and proposes every figure in the same shape.",
+      "say": "Pick Gemini or OpenAI and fetch: it searches official sources and proposes every figure in the same shape. It uses the owner's own AI key.",
       "do": [
         {
-          "highlight_target": "#tw-fetch|main",
+          "highlight_target": "#tw-go|#tw-fetch",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "At a glance",
+      "say": "How many figures there are, how many changed, how many are the same, and how many are not announced yet.",
+      "do": [
+        {
+          "highlight_target": ".sf-kpis",
           "optional": true,
           "timeout": 5
         }
@@ -52,10 +85,32 @@
     },
     {
       "chapter": "Compare",
-      "say": "Each figure side by side - this year's and the new year's, what changed, and the source page for each.",
+      "say": "Each figure side by side - the live year's and the new one's, what changed marked, and the source page for each.",
       "do": [
         {
-          "highlight_target": "#tw-table|main",
+          "highlight_target": "#tw-table",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Only changes",
+      "say": "Show only what changed.",
+      "do": [
+        {
+          "highlight_target": "#tw-only",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Edit by hand",
+      "say": "A figure the AI got wrong or could not find: type the right one. It is marked as edited.",
+      "do": [
+        {
+          "highlight_target": "[data-edit]",
           "optional": true,
           "timeout": 5
         }
@@ -63,10 +118,43 @@
     },
     {
       "chapter": "Apply",
-      "say": "Tick what is right, edit anything by hand, then apply. Last year's slabs stay for past years, and every chip keeps its History.",
+      "say": "Tick what is right, then apply. The figures go into the rules with History; last year's slabs stay for past years.",
       "do": [
         {
-          "highlight_target": "#tw-apply|main",
+          "highlight_target": "#tw-apply",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Changes it cannot apply",
+      "say": "A new rule that is not a figure - a new fee, a new form - is listed here, to be built.",
+      "do": [
+        {
+          "highlight_target": "section.card:has(.tw-new)|#tw-table",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Sources",
+      "say": "The pages the AI read, to check for yourself.",
+      "do": [
+        {
+          "highlight_target": "section.card:has(.tw-pages)|#tw-table",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Rule book",
+      "say": "Every rule SimplyFile works by, written out in one book.",
+      "do": [
+        {
+          "highlight_target": "#tw-head a.btn|#tw-head",
           "optional": true,
           "timeout": 5
         }

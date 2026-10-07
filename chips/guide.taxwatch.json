@@ -16,7 +16,7 @@
     {
       "name": "lede",
       "type": "long",
-      "default": "Each new year's tax figures: fetch, compare, apply - the AI proposes, you decide.",
+      "default": "The year's tax figures - slabs, rebates, caps and due dates - in one place. Everyone sees what every return uses; the portal owner fetches each year's, compares and applies.",
       "label": "lede"
     },
     {
@@ -28,7 +28,7 @@
     {
       "name": "minutes",
       "type": "json",
-      "default": 2,
+      "default": 3,
       "label": "minutes"
     },
     {
@@ -37,23 +37,58 @@
       "default": [
         {
           "title": "Live year",
-          "say": "The figures the portal computes with today, and the year they are for.",
-          "target": "#tw-head|main"
+          "say": "The figures every return on this portal uses today, and the year they are for. For everyone but the owner, this screen is read-only.",
+          "target": "#tw-head"
+        },
+        {
+          "title": "Which year",
+          "say": "The next year, or this year again: the department publishes circulars all year, so a re-check can move a due date. A reminder shows when a re-check is due.",
+          "target": "#tw-ay"
         },
         {
           "title": "Fetch",
-          "say": "Pick the new year and fetch: Gemini reads official sources only and proposes every figure in the same shape.",
-          "target": "#tw-fetch|main"
+          "say": "Pick Gemini or OpenAI and fetch: it searches official sources and proposes every figure in the same shape. It uses the owner's own AI key.",
+          "target": "#tw-go|#tw-fetch"
+        },
+        {
+          "title": "At a glance",
+          "say": "How many figures there are, how many changed, how many are the same, and how many are not announced yet.",
+          "target": ".sf-kpis"
         },
         {
           "title": "Compare",
-          "say": "Each figure side by side - this year's and the new year's, what changed, and the source page for each.",
-          "target": "#tw-table|main"
+          "say": "Each figure side by side - the live year's and the new one's, what changed marked, and the source page for each.",
+          "target": "#tw-table"
+        },
+        {
+          "title": "Only changes",
+          "say": "Show only what changed.",
+          "target": "#tw-only"
+        },
+        {
+          "title": "Edit by hand",
+          "say": "A figure the AI got wrong or could not find: type the right one. It is marked as edited.",
+          "target": "[data-edit]"
         },
         {
           "title": "Apply",
-          "say": "Tick what is right, edit anything by hand, then apply. Last year's slabs stay for past years, and every chip keeps its History.",
-          "target": "#tw-apply|main"
+          "say": "Tick what is right, then apply. The figures go into the rules with History; last year's slabs stay for past years.",
+          "target": "#tw-apply"
+        },
+        {
+          "title": "Changes it cannot apply",
+          "say": "A new rule that is not a figure - a new fee, a new form - is listed here, to be built.",
+          "target": "section.card:has(.tw-new)|#tw-table"
+        },
+        {
+          "title": "Sources",
+          "say": "The pages the AI read, to check for yourself.",
+          "target": "section.card:has(.tw-pages)|#tw-table"
+        },
+        {
+          "title": "Rule book",
+          "say": "Every rule {product} works by, written out in one book.",
+          "target": "#tw-head a.btn|#tw-head"
         }
       ],
       "label": "steps"
@@ -70,37 +105,72 @@
     }
   },
   "returns": "record",
-  "version": 1,
+  "version": 4,
   "status": "published",
-  "description_nl": "2026-10-06: the Tax rules walk; tours/sf-taxwatch.json is made from it.",
+  "description_nl": "2026-10-06: the Tax rules walk; tours/sf-taxwatch.json is made from it. 2026-10-07: rewritten for what shipped on 6-7 October (tools/make_guides_wave4.py).",
   "test_cases": [
     {
       "args": {},
       "expect_value": {
         "title": "Tax rules",
-        "lede": "Each new year's tax figures: fetch, compare, apply - the AI proposes, you decide.",
+        "lede": "The year's tax figures - slabs, rebates, caps and due dates - in one place. Everyone sees what every return uses; the portal owner fetches each year's, compares and applies.",
         "icon": "refresh",
-        "minutes": 2,
+        "minutes": 3,
         "steps": [
           {
             "title": "Live year",
-            "say": "The figures the portal computes with today, and the year they are for.",
-            "target": "#tw-head|main"
+            "say": "The figures every return on this portal uses today, and the year they are for. For everyone but the owner, this screen is read-only.",
+            "target": "#tw-head"
+          },
+          {
+            "title": "Which year",
+            "say": "The next year, or this year again: the department publishes circulars all year, so a re-check can move a due date. A reminder shows when a re-check is due.",
+            "target": "#tw-ay"
           },
           {
             "title": "Fetch",
-            "say": "Pick the new year and fetch: Gemini reads official sources only and proposes every figure in the same shape.",
-            "target": "#tw-fetch|main"
+            "say": "Pick Gemini or OpenAI and fetch: it searches official sources and proposes every figure in the same shape. It uses the owner's own AI key.",
+            "target": "#tw-go|#tw-fetch"
+          },
+          {
+            "title": "At a glance",
+            "say": "How many figures there are, how many changed, how many are the same, and how many are not announced yet.",
+            "target": ".sf-kpis"
           },
           {
             "title": "Compare",
-            "say": "Each figure side by side - this year's and the new year's, what changed, and the source page for each.",
-            "target": "#tw-table|main"
+            "say": "Each figure side by side - the live year's and the new one's, what changed marked, and the source page for each.",
+            "target": "#tw-table"
+          },
+          {
+            "title": "Only changes",
+            "say": "Show only what changed.",
+            "target": "#tw-only"
+          },
+          {
+            "title": "Edit by hand",
+            "say": "A figure the AI got wrong or could not find: type the right one. It is marked as edited.",
+            "target": "[data-edit]"
           },
           {
             "title": "Apply",
-            "say": "Tick what is right, edit anything by hand, then apply. Last year's slabs stay for past years, and every chip keeps its History.",
-            "target": "#tw-apply|main"
+            "say": "Tick what is right, then apply. The figures go into the rules with History; last year's slabs stay for past years.",
+            "target": "#tw-apply"
+          },
+          {
+            "title": "Changes it cannot apply",
+            "say": "A new rule that is not a figure - a new fee, a new form - is listed here, to be built.",
+            "target": "section.card:has(.tw-new)|#tw-table"
+          },
+          {
+            "title": "Sources",
+            "say": "The pages the AI read, to check for yourself.",
+            "target": "section.card:has(.tw-pages)|#tw-table"
+          },
+          {
+            "title": "Rule book",
+            "say": "Every rule {product} works by, written out in one book.",
+            "target": "#tw-head a.btn|#tw-head"
           }
         ]
       }

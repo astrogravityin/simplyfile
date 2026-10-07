@@ -126,4 +126,73 @@ s26 = "\n".join([
     "^^1^194A^31-Mar-2026^F^15-May-2026^-^62000.00^6200.00^6200.00",
 ])
 (OUT / "04 26AS - ZZDPK0042Q - AY 2026-27.txt").write_text(s26, encoding="utf-8")
-print("wrote", ", ".join(sorted(p.name for p in OUT.iterdir())))
+
+
+# --- 2026-10-07, showcase parts 9-11: a CAMS capital-gains CSV and a bank statement for the same person; the employer's Form 16
+# issued again (the "already here - replace it?" question); an HUF and a consultant who start from their pre-filled JSON --------
+def csv(rows: list[list[str]]) -> bytes:
+    return ("\n".join(",".join(f'"{c}"' for c in r) for r in rows) + "\n").encode()
+
+
+(OUT / "05 CAMS capital gains - ZZDPK0042Q - FY 2025-26.csv").write_bytes(csv([
+    ["Consolidated Capital Gains Statement - Demo Registrar - FY 2025-26 - ANIL KUMAR DEMO - ZZDPK0042Q"], [],
+    ["Scheme Name", "ISIN", "Category", "Units", "Purchase Date", "Purchase Value", "NAV as on 31/01/2018", "Redemption Date", "Redemption Amount", "STT"],
+    ["Demo Bluechip Fund - Growth", "INF000Z01011", "Equity", "800", "15/06/2017", "80,000.00", "150.00", "10/09/2025", "2,40,000.00", "2"],
+    ["Demo Flexicap Fund - Growth", "INF000Z01029", "Equity", "400", "12/03/2020", "40,000.00", "", "10/09/2025", "1,10,000.00", "1"],
+    ["Demo Midcap Fund - Growth", "INF000Z01037", "Equity", "200", "10/01/2025", "40,000.00", "", "10/08/2025", "52,000.00", "1"],
+    ["Demo Gilt Fund - Growth", "INF000Z01052", "Debt", "100", "10/01/2021", "2,00,000.00", "", "01/12/2025", "2,40,000.00", "0"],
+    ["Grand Total", "", "", "", "", "3,60,000.00", "", "", "6,42,000.00", ""]]))
+BANK = [["Date", "Narration", "Chq/Ref No", "Withdrawal Amt", "Deposit Amt", "Closing Balance"],
+        ["01/04/2025", "OPENING BALANCE", "", "", "", "2,10,000.00"],
+        ["30/04/2025", "NEFT CR-DEMO SOFTWARE PVT LTD-SALARY APR", "S1", "", "1,10,000.00", "3,20,000.00"],
+        ["05/05/2025", "UPI-DEMO GROCER", "U1", "4,200.00", "", "3,15,800.00"],
+        ["30/06/2025", "INT.PD:0000000000:01-04-2025 TO 30-06-2025", "", "", "4,600.00", "3,20,400.00"],
+        ["10/09/2025", "NEFT CR-DEMO REGISTRAR-REDEMPTION", "R1", "", "3,50,000.00", "6,70,400.00"],
+        ["30/09/2025", "INT.PD:0000000000:01-07-2025 TO 30-09-2025", "", "", "4,600.00", "6,75,000.00"],
+        ["15/12/2025", "TRF TO SELF A/C DEMO FD", "", "3,00,000.00", "", "3,75,000.00"],
+        ["31/12/2025", "INT.PD:0000000000:01-10-2025 TO 31-12-2025", "", "", "4,600.00", "3,79,600.00"],
+        ["31/03/2026", "INT.PD:0000000000:01-01-2026 TO 31-03-2026", "", "", "4,600.00", "3,84,200.00"]]
+(OUT / "06 Bank statement - Demo Bank - FY 2025-26.csv").write_bytes(csv(BANK))
+
+AGAIN = OUT.parent / "self-again"       # the employer sends Form 16 again, corrected: same figures, a later date
+AGAIN.mkdir(exist_ok=True)
+(AGAIN / "Form 16 - Demo Software - reissued.pdf").write_bytes(pdf([x.replace("Last updated on 10-Jun-2026", "Last updated on 20-Jun-2026") for x in f16]))
+
+
+def prefill_of(first: str, last: str, pan: str, dob: str, n: int, sal: list, oth: list, interest: dict) -> dict:
+    return {"personalInfo": {"assesseeName": {"firstName": first, "surNameOrOrgName": last}, "pan": pan, "dob": dob,
+                             "address": {"residenceNo": f"Flat {n}, Demo Residency", "roadOrStreet": "Demo Road", "localityOrArea": "Madhapur",
+                                         "cityOrTownOrDistrict": "Hyderabad", "stateCode": "36", "countryCode": "91", "pinCode": 500081,
+                                         "countryCodeMobile": 91, "mobileNo": 9000000000 + n, "emailAddress": f"demo{n}@demo.example"},
+                             "filingStatus": {"residentialStatus": "RES"}},
+            "form26as": {"tdsOnSalaries": {"tdsOnSalary": sal}, "tdsOnOthThanSals": {"tdSonOthThanSal": [
+                {"employerOrDeductorOrCollectDetl": {"tan": t, "employerOrDeductorOrCollecterName": nm}, "amtForTaxDeduct": a, "totTDSOnAmtPaid": x,
+                 "claimOutOfTotTDSOnAmtPaid": x, "tdsSection": s} for t, nm, a, x, s in oth]}, "taxPayments": {"taxPayment": []}},
+            "insights": interest,
+            "bankAccountDtls": [{"addtnlBankDetails": [{"ifsccode": f"DEMO00000{n}", "bankName": "DEMO BANK LIMITED", "bankAccountNo": f"00{n}00{n}00{n}", "useForRefund": True}]}]}
+
+
+HUF = OUT.parent / "huf"                # a family HUF: deposits in the HUF's name; the Karta signs
+HUF.mkdir(exist_ok=True)
+(HUF / "Pre-filled JSON - ZZDHF0045L - AY 2026-27.json").write_text(json.dumps(prefill_of(
+    "", "DEMO FAMILY HUF", "ZZDHF0045L", "1990-04-01", 45, [], [(BANK_TAN, "DEMO BANK LIMITED", 840000, 84000, "194A")],
+    {"intrstFrmSavingBank": 21000, "intrstFrmTermDeposit": 840000}), indent=1), encoding="utf-8")
+
+KAV = OUT.parent / "kavya"              # a consultant with no Form 16: fees from clients, TDS under 194J, her bank statement
+KAV.mkdir(exist_ok=True)
+(KAV / "Pre-filled JSON - ZZDPC0044K - AY 2026-27.json").write_text(json.dumps(prefill_of(
+    "KAVYA", "DEMO CONSULTANT", "ZZDPC0044K", "1985-05-05", 44, [],
+    [("HYDD00091C", "DEMO CLIENT ONE PRIVATE LIMITED", 900000, 90000, "194J"), ("HYDD00092D", "DEMO CLIENT TWO LLP", 600000, 60000, "194J")],
+    {"intrstFrmSavingBank": 9200}), indent=1), encoding="utf-8")
+(KAV / "Bank statement - Demo Bank - Kavya - FY 2025-26.csv").write_bytes(csv([
+    ["Date", "Narration", "Chq/Ref No", "Withdrawal Amt", "Deposit Amt", "Closing Balance"],
+    ["01/04/2025", "NEFT CR-DEMO CLIENT ONE PVT LTD-INV 101", "N1", "", "4,05,000.00", "4,05,000.00"],
+    ["15/04/2025", "UPI-DEMO GROCER", "U1", "3,000.00", "", "4,02,000.00"],
+    ["30/06/2025", "INT.PD:0000000000:01-04-2025 TO 30-06-2025", "", "", "2,300.00", "4,04,300.00"],
+    ["05/07/2025", "BY CASH DEPOSIT CDM", "", "", "60,000.00", "4,64,300.00"],
+    ["12/08/2025", "IMPS-DEMO CLIENT TWO LLP-FEES", "I2", "", "5,40,000.00", "10,04,300.00"],
+    ["20/11/2025", "NEFT CR-DEMO CLIENT ONE PVT LTD-INV 117", "N2", "", "4,05,000.00", "14,09,300.00"],
+    ["10/01/2026", "NEFT CR-DEMO CLIENT THREE-WORKSHOP", "N3", "", "2,40,000.00", "16,49,300.00"],
+    ["31/03/2026", "INT.PD:0000000000:01-01-2026 TO 31-03-2026", "", "", "2,300.00", "16,51,600.00"]]))
+for d in (OUT, AGAIN, HUF, KAV):
+    print("wrote", d.name + ":", ", ".join(sorted(p.name for p in d.iterdir())))

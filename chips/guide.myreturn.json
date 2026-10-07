@@ -16,7 +16,7 @@
     {
       "name": "lede",
       "type": "long",
-      "default": "Your own return, ITR-1 or ITR-2: drop in your documents, and {product} reads them, checks them against each other and works out both regimes.",
+      "default": "Your own return - ITR-1, 2, 3 or 4, for yourself or a family HUF. Start from your documents: {product} reads them, checks them against each other, works out both regimes and makes the department's JSON.",
       "label": "lede"
     },
     {
@@ -28,7 +28,7 @@
     {
       "name": "minutes",
       "type": "number",
-      "default": 3,
+      "default": 7,
       "label": "minutes"
     },
     {
@@ -38,47 +38,184 @@
         {
           "title": "Five steps",
           "say": "Gather, check, choose, review, file. Each step ticks itself off as it is done, and you can click any step to go back to it.",
-          "target": ".mr-rail-card|main"
+          "target": ".mr-rail-card"
+        },
+        {
+          "title": "Start from documents",
+          "say": "No client to add first. Drop the pre-filled JSON or a return already filed, and the person - or the HUF - is made from it: PAN, name, date of birth. A CA firm sees its people here; you go straight to your own return.",
+          "target": "#mr-new|.mr-pick|.mr-rail-card"
+        },
+        {
+          "title": "Keep these handy",
+          "say": "A checklist of what to have before you start. Each line ticks itself when the document is in.",
+          "target": ".mr-ready",
+          "open": ".mr-node[data-step='gather']"
+        },
+        {
+          "title": "Where each document comes from",
+          "say": "Who issues each document and what it gives your return: Form 16 from your employer; the AIS, TIS and 26AS from the department; a capital-gains statement from CAMS or your broker; your bank statement.",
+          "target": "details.mr-how:has(.mr-src-table)",
+          "open": ".mr-node[data-step='gather']"
         },
         {
           "title": "Drop in your documents",
-          "say": "Start with the pre-filled JSON from the e-filing portal, then the AIS and Form 16 from each employer. A locked PDF opens with your PAN and date of birth.",
-          "target": "#mr-file|.mr-panel|main"
+          "say": "PDF, Excel, CSV or JSON: the pre-filled JSON, Form 16 from each employer, the AIS, TIS and 26AS, a CAMS or broker statement, a bank statement, last year's filed return.",
+          "target": "[data-drop='mr-file']",
+          "open": ".mr-node[data-step='gather']"
+        },
+        {
+          "title": "Locked PDFs",
+          "say": "An AIS or 26AS PDF opens with its password - your PAN in small letters and your date of birth. The eye shows what you typed.",
+          "target": ".mr-pw",
+          "open": ".mr-node[data-step='gather']"
         },
         {
           "title": "What each one gave",
-          "say": "Every document shows what was read from it - salary, tax deducted, interest - and, if you do not have it yet, how to get it.",
-          "target": ".mr-dgrid|main"
+          "say": "Every document shows what was read from it - salary, tax deducted, interest, each sale - and, if you do not have it yet, how to get it. Drop the same kind again and you are asked first: replace it, or keep both.",
+          "target": ".mr-dgrid",
+          "open": ".mr-node[data-step='gather']"
+        },
+        {
+          "title": "History",
+          "say": "Every figure you change and every document you replace is in History, with who and when. Old versions are kept, ready to download.",
+          "target": "[data-history]"
         },
         {
           "title": "Your return at a glance",
           "say": "Total income, tax, and the refund due or the amount to pay - kept up to date with every document and every figure.",
-          "target": ".mr-glance|main"
+          "target": ".mr-glance"
         },
         {
           "title": "Do the documents agree?",
           "say": "Form 16's tax deducted beside 26AS, and salary and interest beside the AIS. A gap is shown to you before the department finds it.",
-          "target": ".mr-tmap|.mr-panel|main"
+          "target": ".mr-tmap|.mr-chk",
+          "open": ".mr-node[data-step='check']"
         },
         {
           "title": "New or old regime",
-          "say": "Both regimes worked out side by side, and the cheaper one marked. After the due date only the new regime is open, and the screen says so.",
-          "target": ".mr-rgs|.mr-panel|main"
+          "say": "Both regimes worked out in full, the cheaper one marked. Pick either - the other stays one click away.",
+          "target": ".mr-rgs|.mr-regs",
+          "open": ".mr-node[data-step='choose']"
         },
         {
           "title": "From income to tax",
-          "say": "Income, what comes off it, what is taxed and the tax - the whole computation in one picture.",
-          "target": ".mr-water|main"
+          "say": "Gross income, what is exempt, the deductions, the taxable income and the tax - step by step.",
+          "target": ".mr-water",
+          "open": ".mr-node[data-step='choose']"
         },
         {
-          "title": "Review every figure",
-          "say": "Each figure carries the document it came from. Type over any of them; your figure wins, and is marked as yours.",
-          "target": ".mr-panel|main"
+          "title": "Salary",
+          "say": "Each employer's figures from Form 16, with the source beside them. Type over anything - your own figure is marked as yours.",
+          "target": "section.card:has(#mr-emp-add)",
+          "open": ".mr-node[data-step='review']"
+        },
+        {
+          "title": "Residential status",
+          "say": "Days in India this year and the years before decide resident, not ordinarily resident or non-resident - and so which income counts.",
+          "target": "section.card:has(#q-days_fy)",
+          "open": ".mr-node[data-step='review']"
+        },
+        {
+          "title": "Salary arrears",
+          "say": "Arrears for an earlier year: each year's income and regime, and the relief under section 89 worked out, with a reminder to file Form 10E.",
+          "target": "section.card:has(#mr-ar-add)",
+          "open": ".mr-node[data-step='review']"
+        },
+        {
+          "title": "Income from outside India",
+          "say": "Foreign salary, interest or rent, by country, with the tax paid there - relief under the treaty, or section 91 without one.",
+          "target": "section.card:has(#mr-fi-add)",
+          "open": ".mr-node[data-step='review']"
+        },
+        {
+          "title": "Foreign assets",
+          "say": "A resident's bank accounts, shares and property abroad, for Schedule FA.",
+          "target": "section.card:has(#mr-fa-add)",
+          "open": ".mr-node[data-step='review']"
+        },
+        {
+          "title": "Clubbing",
+          "say": "Your spouse's or minor child's income that the law adds to yours - with the exemption for each child.",
+          "target": "section.card:has(#mr-cl-add)",
+          "open": ".mr-node[data-step='review']"
+        },
+        {
+          "title": "House property",
+          "say": "Self-occupied or let out, rent, municipal tax and loan interest. A co-owned house is taken by your share, and interest before the house was finished in five parts.",
+          "target": "section.card:has(#mr-house-add)",
+          "open": ".mr-node[data-step='review']"
+        },
+        {
+          "title": "Business or profession",
+          "say": "Presumptive income under 44AD, 44ADA or 44AE, or your own profit and loss. Receipts can come from your bank statement. The form follows: ITR-4, or ITR-3.",
+          "target": "section.card:has(#b-kind)",
+          "open": ".mr-node[data-step='review']"
+        },
+        {
+          "title": "Other income",
+          "say": "Savings and deposit interest, dividends, family pension - from the AIS, or typed.",
+          "target": "section.card:has(#e-other-savings)",
+          "open": ".mr-node[data-step='review']"
+        },
+        {
+          "title": "Winnings and crypto",
+          "say": "Lottery and online games, and crypto or other virtual digital assets - taxed at thirty percent, a crypto loss set off against nothing.",
+          "target": "section.card:has(#mr-vda-add)",
+          "open": ".mr-node[data-step='review']"
+        },
+        {
+          "title": "Tax you paid yourself",
+          "say": "Advance tax and self-assessment tax, with the BSR code and challan number - or read from the AIS.",
+          "target": "section.card:has(#mr-paid-add)",
+          "open": ".mr-node[data-step='review']"
+        },
+        {
+          "title": "Capital gains",
+          "say": "Every sale from a CAMS or broker statement, or typed: shares and funds with grandfathering, and a house or land with the cheaper of the two rates. Exemptions under 54, 54EC and 54F.",
+          "target": "section.card:has(#mr-cg-add)",
+          "open": ".mr-node[data-step='review']"
+        },
+        {
+          "title": "Losses brought forward",
+          "say": "Losses from earlier years, set off this year and carried on - or filled from last year's filed return.",
+          "target": "section.card:has(#mr-loss-add)",
+          "open": ".mr-node[data-step='review']"
+        },
+        {
+          "title": "Gifts",
+          "say": "Gifts of money or property: from a relative or on your wedding they are free; from others, over fifty thousand in a year is income.",
+          "target": "section.card:has(#mr-gift-add)",
+          "open": ".mr-node[data-step='review']"
+        },
+        {
+          "title": "Deductions",
+          "say": "80C to 80G, and more for the old regime: 80DD, 80DDB, 80EE, 80EEA, 80EEB, 80GG and 80GGC, with the details each schedule asks for.",
+          "target": "section.card:has(#e-via-c80c)",
+          "open": ".mr-node[data-step='review']"
+        },
+        {
+          "title": "A few questions",
+          "say": "Contact details for the return, farm income, and for an HUF the Karta who signs it.",
+          "target": "section.card:has(#q-father)",
+          "open": ".mr-node[data-step='review']"
+        },
+        {
+          "title": "Already filed?",
+          "say": "Once filed, note the date and acknowledgement - and compare what was filed with what {product} worked out.",
+          "target": "section.card:has(#mr-filed-on)",
+          "open": ".mr-node[data-step='file']"
         },
         {
           "title": "File it",
-          "say": "ITR-1 or ITR-2 is picked for you, and the return is checked against the department's own schema. Download it and upload it on the e-filing portal.",
-          "target": "#mr-json|.mr-panel|main"
+          "say": "Download the department's JSON for ITR-1, 2, 3 or 4, checked against its schema, and upload it on the e-filing portal.",
+          "target": "#mr-json|.mr-file",
+          "open": ".mr-node[data-step='file']"
+        },
+        {
+          "title": "Updated return",
+          "say": "Missed something in an earlier year? The updated return, ITR-U: the extra tax, interest and the additional tax worked out, and whether you can file one at all.",
+          "target": "section.card:has([data-iurow])",
+          "open": ".mr-node[data-step='file']"
         }
       ],
       "label": "steps"
@@ -95,62 +232,199 @@
     }
   },
   "returns": "record",
-  "version": 1,
+  "version": 4,
   "status": "published",
-  "description_nl": "2026-10-06: the My return walk - the five steps, the documents, the checks, the two regimes, the review and the file; tours/sf-myreturn.json says the same.",
+  "description_nl": "2026-10-06: the My return walk - the five steps, the documents, the checks, the two regimes, the review and the file; tours/sf-myreturn.json says the same. 2026-10-07: rewritten for what shipped on 6-7 October (tools/make_guides_wave4.py).",
   "test_cases": [
     {
       "args": {},
       "expect_value": {
         "title": "My return",
-        "lede": "Your own return, ITR-1 or ITR-2: drop in your documents, and {product} reads them, checks them against each other and works out both regimes.",
+        "lede": "Your own return - ITR-1, 2, 3 or 4, for yourself or a family HUF. Start from your documents: {product} reads them, checks them against each other, works out both regimes and makes the department's JSON.",
         "icon": "user",
-        "minutes": 3,
+        "minutes": 7,
         "steps": [
           {
             "title": "Five steps",
             "say": "Gather, check, choose, review, file. Each step ticks itself off as it is done, and you can click any step to go back to it.",
-            "target": ".mr-rail-card|main"
+            "target": ".mr-rail-card"
+          },
+          {
+            "title": "Start from documents",
+            "say": "No client to add first. Drop the pre-filled JSON or a return already filed, and the person - or the HUF - is made from it: PAN, name, date of birth. A CA firm sees its people here; you go straight to your own return.",
+            "target": "#mr-new|.mr-pick|.mr-rail-card"
+          },
+          {
+            "title": "Keep these handy",
+            "say": "A checklist of what to have before you start. Each line ticks itself when the document is in.",
+            "target": ".mr-ready",
+            "open": ".mr-node[data-step='gather']"
+          },
+          {
+            "title": "Where each document comes from",
+            "say": "Who issues each document and what it gives your return: Form 16 from your employer; the AIS, TIS and 26AS from the department; a capital-gains statement from CAMS or your broker; your bank statement.",
+            "target": "details.mr-how:has(.mr-src-table)",
+            "open": ".mr-node[data-step='gather']"
           },
           {
             "title": "Drop in your documents",
-            "say": "Start with the pre-filled JSON from the e-filing portal, then the AIS and Form 16 from each employer. A locked PDF opens with your PAN and date of birth.",
-            "target": "#mr-file|.mr-panel|main"
+            "say": "PDF, Excel, CSV or JSON: the pre-filled JSON, Form 16 from each employer, the AIS, TIS and 26AS, a CAMS or broker statement, a bank statement, last year's filed return.",
+            "target": "[data-drop='mr-file']",
+            "open": ".mr-node[data-step='gather']"
+          },
+          {
+            "title": "Locked PDFs",
+            "say": "An AIS or 26AS PDF opens with its password - your PAN in small letters and your date of birth. The eye shows what you typed.",
+            "target": ".mr-pw",
+            "open": ".mr-node[data-step='gather']"
           },
           {
             "title": "What each one gave",
-            "say": "Every document shows what was read from it - salary, tax deducted, interest - and, if you do not have it yet, how to get it.",
-            "target": ".mr-dgrid|main"
+            "say": "Every document shows what was read from it - salary, tax deducted, interest, each sale - and, if you do not have it yet, how to get it. Drop the same kind again and you are asked first: replace it, or keep both.",
+            "target": ".mr-dgrid",
+            "open": ".mr-node[data-step='gather']"
+          },
+          {
+            "title": "History",
+            "say": "Every figure you change and every document you replace is in History, with who and when. Old versions are kept, ready to download.",
+            "target": "[data-history]"
           },
           {
             "title": "Your return at a glance",
             "say": "Total income, tax, and the refund due or the amount to pay - kept up to date with every document and every figure.",
-            "target": ".mr-glance|main"
+            "target": ".mr-glance"
           },
           {
             "title": "Do the documents agree?",
             "say": "Form 16's tax deducted beside 26AS, and salary and interest beside the AIS. A gap is shown to you before the department finds it.",
-            "target": ".mr-tmap|.mr-panel|main"
+            "target": ".mr-tmap|.mr-chk",
+            "open": ".mr-node[data-step='check']"
           },
           {
             "title": "New or old regime",
-            "say": "Both regimes worked out side by side, and the cheaper one marked. After the due date only the new regime is open, and the screen says so.",
-            "target": ".mr-rgs|.mr-panel|main"
+            "say": "Both regimes worked out in full, the cheaper one marked. Pick either - the other stays one click away.",
+            "target": ".mr-rgs|.mr-regs",
+            "open": ".mr-node[data-step='choose']"
           },
           {
             "title": "From income to tax",
-            "say": "Income, what comes off it, what is taxed and the tax - the whole computation in one picture.",
-            "target": ".mr-water|main"
+            "say": "Gross income, what is exempt, the deductions, the taxable income and the tax - step by step.",
+            "target": ".mr-water",
+            "open": ".mr-node[data-step='choose']"
           },
           {
-            "title": "Review every figure",
-            "say": "Each figure carries the document it came from. Type over any of them; your figure wins, and is marked as yours.",
-            "target": ".mr-panel|main"
+            "title": "Salary",
+            "say": "Each employer's figures from Form 16, with the source beside them. Type over anything - your own figure is marked as yours.",
+            "target": "section.card:has(#mr-emp-add)",
+            "open": ".mr-node[data-step='review']"
+          },
+          {
+            "title": "Residential status",
+            "say": "Days in India this year and the years before decide resident, not ordinarily resident or non-resident - and so which income counts.",
+            "target": "section.card:has(#q-days_fy)",
+            "open": ".mr-node[data-step='review']"
+          },
+          {
+            "title": "Salary arrears",
+            "say": "Arrears for an earlier year: each year's income and regime, and the relief under section 89 worked out, with a reminder to file Form 10E.",
+            "target": "section.card:has(#mr-ar-add)",
+            "open": ".mr-node[data-step='review']"
+          },
+          {
+            "title": "Income from outside India",
+            "say": "Foreign salary, interest or rent, by country, with the tax paid there - relief under the treaty, or section 91 without one.",
+            "target": "section.card:has(#mr-fi-add)",
+            "open": ".mr-node[data-step='review']"
+          },
+          {
+            "title": "Foreign assets",
+            "say": "A resident's bank accounts, shares and property abroad, for Schedule FA.",
+            "target": "section.card:has(#mr-fa-add)",
+            "open": ".mr-node[data-step='review']"
+          },
+          {
+            "title": "Clubbing",
+            "say": "Your spouse's or minor child's income that the law adds to yours - with the exemption for each child.",
+            "target": "section.card:has(#mr-cl-add)",
+            "open": ".mr-node[data-step='review']"
+          },
+          {
+            "title": "House property",
+            "say": "Self-occupied or let out, rent, municipal tax and loan interest. A co-owned house is taken by your share, and interest before the house was finished in five parts.",
+            "target": "section.card:has(#mr-house-add)",
+            "open": ".mr-node[data-step='review']"
+          },
+          {
+            "title": "Business or profession",
+            "say": "Presumptive income under 44AD, 44ADA or 44AE, or your own profit and loss. Receipts can come from your bank statement. The form follows: ITR-4, or ITR-3.",
+            "target": "section.card:has(#b-kind)",
+            "open": ".mr-node[data-step='review']"
+          },
+          {
+            "title": "Other income",
+            "say": "Savings and deposit interest, dividends, family pension - from the AIS, or typed.",
+            "target": "section.card:has(#e-other-savings)",
+            "open": ".mr-node[data-step='review']"
+          },
+          {
+            "title": "Winnings and crypto",
+            "say": "Lottery and online games, and crypto or other virtual digital assets - taxed at thirty percent, a crypto loss set off against nothing.",
+            "target": "section.card:has(#mr-vda-add)",
+            "open": ".mr-node[data-step='review']"
+          },
+          {
+            "title": "Tax you paid yourself",
+            "say": "Advance tax and self-assessment tax, with the BSR code and challan number - or read from the AIS.",
+            "target": "section.card:has(#mr-paid-add)",
+            "open": ".mr-node[data-step='review']"
+          },
+          {
+            "title": "Capital gains",
+            "say": "Every sale from a CAMS or broker statement, or typed: shares and funds with grandfathering, and a house or land with the cheaper of the two rates. Exemptions under 54, 54EC and 54F.",
+            "target": "section.card:has(#mr-cg-add)",
+            "open": ".mr-node[data-step='review']"
+          },
+          {
+            "title": "Losses brought forward",
+            "say": "Losses from earlier years, set off this year and carried on - or filled from last year's filed return.",
+            "target": "section.card:has(#mr-loss-add)",
+            "open": ".mr-node[data-step='review']"
+          },
+          {
+            "title": "Gifts",
+            "say": "Gifts of money or property: from a relative or on your wedding they are free; from others, over fifty thousand in a year is income.",
+            "target": "section.card:has(#mr-gift-add)",
+            "open": ".mr-node[data-step='review']"
+          },
+          {
+            "title": "Deductions",
+            "say": "80C to 80G, and more for the old regime: 80DD, 80DDB, 80EE, 80EEA, 80EEB, 80GG and 80GGC, with the details each schedule asks for.",
+            "target": "section.card:has(#e-via-c80c)",
+            "open": ".mr-node[data-step='review']"
+          },
+          {
+            "title": "A few questions",
+            "say": "Contact details for the return, farm income, and for an HUF the Karta who signs it.",
+            "target": "section.card:has(#q-father)",
+            "open": ".mr-node[data-step='review']"
+          },
+          {
+            "title": "Already filed?",
+            "say": "Once filed, note the date and acknowledgement - and compare what was filed with what {product} worked out.",
+            "target": "section.card:has(#mr-filed-on)",
+            "open": ".mr-node[data-step='file']"
           },
           {
             "title": "File it",
-            "say": "ITR-1 or ITR-2 is picked for you, and the return is checked against the department's own schema. Download it and upload it on the e-filing portal.",
-            "target": "#mr-json|.mr-panel|main"
+            "say": "Download the department's JSON for ITR-1, 2, 3 or 4, checked against its schema, and upload it on the e-filing portal.",
+            "target": "#mr-json|.mr-file",
+            "open": ".mr-node[data-step='file']"
+          },
+          {
+            "title": "Updated return",
+            "say": "Missed something in an earlier year? The updated return, ITR-U: the extra tax, interest and the additional tax worked out, and whether you can file one at all.",
+            "target": "section.card:has([data-iurow])",
+            "open": ".mr-node[data-step='file']"
           }
         ]
       }
