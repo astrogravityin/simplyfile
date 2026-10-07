@@ -209,12 +209,19 @@ ${d.steps ? `  <section class="steps" id="how"><div class="wrap">
 
   ${films ? `  <section class="theatre" id="watch"><div class="wrap">
     ${head(d.theatre)}
+    ${d.theatre.search ? `<div class="wfind" role="search">
+      <label class="sr" for="sc-wq">${esc(d.theatre.search)}</label>
+      <input id="sc-wq" type="search" placeholder="${esc(d.theatre.search)}" autocomplete="off" enterkeyhint="search"/>
+      <span class="wcount" id="sc-wcount" aria-live="polite"></span>
+      <div class="wtags">${(d.theatre.topics || []).map((t) => `<button type="button" class="wtag" data-tag="${esc(t)}">${esc(t)}</button>`).join('')}</div>
+    </div>` : ''}
     <div class="stage">
       <div class="list" role="listbox" aria-label="${esc(d.theatre.playlist)}">
-        ${groups.map((g) => `<h3>${esc(g.title)}</h3><p class="gl">${esc(g.line)}</p>
+        ${groups.map((g) => `<h3 data-g="${esc(g.id)}">${esc(g.title)}</h3><p class="gl" data-g="${esc(g.id)}">${esc(g.line)}</p>
           ${chs.map((c, i) => (c.group !== g.id ? '' : `<button type="button" class="ch" role="option" data-ch="${i}">
             <span class="th"><img loading="lazy" src="${media(c.key, 'jpg')}" alt=""/><span class="n">${i + 1}</span><i></i></span>
             <span><b>${esc(c.title)}</b><small>${esc(c.module)}</small></span></button>`)).join('')}`).join('')}
+        <p class="wnone" id="sc-wnone" hidden>${esc(d.theatre.none || '')}</p>
       </div>
       <div class="player">
         <div class="screen">
@@ -223,7 +230,7 @@ ${d.steps ? `  <section class="steps" id="how"><div class="wrap">
         </div>
         <div class="bar" aria-hidden="true"><i id="sc-bar"></i></div>
         <div class="now">
-          <div><span class="k" id="sc-of"></span><h3 id="sc-title"></h3><p id="sc-line"></p><span class="mod" id="sc-mod"></span></div>
+          <div><span class="k" id="sc-of"></span><h3 id="sc-title"></h3><p id="sc-line"></p><span class="mod" id="sc-mod"></span><span class="wtags now-tags" id="sc-tags"></span></div>
           <div class="ctrl">
             <button type="button" class="ic" data-step="-1" aria-label="${esc(d.theatre.prev)}">${icon('dleft', 16)} ${esc(d.theatre.prev)}</button>
             <button type="button" class="ic" data-step="1" aria-label="${esc(d.theatre.next)}">${esc(d.theatre.next)} ${icon('dright', 16)}</button>
@@ -351,6 +358,24 @@ ${d.faq ? `  <section class="faq" id="faq"><div class="wrap">
 
 // ------------------------------------------------------------------------------------------- the player and its list
 
+// Flexible find (2026-10-07 owner: "people want to find" a film like a short): every word typed must meet some word of
+// the film - its title, line, module, group, tags or moments - inside it, or one letter off (a typo, a plural).
+// ponytail: a linear scan over the chapters, fine to a few hundred films; an index if a site ever has thousands.
+const norm = (s) => String(s ?? '').toLowerCase().normalize('NFKD').replace(/\p{M}/gu, '').replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
+const nearWord = (a, b) => {                                // one letter added, dropped or changed
+  if (Math.abs(a.length - b.length) > 1) return false;
+  let i = 0; let j = 0; let miss = 0;
+  while (i < a.length && j < b.length) {
+    if (a[i] === b[j]) { i += 1; j += 1; continue; }
+    miss += 1;
+    if (miss > 1) return false;
+    if (a.length > b.length) i += 1; else if (b.length > a.length) j += 1; else { i += 1; j += 1; }
+  }
+  return miss + (a.length - i) + (b.length - j) <= 1;
+};
+const filmWords = (c, g) => norm([c.title, c.line, c.module, g && g.title, ...(c.tags || []), ...(c.marks || []).map((m) => m.title)].join(' ')).split(' ');
+const findsFilm = (words, q) => norm(q).split(' ').filter(Boolean).every((t) => words.some((w) => w.includes(t) || (t.length > 4 && nearWord(w, t))));
+
 function wirePlayer(d) {
   const chs = d.chapters;
   const video = document.getElementById('sc-video');
@@ -360,6 +385,31 @@ function wirePlayer(d) {
   const seen = new Set(store.get('seen', []));
   let at = Math.min(Math.max(0, store.get('at', 0)), chs.length - 1);
   auto.checked = store.get('auto', true);
+  // the films a find left (all of them with no find); Next, Previous, N/P and play-the-next step through these only
+  const q = document.getElementById('sc-wq');
+  const hay = chs.map((c) => filmWords(c, d.theatre.groups.find((g) => g.id === c.group)));
+  let shown = chs.map((_, i) => i);
+  const stepFrom = (k) => {
+    const p = shown.indexOf(at);
+    if (!shown.length) return at;
+    if (p < 0) return shown[0];
+    return shown[(p + k + shown.length) % shown.length];
+  };
+  const find = () => {
+    const text = q ? q.value : '';
+    shown = chs.map((_, i) => i).filter((i) => findsFilm(hay[i], text));
+    items.forEach((b) => { b.hidden = !shown.includes(Number(b.dataset.ch)); });
+    document.querySelectorAll('.list [data-g]').forEach((x) => { x.hidden = !shown.some((i) => chs[i].group === x.dataset.g); });
+    document.getElementById('sc-wnone').hidden = shown.length > 0;
+    const n = document.getElementById('sc-wcount');
+    if (n) n.textContent = norm(text) ? (d.theatre.found || '').replace('{n}', shown.length).replace('{total}', chs.length) : '';
+    document.querySelectorAll('.wfind [data-tag]').forEach((b) => b.classList.toggle('on', norm(b.dataset.tag) === norm(text)));
+    try {                                                   // a find can be shared: ?find=storyboard#watch
+      const u = new URL(location.href);
+      if (norm(text)) u.searchParams.set('find', text); else u.searchParams.delete('find');
+      history.replaceState(null, '', u);
+    } catch { /* a sandboxed page keeps its address */ }
+  };
 
   const mark = () => items.forEach((b) => { const i = Number(b.dataset.ch); b.classList.toggle('on', i === at); b.classList.toggle('seen', seen.has(chs[i].key)); b.setAttribute('aria-selected', i === at ? 'true' : 'false'); });
   const say = () => {
@@ -376,7 +426,10 @@ function wirePlayer(d) {
       const go = () => { video.currentTime = m.t; video.play().catch(() => {}); cover.hidden = true; };
       if (video.readyState >= 1) go(); else video.addEventListener('loadedmetadata', go, { once: true });
     }));
-    const nx = chs[at + 1];
+    const tg = document.getElementById('sc-tags');
+    if (tg) tg.innerHTML = d.theatre.search ? (c.tags || []).map((t) => `<button type="button" class="wtag" data-tag="${esc(t)}">${esc(t)}</button>`).join('') : '';
+    const nx = chs[stepFrom(1)];
+    if (nx === c) { document.getElementById('sc-next').innerHTML = ''; return; }
     document.getElementById('sc-next').innerHTML = nx ? `${esc(d.theatre.up_next)}: <b>${esc(nx.title)}</b> · ${esc(nx.module)}` : '';
   };
   const load = (i, play) => {
@@ -412,21 +465,35 @@ function wirePlayer(d) {
     seen.add(chs[at].key);
     store.set('seen', [...seen]);
     mark();
-    if (auto.checked && at < chs.length - 1) load(at + 1, true);
+    const p = shown.indexOf(at);
+    if (auto.checked && p >= 0 && p < shown.length - 1) load(shown[p + 1], true);
   });
   auto.addEventListener('change', () => store.set('auto', auto.checked));
   cover.addEventListener('click', () => { cover.hidden = true; video.play().catch(() => { cover.hidden = false; }); });
-  document.querySelectorAll('[data-step]').forEach((b) => b.addEventListener('click', () => load(at + Number(b.dataset.step), !video.paused || cover.hidden)));
+  document.querySelectorAll('[data-step]').forEach((b) => b.addEventListener('click', () => load(stepFrom(Number(b.dataset.step)), !video.paused || cover.hidden)));
+  if (q) {
+    q.addEventListener('input', find);
+    q.addEventListener('keydown', (e) => { if (e.key === 'Enter' && shown.length) { e.preventDefault(); load(shown[0], true); } });
+  }
   document.addEventListener('click', (e) => {
+    const tag = q && e.target.closest('[data-tag]');      // a tag finds every film that carries it; pressed again, clears
+    if (tag) {
+      q.value = norm(q.value) === norm(tag.dataset.tag) ? '' : tag.dataset.tag;
+      find();
+      if (!tag.closest('.wfind')) q.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
     const pick = e.target.closest('[data-ch]');
     if (pick) { load(Number(pick.dataset.ch), true); if (!pick.classList.contains('ch')) document.getElementById('watch').scrollIntoView({ behavior: 'smooth' }); return; }
     if (e.target.closest('[data-play-all]')) { document.getElementById('watch').scrollIntoView({ behavior: 'smooth' }); load(at, true); }
   });
   document.addEventListener('keydown', (e) => {
     if (e.target.closest('input, textarea')) return;
-    if (e.key === 'n' || e.key === 'N') load(at + 1, true);
-    if (e.key === 'p' || e.key === 'P') load(at - 1, true);
+    if (e.key === 'n' || e.key === 'N') load(stepFrom(1), true);
+    if (e.key === 'p' || e.key === 'P') load(stepFrom(-1), true);
   });
+  const asked = q && new URLSearchParams(location.search).get('find');
+  if (asked) { q.value = asked; find(); if (shown.length && !shown.includes(at)) at = shown[0]; }
   load(at, false);
 }
 

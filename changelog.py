@@ -228,7 +228,8 @@ def kept_file(cid: str, ay: str, kept_in: str, fid: str, v: int):
     return hit[0]
 
 
-lists.source("changes", listed, screen="clients")
+# 2026-10-07: a self-filer has My return, not Clients & years - their own History said "No such list" (listed() checks the client)
+lists.source("changes", listed, screen="clients|myreturn")
 
 
 if __name__ == "__main__":  # ponytail: a client edit and a replaced statement come out as one entry per field, named by the chip

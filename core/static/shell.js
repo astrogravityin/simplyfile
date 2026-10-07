@@ -200,11 +200,19 @@ function authPath() {
   return { code: `${base}-code`, password: `${base}-password`, done: `${base}-done` }[flow.step] || base;
 }
 
+/** "Powered by ValueStream" with its logo (2026-10-07 owner: every portal is a valuestream.in sub-domain). Words: ui.shell. */
+function poweredBy() {
+  if (!w('powered_name') || w('powered_name') === 'powered_name') return '';
+  return `<a class="powered" href="${esc(w('powered_href'))}" target="_blank" rel="noopener">
+    <img src="${BASE}/core-static/valuestream.png" width="18" height="18" alt="">${esc(w('powered_by'))} <b>${esc(w('powered_name'))}</b></a>`;
+}
+
 function authShell(inner) {
   return `<div class="gate">
     <aside class="pitch">
       <div class="mark">${config.logo(40)}<span>${esc(state.productName)}</span></div>
       ${config.pitch()}
+      ${poweredBy()}
     </aside>
     <div class="gateform"><form class="card" id="authform" novalidate>${inner}
       ${howtoButton('signin') ? `<p class="alt">${howtoButton('signin')}</p>` : ''}</form></div>
@@ -830,6 +838,7 @@ function shellView(route) {
           aria-label="${esc(w(folded ? 'expand_menu' : 'collapse_menu'))}" aria-expanded="${folded ? 'false' : 'true'}">${icon(folded ? 'dright' : 'dleft', 17)}</button></div>
       <div class="nav">${nav}</div>
       ${slot(config.navFoot) ? `<div class="foot">${slot(config.navFoot)}</div>` : ''}
+      ${poweredBy()}
     </nav>
     <main class="main">
       <div class="topbar">

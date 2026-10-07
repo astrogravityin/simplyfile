@@ -216,16 +216,17 @@ export async function myReturnPage(host) {
         b.setAttribute('aria-pressed', String(on)); b.setAttribute('aria-label', say); b.title = say; b.classList.toggle('is-on', on);
       };
       $('#mr-ai').onchange = (e) => put({ answers: { ai_ok: e.target.checked } }, true);
-      $('#mr-up').onclick = (e) => busy(e.currentTarget, async () => {
+      $('#mr-up').onclick = async (e) => {             // busy only while the server works - never over the "already here?" question
+        const btn = e.currentTarget;
         const f = $('#mr-file').files[0];
         if (!f) { toast(w('drop'), 'warn'); return; }
         const fd = new FormData(); fd.append('file', f); fd.append('password', $('#mr-pw').value);
         try {
-          const r = await sendDoc(url('/docs'), fd, f.name, ay);
+          const r = await sendDoc(url('/docs'), fd, f.name, ay, btn);
           if (!r) return;
           S.d = r; toast(w('read_done', { kind: w(`k_${S.d.added.kind}`) }), 'ok'); draw();
         } catch (err) { toast(err.message, 'bad', 10); }
-      });
+      };
       host.querySelectorAll('[data-del]').forEach((b) => { b.onclick = (e) => busy(e.currentTarget, async () => { try { S.d = await api(url(`/docs/${b.dataset.del}`), { method: 'DELETE' }); draw(); } catch (err) { toast(err.message, 'bad', 8); } }); });
     }
     host.querySelectorAll('[data-accept]').forEach((b) => { b.onclick = () => put({ accept: b.dataset.accept }); });
@@ -304,25 +305,27 @@ function pick(host, home, ay) {
       ${dropZone('mr-new', { accept: '.json,.pdf', title: w('drop'), hint: w('drop_hint') })}
       <div class="row tight" style="justify-content:flex-end"><button type="button" class="primary" id="mr-new-up">${icon('upload', 14)} ${esc(w('read'))}</button></div></section>`;
   wireDrops(host);
-  host.querySelector('#mr-new-up').onclick = (e) => busy(e.currentTarget, async () => {
+  host.querySelector('#mr-new-up').onclick = async (e) => {
+    const btn = e.currentTarget;
     const f = host.querySelector('#mr-new').files[0];
     if (!f) { toast(w('drop'), 'warn'); return; }
     const fd = new FormData(); fd.append('file', f);
     try {
-      const r = await sendDoc(`/api/myreturn/start/${encodeURIComponent(ay)}`, fd, f.name, ay);
+      const r = await sendDoc(`/api/myreturn/start/${encodeURIComponent(ay)}`, fd, f.name, ay, btn);
       if (!r) return;
       toast(r.said, 'ok'); location.hash = `#/myreturn?c=${encodeURIComponent(r.cid)}&ay=${encodeURIComponent(ay)}`;
     } catch (err) { toast(err.message, 'bad', 10); }
-  });
+  };
 }
 
 // --- "before we go on" (2026-10-06): a return already under way, or a second AIS / 26AS - asked, never assumed --------------
 const whenOf = (iso) => { const d = new Date(iso); return Number.isNaN(+d) ? '' : d.toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' }); };
 
-/** Send a document; when the server asks first (r.ask), put the question, send again with the answer. null = cancelled. */
-async function sendDoc(path, fd, fname, ay) {
+/** Send a document; when the server asks first (r.ask), put the question, send again with the answer. null = cancelled.
+ *  2026-10-07: the work window shows only while the server reads - it sat over the question while the person was answering. */
+async function sendDoc(path, fd, fname, ay, btn) {
   for (let i = 0; i < 3; i += 1) {
-    const r = await api(path, { method: 'POST', body: fd });
+    const r = await busy(btn, () => api(path, { method: 'POST', body: fd }));
     if (!r.ask) return r;
     const pick = await askFirst(r.ask, fname, ay);
     if (!pick) return null;

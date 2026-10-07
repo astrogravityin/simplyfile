@@ -128,13 +128,15 @@ s26 = "\n".join([
 (OUT / "04 26AS - ZZDPK0042Q - AY 2026-27.txt").write_text(s26, encoding="utf-8")
 
 
-# --- 2026-10-07, showcase parts 9-11: a CAMS capital-gains CSV and a bank statement for the same person; the employer's Form 16
+# --- 2026-10-07, showcase parts 9-11: a CAMS capital-gains CSV and a bank statement for the same person (self-more/); the employer's Form 16
 # downloaded again (the "already here - replace it?" question); an HUF and a consultant who start from their pre-filled JSON --------
 def csv(rows: list[list[str]]) -> bytes:
     return ("\n".join(",".join(f'"{c}"' for c in r) for r in rows) + "\n").encode()
 
 
-(OUT / "05 CAMS capital gains - ZZDPK0042Q - FY 2025-26.csv").write_bytes(csv([
+MORE = OUT.parent / "self-more"         # kept out of self/: tools/e2e_myreturn.py reads every file in self/
+MORE.mkdir(exist_ok=True)
+(MORE / "05 CAMS capital gains - ZZDPK0042Q - FY 2025-26.csv").write_bytes(csv([
     ["Consolidated Capital Gains Statement - Demo Registrar - FY 2025-26 - ANIL KUMAR DEMO - ZZDPK0042Q"], [],
     ["Scheme Name", "ISIN", "Category", "Units", "Purchase Date", "Purchase Value", "NAV as on 31/01/2018", "Redemption Date", "Redemption Amount", "STT"],
     ["Demo Bluechip Fund - Growth", "INF000Z01011", "Equity", "800", "15/06/2017", "80,000.00", "150.00", "10/09/2025", "2,40,000.00", "2"],
@@ -152,7 +154,7 @@ BANK = [["Date", "Narration", "Chq/Ref No", "Withdrawal Amt", "Deposit Amt", "Cl
         ["15/12/2025", "TRF TO SELF A/C DEMO FD", "", "3,00,000.00", "", "3,75,000.00"],
         ["31/12/2025", "INT.PD:0000000000:01-10-2025 TO 31-12-2025", "", "", "4,600.00", "3,79,600.00"],
         ["31/03/2026", "INT.PD:0000000000:01-01-2026 TO 31-03-2026", "", "", "4,600.00", "3,84,200.00"]]
-(OUT / "06 Bank statement - Demo Bank - FY 2025-26.csv").write_bytes(csv(BANK))
+(MORE / "06 Bank statement - Demo Bank - FY 2025-26.csv").write_bytes(csv(BANK))
 
 AGAIN = OUT.parent / "self-again"       # 26AS downloaded again later in the year (one per return: the "already here" question)
 AGAIN.mkdir(exist_ok=True)
@@ -196,5 +198,5 @@ KAV.mkdir(exist_ok=True)
     ["20/11/2025", "NEFT CR-DEMO CLIENT ONE PVT LTD-INV 117", "N2", "", "4,05,000.00", "14,09,300.00"],
     ["10/01/2026", "NEFT CR-DEMO CLIENT THREE-WORKSHOP", "N3", "", "2,40,000.00", "16,49,300.00"],
     ["31/03/2026", "INT.PD:0000000000:01-01-2026 TO 31-03-2026", "", "", "2,300.00", "16,51,600.00"]]))
-for d in (OUT, AGAIN, HUF, KAV):
+for d in (OUT, MORE, AGAIN, HUF, KAV):
     print("wrote", d.name + ":", ", ".join(sorted(p.name for p in d.iterdir())))

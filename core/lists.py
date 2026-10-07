@@ -28,7 +28,7 @@ SOURCES: dict[str, dict] = {}
 
 def source(list_id: str, rows: Callable[[dict, dict], list], fill: Callable[[dict, list, dict], list] | None = None,
            screen: str = "") -> None:
-    """`screen`: the screen whose people may read this list - /api/lists asks access.may before any row is built
+    """`screen`: the screen whose people may read this list ("a|b": the people of either) - /api/lists asks access.may before any row is built
     (2026-10-02 review: the route only knew "signed in", so a list of a screen someone is denied stayed readable)."""
     # 2026-09-30: a second module took the id of the framework's Storage list and silently replaced it - an id is one list
     # (a module run as its own self-check is "__main__" and its imported self at once - that is one module)
@@ -48,7 +48,7 @@ def page(list_id: str, user: dict, args: dict) -> dict:
     v, src = view(list_id), SOURCES[list_id]
     if src.get("screen"):
         from core import access  # noqa: PLC0415 - access registers its own lists here
-        if not access.may(user, src["screen"]):
+        if not any(access.may(user, sc) for sc in src["screen"].split("|")):   # "a|b": either screen's people (2026-10-07)
             raise HTTPException(403, engine.say("lists.messages", "no_list"))
     s = engine.run("lists.settings")
     sort = str(args.get("sort") or "")

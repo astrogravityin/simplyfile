@@ -5,7 +5,7 @@
      forward, gifts, winnings and crypto, tax paid, clubbing, s.89, farm income; ITR-2 JSON checked; ITR-U.  (selfer, after pre10.py)
  11  An HUF and a consultant, from a CA firm - start from documents, the Karta, 44ADA from the bank statement -> ITR-4, own P&L -> ITR-3.
  12  Tax rules - the owner's Compare and Apply on a saved, made-up draft (pre_taxwatch.py; no AI call).  (TOUR_LOGIN=admin)
-Demo documents: python tools/showcase/make_myreturn_demo.py (tools/tour_video/showcase/self, self-again, huf, kavya). All made up."""
+Demo documents: python tools/showcase/make_myreturn_demo.py (tools/tour_video/showcase/self, self-more, self-again, huf, kavya). All made up."""
 import pathlib as _pl; _R = str(_pl.Path(__file__).resolve().parents[2])  # the repo root
 import json
 import runpy
@@ -19,7 +19,7 @@ node = lambda s: click(f".mr-node[data-step='{s}']")    # noqa: E731
 SELF = "showcase/self/"
 F = {"pre": SELF + "01 Pre-filled JSON - ZZDPK0042Q - AY 2026-27.json", "f16": SELF + "02 Form 16 - Demo Software - AY 2026-27.pdf",
      "ais": SELF + "03 AIS - ZZDPK0042Q - FY 2025-26.pdf", "26as": SELF + "04 26AS - ZZDPK0042Q - AY 2026-27.txt",
-     "cams": SELF + "05 CAMS capital gains - ZZDPK0042Q - FY 2025-26.csv", "bank": SELF + "06 Bank statement - Demo Bank - FY 2025-26.csv",
+     "cams": "showcase/self-more/05 CAMS capital gains - ZZDPK0042Q - FY 2025-26.csv", "bank": "showcase/self-more/06 Bank statement - Demo Bank - FY 2025-26.csv",
      "again": "showcase/self-again/26AS - ZZDPK0042Q - AY 2026-27 - downloaded again.txt", "huf": "showcase/huf/Pre-filled JSON - ZZDHF0045L - AY 2026-27.json",
      "kavya": "showcase/kavya/Pre-filled JSON - ZZDPC0044K - AY 2026-27.json", "kbank": "showcase/kavya/Bank statement - Demo Bank - Kavya - FY 2025-26.csv"}
 
@@ -131,9 +131,9 @@ P11 = [S("Families and consultants", "Part eleven: My return at a CA firm, for a
        S("ITR-4", "Her nature of work, and her father's name for the return. The form follows: I T R 4, Sugam.",
          {"select": "#b-code", "value": "14001"}, {"wait": 2}, {"scroll_to": "#q-father"}, *typed("#q-father", "Demo Father"),
          {"scroll_to": "header.pagehead"}, O(highlight="header.pagehead .tag")),
-       S("Her own profit and loss", "If she keeps her own accounts instead - receipts, expenses and profit typed - it is I T R 3.",
-         {"scroll_to": "#b-kind"}, {"select": "#b-kind", "value": "profession"}, {"wait": 2}, {"scroll_to": "#b-expenses"},
-         *typed("#b-expenses", "620000"), O(highlight=card("#b-kind"))),
+       S("Her own profit and loss", "If she keeps her own accounts instead - her gross profit and expenses typed, the profit worked out - it is I T R 3.",
+         {"scroll_to": "#b-kind"}, {"select": "#b-kind", "value": "profession"}, {"wait": 2}, {"scroll_to": "#b-gp"},
+         *typed("#b-gp", "1650000"), *typed("#b-expenses", "620000"), O(highlight=card("#b-kind"))),
        S("ITR-3, checked", "File: I T R 3, made from My return and checked against the department's schema.", node("file"), {"wait_for": ".mr-form"},
          {"wait": 1}, O(highlight=".mr-form"), O(highlight="#mr-schema.mr-ok", timeout=12)),
        S(None, "Last, part twelve: the tax rules themselves.", {"wait": 1.5})]

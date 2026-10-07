@@ -104,6 +104,18 @@ section { padding: clamp(64px, 9vw, 112px) 0; }
 .list .gl { font-size: 13px; color: var(--on-night-2); margin: 0 10px 8px; line-height: 1.45; }
 .ch { display: grid; grid-template-columns: 86px 1fr; gap: 12px; align-items: center; width: 100%; text-align: left; background: transparent; border: 0; border-radius: var(--radius-s); padding: 8px; cursor: pointer; color: var(--on-night); position: relative; }
 .ch:hover { background: rgba(255, 255, 255, .06); }
+/* 2026-10-07 find a film: a search box, the site's topics and each film's own tags (words: chip theatre.search/found/none/topics) */
+.list [hidden] { display: none; }
+.wfind { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; margin: 0 0 18px; }
+.wfind input { flex: 1 1 320px; min-width: 0; border: 1px solid rgba(255, 255, 255, .34); background: rgba(255, 255, 255, .07); color: var(--on-night); border-radius: 999px; padding: 11px 18px; font: inherit; font-size: 15px; }
+.wfind input::placeholder { color: var(--on-night-2); opacity: 1; }
+.wcount { font-size: 13.5px; color: var(--on-night-2); }
+.wtags { display: flex; flex-wrap: wrap; gap: 8px; flex-basis: 100%; }
+.wtag { border: 1px solid rgba(255, 255, 255, .3); background: transparent; color: var(--on-night); border-radius: 999px; padding: 5px 12px; font-size: 13px; font-weight: 600; cursor: pointer; }
+.wtag:hover, .wtag.on { background: var(--saffron); border-color: var(--saffron); color: var(--night); }
+.now .now-tags { margin-top: 10px; gap: 6px; }
+.now .now-tags .wtag { font-size: 12px; padding: 3px 10px; }
+.wnone { color: var(--on-night-2); margin: 14px 10px; font-size: 14.5px; }
 .ch.on { background: linear-gradient(90deg, rgba(109, 94, 252, .32), rgba(109, 94, 252, .08)); box-shadow: inset 3px 0 0 var(--brand-2); }
 .ch .th { position: relative; aspect-ratio: 16 / 10; border-radius: 8px; overflow: hidden; background: var(--night-3); }
 .ch .th img { width: 100%; height: 100%; object-fit: cover; object-position: top left; }

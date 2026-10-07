@@ -2566,6 +2566,24 @@
       "name": "my_reports_open",
       "type": "text",
       "default": "Open"
+    },
+    {
+      "name": "powered_by",
+      "type": "text",
+      "default": "Powered by",
+      "label": "powered by"
+    },
+    {
+      "name": "powered_name",
+      "type": "text",
+      "default": "ValueStream",
+      "label": "powered name"
+    },
+    {
+      "name": "powered_href",
+      "type": "text",
+      "default": "https://valuestream.in",
+      "label": "powered href"
     }
   ],
   "expr": {
@@ -3061,13 +3079,16 @@
       "my_reports_lede": "$my_reports_lede",
       "my_reports_none": "$my_reports_none",
       "my_reports_answer": "$my_reports_answer",
-      "my_reports_open": "$my_reports_open"
+      "my_reports_open": "$my_reports_open",
+      "powered_by": "$powered_by",
+      "powered_name": "$powered_name",
+      "powered_href": "$powered_href"
     }
   },
   "returns": "record",
-  "version": 6,
+  "version": 7,
   "status": "published",
-  "description_nl": "The words of one screen. {placeholders} are filled on the page. A language overrides any of them with chip ui.shell.<lang> (for example ui.shell.hi).",
+  "description_nl": "The words of one screen. {placeholders} are filled on the page. A language overrides any of them with chip ui.shell.<lang> (for example ui.shell.hi). 2026-10-07: powered_by / powered_name / powered_href - 'Powered by ValueStream' on the sign-in page and the menu foot.",
   "test_cases": [
     {
       "args": {},
@@ -3562,7 +3583,10 @@
         "my_reports_lede": "Everything you reported or sent as feedback, with its status and the answer.",
         "my_reports_none": "Nothing sent yet.",
         "my_reports_answer": "Answer:",
-        "my_reports_open": "Open"
+        "my_reports_open": "Open",
+        "powered_by": "Powered by",
+        "powered_name": "ValueStream",
+        "powered_href": "https://valuestream.in"
       }
     }
   ],

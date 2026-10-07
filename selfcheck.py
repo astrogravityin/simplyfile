@@ -117,6 +117,27 @@ def api_check() -> None:
         for k_ in ("trust", "steps", "desks", "faq", "pillars", "checks", "modules", "features", "play"):
             assert k_ not in sc_ or f"d.{k_}" in js_, f"showcase chip has {k_} but showcase.js never draws it"
         assert not sc_.get("skin") or f'[data-skin="{sc_["skin"]}"]' in css_, f"showcase skin {sc_.get('skin')} has no styles"
+        # 2026-10-07 owner: "people want to find" a film - every film carries several tags, the theatre has its find words and
+        # topics (each topic a tag some film carries), and the find forgives a typo (same guard as AstroStage tv/selfcheck.py)
+        th_ = sc_["theatre"]
+        assert all(th_.get(k_) for k_ in ("search", "found", "none", "topics")), "Watch has no find words (chip showcase.page theatre search/found/none/topics)"
+        for ch_ in sc_["chapters"]:
+            assert len(set(ch_.get("tags") or [])) >= 3, f"film {ch_['key']} needs several tags - the words people search for"
+        tags_ = {t_.lower() for ch_ in sc_["chapters"] for t_ in ch_["tags"]}
+        assert not [t_ for t_ in th_["topics"] if t_.lower() not in tags_], "Watch offers a topic no film carries"
+        assert "findsFilm(hay[i], text)" in js_ and "stepFrom(" in js_, "Watch find: the list, Next and play-the-next follow what the find left"
+        import shutil as _shutil  # noqa: PLC0415
+        import subprocess as _sp  # noqa: PLC0415
+        if _shutil.which("node"):
+            find_js_ = js_[js_.index("const norm ="):js_.index("function wirePlayer")]
+            find_t_ = """
+const film = {title: 'Importing old returns', line: 'Past ITR JSON becomes history', module: 'Part 3', tags: ['import', 'PAN'], marks: [{t: 1, title: 'A belated return'}]};
+const w = filmWords(film, {title: 'Filing'});
+const ok = [findsFilm(w, 'imprting'), findsFilm(w, 'part 3'), findsFilm(w, 'returns'), findsFilm(w, 'belated pan'), findsFilm(w, ''),
+            !findsFilm(w, 'gst'), !findsFilm(w, 'import gst'), !findsFilm(w, 'zz')];
+if (ok.some((x) => !x)) { console.log(JSON.stringify(ok)); process.exit(1); }"""
+            r_ = _sp.run(["node", "-e", find_js_ + find_t_], capture_output=True, text=True)
+            assert r_.returncode == 0, f"Watch find: a typo, a plural or a half word must still find the film; others must not ({r_.stdout or r_.stderr})"
         said_ = (json.dumps(sc_) + (HERE / "chips" / "ui.app.json").read_text(encoding="utf-8")).lower()
         for over_ in ("filed return", "click to file", "files the return for you"):
             assert over_ not in said_, f"the pitch promises '{over_}' - SimplyFile fills the utility, the CA files"

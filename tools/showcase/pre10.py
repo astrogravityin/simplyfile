@@ -32,7 +32,7 @@ w = myreturn.answer(me, c["id"], ay, {
     "vda": [{"name": "Demo Coin", "acquired": "2024-05-01", "transferred": "2025-09-01", "cost": 50000, "sale": 65000}],
     "paid": [{"kind": "self", "date": "2026-07-10", "amount": 25000, "bsr": "0510002", "challan": "00042"}],
     "club_rows": [{"name": "Demo Son", "relation": "minor_child", "head": "interest", "amount": 30000}],
-    "arrears": [{"fy": "2022-23", "amount": 120000, "income": 900000, "regime": ""}],
+    "arrears": [{"fy": "2022-23", "amount": 120000, "income": 300000, "regime": ""}],
 })
 g = w["regimes"][w["regime"]]
 print("pre10:", w["form"]["form"], w["regime"], "income", g["tax"]["total"], "balance", g["balance"], "| checks", [x["what"] for x in w["checks"] if x["level"] != "ok"])

@@ -1352,8 +1352,25 @@ def api_compute_3cd(cid: str, ay: str, _: dict = Depends(firms.gate("compute")))
 
 
 # --- History (2026-10-05 owner: "change log - field, old value, new value, when, who - and earlier versions of a document")
+def _gate_either(*screens):
+    """firms.gate for the first of these screens the person may use (2026-10-07: a self-filer's own History is reached from My
+    return - they have no Clients & years; the client's firm is still checked by the gate)."""
+    gates = [firms.gate(sc) for sc in screens]
+
+    def guard(request: Request) -> dict:
+        err = None
+        for g in gates:
+            try:
+                return g(request)
+            except HTTPException as e:
+                err = e
+        raise err
+    guard.screen_id, guard.function_id = screens[0], ""
+    return guard
+
+
 @app.get("/api/changes/file/{cid}/{ay}/{kept_in}/{fid}/{v}")
-def api_changes_file(cid: str, ay: str, kept_in: str, fid: str, v: int, name: str = "", _: dict = Depends(firms.gate("clients"))):
+def api_changes_file(cid: str, ay: str, kept_in: str, fid: str, v: int, name: str = "", _: dict = Depends(_gate_either("clients", "myreturn"))):
     p = changelog.kept_file(cid, ay, kept_in, fid, v)
     nice = re.sub(r"[^\w .()-]", "", name)[:120].strip()          # the file's own name, as the log shows it
     return FileResponse(p, filename=changelog.say("file_name", name=Path(nice).stem or p.stem, v=v) + p.suffix)
