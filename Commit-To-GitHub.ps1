@@ -35,6 +35,21 @@ $Python = if (Test-Path '.venv\Scripts\python.exe') { '.venv\Scripts\python.exe'
 $branch = (git branch --show-current).Trim()
 if (-not $branch) { throw 'Could not detect the current git branch.' }
 
+# Every ValueStream repo pushes as one GitHub account to one fixed repo. Without the account named here, Git Credential
+# Manager pops up its "select an account" window on each fetch and push; without origin, there is nowhere to push.
+$GitHubRepo = 'https://github.com/astrogravityin/simplyfile.git'
+$ErrorActionPreference = 'Continue'
+$origin = git remote get-url origin 2>&1
+if ($LASTEXITCODE -ne 0) { git remote add origin $GitHubRepo; Write-Host "Linked to $GitHubRepo" -ForegroundColor Yellow }
+elseif ("$origin" -ne $GitHubRepo) { Write-Host "Note: origin is $origin (expected $GitHubRepo)" -ForegroundColor Yellow }
+git config credential.https://github.com.username astrogravityin
+# A folder started with git's old default branch name: GitHub and the VPS use main.
+if ($branch -eq 'master') {
+    git ls-remote --exit-code --heads origin master 2>&1 | Out-Null
+    if ($LASTEXITCODE -ne 0) { git branch -m master main; $branch = 'main'; Write-Host 'Branch master renamed to main.' -ForegroundColor Yellow }
+}
+$ErrorActionPreference = 'Stop'
+
 $status = if ($Paths) { git status --short -- $Paths } else { git status --short }
 $commit = [bool]$status
 if (-not $commit) {
