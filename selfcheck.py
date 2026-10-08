@@ -95,7 +95,7 @@ def api_check() -> None:
         c = TestClient(app.app)
         boot = c.get("/api/bootstrap").json()
         assert boot["needs_first_account"] is True
-        assert "<title>SimplyFy" in c.get("/").text
+        assert f"<title>{product()}" in c.get("/").text
         # 2026-10-05 owner: the public showcase is the landing for a visitor (chip showcase.page); Start here -> /start
         assert "showcase.js" in c.get("/").text and "showcase.js" not in c.get("/start").text, "a visitor lands on the showcase; /start is the portal"
         sc_ = c.get("/api/showcase").json()
@@ -475,10 +475,33 @@ def guides_tours_check() -> None:
         g = json.loads((HERE / "chips" / f"guide.{sc}.json").read_text(encoding="utf-8"))
         d = {p["name"]: p["default"] for p in g["params"]}
         t = json.loads((HERE / "tours" / f"sf-{sc}.json").read_text(encoding="utf-8"))
-        says = [x["say"] for x in t["steps"]]
-        want = [d["lede"].replace("{product}", "SimplyFy")] + [x["say"].replace("{product}", "SimplyFy") for x in d["steps"]]
+        says = [x["say"].replace("{product}", product()) for x in t["steps"]]
+        want = [d["lede"].replace("{product}", product())] + [x["say"].replace("{product}", product()) for x in d["steps"]]
         assert says == want, f"tours/sf-{sc}.json is not the Guide me walk of {sc} - rebuild it from chip guide.{sc}"
     print(f"  guides and tours: {len(GUIDED)} screens, each tour = its Guide me OK")
+
+
+def product() -> str:
+    """The product's one name (2026-10-08 owner: "the name should be chip/ops - one place change, everywhere changed")."""
+    d = {p["name"]: p["default"] for p in json.loads((HERE / "chips" / "edition.settings.json").read_text(encoding="utf-8"))["params"]}
+    return next(r["product_name"] for r in d["rows"] if r["id"] == d["default_edition"])
+
+
+def name_once_check() -> None:
+    """No chip or tour spells the product's name: they say {product}, which the engine fills from edition.settings.
+    Left out: the chip that holds it, test_cases (answers as a person sees them), and the boilerplate chips that list
+    every ValueStream product by name (server.settings, tourvideo.settings, changes.settings)."""
+    name, keep = product(), {"edition.settings", "server.settings", "tourvideo.settings", "changes.settings"}
+    bad = []
+    for f in sorted((HERE / "chips").glob("*.json")) + sorted((HERE / "tours").glob("*.json")):
+        d = json.loads(f.read_text(encoding="utf-8"))
+        if f.stem in keep:
+            continue
+        d.pop("test_cases", None)
+        if re.search(rf"\b{re.escape(name)}\b", json.dumps(d, ensure_ascii=False)):
+            bad.append(f.name)
+    assert not bad, f"these spell '{name}' - write {{product}} instead: {bad}"
+    print(f"  product name: one place (chip edition.settings = {name}) OK")
 
 
 if __name__ == "__main__":
@@ -487,5 +510,6 @@ if __name__ == "__main__":
     static_checks()
     chips_first_check()
     guides_tours_check()
+    name_once_check()
     api_check()
     print("All checks passed.")

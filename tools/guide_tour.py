@@ -17,7 +17,7 @@ DEFAULTS = {"prod_base": "https://sf.valuestream.in", "voice": "en-IN-NeerjaNeur
 def build(screen: str) -> dict:
     g = json.loads((ROOT / "chips" / f"guide.{screen}.json").read_text(encoding="utf-8"))
     d = {p["name"]: p["default"] for p in g["params"]}
-    sub = lambda s: str(s or "").replace("{product}", "SimplyFy")  # noqa: E731
+    sub = lambda s: str(s or "")  # noqa: E731 - {product} stays: make_tour fills it from chip edition.settings
     out = ROOT / "tours" / f"sf-{screen}.json"
     old = json.loads(out.read_text(encoding="utf-8")) if out.is_file() else {}
     head = {k: old.get(k, v) for k, v in DEFAULTS.items()}

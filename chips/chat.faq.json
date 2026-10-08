@@ -157,9 +157,9 @@
         },
         {
           "id": "what_is",
-          "q": "What is SimplyFy?",
+          "q": "What is {product}?",
           "words": "about this portal what does it do purpose overview",
-          "a": "SimplyFy takes a client's statements (Excel or CSV), gives every row its SF Ref - the ITR schedule or 3CD clause it belongs to - checks them against 26AS, AIS and TIS, works out the tax, interest and refund, and writes the return in the Income-tax Department's own JSON (ITR-3, ITR-5, and the 3CB-3CD for an audit). Many CA firms work on it, each seeing only its own clients.",
+          "a": "{product} takes a client's statements (Excel or CSV), gives every row its SF Ref - the ITR schedule or 3CD clause it belongs to - checks them against 26AS, AIS and TIS, works out the tax, interest and refund, and writes the return in the Income-tax Department's own JSON (ITR-3, ITR-5, and the 3CB-3CD for an audit). Many CA firms work on it, each seeing only its own clients.",
           "roles": [],
           "go": "",
           "live": ""
@@ -309,9 +309,9 @@
         },
         {
           "id": "own_return",
-          "q": "Can I prepare my own return in SimplyFy?",
+          "q": "Can I prepare my own return in {product}?",
           "words": "my own return myself self file own filing personal return partner own itr",
-          "a": "Yes. In a firm, add yourself as a client (Clients & years - New client, with your own PAN) and work your return like any other: statements, reconcile, compute, sign off, the JSON. Without a firm, sign up as Individual / HUF - SimplyFy then makes you its one client. It prepares ITR-3 (business or profession) and ITR-5; salary (Schedule S) and capital gains at special rates are not worked out yet - add those in the department's utility.",
+          "a": "Yes. In a firm, add yourself as a client (Clients & years - New client, with your own PAN) and work your return like any other: statements, reconcile, compute, sign off, the JSON. Without a firm, sign up as Individual / HUF - {product} then makes you its one client. It prepares ITR-3 (business or profession) and ITR-5; salary (Schedule S) and capital gains at special rates are not worked out yet - add those in the department's utility.",
           "roles": [],
           "go": "#/clients",
           "live": ""
@@ -419,7 +419,7 @@
           "id": "nri",
           "q": "Can I file for a non-resident (NRI)?",
           "words": "nri non resident abroad foreign",
-          "a": "Yes - tick Non-resident on the client. SimplyFy then gives no 87A rebate. Salary and capital gains at special rates are not worked out yet - add those in the department's utility.",
+          "a": "Yes - tick Non-resident on the client. {product} then gives no 87A rebate. Salary and capital gains at special rates are not worked out yet - add those in the department's utility.",
           "roles": [
             "firm_admin",
             "partner",
@@ -449,9 +449,9 @@
         },
         {
           "id": "pdf_scan",
-          "q": "Can SimplyFy read a PDF or a scanned statement?",
+          "q": "Can {product} read a PDF or a scanned statement?",
           "words": "pdf scanned scan photo picture image ocr bank statement pdf read",
-          "a": "A PDF with text in it is read best-effort - columns can shift, so check every row before mapping. A scanned PDF or a photo cannot be read: SimplyFy has no text recognition (OCR). Ask the client for the Excel, or a PDF exported with text.",
+          "a": "A PDF with text in it is read best-effort - columns can shift, so check every row before mapping. A scanned PDF or a photo cannot be read: {product} has no text recognition (OCR). Ask the client for the Excel, or a PDF exported with text.",
           "roles": [
             "firm_admin",
             "partner",
@@ -499,7 +499,7 @@
           "id": "sf_ref",
           "q": "What is an SF Ref?",
           "words": "sf ref meaning reference tag code schedule clause mapping",
-          "a": "The SF Ref says where a row belongs: the ITR schedule or the 3CD clause, e.g. ITR3 HP or 3CD 31(a) #2. SimplyFy suggests one for every row; you accept or change it. Put the SF Ref in a column of the client's own sheet and next year's file maps itself.",
+          "a": "The SF Ref says where a row belongs: the ITR schedule or the 3CD clause, e.g. ITR3 HP or 3CD 31(a) #2. {product} suggests one for every row; you accept or change it. Put the SF Ref in a column of the client's own sheet and next year's file maps itself.",
           "roles": [
             "firm_admin",
             "partner",
@@ -687,7 +687,7 @@
         },
         {
           "id": "audit_3cd",
-          "q": "Does SimplyFy do the tax audit report?",
+          "q": "Does {product} do the tax audit report?",
           "words": "tax audit 3cd 3cb 3ca 44ab audit report",
           "a": "Yes - for an audit year it writes the Form 3CB-3CD (or 3CA-3CD) JSON from the SF Refs, checked against the CBDT schema, next to the ITR.",
           "roles": [
@@ -767,7 +767,7 @@
         },
         {
           "id": "not_supported",
-          "q": "What does SimplyFy not do yet?",
+          "q": "What does {product} not do yet?",
           "words": "not supported limitations missing salary capital gains marginal relief",
           "a": "Not yet: salary (Schedule S), capital gains at special rates, and 87A marginal relief. Complete those in the department's offline utility after importing the JSON.",
           "roles": [],
@@ -826,7 +826,7 @@
           "id": "late_fee",
           "q": "What is the late fee for filing after the due date?",
           "words": "late fee 234f penalty filing late belated fee",
-          "a": "Filing after the due date costs a late fee under 234F: Rs 5,000, or Rs 1,000 when total income is up to Rs 5 lakh - plus interest under 234A for the months late. SimplyFy works out 234A; add the 234F fee in the department's utility if it applies.",
+          "a": "Filing after the due date costs a late fee under 234F: Rs 5,000, or Rs 1,000 when total income is up to Rs 5 lakh - plus interest under 234A for the months late. {product} works out 234A; add the 234F fee in the department's utility if it applies.",
           "roles": [],
           "go": "",
           "live": ""
@@ -875,9 +875,9 @@
         },
         {
           "id": "gst_tds",
-          "q": "Does SimplyFy file GST or TDS returns?",
+          "q": "Does {product} file GST or TDS returns?",
           "words": "gst return gstr tds return 24q 26q 27q tcs return",
-          "a": "No - SimplyFy prepares income-tax returns (ITR-3, ITR-5) and the tax audit report. GST and TDS returns are filed elsewhere; their figures still show here through AIS, TIS and 26AS.",
+          "a": "No - {product} prepares income-tax returns (ITR-3, ITR-5) and the tax audit report. GST and TDS returns are filed elsewhere; their figures still show here through AIS, TIS and 26AS.",
           "roles": [],
           "go": "",
           "live": ""
@@ -911,7 +911,7 @@
           "id": "json_upload",
           "q": "Can I upload the JSON straight to the Income-tax portal?",
           "words": "upload json portal direct e-filing import utility",
-          "a": "Open it in the department's offline utility, complete any remaining schedules, validate, and upload from there. A direct upload needs a CBDT software ID, which SimplyFy does not have yet.",
+          "a": "Open it in the department's offline utility, complete any remaining schedules, validate, and upload from there. A direct upload needs a CBDT software ID, which {product} does not have yet.",
           "roles": [
             "firm_admin",
             "partner",
@@ -1077,7 +1077,7 @@
           "id": "ai_key",
           "q": "Do I need an AI key?",
           "words": "ai key gemini api key needed",
-          "a": "No - SimplyFy's computations, checks and Chip Chat work without one. A key only lets Chip Chat ask an AI which answer fits when it is unsure.",
+          "a": "No - {product}'s computations, checks and Chip Chat work without one. A key only lets Chip Chat ask an AI which answer fits when it is unsure.",
           "roles": [],
           "go": "#/keys",
           "live": ""
@@ -1097,7 +1097,7 @@
           "id": "backups",
           "q": "How are the backups kept?",
           "words": "backup policy retention offsite restore",
-          "a": "SimplyFy's data is copied every hour (24 kept), daily (7) and weekly (5); the daily and weekly copies also go off-site, encrypted. Server & sites shows each backup's newest copy and flags a late one.",
+          "a": "{product}'s data is copied every hour (24 kept), daily (7) and weekly (5); the daily and weekly copies also go off-site, encrypted. Server & sites shows each backup's newest copy and flags a late one.",
           "roles": [
             "owner"
           ],

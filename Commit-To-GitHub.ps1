@@ -30,7 +30,12 @@ function Assert-Ok([string]$What) {
     if ($LASTEXITCODE -ne 0) { throw "$What failed (exit $LASTEXITCODE). Stopped here." }
 }
 
-if (-not (Test-Path '.git')) { throw 'Run this from the SimplyFy git folder (D:\Simplyfile).' }
+if (-not (Test-Path '.git')) {
+    # A portal's first commit: the folder is not a git repo yet - start one on main (origin is linked below).
+    if (-not (Test-Path 'selfcheck.py')) { throw 'Run this from the SimplyFy folder (D:\Simplyfile).' }
+    git init -b main; Assert-Ok 'git init'
+    Write-Host 'Started a git repo here (branch main).' -ForegroundColor Yellow
+}
 $Python = if (Test-Path '.venv\Scripts\python.exe') { '.venv\Scripts\python.exe' } else { 'python' }
 $branch = (git branch --show-current).Trim()
 if (-not $branch) { throw 'Could not detect the current git branch.' }

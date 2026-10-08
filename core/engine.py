@@ -30,6 +30,7 @@ from __future__ import annotations
 
 import json
 import math
+import os
 import re
 import sys
 import threading
@@ -219,13 +220,40 @@ def run(chip_id: str, args: dict | None = None, lib: dict | None = None) -> Any:
     _depth.n = depth + 1
     try:
         env = knobs(chip_id, lib) | (args or {})
-        got = test(chip["expr"], env, lib) if chip.get("kind") == "predicate" else value(chip["expr"], env, lib)
+        got = test(chip["expr"], env, lib) if chip.get("kind") == "predicate" else _named(value(chip["expr"], env, lib), lib)
         if keep and _memo["lib"] is lib:
             _memo["got"][chip_id] = got
             return dict(got) if isinstance(got, dict) else list(got) if isinstance(got, list) else got
         return got
     finally:
         _depth.n = depth
+
+
+def product_name(lib: dict | None = None) -> str:
+    """The product's one name - chip edition.settings, this server's edition row (2026-10-08 owner: "the name should be
+    chip/ops - one place change, everywhere changed"). Read from the chip itself, not run(), so naming never recurses."""
+    lib = lib if lib is not None else chips()
+    if _pn["lib"] is lib:
+        return _pn["name"]
+    knob = {p["name"]: p.get("default") for p in (lib.get("edition.settings") or {}).get("params", [])}
+    want = (os.getenv("PORTAL_EDITION") or os.getenv("TV_EDITION") or knob.get("default_edition") or "").strip().lower()
+    _pn.update(lib=lib, name=next((r.get("product_name", "") for r in knob.get("rows") or [] if r.get("id") == want), ""))
+    return _pn["name"]
+
+
+_pn: dict = {"lib": None, "name": ""}
+
+
+def _named(got: Any, lib: dict) -> Any:
+    """Every word a chip answers says {product} for the product's name; filled here, so no chip ever spells the name.
+    ponytail: walks every answer (no-arg answers are memoised); skip the walk per chip if a hot rule ever shows in a profile."""
+    if isinstance(got, str):
+        return got.replace("{product}", product_name(lib) or "{product}") if "{product}" in got else got
+    if isinstance(got, list):
+        return [_named(x, lib) for x in got]
+    if isinstance(got, dict):
+        return {k: _named(v, lib) for k, v in got.items()}
+    return got
 
 
 def say(chip_id: str, key: str, **values) -> str:
@@ -351,7 +379,7 @@ def run_tests(chip: dict, lib: dict, scenarios: dict | None = None) -> list[dict
     for i, case in enumerate(chip.get("test_cases") or []):
         args = dict(((scenarios or {}).get(case.get("scenario")) or {}).get("facts") or {}) | (case.get("args") or {})
         want_key = "expect" if "expect" in case else "expect_value"
-        row = {"n": i + 1, "scenario": case.get("scenario", ""), "args": args, "want": case.get(want_key)}
+        row = {"n": i + 1, "scenario": case.get("scenario", ""), "args": args, "want": _named(case.get(want_key), lib)}
         try:
             row["got"] = run(chip["chip_id"], args, lib)
             row["ok"] = same(row["got"], row["want"])
@@ -389,6 +417,13 @@ if __name__ == "__main__":
     globals()["run"] = _run
     _m = {}
     assert run_memo(_m, "find.score", {}) == run("find.score") and len(_m) == 1 and run_memo(None, "find.score") == run("find.score")
+    # 2026-10-08 owner "the name should be chip/ops": {product} in any answer is the edition's product_name
+    _ed = {"chip_id": "edition.settings", "params": [{"name": "default_edition", "default": "x"},
+                                                     {"name": "rows", "default": [{"id": "x", "product_name": "Namely"}]}]}
+    _w = {"chip_id": "x.words", "kind": "accessor", "params": [], "expr": {"hi": "Welcome to {product}", "n": [1, "{product}"]}}
+    _lib = {"edition.settings": _ed, "x.words": _w}
+    assert run("x.words", {"z": 1}, _lib) == {"hi": "Welcome to Namely", "n": [1, "Namely"]}, "{product} not filled"
+    assert _w["expr"]["hi"] == "Welcome to {product}", "filling the name changed the chip itself"
     if len(sys.argv) > 1:
         register_dir(sys.argv[1])
     bad = certify()
