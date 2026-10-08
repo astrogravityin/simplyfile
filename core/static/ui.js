@@ -587,7 +587,7 @@ function workHtml(s, canStop) {
         <div><span>${esc(sw('ww_cost_left'))}</span><b>${running ? usd(ctotal === null ? null : ctotal - spent) : usd(0)}</b><em>${esc(sw('ww_estimate'))}</em></div>
         <div><span>${esc(sw('ww_cost_total'))}</span><b>${usd(running ? ctotal : spent)}</b><em>${esc(running ? sw('ww_at_complete') : sw('ww_final'))}</em></div></div>`;
   } else if (c && c.free) cost = `<p class="ww-free">${icon('check', 12)} ${esc(sw('ww_free'))}</p>`;
-  return `
+  return `${s.art ? `<div class="ww-art">${s.art}</div>` : ''}
     <div class="ww-top tone-${tone}">
       <svg class="ww-ring${ring === null && running ? ' spin' : ''}" viewBox="0 0 120 120" aria-hidden="true">
         <defs><linearGradient id="${gid}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" style="stop-color:var(--brand)"/><stop offset="1" style="stop-color:var(--brand-2)"/></linearGradient></defs>
@@ -615,7 +615,7 @@ function workHtml(s, canStop) {
 }
 
 /** Open the work window. `set(patch)` with any of {activity, sub, pct, total_s, started_ms, cost:{spent,total,models,free},
- *  steps:[{label,note,state}], basis, note}; `end(status, sub)` with finished|failed|stopped; `close()`. Closing it by
+ *  steps:[{label,note,state}], basis, note, art (a drawing above the ring - trusted HTML/SVG from the page, 2026-10-08)}; `end(status, sub)` with finished|failed|stopped; `close()`. Closing it by
  *  hand never stops the work - Stop (when `onStop` is given) does. */
 export function workWindow(title, { activity = '', onStop = null, note = '' } = {}) {
   const s = { id: ++wwCount, activity, note, status: 'running', started: Date.now(), pct: null, total_s: null, cost: null, steps: null, sub: '', basis: '' };
