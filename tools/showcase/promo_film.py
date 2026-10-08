@@ -44,12 +44,20 @@ def seconds(path: Path) -> float:
     return int(h) * 3600 + int(m) * 60 + float(s)
 
 
+def spoken(text: str) -> str:
+    """The narrator's lexicon (tools/tour_video/_lexicon.json), as make_tour applies it to every tour."""
+    lex = json.loads((ROOT / "tools" / "tour_video" / "_lexicon.json").read_text(encoding="utf-8"))["say_as"]
+    for word, say in lex.items():
+        text = re.sub(rf"(?<!\w){re.escape(word)}(?!\w)", say, text)
+    return text
+
+
 async def voices(f: dict) -> list[Path]:
     import edge_tts  # noqa: PLC0415
     out = []
     for i, sc in enumerate(f["scenes"]):
         p = WORK / f"vo{i:02d}.mp3"
-        await edge_tts.Communicate(sc["say"], f["voice"], rate=f["rate"]).save(str(p))
+        await edge_tts.Communicate(spoken(sc["say"]), f["voice"], rate=f["rate"]).save(str(p))   # the tours' lexicon: "Tradify", not "Trady F Y"
         out.append(p)
     return out
 

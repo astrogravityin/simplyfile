@@ -611,6 +611,39 @@ def mux(tour: dict, out: Path, times: list[tuple[float, float]]) -> Path:
     return mp4
 
 
+def revoice(tour: dict, out: Path) -> None:
+    """2026-10-08 (owner: every -Fy name said as one word, "Tradify"): voice the steps again and lay them over the video
+    already made - each step starts where its subtitle starts. A step whose new voice outruns its slot (the next step's
+    start) stops the run: that tour needs a real re-record."""
+    key = tour["page_key"]
+    mp4, srt = out / f"{key}.mp4", out / f"{key}.srt"
+    if not mp4.exists() or not srt.exists():
+        raise SystemExit(f"{key}: no recorded video to revoice - record it first")
+    starts = [int(h) * 3600 + int(m) * 60 + float(s.replace(",", "."))
+              for h, m, s in re.findall(r"^(\d+):(\d+):([\d,.]+) -->", srt.read_text(encoding="utf-8"), re.M)]
+    if len(starts) != len(tour["steps"]):
+        raise SystemExit(f"{key}: the tour has {len(tour['steps'])} steps, the video {len(starts)} - re-record it")
+    total = duration(mp4)
+    durs = asyncio.run(synth(tour, out))
+    for i, d in enumerate(durs):
+        room = (starts[i + 1] if i + 1 < len(starts) else total) - starts[i]
+        if d > room + 0.3:
+            raise SystemExit(f"{key}: step {i + 1} now speaks {d:.1f}s in a {room:.1f}s slot - re-record this tour")
+    tmp = out / f"{key}.revoiced.mp4"
+    cmd = [ffmpeg(), "-y", "-i", str(mp4)]
+    parts = []
+    for i, st in enumerate(starts):
+        cmd += ["-i", str(out / "audio" / f"{i:02d}.mp3")]
+        parts.append(f"[{i + 1}:a]adelay={int(st * 1000)}|{int(st * 1000)}[a{i}]")
+    graph = ";".join(parts) + ";" + "".join(f"[a{i}]" for i in range(len(starts))) + f"amix=inputs={len(starts)}:normalize=0[aout]"
+    cmd += ["-filter_complex", graph, "-map", "0:v", "-map", "[aout]", "-c:v", "copy", "-c:a", "aac", "-b:a", "160k", str(tmp)]
+    r = subprocess.run(cmd, capture_output=True, text=True)
+    if r.returncode:
+        raise SystemExit("ffmpeg failed:\n" + r.stderr[-1500:])
+    tmp.replace(mp4)
+    print(f"revoiced: {mp4}")
+
+
 def has_screen() -> bool:
     return os.name == "nt" or sys.platform == "darwin" or bool(os.environ.get("DISPLAY") or os.environ.get("WAYLAND_DISPLAY"))
 
@@ -751,6 +784,7 @@ def main() -> None:
     ap.add_argument("--var", action="append", default=[], help="override a tour var: name=value")
     ap.add_argument("--voice", help="narrator voice id from _voices.json (overrides the tour's own)")
     ap.add_argument("--check-all", action="store_true", help="walk every tour with default vars, PASS/FAIL per tour")
+    ap.add_argument("--revoice", action="store_true", help="new narration over the recorded picture (a lexicon or wording change); no browser")
     ap.add_argument("--prod", action="store_true", help="use each tour's production site instead of --base")
     args = ap.parse_args()
     base = args.base.rstrip("/")
@@ -778,6 +812,8 @@ def main() -> None:
     if args.check:
         walk(tour, base, out, None, args.headed)
         return print("check passed - every step ran")
+    if args.revoice:
+        return revoice(tour, out)
     print("narrating...")
     durs = asyncio.run(synth(tour, out))
     print(f"recording ({sum(durs):.0f}s of narration)...")
