@@ -504,6 +504,22 @@ def name_once_check() -> None:
     print(f"  product name: one place (chip edition.settings = {name}) OK")
 
 
+BAD_VERBS = re.compile(r"^(Take\b.*\b(out|off|away)\b|Throw away|Purge\b|Wipe\b|Erase\b)", re.I)
+
+
+def verbs_check() -> None:
+    """One verb set on every portal (2026-10-08 owner, the MS Office rule): Delete = gone, Remove = out of a list or group,
+    Archive = hidden and restorable, Discard = unsaved work dropped. No ui.* word says "Take out", "Throw away", "Purge"..."""
+    bad = []
+    for f in sorted((HERE / "chips").glob("ui.*.json")) + sorted((HERE / "core" / "chips").glob("ui.*.json")):
+        for p in json.loads(f.read_text(encoding="utf-8")).get("params", []):
+            v = p.get("default")
+            if isinstance(v, str) and BAD_VERBS.match(v):
+                bad.append(f"{f.stem}.{p['name']}: {v}")
+    assert not bad, "say Delete / Remove / Archive / Discard: " + "; ".join(bad)
+    print("  verbs: Delete / Remove / Archive / Discard on every button OK")
+
+
 if __name__ == "__main__":
     print("SimplyFy - self-check")
     module_checks()
@@ -511,5 +527,6 @@ if __name__ == "__main__":
     chips_first_check()
     guides_tours_check()
     name_once_check()
+    verbs_check()
     api_check()
     print("All checks passed.")
