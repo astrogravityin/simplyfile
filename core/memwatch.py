@@ -7,7 +7,7 @@ applies, which request is worth recording, the trend, the spike, the verdict and
 network cards count, how the offenders and other services rank — is a `memory.*` chip in
 core/chips/, with its knobs and its test cases.
 
-Why it exists (AstroStage, 2026-09-10): a process killed for memory prints no traceback anywhere,
+Why it exists (the studio, 2026-09-10): a process killed for memory prints no traceback anywhere,
 and a one-minute platform graph never shows the ten-second spike that did it. So the portal keeps its
 own record: a reading every few seconds, and the name of every request that moved memory.
 

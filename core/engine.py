@@ -1,6 +1,6 @@
 """The chip engine: every decision the portal makes is a chip (JSON) built from ops (core/ops.py).
 
-This is AstroStage's architecture ("every reading is data"), portable and stdlib-only:
+This is the studio's architecture ("every reading is data"), portable and stdlib-only:
 
   * An OP is a generic primitive in Python (core/ops.py). It never knows the domain.
   * A CHIP is a named, reusable decision in JSON: `params` are its knobs (with defaults), `expr` is
@@ -17,7 +17,7 @@ Where a chip lives — later layers win for the same chip_id:
 A chip's `status` is published | inactive. Drafts live apart (core/builder.py) and only run when a
 builder passes them in as `lib` for a test.
 
-Grammar (same as AstroStage backend/engine):
+Grammar (same as the studio backend/engine):
     {"chip": "memory.verdict", "args": {...}}      use another chip
     {"vop": "median", "values": "$rss"}            a value op (ops.OPS, or "choose" with cases/else)
     {"op": "ge", "left": ..., "right": ...}        a test: all any not eq ne in_set ge gt le lt at_least
@@ -183,8 +183,8 @@ _memo: dict = {"lib": None, "got": {}}
 
 
 def run_memo(memo: dict | None, chip_id: str, args: dict | None = None) -> Any:
-    """run(), answered once per distinct FLAT args within one request (2026-10-02 load test: a Katha list of 5,000 works
-    asked katha.may_see / katha.age_ok / katha.shared_shows 25,000 times with a handful of distinct true/false answers).
+    """run(), answered once per distinct FLAT args within one request (2026-10-02 load test: a shelf list of 5,000 works
+    asked shelf.may_see / shelf.age_ok / shelf.shared_shows 25,000 times with a handful of distinct true/false answers).
     `memo` = a dict the caller makes for ONE request and drops after it - the chip still decides every answer; nothing is
     kept across requests, so a chip edit is seen on the next one. memo None = a plain run()."""
     if memo is None:

@@ -1,5 +1,5 @@
-"""Tour Video - SteadyMove (2026-10-02 owner: "Tour Video card we have in AstroStage - bring that to sm, visible to portal
-admin"). A narrated MP4 of each screen, recorded from its tour script by AstroStage's own runner (tools/tour_video/
+"""Tour Video (2026-10-02 owner: "Tour Video card we have in the studio - bring that to sm, visible to portal
+admin"). A narrated MP4 of each screen, recorded from its tour script by the studio's own runner (tools/tour_video/
 make_tour.py, skill module-tour-video): Check steps walks it silently, Record makes MP4 + subtitles + chapters, Sign in
 opens a window on this computer once. Where things are, which Python records, and the words: chips tourvideo.settings,
 tourvideo.state (none / stale / ready), list.tour_videos, ui.tourvideo. Glue only: one job at a time, its log kept.

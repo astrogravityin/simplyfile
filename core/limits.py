@@ -82,10 +82,10 @@ if __name__ == "__main__":  # ponytail: the wrappers carry each chip's answer th
     _was = store.DATA
     store.DATA = Path(tempfile.mkdtemp())
     try:
-        most_ = engine.run("limits.rates")["katha_claim"]["most"]
-        assert all(allow("katha_claim", "u1") for _ in range(most_)) and not allow("katha_claim", "u1"), "the most is the most"
-        assert allow("katha_claim", "u2") and allow("not_a_named_action", "u1"), "per person; an unnamed action is not limited"
-        assert not allow("katha_invite_email", "u3", most_ + 10_000), "n at once counts as n"
+        most_ = engine.run("limits.rates")["access_request"]["most"]
+        assert all(allow("access_request", "u1") for _ in range(most_)) and not allow("access_request", "u1"), "the most is the most"
+        assert allow("access_request", "u2") and allow("not_a_named_action", "u1"), "per person; an unnamed action is not limited"
+        assert not allow("issue", "u3", most_ + 10_000), "n at once counts as n"
     finally:
         store.DATA = _was
     import io, zipfile  # noqa: E401, PLC0415 - 2026-10-01: a zip that unpacks too big is refused before it is read

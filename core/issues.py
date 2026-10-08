@@ -1,4 +1,4 @@
-"""Reports and feedback - ONE framework (2026-09-28 Report an issue; 2026-10-03 owner merged Katha's feedback cycle into
+"""Reports and feedback - ONE framework (2026-09-28 Report an issue; 2026-10-03 owner merged a sibling portal's feedback cycle into
 it: "We already have Report Issue framework - why can't we use that ... chip ops only").
 
 A KIND (chip issues.kinds) is everything that differs between notes: its settings chip (limits, statuses, where-fields,
@@ -7,7 +7,6 @@ screenshot types, a new note's marks, the marks an answer leaves), where its row
 note is ABOUT registers one function, about(user, ref) -> facts (owner_id, title, link, answer_link, open, keeper) - facts
 only; every yes / no is the kind's chip.
   issue           Report an issue from any screen -> whoever holds the Reported issues screen; the reply is a banner
-  katha_feedback  a reader's note on a Katha work -> its maker (status, reply, acted-on date); a bell both ways
 
   <store>/<ref>          the notes on one thing (an issue's store is one file, no ref)
   <shots>/<ref>/         their screenshots, beside the rows, never inline
@@ -462,7 +461,7 @@ if __name__ == "__main__":  # ponytail: one runnable self-check on throwaway dat
     _b = io.BytesIO()
     _Img.new("RGB", (4, 4)).save(_b, "PNG")
     png = "data:image/png;base64," + base64.b64encode(_b.getvalue()).decode()
-    r = file(kid, {"title": "Copies my book", "body": "Chapter 2 is mine", "screenshot": png, "surface": "katha", "context": "work w1"})
+    r = file(kid, {"title": "Copies my book", "body": "Chapter 2 is mine", "screenshot": png, "surface": "home", "context": "work w1"})
     raw_ = _rows("issue", "")[0]
     assert raw_["email"] == "kid@x.org" and raw_["shot"].endswith(".png") and (_shots("issue", "") / raw_["shot"]).exists(), "the account is the reporter"
     assert not r["email"], "the reporter's own copy shows no email (only the answerer sees it)"

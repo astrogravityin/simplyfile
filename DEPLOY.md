@@ -1,7 +1,7 @@
 # Deploying SimplyFile to the VPS — sf.valuestream.in
 
 SimplyFile has its own repository, its own checkout on the server (`/opt/simplyfile`), its own Python venv, service,
-port and data folder. It shares nothing with AstroStage, tv or sm except the machine and nginx.
+port and data folder. It shares nothing with the other portals except the machine and nginx.
 
 ```bash
 # 0. DNS (Hostinger hPanel -> Domains -> valuestream.in -> DNS): A record  sf -> the VPS IP

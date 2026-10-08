@@ -1,4 +1,4 @@
-// Screen guide on tv / SteadyMove: the Guide me button in the top bar, and the tour it opens.
+// Screen guide on every portal: the Guide me button in the top bar, and the tour it opens.
 // The drawing, the spotlight, the voice and the pictures are the portable kit (guide-kit.js + guide-kit.css,
 // the same file the Guide Me Builder exports to other sites). This adapter only fetches the screen's tour
 // (core/guide.py, chip guide.<screen> - or one imported in How to Use Configure) and hands the kit the

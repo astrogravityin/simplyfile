@@ -55,7 +55,7 @@ def model_row(kind: str, model: str) -> dict | None:
 
 
 # --- the key pool: several keys per provider, default first, rotated on quota / invalid (chip providers.rotate) ---
-# 2026-09-19 owner: "I should be able to add multiple Gemini keys and you rotate" - the way AstroStage's Key
+# 2026-09-19 owner: "I should be able to add multiple Gemini keys and you rotate" - the way the studio's Key
 # Management does it (UserApiKey rows, default first, callers try each candidate). The old single field
 # (gemini_api_key …) becomes pool entry #1 on first read and is kept equal to the default key, so every older
 # reader still finds a key.

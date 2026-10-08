@@ -1,4 +1,5 @@
-/* SteadyMove showcase (2026-10-05) - the public page linked from the landing. Words: chip showcase.page. */
+/* Showcase (2026-10-05) - the public page linked from the landing. Words: chip showcase.page. */
+/* The family copy uses neutral keys (section `shelf`) - it no longer matches the studio's copy, by design. */
 :root {
   --ink: #17162b; --ink-2: #4a4866; --ink-3: #75738f;
   --paper: #faf7f1; --paper-2: #f2ede3; --card: #ffffff; --line: #e6dfd2;
@@ -198,12 +199,12 @@ section { padding: clamp(64px, 9vw, 112px) 0; }
 .mod p { margin: 0; font-size: 15px; color: var(--ink-2); }
 .mod .watch { margin-top: auto; align-self: flex-start; display: inline-flex; gap: 6px; align-items: center; font-size: 13.5px; font-weight: 650; color: var(--brand); background: none; border: 0; padding: 4px 0; cursor: pointer; }
 
-/* --- katha --- */
-.katha { background: radial-gradient(900px 500px at 100% 0%, rgba(244, 165, 36, .16), transparent 60%), var(--paper); }
-.katha .grid3 .card { display: grid; grid-template-columns: 46px 1fr; gap: 14px; align-items: start; padding: 22px; }
-.katha .card h3 { margin: 0; font: 700 17px var(--sans); }
-.katha .card p { margin-top: 4px; }
-.katha .badge { width: 46px; height: 46px; border-radius: 14px; }
+/* --- shelf --- */
+.shelf { background: radial-gradient(900px 500px at 100% 0%, rgba(244, 165, 36, .16), transparent 60%), var(--paper); }
+.shelf .grid3 .card { display: grid; grid-template-columns: 46px 1fr; gap: 14px; align-items: start; padding: 22px; }
+.shelf .card h3 { margin: 0; font: 700 17px var(--sans); }
+.shelf .card p { margin-top: 4px; }
+.shelf .badge { width: 46px; height: 46px; border-radius: 14px; }
 
 /* --- ages --- */
 .ages { background: var(--night); color: var(--on-night); }
@@ -246,7 +247,7 @@ footer a { color: var(--on-night); text-decoration: none; font-weight: 600; disp
 @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
 .cover[hidden] { display: none; }
 
-/* brand tag + share anywhere (2026-10-05: "A Freedom Studio" - not just Katha) */
+/* brand tag + share anywhere (2026-10-05: "A Freedom Studio" - not just one site) */
 .brand span { display: flex; flex-direction: column; line-height: 1.05; }
 .brand small { font: 600 10.5px var(--sans); letter-spacing: .12em; text-transform: uppercase; color: var(--saffron); margin-top: 3px; }
 .share { background: radial-gradient(800px 400px at 10% 0%, rgba(36, 168, 154, .12), transparent 60%), radial-gradient(800px 400px at 100% 100%, rgba(233, 87, 63, .1), transparent 60%), var(--paper); }
@@ -261,8 +262,8 @@ footer a { color: var(--on-night); text-decoration: none; font-weight: 600; disp
 
 /* phone menu (2026-10-05): the section links behind one button below 900px */
 .menu-btn { display: none; margin-left: auto; border: 0; background: rgba(255, 255, 255, .08); color: var(--on-night); width: 42px; height: 42px; border-radius: 12px; cursor: pointer; place-items: center; }
-.katha .card h3 a { color: var(--brand); text-decoration: none; }
-.katha .card h3 a:hover { text-decoration: underline; }
+.shelf .card h3 a { color: var(--brand); text-decoration: none; }
+.shelf .card h3 a:hover { text-decoration: underline; }
 @media (max-width: 900px) {
   .menu-btn { display: grid; }
   .top .btn { margin-left: 8px; }

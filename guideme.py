@@ -1,4 +1,4 @@
-"""Guide Me Builder (SteadyMove, 2026-09-28): bring a Guide Me script, check it, preview it, export it for any site.
+"""Guide Me Builder (2026-09-28): bring a Guide Me script, check it, preview it, export it for any site.
 
 A Guide Me script (format guide-me/1, skill .agents/skills/guide-me-script) is a screen's live tour written as plain
 JSON: its site, its page, a title and the steps (what each spotlights and what it says). This module only GATHERS
@@ -185,14 +185,14 @@ if __name__ == "__main__":  # ponytail: one runnable self-check - bad scripts re
     import core.store as cs
     with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as tmp:
         cs.DATA = Path(tmp)
-        good = {"format": "guide-me/1", "portal": "sm", "page": "comics", "title": "Comic Book Studio", "lede": "L", "icon": "image",
+        good = {"format": "guide-me/1", "portal": "portal", "page": "comics", "title": "Comic Book Studio", "lede": "L", "icon": "image",
                 "voice": {"rate": 1.1, "speak_by_default": False, "secret": 1}, "extra": "dropped",
                 "steps": [{"title": f"S{i}", "say": "Words.", "target": "#x", "art": {"kind": "flow", "items": ["A", "B"], "at": 0, "junk": 1}, "zzz": 1}
                           for i in range(3)]}
         clean, bad = check(json.dumps(good))
         assert not bad and "extra" not in clean and "secret" not in clean["voice"] and "zzz" not in clean["steps"][0], bad
         assert "junk" not in clean["steps"][0]["art"], clean
-        assert check({**good, "portal": "workspace:astrogaami"})[0], "any institute workspace is a site"
+        assert check({**good, "portal": "workspace:demo"})[0], "any institute workspace is a site"
         _, bad = check({**good, "format": "x", "portal": "nope", "page": "Bad Page", "icon": "no-such-icon",
                         "steps": [{"title": "", "say": "", "art": {"kind": "movie"}, "place": "middle"}]})
         assert len(bad) >= 6 and all(not b.startswith("[") and "{" not in b for b in bad), bad
@@ -209,14 +209,14 @@ if __name__ == "__main__":  # ponytail: one runnable self-check - bad scripts re
         name, data = export("u1", row["id"])
         with zipfile.ZipFile(io.BytesIO(data)) as z:
             got = {Path(n).name: z.read(n).decode("utf-8") for n in z.namelist()}
-        assert name == "guide-me-sm-comics" and set(got) == {"guide-kit.js", "guide-kit.css", "icons.js", "comics.guide.json", "guide-me.comics.js", "README.md"}, got.keys()
+        assert name == "guide-me-portal-comics" and set(got) == {"guide-kit.js", "guide-kit.css", "icons.js", "comics.guide.json", "guide-me.comics.js", "README.md"}, got.keys()
         mod = got["guide-me.comics.js"]
         assert "import { openTour } from './guide-kit.js'" in mod and "export function mountGuideMe(where = document.body)" in mod, mod[:400]
         assert '"page": "comics"' in mod and '"step_of"' in mod and '"art_kinds"' in mod, "the module carries the script, the words and the settings"
         slots_ = set(re.findall(r"\{([a-z_]+)\}", engine.run("guideme.export")["module_js"]))
         assert slots_ and not any("{" + s_ + "}" in mod for s_ in slots_ - {"n", "total", "why", "product"}), "every slot of the template is filled"
         assert "mountGuideMe" in got["README.md"] and "guide-me.comics.js" in got["README.md"]
-        assert export_files({**clean, "portal": "workspace:astrogaami"})[0] == "guide-me-workspace-astrogaami-comics", "a zip name never carries a colon"
+        assert export_files({**clean, "portal": "workspace:demo"})[0] == "guide-me-workspace-demo-comics", "a zip name never carries a colon"
         try:
             get("u2", row["id"])
             raise AssertionError("another account never sees a build")

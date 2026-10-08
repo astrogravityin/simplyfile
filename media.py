@@ -20,7 +20,7 @@ from core import engine
 
 
 def is_picture(data: bytes) -> bool:
-    """THE test of "is this really a picture" (2026-10-02 review: articles and books each had a copy, Ads and Katha borrowed
+    """THE test of "is this really a picture" (2026-10-02 review: articles and books each had a copy, Ads and the reader borrowed
     a private one): Pillow can read it, whatever its name says - a fake .png made a book's PDF fail."""
     import io  # noqa: PLC0415
     from PIL import Image  # noqa: PLC0415
@@ -747,7 +747,7 @@ if __name__ == "__main__":  # ponytail: one runnable self-check
         out_args = picture_args(hevc)
         assert out_args[:2] == ["-c:v", "libx264"] and "yuv420p" in out_args, (hevc, out_args)
     assert "-movflags" in picture_args("hevc"), "the index goes to the front, so it plays while downloading"
-    # 2026-09-18 trim and join (the floor SteadyMove's shorts and films stand on)
+    # 2026-09-18 trim and join (the floor the studio's shorts and films stand on)
     cut = trim_command(Path("a.mp4"), 2.5, 7.0, Path("b.mp4"))
     assert cut[cut.index("-ss") + 1] == "2.500" and cut[cut.index("-t") + 1] == "4.500", cut
     assert cut.index("-ss") < cut.index("-i"), "seek before the input, or ffmpeg decodes what it throws away"

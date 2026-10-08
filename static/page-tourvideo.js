@@ -1,7 +1,7 @@
-// Tour Video - SteadyMove, owner only (2026-10-02 owner: "Tour Video card we have in AstroStage - bring that to sm,
+// Tour Video - owner only (2026-10-02 owner: "Tour Video card we have in the studio - bring that to sm,
 // visible to portal admin"). One row per tour script (list.tour_videos): its state (chip tourvideo.state - no video /
 // script changed since / up to date), Check steps, Record video, and the MP4, subtitles and YouTube description.
-// The runner is AstroStage's own (chip tourvideo.settings); one job at a time, followed in the ONE work window.
+// The runner is the studio's own (chip tourvideo.settings); one job at a time, followed in the ONE work window.
 // Every word is chip ui.tourvideo.
 import { api, BASE, esc, toast, busy, pageHead, confirmDialog, t, loadWords, listBox, followJob, when, ps } from './app.js';
 import { icon } from './icons.js';

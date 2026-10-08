@@ -1,5 +1,5 @@
-// Chip Chat - AstroStage's ChipChat + chipChatShared, ported (2026-10-04 owner: "Surprise me gone ... bring entire thing from
-// AstroStage"). Ask in plain words; SimplyFile's own rules and the firm's data answer (chipchat.py - the screen evaluates
+// Chip Chat - the studio's ChipChat + chipChatShared, ported (2026-10-04 owner: "Surprise me gone ... bring entire thing from
+// the studio"). Ask in plain words; SimplyFile's own rules and the firm's data answer (chipchat.py - the screen evaluates
 // nothing). Chat: your questions right (with ↻ to ask again), the chips' answers left - the answer, its lines (each opens
 // its client), the screen it lives on, choices when the question was unclear, and Ask next. The ask box: a rotating hint,
 // a fresh set of example questions on every open and after every ask, and Surprise me. Train (the firm admin, the portal
@@ -78,7 +78,7 @@ export async function openChipChat() {
       b.querySelector('[data-send]').onclick = send;
       box.onkeydown = (e) => {
         if (e.key === 'Enter') send();
-        // Tab (or → at the end) on an empty box takes the gray example question, as AstroStage's Chip Chat does
+        // Tab (or → at the end) on an empty box takes the gray example question, as the studio's Chip Chat does
         else if ((e.key === 'Tab' || e.key === 'ArrowRight') && !box.value && box.placeholder && box.placeholder !== w('ask_own')) {
           e.preventDefault(); box.value = box.placeholder; hint('');
         }

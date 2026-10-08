@@ -1,6 +1,6 @@
 // Reported issues - what people reported from any screen (Report an issue, core/issues.py), answered in the portal.
 // 2026-09-28 owner: "We will not have email - we will have Report the way we have in TeDBook, notified back to the
-// Portal Admin". 2026-10-03: one framework with Katha feedback (kind `issue` of core/issues.py). The queue is list issues (core/lists.py): searched and paged; a reply reaches the reporter as a banner.
+// Portal Admin". 2026-10-03: one framework with reader feedback (kind `issue` of core/issues.py). The queue is list issues (core/lists.py): searched and paged; a reply reaches the reporter as a banner.
 import { api, BASE, esc, say, modal, toast, busy, pageHead, t, loadWords, listBox, when } from './ui.js';
 import { refresh } from './shell.js';
 import { icon } from './icons.js';

@@ -2,7 +2,7 @@
 
 ONE script, TWO outputs. A page's words and spotlights live in its Guide me script
 (backend/data/guides/<portal>/<page>.json, format guide-me/1; skill guide-me-script) - the same script the
-live "Guide me" button walks. This tool reads it (astrostage first, else a workspace-<slug> folder) and
+live "Guide me" button walks. This tool reads it (the studio's own folder first, else a workspace-<slug> folder) and
 translates it at run time: a cover step (title + lede), then per step {chapter: title, say, do: [press `open`
 when `target` is not on screen, spotlight `target`]} - both found exactly the way the kit finds them
 (`|` alternatives, first on screen wins; `sel:has-text('X')` = the innermost `sel` showing X).
@@ -55,7 +55,7 @@ GUIDES = ROOT / "backend" / "data" / "guides"      # Guide me scripts: <portal w
 SETTINGS = TOOL / "video_settings.json"            # video-only knobs per page key
 OUT = ROOT / "tmp" / "tour_video"
 AUTH = OUT / "auth.json"
-# Sign-in boxes on every portal: AstroStage names them username/password, SteadyMove au-ident/au-pass;
+# Sign-in boxes on every portal: the studio names them username/password, this framework au-ident/au-pass;
 # both carry the standard autocomplete words, so match either.
 USER_BOX = "input[name=username], input[autocomplete=username] >> visible=true"
 PASS_BOX = "input[name=password], input[autocomplete=current-password] >> visible=true"
@@ -220,7 +220,7 @@ def validate_tour(t: dict) -> list[str]:
     steps = t.get("steps")
     if not isinstance(steps, list) or not steps:
         return err + ["'steps' must be a non-empty list"]
-    # 2026-10-07 owner: every video carries several tags - the words people search a Watch section by (as AstroStage's make_tour)
+    # 2026-10-07 owner: every video carries several tags - the words people search a Watch section by (as the studio's make_tour)
     if "tags" in t and not (isinstance(t["tags"], list) and len({str(x).strip().lower() for x in t["tags"] if isinstance(x, str) and x.strip()}) >= 3):
         err.append("'tags' must list at least 3 different words people would search for")
     if "also" in t and not (isinstance(t["also"], list) and all(isinstance(x, str) for x in t["also"])):
@@ -494,7 +494,7 @@ def blocked(page, tour: dict) -> None:
     """Refuse to record a page that is not the screen: a sign-in form, or an access guard."""
     if not tour.get("anonymous"):
         # The app drops an expired token and falls back to a public landing page that may have no
-        # password box at all (astrostage.in/ind), so ask the page itself whether it holds a token.
+        # password box at all (the studio's individual page), so ask the page itself whether it holds a token.
         has_token = page.evaluate("() => { try { return Object.keys(localStorage).some(k => k.endsWith('_token') && localStorage.getItem(k)); } catch (e) { return true; } }")
         # A portal that keeps its session in an httpOnly cookie (the Training & Video Portal) has
         # nothing in localStorage to find, and JavaScript cannot see the cookie either - ask the
@@ -656,7 +656,7 @@ def launch_args() -> list[str]:
 
 
 def _token_origins(state: dict) -> list[str]:
-    # ponytail: any '*_token' in localStorage = signed in (astrostage_token, family_os_token...).
+    # ponytail: any '*_token' in localStorage = signed in (a studio token, a family token...).
     out = [o["origin"] for o in state.get("origins", [])
            if any(i["name"].endswith("_token") and i["value"] for i in o.get("localStorage", []))]
     # A portal that keeps its session in an httpOnly cookie writes nothing to localStorage (the
@@ -668,14 +668,14 @@ def _token_origins(state: dict) -> list[str]:
 
 
 def _save_session(state: dict) -> None:
-    """Merge into auth.json per site, so signing in to tedbook.in keeps the astrostage.in session."""
+    """Merge into auth.json per site, so signing in to one site keeps another site's session."""
     OUT.mkdir(parents=True, exist_ok=True)
     old = json.loads(AUTH.read_text(encoding="utf-8")) if AUTH.exists() else {"cookies": [], "origins": []}
     mine = {o["origin"] for o in state.get("origins", [])}
     old["origins"] = [o for o in old.get("origins", []) if o["origin"] not in mine] + state.get("origins", [])
-    # 2026-10-03: was `domain in origin` - "localhost" is inside "http://katha.localhost:8820", so signing in to Katha
-    # threw away the SteadyMove session. Then (same day) every cookie of the HOST went: signing in to AstroStage on
-    # localhost:5174 wiped SteadyMove's sm_session on localhost:8820 - cookies have no port. A new sign-in now replaces
+    # 2026-10-03: was `domain in origin` - "localhost" is inside "http://door.localhost:8820", so signing in to a door
+    # threw away the main site's session. Then (same day) every cookie of the HOST went: signing in to the studio on
+    # localhost:5174 wiped the main site's session cookie on localhost:8820 - cookies have no port. A new sign-in now replaces
     # only the cookies it sets itself (same host, name and path); every other site's stays.
     key = lambda c: (c.get("domain", "").lstrip("."), c.get("name", ""), c.get("path", "/"))   # noqa: E731
     fresh = {key(c) for c in state.get("cookies", [])}
@@ -709,7 +709,7 @@ def login(base: str) -> None:
         if auto:
             print("signing in with the given account...", flush=True)
             try:
-                # Signed out, astrostage.in shows the public front door; the form sits behind its
+                # Signed out, the studio shows the public front door; the form sits behind its
                 # "Sign up / Sign in" button. Brand hosts (tedbook.in, familyos.in) show the form at once.
                 pw_box = page.locator(PASS_BOX)
                 entry = page.locator("button:has-text('Sign in') >> visible=true")

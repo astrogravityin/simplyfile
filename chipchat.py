@@ -1,5 +1,5 @@
 """Chip Chat - ask SimplyFile a question (2026-10-04 owner: "build Chip Chat for each firm and at role level ... preempt all
-the questions"; chosen: chips first, like AstroStage's).
+the questions"; chosen: chips first, like the studio's).
 
 Facts only. The questions and answers are chip chat.faq (filtered to the person's role) plus the firm's own answers and the
 phrases its admins taught; this module scores how well each matches (word stems, chip chat.settings), chip chat.route

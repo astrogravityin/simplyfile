@@ -1,8 +1,8 @@
 """The landing page - a public showcase for a visitor who is not signed in (boilerplate: every domain portal has it).
 
-2026-10-05 owner: "do the same [as SteadyMove] for SimplyFile" - the showcase is the landing for a visitor (chip
+2026-10-05 owner: "do the same [as the studio] for SimplyFile" - the showcase is the landing for a visitor (chip
 showcase.settings sites: edition + door -> the words chip, here showcase.page); Start here goes to /start, the portal
-itself. The page (static/showcase.js, shared with SteadyMove and Katha) only draws the chip; an old /#/... link (invite,
+itself. The page (static/showcase.js; the family copy uses neutral keys) only draws the chip; an old /#/... link (invite,
 reset) that lands on / is sent on to /start by the page before anything loads.
 2026-10-05 owner: a returning visitor skips it - a browser that has signed in here before (core.auth.known) opens / on
 sign-in (chip showcase.settings returning_skip); the landing stays at /showcase and is linked from the sign-in pitch.

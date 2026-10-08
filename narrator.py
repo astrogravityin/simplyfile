@@ -323,7 +323,7 @@ def facts(row: dict) -> dict:
 
 def help_index(live_only: bool = False) -> dict:
     """{recording id: [page id, ...]}: which pages' How to Use links point at a recording. ONE source of truth -
-    How to Use pages (core/howto.py, store "howto"), the same model as AstroStage's Page Configuration: any page,
+    How to Use pages (core/howto.py, store "howto"), the same model as the studio's Page Configuration: any page,
     any number of links. 2026-09-22 owner: a Studio-only checkbox "is completely wrong - if I want another video
     in another place, then?" `live_only`: only links ticked Live (what a reader can play)."""
     out: dict = {}

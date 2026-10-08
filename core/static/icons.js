@@ -62,7 +62,7 @@ const PATHS = {
   globe:     'M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20Z|M2 12h20|M12 2a15 15 0 0 1 0 20|M12 2a15 15 0 0 0 0 20',
   ban:       'M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20Z|M5 5l14 14',
   archive:   'M3 4h18v4H3z|M5 8v11a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8|M10 12h4',
-  // 2026-10-04: AstroStage's bottom bar and Notes / Issues / Chip Chat (the same Lucide shapes AstroStage draws)
+  // 2026-10-04: the studio's bottom bar and Notes / Issues / Chip Chat (the same Lucide shapes the studio draws)
   crop:      'M6 2v14a2 2 0 0 0 2 2h14|M18 22V8a2 2 0 0 0-2-2H2',
   video:     'm16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5|M4 6h10a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2Z',
   notebook:  'M13.4 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7.4|M2 6h4|M2 10h4|M2 14h4|M2 18h4|M21.378 5.626a1 1 0 1 0-3.004-3.004l-5.01 5.012a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506z',
@@ -108,7 +108,7 @@ export function icon(name, size = 16) {
     aria-hidden="true" focusable="false">${paths}</svg>`;
 }
 
-/** 2026-10-04: the Chip Chat mark, as AstroStage draws it - a speech bubble holding a chip (the question goes in, a chip
+/** 2026-10-04: the Chip Chat mark, as the studio draws it - a speech bubble holding a chip (the question goes in, a chip
  *  answers), indigo to teal, with a spark. Its own gradient id per size so two on a page never clash. */
 let ccg = 0;
 export function chipChatGlyph(size = 24) {

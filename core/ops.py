@@ -1,4 +1,4 @@
-"""Ops: the generic primitives every chip is built from. The same idea as AstroStage's engine ops.
+"""Ops: the generic primitives every chip is built from. The same idea as the studio's engine ops.
 
 An op knows numbers, text, lists, rows and tables. It never knows what a portal, a memory limit or a
 visitor is. Every judgement (a threshold, a message, which rows count, what order) is a knob on a chip
@@ -196,7 +196,7 @@ def step_rate(amount: Any = None, steps: Any = None, field: Any = "rate") -> Any
 
 
 def median(values: Any = None) -> Any:
-    """The middle value of a list: the upper middle when the count is even (as AstroStage)."""
+    """The middle value of a list: the upper middle when the count is even (as the studio)."""
     nums = sorted(n for n in (_num(v) for v in (values or [])) if n is not None)
     return _tidy(nums[len(nums) // 2]) if nums else None
 
@@ -1022,7 +1022,7 @@ def group_rows(rows: Any = None, key: Any = None, measures: Any = None, separato
 
 
 def rows_aggregate(rows: Any = None, agg: Any = "sum", key: Any = None, where: Any = None, digits: Any = 2) -> Any:
-    """Aggregate over rows (AstroStage access_ops.rows_aggregate). agg: sum | count | max | min |
+    """Aggregate over rows (the studio access_ops.rows_aggregate). agg: sum | count | max | min |
     distinct | mode. `where` = {field: value or [values]} keeps matching rows only; a sum keeps `digits` places
     (money in cents of a cent needs 4)."""
     if not isinstance(rows, list):
@@ -1177,7 +1177,7 @@ def rows_having(rows: Any = None, field: Any = "", value: Any = None) -> list | 
 
 
 def decision_table(facts: Any = None, rules: Any = None, current: Any = None) -> Any:
-    """First matching rule's `set`, else `current` (AstroStage access_ops.decision_table).
+    """First matching rule's `set`, else `current` (the studio access_ops.decision_table).
     rules: [{when: {fact: value}, from: [...], set: x}]. The table IS the policy."""
     f = facts if isinstance(facts, dict) else {}
 
@@ -1302,7 +1302,7 @@ def get(value: Any = None, path: Any = "") -> Any:
     return cur
 
 
-# --- server facts (2026-10-07 ValueStream CC VPS Console, from AstroStage access_ops) ----------------
+# --- server facts (2026-10-07 ValueStream CC VPS Console, from the studio access_ops) ----------------
 
 def _n0(v: Any) -> float:
     n = _num(v)
@@ -1547,8 +1547,8 @@ if __name__ == "__main__":
     assert stable_hash("abc", 2 ** 31) == int("a9993e364706816aba3e25717850c26c9cd0d89d", 16) % 2 ** 31 and stable_hash("x", 0) == 0
     assert pack_text("Aa bb. Cc dd. Ee.", 8) == ["Aa bb.", "Cc dd.", "Ee."] and pack_text("aaaa bbbb cccc", 9) == ["aaaa bbbb", "cccc"] and pack_text("", 5) == []
     assert all(len(x) <= 10 for x in pack_text("x" * 25, 10)) and trim_to_sentence("One. Two three four", 12, [". "]) == "One. Two thr"
-    # 2026-10-03 Katha V2: an author handle and every sentence inside an asset - ops, never hand code
-    assert hash_hex("katha-author:u1", 12) == __import__("hashlib").sha1(b"katha-author:u1").hexdigest()[:12]
+    # 2026-10-03 reader V2: an author handle and every sentence inside an asset - ops, never hand code
+    assert hash_hex("author:u1", 12) == __import__("hashlib").sha1(b"author:u1").hexdigest()[:12]
     assert strings_in({"a": "one two", "b": ["x", {"c": "three four"}], "d": 5}, "(?s).* .*") == ["one two", "three four"]
     assert strings_in(["a", ["b"]]) == ["a", "b"] and strings_in(None) == []
     assert ease(0.5, "smooth") == 0.5 and ease(0.25, "smooth") == 0.15625 and ease(2, "linear") == 1.0 and ease(-1, "smooth") == 0.0
@@ -1613,7 +1613,7 @@ if __name__ == "__main__":
     crit = [{"fact": "a", "good": 10, "fair": 5}, {"fact": "a", "good": 2, "fair": 20, "higher_better": "false"},
             {"fact": "b", "good": 1, "fair": 0}, {"fact": "a", "good": 30, "fair": 20}]
     assert [(r["band"], r["score"]) for r in rows_band(crit, {"a": 12})] == [("good", 100), ("fair", 60), ("unknown", None), ("weak", 25)]
-    # 2026-10-07 VPS Console (CC): server facts as generic ops, the same answers as AstroStage access_ops
+    # 2026-10-07 VPS Console (CC): server facts as generic ops, the same answers as the studio access_ops
     s_ = parts_of_whole([{"name": "a", "size": 40}, {"name": "b", "size": 20}], "size", 200, 1, {"name": "rest"}, {"name": "free"}, 110)
     assert [(r["name"], r["pct"]) for r in s_] == [("a", 20.0), ("rest", 25.0), ("free", 55.0)], s_
     assert list_prefer(["me", "org"], ["org"]) == "org" and list_prefer(["me"], ["x"]) == "me" and list_prefer([1, 2], [5], False) is None

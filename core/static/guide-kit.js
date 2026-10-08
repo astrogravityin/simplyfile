@@ -2,7 +2,7 @@
 // being explained, one card with a picture, the step's narration, Back / Next, and the browser's own voice
 // reading it aloud when asked (free: nothing leaves the machine).
 //
-// PORTABLE - the same file runs on tv / SteadyMove (core/static/guide.js is its adapter), on AstroStage and
+// PORTABLE - the same file runs on every portal (core/static/guide.js is its adapter), on the studio and
 // every family site, and in any site the Guide Me Builder exports it to. It needs only ./icons.js and
 // guide-kit.css. It never fetches and it holds no words and no knobs of its own (chips and ops only): the host
 // hands it the tour, `tour.settings` (chip guide.settings: voice, pace, padding, wait, phone width) and the

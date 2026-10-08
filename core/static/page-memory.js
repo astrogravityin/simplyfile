@@ -1,4 +1,4 @@
-// Memory watch — the AstroStage screen, drawn without a chart library. What the portal weighs, the whole
+// Memory watch — the studio's screen, drawn without a chart library. What the portal weighs, the whole
 // server around it (CPU, memory, disk, bandwidth: this portal against everything else), which request
 // moved memory, and a verdict in words. Every judgement on this page comes from a `memory.*` chip on the
 // server; the page only draws what it is given. Refresh is the shell's (top right); this page adds

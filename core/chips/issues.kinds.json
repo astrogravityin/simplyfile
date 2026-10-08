@@ -37,36 +37,6 @@
             "open": true,
             "keeper": false
           }
-        },
-        "katha_feedback": {
-          "settings": "katha.feedback",
-          "words": "ui.katha_reader",
-          "store": "katha_feedback/{ref}",
-          "shots": "katha_feedback_shots/{ref}",
-          "per_ref": true,
-          "chips": {
-            "file": "katha.may_give_feedback",
-            "answer": "katha.may_answer_feedback",
-            "see": "katha.may_see_feedback",
-            "remove": "katha.may_remove_comment"
-          },
-          "screen": "",
-          "tell_answerer": "bell",
-          "tell_giver": "bell",
-          "show_email": false,
-          "label_word": "kind_katha_feedback",
-          "messages": {
-            "off": "This work is not taking feedback.",
-            "no_body": "Say what should change (or stay).",
-            "filed": "Feedback sent - the maker has been told.",
-            "saved": "Answer saved - the reader has been told.",
-            "removed": "Feedback removed.",
-            "not_yours": "Only the maker answers this feedback.",
-            "no_issue": "That feedback is not there any more.",
-            "bell_new": "{who} sent feedback on {title}",
-            "bell_reply": "The maker answered your feedback on {title}",
-            "too_fast": "One note every {s} seconds - try again in a moment."
-          }
         }
       },
       "label": "one row per kind: settings chip, words chip, where rows / screenshots live, decision chips, who hears how"
@@ -166,9 +136,9 @@
     }
   },
   "returns": "record",
-  "version": 2,
+  "version": 3,
   "status": "published",
-  "description_nl": "2026-10-03 owner: \"We already have Report Issue framework - why can't we use that ... chip ops only\" - Report an issue and Katha feedback are ONE framework (core/issues.py); a kind is a row here. 2026-10-03 owner: \"Chips and ops audit for core/issues.py\" - every name, path, field list, pattern and rule the code held.",
+  "description_nl": "2026-10-03 owner: \"We already have Report Issue framework - why can't we use that ... chip ops only\" - Report an issue and reader feedback are ONE framework (core/issues.py); a kind is a row here. 2026-10-03 owner: \"Chips and ops audit for core/issues.py\" - every name, path, field list, pattern and rule the code held.",
   "test_cases": [
     {
       "args": {},
@@ -199,36 +169,6 @@
               "answer_link": "#/issues",
               "open": true,
               "keeper": false
-            }
-          },
-          "katha_feedback": {
-            "settings": "katha.feedback",
-            "words": "ui.katha_reader",
-            "store": "katha_feedback/{ref}",
-            "shots": "katha_feedback_shots/{ref}",
-            "per_ref": true,
-            "chips": {
-              "file": "katha.may_give_feedback",
-              "answer": "katha.may_answer_feedback",
-              "see": "katha.may_see_feedback",
-              "remove": "katha.may_remove_comment"
-            },
-            "screen": "",
-            "tell_answerer": "bell",
-            "tell_giver": "bell",
-            "show_email": false,
-            "label_word": "kind_katha_feedback",
-            "messages": {
-              "off": "This work is not taking feedback.",
-              "no_body": "Say what should change (or stay).",
-              "filed": "Feedback sent - the maker has been told.",
-              "saved": "Answer saved - the reader has been told.",
-              "removed": "Feedback removed.",
-              "not_yours": "Only the maker answers this feedback.",
-              "no_issue": "That feedback is not there any more.",
-              "bell_new": "{who} sent feedback on {title}",
-              "bell_reply": "The maker answered your feedback on {title}",
-              "too_fast": "One note every {s} seconds - try again in a moment."
             }
           }
         },

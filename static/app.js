@@ -136,7 +136,7 @@ const TOUR = (t) => `<figure class="tourbox">
   <figcaption>${icon('play', 13)} ${pw('tour_caption')}</figcaption>
 </figure>`;
 
-// The edition's own pitch words (chip edition.settings words_prefix: SteadyMove's are sm_*); tv's tour only on tv.
+// The edition's own pitch words (chip edition.settings words_prefix, e.g. sf_*); tv's tour only on tv.
 const pfx = () => (state.edition && state.edition.words_prefix) || '';
 const pw = (k, v) => w(pfx() + k, v);
 
@@ -168,11 +168,11 @@ const keyScreen = () => ps('shell').key_screen;          // the Account & key sc
 
 startPortal({
   views: { firm: firmPage, analytics: analyticsPage, portalstats: portalstatsPage, server: serverPage, delegate: delegatePage, itrimport: itrImportPage, myreturn: myReturnPage, taxwatch: taxwatchPage, approvals: approvalsPage, clients: clientsPage, intake: intakePage, recon: reconPage, compute: computePage, audit: auditPage, manuals: manualPage, howto: howtoPage, guideme: guidemePage, setup: setupPage, keys: keysPage, buykey: buyKeyPage, keysales: keySalesPage, tourvideo: tourVideoPage },
-  // The edition (tv or SteadyMove, chip edition.settings) names the line under the logo.
+  // The edition (chip edition.settings) names the line under the logo.
   pitch, logo, brandSub: () => (state.edition && state.edition.brand_sub) || '',
   landing: () => (state.selfFiler ? '#/myreturn' : '') || (state.edition && state.edition.landing) || '#/video',   // a self-filer opens on My return; a door (chip edition.settings doors) has its own first screen
-  // 2026-10-01 owner "In Katha we don't need key": the key link, the key menu row and AI READY show only where Account &
-  // key is in THIS host's menu - a door without the keys screen (Katha, chip edition.settings doors[].screens) shows none
+  // 2026-10-01 owner "a door needs no key": the key link, the key menu row and AI READY show only where Account &
+  // key is in THIS host's menu - a door without the keys screen (chip edition.settings doors[].screens) shows none
   navFoot: () => (onMenu(keyScreen()) ? `<a class="quiet" href="${BASE}/help/gemini-key" target="_blank" rel="noopener">
     ${icon('help', 15)} ${w('how_to_get_key')}</a>` : ''),
   userMenu: () => (onMenu(keyScreen()) ? `<a href="#/${esc(keyScreen())}">${icon('key', 15)} ${w('account_key')}</a>` : ''),
@@ -181,7 +181,7 @@ startPortal({
     state.edition = d.edition || null;
     state.showcase = !!d.showcase;                      // this site has a public showcase (landing.py bootstrap_extra)
     state.selfFiler = !!d.self_filer;                   // firms.bootstrap_extra: one's own return, not a client register
-    document.title = state.productName;                 // SteadyMove's tab says SteadyMove, not the HTML's default
+    document.title = state.productName;                 // the tab says the product's name, not the HTML's default
     const aside = document.querySelector('aside.pitch');   // signed out: the pitch was drawn before the edition was known
     if (aside) aside.innerHTML = (aside.querySelector('.mark') || { outerHTML: '' }).outerHTML + pitch();
     state.hasKey = !!d.has_key;
@@ -198,7 +198,7 @@ startPortal({
     ${!may(keyScreen()) || !onMenu(keyScreen()) ? '' : state.hasKey
       ? `<span class="tag ok" title="${esc(w('ai_ready_tip'))}">${icon('spark', 12)} ${w('ai_ready')}</span>`
       : `<a href="#/${esc(keyScreen())}" class="chipbtn">${icon('key', 14)} ${w('add_key')}</a>`}`,
-  // 2026-09-28 owner: "Launch -> Studio at top right" - a door (Katha) opens the workshop (SteadyMove) in a new tab
+  // 2026-09-28 owner: "Launch -> Studio at top right" - a door opens the workshop (the studio) in a new tab
   topbarEnd: () => (state.edition && state.edition.launch ? `<a class="chipbtn" href="${esc(state.edition.launch)}" target="_blank" rel="noopener">
       ${icon('wand', 14)} ${w('launch_studio')}</a>` : ''),
   wireTopbar: (root) => {

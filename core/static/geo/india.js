@@ -1,4 +1,4 @@
-// COPIED from AstroStage src/components/admin/geo/indiaStates.ts (TypeScript type removed). Do not edit by hand.
+// COPIED from the studio src/components/admin/geo/indiaStates.ts (TypeScript type removed). Do not edit by hand.
 // India states and union territories: DataMeet India community, States/Admin2 (CC BY 4.0) —
 // attribution shown under the map. Drawn to India's official boundary (verified: Gilgit,
 // Skardu, Aksai Chin in Ladakh; Muzaffarabad, Mirpur in Jammu & Kashmir). Lambert conformal

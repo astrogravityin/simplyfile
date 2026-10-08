@@ -118,7 +118,7 @@ def api_check() -> None:
             assert k_ not in sc_ or f"d.{k_}" in js_, f"showcase chip has {k_} but showcase.js never draws it"
         assert not sc_.get("skin") or f'[data-skin="{sc_["skin"]}"]' in css_, f"showcase skin {sc_.get('skin')} has no styles"
         # 2026-10-07 owner: "people want to find" a film - every film carries several tags, the theatre has its find words and
-        # topics (each topic a tag some film carries), and the find forgives a typo (same guard as AstroStage tv/selfcheck.py)
+        # topics (each topic a tag some film carries), and the find forgives a typo (same guard as the studio tv/selfcheck.py)
         th_ = sc_["theatre"]
         assert all(th_.get(k_) for k_ in ("search", "found", "none", "topics")), "Watch has no find words (chip showcase.page theatre search/found/none/topics)"
         for ch_ in sc_["chapters"]:
@@ -159,7 +159,7 @@ if (ok.some((x) => !x)) { console.log(JSON.stringify(ok)); process.exit(1); }"""
                 if code >= 500:
                     bad.append(f"{path} {code}")
         assert not bad, f"server errors: {bad}"
-        # 2026-10-06 owner "Can we have this process of trouble shooting in UI" (from SteadyMove: a reset code that "never
+        # 2026-10-06 owner "Can we have this process of trouble shooting in UI" (from the studio: a reset code that "never
         # came" took an SSH session - it had been sent, Gmail filed it under a label). Every code / notice attempt is on
         # People & access -> Email (SMTP) -> Recent mail with what became of it (core/auth.py _mail, chip mail.outcomes).
         st_, au_ = app.auth.store, app.auth

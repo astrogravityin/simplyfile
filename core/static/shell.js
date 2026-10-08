@@ -20,6 +20,7 @@ export const state = {
   user: null, productName: 'Portal', portalUrl: '', needsFirstAccount: false,
   reservedOwner: '',   // PORTAL_OWNER_EMAIL on the server: only this address may claim the portal
   canEmail: false, canSignup: false, verifyEmail: false, signupDomains: '',
+  userLen: [],         // chip auth.username_problem [min, max] - shown in the user name box
   noMailPolicy: 'verify_later',     // chip auth.no_mail_policy: what sign-up does when no email can be sent
   code: { digits: 6, resend: 60 },  // chip auth.code_policy: code length, seconds before "Send a new code"
   authMode: 'signin',  // which tab the way-in card shows: signin | signup | forgot
@@ -381,7 +382,7 @@ function signupStep(step) {
       : w('free_to_open')}</p>
     <div id="auth-msg"></div>
     ${authField('au-name', w('display_name'), { name: 'name', placeholder: w('display_name_placeholder'), auto: 'name' })}
-    ${authField('au-user', w('user_name'), { name: 'username', placeholder: w('user_name_placeholder'), auto: 'username',
+    ${authField('au-user', w('user_name'), { name: 'username', placeholder: w('user_name_placeholder', { min: state.userLen[0], max: state.userLen[1] }), auto: 'username',
       extra: 'autocapitalize="off" spellcheck="false" data-lower' })}
     ${authField('au-email', w('email'), { name: 'email', type: 'email', placeholder: w('email_placeholder'), auto: 'email',
       extra: 'inputmode="email" autocapitalize="off" spellcheck="false"' })}
@@ -433,7 +434,7 @@ function firstAccountView() {
       : w('first_nobody')}</p>
     <div id="auth-msg"></div>
     ${authField('au-name', w('display_name'), { name: 'name', placeholder: w('display_name_placeholder'), auto: 'name' })}
-    ${authField('au-user', w('user_name'), { name: 'username', placeholder: w('user_name_placeholder'), auto: 'username',
+    ${authField('au-user', w('user_name'), { name: 'username', placeholder: w('user_name_placeholder', { min: state.userLen[0], max: state.userLen[1] }), auto: 'username',
       hint: w('user_name_optional'), extra: 'autocapitalize="off" spellcheck="false" data-lower' })}
     ${authField('au-email', w('email'), { name: 'email', type: 'email', placeholder: w('email_placeholder'), auto: 'email',
       value: state.reservedOwner || undefined, readonly: !!state.reservedOwner,
@@ -452,12 +453,12 @@ async function landed(user) {
   remembersFor(user && user.id);        // what this browser remembers from here on belongs to THIS person
   state.needsFirstAccount = false;
   await refresh();
-  // a link that named a screen (katha's /k/<id> -> #/read?w=<id>) opens that screen after sign-in; else the landing
+  // a link that named a screen (a door's /k/<id> -> #/read?w=<id>) opens that screen after sign-in; else the landing
   toLanding();
   render();
 }
 
-/** No screen asked for (or one this person may not open): the landing (a door's first screen: Katha #/read; a self-filer's
+/** No screen asked for (or one this person may not open): the landing (a door's first screen, e.g. #/read; a self-filer's
  *  My return) when granted, else the first screen this person may open. On sign-in, and on a page opened already signed in. */
 function toLanding() {
   const asked = (location.hash || '').replace(/^#\//, '').split('?')[0];
@@ -530,7 +531,8 @@ async function submitStep(form, msg) {
   if (state.authMode === 'signup') {
     if (step === 'details') {
       if (missing(form, ['au-name', 'au-user', 'au-email'])) return;
-      const d = await post('/api/auth/code/send', { purpose: 'signup', identity: v('au-email').trim() });
+      const d = await post('/api/auth/code/send', { purpose: 'signup', identity: v('au-email').trim(),
+        display_name: v('au-name').trim(), username: v('au-user').trim() });   // every detail checked before a code is mailed
       if (d.mail === false) {
         goStep('password', { noMail: true, proof: '',
           note: { kind: 'info', text: w('no_mail_signup') } });
@@ -1257,6 +1259,7 @@ function take(d) {
   state.signupDomains = d.signup_domains || '';
   state.noMailPolicy = d.no_mail_policy || 'verify_later';
   state.passwordMin = Number(d.password_min_length) || 8;
+  state.userLen = d.username_length || [];               // chip auth.username_problem min / max: shown in the box
   state.code = { digits: Number(d.code && d.code.digits) || 6, resend: Number(d.code && d.code.resend_after_seconds) || 60 };
   state.productName = d.product_name || state.productName;
   setProduct(state.productName);
@@ -1324,7 +1327,7 @@ export function render() {
   document.querySelector('.floattip')?.setAttribute('hidden', '');
   root.className = '';
   clearInterval(resendTimer);                      // a code countdown never outlives its card
-  // 2026-10-01 owner "send Katha links to katha.valuestream.in": a screen this address leaves to another (bootstrap
+  // 2026-10-01 owner "send door links to the door's address": a screen this address leaves to another (bootstrap
   // `elsewhere`, chip edition.settings site_sends) opens THERE - the same screen and query, before anything is drawn
   const away = state.elsewhere;
   const here = (location.hash || '').replace(/^#\//, '').split('?')[0];

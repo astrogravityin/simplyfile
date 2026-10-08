@@ -685,8 +685,8 @@ if __name__ == "__main__":  # ponytail: one runnable self-check of lending, usin
         assert store.funds_for(a["id"], "gemini")["spent_usd"] == 2.0, "the lender's balance pays"
         assert store.funds_for(b["id"], "gemini")["spent_usd"] == 0, "the borrower's own balance is untouched"
 
-        seen_a = usage(a["id"], "SteadyMove")["rows"][0]
-        seen_b = usage(b["id"], "SteadyMove")["rows"][0]
+        seen_a = usage(a["id"], "Demo Portal")["rows"][0]
+        seen_b = usage(b["id"], "Demo Portal")["rows"][0]
         assert seen_a["used_by"] == "Bala" and seen_a["own"] is False
         assert seen_a["activity"] == "Draft: Diwali …", ("the lender sees enough to recognise it, not the title", seen_a)
         assert seen_b["activity"] == "Draft: Diwali promo film", "the person who ran it sees it whole and can cross-check"
@@ -743,7 +743,7 @@ if __name__ == "__main__":  # ponytail: one runnable self-check of lending, usin
 
         # a mark-up change applies from NOW: what already ran keeps the per cent frozen onto its row
         set_terms(a["id"], g["id"], {"markup_pct": 100})
-        again = usage(a["id"], "SteadyMove")["rows"]
+        again = usage(a["id"], "Demo Portal")["rows"]
         assert sorted(r["cost_usd"] for r in again) == [2.5, 2.5], "old runs keep the mark-up they were charged at"
 
         # --- the lender's report: per key, per person, per sitting ----------------------------------
@@ -773,7 +773,7 @@ if __name__ == "__main__":  # ponytail: one runnable self-check of lending, usin
         assert providers.pool(b["id"], "gemini") == [], "a key taken back is gone at once"
         hist = lists.page("keys_lent", a, {"all": "1"})["rows"][0]
         assert hist["state"] == "revoked" and hist["granted_at"] and hist["revoked_at"]
-        assert usage(a["id"], "SteadyMove")["total"] == 3, "the runs it paid for stay on the record"
+        assert usage(a["id"], "Demo Portal")["total"] == 3, "the runs it paid for stay on the record"
         g2 = share(a["id"], spare["id"], "b@x.com")
         revoke(b["id"], g2["id"], "Bala")
         assert next(x for x in lists.page("keys_lent", a, {"all": "1"})["rows"] if x["id"] == g2["id"])["state"] == "returned", "the borrower giving it back reads differently"

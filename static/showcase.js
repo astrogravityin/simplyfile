@@ -1,8 +1,9 @@
-// SteadyMove showcase - the public page linked from the SteadyMove landing (2026-10-05 owner: "open all this in another
+// Showcase - the public page linked from the landing (2026-10-05 owner: "open all this in another
 // page ... auto run video by video or the user can select from the left pane ... the most beautiful page ... every
 // module, one stop shop, standards as a framework with unlimited freedom ... all age groups"). Every word, module,
 // feature and chapter is chip showcase.page (GET api/showcase); this file only draws it. Films stream from
 // showcase/media/<key>.mp4 (seekable), posters .jpg, captions .vtt.
+// The family copy uses neutral keys (foot.maker / foot.maker_href, section and icon `shelf`) - it no longer matches the studio's copy, by design.
 import { icon } from '../core-static/icons.js';
 
 const root = document.getElementById('sc-root');
@@ -150,7 +151,7 @@ const ageArt = (id) => `<svg viewBox="0 0 96 96" aria-hidden="true"><circle cx="
 
 // where a work goes - drawn as plain things (a shelf, an upright phone, a wide screen, a chat, a page, headphones), never a brand's mark
 const SHARE_ART = {
-  katha: '<rect x="12" y="14" width="10" height="34" rx="2" fill="#6d5efc"/><rect x="25" y="10" width="10" height="38" rx="2" fill="#e9573f"/><rect x="38" y="16" width="10" height="32" rx="2" fill="#24a89a" transform="rotate(8 43 32)"/><rect x="8" y="48" width="48" height="5" rx="2" fill="#f4a524"/>',
+  shelf: '<rect x="12" y="14" width="10" height="34" rx="2" fill="#6d5efc"/><rect x="25" y="10" width="10" height="38" rx="2" fill="#e9573f"/><rect x="38" y="16" width="10" height="32" rx="2" fill="#24a89a" transform="rotate(8 43 32)"/><rect x="8" y="48" width="48" height="5" rx="2" fill="#f4a524"/>',
   reels: '<rect x="20" y="6" width="24" height="52" rx="6" fill="#e9573f"/><rect x="23" y="12" width="18" height="38" rx="3" fill="#fff"/><path d="M29 24 v14 l 11 -7 z" fill="#e9573f"/>',
   youtube: '<rect x="6" y="10" width="52" height="34" rx="4" fill="#26234d"/><rect x="10" y="14" width="44" height="26" rx="2" fill="#4b9fe8"/><path d="M28 21 v12 l 10 -6 z" fill="#fff"/><path d="M24 52 h16 M32 44 v8" stroke="#26234d" stroke-width="4" stroke-linecap="round"/>',
   chat: '<path d="M10 14 h44 a6 6 0 0 1 6 6 v20 a6 6 0 0 1 -6 6 H26 l -12 10 v-10 h-4 a6 6 0 0 1 -6 -6 V20 a6 6 0 0 1 6 -6z" fill="#24a89a"/><circle cx="22" cy="30" r="3.5" fill="#fff"/><circle cx="32" cy="30" r="3.5" fill="#fff"/><circle cx="42" cy="30" r="3.5" fill="#fff"/>',
@@ -309,9 +310,9 @@ ${d.modules ? `  <section class="mods" id="modules"><div class="wrap">
     </div></div>`).join('')}
   </div></section>` : ''}
 
-${d.katha ? `  <section class="katha"><div class="wrap">
-    ${head(d.katha)}
-    <div class="grid3">${d.katha.rows.map((r, i) => `<article class="card reveal">${badge(r.icon, i + 1)}<div><h3>${r.href ? `<a href="${esc(r.href)}" target="_blank" rel="noopener">${esc(r.title)}</a>` : esc(r.title)}</h3><p>${esc(r.line)}</p></div></article>`).join('')}</div>
+${d.shelf ? `  <section class="shelf"><div class="wrap">
+    ${head(d.shelf)}
+    <div class="grid3">${d.shelf.rows.map((r, i) => `<article class="card reveal">${badge(r.icon, i + 1)}<div><h3>${r.href ? `<a href="${esc(r.href)}" target="_blank" rel="noopener">${esc(r.title)}</a>` : esc(r.title)}</h3><p>${esc(r.line)}</p></div></article>`).join('')}</div>
   </div></section>` : ''}
 
 ${d.ages ? `  <section class="ages" id="ages"><div class="wrap">
@@ -346,7 +347,7 @@ ${d.faq ? `  <section class="faq" id="faq"><div class="wrap">
     <p class="fine">${esc(d.cta.fine)}</p>
   </div>${SKY}</section>
 
-  <footer><div class="wrap"><span>${esc(d.foot.line)}</span><a href="${esc(d.foot.katha_href)}" target="_blank" rel="noopener">${esc(d.foot.katha)} ${icon('external', 13)}</a></div></footer>`;
+  <footer><div class="wrap"><span>${esc(d.foot.line)}</span><a href="${esc(d.foot.maker_href)}" target="_blank" rel="noopener">${esc(d.foot.maker)} ${icon('external', 13)}</a></div></footer>`;
   root.removeAttribute('aria-busy');
   if (d.theatre && (d.chapters || []).length) wirePlayer(d);
   wireFeatures(d);

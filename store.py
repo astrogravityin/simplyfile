@@ -28,7 +28,7 @@ from core.store import _LOCK, SECRET_FILES  # noqa: E402 - underscore names are 
 from core import engine  # noqa: E402
 
 engine.register_dir(Path(__file__).resolve().parent / "chips")
-# Which product this server is - Training & Video Portal or SteadyMove - is chip edition.settings,
+# Which product this server is - Training & Video Portal or the studio - is chip edition.settings,
 # picked by PORTAL_EDITION in the service file. Its name is the default until the owner renames it.
 import edition  # noqa: E402
 

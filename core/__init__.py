@@ -8,7 +8,7 @@
     Storage         core/storage.py   who holds the disk; ask to clean up (3 requests), then delete
     Memory watch    core/memwatch.py  memory, whole server (CPU, memory, disk, bandwidth), verdict, offenders
     Chips & ops     core/engine.py    every decision is a JSON chip (core/chips, <portal>/chips) built from
-                    core/ops.py       generic primitives — AstroStage's architecture, stdlib only
+                    core/ops.py       generic primitives — the studio's architecture, stdlib only
     Rules           core/rules.py     at a trigger, when chips hold, do: refuse · banner · email · value · flag
     Builders        core/builder.py   Ops & Chips Builder + Rule Chip Builder: draft → review → publish,
                                       history, scenarios; owner / editor / author (chip builder.can)

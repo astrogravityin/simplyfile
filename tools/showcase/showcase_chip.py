@@ -238,7 +238,7 @@ values = {
         "start": "Start here", "watch": "Watch the films again", "demo": "Try the demo",
         "fine": "The firm and clients in the films are made up.",
     },
-    "foot": {"line": "SimplyFile · Books in. Return out. Every figure traced.", "katha": "Powered by ValueStream", "katha_href": "https://valuestream.in/"},
+    "foot": {"line": "SimplyFile · Books in. Return out. Every figure traced.", "maker": "Powered by ValueStream", "maker_href": "https://valuestream.in/"},
     "media_base": "static/showcase/",
 }
 
@@ -278,7 +278,7 @@ if __name__ == "__main__":
         values["play"]["sub"] = values["play"]["sub"].replace("20 clients", "22 clients")
     w = lambda p, d: (ROOT / "chips" / p).write_bytes((json.dumps(d, indent=2, ensure_ascii=False) + "\n").encode("utf-8"))   # noqa: E731
     w("showcase.page.json", chip_json("showcase.page", "SimplyFile's public showcase (its landing for visitors): every word, screen, feature and film part", values,
-                                      "2026-10-05 owner: \"do the same for SimplyFile\" - the landing for a visitor, drawn by static/showcase.js (shared with SteadyMove and Katha). Parts are the showcase series recorded on sf.valuestream.in with a made-up firm; marks = each part's description.txt."))
+                                      "2026-10-05 owner: \"do the same for SimplyFile\" - the landing for a visitor, drawn by static/showcase.js (the family copy; it uses neutral keys). Parts are the showcase series recorded on sf.valuestream.in with a made-up firm; marks = each part's description.txt."))
     sites = [{"edition": "simplyfile", "door": "", "page": "showcase.page"}]
     if not (ROOT / "chips" / "showcase.settings.json").is_file():    # 2026-10-07: written once - it has grown by hand since (returning_skip)
       w("showcase.settings.json", chip_json("showcase.settings", "Which sites have a public showcase, and which chip holds its words",

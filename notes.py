@@ -1,4 +1,4 @@
-"""Notes - the bottom bar's notebook, as AstroStage has it (2026-10-04 owner: "bring the entire thing from AstroStage").
+"""Notes - the bottom bar's notebook, as the studio has it (2026-10-04 owner: "bring the entire thing from the studio").
 
 A person's own notes: a name, rich text (bold, italic, underline, lists, highlight and text colours, pasted pictures)
 and voice notes - the recording, with the words the browser wrote down while it was spoken. Private to each person.
@@ -74,7 +74,7 @@ def clean(content: str) -> tuple[str, str]:
 
 def _all() -> list[dict]:
     rows = store.read(FILE, [])
-    for n in rows:                      # notes written before the AstroStage port: title / text / pictures / voices
+    for n in rows:                      # notes written before the studio's port: title / text / pictures / voices
         if "content" not in n:
             body = html.escape(n.pop("text", "") or "", quote=False)
             n["name"] = n.pop("title", "") or body[:40]

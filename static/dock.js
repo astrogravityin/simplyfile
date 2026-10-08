@@ -1,15 +1,15 @@
-// The bottom bar - AstroStage's PortalDock + DockTools, ported one to one (2026-10-04 owner: "What it takes to just bring
-// entire thing from AstroStage to SimplyFile"). On every screen, signed in: Chip Chat, Screen capture, Screen recording,
+// The bottom bar - the studio's PortalDock + DockTools, ported one to one (2026-10-04 owner: "What it takes to just bring
+// entire thing from the studio to SimplyFile"). On every screen, signed in: Chip Chat, Screen capture, Screen recording,
 // Voice typing, Notes, Issues. Opens sideways (a row) or upwards (a column); folded, it keeps the Chip Chat mark with the
 // arrows to open it again - the choice is remembered per browser. Refresh, theme, Guide me and search stay in the top bar
-// (SimplyFile has them there); AstroStage's portal switcher and time zone are left out (owner).
+// (SimplyFile has them there); the studio's portal switcher and time zone are left out (owner).
 //   Screen capture   - the screen is taken, drag over the part to keep (or Whole screen). NOTHING is kept by itself:
 //                      Copy / Download / Add to a note / Report as an issue / Discard.
 //   Screen recording - the screen with the microphone until stopped, then shown: Download or Discard.
 //   Voice typing     - what is spoken is typed into the text box the cursor is in; a caption shows it listening, and
 //                      words spoken before a box is chosen go into the next box clicked.
 //   Notes / Issues   - notes-modal.js, issues-modal.js. Issues' badge = own issues answered and not opened yet.
-// Settings: chip page.dock (AstroStage's ui.dock_tools). Words: chip ui.dock (AstroStage's ui.dock_words, word for word).
+// Settings: chip page.dock (the studio's ui.dock_tools). Words: chip ui.dock (the studio's ui.dock_words, word for word).
 import { api, esc, toast, t, ps, loadWords, modal, confirmDialog, keep, kept } from './app.js';
 import { icon, chipChatGlyph } from './icons.js';
 
@@ -237,7 +237,7 @@ export async function openNotes(picture) {
   S.target = null; S.aimed = false;                              // words spoken before the note is up must not land behind it
   const m = await import('./notes-modal.js');
   m.notesModal({ picture, onClose: () => { if (S.stopListening) S.stopListening(); } });
-  if (!S.stopListening) listen(true);                             // AstroStage: the microphone is on as Notes opens
+  if (!S.stopListening) listen(true);                             // the studio: the microphone is on as Notes opens
 }
 export async function openIssues(shot) {
   const m = await import('./issues-modal.js');

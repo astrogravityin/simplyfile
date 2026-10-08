@@ -1,9 +1,9 @@
-"""Server & sites - the VPS's sites, backups and disk, for the portal admin (2026-10-04 owner: "bring AstroStage's VPS
+"""Server & sites - the VPS's sites, backups and disk, for the portal admin (2026-10-04 owner: "bring the studio's VPS
 Console utilities under sf Portal Admin").
 
 READ-ONLY by construction (2026-10-04 owner: "wire it read-only, no restart button"): every command only reads -
 systemctl is-active/show, df, du, find, grep, tail - fixed here or built from chip server.settings rows (shlex-quoted),
-never the caller's text. Restarts, deletes, cron edits, the terminal and deploys stay in AstroStage's VPS Console on
+never the caller's text. Restarts, deletes, cron edits, the terminal and deploys stay in the studio's VPS Console on
 the owner's own machine. Chips decide what each reading means: server.disk, server.backup, server.site, server.trend.
 """
 from __future__ import annotations

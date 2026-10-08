@@ -1,6 +1,6 @@
 // One choropleth for every map on the Visitors screen (world by country, India by state) — the plain-JS
-// port of AstroStage's GeoChoropleth.tsx. Shapes arrive pre-projected as SVG paths (./geo/*.js, copied
-// from AstroStage), so there is no mapping library and no runtime projection. Colour = magnitude on a
+// port of the studio's GeoChoropleth.tsx. Shapes arrive pre-projected as SVG paths (./geo/*.js, copied
+// from the studio), so there is no mapping library and no runtime projection. Colour = magnitude on a
 // LOG scale because traffic is heavily skewed; zero stays neutral so "none" never reads as "a little".
 import { esc } from './ui.js';
 
@@ -25,7 +25,7 @@ export function choropleth({ viewBox, shapes, values, unit, attribution = '' }) 
 
 // The IP database and the DataMeet map name India's states differently ("National Capital Territory of
 // Delhi" vs "Delhi", "Andaman and Nicobar Islands" vs "Andaman & Nicobar", old names like "Orissa").
-// Both sides go through this one key. Same rules as AstroStage indiaRegion.ts.
+// Both sides go through this one key. Same rules as the studio indiaRegion.ts.
 const DNH = 'dadra and nagar haveli and daman and diu';
 const ALIAS = {
   orissa: 'odisha',

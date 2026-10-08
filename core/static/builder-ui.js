@@ -1,6 +1,6 @@
 // The builders' shared parts — the Ops & Chips Builder and the Rule Chip Builder are made of these.
 //
-// The two-way rule (AstroStage): nothing in a chip's or a rule's JSON may exist that the author cannot
+// The two-way rule (the studio): nothing in a chip's or a rule's JSON may exist that the author cannot
 // see and edit here. So there is no raw-JSON box anywhere: every value has a typed editor (number, text,
 // yes/no, list, record, rows of records), and every expression node has a form for its kind:
 //   Value · Knob / fact ($name) · Chip {chip,args} · Op {vop,…} · Choose {cases,else} · Test {op,…}

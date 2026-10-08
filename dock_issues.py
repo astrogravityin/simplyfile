@@ -1,4 +1,4 @@
-"""Issues on the bottom bar, as AstroStage has them (2026-10-04 owner): a person's own issues - searched, filtered by status,
+"""Issues on the bottom bar, as the studio has them (2026-10-04 owner): a person's own issues - searched, filtered by status,
 counted - one issue with its pictures, voice notes and the portal admin's reply, and the badge of replies not yet opened.
 Facts only: the notes live in core issues (the portal admin answers them in Reported issues); the list is chip
 issues.mine_view; statuses and their colours chip page.dock; words chip ui.dock.

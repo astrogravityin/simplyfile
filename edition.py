@@ -1,9 +1,9 @@
 """Which product this server is. In this folder only SimplyFile (chip edition.settings) - kept as the framework's hook.
 
-2026-09-18 owner: "going forward all other features will be part of SteadyMove, which is tv + new
+2026-09-18 owner: "going forward all other features will be part of the studio, which is tv + new
 features". One codebase, two editions. A server is told which it is by PORTAL_EDITION (a hosting fact,
 set in its service file, like the port); what each edition is called and which screens it shows is chip
-`edition.settings`. tv is frozen: a new screen is added to the catalog and to steadymove's list only.
+`edition.settings`. tv is frozen: a new screen is added to the catalog and to the studio's list only.
 """
 from __future__ import annotations
 
@@ -32,8 +32,8 @@ def catalog(screens: list[dict]) -> list[dict]:
 
 
 def door(host: str) -> dict | None:
-    """2026-09-28 owner: "make Katha standard as tv and sm". Another address of the SAME edition (katha.valuestream.in on
-    SteadyMove) is a door, chip edition.settings rows[].doors: its own name, pitch and first screen - the same shell,
+    """2026-09-28 owner: "make the door standard as the other sites". Another address of the SAME edition (a second address on
+    the studio) is a door, chip edition.settings rows[].doors: its own name, pitch and first screen - the same shell,
     sign-in card, menu and screens. Never a page of its own."""
     host = str(host or "").split(":")[0].strip().lower()
     return next((d for d in current().get("doors") or [] if host in d["hosts"]), None)
@@ -41,8 +41,8 @@ def door(host: str) -> dict | None:
 
 def menu_ids(host: str) -> set[str] | None:
     """The screens this address's menu and top search offer; None = every screen of the edition.
-    A door's are ITS screens (Katha: home, watch, read...); the edition's own address leaves off its `site_hides`
-    (2026-10-01 owner: "I don't want Katha in sm's menu" - they live on katha.valuestream.in). The framework's admin
+    A door's are ITS screens (e.g. home, watch, read...); the edition's own address leaves off its `site_hides`
+    (2026-10-01 owner: "keep the door's screens out of the main menu" - they live on the door's address). The framework's admin
     screens, which no edition lists, stay for whoever may open them. Menu and search only: a hidden screen still opens
     from a link or a bell, and the server still asks access.may."""
     from core import access  # noqa: PLC0415
@@ -55,7 +55,7 @@ def menu_ids(host: str) -> set[str] | None:
 
 def elsewhere(host: str) -> dict:
     """Where this address sends the screens its menu leaves off (chip edition.settings site_sends): {url, screens}, or
-    {} - a door, or an address with nowhere named, keeps them. 2026-10-01 owner: "send Katha links to katha.valuestream.in"."""
+    {} - a door, or an address with nowhere named, keeps them. 2026-10-01 owner: "send door links to the door's address"."""
     h = str(host or "").split(":")[0].strip().lower()
     url = (current().get("site_sends") or {}).get(h, "")
     return {"url": url, "screens": list(current().get("site_hides") or [])} if url and not door(host) else {}

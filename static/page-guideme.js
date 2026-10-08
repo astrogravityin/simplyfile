@@ -1,4 +1,4 @@
-// Guide Me Builder (SteadyMove, 2026-09-28): bring a Guide Me script (format guide-me/1), have the server check it,
+// Guide Me Builder (2026-09-28): bring a Guide Me script (format guide-me/1), have the server check it,
 // preview it as the live tour, and export the complete code for any page of any site (guideme.py).
 // Home = the import box + this person's builds (one searched page at a time, chip guideme.list_view).
 // An open build = its facts, its steps, Preview / Export / Replace script / Delete. Every word: chip ui.guideme.

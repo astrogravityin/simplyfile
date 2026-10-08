@@ -1,7 +1,7 @@
 """The way in: first owner, sign up with an emailed code, sign in by user name or email, forgot password
 with a code, change password, forced change after an owner's reset, invitations, mail settings.
 
-The standard is `.agents/skills/portal-builder/AUTH.md` (astrosahai.in's card, AstroStage's User Access
+The standard is `.agents/skills/portal-builder/AUTH.md` (a sibling portal's sign-in card and User Access
 reset, with their gaps closed). Built the chip way: this module gathers facts (who, which address, what
 was typed, can mail be sent) and does the I/O (sessions, codes, email). Every decision — who may sign up,
 what a good user name or password is, how long a code lives, how many tries, lockouts, every sentence —
@@ -286,6 +286,7 @@ def bootstrap(request: Request):
            "verify_email": mailer.configured(),
            "code": {"digits": c["digits"], "resend_after_seconds": c["resend_after_seconds"]},
            "password_min_length": engine.knobs("auth.password_problem")["min_length"],
+           "username_length": [engine.knobs("auth.username_problem")[k] for k in ("min_length", "max_length")],
            "signup_domains": s["signup_domains"] if s["signup_mode"] == "domain" else ""}
     for extra in BOOTSTRAP_EXTRAS:
         out |= extra(request, u)
@@ -377,6 +378,13 @@ def send_code(body: dict = Body(...)):
     if purpose not in ("signup", "reset"):
         raise HTTPException(400, msg("bad_purpose"))
     identity = _norm(body.get("identity") or body.get("email"))
+    # 2026-10-08 owner: a too-short user name was only refused at the password step, after the code was mailed. The
+    # details step checks every field it carries (chips auth.*_problem) and a taken user name before any mail goes out
+    if purpose == "signup" and ("username" in body or "display_name" in body):
+        username = _norm(body.get("username"))
+        check_fields(name=str(body.get("display_name") or "").strip(), username=username, email=identity)
+        if username and store.username_taken(username):
+            raise fail(409, "taken_username", field="username")
     if not mailer.configured():
         if purpose == "reset":
             return {"mail": False, "message": msg("no_mail_reset")}

@@ -10,7 +10,7 @@
     {
       "name": "empty",
       "type": "text",
-      "default": "Your SteadyMove credit is used up. Ask the portal owner to add more.",
+      "default": "Your {product} credit is used up. Ask the portal owner to add more.",
       "label": "empty"
     },
     {
@@ -70,7 +70,7 @@
     {
       "name": "wallet_key",
       "type": "text",
-      "default": "SteadyMove credit",
+      "default": "{product} credit",
       "label": "wallet key"
     }
   ],
@@ -91,14 +91,14 @@
     }
   },
   "returns": "record",
-  "version": 1,
+  "version": 2,
   "status": "published",
   "description_nl": "Every sentence the wallet routes answer with. {placeholders} are filled by the server.",
   "test_cases": [
     {
       "args": {},
       "expect_value": {
-        "empty": "Your SteadyMove credit is used up. Ask the portal owner to add more.",
+        "empty": "Your {product} credit is used up. Ask the portal owner to add more.",
         "day_cap": "Today's limit of {cap} is used up. It opens again tomorrow, or ask the portal owner to raise it.",
         "low": "Only {left} of credit left.",
         "only_owner": "Only the portal owner can do that.",
@@ -108,7 +108,7 @@
         "added": "Added {amount} to {email}'s wallet. {left} left now.",
         "cap_set": "{email} may now spend {cap} a day.",
         "cap_off": "{email} has no daily limit now.",
-        "wallet_key": "SteadyMove credit"
+        "wallet_key": "{product} credit"
       }
     }
   ]

@@ -1,4 +1,4 @@
-// Pictures and VOICE NOTES on a note or an issue - AstroStage's DockAttachments, ported (2026-10-04 owner). AstroStage turns
+// Pictures and VOICE NOTES on a note or an issue - the studio's DockAttachments, ported (2026-10-04 owner). The studio turns
 // a voice note into text on its server; here the browser writes the words down while the voice note is being recorded
 // (the same speech service as voice typing), so the text is there the moment it stops. While a voice note records, voice
 // typing pauses (one microphone listener at a time) and comes back after. Words: chip ui.dock (voice.*, attach.*).

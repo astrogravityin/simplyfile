@@ -240,7 +240,7 @@ def tv_bootstrap(request: Request, u: dict | None) -> dict:
 auth.BOOTSTRAP_EXTRAS.append(tv_bootstrap)
 auth.BOOTSTRAP_EXTRAS.append(edition.bootstrap_extra)
 auth.BOOTSTRAP_EXTRAS.append(firms.bootstrap_extra)   # a self-filer lands on My return
-core.find.register_menu(edition.menu_ids)   # 2026-10-01: Ctrl+K offers what THIS address's menu shows (sm: no Katha section)
+core.find.register_menu(edition.menu_ids)   # 2026-10-01: Ctrl+K offers what THIS address's menu shows (sm: no door section)
 
 
 _owner_of = narrator.owner_of                           # a recording with no owner_id is the first owner's
@@ -349,7 +349,7 @@ def delete_buy_order(order_id: str, u: dict = Depends(screen("buykey"))):
     return keysales.withdraw_order(u["id"], order_id)
 
 
-# --- Tour Video (2026-10-02 owner: "bring Tour Video from AstroStage to sm, visible to portal admin") ------------------
+# --- Tour Video (2026-10-02 owner: "bring Tour Video from the studio to sm, visible to portal admin") ------------------
 @app.get("/api/tourvideo/job")
 def api_tourvideo_job(_: dict = Depends(screen("tourvideo"))):
     return tourvideo.job()
@@ -918,7 +918,7 @@ def api_analytics(ay: str = "", u: dict = Depends(firms.gate("analytics"))):
     return r | {"radar": len(r["radar"]), "lead_n": {k: len(v) for k, v in r["leads"].items()}, "leads": {k: v[:r["top_n"]] for k, v in r["leads"].items()}}
 
 
-# --- Chip Chat (2026-10-04 owner, as AstroStage): questions answered from chips and the person's own work, by firm and
+# --- Chip Chat (2026-10-04 owner, as the studio): questions answered from chips and the person's own work, by firm and
 # role; rotating examples, Surprise me, Ask next; the Train tab for the firm admin and the portal owner (chipchat.py) -------
 @app.get("/api/chat/examples")
 def api_chat_examples(screen: str = "", u: dict = Depends(signed_in)):
@@ -980,7 +980,7 @@ def api_chat_custom_delete(cid: str, u: dict = Depends(signed_in)):
     return chipchat.delete_custom(u, cid)
 
 
-# --- Notes - the bottom bar's notebook, as AstroStage has it (2026-10-04 owner), private to each person (notes.py) --------
+# --- Notes - the bottom bar's notebook, as the studio has it (2026-10-04 owner), private to each person (notes.py) --------
 @app.get("/api/notes")
 def api_notes(q: str = "", u: dict = Depends(signed_in)):
     return {"notes": notes.listed(u, q)}
@@ -1016,7 +1016,7 @@ def api_notes_drop(nid: str, fid: int, u: dict = Depends(signed_in)):
     return notes.drop_file(u, nid, fid)
 
 
-# --- Issues on the bottom bar (2026-10-04 owner, as AstroStage): own issues, one issue, the unread-reply badge ----------
+# --- Issues on the bottom bar (2026-10-04 owner, as the studio): own issues, one issue, the unread-reply badge ----------
 @app.get("/api/dock/issues")
 def api_dock_issues(q: str = "", status: str = "", u: dict = Depends(signed_in)):
     return dock_issues.listed(u, q, status)
@@ -1447,7 +1447,7 @@ def api_recon_delete(cid: str, ay: str, fid: str, _: dict = Depends(firms.gate("
     return {"ok": True}
 
 
-# --- Guide Me Builder (SteadyMove, 2026-09-28): a Guide Me script checked, kept, previewed and exported (guideme.py) ----
+# --- Guide Me Builder (2026-09-28): a Guide Me script checked, kept, previewed and exported (guideme.py) ----
 @app.get("/api/guideme")
 def api_guideme_list(q: str = "", page: int = 1, u: dict = Depends(screen("guideme"))):
     return guideme.find(u["id"], q, page)
@@ -1543,7 +1543,7 @@ _BOOT = {"commit": _boot_commit(), "started_at": store.now()}
 
 @app.get("/health/run")
 def health_run(request: Request):
-    """2026-10-01 owner: Restart sites (AstroStage Portal Admin -> VPS Console) waits for this. Which code runs and
+    """2026-10-01 owner: Restart sites (the studio Portal Admin -> VPS Console) waits for this. Which code runs and
     how many jobs are mid-way - asked ON the VPS only: a call that came through nginx carries a forwarded header."""
     if request.headers.get("x-forwarded-for") or request.headers.get("x-real-ip"):
         raise HTTPException(404)
@@ -1555,7 +1555,7 @@ def health_run(request: Request):
 def page(host: str = "") -> str:
     """The one HTML page. Asset links are rewritten to the mount point so the portal works at the
     site root, at /tv, and with or without the trailing slash. 2026-10-01 Phase 4: the tab title and the boot line name
-    THIS site (its door's product name, else the edition's) - sm and katha showed "Training & Video Portal" until boot."""
+    THIS site (its door's product name, else the edition's) - sm and its door showed "Training & Video Portal" until boot."""
     import html as _html  # noqa: PLC0415
     name = (edition.door(host or "") or {}).get("product_name") or edition.current()["product_name"]
     page_ = (ROOT / "static" / "index.html").read_text(encoding="utf-8")
@@ -1571,7 +1571,7 @@ def _ui_sizes(html_: str) -> str:
     return html_.replace("</head>", f'<style id="ui-spacing">{vars_}</style></head>', 1) if vars_ else html_
 
 
-# 2026-09-28 owner: "make Katha standard as tv and sm". katha.valuestream.in is a DOOR of the same shell (chip
+# 2026-09-28 owner: "make the door standard as the other sites". A second address is a DOOR of the same shell (chip
 # edition.settings doors: its name, pitch and first screen) - the same sign-in card, menu and screens, never a page of
 # its own. /k stays the public reader for a shared link, for someone with no account.
 # The landing page (public showcase, returning visitors skip it), / and /start: landing.py (boilerplate).
@@ -1584,8 +1584,8 @@ app.mount("/static", StaticFiles(directory=str(ROOT / "static")), name="static")
 @app.middleware("http")
 async def edition_routes(request: Request, call_next):
     """2026-10-01 portal assessment: an address of a screen THIS site does not have (chip edition.route_screens - the
-    routes a screen guard does not already cover) answers 404, as if it were not there (tv never serves the Katha
-    reader, Decks or SteadyMove lists)."""
+    routes a screen guard does not already cover) answers 404, as if it were not there (tv never serves the door's
+    reader, Decks or studio lists)."""
     path = request.url.path
     for start, screen_id in (engine.run("edition.route_screens") or {}).items():
         hit = path == start[1:] if start.startswith("=") else path.startswith(start)

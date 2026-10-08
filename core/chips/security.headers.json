@@ -2,7 +2,7 @@
   "chip_id": "security.headers",
   "kind": "accessor",
   "set": "security",
-  "label": "Security headers every answer of the portal carries (tv, sm, katha - one list)",
+  "label": "Security headers every answer of the portal carries (every portal - one list)",
   "aliases": [
     "security headers",
     "http headers",
@@ -45,9 +45,9 @@
     }
   },
   "returns": "record",
-  "version": 1,
+  "version": 2,
   "status": "published",
-  "description_nl": "2026-10-01 portal assessment: tv, sm and katha sent no Content-Security-Policy, X-Frame-Options, nosniff or Referrer-Policy, and katha no HSTS (nginx config not in the repo). Every answer now carries these from core (core/__init__ _stamp_build), so all three sites get them from one list; change a value here, never in code. frame-ancestors lets AstroStage and the valuestream sites frame each other; CSP stays frame-ancestors only (inline styles everywhere - a full script/style policy is a later step).",
+  "description_nl": "2026-10-01 portal assessment: the sibling portals sent no Content-Security-Policy, X-Frame-Options, nosniff or Referrer-Policy, and one had no HSTS (nginx config not in the repo). Every answer now carries these from core (core/__init__ _stamp_build), so all three sites get them from one list; change a value here, never in code. frame-ancestors lets the studio and the valuestream sites frame each other; CSP stays frame-ancestors only (inline styles everywhere - a full script/style policy is a later step).",
   "test_cases": [
     {
       "args": {},

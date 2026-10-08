@@ -10,9 +10,9 @@ and it gets these features:
 | Portal activity | `ledger.py` | One row per request: who, method, path, screen, status and time. Reports by person and by screen, plus archive download and clear. |
 | Visitors | `ledger.py`, `geo.py` | Page views, visits, pages, devices, browsers, referrers and time on page. Places come from CDN headers or a local IP database, shown on a world map and an India map by state. |
 | Storage | `storage.py` | Every account by space used, file count and how long it has held files. Ask a person to clean up: a second request at least 3 days after the first, a third at least 3 days after that, and from day 7 the owner may delete some or all of their items. The server enforces the dates. Requests go by email and also appear as a banner in the portal, so they work without SMTP. The host registers what counts as a file: `storage.register(items=…, delete=…, manage_hash=…)`. |
-| Memory watch | `memwatch.py` | Same screen as AstroStage. A verdict in words with hints. Resident memory against the limit (cgroup, machine RAM, or `PORTAL_MEMORY_LIMIT_MB`). A **whole-server** view: CPU, memory, disk and bandwidth for this portal versus other services, CPU and bandwidth charts, a portal process table and an other-services table. A 4-hour memory chart. **Offenders** (requests ranked by their largest move) and recent moves. |
+| Memory watch | `memwatch.py` | Same screen as the studio. A verdict in words with hints. Resident memory against the limit (cgroup, machine RAM, or `PORTAL_MEMORY_LIMIT_MB`). A **whole-server** view: CPU, memory, disk and bandwidth for this portal versus other services, CPU and bandwidth charts, a portal process table and an other-services table. A 4-hour memory chart. **Offenders** (requests ranked by their largest move) and recent moves. |
 | How to Use | `howto.py` | Training links for each screen, shown as a button in the top bar and on the sign-in page. |
-| **Resumable jobs** | `jobs.py`, `chips/jobs.*` | Long work as a list of saved steps on disk. A failure, a Stop or a server restart keeps every finished step; pressing the same button again carries on from the first missing one and never makes or pays for a step twice. Before a paid step, `jobs.may_continue` checks the budget and stops cleanly with what the rest would cost. `ready` = how much can be played right now. Generate uses it today; SteadyMove shorts and film shots will too. |
+| **Resumable jobs** | `jobs.py`, `chips/jobs.*` | Long work as a list of saved steps on disk. A failure, a Stop or a server restart keeps every finished step; pressing the same button again carries on from the first missing one and never makes or pays for a step twice. Before a paid step, `jobs.may_continue` checks the budget and stops cleanly with what the rest would cost. `ready` = how much can be played right now. Generate uses it today; the studio's shorts and film shots will too. |
 | **Words** | `words.py`, `chips/ui.*`, `t()`/`loadWords()` in `static/ui.js` | Every word on every screen is chip `ui.<screen>` (framework screens here, the portal's in `<portal>/chips`). A language overrides any word with `ui.<screen>.<lang>`. `core/ui_words_ratchet.json` counts sentences still typed into JavaScript per file — it may only go down (2 left: the "portal is not answering" card, which must work when the words cannot be fetched). |
 | **Top search** | `find.py`, `chips/find.*`, the pill in `static/shell.js` | One box in the top bar (Ctrl/Cmd K, or `/`) that reaches every screen and every action the person may open, and jumps straight there. The rows come from the catalog, so a screen added later is searchable with no code change; what matches, what ranks first and every word are chips `find.score`, `find.keywords`, `find.settings`, `find.messages`. |
 | **Chips & ops** | `engine.py`, `ops.py`, `chips/` | The architecture everything above is moving onto (see below). |
@@ -24,7 +24,7 @@ Small state is stored in JSON under `data/`. The ledger is stored in `data/ledge
 
 ## Chips and ops: the standard architecture
 
-This is AstroStage's rule: nothing is hard-coded, and every decision is data. It holds for every portal built on core/.
+This is the studio's rule: nothing is hard-coded, and every decision is data. It holds for every portal built on core/.
 
 - An **op** (`ops.py`) is a generic, pure primitive, such as `median`, `pct`, `filter_rows`, `group_rows`, `rank_rows`, `decision_table` or `template`. It never knows the domain. An input it cannot answer returns `None`.
 - A **chip** (`chips/*.json` for the framework, `<portal>/chips/*.json` for the portal's own business) is one named decision:
@@ -32,7 +32,7 @@ This is AstroStage's rule: nothing is hard-coded, and every decision is data. It
   - `expr` builds the answer from ops and other chips.
   - `test_cases` prove the chip works.
   - The file name is the `chip_id`.
-- The grammar matches AstroStage `backend/engine`:
+- The grammar matches the studio `backend/engine`:
   - `{"chip": id, "args": {}}` calls another chip.
   - `{"vop": op, ...}` calls an op, or `choose` with `cases` and `else`.
   - `{"op": "all|any|not|eq|ne|in_set|ge|gt|le|lt|at_least"}` is a tri-state test: an unknown operand never passes.
@@ -91,7 +91,7 @@ THEN  outcomes                refuse · banner · notify (email; a banner when t
 - Outcome text fills in `{fact}`, `{knob}` and `{value.field}`. A field written as `"$knob"` takes the
   knob's value. `cooldown_minutes` keeps a reading that arrives every few seconds from sending a hundred emails.
 - **Scenarios** (`scenarios/*.json`) are named sets of facts, such as `server_kill` or `signup_disposable`.
-  They are what a test or a dry run is tried on, the portal's version of AstroStage's sample charts.
+  They are what a test or a dry run is tried on, the portal's version of the studio's sample charts.
 - Shipped rules: `memory_alarm` (banner and email to the owner at warn or kill), `disk_low_daily` and
   `signup_disposable_email` (shipped switched off).
 
@@ -222,4 +222,4 @@ the address is cut to its /24 or /48 as before. No address is sent to any servic
 - When the database opens, views stored without a place are filled in from their stored network.
 - The reader is about 100 lines of stdlib code (`mmap`). No `maxminddb` package is needed.
 - The Visitors screen draws a **world map by country** and an **India map by state**. Both are the
-  AstroStage maps (`static/geo/`, copied from `src/components/admin/geo/`), loaded only on that screen.
+  the studio maps (`static/geo/`, copied from `src/components/admin/geo/`), loaded only on that screen.

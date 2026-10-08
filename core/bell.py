@@ -1,4 +1,4 @@
-"""The bell: short notes for ONE person, shown under the bell in the top bar (2026-09-28 owner: Katha = YouTube + Spotify
+"""The bell: short notes for ONE person, shown under the bell in the top bar (2026-09-28 owner: a reader site = YouTube + Spotify
 + Scribd - "like, comment, subscribe, notify"). Any module pushes one; nothing here knows what a work or a comment is.
 
   bell/<user id>    that person's notes, newest first, capped at chip bell.settings keep - one small file per person,

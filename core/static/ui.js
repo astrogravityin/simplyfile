@@ -1137,8 +1137,8 @@ document.addEventListener('click', (e) => {
 });
 
 /** 2026-09-28 owner: "We will not have email - we will have Report the way we have in TeDBook". The ONE Report-an-issue
- *  form (AstroStage.in's ReportIssue.tsx): header, what is wrong, an optional screenshot; the signed-in account rides
- *  along. `surface`/`context` say where it came from; `url` + `extra` let a screen add its own tick (Katha's
+ *  form (a sibling portal's ReportIssue.tsx): header, what is wrong, an optional screenshot; the signed-in account rides
+ *  along. `surface`/`context` say where it came from; `url` + `extra` let a screen add its own tick (the reader site's
  *  "copies my work"); `extraBody(root)` reads it. Lands in core Reported issues (core/issues.py). */
 export function reportIssue({ surface = '', context = '', url = '/api/core/issues', extra = '', extraBody = () => ({}), onSent = () => {}, shot: preShot = '' } = {}) {
   let shot = preShot;   // 2026-10-04: the dock's Screen capture hands its picture over
@@ -1202,7 +1202,7 @@ export function listBox(host, { list, args = {}, row, wire = () => {}, empty = '
   const pager = host.querySelector('.lb-pager');
   const load = async () => {
     let r;
-    // `url`: a list anyone may read (the public Katha shelf) is served by its own route, paged the same way
+    // `url`: a list anyone may read (a public shelf) is served by its own route, paged the same way
     try { r = await api(`${url || `/api/lists/${encodeURIComponent(list)}`}?${new URLSearchParams({ ...args, q: st.q, page: st.page })}`); }
     catch (err) { rows.innerHTML = `<p class="small bad">${esc(err.message)}</p>`; return; }
     st.page = r.page;
@@ -1361,10 +1361,10 @@ function rows(text, chars, lines) {
   return out;
 }
 
-/** x.bare (2026-09-30, Katha face lift): the picture or the drawn motif only - no shade, label or title inside; the card
+/** x.bare (2026-09-30, reader face lift): the picture or the drawn motif only - no shade, label or title inside; the card
  *  around it carries the words (a real picture often has its own text, and a title on top of it could not be read). */
 /** An asset's cover (2026-09-29): its own picture when it has one (`img`), else colours from its id, its kind's motif
- *  and its title - drawn the same on Katha's cards and every Home card. x = {id, title, kind, label, line, img}; the
+ *  and its title - drawn the same on shelf cards and every Home card. x = {id, title, kind, label, line, img}; the
  *  palettes, fonts and how a title wraps are chip page.shell `cover`. */
 let coverSeq = 0;
 export function coverArt(x) {
@@ -1373,7 +1373,7 @@ export function coverArt(x) {
   const n = hash(x.id || x.title);
   const [a, b] = pal[n % pal.length];
   // one id per DRAWING, never per work: the same work on two rails (or in hidden search results first) shared its
-  // gradient ids, and a url(#id) that lands in a display:none svg paints nothing - a white card (2026-09-30 Katha)
+  // gradient ids, and a url(#id) that lands in a display:none svg paints nothing - a white card (2026-09-30, a reader site)
   coverSeq += 1;
   const id = `kc${n.toString(36)}_${coverSeq}`;
   const lines = rows(x.title, k.title_chars || 18, k.title_lines || 3);
@@ -1588,7 +1588,7 @@ function emptyStateOf(t, w) {
 }
 
 /** Publish & Circles for one asset (2026-09-30 owner: on every module's card and file bar): chip assets.types `publish` =
- *  the Katha kind it publishes as; the press opens that screen (chip page.shell publish_screen) with the asset chosen. */
+ *  the shelf kind it publishes as; the press opens that screen (chip page.shell publish_screen) with the asset chosen. */
 function publishButton(t, id, label) {
   return t.publish ? `<button type="button" class="small ghost" data-pub="${esc(t.publish)}:${esc(id)}" title="${esc(sw('as_publish'))}">${icon('upload', 12)}${label ? ` ${esc(sw('as_publish'))}` : ''}</button>` : '';
 }
@@ -1911,7 +1911,7 @@ export function askText(title, label, okWord, done, placeholder = '') {
   } });
 }
 
-// --- the rich-text editor (2026-10-02 owner: Articles + Books from AstroStage's Study Article "with Rich Text Format
+// --- the rich-text editor (2026-10-02 owner: Articles + Books from the studio's Study Article "with Rich Text Format
 // control"). ONE editor for every screen that writes rich text: its buttons, colours, table size, the video address it
 // takes and what a paste keeps are chip page.shell `rich`; its words are ui.shell rt_*. What it holds is cleaned AGAIN
 // on the server on every save (chip rich.allow_list) - the browser's cleaning is only a courtesy.

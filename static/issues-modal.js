@@ -1,4 +1,4 @@
-// Issues - AstroStage's IssuesModal, ported (2026-10-04 owner). Report an issue from any screen, and follow what became of
+// Issues - the studio's IssuesModal, ported (2026-10-04 owner). Report an issue from any screen, and follow what became of
 // it. Left pane = the person's own issues (flexi search + status filter, server chip issues.mine_view); right = a new issue
 // (header, details, SEVERAL pictures pasted with Ctrl+V one after another or attached at once, voice notes with their words,
 // the microphone for typing) or the chosen issue with its status and the portal admin's reply. A new issue lands in the

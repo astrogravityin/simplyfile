@@ -1,4 +1,4 @@
-// Notes - AstroStage's NotesModal, ported (2026-10-04 owner). A person's own notes about any screen, opened from the bottom
+// Notes - the studio's NotesModal, ported (2026-10-04 owner). A person's own notes about any screen, opened from the bottom
 // bar. Left pane = every saved note with flexi search (server, chip notes.list_view), New and Delete; right = the note, with
 // Bold / Italic / Underline, numbered and bullet lists, highlighter and text colours (chip page.dock), pictures pasted with
 // Ctrl+V (or handed over from Screen capture), voice notes with their words, and the microphone already on as it opens

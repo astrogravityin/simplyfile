@@ -13,26 +13,6 @@
       "name": "rates",
       "type": "any",
       "default": {
-        "katha_invite_email": {
-          "per_s": 86400,
-          "most": 60,
-          "why": "addresses one person may invite to Katha groups in a day (each is an email)"
-        },
-        "katha_invite_again": {
-          "per_s": 604800,
-          "most": 1,
-          "why": "the same address asked again into the same group (remove + add again) - once a week"
-        },
-        "katha_claim": {
-          "per_s": 86400,
-          "most": 3,
-          "why": "copyright claims one account may file in a day (a claim hides the work at once)"
-        },
-        "katha_circle_join": {
-          "per_s": 3600,
-          "most": 10,
-          "why": "wrong circle codes one account may try in an hour"
-        },
         "issue": {
           "per_s": 3600,
           "most": 10,
@@ -52,33 +32,13 @@
     "value": "$rates"
   },
   "returns": "any",
-  "version": 1,
+  "version": 2,
   "status": "published",
-  "description_nl": "2026-10-01 portal assessment (tv / sm / katha): group invites could mail any address without limit (remove + add again re-mailed it), one account could hide any public work with copyright claims, circle codes and issue reports had no limit. ONE gate for all: core/limits.allow(action, who) counts per person per window and asks limits.room_left. An action not named here is not limited.",
+  "description_nl": "2026-10-01 portal assessment (the sibling portals): group invites could mail any address without limit (remove + add again re-mailed it), one account could hide any public work with copyright claims, circle codes and issue reports had no limit. ONE gate for all: core/limits.allow(action, who) counts per person per window and asks limits.room_left. An action not named here is not limited.",
   "test_cases": [
     {
       "args": {},
       "expect_value": {
-        "katha_invite_email": {
-          "per_s": 86400,
-          "most": 60,
-          "why": "addresses one person may invite to Katha groups in a day (each is an email)"
-        },
-        "katha_invite_again": {
-          "per_s": 604800,
-          "most": 1,
-          "why": "the same address asked again into the same group (remove + add again) - once a week"
-        },
-        "katha_claim": {
-          "per_s": 86400,
-          "most": 3,
-          "why": "copyright claims one account may file in a day (a claim hides the work at once)"
-        },
-        "katha_circle_join": {
-          "per_s": 3600,
-          "most": 10,
-          "why": "wrong circle codes one account may try in an hour"
-        },
         "issue": {
           "per_s": 3600,
           "most": 10,

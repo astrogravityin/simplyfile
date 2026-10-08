@@ -50,7 +50,7 @@ def tasks() -> list[dict]:
     return out
 
 
-#: Which screens THIS address's menu offers (a portal with several addresses: SteadyMove's own site and its Katha door).
+#: Which screens THIS address's menu offers (a portal with several addresses: its own site and a door).
 #: The host registers `register_menu(lambda host: {screen ids} | None)`; None = every screen. Search = the menu.
 _MENU: dict = {"of": None}
 
@@ -151,7 +151,7 @@ if __name__ == "__main__":  # ponytail: one runnable self-check of the search it
                                   {"screen": "video", "label": "Anyone part", "words": ""}]
     assert [r["label"] for r in rows(member) if r["kind"] == "task"] == ["Anyone part"], "an owner-only part is never offered to others"
     assert [r["label"] for r in rows(owner) if r["kind"] == "task"] == ["Owner part", "Anyone part"]
-    # 2026-10-01 owner "I don't want Katha in sm's menu": search offers what THIS address's menu shows, tasks too
+    # 2026-10-01 owner "keep the door's screens out of the main menu": search offers what THIS address's menu shows, tasks too
     register_menu(lambda host: {"storage"} if host == "door" else None)
     door_ = rows(owner, "door")
     assert [r["label"] for r in door_ if r["kind"] == "screen"] == ["Storage"], "a screen off this address's menu is not searched"

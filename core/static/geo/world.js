@@ -1,4 +1,4 @@
-// COPIED from AstroStage src/components/admin/geo/worldCountries.ts (TypeScript type removed). Do not edit by hand.
+// COPIED from the studio src/components/admin/geo/worldCountries.ts (TypeScript type removed). Do not edit by hand.
 // World countries, India's official point of view: Natural Earth 1:10m admin-0 'IND' POV
 // (public domain), Robinson projection. South Asia kept at 4% detail so the official India
 // boundary (all of J&K incl. PoK and Gilgit-Baltistan, Ladakh incl. Aksai Chin) survives
