@@ -26,6 +26,8 @@ PROD_DATA=$(systemctl show -p Environment --value "$APP" | tr ' ' '\n' | sed -n 
 PROD_DATA=${PROD_DATA:-$CODE/data}
 [ -f "$PROD_DATA/smtp.json" ] && cp -a "$PROD_DATA/smtp.json" "$ROOT/data/smtp.json" && echo "mail settings copied from prod"
 chown -R "$RUNAS":"$RUNAS" "$ROOT"
+# who owns every demo: set once with  PORTAL_DEMO_OWNER=<email> in /etc/valuestream/demo.env (setup keeps it)
+mkdir -p /etc/valuestream && touch /etc/valuestream/demo.env && chmod 600 /etc/valuestream/demo.env
 
 cat > "/etc/systemd/system/$SERVICE.service" <<UNIT
 [Unit]
@@ -41,6 +43,8 @@ Environment=PORTAL_DATA=$ROOT/data
 Environment=PORTAL_COOKIE=${APP}demo_$NAME
 Environment=PORTAL_HTTPS=1
 Environment=PORTAL_TRUSTED_PROXY=nginx
+# the demo's owner (PORTAL_DEMO_OWNER=<email>) lives in one file for every demo - never in a snapshot
+EnvironmentFile=-/etc/valuestream/demo.env
 ExecStart=$CODE/.venv/bin/python -m uvicorn app:app --host 127.0.0.1 --port $PORT
 Restart=always
 RestartSec=3

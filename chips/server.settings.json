@@ -26,6 +26,27 @@
           "health": "http://127.0.0.1:8831/health/run"
         },
         {
+          "id": "df",
+          "label": "DummyFy",
+          "host": "df.valuestream.in",
+          "service": "dummyfy",
+          "health": "http://127.0.0.1:8833/health/run"
+        },
+        {
+          "id": "hf",
+          "label": "HealthyFy",
+          "host": "hf.valuestream.in",
+          "service": "healthyfy",
+          "health": "http://127.0.0.1:8890/health/run"
+        },
+        {
+          "id": "tf",
+          "label": "TradyFy",
+          "host": "tf.valuestream.in",
+          "service": "tradyfy",
+          "health": "http://127.0.0.1:8880/health/run"
+        },
+        {
           "id": "astrostage",
           "label": "AstroStage",
           "host": "astrostage.in",
@@ -67,6 +88,30 @@
           "cron": "/etc/cron.d/justify-backup",
           "dir": "/var/backups",
           "pattern": "justify-data-*.tar.gz",
+          "plan": "hourly, kept 4.5 hours (VPS Console New site)"
+        },
+        {
+          "id": "df",
+          "label": "DummyFy data",
+          "cron": "/etc/cron.d/dummyfy-backup",
+          "dir": "/var/backups",
+          "pattern": "dummyfy-data-*.tar.gz",
+          "plan": "hourly, kept 4.5 hours (VPS Console New site)"
+        },
+        {
+          "id": "hf",
+          "label": "HealthyFy data",
+          "cron": "/etc/cron.d/healthyfy-backup",
+          "dir": "/var/backups",
+          "pattern": "healthyfy-data-*.tar.gz",
+          "plan": "hourly, kept 4.5 hours (VPS Console New site)"
+        },
+        {
+          "id": "tf",
+          "label": "TradyFy data",
+          "cron": "/etc/cron.d/tradyfy-backup",
+          "dir": "/var/backups",
+          "pattern": "tradyfy-data-*.tar.gz",
           "plan": "hourly, kept 4.5 hours (VPS Console New site)"
         },
         {
@@ -171,7 +216,7 @@
     }
   },
   "returns": "record",
-  "version": 2,
+  "version": 3,
   "status": "published",
   "description_nl": "2026-10-04: the sites on the VPS (service, health URL), the backups (cron file, folder, file pattern), the disk-history logs AstroStage's VPS Console writes, disk bands, when a backup counts as late. 2026-10-06: JustyFy (jf.valuestream.in, service justify, port 8831 - as VPS Console's New site made it) and its backups.",
   "test_cases": [
@@ -192,6 +237,27 @@
             "host": "jf.valuestream.in",
             "service": "justify",
             "health": "http://127.0.0.1:8831/health/run"
+          },
+          {
+            "id": "df",
+            "label": "DummyFy",
+            "host": "df.valuestream.in",
+            "service": "dummyfy",
+            "health": "http://127.0.0.1:8833/health/run"
+          },
+          {
+            "id": "hf",
+            "label": "HealthyFy",
+            "host": "hf.valuestream.in",
+            "service": "healthyfy",
+            "health": "http://127.0.0.1:8890/health/run"
+          },
+          {
+            "id": "tf",
+            "label": "TradyFy",
+            "host": "tf.valuestream.in",
+            "service": "tradyfy",
+            "health": "http://127.0.0.1:8880/health/run"
           },
           {
             "id": "astrostage",
@@ -230,6 +296,30 @@
             "cron": "/etc/cron.d/justify-backup",
             "dir": "/var/backups",
             "pattern": "justify-data-*.tar.gz",
+            "plan": "hourly, kept 4.5 hours (VPS Console New site)"
+          },
+          {
+            "id": "df",
+            "label": "DummyFy data",
+            "cron": "/etc/cron.d/dummyfy-backup",
+            "dir": "/var/backups",
+            "pattern": "dummyfy-data-*.tar.gz",
+            "plan": "hourly, kept 4.5 hours (VPS Console New site)"
+          },
+          {
+            "id": "hf",
+            "label": "HealthyFy data",
+            "cron": "/etc/cron.d/healthyfy-backup",
+            "dir": "/var/backups",
+            "pattern": "healthyfy-data-*.tar.gz",
+            "plan": "hourly, kept 4.5 hours (VPS Console New site)"
+          },
+          {
+            "id": "tf",
+            "label": "TradyFy data",
+            "cron": "/etc/cron.d/tradyfy-backup",
+            "dir": "/var/backups",
+            "pattern": "tradyfy-data-*.tar.gz",
             "plan": "hourly, kept 4.5 hours (VPS Console New site)"
           },
           {

@@ -91,6 +91,8 @@ def check_code(response: Response, body: dict = Body(...)):
     outcome = store.check_code(PURPOSE, email, str(body.get("code") or ""), int(settings()["max_attempts"]))
     if outcome != "ok":
         raise HTTPException(400, {"message": say("code_burned" if outcome == "burned" else "code_wrong"), "field": "code"})
+    if is_owner(email):   # the demo's owner, named by the server's env - never by the snapshot
+        return auth._sign_in(response, _owner_seat(email, name)) | {"signed_in": True}  # noqa: SLF001
     u = store.find_user(email)
     if not u:
         auth.check_fields(email=email, name=name)
@@ -100,6 +102,29 @@ def check_code(response: Response, body: dict = Body(...)):
             seat(u)
         u = store.find_user(email)
     return auth._sign_in(response, u) | {"signed_in": True}  # noqa: SLF001 - the one way a session starts
+
+
+def is_owner(email: str) -> bool:
+    """2026-10-08 owner: "How will I know how many people logged in the demo site unless I am owner?" The service file names
+    the demo's owner (PORTAL_DEMO_OWNER, set by deploy/demo/setup.sh), so no real address ever sits in a snapshot: that email,
+    after its code, is the portal owner - People, Activity, Visitors - and never a visitor seat."""
+    want = os.getenv("PORTAL_DEMO_OWNER", "").strip().lower()
+    return bool(want) and str(email or "").strip().lower() == want
+
+
+def _owner_seat(email: str, name: str) -> dict:
+    """The owner's account on this copy: made on first sign-in after each nightly reset, kept an owner."""
+    u = store.find_user(email) or store.add_user(email, secrets.token_urlsafe(24), name, "owner", verified=True)
+    if u.get("role") != "owner" or u.get("demo"):
+        with store._LOCK:  # noqa: SLF001 - part of the store's own tooling
+            rows = store.users()
+            for x in rows:
+                if x["id"] == u["id"]:
+                    x["role"] = "owner"
+                    x.pop("demo", None)
+            store.write("users", rows)
+        u = store.find_user(email)
+    return u
 
 
 def _mark_visitor(uid: str) -> None:
@@ -165,4 +190,8 @@ elif __name__ == "__main__":  # ponytail: the chip's numbers are sane and every 
     assert _moved({"a": ["2026-10-06", "2026-10-06T03:34:11+00:00", "2025-26", "28 Oct", 9000000001]}, 26) == \
         {"a": ["2026-11-01", "2026-11-01T03:34:11+00:00", "2025-26", "28 Oct", 9000000001]}
     assert _moved("2026-02-31", 1) == "2026-02-31"
+    os.environ["PORTAL_DEMO_OWNER"] = " Boss@Demo.Example "
+    assert is_owner("boss@demo.example") and not is_owner("someone@demo.example") and not is_owner("")
+    os.environ["PORTAL_DEMO_OWNER"] = ""
+    assert not is_owner("") and not is_owner("boss@demo.example"), "no owner named = nobody is the demo's owner"
     print("demo OK")

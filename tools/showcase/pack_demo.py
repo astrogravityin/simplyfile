@@ -13,6 +13,15 @@ DROP = {"sessions.json", "codes.json", "code_log.json", "tokens.json", "secret.j
 stage = Path(tempfile.mkdtemp()) / "snap"
 shutil.copytree(src, stage, ignore=lambda d, names: [n for n in names if Path(d) == src and n in DROP])
 users = json.loads((stage / "users.json").read_text(encoding="utf-8"))
+# 2026-10-08: a snapshot holds made-up people only. A real address (the /tax demo kept a gmail portal owner) would give
+# whoever reads that inbox every Admin menu on the public demo; the demo's owner is named by the server (PORTAL_DEMO_OWNER).
+MADE_UP = (".example", ".test", ".invalid", ".localhost")                                 # reserved names (RFC 2606)
+OURS = {"example.com", "example.org", "example.net", "valuestream.in"}                     # reserved, and our own domain
+dom = lambda u: u.get("email", "").lower().split("@")[-1]  # noqa: E731
+real = [u for u in users if not (dom(u).endswith(MADE_UP) or dom(u) in OURS)]
+users = [u for u in users if u not in real]
+if real:
+    print(f"left out {len(real)} account(s) with a real address:", ", ".join(u.get("name", "?") for u in real))
 for u in users:
     u["password"] = hash_password(secrets.token_urlsafe(24))
     u["must_change_password"] = False
