@@ -3,7 +3,7 @@
 // figure from two documents, side by side), Choose (both regimes worked out, the cheaper one marked), Review (every
 // figure with where it came from, and the person's own over it), File (the department's JSON, checked against its schema).
 // myreturn.py decides and adds up (chips myreturn.*); this draws. Pictures: myreturn-art.js. Words: chip ui.myreturn.
-import { api, BASE, esc, toast, busy, pageHead, t, loadWords, dropZone, wireDrops, modal, confirmDialog } from './app.js';
+import { api, BASE, esc, toast, busy, pageHead, t, loadWords, dropZone, wireDrops, modal, confirmDialog, state } from './app.js';
 import { icon } from './icons.js';
 import { historyButton, wireHistory } from './changes.js';
 import { stepper, docArt, waterfall, regimeBars, tdsMap, askArt } from './myreturn-art.js';
@@ -78,7 +78,7 @@ export async function myReturnPage(host) {
           ${w('src_rows').split('||').map((r) => r.split('|')).map(([a, b2, c2]) => `<div class="mr-src-row" role="row"><b role="cell">${esc(a)}</b><span role="cell">${esc(b2)}</span><span role="cell" class="muted">${esc(c2)}</span></div>`).join('')}</div></details>
         ${dropZone('mr-file', { accept: '.pdf,.json,.csv,.txt,.xlsx,.xls,.zip', title: w('drop'), hint: w('drop_hint') })}
         <div class="grid two mr-opts"><div class="field"><label for="mr-pw">${esc(w('pw'))}</label><span class="withbtn mr-pw"><input id="mr-pw" type="password" autocomplete="new-password" data-lpignore="true" data-1p-ignore placeholder="${esc(w('pw_ph'))}"/><button type="button" id="mr-pw-eye" aria-label="${esc(w('pw_show'))}" title="${esc(w('pw_show'))}" aria-pressed="false">${icon('eye', 16)}</button></span></div>
-          <label class="check mr-ai"><input type="checkbox" id="mr-ai" ${d.answers.ai_ok ? 'checked' : ''}/> <span>${esc(w('ai_ok'))}</span></label></div>
+          ${state.user && state.user.role === 'owner' ? `<label class="check mr-ai"><input type="checkbox" id="mr-ai" ${d.answers.ai_ok ? 'checked' : ''}/> <span>${esc(w('ai_ok'))}</span></label>` : ''}</div>
         <div class="row tight" style="justify-content:flex-end"><button type="button" class="primary" id="mr-up">${icon('upload', 14)} ${esc(w('read'))}</button></div></section>
       <div class="mr-dgrid">${cards}</div>
       ${next('check')}`;
@@ -216,7 +216,7 @@ export async function myReturnPage(host) {
         const b = e.currentTarget; const say = w(on ? 'pw_hide' : 'pw_show');
         b.setAttribute('aria-pressed', String(on)); b.setAttribute('aria-label', say); b.title = say; b.classList.toggle('is-on', on);
       };
-      $('#mr-ai').onchange = (e) => put({ answers: { ai_ok: e.target.checked } }, true);
+      if ($('#mr-ai')) $('#mr-ai').onchange = (e) => put({ answers: { ai_ok: e.target.checked } }, true);   // the portal admin only
       $('#mr-up').onclick = async (e) => {             // busy only while the server works - never over the "already here?" question
         const btn = e.currentTarget;
         const f = $('#mr-file').files[0];

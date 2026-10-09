@@ -113,7 +113,7 @@ function papers(d) {
 
 function banner(d) {
   const f = d.firm, last = [...(f.history || [])].reverse().find((h) => h.note);
-  const text = w(f.editable && !f.ready.say ? 'st_ready' : `st_${f.state}`, { hours: d.settings.review_hours, at: when(f.submitted_at || '') });
+  const text = w(f.editable && !f.ready.say ? 'st_ready' : f.state === d.settings.working_state && !('team' in d) ? 'st_approved_solo' : `st_${f.state}`, { hours: d.settings.review_hours, at: when(f.submitted_at || '') });
   return `<div class="fi-banner fi-${esc(f.state)}">${icon((P().state_icon || {})[f.state] || 'info', 16)}
     <div><b>${esc(stateOf(d, f.state).label)}</b><div class="small">${esc(text)}</div>
     ${last && (P().note_states || []).includes(f.state) ? `<div class="small fi-note">${icon('chat', 12)} ${esc(last.note)}</div>` : ''}</div>
@@ -202,7 +202,9 @@ export async function firmPage(host) {
       try {
         await api('/api/firm', { method: 'PUT', body: values() });
         const r = await api(`/api/firm/${f.id}/move`, { method: 'POST', body: { action: 'submit' } });
-        toast(r.say, 'ok'); firmPage(host);
+        toast(r.say, 'ok');
+        if (r.state === d.settings.working_state) { setTimeout(() => location.reload(), 900); return; }   // approved at once: redraw the menu
+        firmPage(host);
       } catch (err) { toast(err.message, 'bad', 8); }
     }), w('submit'), { tone: 'brand' });
   };

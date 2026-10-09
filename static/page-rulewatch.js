@@ -24,15 +24,95 @@ function show(kind, v, other) {
     case 'number': return esc(v);
     case 'mmdd': return esc(`${v % 100} ${MON[Math.floor(v / 100) - 1] || '?'}`);
     case 'date': { const [y, m, dd] = String(v).split('-'); return esc(`${+dd} ${MON[+m - 1] || '?'} ${y}`); }
-    case 'dates': return v.map((x) => `<span class="tw-slab${other && !other.includes(x) ? ' tw-diff' : ''}">${show('date', x)}</span>`).join('');
+    case 'dates': return v.map((x) => `<span class="tw-slab${other && !other.includes(x) ? ' tw-diff' : ''}">${show('date', x)}</span>`).join('')
+      + (Array.isArray(other) ? other.filter((x) => !v.includes(x)).map((x) => `<span class="tw-slab tw-gone" title="${esc(w('t_gone'))}">${show('date', x)}</span>`).join('') : '');
     case 'money_by_age': case 'money_by_regime': case 'money_map': case 'pct_by_regime':
       return Object.entries(v).map(([k, x]) => `<span class="tw-slab${other ? diff(x, other[k]) : ''}">${esc(named(k))} <b>${esc(kind === 'pct_by_regime' ? `${x}%` : L(x))}</b></span>`).join('');
-    default: return `<code>${esc(JSON.stringify(v))}</code>`;
+    default: return tree(v, Array.isArray(other) || (other && typeof other === 'object') ? other : undefined);
   }
 }
 
+// 2026-10-09 owner: a list of dates or rows (court calendars: holidays, vacations) and a slab table (court fees) read as a
+// compact table / chips, never raw JSON; with the live value beside it (Compare) each row says added, changed (old -> new)
+// or removed. Any shape: a list of plain values = chips, a list of records = a table, a record of lists = one block each.
+const plain = (x) => x == null || typeof x !== 'object';
+const isRec = (x) => x != null && typeof x === 'object' && !Array.isArray(x);
+const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+const head = (k) => { const x = w(`c_${k}`); return x === `c_${k}` ? String(k).replace(/_/g, ' ').replace(/^./, (c) => c.toUpperCase()) : x; };
+function cell(k, x) {
+  if (x == null) return /^(upto|to|till|max)$/.test(k) ? '∞' : '<span class="muted">-</span>';
+  if (typeof x === 'boolean') return esc(w(x ? 't_yes' : 't_no'));
+  if (typeof x === 'number') return esc(x.toLocaleString('en-IN'));
+  if (typeof x === 'string') return /^\d{4}-\d{2}-\d{2}$/.test(x) ? show('date', x) : esc(x);
+  if (Array.isArray(x) && x.every(plain)) return x.map((y) => cell(k, y)).join(', ');
+  return `<code>${esc(JSON.stringify(x))}</code>`;
+}
+/** The field that names a row in both lists (id, date, from, label, name) - else rows pair by place. */
+function rowKey(a, b) {
+  const all = [...a, ...(b || [])];
+  const uniq = (l, f) => new Set(l.map((r) => JSON.stringify(r[f]))).size === l.length;
+  const k = ['id', 'date', 'from', 'label', 'name'].find((f) => all.every((r) => r[f] != null) && uniq(a, f) && uniq(b || [], f));
+  return k ? (r) => JSON.stringify(r[k]) : null;
+}
+function rowsTable(v, o) {
+  const cols = [...new Set([...v, ...(o || [])].flatMap((r) => Object.keys(r)))];
+  const key = rowKey(v, o);
+  const was = o ? new Map(o.map((r, i) => [key ? key(r) : i, r])) : null;
+  const n = { add: 0, chg: 0, del: 0 };
+  const seen = new Set();
+  const tr = v.map((r, i) => {
+    const id = key ? key(r) : i;
+    seen.add(id);
+    const old = was ? was.get(id) : undefined;
+    const st = !was ? '' : old === undefined ? 'add' : same(old, r) ? '' : 'chg';
+    if (st) n[st] += 1;
+    return `<tr class="${st ? `tw-r-${st}` : ''}">${cols.map((c) => `<td>${st === 'chg' && !same(old[c], r[c])
+      ? `<s class="muted">${cell(c, old[c])}</s> → <b>${cell(c, r[c])}</b>` : cell(c, r[c])}</td>`).join('')}${was ? `<td>${st ? `<span class="tw-tag">${esc(w(`t_${st}`))}</span>` : ''}</td>` : ''}</tr>`;
+  });
+  const gone = was ? [...was].filter(([id]) => !seen.has(id)).map(([, r]) => r) : [];
+  n.del = gone.length;
+  gone.forEach((r) => tr.push(`<tr class="tw-r-del">${cols.map((c) => `<td><s>${cell(c, r[c])}</s></td>`).join('')}<td><span class="tw-tag">${esc(w('t_del'))}</span></td></tr>`));
+  const sum = was && (n.add + n.chg + n.del) ? `<div class="tw-sum">${['add', 'chg', 'del'].filter((x) => n[x]).map((x) => `<span class="tw-slab tw-diff">${esc(w(`t_${x}_n`, { n: n[x] }))}</span>`).join('')}</div>` : '';
+  return `${sum}<div class="tw-mini"><table><thead><tr>${cols.map((c) => `<th>${esc(head(c))}</th>`).join('')}${was ? '<th></th>' : ''}</tr></thead><tbody>${tr.join('')}</tbody></table></div>`;
+}
+/** Any value as people read it; `o` (the live value, on Compare) marks what differs. */
+function tree(v, o) {
+  if (plain(v)) return o !== undefined && !same(v, o) ? `<s class="muted">${cell('', o)}</s> → <b>${cell('', v)}</b>` : cell('', v);
+  if (Array.isArray(v)) {
+    const ol = Array.isArray(o) ? o : undefined;
+    if (!v.length) return `<span class="muted">${esc(w('t_empty'))}</span>`;
+    if (v.every(plain)) {
+      const has = (l, x) => l.some((y) => same(x, y));
+      return v.map((x) => `<span class="tw-slab${ol && !has(ol, x) ? ' tw-diff' : ''}">${cell('', x)}</span>`).join('')
+        + (ol ? ol.filter((x) => !has(v, x)).map((x) => `<span class="tw-slab tw-gone" title="${esc(w('t_gone'))}">${cell('', x)}</span>`).join('') : '');
+    }
+    if (v.every(isRec) && (!ol || ol.every(isRec))) return rowsTable(v, ol);
+    return `<code>${esc(JSON.stringify(v))}</code>`;
+  }
+  const or = isRec(o) ? o : undefined;
+  const keys = [...new Set([...Object.keys(v), ...Object.keys(or || {})])];
+  if (keys.every((k) => plain(v[k]) && (!or || plain(or[k])))) {
+    return keys.map((k) => (!(k in v) ? `<span class="tw-slab tw-gone">${esc(head(k))} <b>${cell(k, or[k])}</b></span>`
+      : `<span class="tw-slab${or && !same(v[k], or[k]) ? ' tw-diff' : ''}">${esc(head(k))} <b>${or && k in or && !same(v[k], or[k]) ? `<s>${cell(k, or[k])}</s> → ` : ''}${cell(k, v[k])}</b></span>`)).join('');
+  }
+  return keys.map((k) => `<div class="tw-sub"><small>${esc(head(k))}</small>${k in v ? tree(v[k], or ? (k in or ? or[k] : []) : undefined) : `<s class="muted">${esc(w('t_del'))}</s>`}</div>`).join('');
+}
+// The page's own few styles (page-rulewatch.js is boilerplate; app.css is each portal's own)
+const CSS = `.tw-mini{max-height:260px;overflow:auto;margin:2px 0;border:1px solid var(--line);border-radius:8px}
+.tw-mini table{border-collapse:collapse;width:100%;font-size:12px}
+.tw-mini th{position:sticky;top:0;background:var(--panel-2);text-align:left;font-weight:600;color:var(--muted);padding:3px 6px}
+.tw-mini td{padding:3px 6px;border-top:1px solid var(--line);vertical-align:top}
+.tw-mini tr.tw-r-add td,.tw-mini tr.tw-r-chg td{background:color-mix(in srgb,var(--warn) 14%,transparent)}
+.tw-mini tr.tw-r-del td{color:var(--muted)}
+.tw-tag{font-size:11px;padding:1px 6px;border-radius:999px;background:var(--panel-2);white-space:nowrap}
+.tw-slab.tw-gone{text-decoration:line-through;color:var(--muted)}
+.tw-sub{margin:4px 0}.tw-sub>small{display:block;color:var(--muted);margin-bottom:2px}
+.tw-sum{display:flex;flex-wrap:wrap;gap:4px;margin:2px 0 4px}`;
+const addCss = () => { if (!document.getElementById('tw-mini-css')) document.head.insertAdjacentHTML('beforeend', `<style id="tw-mini-css">${CSS}</style>`); };
+
 export const rulewatchPage = (name) => async (host) => {
   w = (k, v) => t(name, k, v);
+  addCss();
   const A = `/api/${name}`;
   await loadWords(name);
   const q = new URLSearchParams((location.hash.split('?')[1]) || '');

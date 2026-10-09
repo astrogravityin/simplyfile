@@ -520,6 +520,23 @@ def verbs_check() -> None:
     print("  verbs: Delete / Remove / Archive / Discard on every button OK")
 
 
+AI_CALL = re.compile(r"call_with_keys\(|\bWatch\(\s*[\"']")   # a model call, or a rulewatch.Watch (its Fetch calls one)
+
+
+def ai_check() -> None:
+    """2026-10-09 owner: no AI-key menu, button or link where the portal uses no AI; the portal admin's alone where it does.
+    Chip ai.features lists the AI features (edition.catalog hides or locks the key screens from it). A module of this portal
+    that calls a model while the chip is empty would leave its admin no way to add a key - so it fails here."""
+    feats = json.loads((HERE / "chips" / "ai.features.json").read_text(encoding="utf-8"))["params"][0]["default"]
+    skip = {"providers.py", "rulewatch.py", "keyshare.py", "narrator.py", "selfcheck.py", "edition.py"}   # the key machinery itself
+    calls = sorted(f.name for f in HERE.glob("*.py") if f.name not in skip and AI_CALL.search(f.read_text(encoding="utf-8", errors="replace")))
+    assert not calls or feats, f"{', '.join(calls)} call an AI model but chip ai.features lists no feature - add its row"
+    shown = {s["id"] for s in json.loads((HERE / "catalog.json").read_text(encoding="utf-8"))}
+    bad = [f["id"] for f in feats if f.get("screen") not in shown or f.get("who") not in ("owner", "anyone")]
+    assert not bad, f"ai.features rows need a catalog screen and who = owner or anyone: {bad}"
+    print(f"  ai: {len(feats)} AI feature(s) - key screens {'for the portal admin only' if feats else 'hidden everywhere'} OK")
+
+
 if __name__ == "__main__":
     print("SimplyFy - self-check")
     module_checks()
@@ -528,5 +545,6 @@ if __name__ == "__main__":
     guides_tours_check()
     name_once_check()
     verbs_check()
+    ai_check()
     api_check()
     print("All checks passed.")

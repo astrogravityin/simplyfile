@@ -77,6 +77,14 @@ ITRU_NUM = ("orig_income", "added", "tds_added", "tds", "advance", "orig_111a", 
 ITRU_SPECIAL = {"111a": "stcg_111a", "112a": "ltcg_112a", "112": "ltcg_112", "30": "special"}
 
 
+
+def _ai_allowed(user: dict | None) -> bool:
+    """2026-10-09 owner: only the portal admin fetches with AI (chip ai.features form16_ai_read who)."""
+    import firms  # noqa: PLC0415
+    from core import engine  # noqa: PLC0415
+    row = next((f for f in engine.knobs("ai.features").get("features") or [] if f.get("id") == "form16_ai_read"), None)
+    return bool(row) and (row.get("who") != "owner" or firms.is_owner(user))
+
 def settings() -> dict:
     return engine.run("myreturn.settings")
 
@@ -139,7 +147,7 @@ def add_doc(user: dict, cid: str, ay: str, filename: str, data: bytes, password:
     c = clients.get(cid)
     dob = c.get("dob") or next((w["dob"] for d in st0.get("docs") or [] if (w := who(d)).get("dob")), "")
     got = myreturn_read.read(filename, data, password=password, user=user, ay=ay, pan=c.get("pan", ""), dob=dob,
-                             ai_ok=bool((st0.get("answers") or {}).get("ai_ok")))
+                             ai_ok=bool((st0.get("answers") or {}).get("ai_ok")) and _ai_allowed(user))
     w = who(got)                                            # a document naming this person fills what the client lacks
     if w.get("pan") == c.get("pan") and (w.get("dob") and not c.get("dob") or w.get("name") and c.get("name") == c.get("pan")):
         clients.save(user, c | {"dob": c.get("dob") or w["dob"], "name": w["name"] if c.get("name") == c.get("pan") and w.get("name") else c["name"]}, cid)

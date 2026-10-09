@@ -486,6 +486,162 @@
       "type": "text",
       "default": "This year has not been checked yet.",
       "label": "check never"
+    },
+    {
+      "name": "t_yes",
+      "type": "text",
+      "default": "Yes",
+      "label": "t yes"
+    },
+    {
+      "name": "t_no",
+      "type": "text",
+      "default": "No",
+      "label": "t no"
+    },
+    {
+      "name": "t_add",
+      "type": "text",
+      "default": "added",
+      "label": "t add"
+    },
+    {
+      "name": "t_chg",
+      "type": "text",
+      "default": "changed",
+      "label": "t chg"
+    },
+    {
+      "name": "t_del",
+      "type": "text",
+      "default": "removed",
+      "label": "t del"
+    },
+    {
+      "name": "t_add_n",
+      "type": "text",
+      "default": "{n} added",
+      "label": "t add n"
+    },
+    {
+      "name": "t_chg_n",
+      "type": "text",
+      "default": "{n} changed",
+      "label": "t chg n"
+    },
+    {
+      "name": "t_del_n",
+      "type": "text",
+      "default": "{n} removed",
+      "label": "t del n"
+    },
+    {
+      "name": "t_gone",
+      "type": "text",
+      "default": "Not in the fetched figures",
+      "label": "t gone"
+    },
+    {
+      "name": "t_empty",
+      "type": "text",
+      "default": "None",
+      "label": "t empty"
+    },
+    {
+      "name": "c_id",
+      "type": "text",
+      "default": "Id",
+      "label": "c id"
+    },
+    {
+      "name": "c_date",
+      "type": "text",
+      "default": "Date",
+      "label": "c date"
+    },
+    {
+      "name": "c_name",
+      "type": "text",
+      "default": "Name",
+      "label": "c name"
+    },
+    {
+      "name": "c_label",
+      "type": "text",
+      "default": "What",
+      "label": "c label"
+    },
+    {
+      "name": "c_from",
+      "type": "text",
+      "default": "From",
+      "label": "c from"
+    },
+    {
+      "name": "c_to",
+      "type": "text",
+      "default": "To",
+      "label": "c to"
+    },
+    {
+      "name": "c_upto",
+      "type": "text",
+      "default": "Up to",
+      "label": "c upto"
+    },
+    {
+      "name": "c_per",
+      "type": "text",
+      "default": "For every",
+      "label": "c per"
+    },
+    {
+      "name": "c_fee",
+      "type": "text",
+      "default": "Fee",
+      "label": "c fee"
+    },
+    {
+      "name": "c_fee_text",
+      "type": "text",
+      "default": "Fee",
+      "label": "c fee text"
+    },
+    {
+      "name": "c_rate",
+      "type": "text",
+      "default": "Rate",
+      "label": "c rate"
+    },
+    {
+      "name": "c_where",
+      "type": "text",
+      "default": "Where",
+      "label": "c where"
+    },
+    {
+      "name": "c_closed",
+      "type": "text",
+      "default": "Closed for filing",
+      "label": "c closed"
+    },
+    {
+      "name": "c_applies",
+      "type": "text",
+      "default": "Applies to",
+      "label": "c applies"
+    },
+    {
+      "name": "c_holidays",
+      "type": "text",
+      "default": "Holidays",
+      "label": "c holidays"
+    },
+    {
+      "name": "c_vacations",
+      "type": "text",
+      "default": "Vacations",
+      "label": "c vacations"
     }
   ],
   "expr": {
@@ -570,13 +726,39 @@
       "snapshot": "$snapshot",
       "rulebook_url": "$rulebook_url",
       "check_due": "$check_due",
-      "check_never": "$check_never"
+      "check_never": "$check_never",
+      "t_yes": "$t_yes",
+      "t_no": "$t_no",
+      "t_add": "$t_add",
+      "t_chg": "$t_chg",
+      "t_del": "$t_del",
+      "t_add_n": "$t_add_n",
+      "t_chg_n": "$t_chg_n",
+      "t_del_n": "$t_del_n",
+      "t_gone": "$t_gone",
+      "t_empty": "$t_empty",
+      "c_id": "$c_id",
+      "c_date": "$c_date",
+      "c_name": "$c_name",
+      "c_label": "$c_label",
+      "c_from": "$c_from",
+      "c_to": "$c_to",
+      "c_upto": "$c_upto",
+      "c_per": "$c_per",
+      "c_fee": "$c_fee",
+      "c_fee_text": "$c_fee_text",
+      "c_rate": "$c_rate",
+      "c_where": "$c_where",
+      "c_closed": "$c_closed",
+      "c_applies": "$c_applies",
+      "c_holidays": "$c_holidays",
+      "c_vacations": "$c_vacations"
     }
   },
   "returns": "record",
-  "version": 9,
+  "version": 10,
   "status": "published",
-  "description_nl": "2026-10-06: every word on Tax rules (Fetch, Compare, Apply). 2026-10-06: new_h / new_p / new_who / new_none - the changes Fetch found that are not a figure. 2026-10-06: ro_note / ro_tag - what everyone but the owner sees. 2026-10-06: rulebook / rulebook_sub - the Rule book button. 2026-10-06: ai_pick / ai_auto / ai_none / ai_ready / ai_resting - the AI choice beside Fetch. 2026-10-06: recheck / ext_why / recheck_p - checking the live year again. 2026-10-07: log_note / snapshot / rulebook_url (empty hides the link) - the shared rule watch. 2026-10-07: check_due / check_never - the re-check nudge. 2026-10-08: fetching names the AI picked ({ai}).",
+  "description_nl": "2026-10-06: every word on Tax rules (Fetch, Compare, Apply). 2026-10-06: new_h / new_p / new_who / new_none - the changes Fetch found that are not a figure. 2026-10-06: ro_note / ro_tag - what everyone but the owner sees. 2026-10-06: rulebook / rulebook_sub - the Rule book button. 2026-10-06: ai_pick / ai_auto / ai_none / ai_ready / ai_resting - the AI choice beside Fetch. 2026-10-06: recheck / ext_why / recheck_p - checking the live year again. 2026-10-07: log_note / snapshot / rulebook_url (empty hides the link) - the shared rule watch. 2026-10-07: check_due / check_never - the re-check nudge. 2026-10-08: fetching names the AI picked ({ai}). 2026-10-09: t_* / c_* - lists of rows (calendars, fee slabs) drawn as a table: column names c_<field>, added / changed / removed on Compare.",
   "test_cases": [
     {
       "args": {},
@@ -660,7 +842,33 @@
         "snapshot": "Tax rules: AY {ay}",
         "rulebook_url": "/api/rulebook",
         "check_due": "Not checked for {days} days or more: the department may have published a circular or notification since. Fetch the year being filed again.",
-        "check_never": "This year has not been checked yet."
+        "check_never": "This year has not been checked yet.",
+        "t_yes": "Yes",
+        "t_no": "No",
+        "t_add": "added",
+        "t_chg": "changed",
+        "t_del": "removed",
+        "t_add_n": "{n} added",
+        "t_chg_n": "{n} changed",
+        "t_del_n": "{n} removed",
+        "t_gone": "Not in the fetched figures",
+        "t_empty": "None",
+        "c_id": "Id",
+        "c_date": "Date",
+        "c_name": "Name",
+        "c_label": "What",
+        "c_from": "From",
+        "c_to": "To",
+        "c_upto": "Up to",
+        "c_per": "For every",
+        "c_fee": "Fee",
+        "c_fee_text": "Fee",
+        "c_rate": "Rate",
+        "c_where": "Where",
+        "c_closed": "Closed for filing",
+        "c_applies": "Applies to",
+        "c_holidays": "Holidays",
+        "c_vacations": "Vacations"
       }
     }
   ]

@@ -176,6 +176,12 @@
       "label": "st approved"
     },
     {
+      "name": "st_approved_solo",
+      "type": "text",
+      "default": "Your firm is approved. Filing is open.",
+      "label": "st approved solo"
+    },
+    {
       "name": "st_rejected",
       "type": "text",
       "default": "The application was not approved (reason below). Write to the portal admin if you think this is wrong.",
@@ -1011,6 +1017,7 @@
       "st_submitted": "$st_submitted",
       "st_returned": "$st_returned",
       "st_approved": "$st_approved",
+      "st_approved_solo": "$st_approved_solo",
       "st_rejected": "$st_rejected",
       "st_suspended": "$st_suspended",
       "team": "$team",
@@ -1148,9 +1155,9 @@
     }
   },
   "returns": "record",
-  "version": 1,
+  "version": 2,
   "status": "published",
-  "description_nl": "Every word of My firm, Firm approvals and the sentences firms.py answers with.",
+  "description_nl": "Every word of My firm, Firm approvals and the sentences firms.py answers with. 2026-10-09: st_approved_solo - the approved line for a desk with no team (no 'add your team').",
   "test_cases": [
     {
       "args": {},
@@ -1183,6 +1190,7 @@
         "st_submitted": "Sent on {at}. The portal admin reviews within {hours} hours; you will get an email.",
         "st_returned": "The portal admin asked for a fix (below). Change what is asked, then send again.",
         "st_approved": "Your firm is approved. Filing is open; add your team below.",
+        "st_approved_solo": "Your firm is approved. Filing is open.",
         "st_rejected": "The application was not approved (reason below). Write to the portal admin if you think this is wrong.",
         "st_suspended": "Your firm is suspended (reason below). Filing is closed until the portal admin restores it.",
         "team": "Team",

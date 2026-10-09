@@ -25,10 +25,19 @@ def current() -> dict:
     return row
 
 
+def ai_features() -> list[dict]:
+    """This portal's features that call an AI model (chip ai.features; no chip = none)."""
+    return list(engine.knobs("ai.features").get("features") or [])
+
+
 def catalog(screens: list[dict]) -> list[dict]:
-    """The catalog's screens this edition shows, in the edition's own order."""
+    """The catalog's screens this edition shows, in the edition's own order.
+    2026-10-09 owner: the AI-key screens (Account & key, Buy a key, Keys for sale) are gone when the portal uses no AI, and
+    the portal admin's alone when it does - chip ai.features lists the features; its key_screens the screens."""
     by_id = {s["id"]: s for s in screens}
-    return [by_id[i] for i in current()["screens"] if i in by_id]
+    keyed = set(engine.knobs("ai.features").get("key_screens") or ["keys", "buykey", "keysales"])
+    ai = bool(ai_features())
+    return [by_id[i] | ({"admin": True} if i in keyed else {}) for i in current()["screens"] if i in by_id and (ai or i not in keyed)]
 
 
 def door(host: str) -> dict | None:
@@ -86,6 +95,15 @@ if __name__ == "__main__":  # ponytail: one runnable self-check - SimplyFile is 
         shown = [s["id"] for s in catalog([{"id": x} for x in [*reversed(listed), "no_such_screen"]])]
         assert shown == listed, shown                                 # the edition's order; a screen it does not list is absent
         assert door("no-such-host.example") is None
+        real = ai_features
+        try:   # AI-key screens: absent with no AI feature; admin-only (portal admin) with one
+            for feats in ([], [{"id": "x"}]):
+                globals()["ai_features"] = lambda f=feats: f
+                got = {s["id"]: s for s in catalog([{"id": i} for i in [*listed, "keys"]] )} if "keys" in e["screens"] else None
+                if got is not None:
+                    assert ("keys" in got) == bool(feats) and (not feats or got["keys"].get("admin")), (feats, got)
+        finally:
+            globals()["ai_features"] = real
         os.environ["PORTAL_EDITION"] = "nonsense"
         try:
             current()

@@ -173,9 +173,9 @@ startPortal({
   landing: () => (state.selfFiler ? '#/myreturn' : '') || (state.edition && state.edition.landing) || '#/video',   // a self-filer opens on My return; a door (chip edition.settings doors) has its own first screen
   // 2026-10-01 owner "a door needs no key": the key link, the key menu row and AI READY show only where Account &
   // key is in THIS host's menu - a door without the keys screen (chip edition.settings doors[].screens) shows none
-  navFoot: () => (onMenu(keyScreen()) ? `<a class="quiet" href="${BASE}/help/gemini-key" target="_blank" rel="noopener">
+  navFoot: () => (onMenu(keyScreen()) && may(keyScreen()) ? `<a class="quiet" href="${BASE}/help/gemini-key" target="_blank" rel="noopener">
     ${icon('help', 15)} ${w('how_to_get_key')}</a>` : ''),
-  userMenu: () => (onMenu(keyScreen()) ? `<a href="#/${esc(keyScreen())}">${icon('key', 15)} ${w('account_key')}</a>` : ''),
+  userMenu: () => (onMenu(keyScreen()) && may(keyScreen()) ? `<a href="#/${esc(keyScreen())}">${icon('key', 15)} ${w('account_key')}</a>` : ''),
   onBoot: async (d) => {
     await loadWords('app');      // already there from the start; a no-op unless that first fetch failed
     state.edition = d.edition || null;

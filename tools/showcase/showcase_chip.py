@@ -1,4 +1,4 @@
-"""Disposable builder (run once): writes chips/showcase.page.json + chips/showcase.settings.json for SimplyFile's public
+"""Builder: writes (first run) or keeps in step (every run after: only the parts' chapters and marks) chips/showcase.page.json + chips/showcase.settings.json for SimplyFile's public
 showcase (its landing for visitors), and re-encodes the showcase parts into static/showcase/ (streamable MP4, a
 poster, WebVTT captions). The chapter marks come from each part's own description.txt. The JSON is the source of truth."""
 import json
@@ -265,22 +265,48 @@ values["stats"] = [
 ]
 
 
+def owned(chip: dict) -> bool:
+    """2026-10-09 owner: the chip's words are kept by hand ({product}, the play section...) - a re-run rewrites only what this
+    script owns: each part's chapter (title, group, line, tags) and its marks from description.txt (a part without one keeps
+    its marks). The name is never spelled: {product}; the test holds it filled, as the engine answers. True = changed."""
+    sys.path.insert(0, str(ROOT))
+    from core import engine  # noqa: PLC0415
+    name = engine.product_name() or "{product}"
+    ps = {x["name"]: x for x in chip["params"]}
+    had = {c["key"]: c for c in ps["chapters"]["default"]}
+    gen = []
+    for i, (folder, key, title, line) in enumerate(PARTS):
+        mk = marks(folder) if (SRC / folder / "description.txt").is_file() else had.get(key, {}).get("marks", [])
+        mk = [{**m, "title": re.sub(r"\bSimplyF(?:ile|y)\b", "{product}", m["title"])} for m in mk]
+        gen.append({"key": key, "group": GROUP(i), "title": title, "module": f"Part {i + 1}", "line": line, "tags": TAGS[key], "marks": mk})
+    filled = json.loads(json.dumps(gen, ensure_ascii=False).replace("{product}", name))
+    test = chip["test_cases"][0]["expect_value"]
+    if ps["chapters"]["default"] == gen and test.get("chapters") == filled:
+        return False
+    ps["chapters"]["default"], test["chapters"] = gen, filled
+    chip["version"] = int(chip.get("version") or 0) + 1
+    return True
+
+
 if __name__ == "__main__":
     if "--media" in sys.argv:
         media()
-    old = {x["name"]: x["default"] for x in json.loads((ROOT / "chips" / "showcase.page.json").read_text(encoding="utf-8"))["params"]}
-    values = {**values, **{k: v for k, v in old.items() if k not in values}}     # 2026-10-07: never drop a section written by hand (play)
-    TRY = "Open My return for the family HUF and the consultant"
-    if "play" in values and TRY not in values["play"]["tries"]:
-        values["play"]["tries"] = values["play"]["tries"] + [TRY]
-    if "play" in values:      # the demo firm's clients, counted in tmp/showcase/demo-final (2026-10-07: 20 + the HUF and the consultant of part 11)
-        values["play"]["window"]["rows"] = [[k, "22" if k == "Clients" else v] for k, v in values["play"]["window"]["rows"]]
-        values["play"]["sub"] = values["play"]["sub"].replace("20 clients", "22 clients")
     w = lambda p, d: (ROOT / "chips" / p).write_bytes((json.dumps(d, indent=2, ensure_ascii=False) + "\n").encode("utf-8"))   # noqa: E731
-    w("showcase.page.json", chip_json("showcase.page", "SimplyFile's public showcase (its landing for visitors): every word, screen, feature and film part", values,
-                                      "2026-10-05 owner: \"do the same for SimplyFile\" - the landing for a visitor, drawn by static/showcase.js (the family copy; it uses neutral keys). Parts are the showcase series recorded on sf.valuestream.in with a made-up firm; marks = each part's description.txt."))
+    page = ROOT / "chips" / "showcase.page.json"
+    if page.is_file():
+        chip = json.loads(page.read_text(encoding="utf-8"))
+        if owned(chip):
+            w("showcase.page.json", chip)
+            print("showcase.page: chapters rewritten, version", chip["version"])
+        else:
+            print("showcase.page: in step - nothing written")
+    else:   # first run only: the seed above, the name as {product}
+        seed = json.loads(json.dumps(values, ensure_ascii=False).replace("SimplyFile", "{product}"))
+        w("showcase.page.json", chip_json("showcase.page", "{product}'s public showcase (its landing for visitors): every word, screen, feature and film part", seed,
+                                          "2026-10-05 owner: \"do the same for {product}\" - the landing for a visitor, drawn by static/showcase.js (the family copy; it uses neutral keys). Parts are the showcase series recorded on sf.valuestream.in with a made-up firm; marks = each part's description.txt."))
+        print("wrote showcase.page")
     sites = [{"edition": "simplyfile", "door": "", "page": "showcase.page"}]
     if not (ROOT / "chips" / "showcase.settings.json").is_file():    # 2026-10-07: written once - it has grown by hand since (returning_skip)
-      w("showcase.settings.json", chip_json("showcase.settings", "Which sites have a public showcase, and which chip holds its words",
-                                          {"editions": ["simplyfile"], "sites": sites, "path": "/showcase"}, "2026-10-05 owner: the showcase is the landing; Start here -> /start.", "admin"))
-    print("wrote showcase.page + showcase.settings")
+        w("showcase.settings.json", chip_json("showcase.settings", "Which sites have a public showcase, and which chip holds its words",
+                                              {"editions": ["simplyfile"], "sites": sites, "path": "/showcase"}, "2026-10-05 owner: the showcase is the landing; Start here -> /start.", "admin"))
+        print("wrote showcase.settings")

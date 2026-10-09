@@ -1,0 +1,80 @@
+{
+  "chip_id": "ai.features",
+  "kind": "accessor",
+  "set": "ai",
+  "audience": "admin",
+  "label": "Which features of this portal call an AI model - and so whether anyone sees AI-key menus and buttons",
+  "aliases": [
+    "ai features",
+    "ai key",
+    "uses ai"
+  ],
+  "params": [
+    {
+      "name": "features",
+      "type": "json",
+      "default": [
+        {
+          "id": "taxwatch_fetch",
+          "label": "Tax rules - Fetch with AI",
+          "screen": "taxwatch",
+          "who": "owner"
+        },
+        {
+          "id": "form16_ai_read",
+          "label": "My return - read Form 16 with AI",
+          "screen": "myreturn",
+          "who": "owner"
+        }
+      ],
+      "label": "each AI feature: id, label, screen, who may run it (owner = the portal admin). Empty: the portal uses no AI - Account & key, Buy a key, Keys for sale, the top-bar key button and the key links are gone"
+    },
+    {
+      "name": "key_screens",
+      "type": "json",
+      "default": [
+        "keys",
+        "buykey",
+        "keysales"
+      ],
+      "label": "the AI-key screens: gone when features is empty, the portal admin's alone when it is not"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "features": "$features",
+      "key_screens": "$key_screens"
+    }
+  },
+  "returns": "any",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-09 owner: remove the AI key everywhere (top bar, menus, links) when the portal does not use AI; as soon as a feature uses it, show it - to the portal admin only. Add a feature's row here in the same change that adds the feature (selfcheck fails otherwise).",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "features": [
+          {
+            "id": "taxwatch_fetch",
+            "label": "Tax rules - Fetch with AI",
+            "screen": "taxwatch",
+            "who": "owner"
+          },
+          {
+            "id": "form16_ai_read",
+            "label": "My return - read Form 16 with AI",
+            "screen": "myreturn",
+            "who": "owner"
+          }
+        ],
+        "key_screens": [
+          "keys",
+          "buykey",
+          "keysales"
+        ]
+      }
+    }
+  ]
+}
