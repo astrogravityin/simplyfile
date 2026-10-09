@@ -462,6 +462,28 @@
             "word": "fd_refund",
             "path": "ITR2.PartB_TTI.Refund.RefundDue"
           }
+        ],
+        "ITR-3": [
+          {
+            "word": "fd_pan",
+            "path": "ITR3.PartA_GEN1.PersonalInfo.PAN"
+          },
+          {
+            "word": "fd_ay",
+            "path": "ITR3.Form_ITR3.AssessmentYear"
+          },
+          {
+            "word": "fd_total",
+            "path": "ITR3.PartB-TI.TotalIncome"
+          },
+          {
+            "word": "fd_tax",
+            "path": "ITR3.PartB_TTI.ComputationOfTaxLiability.NetTaxLiability"
+          },
+          {
+            "word": "fd_refund",
+            "path": "ITR3.PartB_TTI.Refund.RefundDue"
+          }
         ]
       },
       "label": "filed found"
@@ -1226,6 +1248,114 @@
         "two_digit_pivot": 50
       },
       "label": "a broker's / registrar's capital-gains statement: the words that tell one, each column's heading words (the first column whose heading has one), which are needed, a debt fund by its words, the FMV on 31-01-2018 per unit when its heading says so, dates written dd-mm-yy"
+    },
+    {
+      "name": "cas_pdf",
+      "type": "json",
+      "default": {
+        "words": [
+          "capital gain"
+        ],
+        "any": [
+          "cams",
+          "kfin",
+          "karvy",
+          "consolidated account statement",
+          "mutual fund",
+          "redemption"
+        ],
+        "scheme": "^(?P<name>.+?)\\s*(?:-\\s*)?ISIN\\s*:?\\s*(?P<isin>IN[A-Z0-9]{10})",
+        "row": "(?:Redemption|Redeem|Switch[ -]?Out|Sale|SWP|Transfer)\\w*\\s+(?P<sold>\\d{1,2}-[A-Za-z]{3}-\\d{4})\\s+(?P<units>[\\d,]+\\.\\d+)\\s+(?P<sale>[\\d,]+\\.\\d\\d)\\s+(?P<acquired>\\d{1,2}-[A-Za-z]{3}-\\d{4})\\s+(?P<cost>[\\d,]+\\.\\d\\d)(?:\\s+(?P<fmv>[\\d,]+\\.\\d\\d))?"
+      },
+      "label": "a CAMS / KFintech capital-gains statement as a PDF (its text): a scheme's line names it and its ISIN, each redemption line is a sale - the redemption date, units, amount, the purchase date and cost, then (equity, bought before 1 Feb 2018) the value on 31 January 2018"
+    },
+    {
+      "name": "a2_26as",
+      "type": "json",
+      "default": {
+        "title": [
+          "194ia"
+        ],
+        "title_also": [
+          "for seller",
+          "seller of property",
+          "sale of immovable property"
+        ],
+        "sections": [
+          "194IA"
+        ],
+        "pan": "[A-Z]{5}[0-9]{4}[A-Z]",
+        "date": "\\d{2}-[A-Za-z]{3}-\\d{4}",
+        "part": "^\\W*part[\\s\\-]",
+        "amount": "-?[\\d,]+\\.\\d\\d",
+        "section": "194[A-Z]*",
+        "serial": "\\d{1,4}",
+        "pdf_deductor": "^\\d+\\s+\\S+\\s+(?P<name>.+?)\\s+(?P<pan>[A-Z]{5}[0-9]{4}[A-Z])\\s+(?P<on>\\d{2}-[A-Za-z]{3}-\\d{4})\\s+(?P<amount>[\\d,]+\\.\\d\\d)\\s+(?P<tds>[\\d,]+\\.\\d\\d)",
+        "pdf_entry": "^\\d+\\s+\\S+\\s+(?P<section>194[A-Z]*)\\s"
+      },
+      "label": "26AS Part A2 (Part IV in the 2023 layout) - TDS on the sale of immovable property u/s 194IA, for the seller: each buyer (deductor, by PAN), the transaction amount and the TDS deposited; the entry lines name the section (194IA kept; 194IB rent, 194M and 194S are not a sale of property)"
+    },
+    {
+      "name": "gst3b",
+      "type": "json",
+      "default": {
+        "words": [
+          "gstr-3b",
+          "gstr 3b",
+          "gstr3b",
+          "taxable value",
+          "outward taxable supplies"
+        ],
+        "cols": [
+          [
+            "gstin",
+            [
+              "gstin"
+            ]
+          ],
+          [
+            "zero",
+            [
+              "zero rated"
+            ]
+          ],
+          [
+            "exempt",
+            [
+              "nil rated",
+              "exempted",
+              "exempt"
+            ]
+          ],
+          [
+            "non_gst",
+            [
+              "non-gst",
+              "non gst"
+            ]
+          ],
+          [
+            "taxable",
+            [
+              "total taxable value",
+              "taxable value",
+              "outward taxable supplies"
+            ]
+          ]
+        ],
+        "need": [
+          "gstin",
+          "taxable"
+        ],
+        "add": [
+          "taxable",
+          "zero",
+          "exempt",
+          "non_gst"
+        ],
+        "gstin_pattern": "\\d{2}[A-Z]{5}\\d{4}[A-Z][1-9A-Z]Z[0-9A-Z]"
+      },
+      "label": "a GSTR-3B summary (CSV / Excel, one row a month or a year): per GSTIN the outward supplies of table 3.1 - taxable (a), zero-rated (b), nil-rated and exempt (c), non-GST (e) - added up as the turnover for ITR-3 / ITR-4's GST schedule"
     }
   ],
   "expr": {
@@ -1271,13 +1401,16 @@
       "employer_block": "$employer_block",
       "state_names": "$state_names",
       "pin_states": "$pin_states",
-      "cg_statement": "$cg_statement"
+      "cg_statement": "$cg_statement",
+      "cas_pdf": "$cas_pdf",
+      "a2_26as": "$a2_26as",
+      "gst3b": "$gst3b"
     }
   },
   "returns": "record",
-  "version": 16,
+  "version": 18,
   "status": "published",
-  "description_nl": "2026-10-06: the pre-filled JSON's keys (camelCase, e-filing portal), the words that tell a Form 16, an AIS and a 26AS apart, the AIS JSON's encryption (PBKDF2-SHA256 over PAN + pepper + DDMMYYYY, AES-256-CBC), AIS information codes -> fields (SFT-016 SB/TD interest, SFT-015 dividend, TDS-192 salary; TDS-194/194A are the same income again and are left out), Form 16's line anchors (the figure is the last amount on the line), and the AI fallback's model, fields and prompt. 2026-10-06: employee_pan_pattern - the employee's PAN in a TRACES Form 16 (TAN and PAN on lines of their own), so a return can start from it. 2026-10-06: pdf26as - the TRACES Annual Tax Statement as a PDF: Part I, each deductor's total line (name, TAN, paid, deducted, deposited) and its entries' section. 2026-10-06: income_of - a 26AS section whose amount paid is that kind of other income (used when no AIS or pre-filled JSON is there). 2026-10-06: ais_amount_tail - an AIS PDF line's amount when it has no comma (654), the last number on the line. 2026-10-06: tis - the Taxpayer Information Summary PDF: its first table, one line per category (processed, accepted); the accepted total is used, read as the AIS. 2026-10-06: ais_paid - AIS Part B3, tax the person paid (advance, self-assessment): a row's financial year, minor head words, total, BSR, date, challan. Only the return's own year counts. 2026-10-06: words_bank - a bank statement (kept with the return: the receipts of a business or profession with no TDS; its credits are typed). 2026-10-06: bank - a bank statement (PDF / Excel / CSV): its table found by the date and credit column words; a credit is then sorted by the first kind whose words its narration has (interest, tax refund, salary, reversal, own transfer, cash) - else a receipt. Where the columns run together (a PDF) the running balance says what came in. 2026-10-06: bank amount_words / type_words / credit_marks - one Amount column with a Dr / Cr column beside it. 2026-10-07: AIS TDS-194B / 194BB (winnings - 115BB), 194BA (online games - 115BBJ), 194S (a VDA transferred - the sale value, shown beside the rows typed); 26AS 194B / 194BB / 194BA; the AIS header's mobile, e-mail and address; Form 16's employer address block, a state from its name or PIN. 2026-10-07: employer_block: the employee's column (left of it is the employer's), at most 8 lines. 2026-10-07: AIS TDS-194IA (the buyer's TDS on a property sold: amount, TDS, the buyer's PAN) and SFT-012 (the sub-registrar's report); cg_statement - a CAMS / KFintech consolidated capital-gains statement or a broker's tax P&L (CSV / Excel), one row per sale.",
+  "description_nl": "2026-10-06: the pre-filled JSON's keys (camelCase, e-filing portal), the words that tell a Form 16, an AIS and a 26AS apart, the AIS JSON's encryption (PBKDF2-SHA256 over PAN + pepper + DDMMYYYY, AES-256-CBC), AIS information codes -> fields (SFT-016 SB/TD interest, SFT-015 dividend, TDS-192 salary; TDS-194/194A are the same income again and are left out), Form 16's line anchors (the figure is the last amount on the line), and the AI fallback's model, fields and prompt. 2026-10-06: employee_pan_pattern - the employee's PAN in a TRACES Form 16 (TAN and PAN on lines of their own), so a return can start from it. 2026-10-06: pdf26as - the TRACES Annual Tax Statement as a PDF: Part I, each deductor's total line (name, TAN, paid, deducted, deposited) and its entries' section. 2026-10-06: income_of - a 26AS section whose amount paid is that kind of other income (used when no AIS or pre-filled JSON is there). 2026-10-06: ais_amount_tail - an AIS PDF line's amount when it has no comma (654), the last number on the line. 2026-10-06: tis - the Taxpayer Information Summary PDF: its first table, one line per category (processed, accepted); the accepted total is used, read as the AIS. 2026-10-06: ais_paid - AIS Part B3, tax the person paid (advance, self-assessment): a row's financial year, minor head words, total, BSR, date, challan. Only the return's own year counts. 2026-10-06: words_bank - a bank statement (kept with the return: the receipts of a business or profession with no TDS; its credits are typed). 2026-10-06: bank - a bank statement (PDF / Excel / CSV): its table found by the date and credit column words; a credit is then sorted by the first kind whose words its narration has (interest, tax refund, salary, reversal, own transfer, cash) - else a receipt. Where the columns run together (a PDF) the running balance says what came in. 2026-10-06: bank amount_words / type_words / credit_marks - one Amount column with a Dr / Cr column beside it. 2026-10-07: AIS TDS-194B / 194BB (winnings - 115BB), 194BA (online games - 115BBJ), 194S (a VDA transferred - the sale value, shown beside the rows typed); 26AS 194B / 194BB / 194BA; the AIS header's mobile, e-mail and address; Form 16's employer address block, a state from its name or PIN. 2026-10-07: employer_block: the employee's column (left of it is the employer's), at most 8 lines. 2026-10-07: AIS TDS-194IA (the buyer's TDS on a property sold: amount, TDS, the buyer's PAN) and SFT-012 (the sub-registrar's report); cg_statement - a CAMS / KFintech consolidated capital-gains statement or a broker's tax P&L (CSV / Excel), one row per sale. 2026-10-08: cas_pdf (CAMS / KFintech capital-gains PDF), a2_26as (26AS Part A2 / IV - 194IA), gst3b (GSTR-3B summary), filed_found ITR-3 (last year's ITR-3).",
   "test_cases": [
     {
       "args": {},
@@ -1603,6 +1736,28 @@
             {
               "word": "fd_refund",
               "path": "ITR2.PartB_TTI.Refund.RefundDue"
+            }
+          ],
+          "ITR-3": [
+            {
+              "word": "fd_pan",
+              "path": "ITR3.PartA_GEN1.PersonalInfo.PAN"
+            },
+            {
+              "word": "fd_ay",
+              "path": "ITR3.Form_ITR3.AssessmentYear"
+            },
+            {
+              "word": "fd_total",
+              "path": "ITR3.PartB-TI.TotalIncome"
+            },
+            {
+              "word": "fd_tax",
+              "path": "ITR3.PartB_TTI.ComputationOfTaxLiability.NetTaxLiability"
+            },
+            {
+              "word": "fd_refund",
+              "path": "ITR3.PartB_TTI.Refund.RefundDue"
             }
           ]
         },
@@ -2296,6 +2451,99 @@
           },
           "two_digit_base": 2000,
           "two_digit_pivot": 50
+        },
+        "cas_pdf": {
+          "words": [
+            "capital gain"
+          ],
+          "any": [
+            "cams",
+            "kfin",
+            "karvy",
+            "consolidated account statement",
+            "mutual fund",
+            "redemption"
+          ],
+          "scheme": "^(?P<name>.+?)\\s*(?:-\\s*)?ISIN\\s*:?\\s*(?P<isin>IN[A-Z0-9]{10})",
+          "row": "(?:Redemption|Redeem|Switch[ -]?Out|Sale|SWP|Transfer)\\w*\\s+(?P<sold>\\d{1,2}-[A-Za-z]{3}-\\d{4})\\s+(?P<units>[\\d,]+\\.\\d+)\\s+(?P<sale>[\\d,]+\\.\\d\\d)\\s+(?P<acquired>\\d{1,2}-[A-Za-z]{3}-\\d{4})\\s+(?P<cost>[\\d,]+\\.\\d\\d)(?:\\s+(?P<fmv>[\\d,]+\\.\\d\\d))?"
+        },
+        "a2_26as": {
+          "title": [
+            "194ia"
+          ],
+          "title_also": [
+            "for seller",
+            "seller of property",
+            "sale of immovable property"
+          ],
+          "sections": [
+            "194IA"
+          ],
+          "pan": "[A-Z]{5}[0-9]{4}[A-Z]",
+          "date": "\\d{2}-[A-Za-z]{3}-\\d{4}",
+          "part": "^\\W*part[\\s\\-]",
+          "amount": "-?[\\d,]+\\.\\d\\d",
+          "section": "194[A-Z]*",
+          "serial": "\\d{1,4}",
+          "pdf_deductor": "^\\d+\\s+\\S+\\s+(?P<name>.+?)\\s+(?P<pan>[A-Z]{5}[0-9]{4}[A-Z])\\s+(?P<on>\\d{2}-[A-Za-z]{3}-\\d{4})\\s+(?P<amount>[\\d,]+\\.\\d\\d)\\s+(?P<tds>[\\d,]+\\.\\d\\d)",
+          "pdf_entry": "^\\d+\\s+\\S+\\s+(?P<section>194[A-Z]*)\\s"
+        },
+        "gst3b": {
+          "words": [
+            "gstr-3b",
+            "gstr 3b",
+            "gstr3b",
+            "taxable value",
+            "outward taxable supplies"
+          ],
+          "cols": [
+            [
+              "gstin",
+              [
+                "gstin"
+              ]
+            ],
+            [
+              "zero",
+              [
+                "zero rated"
+              ]
+            ],
+            [
+              "exempt",
+              [
+                "nil rated",
+                "exempted",
+                "exempt"
+              ]
+            ],
+            [
+              "non_gst",
+              [
+                "non-gst",
+                "non gst"
+              ]
+            ],
+            [
+              "taxable",
+              [
+                "total taxable value",
+                "taxable value",
+                "outward taxable supplies"
+              ]
+            ]
+          ],
+          "need": [
+            "gstin",
+            "taxable"
+          ],
+          "add": [
+            "taxable",
+            "zero",
+            "exempt",
+            "non_gst"
+          ],
+          "gstin_pattern": "\\d{2}[A-Z]{5}\\d{4}[A-Z][1-9A-Z]Z[0-9A-Z]"
         }
       }
     }

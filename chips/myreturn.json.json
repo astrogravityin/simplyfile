@@ -522,6 +522,66 @@
             "nature": "None",
             "sch": "NI"
           }
+        },
+        "signing": {
+          "list": "DetailsOfAccntsHvngSigningAuth",
+          "map": {
+            "NameOfInstitution": "name",
+            "AddressOfInstitution": "address",
+            "ZipCode": "zip",
+            "NameMentionedInAccnt": "holder",
+            "InstitutionAccountNumber": "account",
+            "PeakBalanceOrInvestment": "peak",
+            "IncAccuredTaxFlag": "flag",
+            "IncAccuredInAcc": "income",
+            "IncOfferedAmt": "taxed",
+            "IncOfferedSch": "sch",
+            "IncOfferedSchNo": "sch_no"
+          },
+          "defaults": {
+            "sch": "NI"
+          }
+        },
+        "trust": {
+          "list": "DetailsOfTrustOutIndiaTrustee",
+          "map": {
+            "NameOfTrust": "name",
+            "AddressOfTrust": "address",
+            "ZipCode": "zip",
+            "NameOfOtherTrustees": "trustees",
+            "AddressOfOtherTrustees": "trustees_addr",
+            "NameOfSettlor": "settlor",
+            "AddressOfSettlor": "settlor_addr",
+            "NameOfBeneficiaries": "beneficiaries",
+            "AddressOfBeneficiaries": "beneficiaries_addr",
+            "DateHeld": "opened",
+            "IncDrvTaxFlag": "flag",
+            "IncDrvFromTrust": "income",
+            "IncOfferedAmt": "taxed",
+            "IncOfferedSch": "sch",
+            "IncOfferedSchNo": "sch_no"
+          },
+          "defaults": {
+            "sch": "NI"
+          }
+        },
+        "income": {
+          "list": "DetailsOfOthSourcesIncOutsideIndia",
+          "map": {
+            "NameOfPerson": "name",
+            "AddressOfPerson": "address",
+            "ZipCode": "zip",
+            "IncDerived": "income",
+            "NatureOfInc": "nature",
+            "IncDrvTaxFlag": "flag",
+            "IncOfferedAmt": "taxed",
+            "IncOfferedSch": "sch",
+            "IncOfferedSchNo": "sch_no"
+          },
+          "defaults": {
+            "nature": "Other",
+            "sch": "NI"
+          }
         }
       },
       "label": "Schedule FA: each kind of foreign asset - the department's table (A1 bank accounts, A2 custodial accounts, A3 equity and debt interests, A4 cash-value insurance, B immovable property, C other capital assets) and which of the row's fields goes in each column"
@@ -603,7 +663,7 @@
     }
   },
   "returns": "record",
-  "version": 8,
+  "version": 9,
   "status": "published",
   "description_nl": "2026-10-06: other-sources nature codes (SAV savings, IFD deposits, TAX refund interest, DIV dividend, FAP family pension, OTH other), and the employer category (OTH = private employer) when the person has not picked one. 2026-10-06: status_codes - I for an individual, H for an HUF. 2026-10-06: capacity - an HUF's return is verified by its Karta (K). 2026-10-07: Schedule SI codes and rates, the special-income date ranges, agricultural (AGRI), co-owned YES/NO, VDA head CG, 44AE owned / leased / hired. 2026-10-07: capital gains: Schedule 112A (BE / AE, INNOTREQUIRD), 111A code, Schedule CFL's blocks and fields, Schedule TDS3 sections (26QB ...), gifts in ITR-1 / ITR-4. 2026-10-07: tds_heads (ITR-3 Schedule TDS2: BP for a receipt of the business, OS otherwise); yn. 2026-10-07: tds_heads (ITR-3 Schedule TDS2: BP for a receipt of the business, OS otherwise); yn; ITR-3 Schedule CFL block names (by AY) and its nil business-loss columns; code_54f. 2026-10-07: wave 3: foreign state / employer codes, Schedule FSI blocks (ITR-2 / ITR-3), Schedule TR flag, Schedule FA tables, Schedule SPI words, 115H.",
   "test_cases": [
@@ -890,6 +950,66 @@
             "defaults": {
               "status": "DIRECT",
               "nature": "None",
+              "sch": "NI"
+            }
+          },
+          "signing": {
+            "list": "DetailsOfAccntsHvngSigningAuth",
+            "map": {
+              "NameOfInstitution": "name",
+              "AddressOfInstitution": "address",
+              "ZipCode": "zip",
+              "NameMentionedInAccnt": "holder",
+              "InstitutionAccountNumber": "account",
+              "PeakBalanceOrInvestment": "peak",
+              "IncAccuredTaxFlag": "flag",
+              "IncAccuredInAcc": "income",
+              "IncOfferedAmt": "taxed",
+              "IncOfferedSch": "sch",
+              "IncOfferedSchNo": "sch_no"
+            },
+            "defaults": {
+              "sch": "NI"
+            }
+          },
+          "trust": {
+            "list": "DetailsOfTrustOutIndiaTrustee",
+            "map": {
+              "NameOfTrust": "name",
+              "AddressOfTrust": "address",
+              "ZipCode": "zip",
+              "NameOfOtherTrustees": "trustees",
+              "AddressOfOtherTrustees": "trustees_addr",
+              "NameOfSettlor": "settlor",
+              "AddressOfSettlor": "settlor_addr",
+              "NameOfBeneficiaries": "beneficiaries",
+              "AddressOfBeneficiaries": "beneficiaries_addr",
+              "DateHeld": "opened",
+              "IncDrvTaxFlag": "flag",
+              "IncDrvFromTrust": "income",
+              "IncOfferedAmt": "taxed",
+              "IncOfferedSch": "sch",
+              "IncOfferedSchNo": "sch_no"
+            },
+            "defaults": {
+              "sch": "NI"
+            }
+          },
+          "income": {
+            "list": "DetailsOfOthSourcesIncOutsideIndia",
+            "map": {
+              "NameOfPerson": "name",
+              "AddressOfPerson": "address",
+              "ZipCode": "zip",
+              "IncDerived": "income",
+              "NatureOfInc": "nature",
+              "IncDrvTaxFlag": "flag",
+              "IncOfferedAmt": "taxed",
+              "IncOfferedSch": "sch",
+              "IncOfferedSchNo": "sch_no"
+            },
+            "defaults": {
+              "nature": "Other",
               "sch": "NI"
             }
           }

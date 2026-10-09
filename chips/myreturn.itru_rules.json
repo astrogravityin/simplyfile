@@ -70,6 +70,12 @@
       "type": "boolean",
       "default": false,
       "label": "the department's ITR-U schema for an earlier AY is not in schemas/itr - the JSON is not made (the computation and the steps are given)"
+    },
+    {
+      "name": "c_default",
+      "type": "text",
+      "default": "mar",
+      "label": "advance tax of that year with no instalment dates typed: taken as paid by 15 March (the last instalment)"
     }
   ],
   "expr": {
@@ -81,13 +87,14 @@
       "b_min": "$b_min",
       "b_pct": "$b_pct",
       "reasons": "$reasons",
-      "schema_have": "$schema_have"
+      "schema_have": "$schema_have",
+      "c_default": "$c_default"
     }
   },
   "returns": "record",
-  "version": 1,
+  "version": 2,
   "status": "published",
-  "description_nl": "2026-10-07: The updated return (s.139(8A), Finance Act 2022; 48 months from the end of the AY and 60% / 70% for the third / fourth year by the Finance Act 2025 - the additional tax is chip close.itr_u's): who may not file one, the interest, the reason codes.",
+  "description_nl": "2026-10-07: The updated return (s.139(8A), Finance Act 2022; 48 months from the end of the AY and 60% / 70% for the third / fourth year by the Finance Act 2025 - the additional tax is chip close.itr_u's): who may not file one, the interest, the reason codes. 2026-10-08: c_default - 234C of an updated return when the advance tax's instalments are not typed.",
   "test_cases": [
     {
       "args": {},
@@ -117,7 +124,8 @@
           "7": "Wrong rate of tax",
           "8": "Others"
         },
-        "schema_have": false
+        "schema_have": false,
+        "c_default": "mar"
       }
     }
   ]

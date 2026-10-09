@@ -1,0 +1,1145 @@
+{
+  "chip_id": "myreturn.year_rates",
+  "kind": "accessor",
+  "set": "myreturn",
+  "label": "My return: an earlier year's rates - slabs, rebate, special rates, surcharge, cess",
+  "aliases": [
+    "rates of an earlier year",
+    "surcharge history",
+    "111a rate history"
+  ],
+  "params": [
+    {
+      "name": "fy",
+      "type": "number",
+      "default": 2025,
+      "label": "the financial year (its first year: 2019 = FY 2019-20)"
+    },
+    {
+      "name": "regime",
+      "type": "text",
+      "default": "old",
+      "label": "old / new"
+    },
+    {
+      "name": "early",
+      "type": "boolean",
+      "default": false,
+      "label": "FY 2024-25 only: the gains were on transfers before 23 July 2024 (the rates before the Finance (No. 2) Act 2024)"
+    },
+    {
+      "name": "years",
+      "type": "json",
+      "default": {
+        "2015": {
+          "old": {
+            "surcharge": [
+              {
+                "above": 10000000,
+                "rate": 12
+              }
+            ],
+            "cap_a": 100,
+            "cap_112": 100,
+            "r30": 30,
+            "rebate_special": true,
+            "r111a": 15,
+            "r112a": 0,
+            "x112a": 0,
+            "r112": 20
+          },
+          "new": {
+            "surcharge": [],
+            "cap_a": 100,
+            "cap_112": 100,
+            "r30": 30,
+            "rebate_special": true,
+            "r111a": 15,
+            "r112a": 0,
+            "x112a": 0,
+            "r112": 20
+          }
+        },
+        "2016": {
+          "old": {
+            "surcharge": [
+              {
+                "above": 10000000,
+                "rate": 15
+              }
+            ],
+            "cap_a": 100,
+            "cap_112": 100,
+            "r30": 30,
+            "rebate_special": true,
+            "r111a": 15,
+            "r112a": 0,
+            "x112a": 0,
+            "r112": 20
+          },
+          "new": {
+            "surcharge": [],
+            "cap_a": 100,
+            "cap_112": 100,
+            "r30": 30,
+            "rebate_special": true,
+            "r111a": 15,
+            "r112a": 0,
+            "x112a": 0,
+            "r112": 20
+          }
+        },
+        "2017": {
+          "old": {
+            "surcharge": [
+              {
+                "above": 5000000,
+                "rate": 10
+              },
+              {
+                "above": 10000000,
+                "rate": 15
+              }
+            ],
+            "cap_a": 100,
+            "cap_112": 100,
+            "r30": 30,
+            "rebate_special": true,
+            "r111a": 15,
+            "r112a": 0,
+            "x112a": 0,
+            "r112": 20
+          },
+          "new": {
+            "surcharge": [],
+            "cap_a": 100,
+            "cap_112": 100,
+            "r30": 30,
+            "rebate_special": true,
+            "r111a": 15,
+            "r112a": 0,
+            "x112a": 0,
+            "r112": 20
+          }
+        },
+        "2018": {
+          "old": {
+            "surcharge": [
+              {
+                "above": 5000000,
+                "rate": 10
+              },
+              {
+                "above": 10000000,
+                "rate": 15
+              }
+            ],
+            "cap_a": 100,
+            "cap_112": 100,
+            "r30": 30,
+            "rebate_special": true,
+            "r111a": 15,
+            "r112a": 10,
+            "x112a": 100000,
+            "r112": 20
+          },
+          "new": {
+            "surcharge": [],
+            "cap_a": 100,
+            "cap_112": 100,
+            "r30": 30,
+            "rebate_special": true,
+            "r111a": 15,
+            "r112a": 10,
+            "x112a": 100000,
+            "r112": 20
+          }
+        },
+        "2019": {
+          "old": {
+            "surcharge": [
+              {
+                "above": 5000000,
+                "rate": 10
+              },
+              {
+                "above": 10000000,
+                "rate": 15
+              },
+              {
+                "above": 20000000,
+                "rate": 25
+              },
+              {
+                "above": 50000000,
+                "rate": 37
+              }
+            ],
+            "cap_a": 15,
+            "cap_112": 100,
+            "r30": 30,
+            "rebate_special": true,
+            "r111a": 15,
+            "r112a": 10,
+            "x112a": 100000,
+            "r112": 20
+          },
+          "new": {
+            "surcharge": [
+              {
+                "above": 5000000,
+                "rate": 10
+              },
+              {
+                "above": 10000000,
+                "rate": 15
+              },
+              {
+                "above": 20000000,
+                "rate": 25
+              },
+              {
+                "above": 50000000,
+                "rate": 37
+              }
+            ],
+            "cap_a": 15,
+            "cap_112": 100,
+            "r30": 30,
+            "rebate_special": true,
+            "r111a": 15,
+            "r112a": 10,
+            "x112a": 100000,
+            "r112": 20
+          }
+        },
+        "2020": {
+          "old": {
+            "surcharge": [
+              {
+                "above": 5000000,
+                "rate": 10
+              },
+              {
+                "above": 10000000,
+                "rate": 15
+              },
+              {
+                "above": 20000000,
+                "rate": 25
+              },
+              {
+                "above": 50000000,
+                "rate": 37
+              }
+            ],
+            "cap_a": 15,
+            "cap_112": 100,
+            "r30": 30,
+            "rebate_special": true,
+            "r111a": 15,
+            "r112a": 10,
+            "x112a": 100000,
+            "r112": 20
+          },
+          "new": {
+            "surcharge": [
+              {
+                "above": 5000000,
+                "rate": 10
+              },
+              {
+                "above": 10000000,
+                "rate": 15
+              },
+              {
+                "above": 20000000,
+                "rate": 25
+              },
+              {
+                "above": 50000000,
+                "rate": 37
+              }
+            ],
+            "cap_a": 15,
+            "cap_112": 100,
+            "r30": 30,
+            "rebate_special": true,
+            "r111a": 15,
+            "r112a": 10,
+            "x112a": 100000,
+            "r112": 20
+          }
+        },
+        "2021": {
+          "old": {
+            "surcharge": [
+              {
+                "above": 5000000,
+                "rate": 10
+              },
+              {
+                "above": 10000000,
+                "rate": 15
+              },
+              {
+                "above": 20000000,
+                "rate": 25
+              },
+              {
+                "above": 50000000,
+                "rate": 37
+              }
+            ],
+            "cap_a": 15,
+            "cap_112": 100,
+            "r30": 30,
+            "rebate_special": true,
+            "r111a": 15,
+            "r112a": 10,
+            "x112a": 100000,
+            "r112": 20
+          },
+          "new": {
+            "surcharge": [
+              {
+                "above": 5000000,
+                "rate": 10
+              },
+              {
+                "above": 10000000,
+                "rate": 15
+              },
+              {
+                "above": 20000000,
+                "rate": 25
+              },
+              {
+                "above": 50000000,
+                "rate": 37
+              }
+            ],
+            "cap_a": 15,
+            "cap_112": 100,
+            "r30": 30,
+            "rebate_special": true,
+            "r111a": 15,
+            "r112a": 10,
+            "x112a": 100000,
+            "r112": 20
+          }
+        },
+        "2022": {
+          "old": {
+            "surcharge": [
+              {
+                "above": 5000000,
+                "rate": 10
+              },
+              {
+                "above": 10000000,
+                "rate": 15
+              },
+              {
+                "above": 20000000,
+                "rate": 25
+              },
+              {
+                "above": 50000000,
+                "rate": 37
+              }
+            ],
+            "cap_a": 15,
+            "cap_112": 15,
+            "r30": 30,
+            "rebate_special": true,
+            "r111a": 15,
+            "r112a": 10,
+            "x112a": 100000,
+            "r112": 20
+          },
+          "new": {
+            "surcharge": [
+              {
+                "above": 5000000,
+                "rate": 10
+              },
+              {
+                "above": 10000000,
+                "rate": 15
+              },
+              {
+                "above": 20000000,
+                "rate": 25
+              },
+              {
+                "above": 50000000,
+                "rate": 37
+              }
+            ],
+            "cap_a": 15,
+            "cap_112": 15,
+            "r30": 30,
+            "rebate_special": true,
+            "r111a": 15,
+            "r112a": 10,
+            "x112a": 100000,
+            "r112": 20
+          }
+        },
+        "2023": {
+          "old": {
+            "surcharge": [
+              {
+                "above": 5000000,
+                "rate": 10
+              },
+              {
+                "above": 10000000,
+                "rate": 15
+              },
+              {
+                "above": 20000000,
+                "rate": 25
+              },
+              {
+                "above": 50000000,
+                "rate": 37
+              }
+            ],
+            "cap_a": 15,
+            "cap_112": 15,
+            "r30": 30,
+            "rebate_special": true,
+            "r111a": 15,
+            "r112a": 10,
+            "x112a": 100000,
+            "r112": 20
+          },
+          "new": {
+            "surcharge": [
+              {
+                "above": 5000000,
+                "rate": 10
+              },
+              {
+                "above": 10000000,
+                "rate": 15
+              },
+              {
+                "above": 20000000,
+                "rate": 25
+              }
+            ],
+            "cap_a": 15,
+            "cap_112": 15,
+            "r30": 30,
+            "rebate_special": true,
+            "r111a": 15,
+            "r112a": 10,
+            "x112a": 100000,
+            "r112": 20
+          }
+        },
+        "2024": {
+          "old": {
+            "surcharge": [
+              {
+                "above": 5000000,
+                "rate": 10
+              },
+              {
+                "above": 10000000,
+                "rate": 15
+              },
+              {
+                "above": 20000000,
+                "rate": 25
+              },
+              {
+                "above": 50000000,
+                "rate": 37
+              }
+            ],
+            "cap_a": 15,
+            "cap_112": 15,
+            "r30": 30,
+            "rebate_special": true,
+            "r111a": 20,
+            "r112a": 12.5,
+            "x112a": 125000,
+            "r112": 12.5,
+            "early": {
+              "r111a": 15,
+              "r112a": 10,
+              "x112a": 125000,
+              "r112": 20
+            }
+          },
+          "new": {
+            "surcharge": [
+              {
+                "above": 5000000,
+                "rate": 10
+              },
+              {
+                "above": 10000000,
+                "rate": 15
+              },
+              {
+                "above": 20000000,
+                "rate": 25
+              }
+            ],
+            "cap_a": 15,
+            "cap_112": 15,
+            "r30": 30,
+            "rebate_special": true,
+            "r111a": 20,
+            "r112a": 12.5,
+            "x112a": 125000,
+            "r112": 12.5,
+            "early": {
+              "r111a": 15,
+              "r112a": 10,
+              "x112a": 125000,
+              "r112": 20
+            }
+          }
+        },
+        "2025": {
+          "old": {
+            "surcharge": [
+              {
+                "above": 5000000,
+                "rate": 10
+              },
+              {
+                "above": 10000000,
+                "rate": 15
+              },
+              {
+                "above": 20000000,
+                "rate": 25
+              },
+              {
+                "above": 50000000,
+                "rate": 37
+              }
+            ],
+            "cap_a": 15,
+            "cap_112": 15,
+            "r30": 30,
+            "rebate_special": true,
+            "r111a": 20,
+            "r112a": 12.5,
+            "x112a": 125000,
+            "r112": 12.5
+          },
+          "new": {
+            "surcharge": [
+              {
+                "above": 5000000,
+                "rate": 10
+              },
+              {
+                "above": 10000000,
+                "rate": 15
+              },
+              {
+                "above": 20000000,
+                "rate": 25
+              }
+            ],
+            "cap_a": 15,
+            "cap_112": 15,
+            "r30": 30,
+            "rebate_special": false,
+            "r111a": 20,
+            "r112a": 12.5,
+            "x112a": 125000,
+            "r112": 12.5
+          }
+        }
+      },
+      "label": "each FY's special rates and surcharge: 111A, 112A (and its exemption), 112, the 30% of 115BB / 115BBJ / 115BBH; the surcharge steps; the surcharge cap on 111A / 112A (15% from FY 2019-20) and on 112 (15% from FY 2022-23); whether the 87A rebate is against special-rate tax (not in the new regime from FY 2025-26)"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "known": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "ge",
+              "left": {
+                "vop": "coalesce",
+                "values": [
+                  {
+                    "vop": "get",
+                    "value": {
+                      "chip": "myreturn.slabs_by_year",
+                      "args": {}
+                    },
+                    "path": {
+                      "vop": "template",
+                      "text": "years.{y}.{r}.rebate_upto",
+                      "values": {
+                        "vop": "record",
+                        "fields": {
+                          "y": "$fy",
+                          "r": "$regime"
+                        }
+                      }
+                    }
+                  },
+                  0
+                ]
+              },
+              "right": 1
+            },
+            "then": true
+          }
+        ],
+        "else": false
+      },
+      "rebate_upto": {
+        "vop": "get",
+        "value": {
+          "chip": "myreturn.slabs_by_year",
+          "args": {}
+        },
+        "path": {
+          "vop": "template",
+          "text": "years.{y}.{r}.rebate_upto",
+          "values": {
+            "vop": "record",
+            "fields": {
+              "y": "$fy",
+              "r": "$regime"
+            }
+          }
+        }
+      },
+      "rebate_most": {
+        "vop": "get",
+        "value": {
+          "chip": "myreturn.slabs_by_year",
+          "args": {}
+        },
+        "path": {
+          "vop": "template",
+          "text": "years.{y}.{r}.rebate_most",
+          "values": {
+            "vop": "record",
+            "fields": {
+              "y": "$fy",
+              "r": "$regime"
+            }
+          }
+        }
+      },
+      "marginal": {
+        "vop": "get",
+        "value": {
+          "chip": "myreturn.slabs_by_year",
+          "args": {}
+        },
+        "path": {
+          "vop": "template",
+          "text": "years.{y}.{r}.marginal",
+          "values": {
+            "vop": "record",
+            "fields": {
+              "y": "$fy",
+              "r": "$regime"
+            }
+          }
+        }
+      },
+      "cess": {
+        "vop": "get",
+        "value": {
+          "chip": "myreturn.slabs_by_year",
+          "args": {}
+        },
+        "path": {
+          "vop": "template",
+          "text": "years.{y}.{r}.cess",
+          "values": {
+            "vop": "record",
+            "fields": {
+              "y": "$fy",
+              "r": "$regime"
+            }
+          }
+        }
+      },
+      "surcharge": {
+        "vop": "get",
+        "value": "$years",
+        "path": {
+          "vop": "template",
+          "text": "{y}.{r}.surcharge",
+          "values": {
+            "vop": "record",
+            "fields": {
+              "y": "$fy",
+              "r": "$regime"
+            }
+          }
+        }
+      },
+      "cap_a": {
+        "vop": "get",
+        "value": "$years",
+        "path": {
+          "vop": "template",
+          "text": "{y}.{r}.cap_a",
+          "values": {
+            "vop": "record",
+            "fields": {
+              "y": "$fy",
+              "r": "$regime"
+            }
+          }
+        }
+      },
+      "cap_112": {
+        "vop": "get",
+        "value": "$years",
+        "path": {
+          "vop": "template",
+          "text": "{y}.{r}.cap_112",
+          "values": {
+            "vop": "record",
+            "fields": {
+              "y": "$fy",
+              "r": "$regime"
+            }
+          }
+        }
+      },
+      "r30": {
+        "vop": "get",
+        "value": "$years",
+        "path": {
+          "vop": "template",
+          "text": "{y}.{r}.r30",
+          "values": {
+            "vop": "record",
+            "fields": {
+              "y": "$fy",
+              "r": "$regime"
+            }
+          }
+        }
+      },
+      "rebate_special": {
+        "vop": "get",
+        "value": "$years",
+        "path": {
+          "vop": "template",
+          "text": "{y}.{r}.rebate_special",
+          "values": {
+            "vop": "record",
+            "fields": {
+              "y": "$fy",
+              "r": "$regime"
+            }
+          }
+        }
+      },
+      "r111a": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "eq",
+                  "left": "$early",
+                  "right": true
+                },
+                {
+                  "op": "eq",
+                  "left": "$fy",
+                  "right": 2024
+                }
+              ]
+            },
+            "then": {
+              "vop": "get",
+              "value": "$years",
+              "path": {
+                "vop": "template",
+                "text": "{y}.{r}.early.r111a",
+                "values": {
+                  "vop": "record",
+                  "fields": {
+                    "y": "$fy",
+                    "r": "$regime"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "else": {
+          "vop": "get",
+          "value": "$years",
+          "path": {
+            "vop": "template",
+            "text": "{y}.{r}.r111a",
+            "values": {
+              "vop": "record",
+              "fields": {
+                "y": "$fy",
+                "r": "$regime"
+              }
+            }
+          }
+        }
+      },
+      "r112a": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "eq",
+                  "left": "$early",
+                  "right": true
+                },
+                {
+                  "op": "eq",
+                  "left": "$fy",
+                  "right": 2024
+                }
+              ]
+            },
+            "then": {
+              "vop": "get",
+              "value": "$years",
+              "path": {
+                "vop": "template",
+                "text": "{y}.{r}.early.r112a",
+                "values": {
+                  "vop": "record",
+                  "fields": {
+                    "y": "$fy",
+                    "r": "$regime"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "else": {
+          "vop": "get",
+          "value": "$years",
+          "path": {
+            "vop": "template",
+            "text": "{y}.{r}.r112a",
+            "values": {
+              "vop": "record",
+              "fields": {
+                "y": "$fy",
+                "r": "$regime"
+              }
+            }
+          }
+        }
+      },
+      "x112a": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "eq",
+                  "left": "$early",
+                  "right": true
+                },
+                {
+                  "op": "eq",
+                  "left": "$fy",
+                  "right": 2024
+                }
+              ]
+            },
+            "then": {
+              "vop": "get",
+              "value": "$years",
+              "path": {
+                "vop": "template",
+                "text": "{y}.{r}.early.x112a",
+                "values": {
+                  "vop": "record",
+                  "fields": {
+                    "y": "$fy",
+                    "r": "$regime"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "else": {
+          "vop": "get",
+          "value": "$years",
+          "path": {
+            "vop": "template",
+            "text": "{y}.{r}.x112a",
+            "values": {
+              "vop": "record",
+              "fields": {
+                "y": "$fy",
+                "r": "$regime"
+              }
+            }
+          }
+        }
+      },
+      "r112": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "eq",
+                  "left": "$early",
+                  "right": true
+                },
+                {
+                  "op": "eq",
+                  "left": "$fy",
+                  "right": 2024
+                }
+              ]
+            },
+            "then": {
+              "vop": "get",
+              "value": "$years",
+              "path": {
+                "vop": "template",
+                "text": "{y}.{r}.early.r112",
+                "values": {
+                  "vop": "record",
+                  "fields": {
+                    "y": "$fy",
+                    "r": "$regime"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "else": {
+          "vop": "get",
+          "value": "$years",
+          "path": {
+            "vop": "template",
+            "text": "{y}.{r}.r112",
+            "values": {
+              "vop": "record",
+              "fields": {
+                "y": "$fy",
+                "r": "$regime"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "returns": "record",
+  "version": 2,
+  "status": "published",
+  "description_nl": "2026-10-08: The numbers of an earlier year's tax (FY 2015-16 to 2025-26): the slabs, 87A and cess from chip myreturn.slabs_by_year; the special rates - 111A 15% (20% from 23 July 2024), 112A 10% over 1 lakh (from FY 2018-19; 12.5% over 1.25 lakh from 23 July 2024, the 1.25 lakh for all of FY 2024-25), 112 20% with indexation (12.5% from 23 July 2024), 115BB / 115BBJ / 115BBH 30%; the surcharge - 12% over 1 crore (FY 2015-16), 15% over 1 crore (2016-17), 10% / 15% over 50 lakh / 1 crore (2017-18, 2018-19), then 25% over 2 crore and 37% over 5 crore (Finance (No. 2) Act 2019; the new regime's top 25% from FY 2023-24), at most 15% on 111A / 112A gains (from FY 2019-20) and on 112 (from FY 2022-23). known false: no such year / regime (the new regime before FY 2020-21).",
+  "test_cases": [
+    {
+      "args": {
+        "fy": 2019
+      },
+      "expect_value": {
+        "known": true,
+        "rebate_upto": 500000,
+        "rebate_most": 12500,
+        "marginal": false,
+        "cess": 4,
+        "surcharge": [
+          {
+            "above": 5000000,
+            "rate": 10
+          },
+          {
+            "above": 10000000,
+            "rate": 15
+          },
+          {
+            "above": 20000000,
+            "rate": 25
+          },
+          {
+            "above": 50000000,
+            "rate": 37
+          }
+        ],
+        "cap_a": 15,
+        "cap_112": 100,
+        "r30": 30,
+        "rebate_special": true,
+        "r111a": 15,
+        "r112a": 10,
+        "x112a": 100000,
+        "r112": 20
+      }
+    },
+    {
+      "args": {
+        "fy": 2024,
+        "regime": "new"
+      },
+      "expect_value": {
+        "known": true,
+        "rebate_upto": 700000,
+        "rebate_most": 25000,
+        "marginal": true,
+        "cess": 4,
+        "surcharge": [
+          {
+            "above": 5000000,
+            "rate": 10
+          },
+          {
+            "above": 10000000,
+            "rate": 15
+          },
+          {
+            "above": 20000000,
+            "rate": 25
+          }
+        ],
+        "cap_a": 15,
+        "cap_112": 15,
+        "r30": 30,
+        "rebate_special": true,
+        "r111a": 20,
+        "r112a": 12.5,
+        "x112a": 125000,
+        "r112": 12.5
+      }
+    },
+    {
+      "args": {
+        "fy": 2024,
+        "regime": "new",
+        "early": true
+      },
+      "expect_value": {
+        "known": true,
+        "rebate_upto": 700000,
+        "rebate_most": 25000,
+        "marginal": true,
+        "cess": 4,
+        "surcharge": [
+          {
+            "above": 5000000,
+            "rate": 10
+          },
+          {
+            "above": 10000000,
+            "rate": 15
+          },
+          {
+            "above": 20000000,
+            "rate": 25
+          }
+        ],
+        "cap_a": 15,
+        "cap_112": 15,
+        "r30": 30,
+        "rebate_special": true,
+        "r111a": 15,
+        "r112a": 10,
+        "x112a": 125000,
+        "r112": 20
+      }
+    },
+    {
+      "args": {
+        "fy": 2016
+      },
+      "expect_value": {
+        "known": true,
+        "rebate_upto": 500000,
+        "rebate_most": 5000,
+        "marginal": false,
+        "cess": 3,
+        "surcharge": [
+          {
+            "above": 10000000,
+            "rate": 15
+          }
+        ],
+        "cap_a": 100,
+        "cap_112": 100,
+        "r30": 30,
+        "rebate_special": true,
+        "r111a": 15,
+        "r112a": 0,
+        "x112a": 0,
+        "r112": 20
+      }
+    },
+    {
+      "args": {
+        "fy": 2019,
+        "regime": "new"
+      },
+      "expect_value": {
+        "known": false,
+        "rebate_upto": null,
+        "rebate_most": null,
+        "marginal": null,
+        "cess": null,
+        "surcharge": [
+          {
+            "above": 5000000,
+            "rate": 10
+          },
+          {
+            "above": 10000000,
+            "rate": 15
+          },
+          {
+            "above": 20000000,
+            "rate": 25
+          },
+          {
+            "above": 50000000,
+            "rate": 37
+          }
+        ],
+        "cap_a": 15,
+        "cap_112": 100,
+        "r30": 30,
+        "rebate_special": true,
+        "r111a": 15,
+        "r112a": 10,
+        "x112a": 100000,
+        "r112": 20
+      }
+    }
+  ]
+}

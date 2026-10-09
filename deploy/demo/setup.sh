@@ -24,7 +24,10 @@ fi
 # the codes go out through the same mail account as prod
 PROD_DATA=$(systemctl show -p Environment --value "$APP" | tr ' ' '\n' | sed -n 's/^\(PORTAL\|TV\)_DATA=//p' | head -1)
 PROD_DATA=${PROD_DATA:-$CODE/data}
-[ -f "$PROD_DATA/smtp.json" ] && cp -a "$PROD_DATA/smtp.json" "$ROOT/data/smtp.json" && echo "mail settings copied from prod"
+# prod has none yet (a new domain): borrow any sibling site's, so the demo can still send codes (2026-10-08)
+MAIL="$PROD_DATA/smtp.json"; [ -f "$MAIL" ] || MAIL=$(ls /opt/*/data/smtp.json 2>/dev/null | head -1 || true)
+[ -n "$MAIL" ] && [ -f "$MAIL" ] && cp -a "$MAIL" "$ROOT/data/smtp.json" && echo "mail settings copied from $MAIL"
+[ -f "$ROOT/data/smtp.json" ] || echo "WARNING: no mail settings anywhere - the demo cannot send sign-in codes"
 chown -R "$RUNAS":"$RUNAS" "$ROOT"
 # who owns every demo: set once with  PORTAL_DEMO_OWNER=<email> in /etc/valuestream/demo.env (setup keeps it)
 mkdir -p /etc/valuestream && touch /etc/valuestream/demo.env && chmod 600 /etc/valuestream/demo.env

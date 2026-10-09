@@ -147,7 +147,8 @@ class Watch:
             from google import genai  # noqa: PLC0415
             from google.genai import types  # noqa: PLC0415
             cfg = types.GenerateContentConfig(tools=[types.Tool(google_search=types.GoogleSearch())] if k["search"] else None)
-            resp = genai.Client(api_key=secret).models.generate_content(model=k["model"], contents=prompt, config=cfg)
+            client = genai.Client(api_key=secret)        # held: a temporary client closes before its call answers
+            resp = client.models.generate_content(model=k["model"], contents=prompt, config=cfg)
             pages = []
             for c in getattr(resp, "candidates", None) or []:
                 for ch in getattr(getattr(c, "grounding_metadata", None), "grounding_chunks", None) or []:

@@ -37,8 +37,10 @@ def save(c, note=""):
 
 def knob(c, name, default, label):
     """A knob on a record chip that hands its params back: param, field, and the no-args test."""
+    changed = True
     for p in c["params"]:
         if p["name"] == name:
+            changed = p["default"] != default        # 2026-10-08: an unchanged word keeps its test's answer ({product} is filled there)
             p["default"] = default
             break
     else:
@@ -47,7 +49,7 @@ def knob(c, name, default, label):
         if c["expr"].get("vop") == "record" and all(isinstance(v, str) and v.startswith("$") for v in c["expr"]["fields"].values()):
             c["expr"]["fields"][name] = "$" + name
     for t in c["test_cases"]:
-        if isinstance(t.get("expect_value"), dict) and not t.get("args") and name in c["expr"].get("fields", {}):
+        if isinstance(t.get("expect_value"), dict) and not t.get("args") and name in c["expr"].get("fields", {}) and changed:
             t["expect_value"][name] = default
 
 
@@ -89,6 +91,22 @@ FA_KINDS = {
     "other": {"list": "DetailsOthAssets", "map": {"ZipCode": "zip", "NatureOfAsset": "name", "Ownership": "status", "DateOfAcq": "opened", "TotalInvestment": "cost",
                                                   "IncDrvAsset": "income", "NatureOfInc": "nature", "IncTaxAmt": "taxed", "IncTaxSch": "sch", "IncTaxSchNo": "sch_no"},
               "defaults": {"status": "DIRECT", "nature": "None", "sch": "NI"}},
+    # 2026-10-08 wave 4: Schedule FA D-F as the person knows them - accounts with signing authority, trusts abroad, other income from outside India
+    # ("flag" - is the income taxable and offered in this return: Y when an amount offered is typed - myreturn.wave3_facts)
+    "signing": {"list": "DetailsOfAccntsHvngSigningAuth", "map": {"NameOfInstitution": "name", "AddressOfInstitution": "address", "ZipCode": "zip",
+                                                                 "NameMentionedInAccnt": "holder", "InstitutionAccountNumber": "account",
+                                                                 "PeakBalanceOrInvestment": "peak", "IncAccuredTaxFlag": "flag", "IncAccuredInAcc": "income",
+                                                                 "IncOfferedAmt": "taxed", "IncOfferedSch": "sch", "IncOfferedSchNo": "sch_no"}, "defaults": {"sch": "NI"}},
+    "trust": {"list": "DetailsOfTrustOutIndiaTrustee", "map": {"NameOfTrust": "name", "AddressOfTrust": "address", "ZipCode": "zip",
+                                                              "NameOfOtherTrustees": "trustees", "AddressOfOtherTrustees": "trustees_addr",
+                                                              "NameOfSettlor": "settlor", "AddressOfSettlor": "settlor_addr",
+                                                              "NameOfBeneficiaries": "beneficiaries", "AddressOfBeneficiaries": "beneficiaries_addr",
+                                                              "DateHeld": "opened", "IncDrvTaxFlag": "flag", "IncDrvFromTrust": "income",
+                                                              "IncOfferedAmt": "taxed", "IncOfferedSch": "sch", "IncOfferedSchNo": "sch_no"}, "defaults": {"sch": "NI"}},
+    "income": {"list": "DetailsOfOthSourcesIncOutsideIndia", "map": {"NameOfPerson": "name", "AddressOfPerson": "address", "ZipCode": "zip",
+                                                                    "IncDerived": "income", "NatureOfInc": "nature", "IncDrvTaxFlag": "flag",
+                                                                    "IncOfferedAmt": "taxed", "IncOfferedSch": "sch", "IncOfferedSchNo": "sch_no"},
+               "defaults": {"nature": "Other", "sch": "NI"}},
 }
 for k2, v, lbl in [
     ("foreign_state", "99", "Schedule S / HP: the state code of a place outside India (99 - Foreign)"),
@@ -216,13 +234,16 @@ WORDS = {
     "fi_relief": "Relief for tax paid abroad: {amount} (s.90 / 90A {dtaa}, s.91 {other}) - the lower of the foreign tax and the Indian tax on it at your average rate.",
     "fi_form67": "File Form 67 (with proof of the tax paid abroad) on the e-filing portal before 31 March 2027 - without it the relief is refused (rule 128(9)).",
     "ca_foreign_business": "Income from a business or profession abroad needs books of account and ITR-3 Schedule BP - My return does not file it. Get a CA "
-                           "(SimplyFile's CA-firm side handles books and business income).",
+                           "({product}'s CA-firm side handles books and business income).",
     # foreign assets
     "fa_h": "Foreign assets (Schedule FA)", "fa_p": "As a resident and ordinarily resident, list everything held abroad at any time in the calendar year "
                                                     "1 January - 31 December 2025: bank and custodial accounts, shares and debt, insurance, property, other assets - "
                                                     "even with no income from it. Rupee values at the SBI TT buying rate. Leaving it out can cost 10 lakh (Black Money Act).",
     "fa_kinds": "bank=Bank account (A1)|custodial=Custodial / brokerage account (A2)|equity=Shares, ESOPs, debt (A3)|insurance=Cash-value insurance (A4)"
-                "|property=Immovable property (B)|other=Other capital asset (C)",
+                "|property=Immovable property (B)|other=Other capital asset (C)|signing=Account you can sign for (D)|trust=Trust abroad - trustee, "
+                "beneficiary or settlor (E)|income=Other income from outside India (F)",
+    "f_fa_holder": "Name in the account", "f_fa_trustees": "Other trustees", "f_fa_trustees_addr": "Their address", "f_fa_settlor": "Settlor",
+    "f_fa_settlor_addr": "Settlor's address", "f_fa_beneficiaries": "Beneficiaries", "f_fa_beneficiaries_addr": "Beneficiaries' address",
     "f_fa_kind": "Asset", "f_fa_country": "Country", "f_fa_name": "Name (bank / entity / asset)", "f_fa_address": "Address", "f_fa_zip": "ZIP code",
     "f_fa_account": "Account number", "f_fa_status": "You are", "f_fa_opened": "Opened / acquired on", "f_fa_peak": "Peak value in 2025", "f_fa_closing": "Value on 31 Dec 2025",
     "f_fa_income": "Income from it in 2025", "f_fa_cost": "Cost / initial value", "f_fa_proceeds": "Sale proceeds in 2025", "f_fa_nature": "Nature (entity / income)",
@@ -276,10 +297,12 @@ WORDS = {
                 "e-File > Income Tax Returns > File Income Tax Return > AY {ay} > Online, filing section 139(8A) - Updated return|"
                 "Part A ITR-U: the reason for updating, the previous return's acknowledgement and date (if any)|"
                 "Part B-ATI: the income added, the tax, the interest, the additional tax and the challan|Verify (Aadhaar OTP / EVC) within 30 days",
-    "iu_no_schema": "SimplyFile does not make the ITR-U JSON: the department's ITR-U schema (and AY {ay}'s ITR schemas) is not in schemas/itr. "
+    "iu_no_schema": "{product} does not make the ITR-U JSON: the department's ITR-U schema (and AY {ay}'s ITR schemas) is not in schemas/itr. "
                     "The computation and the steps are above - file it on the portal, or add the schema to have the JSON made.",
     "iu_none": "Pick a year to work one out.", "iu_reasons_h": "Reason",
 }
+for k2 in ("ar_unknown", "f_iu_orig_income", "f_iu_added", "itru_bar_year_unknown", "iu_lines"):   # 2026-10-08: wave 4 says these now (make_wave4_chips.py)
+    WORDS.pop(k2, None)
 for k2, v in WORDS.items():
     knob(w, k2, v, k2)
 ir = load("myreturn.itru_rules")

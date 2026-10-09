@@ -819,9 +819,10 @@ ok(i2["PartB_TTI"]["ComputationOfTaxLiability"]["TaxRelief"]["Section89"] == 637
 w = myreturn.answer(u, ar, ay, {"itru": {"ay": "2024-25", "filed": "original", "orig_income": 600000, "added": 400000, "tds": 20000, "regime": "new",
                                          "reason": "2", "on": "2026-10-07"}})
 iu = w["itru"]
-ok(iu["ok"] and iu["tax_before"] == 0 and iu["tax_after"] == 62400 and iu["i234a"] == 16848 and iu["i234b"] == 19344 and iu["pct"] == 50
-   and iu["additional"] == 49296 and iu["pay"] == 147888 and iu["updated_by"] == 20290331 and iu["schema"] is False,
-   f"ITR-U AY 2024-25: tax 62,400 + 234A 16,848 + 234B 19,344, 50% additional 49,296 = 1,47,888: {[iu.get(k2) for k2 in ('extra_tax', 'i234a', 'i234b', 'pct', 'additional', 'pay')]}")
+ok(iu["ok"] and iu["tax_before"] == 0 and iu["tax_after"] == 62400 and iu["i234a"] == 16848 and iu["i234b"] == 19344 and iu["i234c"] == 2137 and iu["pct"] == 50
+   and iu["additional"] == 50364 and iu["pay"] == 151093 and iu["updated_by"] == 20290331 and iu["schema"] is False,
+   f"ITR-U AY 2024-25: tax 62,400 + 234A 16,848 + 234B 19,344 + 234C 2,137 (wave 4), 50% additional 50,364 = 1,51,093: "
+   f"{[iu.get(k2) for k2 in ('extra_tax', 'i234a', 'i234b', 'i234c', 'pct', 'additional', 'pay')]}")
 w = myreturn.answer(u, ar, ay, {"itru": {"ay": "2023-24", "filed": "none", "orig_income": 0, "added": 900000, "regime": "new", "on": "2026-10-07"}})
 ok(w["itru"]["ok"] and w["itru"]["pct"] == 60 and w["itru"]["fee_234f"] == 5000, f"AY 2023-24, no return filed: 60% (third year) and the 234F fee: {w['itru']['pct']} {w['itru']['fee_234f']}")
 w = myreturn.answer(u, ar, ay, {"itru": {"ay": "2024-25", "filed": "original", "orig_income": 600000, "added": 400000, "regime": "new", "on": "2026-10-07", "bars": ["search"]}})
@@ -831,5 +832,243 @@ try:
     ok(False, "an updated return is for an earlier year")
 except Exception as e:  # noqa: BLE001
     ok(getattr(e, "status_code", 0) == 400, "an updated return is for an earlier year only")
+
+# --- wave 4 (2026-10-08): the gaps after wave 3 ----------------------------------------------------------------------------------
+import io  # noqa: E402
+from reportlab.lib.pagesizes import A4  # noqa: E402
+from reportlab.pdfgen import canvas  # noqa: E402
+
+
+def pdf_of(lines):
+    b_ = io.BytesIO()
+    c_ = canvas.Canvas(b_, pagesize=A4)
+    y_ = 800
+    for ln_ in lines:
+        c_.setFont("Helvetica", 8.5)
+        c_.drawString(36, y_, ln_)
+        y_ -= 13
+        if y_ < 50:
+            c_.showPage()
+            y_ = 800
+    c_.save()
+    return b_.getvalue()
+
+
+def f16_of(emp, tan, pan, salary, tds, c80c):
+    """A dummy Form 16 (Parts A and B) as TRACES / an employer lay it out - the demo's lines, another employer's figures."""
+    s_ = lambda n: myreturn._inr(n) + ".00"  # noqa: E731, SLF001
+    return pdf_of(["FORM NO. 16 [See rule 31(1)(a)]", "PART A", "Certificate under section 203 of the Income-tax Act, 1961 for tax deducted at source on salary",
+                   "Name and address of the Employer/Specified Bank", f"{emp}, Demo Tech Park, Hyderabad 500081",
+                   "Name and address of the Employee/ Specified senior citizen", "DEMO EMPLOYEE, Flat 90, Demo Residency, Hyderabad",
+                   "PAN of the Deductor TAN of the Deductor PAN of the Employee/ specified senior citizen", f"AAACD0090C {tan} {pan}",
+                   "Assessment Year 2026-27 Period with the Employer From 01-Apr-2025 To 31-Mar-2026", f"Total (Rs.) {s_(salary)} {s_(tds)} {s_(tds)}",
+                   "PART B (Annexure-I)", "A Whether opting out of taxation u/s 115BAC(1A)? No", "1. Gross Salary",
+                   f"(a) Salary as per provisions contained in section 17(1) {s_(salary)}", f"(d) Total {s_(salary)}",
+                   "4. Less: Deductions under section 16", "(a) Standard deduction under section 16(ia) 75,000.00",
+                   "10. Deductions under Chapter VI-A Gross Amount Deductible Amount",
+                   f"(a) Deduction in respect of life insurance premia, contributions to provident fund etc. under section 80C {s_(c80c)} {s_(c80c)}"])
+
+
+Q = {"answers": {"father": "Demo Father", "state": "36", "filed_on": "2026-07-20"}, "regime_seen": True, "reviewed": True}
+# W1 a revised Form 16 from the same employer (same TAN): asked, replaced; a second employer (another TAN): kept, std deduction / 80C once
+jc = person("Vikram Demo Two Jobs", "ZZDPJ0090A", 90)
+myreturn.add_doc(u, jc, ay, "Form 16 - Demo Alpha.pdf", f16_of("DEMO ALPHA PRIVATE LIMITED", "HYDD00090A", "ZZDPJ0090A", 800000, 40000, 100000))
+q = myreturn.add_doc(u, jc, ay, "Form 16 - Demo Alpha revised.pdf", f16_of("DEMO ALPHA PRIVATE LIMITED", "HYDD00090A", "ZZDPJ0090A", 900000, 50000, 100000))
+ok((q.get("ask") or {}).get("why") == "same_tan" and q["ask"]["tan"] == "HYDD00090A" and q["ask"]["employer"] == "DEMO ALPHA PRIVATE LIMITED"
+   and len([x for x in myreturn.state(jc, ay)["docs"] if x["kind"] == "form16"]) == 1, f"a second Form 16 from the same TAN: asked first, nothing added: {q.get('ask')}")
+w = myreturn.add_doc(u, jc, ay, "Form 16 - Demo Alpha revised.pdf", f16_of("DEMO ALPHA PRIVATE LIMITED", "HYDD00090A", "ZZDPJ0090A", 900000, 50000, 100000), on_same="replace")
+ok([e["gross_17_1"] for e in w["return"]["employers"]] == [900000], f"replace: the revised Form 16 only (salary not doubled): {[e['gross_17_1'] for e in w['return']['employers']]}")
+w = myreturn.add_doc(u, jc, ay, "Form 16 - Demo Beta.pdf", f16_of("DEMO BETA PRIVATE LIMITED", "HYDD00091B", "ZZDPJ0090A", 600000, 30000, 100000))
+w = myreturn.answer(u, jc, ay, Q | {"regime": "new"})
+chk = {x["what"]: x for x in w["checks"]}
+ok(not w.get("ask") and sorted(e["tan"] for e in w["return"]["employers"]) == ["HYDD00090A", "HYDD00091B"] and w["regimes"]["new"]["salary"]["income"] == 1425000
+   and chk.get("two_employers", {}).get("level") == "amber" and chk["two_employers"]["a"] == 150000 and chk["two_employers"]["b"] == 75000
+   and chk.get("two_emp_80c", {}).get("a") == 200000 and w["regimes"]["old"]["via"]["d80C"] == 150000,
+   f"a job change (another TAN): kept, 15 lakh less one 75,000; checks: std taken twice, 80C 2 lakh declared, 1.5 lakh allowed: {[(k2, v['a'], v['b']) for k2, v in chk.items()]}")
+q = myreturn.add_doc(u, jc, ay, "Form 16 - Demo Beta second spell.pdf", f16_of("DEMO BETA PRIVATE LIMITED", "HYDD00091B", "ZZDPJ0090A", 100000, 0, 0), on_same="keep")
+ok(len([x for x in myreturn.state(jc, ay)["docs"] if x["kind"] == "form16"]) == 3 and sum(e["gross_17_1"] for e in q["return"]["employers"]) == 1600000,
+   "keep both: a second spell with the same employer - both salaries count")
+i1 = myreturn.facts(jc, ay)
+d1, r1 = itr_json.assemble(i1, i1["form"])
+ok(r1["valid"], f"two employers: {i1['form']} JSON fits the schema ({r1['error_count']})")
+
+# W2 s.44AB: the cash share of payments (both sides), 44AD(4) / (5); GST per GSTIN, typed and from a GSTR-3B summary
+bz = person("Meena Demo Trader", "ZZDPT0091B", 91)
+B = {"kind": "business", "code": "09028", "name": "Meena Demo Stores", "digital": 15000000, "cash": 0, "gp": 2000000, "expenses": 800000}
+w = myreturn.answer(u, bz, ay, Q | {"business": B, "regime": "new"})
+gb = w["regimes"]["new"]["business"]
+ok(not w["ca_needed"] and gb["ask_pay"] and gb["audit_limit"] == 100000000, f"1.5 crore, no cash received, payments not typed: the 10 crore limit for now, and asked: {gb['audit_limit']} {gb['ask_pay']}")
+w = myreturn.answer(u, bz, ay, {"business": B | {"pay_total": 12000000, "pay_cash": 1200000}})
+ok((w["ca_needed"] or {}).get("why") == "ca_audit_turnover" and w["ca_needed"]["limit"] == 10000000,
+   f"cash payments 10% of payments: the 10 crore proviso fails - over 1 crore, an audit: {w['ca_needed']}")
+w = myreturn.answer(u, bz, ay, {"business": B | {"pay_total": 12000000, "pay_cash": 300000, "gst_rows": [{"gstin": "36ZZDPT0091B1Z5", "turnover": 15000000}]}})
+ok(not w["ca_needed"] and not w["regimes"]["new"]["business"]["ask_pay"] and any(x["what"] == "gst" and x["level"] == "ok" for x in w["checks"]),
+   f"cash payments 2.5%: within the 10 crore limit; GST turnover agrees: {[(x['what'], x['level']) for x in w['checks']]}")
+i3 = itr3(bz, "own P&L under the 10 crore proviso, one GSTIN")
+ok(i3["ScheduleGST"]["TurnoverGrsRcptForGSTIN"] == [{"GSTINNo": "36ZZDPT0091B1Z5", "AmtTurnGrossRcptGSTIN": 15000000}], f"ITR-3 Schedule GST: {i3.get('ScheduleGST')}")
+try:
+    myreturn.answer(u, bz, ay, {"business": B | {"gst_rows": [{"gstin": "36ZZDPT0091", "turnover": 5}]}})
+    ok(False, "a bad GSTIN is refused")
+except Exception as e:  # noqa: BLE001
+    ok(getattr(e, "status_code", 0) == 400 and "GSTIN" in str(getattr(e, "detail", "")), f"a bad GSTIN is refused: {getattr(e, 'detail', e)}")
+w = myreturn.answer(u, bz, ay, {"business": {"kind": "business", "code": "09028", "digital": 4000000, "gp": 900000, "expenses": 500000, "ad_left": "yes", "gst_rows": []},
+                                "edits": {"other": {"deposits": 300000}}})
+ok((w["ca_needed"] or {}).get("why") == "ca_audit_44ad4", f"left 44AD within five years, income above the exemption: s.44AD(5) / 44AB(e) - an audit: {w['ca_needed']}")
+w = myreturn.answer(u, bz, ay, {"business": {"kind": "44AD", "code": "09028", "digital": 1000000, "ad_left": "yes"}, "edits": {"other": {"deposits": ""}}})
+ok((w["ca_needed"] or {}).get("why") == "ca_44ad_closed", f"44AD chosen while s.44AD(4) keeps it closed: {w['ca_needed']}")
+w = myreturn.answer(u, bz, ay, {"business": {"kind": "44ADA", "code": "14001", "name": "Meena Demo Design", "digital": 1800000, "gst_rows": []}})
+G3B = ("GSTIN,Tax Period,Total Taxable value,Zero rated supplies,Nil rated and exempted supplies,Non-GST supplies\n"
+       "36ZZDPT0091B1Z5,April 2025,500000,0,20000,0\n36ZZDPT0091B1Z5,May 2025,400000,0,0,0\n29ZZDPT0091B1Z7,April 2025,300000,50000,0,0\n")
+d = myreturn.add_doc(u, bz, ay, "GSTR-3B summary FY 2025-26.csv", G3B.encode())
+w = myreturn.answer(u, bz, ay, {})
+gr = {x["gstin"]: x["turnover"] for x in w["return"]["business"]["gst_rows"]}
+ok(d["added"]["kind"] == "gst" and gr == {"36ZZDPT0091B1Z5": 920000, "29ZZDPT0091B1Z7": 350000} and w["form"]["form"] == "ITR-4"
+   and any(x["what"] == "gst" and x["level"] == "red" for x in w["checks"]), f"GSTR-3B read per GSTIN (months added up); 12.7 lakh against 18 lakh receipts - red: {gr}")
+n4, d4, r4 = myreturn.export(bz, ay)
+bp4 = json.loads(d4)["ITR"]["ITR4"]["ScheduleBP"]
+ok(r4["valid"] and len(bp4["TurnoverGrsRcptForGSTIN"]) == 2 and bp4["TotalTurnoverGrsRcptGSTIN"] == 1270000, f"ITR-4 GST schedule, two GSTINs: {bp4.get('TurnoverGrsRcptForGSTIN')}")
+
+# W3 losses brought forward from last year's ITR-3 (its Schedule CFL is named by AY); a business loss there - a CA's job
+l3 = person("Kavya Demo Prev Three", "ZZDPK0092C", 92)
+P3 = lambda cfl: {"ITR": {"ITR3": {"Form_ITR3": {"FormName": "ITR-3", "AssessmentYear": "2025"}, "PartA_GEN1": {"PersonalInfo": {"PAN": "ZZDPK0092C",  # noqa: E731
+                  "AssesseeName": {"FirstName": "Kavya", "SurNameOrOrgName": "Demo Prev Three"}, "DOB": "1978-04-04"}}, "Verification": {"Date": "2025-07-28"},
+                  "ScheduleCFL": cfl}}}
+CFL3 = {"LossCFCurrentAssmntYear2025": {"CarryFwdLossDetail": {"DateOfFiling": "2024-07-30", "TotalSTCGPTILossCF": 20000}},
+        "LossCFCurrentAssmntYear2022": {"CarryFwdLossDetail": {"DateOfFiling": "2021-07-30", "TotalLTCGPTILossCF": 15000}},
+        "AdjTotBFLossInBFLA": {"LossSummaryDetail": {"TotalSTCGPTILossCF": 5000}}, "CurrentAYloss": {"LossSummaryDetail": {"TotalLTCGPTILossCF": 70000}}}
+d = myreturn.add_doc(u, l3, ay, "ITR-3 AY 2025-26 filed.json", json.dumps(P3(CFL3)).encode())
+w = myreturn.answer(u, l3, ay, Q | {"losses_from_prev": True})
+ok(d["added"]["kind"] == "filed_prev" and w["return"]["losses_bf"] == [
+    {"ay": "2021-22", "kind": "ltcl", "amount": 15000.0, "filed_on": "2021-07-30"}, {"ay": "2024-25", "kind": "stcl", "amount": 15000.0, "filed_on": "2024-07-30"},
+    {"ay": "2025-26", "kind": "ltcl", "amount": 70000.0, "filed_on": "2025-07-28"}] and not w["ca_needed"],
+   f"last year's ITR-3: its blocks by AY, the set-off taken off the oldest, last year's own loss: {w['return']['losses_bf']}")
+CFL3["CurrentAYloss"]["LossSummaryDetail"]["BusLossOthThanSpecLossCF"] = 50000
+myreturn.add_doc(u, l3, ay, "ITR-3 AY 2025-26 filed again.json", json.dumps(P3(CFL3)).encode(), on_same="replace")
+w = myreturn.answer(u, l3, ay, {"losses_from_prev": True})
+ok((w["ca_needed"] or {}).get("why") == "ca_bf_business_loss" and w["ca_needed"]["loss"] == 50000 and w["return"]["losses_bf_other"][0]["kind"] == "bl",
+   f"a business loss brought forward (s.72): a CA's return: {w['ca_needed']}")
+
+# W4 the exemptions' time limits, and two on one sale (54 + 54EC), split by amount
+ex = person("Arjun Demo Seller", "ZZDPE0093D", 93)
+H = {"asset": "house", "name": "Flat 93, Demo Towers", "acquired": "2012-05-01", "sold": "2025-06-10", "sale": 8000000, "cost": 2000000, "buyer": "Demo Buyer",
+     "buyer_pan": "ZZDPB0093E", "address": "Flat 93, Demo Towers, Hyderabad", "pin": "500081", "state": "36"}
+w = myreturn.answer(u, ex, ay, Q | {"cg_rows": [H | {"ex_kind": "54", "ex_amount": 3000000, "ex_on": "2026-03-01", "ex_kind_1": "54EC", "ex_amount_1": 2000000,
+                                                     "ex_on_1": "2025-11-01"}], "regime": "new"})
+r0 = w["return"]["cgw"]["rows"][0]
+ok(r0["exempt"] == 5000000 and r0["gain"] - r0["final"] == 5000000 and [c["amount"] for c in r0["claims"]] == [3000000, 2000000]
+   and [c["amount_indexed"] for c in r0["claims"]] == [3000000, r0["gain_indexed"] - 3000000],
+   f"54 (30 lakh house) and 54EC (20 lakh bonds) on one sale; against the indexed gain the bonds count only up to what is left: {[(c['ex_kind'], c['amount'], c['amount_indexed']) for c in r0['claims']]}")
+i2 = itr2(ex, "54 and 54EC on one sale")
+dci = i2["ScheduleCGFor23"]["DeducClaimInfo"]
+lt0 = i2["ScheduleCGFor23"]["LongTermCapGain23"]["SaleofLandBuild"]["SaleofLandBuildDtls"][0]
+ok(dci["DeducClaimDtlsUs54"][0]["AmtDeducted"] == 3000000 and dci["DeducClaimDtlsUs54EC"][0]["AmtDeducted"] == 2000000
+   and {x["ExemptionSecCode"]: x["ExemptionAmount"] for x in lt0["ExemptionOrDednUs54"]["ExemptionOrDednUs54Dtls"]} == {"54": 3000000, "54EC": 2000000},
+   f"Table D: one claim under each section; Schedule CG B1 lists both: {lt0['ExemptionOrDednUs54']}")
+w = myreturn.answer(u, ex, ay, {"cg_rows": [H | {"ex_rows": [{"ex_kind": "54", "ex_amount": 3000000, "ex_on": "2026-03-01"},
+                                                            {"ex_kind": "54EC", "ex_amount": 2000000, "ex_on": "2026-01-15"}]}]})
+r0 = w["return"]["cgw"]["rows"][0]
+ok(r0["exempt"] == 3000000 and r0["claims"][1]["amount"] == 0 and r0["claims"][1]["why"] == "ex_late_54EC",
+   f"bonds bought 7 months after the sale: 54EC not allowed (6 months, s.54EC): {[(c['ex_kind'], c['amount'], c['why']) for c in r0['claims']]}")
+w = myreturn.answer(u, ex, ay, {"cg_rows": [H | {"ex_rows": [{"ex_kind": "54", "cgas": 3000000, "cgas_on": "2026-08-05"}]}]})
+r0 = w["return"]["cgw"]["rows"][0]
+ok(r0["exempt"] == 0 and r0["ex_why"] == "ex_cgas_late", f"CGAS deposit after 31 July (the due date u/s 139(1)): not counted: {r0['ex_why']}")
+w = myreturn.answer(u, ex, ay, {"cg_rows": [H | {"ex_rows": [{"ex_kind": "54", "ex_amount": 3000000, "ex_on": "2028-05-01", "ex_build": "build"}]}]})
+ok(w["return"]["cgw"]["rows"][0]["exempt"] == 3000000, "a house built within 3 years after the sale: 54 allowed")
+w = myreturn.answer(u, ex, ay, {"cg_rows": [H | {"ex_rows": [{"ex_kind": "54", "ex_amount": 3000000, "ex_on": "2024-05-01"}]}]})
+ok(w["return"]["cgw"]["rows"][0]["exempt"] == 0 and w["return"]["cgw"]["rows"][0]["ex_why"] == "ex_late_54", "a house bought 13 months before the sale: 54 not allowed")
+
+# W5 a CAMS capital-gains statement as a PDF (its text layout)
+cv = person("Neha Demo CAS", "ZZDPC0094E", 94)
+CAS = pdf_of(["CAMS - Consolidated Account Statement", "Capital Gain / Loss Statement for the period 01-Apr-2025 to 31-Mar-2026",
+              "Demo Bluechip Equity Fund - Direct Growth ISIN: INF000Z01045 Folio 9401",
+              "Redemption 10-Sep-2025 1,000.000 3,00,000.00 15-Jun-2017 1,00,000.00 2,50,000.00",
+              "Demo Liquid Fund - Direct Growth ISIN: INF000Z01052 Folio 9402", "Redemption 05-Aug-2025 200.000 2,10,000.00 01-Feb-2024 2,00,000.00"])
+d = myreturn.add_doc(u, cv, ay, "CAMS capital gains FY 2025-26.pdf", CAS)
+w = myreturn.answer(u, cv, ay, Q | {"regime": "new"})
+rows_ = w["return"]["cgw"]["rows"]
+ok(d["added"]["kind"] == "cg" and [(x["asset"], x["isin"], x["bucket"], x["final"]) for x in rows_] == [("equity", "INF000Z01045", "ltcg_112a", 50000), ("debt_mf", "INF000Z01052", "stcg_app", 10000)],
+   f"CAMS PDF: an equity fund (grandfathered at the 31-01-2018 value) and a liquid fund (s.50AA): {[(x['asset'], x['bucket'], x['final']) for x in rows_]}")
+itr2(cv, "a CAMS PDF")
+
+# W6 26AS Part A2 / IV: the buyer's 194IA TDS (rent u/s 194IB in the same part is not a sale of property)
+sp = person("Gopal Demo Property", "ZZDPG0095F", 95)
+T26 = "\n".join(["^Annual Tax Statement^", "^Permanent Account Number (PAN)^ZZDPG0095F^Financial Year^2025-26^Assessment Year^2026-27^",
+                 "^PART-I - Details of Tax Deducted at Source^",
+                 "^Sr. No.^Name of Deductor^TAN of Deductor^^^^^Total Amount Paid / Credited(Rs.)^Total Tax Deducted #(Rs.)^Total TDS Deposited(Rs.)",
+                 "^1^DEMO BANK LIMITED^HYDD00077B^^^^^62000.00^6200.00^6200.00",
+                 "^^Sr. No.^Section^Transaction Date^Status of Booking*^Date of Booking^Remarks**^Amount Paid / Credited(Rs.)^Tax Deducted ##(Rs.)^TDS Deposited(Rs.)",
+                 "^^1^194A^31-Mar-2026^F^15-May-2026^-^62000.00^6200.00^6200.00",
+                 "^PART-IV - Details of Tax Deducted at Source u/s 194IA/ 194IB/ 194M/ 194S (For Seller/Landlord of Property/Contractors or Professionals/Seller of Virtual Digital Asset)^",
+                 "^Sr. No.^Acknowledgement Number^Name of Deductor^PAN of Deductor^Transaction Date^Total Transaction Amount (Rs.)^Total TDS Deposited (Rs.)^Total Amount Deposited other than TDS (Rs.)",
+                 "^1^DEMOACK95^DEMO BUYER NINETYFIVE^ZZDPB0095G^20-Dec-2025^9000000.00^90000.00^0.00",
+                 "^^Sr. No.^TDS Certificate Number^Section^Date of Deposit^Status of Booking*^Date of Booking^Demand Payment^TDS Deposited (Rs.)^Total Amount Deposited other than TDS (Rs.)",
+                 "^^1^-^194IA^05-Jan-2026^F^10-Jan-2026^0.00^90000.00^0.00",
+                 "^2^DEMOACK96^DEMO TENANT^ZZDPT0096H^31-Mar-2026^600000.00^12000.00^0.00",
+                 "^^1^-^194IB^05-Apr-2026^F^10-Apr-2026^0.00^12000.00^0.00",
+                 "^PART-V - Details of Transactions under Proviso to section 194B^"])
+d = myreturn.add_doc(u, sp, ay, "26AS ZZDPG0095F.txt", T26.encode())
+w = myreturn.answer(u, sp, ay, Q | {"regime": "new", "cg_rows": [H | {"buyer_pan": "ZZDPB0095G", "buyer": "Demo Buyer Ninetyfive", "ex_kind": "54EC",
+                                                                     "ex_amount": 5000000, "ex_on": "2025-09-01"}]})
+ok([(x["pan"], x["tds"], x["section"]) for x in w["return"]["tds_194ia"]] == [("ZZDPB0095G", 90000.0, "194IA")] and [x["tan"] for x in w["return"]["tds"]] == ["HYDD00077B"]
+   and w["regimes"]["new"]["tds"] == 96200, f"26AS Part IV: the buyer's 90,000 (194IA) - not the tenant's 194IB, not a Part I deductor: {w['return']['tds_194ia']}")
+i2 = itr2(sp, "194IA from 26AS")
+ok(i2["ScheduleTDS3"]["TDS3onOthThanSalDtls"][0]["PANOfBuyerTenant"] == "ZZDPB0095G" and i2["ScheduleTDS3"]["TotalTDS3OnOthThanSal"] == 90000, "Schedule TDS3 from 26AS Part A2")
+pdf_text = "\n".join(["PART-IV - Details of Tax Deducted at Source u/s 194IA/ 194IB (For Seller/Landlord of Property)",
+                      "Sr. No. Acknowledgement Number Name of Deductor PAN of Deductor Transaction Date Total Transaction Amount (Rs.) Total TDS Deposited (Rs.)",
+                      "1 DEMOACK95 DEMO BUYER NINETYFIVE ZZDPB0095G 20-Dec-2025 90,00,000.00 90,000.00 0.00", "1 - 194IA 05-Jan-2026 F 10-Jan-2026 0.00 90,000.00 0.00",
+                      "PART-V - Details of Transactions"])
+ok(myreturn_read.a2_26as(pdf_text)[1] == [{"pan": "ZZDPB0095G", "name": "DEMO BUYER NINETYFIVE", "income": 9000000.0, "tds": 90000.0, "section": "194IA"}],
+   "26AS PDF text: Part IV's buyer line and its 194IA entry")
+
+# W7 the updated return of an earlier year: its special rates (111A at 15% in FY 2023-24), 234C, surcharge with marginal relief
+uu = person("Lata Demo Update", "ZZDPU0097J", 97)
+w = myreturn.answer(u, uu, ay, {"itru": {"ay": "2024-25", "filed": "original", "orig_income": 1000000, "add_111a": 500000, "tds": 50000, "regime": "new",
+                                         "reason": "2", "on": "2026-10-07"}})
+iu = w["itru"]
+ok(iu["ok"] and iu["tax_before"] == 62400 and iu["tax_after"] == 140400 and iu["extra_tax"] == 78000 and iu["i234c"] == 3939,
+   f"FY 2023-24: 5 lakh of 111A gains at that year's 15% (75,000 + cess); 234C of the updated tax less that of the return before: {[iu.get(k2) for k2 in ('tax_before', 'tax_after', 'i234c')]}")
+w = myreturn.answer(u, uu, ay, {"itru": {"ay": "2023-24", "filed": "original", "orig_income": 4800000, "added": 300000, "tds": 1302600, "regime": "old",
+                                         "reason": "2", "on": "2026-10-07"}})
+iu = w["itru"]
+ok(iu["ok"] and iu["tax_before"] == 1302600 and iu["tax_after"] == 1469000 and iu["surcharge"] == 70000,
+   f"FY 2022-23, 51 lakh: 10% surcharge cut to 70,000 by marginal relief (no longer 'ask a CA'): {[iu.get(k2) for k2 in ('tax_before', 'tax_after', 'surcharge')]}")
+w = myreturn.answer(u, uu, ay, {"itru": {"ay": "2025-26", "filed": "original", "orig_income": 1500000, "add_112a": 225000, "early": "yes", "regime": "new", "on": "2026-10-07"}})
+ok(w["itru"]["tax_after"] - w["itru"]["tax_before"] == 10400, f"FY 2024-25, sold before 23 July 2024: 10% over 1.25 lakh = 10,000 + cess: {w['itru']['extra_tax']}")
+
+# W8 relief u/s 89 for an earlier year over 50 lakh: that year's surcharge, worked out
+s89 = person("Mohan Demo Arrears", "ZZDPM0098K", 98)
+w = myreturn.answer(u, s89, ay, Q | {"employers": {"0": {"name": "Demo Employer Ltd", "tan": "HYDD00098K", "gross_17_1": 6000000}},
+                                     "arrears": [{"fy": "2019-20", "amount": 1000000, "income": 4500000, "regime": "old"}], "regime": "new"})
+rl = w["regimes"]["new"]["relief"]
+ok(not rl["unknown89"] and rl["rows89"][0]["before"] == 1209000 and rl["rows89"][0]["after"] == 1673100 and rl["rows89"][0]["extra"] == 464100,
+   f"FY 2019-20 at 45 + 10 lakh: that year's 10% surcharge in the tax with the arrears: {rl['rows89']}")
+
+# W9 Schedule FA D-F: an account you can sign for, a trust abroad, other income from outside India
+fx = person("Rhea Demo Foreign", "ZZDPF0099L", 99)
+w = myreturn.answer(u, fx, ay, Q | {"answers": Q["answers"] | {"foreign": True}, "regime": "new", "fa_rows": [
+    {"kind": "signing", "country": US, "name": "Demo Bank NA", "address": "1 Demo Plaza, Seattle", "zip": "98101", "holder": "Demo Family Trust", "account": "US9901", "peak": 800000},
+    {"kind": "trust", "country": US, "name": "Demo Family Trust", "address": "2 Demo Road, Seattle", "zip": "98102", "trustees": "Demo Trustee", "trustees_addr": "3 Demo Lane",
+     "settlor": "Demo Settlor", "settlor_addr": "4 Demo Lane", "beneficiaries": "Rhea Demo Foreign", "beneficiaries_addr": "Hyderabad", "opened": "2020-01-01"},
+    {"kind": "income", "country": US, "name": "Demo Agency", "address": "5 Demo Street, Seattle", "zip": "98103", "income": 50000, "nature": "Royalty", "taxed": 50000,
+     "sch": "OS", "sch_no": "1"}]})
+i2 = itr2(fx, "Schedule FA D-F")
+fa = i2["ScheduleFA"]
+ok(fa["DetailsOfAccntsHvngSigningAuth"][0]["NameMentionedInAccnt"] == "Demo Family Trust" and fa["DetailsOfAccntsHvngSigningAuth"][0]["IncAccuredTaxFlag"] == "N"
+   and fa["DetailsOfTrustOutIndiaTrustee"][0]["NameOfSettlor"] == "Demo Settlor" and fa["DetailsOfOthSourcesIncOutsideIndia"][0]["IncDrvTaxFlag"] == "Y"
+   and fa["DetailsOfOthSourcesIncOutsideIndia"][0]["IncOfferedAmt"] == 50000, f"Schedule FA tables of signing authority, trusts and other income: {list(fa)}")
+
+# W10 the old regime chosen in the save that first adds a business: checked against that form's due date (ITR-4: 31 August)
+rg = person("Sanya Demo Regime", "ZZDPR0100M", 100)
+myreturn.answer(u, rg, ay, {"employers": {"0": {"name": "Demo Employer Ltd", "tan": "HYDD00100M", "gross_17_1": 900000}},
+                            "answers": {"father": "Demo Father", "state": "36", "filed_on": "2026-08-20"}})
+w = myreturn.answer(u, rg, ay, {"business": {"kind": "44ADA", "code": "14001", "name": "Sanya Demo Studio", "digital": 1000000}, "regime": "old"})
+ok(w["regime"] == "old" and w["old_ok"] and w["form"]["form"] == "ITR-4" and w["dates"]["due"] == 20260831,
+   f"filed 20 August: ITR-1 would be late, but with the business added in the same save it is ITR-4 (due 31 August) - the old regime is open: {w['form']} {w['dates']['due']}")
+try:
+    myreturn.answer(u, rg, ay, {"business": {"kind": ""}, "regime": "old"})
+    ok(False, "the business taken out in the same save: ITR-1 is late, the old regime closed")
+except Exception as e:  # noqa: BLE001
+    st_ = myreturn.state(rg, ay)
+    ok(getattr(e, "status_code", 0) == 400 and st_["business"]["kind"] == "44ADA", f"the business taken out with the old regime: refused, nothing saved: {getattr(e, 'detail', e)}")
 print("ALL PASS" if not fails else f"{len(fails)} FAILED")
 sys.exit(1 if fails else 0)

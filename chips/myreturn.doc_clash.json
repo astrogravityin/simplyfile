@@ -1,0 +1,156 @@
+{
+  "chip_id": "myreturn.doc_clash",
+  "kind": "accessor",
+  "set": "myreturn",
+  "label": "My return: a document like one already in - ask first?",
+  "aliases": [
+    "second form 16",
+    "same tan",
+    "replace or keep"
+  ],
+  "params": [
+    {
+      "name": "kind",
+      "type": "text",
+      "default": "",
+      "label": "the kind of the document just read"
+    },
+    {
+      "name": "one_per_kind",
+      "type": "json",
+      "default": [],
+      "label": "kinds a return holds one of (chip myreturn.settings one_per_kind)"
+    },
+    {
+      "name": "same_kind",
+      "type": "number",
+      "default": 0,
+      "label": "documents of that kind already in (another file)"
+    },
+    {
+      "name": "tan_kinds",
+      "type": "json",
+      "default": [],
+      "label": "kinds one per employer (chip myreturn.settings tan_kinds)"
+    },
+    {
+      "name": "same_tan",
+      "type": "number",
+      "default": 0,
+      "label": "documents of that kind already in for the same employer (TAN)"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "why": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "in_set",
+                  "value": "$kind",
+                  "set": "$one_per_kind"
+                },
+                {
+                  "op": "gt",
+                  "left": "$same_kind",
+                  "right": 0
+                }
+              ]
+            },
+            "then": "same"
+          },
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "in_set",
+                  "value": "$kind",
+                  "set": "$tan_kinds"
+                },
+                {
+                  "op": "gt",
+                  "left": "$same_tan",
+                  "right": 0
+                }
+              ]
+            },
+            "then": "same_tan"
+          }
+        ],
+        "else": ""
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-08: A second AIS / 26AS / pre-filled JSON / filed return is asked about (replace it, or keep both); a second Form 16 from the same employer (the same TAN) too - a revised Form 16 replaces the first, two Form 16s for two spells with one employer are both kept. A Form 16 from another TAN is a second employer (a job change): kept, no question - and check myreturn.check_employers looks at the two.",
+  "test_cases": [
+    {
+      "args": {
+        "kind": "ais",
+        "one_per_kind": [
+          "ais",
+          "26as"
+        ],
+        "same_kind": 1
+      },
+      "expect_value": {
+        "why": "same"
+      }
+    },
+    {
+      "args": {
+        "kind": "form16",
+        "one_per_kind": [
+          "ais"
+        ],
+        "tan_kinds": [
+          "form16"
+        ],
+        "same_kind": 1,
+        "same_tan": 1
+      },
+      "expect_value": {
+        "why": "same_tan"
+      }
+    },
+    {
+      "args": {
+        "kind": "form16",
+        "one_per_kind": [
+          "ais"
+        ],
+        "tan_kinds": [
+          "form16"
+        ],
+        "same_kind": 1,
+        "same_tan": 0
+      },
+      "expect_value": {
+        "why": ""
+      }
+    },
+    {
+      "args": {
+        "kind": "bank",
+        "one_per_kind": [
+          "ais"
+        ],
+        "tan_kinds": [
+          "form16"
+        ],
+        "same_kind": 3
+      },
+      "expect_value": {
+        "why": ""
+      }
+    }
+  ]
+}

@@ -42,14 +42,18 @@ VIA = ("c80c", "c80ccc", "c80ccd1", "c80ccd1b", "c80ccd2", "c80d_self", "c80d_pa
 VIA_MORE = ("dd_nature", "dd_type", "dd_dependent", "ddb_senior", "stamp", "vehicle", "ggc_party", "ggc_pan", "ggc_date", "ggc_ref", "ggc_ifsc")
 LOAN = ("from", "bank", "acc", "date", "amount", "left")
 BIZ = ("kind", "code", "name", "digital", "cash", "declared", "gstin", "gst_turnover",   # 2026-10-06 presumptive business / profession
-       "gp", "expenses", "np", "debtors", "creditors", "stock", "cash_in_hand")         # 2026-10-07 ITR-3: own profit and loss, no regular books
-BIZ_TEXT = ("kind", "code", "name", "gstin")
+       "gp", "expenses", "np", "debtors", "creditors", "stock", "cash_in_hand",         # 2026-10-07 ITR-3: own profit and loss, no regular books
+       "ad_left")                                                                        # 2026-10-08: s.44AD(4) - left 44AD within five years ("yes")
+BIZ_TEXT = ("kind", "code", "name", "gstin", "ad_left")
+BIZ_OPT = ("pay_total", "pay_cash")       # 2026-10-08 s.44AB provisos: payments in all / in cash - "" until typed (the receipts' share stands in)
+GSTIN = re.compile(r"\d{2}[A-Z]{5}\d{4}[A-Z][1-9A-Z]Z[0-9A-Z]")
+EX = ("ex_kind", "ex_amount", "ex_on", "ex_build", "cgas", "cgas_on", "cgas_acc", "cgas_ifsc")   # 2026-10-08: one exemption claim on a sale
 EMPLOYER = ("name", "tan", "gross_17_1", "perq_17_2", "profit_17_3", "exempt_all", "exempt_new", "hra", "prof_tax", "tds", "basic_da",
             "address", "city", "state", "pin")
 EMP_TEXT = ("name", "tan", "address", "city", "state", "pin")            # 2026-10-07: the employer's address from Form 16 Part A
 # 2026-10-07 wave 3: one sale of a capital asset (typed, or read from a broker / CAMS / KFintech statement), with its exemption claim
 CG_ROW = ("asset", "name", "isin", "units", "acquired", "sold", "term", "sale", "cost", "improve", "improve_on", "fmv", "expenses", "stamp",
-          "ex_kind", "ex_amount", "ex_on", "cgas", "cgas_on", "cgas_acc", "cgas_ifsc", "other_houses",
+          "ex_kind", "ex_amount", "ex_on", "ex_build", "cgas", "cgas_on", "cgas_acc", "cgas_ifsc", "other_houses",
           "buyer", "buyer_pan", "buyer_share", "address", "state", "pin", "tds")
 CG_NUM = ("units", "sale", "cost", "improve", "fmv", "expenses", "stamp", "ex_amount", "cgas", "other_houses", "buyer_share", "tds")
 CG_DAY = ("acquired", "sold", "improve_on", "ex_on", "cgas_on")
@@ -61,12 +65,16 @@ BUCKETS = ("stcg_111a", "stcg_app", "ltcg_112", "ltcg_112a")
 FOREIGN = ("country", "head", "amount", "tax_paid", "sec", "article", "tin", "controlled", "employer", "address", "city", "zip", "municipal_tax", "interest")
 FOREIGN_NUM = ("amount", "tax_paid", "municipal_tax", "interest")
 FA = ("kind", "country", "name", "address", "zip", "account", "status", "opened", "peak", "closing", "income", "nature", "cost", "proceeds",
-      "taxed", "sch", "sch_no")
+      "taxed", "sch", "sch_no", "holder", "trustees", "trustees_addr", "settlor", "settlor_addr", "beneficiaries", "beneficiaries_addr")   # 2026-10-08: D-F
 FA_NUM = ("peak", "closing", "income", "cost", "proceeds", "taxed")
 CLUB = ("name", "pan", "relation", "head", "amount", "skill", "disabled", "municipal_tax", "interest", "address")
 ARREAR = ("fy", "amount", "income", "regime")
-ITRU = ("ay", "filed", "orig_income", "added", "tds_added", "tds", "advance", "regime", "reason", "on", "form")
-ITRU_NUM = ("orig_income", "added", "tds_added", "tds", "advance")
+ITRU = ("ay", "filed", "orig_income", "added", "tds_added", "tds", "advance", "regime", "reason", "on", "form",
+        # 2026-10-08: that year's special-rate income (in the return before / added) and the advance tax by instalment (234C)
+        "orig_111a", "orig_112a", "orig_112", "orig_30", "add_111a", "add_112a", "add_112", "add_30", "early", "adv_q1", "adv_q2", "adv_q3", "adv_q4")
+ITRU_NUM = ("orig_income", "added", "tds_added", "tds", "advance", "orig_111a", "orig_112a", "orig_112", "orig_30", "add_111a", "add_112a", "add_112",
+            "add_30", "adv_q1", "adv_q2", "adv_q3", "adv_q4")
+ITRU_SPECIAL = {"111a": "stcg_111a", "112a": "ltcg_112a", "112": "ltcg_112", "30": "special"}
 
 
 def settings() -> dict:
@@ -136,9 +144,17 @@ def add_doc(user: dict, cid: str, ay: str, filename: str, data: bytes, password:
     if w.get("pan") == c.get("pan") and (w.get("dob") and not c.get("dob") or w.get("name") and c.get("name") == c.get("pan")):
         clients.save(user, c | {"dob": c.get("dob") or w["dob"], "name": w["name"] if c.get("name") == c.get("pan") and w.get("name") else c["name"]}, cid)
     name = Path(filename).name[:120]
-    same = [x for x in st0.get("docs") or [] if got["kind"] in k["one_per_kind"] and x["kind"] == got["kind"] and x["name"] != name]
+    # 2026-10-08: a second AIS / 26AS ..., or a second Form 16 from the same employer (TAN) - asked first (chip myreturn.doc_clash)
+    others = [x for x in st0.get("docs") or [] if x["kind"] == got["kind"] and x["name"] != name]
+    tans = {str(e.get("tan") or "").upper() for e in (got.get("facts") or {}).get("employers") or [] if e.get("tan")}
+    by_tan = [x for x in others if tans & {str(e.get("tan") or "").upper() for e in (x.get("facts") or {}).get("employers") or []}]
+    why = engine.run("myreturn.doc_clash", {"kind": got["kind"], "one_per_kind": k["one_per_kind"], "same_kind": len(others),
+                                            "tan_kinds": k["tan_kinds"], "same_tan": len(by_tan)})["why"]
+    same = others if why == "same" else by_tan if why == "same_tan" else []
     if same and on_same not in ("replace", "keep"):
-        return work(cid, ay) | {"ask": {"why": "same", "kind": got["kind"], "new": name, "have": [{"name": x["name"], "at": x["added_at"]} for x in same]}}
+        emp = next((e for e in (got.get("facts") or {}).get("employers") or [] if e.get("tan")), {})
+        return work(cid, ay) | {"ask": {"why": why, "kind": got["kind"], "new": name, "tan": emp.get("tan", ""), "employer": emp.get("name", ""),
+                                        "have": [{"name": x["name"], "at": x["added_at"]} for x in same]}}
     for x in same if on_same == "replace" else []:
         remove_doc(user, cid, ay, x["id"])
     with _LOCK:
@@ -242,6 +258,7 @@ def answer(user: dict, cid: str, ay: str, body: dict) -> dict:
     k = settings()
     with _LOCK:
         st = state(cid, ay)
+        before = copy.deepcopy(st)
         for q, v in (body.get("answers") or {}).items():
             if q not in k["questions"]:
                 _bad("bad_field", field=q)
@@ -302,8 +319,23 @@ def answer(user: dict, cid: str, ay: str, body: dict) -> dict:
                 one["asset"] = one["asset"] or "equity"
                 if one["asset"] not in rules["assets"]:
                     _bad("bad_field", field="asset")
-                if one["ex_kind"] not in ("", "54", "54EC", "54F") or one["term"] not in ("", "long", "short"):
-                    _bad("bad_field", field="ex_kind" if one["ex_kind"] not in ("", "54", "54EC", "54F") else "term")
+                # 2026-10-08: several exemptions on one sale (54 + 54EC ...) - a list, or the page's flat fields (ex_kind, ex_kind_1 ...)
+                claims = []
+                flat = [{f: x.get(f + ("" if n == 0 else f"_{n}")) for f in EX} for n in range(int(rules["ex_max"]))]
+                for c in (x["ex_rows"] if isinstance(x.get("ex_rows"), list) else flat)[: int(rules["ex_max"])]:
+                    if not isinstance(c, dict) or not str(c.get("ex_kind") or "").strip():
+                        continue
+                    c = {"ex_kind": str(c.get("ex_kind")).strip(), "ex_amount": _num(c.get("ex_amount")), "ex_on": _iso(c.get("ex_on")),
+                         "ex_build": "build" if str(c.get("ex_build") or "") in ("build", "true", "True", "1", "on") else "",
+                         "cgas": _num(c.get("cgas")), "cgas_on": _iso(c.get("cgas_on")), "cgas_acc": str(c.get("cgas_acc") or "").strip()[:20],
+                         "cgas_ifsc": str(c.get("cgas_ifsc") or "").strip().upper()[:11]}
+                    if c["ex_kind"] not in ("54", "54EC", "54F"):
+                        _bad("bad_field", field="ex_kind")
+                    claims.append(c)
+                one["ex_rows"] = claims
+                one |= claims[0] if claims else {f: (0.0 if f in ("ex_amount", "cgas") else "") for f in EX}
+                if one["term"] not in ("", "long", "short"):
+                    _bad("bad_field", field="term")
                 one["isin"] = re.sub(r"\s", "", one["isin"]).upper()[:12]
                 one["buyer_pan"] = re.sub(r"\s", "", one["buyer_pan"]).upper()[:10]
                 if one["buyer_pan"] and not re.fullmatch(r"[A-Z]{5}[0-9]{4}[A-Z]", one["buyer_pan"]):
@@ -339,7 +371,8 @@ def answer(user: dict, cid: str, ay: str, body: dict) -> dict:
             got = prev_losses(st, ay)
             if not got:
                 _bad("no_prev_losses", 404)
-            st["losses_bf"] = got
+            st["losses_bf"] = [x for x in got if x["kind"] in ("stcl", "ltcl", "hp")]
+            st["losses_bf_other"] = [x for x in got if x["kind"] not in ("stcl", "ltcl", "hp")]   # 2026-10-08: a business loss (ITR-3) - a CA's job
         if "business" in body:                              # presumptive business / profession, typed on Check
             b = body["business"] or {}
             if str(b.get("kind") or "") not in k["biz_kinds"]:
@@ -353,7 +386,20 @@ def answer(user: dict, cid: str, ay: str, body: dict) -> dict:
                     _bad("bad_field", field="own")
                 vehicles.append({"reg": re.sub(r"[^A-Z0-9]", "", str(x.get("reg") or "").upper())[:11], "weight_kg": _num(x.get("weight_kg")),
                                  "months": min(max(int(_num(x.get("months")) or 12), 1), 12), "own": o})
-            st["business"] = {f: (str(b.get(f) or "").strip()[:120] if f in BIZ_TEXT else _num(b.get(f))) for f in BIZ} | {"vehicles": vehicles}
+            # 2026-10-08: the GST schedule - turnover per GSTIN (typed rows; the old single gstin / gst_turnover is the first row)
+            gs = b["gst_rows"] if "gst_rows" in b else (st.get("business") or {}).get("gst_rows") or []
+            gst_rows = []
+            for x in (gs or [])[: int(k["gst_max"])]:
+                g = re.sub(r"\s", "", str((x or {}).get("gstin") or "")).upper()[:15]
+                if g and not GSTIN.fullmatch(g) or not g and _num((x or {}).get("turnover")):
+                    _bad("bad_gstin", gstin=g or "-")       # a blank row (just added) is kept to be typed in; the JSON takes only GSTINs
+                gst_rows.append({"gstin": g, "turnover": _num(x.get("turnover"))})
+            opt = {f: ("" if str(b.get(f) if b.get(f) is not None else "").strip() == "" else _num(b.get(f))) for f in BIZ_OPT}
+            st["business"] = {f: (str(b.get(f) or "").strip()[:120] if f in BIZ_TEXT else _num(b.get(f))) for f in BIZ} | {"vehicles": vehicles, "gst_rows": gst_rows} | opt
+            if "gst_rows" in b:                              # the rows say it all now: the single GSTIN of before goes
+                st["business"] |= {"gstin": "", "gst_turnover": 0.0}
+            if st["business"]["ad_left"] not in ("", "yes"):
+                _bad("bad_field", field="ad_left")
         if "vda" in body:                                   # virtual digital assets transferred in the year (115BBH)
             st["vda"] = [{f: (_num(x.get(f)) if f in ("cost", "sale") else str(x.get(f) or "").strip()[:60]) for f in VDA}
                          for x in (body["vda"] or [])[: int(k["vda_max"])] if isinstance(x, dict)]
@@ -379,9 +425,7 @@ def answer(user: dict, cid: str, ay: str, body: dict) -> dict:
         if "regime" in body:
             if body["regime"] not in ("", "new", "old"):
                 _bad("bad_field", field="regime")
-            if body["regime"] == "old" and not work(cid, ay)["old_ok"]:
-                _bad("old_closed")
-            st["regime"] = body["regime"]
+            st["regime"] = body["regime"]       # checked below, on the return with the rest of this save in it
         if body.get("step"):
             st["step"] = str(body["step"])[:20]
         for flag in ("reviewed", "regime_seen"):           # the person has looked: the step counts as done
@@ -394,6 +438,11 @@ def answer(user: dict, cid: str, ay: str, body: dict) -> dict:
             st["accepted"] = sorted(set(st.get("accepted") or []) | {str(body["accept"])[:40]})
         st["by"] = user["id"]
         _save(cid, ay, st)
+        # 2026-10-08: 115BAC(6) - the old regime is open when THIS return (with the business, the dates ... of this same save) is filed by
+        # its form's due date (chip myreturn.settings old_regime_kinds on close.dates): asked after the save, the save undone when it is not
+        if body.get("regime") == "old" and not work(cid, ay)["old_ok"]:
+            _save(cid, ay, before)
+            _bad("old_closed")
     return work(cid, ay)
 
 
@@ -473,6 +522,21 @@ def countries() -> list:
     return [[c, names.get(c, c).strip().title()] for c in v["enum"]]
 
 
+@lru_cache(maxsize=1)
+def cfl3_years() -> dict:
+    """{block name: AY} of ITR-3's Schedule CFL - "LossCFCurrentAssmntYear2025" ... read from the ITR-3 schema's own descriptions ("Carry
+    forward losses for AY2024-25"; chip myreturn.settings itr3_cfl block_ay): the names stay year to year, so last year's file reads by them."""
+    import itr_json  # noqa: PLC0415
+    k3 = settings()["itr3_cfl"]
+    s = itr_json.schema(k3["form"])
+    cfl = itr_json._ref(s, s["definitions"][settings()["from_prev"]["cfl"]])  # noqa: SLF001
+    out = {}
+    for b, v in cfl["properties"].items():
+        if m := re.search(k3["block_ay"], str(v.get("description") or "")):
+            out[b] = m.group(1)
+    return out
+
+
 # --- one return from many documents --------------------------------------------------------------------------------------
 
 @lru_cache(maxsize=1)
@@ -515,6 +579,8 @@ def merged(cid: str, ay: str) -> dict:
                 continue
             if sec in ("employers", "tds", "paid"):             # lists: every document of the winning kind adds its rows
                 out[sec] = [dict(r, doc=d["id"]) for d in have for r in d["facts"][sec]]
+            elif sec == "via" and kind == "form16":            # 2026-10-08: two employers' Form 16s - each one's deductions, added up
+                out[sec] = {f: round(sum(_num(d["facts"][sec].get(f)) for d in have), 2) for f in VIA}   # (the caps apply once; check two_emp_80c)
             else:
                 out[sec] = copy.deepcopy(have[0]["facts"][sec])
             out["from"][sec] = {"kind": kind, "doc": have[0]["id"]}
@@ -550,6 +616,17 @@ def merged(cid: str, ay: str) -> dict:
     bk = [d["facts"]["bank"] for d in st.get("docs") or [] if d["kind"] == "bank" and (d.get("facts") or {}).get("bank")]
     out["bank"] = {f: round(sum(_num(x.get(f)) for x in bk), 2) for f in ("credits", "receipts", "cash", "interest")} | {"statements": len(bk)}
     out["business"] = {f: (str(biz.get(f) or "") if f in BIZ_TEXT else _num(biz.get(f))) for f in BIZ} | {"seen": seen, "vehicles": biz.get("vehicles") or []}
+    out["business"] |= {f: biz.get(f, "") for f in BIZ_OPT}
+    # 2026-10-08: the GST schedule - the rows typed, else what each GSTR-3B summary read gives (a GSTIN's months added up), else the one GSTIN typed
+    gst_read: dict = {}
+    for d in docs:
+        for x in (d.get("facts") or {}).get("gst_rows") or [] if d["kind"] == "gst" else []:
+            gst_read[x["gstin"]] = round(gst_read.get(x["gstin"], 0.0) + _num(x.get("turnover")), 2)
+    typed_gst = [x for x in biz.get("gst_rows") or [] if x.get("gstin")] or ([{"gstin": biz["gstin"].upper(), "turnover": _num(biz.get("gst_turnover"))}] if biz.get("gstin") else [])
+    out["business"]["gst_rows"] = typed_gst or [{"gstin": g, "turnover": v, "doc": True} for g, v in gst_read.items()]
+    out["business"]["gst_typed"] = biz.get("gst_rows") or typed_gst                # what the page shows to type over (a blank row too)
+    out["business"]["gst_read"] = [{"gstin": g, "turnover": v} for g, v in gst_read.items()]
+    out["business"]["gst_turnover"] = round(sum(_num(x.get("turnover")) for x in out["business"]["gst_rows"]), 2)
     out["person"] = out.get("person") or {}
     out["tds"] = out.get("tds") or []
     minor = settings()["paid_minor"]
@@ -566,12 +643,16 @@ def merged(cid: str, ay: str) -> dict:
     for f in ("foreign_rows", "fa_rows", "club_rows", "arrears"):     # 2026-10-07 wave 3, typed on Review
         out[f] = st.get(f) or []
     out["extra"] = {}                                       # what they add to the return - apply_status(), once the status is known
-    seen = [dict(x, doc=d["id"]) for d in docs if d["kind"] in ("ais", "26as") for x in (d.get("facts") or {}).get("tds_194ia") or []]
+    seen = [dict(x, doc=d["id"]) for d in docs if d["kind"] == "26as" for x in (d.get("facts") or {}).get("tds_194ia") or []]   # 2026-10-08: 26AS Part A2
+    by26 = {x["pan"] for x in seen if x.get("pan")}                    # the same buyer in the AIS and 26AS: 26AS (the tax credit statement) only
+    seen += [dict(x, doc=d["id"]) for d in docs if d["kind"] == "ais" for x in (d.get("facts") or {}).get("tds_194ia") or [] if x.get("pan") not in by26]
     pans = {x["pan"] for x in seen if x.get("pan")}
     out["tds_194ia"] = seen + [{"pan": x["buyer_pan"], "name": x["buyer"], "income": x["sale"], "tds": x["tds"], "section": "194IA", "doc": ""}
                                for x in out["cg_rows"] if x.get("tds") and x.get("buyer_pan") and x["buyer_pan"] not in pans]
     out["property_seen"] = round(max(sum(_num((d.get("facts") or {}).get("property_seen")) for d in docs if d["kind"] == "ais"),
-                                     sum(_num((d.get("facts") or {}).get("property_sft")) for d in docs if d["kind"] == "ais")), 2)
+                                     sum(_num((d.get("facts") or {}).get("property_sft")) for d in docs if d["kind"] == "ais"),
+                                     sum(_num(x.get("income")) for x in seen if x.get("doc") in {d["id"] for d in docs if d["kind"] == "26as"})), 2)  # 2026-10-08: 26AS Part A2
+    out["losses_bf_other"] = st.get("losses_bf_other") or []
     out["sales_seen"] = round(sum(_num((d.get("facts") or {}).get("sales")) for d in docs if d["kind"] == "ais"), 2)
     out["fy"] = int(ay[:4]) - 1
     return out
@@ -607,15 +688,36 @@ def cg_work(r: dict, resident: bool = True, ay: str = "") -> dict:
         c = engine.run("myreturn.cg_row", {f: x.get(f) or (0 if f in CG_NUM else "") for f in
                                            ("asset", "acquired", "sold", "term", "sale", "cost", "improve", "improve_on", "fmv", "expenses", "stamp")}
                        | {"resident": resident})
-        args = {"kind": x.get("ex_kind") or "", "asset": x["asset"], "term": c["term"], "net": c["consideration"] - _num(x.get("expenses")),
-                "invested": _num(x.get("ex_amount")), "cgas": _num(x.get("cgas")), "ec_room": ec_room, "other_houses": _num(x.get("other_houses"))}
-        ex = engine.run("myreturn.cg_exempt", args | {"gain": c["gain"]})
-        exi = engine.run("myreturn.cg_exempt", args | {"gain": c["gain_indexed"]}) if c["index_ok"] else ex
-        if args["kind"] == "54EC":
-            ec_room -= ex["amount"]
-        final, final_i = c["gain"] - ex["amount"], c["gain_indexed"] - exi["amount"]
+        # 2026-10-08: each exemption claimed on the sale (54 + 54EC ...): in time? (chip myreturn.cg_window - an investment out of time is not
+        # counted), its amount (chip myreturn.cg_exempt, each against the gain), then each in order up to the gain still left (chip myreturn.waterfall)
+        claims = x.get("ex_rows") or ([{f: x.get(f) for f in EX}] if x.get("ex_kind") else [])
+        outs, plain, indexed, why = [], [], [], ""
+        for cl in claims[: int(k["ex_max"])]:
+            win = engine.run("myreturn.cg_window", {"kind": cl.get("ex_kind") or "", "sold": x.get("sold") or "", "on": cl.get("ex_on") or "",
+                                                     "build": cl.get("ex_build") == "build", "invested": _num(cl.get("ex_amount")), "cgas": _num(cl.get("cgas")),
+                                                     "cgas_on": cl.get("cgas_on") or "", "ay_year": int(ay[:4])})
+            args = {"kind": cl.get("ex_kind") or "", "asset": x["asset"], "term": c["term"], "net": c["consideration"] - _num(x.get("expenses")),
+                    "invested": _num(cl.get("ex_amount")) if win["invest_ok"] else 0, "cgas": _num(cl.get("cgas")) if win["cgas_ok"] else 0,
+                    "ec_room": ec_room, "other_houses": _num(x.get("other_houses"))}
+            ex = engine.run("myreturn.cg_exempt", args | {"gain": c["gain"]})
+            exi = engine.run("myreturn.cg_exempt", args | {"gain": c["gain_indexed"]}) if c["index_ok"] else ex
+            if args["kind"] == "54EC":
+                ec_room -= ex["amount"]
+            plain.append(ex["amount"])
+            indexed.append(exi["amount"])
+            outs.append(dict(cl) | {"why": win["why"] or ex["why"], "win_why": win["why"], "from": win["from"], "to": win["to"]})
+            why = why or win["why"] or ex["why"]
+        sp, spi = _wf(max(c["gain"], 0), plain), _wf(max(c["gain_indexed"], 0), indexed)
+        for n, o in enumerate(outs):
+            o["amount"], o["amount_indexed"] = sp["used"][n], spi["used"][n]
+            if o.get("ex_kind") == "54EC":
+                ec_room += plain[n] - o["amount"]                # what the gain left unused of the 54EC room goes back to it
+        ex_amt, exi_amt = round(sum(o["amount"] for o in outs), 2), round(sum(o["amount_indexed"] for o in outs), 2)
+        by = {kd: round(sum(o["amount"] for o in outs if o.get("ex_kind") == kd), 2) for kd in ("54", "54EC", "54F")}
+        final, final_i = c["gain"] - ex_amt, c["gain_indexed"] - exi_amt
         ch = engine.run("myreturn.cg_choice", {"gain": final, "gain_indexed": final_i, "index_ok": c["index_ok"]})
-        rows.append(dict(x) | c | {"exempt": ex["amount"], "exempt_indexed": exi["amount"], "ex_why": ex["why"], "final": final, "final_indexed": final_i} | ch)
+        rows.append(dict(x) | c | {"exempt": ex_amt, "exempt_indexed": exi_amt, "ex_why": why, "claims": outs, "ex_by": by,
+                                   "final": final, "final_indexed": final_i} | ch)
         (gain if final >= 0 else loss)[c["bucket"]] += abs(final)
     typed = typed_cg(r)
     for f, b in (("stcg_111a", "stcg_111a"), ("stcg_other", "stcg_app"), ("ltcg_112", "ltcg_112"), ("ltcg_112a", "ltcg_112a")):
@@ -794,19 +896,25 @@ def prev_losses(st: dict, ay: str) -> list[dict]:
     y0 = int(ay[:4]) - 1                                       # last year's AY starts the year before this one's
     when = next((str(v)[:10] for p in k["date"] if (v := itr_json._get(body, p))), "")  # noqa: SLF001
     rows = []
-    for n, b in enumerate(blocks[:-1], 1):                     # their n-th earlier year is our (n+1)-th; their 8th is gone
+    k3 = settings()["itr3_cfl"]
+    fields = k["fields"] | (k3["other_fields"] if d["facts"].get("form") == k3["form"] else {})
+    if d["facts"].get("form") == k3["form"]:                  # 2026-10-08: ITR-3 names each block by its AY (the schema says which)
+        named = [(b, ay_) for b, ay_ in cfl3_years().items() if b in cfl]
+    else:                                                      # ITR-2: their n-th earlier year is our (n+1)-th; their 8th is gone
+        named = [(b, f"{y0 - n}-{(y0 - n + 1) % 100:02d}") for n, b in enumerate(blocks[:-1], 1)]
+    for b, lay in named:
         x = itr_json._get(cfl, f"{b}.{k['detail']}") or {}  # noqa: SLF001
-        for kd, field in k["fields"].items():
+        for kd, field in fields.items():
             if _num(x.get(field)):
-                rows.append({"ay": f"{y0 - n}-{(y0 - n + 1) % 100:02d}", "kind": kd, "amount": _num(x.get(field)), "filed_on": str(x.get(k["filed"]) or "")[:10]})
+                rows.append({"ay": lay, "kind": kd, "amount": _num(x.get(field)), "filed_on": str(x.get(k["filed"]) or "")[:10]})
     adj = itr_json._get(cfl, f"{k['adjusted']}.{k['summary']}") or {}  # noqa: SLF001
-    for kd, field in k["fields"].items():                      # what set off last year came from the oldest first
+    for kd, field in fields.items():                           # what set off last year came from the oldest first
         take = _num(adj.get(field))
         for x in sorted((x for x in rows if x["kind"] == kd), key=lambda x: x["ay"]):
             cut = min(take, x["amount"])
             x["amount"], take = round(x["amount"] - cut, 2), take - cut
     cur = itr_json._get(cfl, f"{k['current']}.{k['summary']}") or {}  # noqa: SLF001
-    for kd, field in k["fields"].items():
+    for kd, field in fields.items():
         if _num(cur.get(field)):
             rows.append({"ay": f"{y0}-{(y0 + 1) % 100:02d}", "kind": kd, "amount": _num(cur.get(field)), "filed_on": when})
     return sorted((x for x in rows if x["amount"]), key=lambda x: (x["ay"], x["kind"]))
@@ -870,8 +978,12 @@ def one_regime(r: dict, regime: str, band: str, ans: dict, status: str = "indivi
     au = engine.run("myreturn.audit_44ab", {"pl": biz["pl"] is True, "profession": biz["profession"] is True, "turnover": biz["turnover"],
                                             "cash": _num(b.get("cash")), "net": biz["net"], "deemed": pres["deemed"],
                                             "presumptive_open": biz["presumptive_open"],
-                                            "above_exemption": normal > _num((k["basic"].get(regime) or {}).get(band))})
-    biz |= {"audit": au["audit"] is True, "audit_why": au["why"], "audit_limit": au["limit"]}
+                                            "above_exemption": normal > _num((k["basic"].get(regime) or {}).get(band)),
+                                            # 2026-10-08: the payments' cash share (both sides of the provisos) and s.44AD(4) / (5)
+                                            "pay_total": _num(b.get("pay_total")), "pay_cash": -1 if b.get("pay_cash") in ("", None) else _num(b.get("pay_cash")),
+                                            "ad_left": b.get("ad_left") == "yes", "ad_business": kind in ("44AD", "business"), "kind_44ad": kind == "44AD"})
+    biz |= {"audit": au["audit"] is True, "audit_why": au["why"], "audit_limit": au["limit"], "ask_pay": au["ask_pay"] is True,
+            "ad_closed": au["ad_closed"] is True}
     gti = gti_normal + cg["stcg_111a"] + cg["ltcg_112a"] + cg["ltcg_112"] + o["lottery"] + o["online_games"] + vda["income"]
     cy = engine.run("myreturn.cyla", {"hp": hp["net"], "salary": sal["income"], "os": os_})
     hp_cf = max(-_num(hp["loss"]), 0) - cy["used"]          # s.71(3A) / s.71B: a house loss not set off this year goes forward
@@ -959,13 +1071,19 @@ def work(cid: str, ay: str) -> dict:
     g = both[chosen]
     # 2026-10-07: a tax audit (s.44AB) or a business loss - not filed from My return; a CA (the CA-firm side) does it
     gb = g["business"]
-    why_ca = gb["audit_why"] if gb.get("audit") else ("ca_loss" if gb.get("loss") is True else "ca_foreign_business" if ex["ca"] else "")
-    ca = {"why": why_ca, "receipts": gb["turnover"], "limit": gb.get("audit_limit", 0), "net": gb["net"], "deemed": gb["deemed"]} if why_ca else None
-    checks = checks_of(st, r)
+    # 2026-10-08: 44AD chosen while s.44AD(4) keeps it closed; a business loss brought forward (from last year's ITR-3) - also a CA's job
+    bl = round(sum(_num(x.get("amount")) for x in r.get("losses_bf_other") or []), 2)
+    why_ca = gb["audit_why"] if gb.get("audit") else ("ca_loss" if gb.get("loss") is True else "ca_foreign_business" if ex["ca"]
+                                                      else "ca_44ad_closed" if gb.get("ad_closed") else "ca_bf_business_loss" if bl else "")
+    ca = {"why": why_ca, "receipts": gb["turnover"], "limit": gb.get("audit_limit", 0), "net": gb["net"], "deemed": gb["deemed"], "loss": bl} if why_ca else None
+    checks = checks_of(st, r, chosen)
     fa_chk = engine.run("myreturn.check_fa", {"status": res["status"], "foreign_income": any(x["counts"] for x in ex["foreign"]),
                                               "flag": bool(ans.get("foreign")), "fa_rows": len(r["fa_rows"])})
     if fa_chk["level"] != "ok":                                # 2026-10-07: a resident with foreign income / assets lists them (Schedule FA)
         checks.append(fa_chk)
+    if r["business"]["kind"] and r["business"]["gst_rows"]:    # 2026-10-08: the GST turnover beside the receipts of the return
+        a, b = gb["turnover"] or gb.get("receipts", 0), r["business"]["gst_turnover"]
+        checks.append(engine.run("myreturn.checks", {"what": "gst", "a": a, "b": b}) | {"field": "gst", "a": a, "b": b})
     docs = [{k2: d[k2] for k2 in ("id", "name", "kind", "method", "found", "problems", "added_at", "size")} for d in st.get("docs") or []]
     have = {d["kind"] for d in docs}
     for x in checks:
@@ -996,7 +1114,23 @@ def itru_work(cid: str, ay: str, st: dict, dob: str, status: str) -> dict | None
     ayu, fy = u["ay"], int(u["ay"][:4]) - 1
     on = compute._ymd(u.get("on") or datetime.date.today().isoformat())  # noqa: SLF001
     band = engine.run("myreturn.age_band", {"age": _age(dob, ayu), "status": status}) if dob else "below60"
-    yr = engine.run("myreturn.arrear_row", {"fy": fy, "regime": u.get("regime") or "", "band": band, "income": _num(u.get("orig_income")), "amount": _num(u.get("added"))})
+    reg = engine.run("myreturn.arrear_row", {"fy": fy, "regime": u.get("regime") or "", "band": band})["regime"]
+    # 2026-10-08: that year's tax in full (chip myreturn.year_tax): slabs, its special rates, 87A, surcharge with marginal relief, cess -
+    # the return before, then with the income added (normal and special-rate)
+    sp0 = {v: _num(u.get(f"orig_{k2}")) for k2, v in ITRU_SPECIAL.items()}
+    sp1 = {v: sp0[v] + _num(u.get(f"add_{k2}")) for k2, v in ITRU_SPECIAL.items()}
+    yt = lambda normal, sp: engine.run("myreturn.year_tax", {"fy": fy, "regime": reg, "band": band, "normal": normal, "early": u.get("early") == "yes"} | sp)  # noqa: E731
+    t0, t1 = yt(_num(u.get("orig_income")), sp0), yt(_num(u.get("orig_income")) + _num(u.get("added")), sp1)
+    yr = {"regime": reg, "known": t0["known"], "over": False, "before": t0["tax"], "after": t1["tax"], "extra": t1["tax"] - t0["tax"]}
+    # 234C (s.140B(2): the interest for any default in advance tax): the instalments short of the updated tax, less those short of the tax
+    # before (chip compute.interest); the advance tax with no instalments typed is taken as paid by the last (chip myreturn.itru_rules c_default)
+    ir = engine.run("myreturn.itru_rules")
+    q = [_num(u.get(f"adv_q{n}")) for n in range(1, 5)]
+    if not any(q) and _num(u.get("advance")):
+        q[["jun", "sep", "dec", "mar"].index(ir["c_default"])] = _num(u.get("advance"))
+    adv_by = [sum(q[: n + 1]) for n in range(4)]
+    c_of = lambda tax, tds: engine.run("compute.interest", {"assessed": tax - tds, "adv_by": adv_by, "adv_total": adv_by[-1]})["c"]  # noqa: E731
+    i234c = max(c_of(t1["tax"], _num(u.get("tds"))) - c_of(t0["tax"], _num(u.get("tds")) - _num(u.get("tds_added"))), 0) if yr["known"] else 0
     filed = (u.get("filed") or "none") != "none"
     dd = engine.run("close.dates", {"ay_year": int(ayu[:4]), "audit": False, "tp": False, "form": u.get("form") or "ITR-2", "filed_on": on, "today": on,
                                     "has_current": filed, "has_updated": "already_updated" in (u.get("bars") or [])})
@@ -1005,15 +1139,15 @@ def itru_work(cid: str, ay: str, st: dict, dob: str, status: str) -> dict | None
     bars = list(u.get("bars") or [])
     it = engine.run("myreturn.itru", {"known": yr["known"] is True and yr["over"] is not True,"filed_on": on, "updated_by": dd["updated_by"], "months": months_part(compute.year_day(ayu, "start", 1), on),
                                       "months_a": months_part(after_due, on), "months_b": months_part(compute.year_day(ayu, "start"), on),
-                                      "extra_tax": extra, "tax_after": yr["after"], "tds": _num(u.get("tds")), "advance": _num(u.get("advance")), "bars": bars})
-    fee = 0 if filed else engine.run("chat.fee_234f", {"income": _num(u.get("orig_income")) + _num(u.get("added"))})
+                                      "extra_tax": extra, "tax_after": yr["after"], "tds": _num(u.get("tds")), "advance": adv_by[-1], "bars": bars, "i234c": i234c})
+    fee = 0 if filed else engine.run("chat.fee_234f", {"income": t1["total"]})
     fee = fee if isinstance(fee, (int, float)) and it["ok"] else 0
     return u | it | {"fy": fy, "band": band, "regime_used": yr["regime"], "tax_before": yr["before"], "tax_after": yr["after"], "extra_tax": extra,
                      "updated_by": dd["updated_by"], "due": dd["due"], "fee_234f": fee, "pay": it["total"] + fee,
-                     "income_after": _num(u.get("orig_income")) + _num(u.get("added")), "schema": engine.run("myreturn.itru_rules")["schema_have"]}
+                     "income_after": t1["total"], "special_after": t1["total"] - _num(u.get("orig_income")) - _num(u.get("added")), "surcharge": t1["surcharge"], "schema": engine.run("myreturn.itru_rules")["schema_have"]}
 
 
-def checks_of(st: dict, r: dict) -> list[dict]:
+def checks_of(st: dict, r: dict, regime: str = "new") -> list[dict]:
     """The same figure in two documents, side by side (chip myreturn.checks decides when a gap matters)."""
     docs = st.get("docs") or []
     by_kind = lambda kind: [d for d in docs if d["kind"] == kind]  # noqa: E731
@@ -1039,6 +1173,15 @@ def checks_of(st: dict, r: dict) -> list[dict]:
         mine = sum(e["gross_17_1"] + e["perq_17_2"] + e["profit_17_3"] for e in r["employers"])
         if s or mine:
             out.append(engine.run("myreturn.checks", {"what": "salary", "a": mine, "b": s}) | {"field": "salary", "a": mine, "b": s})
+    # 2026-10-08: two employers (Form 16s of different TANs) - each took off the standard deduction / counted 80C (chip myreturn.check_employers)
+    f16 = by_kind("form16")
+    tans = {str(e.get("tan") or "").upper() for d in f16 for e in (d.get("facts") or {}).get("employers") or [] if e.get("tan")}
+    if len(tans) >= 2:
+        given = sum(_num((d.get("facts") or {}).get("via", {}).get(f)) for d in f16 for f in ("c80c", "c80ccc", "c80ccd1"))
+        for part in ("std", "via"):
+            c2 = engine.run("myreturn.check_employers", {"employers": len(tans), "regime": regime, "via_given": given, "part": part})
+            if c2["level"] != "ok":
+                out.append(c2 | {"field": c2["what"]})
     v = r["via"]
     if v["c80ee"] and v["c80eea"]:                              # 2026-10-07: 80EEA is not for one who claims 80EE
         out.append(engine.run("myreturn.check_80ee", {"c80ee": v["c80ee"], "c80eea": v["c80eea"]}))
@@ -1103,8 +1246,8 @@ def facts(cid: str, ay: str) -> dict:
            "ada_receipts": i(gb["receipts"]) if ada else 0, "ada_digital": i(b["digital"]) if ada else 0, "ada_cash": i(b["cash"]) if ada else 0,
            "ada_income": i(gb["income"]) if ada else 0, "ad_receipts": i(gb["receipts"]) if ad else 0, "ad_digital": i(b["digital"]) if ad else 0,
            "ad_cash": i(b["cash"]) if ad else 0, "ad_6": i(b["digital"] * kb["ad_digital_pct"] / 100) if ad else 0, "ad_8": i(b["cash"] * kb["ad_cash_pct"] / 100) if ad else 0,
-           "ad_income": i(gb["income"]) if ad else 0, "gst_turnover": i(b["gst_turnover"]),
-           "gst_rows": [{"GSTINNo": b["gstin"].upper(), "AmtTurnGrossRcptGSTIN": i(b["gst_turnover"])}] if b["gstin"] else []}
+           "ad_income": i(gb["income"]) if ad else 0, "gst_turnover": sum(i(x["turnover"]) for x in b["gst_rows"]),   # 2026-10-08: per GSTIN
+           "gst_rows": [{"GSTINNo": x["gstin"], "AmtTurnGrossRcptGSTIN": i(x["turnover"])} for x in b["gst_rows"]]}
     # 2026-10-07 ITR-3: Part A-P&L 64 (no regular books - business, profession), Part A-BS, Schedule BP, Part A-GEN2 (chip itr.map ITR-3 myreturn)
     yn = js["yn"]
     own_pl, prf, inc = gb["pl"] is True, gb["profession"] is True, i(gb["income"])
@@ -1198,6 +1341,7 @@ def facts(cid: str, ay: str) -> dict:
                    "net": i(sal["gross"]) - sum(x["amount"] for x in exempt_rows), "std": i(sal["std"]), "prof_tax": i(sal["prof_tax"]),
                    "d16": i(sal["std"] + sal["prof_tax"]), "income": i(sal["income"])},
         "exempt_rows": exempt_rows, "hp_rows": hp_rows, "hp": {"net": i(g["hp"]["net"])}, "biz": biz, "biz3": biz3, "ae_rows": ae_rows,
+        "gst_rows3": [{"gstin": x["gstin"], "turnover": i(x["turnover"])} for x in b["gst_rows"]] if b["kind"] else [],   # 2026-10-08: ITR-3 Schedule GST
         "salary_rows": [{"name": e["name"] or "-", "category": e.get("category") or ans.get("employer_category") or js["employer_default"], "tan": e["tan"],
                          "address": (e.get("address") or (parts[0] if parts else "-"))[:200], "city": (e.get("city") or p.get("city") or (parts[-1] if parts else "-"))[:50],
                          "state": str(e.get("state") or p.get("state") or ans.get("state") or ""), "pin": int(e["pin"]) if str(e.get("pin") or "").isdigit() else "",
@@ -1280,7 +1424,7 @@ def cg_facts(w: dict, g: dict, r: dict, js: dict, ay: str) -> dict:
     def agg(xs: list, t: float = 0.0) -> dict:
         sale, cost = i(sum(x["consideration"] for x in xs) + max(t, 0)), i(sum(x["cost_used"] for x in xs) + max(-t, 0))
         imp, exp = i(sum(_num(x.get("improve")) for x in xs)), i(sum(_num(x.get("expenses")) for x in xs))
-        f54 = i(sum(x["exempt"] for x in xs if x.get("ex_kind") == "54F"))
+        f54 = i(sum((x.get("ex_by") or {}).get("54F", 0) for x in xs))
         return {"sale": sale, "cost": cost, "improve": imp, "expenses": exp, "dedn": cost + imp + exp, "balance": sale - cost - imp - exp, "f54": f54,
                 "gain": sale - cost - imp - exp - f54, "n": len(xs) + (1 if t else 0)}
     sec48 = lambda a: {"AquisitCost": a["cost"], "ImproveCost": a["improve"], "ExpOnTrans": a["expenses"], "TotalDedn": a["dedn"]}  # noqa: E731
@@ -1314,7 +1458,7 @@ def cg_facts(w: dict, g: dict, r: dict, js: dict, ay: str) -> dict:
         ix = bool(x["index_ok"])
         imp = [{"slno": 1, "ImproveCost": i(x.get("improve")), "ImproveDate": fy_label(x.get("improve_on") or x.get("acquired")),
                 "CostOfImpIndex": i(x["improve_indexed"])}] if i(x.get("improve")) else []
-        exs = [{"ExemptionSecCode": x["ex_kind"], "ExemptionAmount": i(x["exempt"])}] if i(x["exempt"]) else []
+        exs = [{"ExemptionSecCode": kd, "ExemptionAmount": i(v)} for kd, v in (x.get("ex_by") or {}).items() if i(v)]
         lt_prop.append({"FullConsideration": i(x.get("sale")), "DateofPurchase": x.get("acquired") or None, "DateofSale": x.get("sold") or None,
                         "PropertyValuation": i(x.get("stamp")), "FullConsideration50C": i(x["consideration"]), "AquisitCost": i(x["cost_used"]),
                         "AquisitCostIndex": i(x["cost_indexed"]) if ix else 0,
@@ -1322,7 +1466,7 @@ def cg_facts(w: dict, g: dict, r: dict, js: dict, ay: str) -> dict:
                         "ExpOnTrans": i(x.get("expenses")), "TotalDedn": i(x["cost_used"]) + i(x.get("improve")) + i(x.get("expenses")),
                         "TotalDednForEiB": i(x["cost_indexed"]) + i(x["improve_indexed"]) + i(x.get("expenses")) if ix else None,
                         "Balance": i(x["gain"]), "BalanceForEiB": max(i(x["gain_indexed"]), 0) if ix else None,
-                        "ExemptionOrDednUs54": {"ExemptionOrDednUs54Dtls": exs, "ExemptionGrandTotal": i(x["exempt"])},
+                        "ExemptionOrDednUs54": {"ExemptionOrDednUs54Dtls": exs, "ExemptionGrandTotal": sum(e["ExemptionAmount"] for e in exs)},
                         "LTCGonImmvblPrprty": i(x["final"]), "LTCGonImmvblPrprtyBE": i(x["final_indexed"]) if ix else None,
                         "TaxSec1121aiiB": i(x["tax_indexed"]) if ix else None, "TaxSec1121a": i(x["tax_plain"]) if ix else None,
                         "ExcessAmtSec1121a": i(x["excess"]) if ix else None, "TrnsfImmblPrprty": buyers(x)})
@@ -1346,7 +1490,7 @@ def cg_facts(w: dict, g: dict, r: dict, js: dict, ay: str) -> dict:
     s112a_tot = {"SaleValue112A": i(tot("TotSaleValue")), "CostAcqWithoutIndx112A": i(tot("CostAcqWithoutIndx")), "AcquisitionCost112A": i(tot("AcquisitionCost")),
                  "LTCGBeforelowerB1B2112A": i(tot("LTCGBeforelowerB1B2")), "FairMktValueCapAst112A": i(tot("TotFairMktValueCapAst")),
                  "ExpExclCnctTransfer112A": i(tot("ExpExclCnctTransfer")), "Deductions112A": i(tot("TotalDeductions")), "Balance112A": i(tot("Balance")), "TotalBalance112A": i(tot("Balance"))}
-    f54_112a = i(sum(x["exempt"] for x in of("ltcg_112a", False) if x.get("ex_kind") == "54F"))
+    f54_112a = i(sum((x.get("ex_by") or {}).get("54F", 0) for x in of("ltcg_112a", False)))
     eq112a = {"BalanceCG": s112a_tot["Balance112A"], "DeductionUs54F": f54_112a, "CapgainonAssets": s112a_tot["Balance112A"] - f54_112a}
     ana = agg(of("ltcg_112", False), _num(typed.get("ltcg_112")))
     na = {"FullValueConsdRecvUnqshr": 0, "FairMrktValueUnqshr": 0, "FullValueConsdSec50CA": 0, "FullValueConsdOthUnqshr": ana["sale"], "FullConsideration": ana["sale"],
@@ -1355,14 +1499,16 @@ def cg_facts(w: dict, g: dict, r: dict, js: dict, ay: str) -> dict:
     # Table D - the exemptions claimed
     claims = {"54": [], "54EC": [], "54F": []}
     for x in rows:
-        if i(x["exempt"]) and x.get("ex_kind") in claims:
-            base_ = {"DateofTransfer": x.get("sold") or None, "AmtDeducted": i(x["exempt"])}
-            if x["ex_kind"] == "54EC":
-                claims["54EC"].append(base_ | {"AmtInvested": i(x.get("ex_amount")), "DateofInvestment": x.get("ex_on") or None})
+        for cl in x.get("claims") or []:                           # 2026-10-08: each claim on the sale, by its own section
+            if not i(cl["amount"]) or cl.get("ex_kind") not in claims:
+                continue
+            base_ = {"DateofTransfer": x.get("sold") or None, "AmtDeducted": i(cl["amount"])}
+            if cl["ex_kind"] == "54EC":
+                claims["54EC"].append(base_ | {"AmtInvested": i(cl.get("ex_amount")), "DateofInvestment": cl.get("ex_on") or None})
             else:
-                claims[x["ex_kind"]].append(base_ | {"CostofNewResHouse": i(x.get("ex_amount")), "DateofPurchase": x.get("ex_on") or None,
-                                                      "AmtDeposited": i(x.get("cgas")), "DepositDate": x.get("cgas_on") or None,
-                                                      "AccountNo": (x.get("cgas_acc") or None), "IFSC": (x.get("cgas_ifsc") or None)})
+                claims[cl["ex_kind"]].append(base_ | {"CostofNewResHouse": i(cl.get("ex_amount")), "DateofPurchase": cl.get("ex_on") or None,
+                                                       "AmtDeposited": i(cl.get("cgas")), "DepositDate": cl.get("cgas_on") or None,
+                                                       "AccountNo": (cl.get("cgas_acc") or None), "IFSC": (cl.get("cgas_ifsc") or None)})
     claims = {k2: [{f: v for f, v in c.items() if v is not None} for c in v2] for k2, v2 in claims.items()}
     # Table E - this year's losses set off; Table F - when the gains were made
     wn, pre, fin, cr, left = cgw["within"], cgw["pre_bf"], cgw["final"], cgw["cross"], cgw["left"]
@@ -1489,6 +1635,7 @@ def wave3_facts(w: dict, g: dict, r: dict, js: dict, agri: int) -> dict:
             if x.get("kind") != kind:
                 continue
             one = {"CountryName": cname(x.get("country")), "CountryCodeExcludingIndia": x.get("country") or dflt["country"]}
+            x = dict(x, flag=js["yn"][str(bool(_num(x.get("taxed")))).lower()])   # 2026-10-08 D-F: taxable and offered in this return - Y / N
             for field, src in spec["map"].items():
                 v = x.get(src)
                 one[field] = i(v) if src in FA_NUM else (str(v).strip() if str(v or "").strip() else (spec.get("defaults") or {}).get(src) or dflt.get(src, dflt["text"]))

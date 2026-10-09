@@ -40,7 +40,7 @@
     {
       "name": "fetching",
       "type": "text",
-      "default": "Asking Gemini, official sources only...",
+      "default": "Asking {ai}, official sources only...",
       "label": "fetching"
     },
     {
@@ -574,9 +574,9 @@
     }
   },
   "returns": "record",
-  "version": 8,
+  "version": 9,
   "status": "published",
-  "description_nl": "2026-10-06: every word on Tax rules (Fetch, Compare, Apply). 2026-10-06: new_h / new_p / new_who / new_none - the changes Fetch found that are not a figure. 2026-10-06: ro_note / ro_tag - what everyone but the owner sees. 2026-10-06: rulebook / rulebook_sub - the Rule book button. 2026-10-06: ai_pick / ai_auto / ai_none / ai_ready / ai_resting - the AI choice beside Fetch. 2026-10-06: recheck / ext_why / recheck_p - checking the live year again. 2026-10-07: log_note / snapshot / rulebook_url (empty hides the link) - the shared rule watch. 2026-10-07: check_due / check_never - the re-check nudge.",
+  "description_nl": "2026-10-06: every word on Tax rules (Fetch, Compare, Apply). 2026-10-06: new_h / new_p / new_who / new_none - the changes Fetch found that are not a figure. 2026-10-06: ro_note / ro_tag - what everyone but the owner sees. 2026-10-06: rulebook / rulebook_sub - the Rule book button. 2026-10-06: ai_pick / ai_auto / ai_none / ai_ready / ai_resting - the AI choice beside Fetch. 2026-10-06: recheck / ext_why / recheck_p - checking the live year again. 2026-10-07: log_note / snapshot / rulebook_url (empty hides the link) - the shared rule watch. 2026-10-07: check_due / check_never - the re-check nudge. 2026-10-08: fetching names the AI picked ({ai}).",
   "test_cases": [
     {
       "args": {},
@@ -586,7 +586,7 @@
         "live": "Live figures are for AY {ay}",
         "target": "Fetch for AY",
         "fetch": "Fetch with AI",
-        "fetching": "Asking Gemini, official sources only...",
+        "fetching": "Asking {ai}, official sources only...",
         "fetched_at": "Fetched {when}",
         "none_yet": "Nothing fetched for AY {ay} yet. Fetch asks Gemini with Google Search for every figure below, from official sources only.",
         "h_item": "Figure",

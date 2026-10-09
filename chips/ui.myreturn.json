@@ -256,7 +256,7 @@
     {
       "name": "k_26as_why",
       "type": "text",
-      "default": "Your tax credit as the department holds it: TDS by deductor and taxes you paid. The return is checked against it.",
+      "default": "Your tax credit as the department holds it: TDS by deductor, the buyer's TDS on a property you sold (Part A2, 194IA) and taxes you paid. The return is checked against it.",
       "label": "k_26as_why"
     },
     {
@@ -2872,7 +2872,7 @@
     {
       "name": "loss_prev_how",
       "type": "text",
-      "default": "Drop last year's filed return (JSON) on Gather to fill these from its Schedule CFL.",
+      "default": "Drop last year's filed return (ITR-2 or ITR-3 JSON) on Gather to fill these from its Schedule CFL.",
       "label": "loss_prev_how"
     },
     {
@@ -3022,7 +3022,7 @@
     {
       "name": "k_cg_how",
       "type": "text",
-      "default": "Broker: back office > Reports > Tax P&L / Capital gains (Excel or CSV)|Mutual funds: CAMS (camsonline.com) or KFintech (mfs.kfintech.com) > Capital gains statement for FY 2025-26 (Excel)|Drop each one here",
+      "default": "Broker: back office > Reports > Tax P&L / Capital gains (Excel or CSV)|Mutual funds: CAMS (camsonline.com) or KFintech (mfs.kfintech.com) > Capital gains statement for FY 2025-26 (Excel, or the PDF)|Drop each one here",
       "label": "k_cg_how"
     },
     {
@@ -3502,7 +3502,7 @@
     {
       "name": "fa_kinds",
       "type": "text",
-      "default": "bank=Bank account (A1)|custodial=Custodial / brokerage account (A2)|equity=Shares, ESOPs, debt (A3)|insurance=Cash-value insurance (A4)|property=Immovable property (B)|other=Other capital asset (C)",
+      "default": "bank=Bank account (A1)|custodial=Custodial / brokerage account (A2)|equity=Shares, ESOPs, debt (A3)|insurance=Cash-value insurance (A4)|property=Immovable property (B)|other=Other capital asset (C)|signing=Account you can sign for (D)|trust=Trust abroad - trustee, beneficiary or settlor (E)|income=Other income from outside India (F)",
       "label": "fa_kinds"
     },
     {
@@ -3826,7 +3826,7 @@
     {
       "name": "ar_unknown",
       "type": "text",
-      "default": "A year cannot be worked out (before FY 2015-16, the new regime before 2020-21, or income over 50 lakh) - no relief is claimed; ask a CA.",
+      "default": "A year cannot be worked out (before FY 2015-16, or the new regime before 2020-21) - no relief is claimed; ask a CA.",
       "label": "ar_unknown"
     },
     {
@@ -3874,13 +3874,13 @@
     {
       "name": "f_iu_orig_income",
       "type": "text",
-      "default": "Total income in that return (nil if none)",
+      "default": "Income at slab rates in that return (nil if none)",
       "label": "f_iu_orig_income"
     },
     {
       "name": "f_iu_added",
       "type": "text",
-      "default": "Income left out",
+      "default": "Income left out (slab rates)",
       "label": "f_iu_added"
     },
     {
@@ -4048,13 +4048,13 @@
     {
       "name": "itru_bar_year_unknown",
       "type": "text",
-      "default": "That year's tax cannot be worked out here (the new regime before FY 2020-21, or income over 50 lakh) - ask a CA.",
+      "default": "That year's tax cannot be worked out here (the new regime before FY 2020-21) - ask a CA.",
       "label": "itru_bar_year_unknown"
     },
     {
       "name": "iu_lines",
       "type": "text",
-      "default": "Tax on the income before|Tax on the updated income|Further tax (less TDS on the income added)|Interest u/s 234A|Interest u/s 234B|Additional tax u/s 140B ({pct}%)|Late fee u/s 234F|To pay",
+      "default": "Tax on the income before|Tax on the updated income|Further tax (less TDS on the income added)|Interest u/s 234A|Interest u/s 234B|Interest u/s 234C|Additional tax u/s 140B ({pct}%)|Late fee u/s 234F|To pay",
       "label": "iu_lines"
     },
     {
@@ -4104,6 +4104,414 @@
       "type": "text",
       "default": "It leaves this return, with what was read from it. Its file is kept for History, and you can add it again.",
       "label": "del doc body"
+    },
+    {
+      "name": "f_fa_holder",
+      "type": "text",
+      "default": "Name in the account",
+      "label": "f_fa_holder"
+    },
+    {
+      "name": "f_fa_trustees",
+      "type": "text",
+      "default": "Other trustees",
+      "label": "f_fa_trustees"
+    },
+    {
+      "name": "f_fa_trustees_addr",
+      "type": "text",
+      "default": "Their address",
+      "label": "f_fa_trustees_addr"
+    },
+    {
+      "name": "f_fa_settlor",
+      "type": "text",
+      "default": "Settlor",
+      "label": "f_fa_settlor"
+    },
+    {
+      "name": "f_fa_settlor_addr",
+      "type": "text",
+      "default": "Settlor's address",
+      "label": "f_fa_settlor_addr"
+    },
+    {
+      "name": "f_fa_beneficiaries",
+      "type": "text",
+      "default": "Beneficiaries",
+      "label": "f_fa_beneficiaries"
+    },
+    {
+      "name": "f_fa_beneficiaries_addr",
+      "type": "text",
+      "default": "Beneficiaries' address",
+      "label": "f_fa_beneficiaries_addr"
+    },
+    {
+      "name": "ask_tan_h",
+      "type": "text",
+      "default": "Already a Form 16 from {employer}",
+      "label": "ask_tan_h"
+    },
+    {
+      "name": "ask_tan_p",
+      "type": "text",
+      "default": "This Form 16 is from the same employer (TAN {tan}) as one already in. A revised Form 16 replaces the first; two Form 16s for two spells with the same employer are both kept - their salaries add up.",
+      "label": "ask_tan_p"
+    },
+    {
+      "name": "ask_replace_tan_sub",
+      "type": "text",
+      "default": "It is a revised Form 16 - use it in place of the first (kept in History).",
+      "label": "ask_replace_tan_sub"
+    },
+    {
+      "name": "ask_keep_tan_sub",
+      "type": "text",
+      "default": "Two spells with this employer - keep both, both salaries count.",
+      "label": "ask_keep_tan_sub"
+    },
+    {
+      "name": "c_two_employers",
+      "type": "text",
+      "default": "Two employers this year",
+      "label": "c_two_employers"
+    },
+    {
+      "name": "c_two_employers_lv",
+      "type": "text",
+      "default": "Each employer's Form 16 took off the standard deduction ({a} in all) - the return takes it once ({b}). The salaries are added up first, so the tax each employer deducted may fall short: expect tax to pay.",
+      "label": "c_two_employers_lv"
+    },
+    {
+      "name": "c_two_emp_80c",
+      "type": "text",
+      "default": "Deductions on both Form 16s",
+      "label": "c_two_emp_80c"
+    },
+    {
+      "name": "c_two_emp_80c_lv",
+      "type": "text",
+      "default": "The Form 16s together declare {a} under 80C / 80CCC / 80CCD(1) - the limit is {b} in all. A deduction you declared to both employers counts once: type the right figure on Review.",
+      "label": "c_two_emp_80c_lv"
+    },
+    {
+      "name": "biz_pay_total",
+      "type": "text",
+      "default": "Payments in the year (all modes)",
+      "label": "biz_pay_total"
+    },
+    {
+      "name": "biz_pay_cash",
+      "type": "text",
+      "default": "Of which in cash",
+      "label": "biz_pay_cash"
+    },
+    {
+      "name": "biz_pay_p",
+      "type": "text",
+      "default": "The tax-audit limit is 10 crore (75 lakh for a profession) only when cash receipts AND cash payments are each 5% or less (section 44AB). Until the payments are typed, the receipts' share stands for both.",
+      "label": "biz_pay_p"
+    },
+    {
+      "name": "biz_ask_pay",
+      "type": "text",
+      "default": "Your receipts are between the two audit limits: the cash share of your payments decides whether the accounts must be audited - type them.",
+      "label": "biz_ask_pay"
+    },
+    {
+      "name": "biz_ad_left",
+      "type": "text",
+      "default": "Left 44AD in the last five years?",
+      "label": "biz_ad_left"
+    },
+    {
+      "name": "biz_ad_left_opts",
+      "type": "text",
+      "default": "=No|yes=Yes - declared 44AD income for a year, then not in one of the five years after",
+      "label": "biz_ad_left_opts"
+    },
+    {
+      "name": "biz_ad_left_p",
+      "type": "text",
+      "default": "Section 44AD(4): leaving the presumptive scheme closes it for five years; with income above the basic exemption the accounts must then be kept and audited (sections 44AD(5), 44AB(e)).",
+      "label": "biz_ad_left_p"
+    },
+    {
+      "name": "ca_audit_44ad4",
+      "type": "text",
+      "default": "You left the presumptive scheme (section 44AD) within five years of using it, and your income is above the basic exemption: sections 44AD(5) and 44AB(e) need books of account and a tax audit by a chartered accountant. My return does not do audits - get a CA ({product}'s CA-firm side handles them).",
+      "label": "ca_audit_44ad4"
+    },
+    {
+      "name": "ca_44ad_closed",
+      "type": "text",
+      "default": "Section 44AD(4): having left the presumptive scheme within five years of using it, you cannot use 44AD for the five years after. Choose 'Business - my own profit and loss' and type the year's figures (ITR-3).",
+      "label": "ca_44ad_closed"
+    },
+    {
+      "name": "ca_bf_business_loss",
+      "type": "text",
+      "default": "Last year's return carries a business loss of {loss} forward (section 72): it is set off only against business income and carried on in ITR-3's Schedule CFL from books of account - My return does not file it. Get a CA ({product}'s CA-firm side handles books and losses).",
+      "label": "ca_bf_business_loss"
+    },
+    {
+      "name": "gst_h",
+      "type": "text",
+      "default": "GST turnover, per GSTIN",
+      "label": "gst_h"
+    },
+    {
+      "name": "gst_p",
+      "type": "text",
+      "default": "Each GSTIN and its turnover for the year - taxable, zero-rated, nil-rated / exempt and non-GST outward supplies (GSTR-3B table 3.1). Drop your GSTR-3B summary on Gather to fill it, or type it.",
+      "label": "gst_p"
+    },
+    {
+      "name": "f_gst_gstin",
+      "type": "text",
+      "default": "GSTIN",
+      "label": "f_gst_gstin"
+    },
+    {
+      "name": "f_gst_turnover",
+      "type": "text",
+      "default": "Turnover (GSTR-3B)",
+      "label": "f_gst_turnover"
+    },
+    {
+      "name": "gst_add",
+      "type": "text",
+      "default": "Add a GSTIN",
+      "label": "gst_add"
+    },
+    {
+      "name": "gst_none",
+      "type": "text",
+      "default": "No GSTIN typed.",
+      "label": "gst_none"
+    },
+    {
+      "name": "gst_read",
+      "type": "text",
+      "default": "From your GSTR-3B: {n} GSTIN(s), {amount} in all",
+      "label": "gst_read"
+    },
+    {
+      "name": "gst_remove",
+      "type": "text",
+      "default": "Remove this GSTIN",
+      "label": "gst_remove"
+    },
+    {
+      "name": "bad_gstin",
+      "type": "text",
+      "default": "{gstin} is not a GSTIN (15 characters: state code, PAN, entity number, Z, check character).",
+      "label": "bad_gstin"
+    },
+    {
+      "name": "no_gst_rows",
+      "type": "text",
+      "default": "A GSTR-3B summary, but no row with a GSTIN and a taxable value.",
+      "label": "no_gst_rows"
+    },
+    {
+      "name": "k_gst",
+      "type": "text",
+      "default": "GSTR-3B summary",
+      "label": "k_gst"
+    },
+    {
+      "name": "k_gst_why",
+      "type": "text",
+      "default": "Your GST turnover per GSTIN - for the GST schedule of ITR-3 / ITR-4, checked against the receipts you declare.",
+      "label": "k_gst_why"
+    },
+    {
+      "name": "k_gst_how",
+      "type": "text",
+      "default": "gst.gov.in > Services > Returns > Returns Dashboard > FY 2025-26 > GSTR-3B > Download (or your accountant's summary, CSV / Excel)|One file a month or the year - each adds up per GSTIN|Drop it here",
+      "label": "k_gst_how"
+    },
+    {
+      "name": "c_gst",
+      "type": "text",
+      "default": "GST turnover beside your receipts",
+      "label": "c_gst"
+    },
+    {
+      "name": "loss_other",
+      "type": "text",
+      "default": "Last year's return also carries a business loss of {amount} forward - see File: a CA files that return.",
+      "label": "loss_other"
+    },
+    {
+      "name": "ex_late_54",
+      "type": "text",
+      "default": "The house is not within 1 year before or 2 years after the sale (3 years to build) - section 54 is not allowed on it.",
+      "label": "ex_late_54"
+    },
+    {
+      "name": "ex_late_54F",
+      "type": "text",
+      "default": "The house is not within 1 year before or 2 years after the sale (3 years to build) - section 54F is not allowed on it.",
+      "label": "ex_late_54F"
+    },
+    {
+      "name": "ex_late_54EC",
+      "type": "text",
+      "default": "The bonds were not bought within 6 months after the sale - section 54EC is not allowed on them.",
+      "label": "ex_late_54EC"
+    },
+    {
+      "name": "ex_cgas_late",
+      "type": "text",
+      "default": "The Capital Gains Accounts Scheme deposit is after the return's due date (31 July) - it does not count (sections 54(2), 54F(4)).",
+      "label": "ex_cgas_late"
+    },
+    {
+      "name": "ex_no_date",
+      "type": "text",
+      "default": "Type the date of the purchase / investment - Schedule CG asks for it, and it must be in time.",
+      "label": "ex_no_date"
+    },
+    {
+      "name": "f_cg_ex_build",
+      "type": "text",
+      "default": "Bought or built",
+      "label": "f_cg_ex_build"
+    },
+    {
+      "name": "cg_build_opts",
+      "type": "text",
+      "default": "=Bought|build=Built (3 years to finish)",
+      "label": "cg_build_opts"
+    },
+    {
+      "name": "cg_ex_add",
+      "type": "text",
+      "default": "Add another exemption",
+      "label": "cg_ex_add"
+    },
+    {
+      "name": "cg_ex_n",
+      "type": "text",
+      "default": "Exemption {n}",
+      "label": "cg_ex_n"
+    },
+    {
+      "name": "cg_ex_remove",
+      "type": "text",
+      "default": "Remove this exemption",
+      "label": "cg_ex_remove"
+    },
+    {
+      "name": "cg_ex_p",
+      "type": "text",
+      "default": "One sale can carry more than one exemption (a house sold: 54 for the new house, 54EC for bonds). Each counts up to the gain still left, in this order.",
+      "label": "cg_ex_p"
+    },
+    {
+      "name": "iu_special_h",
+      "type": "text",
+      "default": "Capital gains and winnings of that year (taxed at their own rates)",
+      "label": "iu_special_h"
+    },
+    {
+      "name": "f_iu_orig_111a",
+      "type": "text",
+      "default": "In that return: short-term gains (111A)",
+      "label": "f_iu_orig_111a"
+    },
+    {
+      "name": "f_iu_orig_112a",
+      "type": "text",
+      "default": "In that return: long-term gains (112A)",
+      "label": "f_iu_orig_112a"
+    },
+    {
+      "name": "f_iu_orig_112",
+      "type": "text",
+      "default": "In that return: long-term gains (112)",
+      "label": "f_iu_orig_112"
+    },
+    {
+      "name": "f_iu_orig_30",
+      "type": "text",
+      "default": "In that return: winnings / crypto (30%)",
+      "label": "f_iu_orig_30"
+    },
+    {
+      "name": "f_iu_add_111a",
+      "type": "text",
+      "default": "Left out: short-term gains (111A)",
+      "label": "f_iu_add_111a"
+    },
+    {
+      "name": "f_iu_add_112a",
+      "type": "text",
+      "default": "Left out: long-term gains (112A)",
+      "label": "f_iu_add_112a"
+    },
+    {
+      "name": "f_iu_add_112",
+      "type": "text",
+      "default": "Left out: long-term gains (112)",
+      "label": "f_iu_add_112"
+    },
+    {
+      "name": "f_iu_add_30",
+      "type": "text",
+      "default": "Left out: winnings / crypto (30%)",
+      "label": "f_iu_add_30"
+    },
+    {
+      "name": "f_iu_early",
+      "type": "text",
+      "default": "FY 2024-25 gains: sold before 23 July 2024?",
+      "label": "f_iu_early"
+    },
+    {
+      "name": "iu_early",
+      "type": "text",
+      "default": "=No - the new rates|yes=Yes - 15% / 10% / 20% (indexed)",
+      "label": "iu_early"
+    },
+    {
+      "name": "iu_adv_h",
+      "type": "text",
+      "default": "That year's advance tax, by instalment (for interest u/s 234C)",
+      "label": "iu_adv_h"
+    },
+    {
+      "name": "f_iu_adv_q1",
+      "type": "text",
+      "default": "Paid by 15 June",
+      "label": "f_iu_adv_q1"
+    },
+    {
+      "name": "f_iu_adv_q2",
+      "type": "text",
+      "default": "16 June - 15 September",
+      "label": "f_iu_adv_q2"
+    },
+    {
+      "name": "f_iu_adv_q3",
+      "type": "text",
+      "default": "16 September - 15 December",
+      "label": "f_iu_adv_q3"
+    },
+    {
+      "name": "f_iu_adv_q4",
+      "type": "text",
+      "default": "16 December - 31 March",
+      "label": "f_iu_adv_q4"
+    },
+    {
+      "name": "iu_sur",
+      "type": "text",
+      "default": "That year's surcharge (with marginal relief) is in the updated tax: {amount}.",
+      "label": "iu_sur"
     }
   ],
   "expr": {
@@ -4791,13 +5199,81 @@
       "iu_reasons_h": "$iu_reasons_h",
       "iu_reasons": "$iu_reasons",
       "del_doc_title": "$del_doc_title",
-      "del_doc_body": "$del_doc_body"
+      "del_doc_body": "$del_doc_body",
+      "f_fa_holder": "$f_fa_holder",
+      "f_fa_trustees": "$f_fa_trustees",
+      "f_fa_trustees_addr": "$f_fa_trustees_addr",
+      "f_fa_settlor": "$f_fa_settlor",
+      "f_fa_settlor_addr": "$f_fa_settlor_addr",
+      "f_fa_beneficiaries": "$f_fa_beneficiaries",
+      "f_fa_beneficiaries_addr": "$f_fa_beneficiaries_addr",
+      "ask_tan_h": "$ask_tan_h",
+      "ask_tan_p": "$ask_tan_p",
+      "ask_replace_tan_sub": "$ask_replace_tan_sub",
+      "ask_keep_tan_sub": "$ask_keep_tan_sub",
+      "c_two_employers": "$c_two_employers",
+      "c_two_employers_lv": "$c_two_employers_lv",
+      "c_two_emp_80c": "$c_two_emp_80c",
+      "c_two_emp_80c_lv": "$c_two_emp_80c_lv",
+      "biz_pay_total": "$biz_pay_total",
+      "biz_pay_cash": "$biz_pay_cash",
+      "biz_pay_p": "$biz_pay_p",
+      "biz_ask_pay": "$biz_ask_pay",
+      "biz_ad_left": "$biz_ad_left",
+      "biz_ad_left_opts": "$biz_ad_left_opts",
+      "biz_ad_left_p": "$biz_ad_left_p",
+      "ca_audit_44ad4": "$ca_audit_44ad4",
+      "ca_44ad_closed": "$ca_44ad_closed",
+      "ca_bf_business_loss": "$ca_bf_business_loss",
+      "gst_h": "$gst_h",
+      "gst_p": "$gst_p",
+      "f_gst_gstin": "$f_gst_gstin",
+      "f_gst_turnover": "$f_gst_turnover",
+      "gst_add": "$gst_add",
+      "gst_none": "$gst_none",
+      "gst_read": "$gst_read",
+      "gst_remove": "$gst_remove",
+      "bad_gstin": "$bad_gstin",
+      "no_gst_rows": "$no_gst_rows",
+      "k_gst": "$k_gst",
+      "k_gst_why": "$k_gst_why",
+      "k_gst_how": "$k_gst_how",
+      "c_gst": "$c_gst",
+      "loss_other": "$loss_other",
+      "ex_late_54": "$ex_late_54",
+      "ex_late_54F": "$ex_late_54F",
+      "ex_late_54EC": "$ex_late_54EC",
+      "ex_cgas_late": "$ex_cgas_late",
+      "ex_no_date": "$ex_no_date",
+      "f_cg_ex_build": "$f_cg_ex_build",
+      "cg_build_opts": "$cg_build_opts",
+      "cg_ex_add": "$cg_ex_add",
+      "cg_ex_n": "$cg_ex_n",
+      "cg_ex_remove": "$cg_ex_remove",
+      "cg_ex_p": "$cg_ex_p",
+      "iu_special_h": "$iu_special_h",
+      "f_iu_orig_111a": "$f_iu_orig_111a",
+      "f_iu_orig_112a": "$f_iu_orig_112a",
+      "f_iu_orig_112": "$f_iu_orig_112",
+      "f_iu_orig_30": "$f_iu_orig_30",
+      "f_iu_add_111a": "$f_iu_add_111a",
+      "f_iu_add_112a": "$f_iu_add_112a",
+      "f_iu_add_112": "$f_iu_add_112",
+      "f_iu_add_30": "$f_iu_add_30",
+      "f_iu_early": "$f_iu_early",
+      "iu_early": "$iu_early",
+      "iu_adv_h": "$iu_adv_h",
+      "f_iu_adv_q1": "$f_iu_adv_q1",
+      "f_iu_adv_q2": "$f_iu_adv_q2",
+      "f_iu_adv_q3": "$f_iu_adv_q3",
+      "f_iu_adv_q4": "$f_iu_adv_q4",
+      "iu_sur": "$iu_sur"
     }
   },
   "returns": "record",
-  "version": 28,
+  "version": 32,
   "status": "published",
-  "description_nl": "2026-10-06: every word of My return - the steps, the documents and how to get each, the checks, the regimes, the review fields, the form and how to file it. 2026-10-06: start from documents. 2026-10-06: an Other card for files not read, so a locked one can be removed. 2026-10-06: how_h / how_steps - the step-by-step shown on Gather. 2026-10-06: rv_paid / pd_* - tax the person paid themselves, typed on Check. 2026-10-06: ask_* - the two questions before a file goes in: a return already under way (carry on / start again) and a second AIS / 26AS (replace / keep both). 2026-10-06: the business card on Check (44ADA / 44AD), the ITR-4 reasons, and where each document comes from. 2026-10-06: pd_bsr / pd_challan - a typed payment's BSR code and challan number; f10iea. 2026-10-06: k_bank_how, bank_kept, src_issuer, src_gives. 2026-10-06: the bank statement's figures on its card and on the business card. 2026-10-06: pw_show / pw_hide - the eye on the PDF password. 2026-10-06: back_to - the Back button on each step. 2026-10-06: from_filed / from_filed_done / from_filed_none. 2026-10-06: why_huf. 2026-10-06: the Karta's fields for an HUF. 2026-10-06: the More deductions panel on Check. 2026-10-07: co-owned houses, winnings and virtual digital assets, agricultural income, 44AE vehicles, the 80EE / 80EEA check, and the address and contact fields. 2026-10-07: what the readers found: a VDA sold, the person's address (AIS), the employer's address (Form 16). 2026-10-07: capital gains in full: each sale, exemptions, the indexation choice, losses brought forward, gifts, pre-construction interest, the statements. 2026-10-07: ITR-3 from My return: the own-profit-and-loss kinds and fields, why_biz_books, and the CA messages (tax audit s.44AB, a business loss). 2026-10-07: wave 3: residential status, foreign income and assets, clubbing, salary arrears (s.89), the updated return (ITR-U). 2026-10-08: words for the app's own warning before a delete / remove (never silently).",
+  "description_nl": "2026-10-06: every word of My return - the steps, the documents and how to get each, the checks, the regimes, the review fields, the form and how to file it. 2026-10-06: start from documents. 2026-10-06: an Other card for files not read, so a locked one can be removed. 2026-10-06: how_h / how_steps - the step-by-step shown on Gather. 2026-10-06: rv_paid / pd_* - tax the person paid themselves, typed on Check. 2026-10-06: ask_* - the two questions before a file goes in: a return already under way (carry on / start again) and a second AIS / 26AS (replace / keep both). 2026-10-06: the business card on Check (44ADA / 44AD), the ITR-4 reasons, and where each document comes from. 2026-10-06: pd_bsr / pd_challan - a typed payment's BSR code and challan number; f10iea. 2026-10-06: k_bank_how, bank_kept, src_issuer, src_gives. 2026-10-06: the bank statement's figures on its card and on the business card. 2026-10-06: pw_show / pw_hide - the eye on the PDF password. 2026-10-06: back_to - the Back button on each step. 2026-10-06: from_filed / from_filed_done / from_filed_none. 2026-10-06: why_huf. 2026-10-06: the Karta's fields for an HUF. 2026-10-06: the More deductions panel on Check. 2026-10-07: co-owned houses, winnings and virtual digital assets, agricultural income, 44AE vehicles, the 80EE / 80EEA check, and the address and contact fields. 2026-10-07: what the readers found: a VDA sold, the person's address (AIS), the employer's address (Form 16). 2026-10-07: capital gains in full: each sale, exemptions, the indexation choice, losses brought forward, gifts, pre-construction interest, the statements. 2026-10-07: ITR-3 from My return: the own-profit-and-loss kinds and fields, why_biz_books, and the CA messages (tax audit s.44AB, a business loss). 2026-10-07: wave 3: residential status, foreign income and assets, clubbing, salary arrears (s.89), the updated return (ITR-U). 2026-10-08: words for the app's own warning before a delete / remove (never silently). 2026-10-08: wave 4: a second Form 16 from the same employer, two employers, the 44AB payments test and 44AD(4), GST per GSTIN, losses from last year's ITR-3, exemption time limits and several exemptions on one sale, the ITR-U of an earlier year (special rates, surcharge, 234C).",
   "test_cases": [
     {
       "args": {},
@@ -4843,7 +5319,7 @@
         "k_form16_why": "Your employer's certificate: Part A (TDS by quarter) and Part B (salary, allowances, deductions). One per employer.",
         "k_form16_how": "Ask your employer's HR or payroll - it is due by 15 June|Usually a signed PDF; Part A comes from TRACES|Changed jobs in the year? Bring one from each employer",
         "k_26as": "26AS",
-        "k_26as_why": "Your tax credit as the department holds it: TDS by deductor and taxes you paid. The return is checked against it.",
+        "k_26as_why": "Your tax credit as the department holds it: TDS by deductor, the buyer's TDS on a property you sold (Part A2, 194IA) and taxes you paid. The return is checked against it.",
         "k_26as_how": "Sign in at incometax.gov.in|e-File > Income Tax Returns > View Form 26AS > Confirm|Pick AY {ay}, view as Text, export|Drop the text file (or the PDF) here",
         "k_other": "Other document",
         "check_h": "Do the documents agree?",
@@ -5279,7 +5755,7 @@
         "loss_add": "Add a loss",
         "loss_none": "None typed.",
         "loss_prev": "Fill from last year's return",
-        "loss_prev_how": "Drop last year's filed return (JSON) on Gather to fill these from its Schedule CFL.",
+        "loss_prev_how": "Drop last year's filed return (ITR-2 or ITR-3 JSON) on Gather to fill these from its Schedule CFL.",
         "loss_gone": "AY {ay}: more than 8 years ago - it cannot be set off any more",
         "loss_used": "Set off this year: {amount}",
         "no_prev_losses": "Last year's filed return holds no loss to carry forward - or it is not on Gather yet.",
@@ -5304,7 +5780,7 @@
         "c_property": "Property sold: your row against the AIS (194IA / SFT-012)",
         "k_cg": "Capital-gains statement",
         "k_cg_why": "Each sale of shares or fund units: dates, sale value, cost and the 31-01-2018 value - read into Schedule 112A and Schedule CG.",
-        "k_cg_how": "Broker: back office > Reports > Tax P&L / Capital gains (Excel or CSV)|Mutual funds: CAMS (camsonline.com) or KFintech (mfs.kfintech.com) > Capital gains statement for FY 2025-26 (Excel)|Drop each one here",
+        "k_cg_how": "Broker: back office > Reports > Tax P&L / Capital gains (Excel or CSV)|Mutual funds: CAMS (camsonline.com) or KFintech (mfs.kfintech.com) > Capital gains statement for FY 2025-26 (Excel, or the PDF)|Drop each one here",
         "k_filed_prev": "Last year's return",
         "k_filed_prev_why": "Its Schedule CFL: the losses still to carry forward into this year.",
         "k_filed_prev_how": "Sign in at incometax.gov.in|e-File > Income Tax Returns > View Filed Returns|Pick the AY before {ay} and download the JSON|Drop it here",
@@ -5384,7 +5860,7 @@
         "ca_foreign_business": "Income from a business or profession abroad needs books of account and ITR-3 Schedule BP - My return does not file it. Get a CA (SimplyFy's CA-firm side handles books and business income).",
         "fa_h": "Foreign assets (Schedule FA)",
         "fa_p": "As a resident and ordinarily resident, list everything held abroad at any time in the calendar year 1 January - 31 December 2025: bank and custodial accounts, shares and debt, insurance, property, other assets - even with no income from it. Rupee values at the SBI TT buying rate. Leaving it out can cost 10 lakh (Black Money Act).",
-        "fa_kinds": "bank=Bank account (A1)|custodial=Custodial / brokerage account (A2)|equity=Shares, ESOPs, debt (A3)|insurance=Cash-value insurance (A4)|property=Immovable property (B)|other=Other capital asset (C)",
+        "fa_kinds": "bank=Bank account (A1)|custodial=Custodial / brokerage account (A2)|equity=Shares, ESOPs, debt (A3)|insurance=Cash-value insurance (A4)|property=Immovable property (B)|other=Other capital asset (C)|signing=Account you can sign for (D)|trust=Trust abroad - trustee, beneficiary or settlor (E)|income=Other income from outside India (F)",
         "f_fa_kind": "Asset",
         "f_fa_country": "Country",
         "f_fa_name": "Name (bank / entity / asset)",
@@ -5438,7 +5914,7 @@
         "ar_none": "None typed.",
         "ar_relief": "Relief u/s 89: {amount} (extra tax now {now}, extra tax in those years {past}).",
         "ar_form10e": "File Form 10E (e-File > Income Tax Forms) before you file the return.",
-        "ar_unknown": "A year cannot be worked out (before FY 2015-16, the new regime before 2020-21, or income over 50 lakh) - no relief is claimed; ask a CA.",
+        "ar_unknown": "A year cannot be worked out (before FY 2015-16, or the new regime before 2020-21) - no relief is claimed; ask a CA.",
         "ar_nil": "No relief: the arrears would have cost as much or more in their own years.",
         "d_relief": "Relief u/s 89 / 90 / 91",
         "iu_h": "Updated return (ITR-U) for an earlier year",
@@ -5446,8 +5922,8 @@
         "f_iu_ay": "Assessment year",
         "f_iu_filed": "Return filed for it",
         "iu_filed": "none=None|original=Original|belated=Belated|revised=Revised",
-        "f_iu_orig_income": "Total income in that return (nil if none)",
-        "f_iu_added": "Income left out",
+        "f_iu_orig_income": "Income at slab rates in that return (nil if none)",
+        "f_iu_added": "Income left out (slab rates)",
         "f_iu_tds_added": "TDS on the income left out",
         "f_iu_tds": "That year's TDS in all",
         "f_iu_advance": "Advance tax paid that year",
@@ -5475,8 +5951,8 @@
         "itru_bar_already_updated": "Not allowed: only one updated return a year.",
         "itru_bar_loss_return": "Not allowed: a return of loss cannot be updated this way.",
         "itru_bar_lower_tax": "Not allowed: it may not lower the tax or raise a refund.",
-        "itru_bar_year_unknown": "That year's tax cannot be worked out here (the new regime before FY 2020-21, or income over 50 lakh) - ask a CA.",
-        "iu_lines": "Tax on the income before|Tax on the updated income|Further tax (less TDS on the income added)|Interest u/s 234A|Interest u/s 234B|Additional tax u/s 140B ({pct}%)|Late fee u/s 234F|To pay",
+        "itru_bar_year_unknown": "That year's tax cannot be worked out here (the new regime before FY 2020-21) - ask a CA.",
+        "iu_lines": "Tax on the income before|Tax on the updated income|Further tax (less TDS on the income added)|Interest u/s 234A|Interest u/s 234B|Interest u/s 234C|Additional tax u/s 140B ({pct}%)|Late fee u/s 234F|To pay",
         "iu_ok": "Allowed: file it by {by}.",
         "iu_steps": "Pay the amount above first: incometax.gov.in > e-File > e-Pay Tax > Income Tax, AY {ay}, Self-Assessment Tax|e-File > Income Tax Returns > File Income Tax Return > AY {ay} > Online, filing section 139(8A) - Updated return|Part A ITR-U: the reason for updating, the previous return's acknowledgement and date (if any)|Part B-ATI: the income added, the tax, the interest, the additional tax and the challan|Verify (Aadhaar OTP / EVC) within 30 days",
         "iu_no_schema": "SimplyFy does not make the ITR-U JSON: the department's ITR-U schema (and AY {ay}'s ITR schemas) is not in schemas/itr. The computation and the steps are above - file it on the portal, or add the schema to have the JSON made.",
@@ -5484,7 +5960,75 @@
         "iu_reasons_h": "Reason",
         "iu_reasons": "1=Return previously not filed|2=Income not reported correctly|3=Wrong heads of income chosen|4=Reduction of carried forward loss|5=Reduction of unabsorbed depreciation|6=Reduction of tax credit u/s 115JB / 115JD|7=Wrong rate of tax|8=Others",
         "del_doc_title": "Remove this document?",
-        "del_doc_body": "It leaves this return, with what was read from it. Its file is kept for History, and you can add it again."
+        "del_doc_body": "It leaves this return, with what was read from it. Its file is kept for History, and you can add it again.",
+        "f_fa_holder": "Name in the account",
+        "f_fa_trustees": "Other trustees",
+        "f_fa_trustees_addr": "Their address",
+        "f_fa_settlor": "Settlor",
+        "f_fa_settlor_addr": "Settlor's address",
+        "f_fa_beneficiaries": "Beneficiaries",
+        "f_fa_beneficiaries_addr": "Beneficiaries' address",
+        "ask_tan_h": "Already a Form 16 from {employer}",
+        "ask_tan_p": "This Form 16 is from the same employer (TAN {tan}) as one already in. A revised Form 16 replaces the first; two Form 16s for two spells with the same employer are both kept - their salaries add up.",
+        "ask_replace_tan_sub": "It is a revised Form 16 - use it in place of the first (kept in History).",
+        "ask_keep_tan_sub": "Two spells with this employer - keep both, both salaries count.",
+        "c_two_employers": "Two employers this year",
+        "c_two_employers_lv": "Each employer's Form 16 took off the standard deduction ({a} in all) - the return takes it once ({b}). The salaries are added up first, so the tax each employer deducted may fall short: expect tax to pay.",
+        "c_two_emp_80c": "Deductions on both Form 16s",
+        "c_two_emp_80c_lv": "The Form 16s together declare {a} under 80C / 80CCC / 80CCD(1) - the limit is {b} in all. A deduction you declared to both employers counts once: type the right figure on Review.",
+        "biz_pay_total": "Payments in the year (all modes)",
+        "biz_pay_cash": "Of which in cash",
+        "biz_pay_p": "The tax-audit limit is 10 crore (75 lakh for a profession) only when cash receipts AND cash payments are each 5% or less (section 44AB). Until the payments are typed, the receipts' share stands for both.",
+        "biz_ask_pay": "Your receipts are between the two audit limits: the cash share of your payments decides whether the accounts must be audited - type them.",
+        "biz_ad_left": "Left 44AD in the last five years?",
+        "biz_ad_left_opts": "=No|yes=Yes - declared 44AD income for a year, then not in one of the five years after",
+        "biz_ad_left_p": "Section 44AD(4): leaving the presumptive scheme closes it for five years; with income above the basic exemption the accounts must then be kept and audited (sections 44AD(5), 44AB(e)).",
+        "ca_audit_44ad4": "You left the presumptive scheme (section 44AD) within five years of using it, and your income is above the basic exemption: sections 44AD(5) and 44AB(e) need books of account and a tax audit by a chartered accountant. My return does not do audits - get a CA (SimplyFy's CA-firm side handles them).",
+        "ca_44ad_closed": "Section 44AD(4): having left the presumptive scheme within five years of using it, you cannot use 44AD for the five years after. Choose 'Business - my own profit and loss' and type the year's figures (ITR-3).",
+        "ca_bf_business_loss": "Last year's return carries a business loss of {loss} forward (section 72): it is set off only against business income and carried on in ITR-3's Schedule CFL from books of account - My return does not file it. Get a CA (SimplyFy's CA-firm side handles books and losses).",
+        "gst_h": "GST turnover, per GSTIN",
+        "gst_p": "Each GSTIN and its turnover for the year - taxable, zero-rated, nil-rated / exempt and non-GST outward supplies (GSTR-3B table 3.1). Drop your GSTR-3B summary on Gather to fill it, or type it.",
+        "f_gst_gstin": "GSTIN",
+        "f_gst_turnover": "Turnover (GSTR-3B)",
+        "gst_add": "Add a GSTIN",
+        "gst_none": "No GSTIN typed.",
+        "gst_read": "From your GSTR-3B: {n} GSTIN(s), {amount} in all",
+        "gst_remove": "Remove this GSTIN",
+        "bad_gstin": "{gstin} is not a GSTIN (15 characters: state code, PAN, entity number, Z, check character).",
+        "no_gst_rows": "A GSTR-3B summary, but no row with a GSTIN and a taxable value.",
+        "k_gst": "GSTR-3B summary",
+        "k_gst_why": "Your GST turnover per GSTIN - for the GST schedule of ITR-3 / ITR-4, checked against the receipts you declare.",
+        "k_gst_how": "gst.gov.in > Services > Returns > Returns Dashboard > FY 2025-26 > GSTR-3B > Download (or your accountant's summary, CSV / Excel)|One file a month or the year - each adds up per GSTIN|Drop it here",
+        "c_gst": "GST turnover beside your receipts",
+        "loss_other": "Last year's return also carries a business loss of {amount} forward - see File: a CA files that return.",
+        "ex_late_54": "The house is not within 1 year before or 2 years after the sale (3 years to build) - section 54 is not allowed on it.",
+        "ex_late_54F": "The house is not within 1 year before or 2 years after the sale (3 years to build) - section 54F is not allowed on it.",
+        "ex_late_54EC": "The bonds were not bought within 6 months after the sale - section 54EC is not allowed on them.",
+        "ex_cgas_late": "The Capital Gains Accounts Scheme deposit is after the return's due date (31 July) - it does not count (sections 54(2), 54F(4)).",
+        "ex_no_date": "Type the date of the purchase / investment - Schedule CG asks for it, and it must be in time.",
+        "f_cg_ex_build": "Bought or built",
+        "cg_build_opts": "=Bought|build=Built (3 years to finish)",
+        "cg_ex_add": "Add another exemption",
+        "cg_ex_n": "Exemption {n}",
+        "cg_ex_remove": "Remove this exemption",
+        "cg_ex_p": "One sale can carry more than one exemption (a house sold: 54 for the new house, 54EC for bonds). Each counts up to the gain still left, in this order.",
+        "iu_special_h": "Capital gains and winnings of that year (taxed at their own rates)",
+        "f_iu_orig_111a": "In that return: short-term gains (111A)",
+        "f_iu_orig_112a": "In that return: long-term gains (112A)",
+        "f_iu_orig_112": "In that return: long-term gains (112)",
+        "f_iu_orig_30": "In that return: winnings / crypto (30%)",
+        "f_iu_add_111a": "Left out: short-term gains (111A)",
+        "f_iu_add_112a": "Left out: long-term gains (112A)",
+        "f_iu_add_112": "Left out: long-term gains (112)",
+        "f_iu_add_30": "Left out: winnings / crypto (30%)",
+        "f_iu_early": "FY 2024-25 gains: sold before 23 July 2024?",
+        "iu_early": "=No - the new rates|yes=Yes - 15% / 10% / 20% (indexed)",
+        "iu_adv_h": "That year's advance tax, by instalment (for interest u/s 234C)",
+        "f_iu_adv_q1": "Paid by 15 June",
+        "f_iu_adv_q2": "16 June - 15 September",
+        "f_iu_adv_q3": "16 September - 15 December",
+        "f_iu_adv_q4": "16 December - 31 March",
+        "iu_sur": "That year's surcharge (with marginal relief) is in the updated tax: {amount}."
       }
     }
   ]

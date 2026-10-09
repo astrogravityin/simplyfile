@@ -56,7 +56,8 @@ export async function myReturnPage(host) {
   };
 
   const gather = (d) => {
-    const kinds = ['prefill', 'ais', 'form16', '26as', 'filed', 'cg', 'filed_prev'].concat(['bank', 'other'].filter((k2) => d.docs.some((x) => x.kind === k2)));
+    const kinds = ['prefill', 'ais', 'form16', '26as', 'filed', 'cg', 'filed_prev'].concat(['gst'].filter((k2) => d.return.business.kind || d.docs.some((x) => x.kind === k2)))
+      .concat(['bank', 'other'].filter((k2) => d.docs.some((x) => x.kind === k2)));   // 2026-10-08: a GSTR-3B summary for a business
     const cards = kinds.map((k) => {
       const docs = d.docs.filter((x) => x.kind === k);
       return `<article class="mr-dcard ${docs.length ? 'is-in' : ''}">${docArt(k, docs.length > 0)}
@@ -257,6 +258,14 @@ export async function myReturnPage(host) {
     host.querySelectorAll('[data-c]').forEach((i) => { i.onchange = () => put({ cg_rows: cgs() }); });
     if ($('#mr-cg-add')) $('#mr-cg-add').onclick = () => put({ cg_rows: [...cgs(), { asset: 'equity' }] });
     host.querySelectorAll('[data-cg-del]').forEach((b) => { b.onclick = () => put({ cg_rows: cgs().filter((_, n) => n !== Number(b.dataset.cgDel)) }); });
+    host.querySelectorAll('[data-cg-exadd]').forEach((b) => { b.onclick = () => {      // 2026-10-08: one more exemption on the same sale
+      const all = cgs(); const x = all[Number(b.dataset.cgExadd)]; let n = 1;
+      while (x[`ex_kind_${n}`]) n += 1;
+      x[`ex_kind_${n}`] = x.ex_kind === '54EC' ? '54' : '54EC'; put({ cg_rows: all });
+    }; });
+    host.querySelectorAll('[data-cg-exdel]').forEach((b) => { b.onclick = () => confirmDialog(w('cg_ex_remove'), '', () => {
+      const [i, n] = b.dataset.cgExdel.split(':').map(Number); const all = cgs(); all[i][`ex_kind_${n}`] = ''; put({ cg_rows: all });
+    }, w('cg_ex_remove')); });
     const losses = () => rowsOf('data-loss', 'data-l');
     host.querySelectorAll('[data-l]').forEach((i) => { i.onchange = () => put({ losses_bf: losses() }); });
     if ($('#mr-loss-add')) $('#mr-loss-add').onclick = () => put({ losses_bf: [...losses(), { kind: 'stcl' }] });
@@ -268,7 +277,11 @@ export async function myReturnPage(host) {
     const biz = () => Object.fromEntries([...host.querySelectorAll('[data-b]')].map((x) => [x.dataset.b, x.value]));
     host.querySelectorAll('[data-a]').forEach((i) => { i.onchange = () => put({ business: { ...biz(), vehicles: cars() } }); });
     if ($('#mr-ae-add')) $('#mr-ae-add').onclick = () => put({ business: { ...biz(), vehicles: [...cars(), { months: 12, own: 'own' }] } });
-    host.querySelectorAll('[data-b]').forEach((i) => { i.onchange = () => put({ business: biz() }); });
+    // 2026-10-08: the GST schedule's rows (GSTIN, turnover) go with the business
+    const gsts = () => rowsOf('data-gst', 'data-g');
+    host.querySelectorAll('[data-b], [data-g]').forEach((i) => { i.onchange = () => put({ business: { ...biz(), gst_rows: gsts() } }); });
+    if ($('#mr-gst-add')) $('#mr-gst-add').onclick = () => put({ business: { ...biz(), gst_rows: [...gsts(), { gstin: '', turnover: '' }] } });
+    host.querySelectorAll('[data-gst-del]').forEach((b) => { b.onclick = () => confirmDialog(w('gst_remove'), '', () => put({ business: { ...biz(), gst_rows: gsts().filter((_, n) => n !== Number(b.dataset.gstDel)) } }), w('gst_remove')); });
     if ($('#mr-biz-bank')) $('#mr-biz-bank').onclick = (e) => put({ business: { ...biz(), digital: e.currentTarget.dataset.receipts, cash: e.currentTarget.dataset.cash } });
     wireWave3(host, S, put);                          // 2026-10-07 wave 3: residence, foreign income / assets, clubbing, arrears, ITR-U
     if ($('#mr-emp-add')) $('#mr-emp-add').onclick = () => put({ employers: { [S.d.return.employers.length]: { name: w('employer_n', { n: S.d.return.employers.length + 1 }) } } });
@@ -341,9 +354,10 @@ function askFirst(q, fname, ay) {
       <span class="ask-nm" title="${esc(x.name)}">${esc(x.name)}</span><span class="ask-when">${esc(w('ask_added', { when: whenOf(x.at) }))}</span></li>`).join('')
     + `<li class="is-new"><span class="ask-tag">${esc(w('ask_new'))}</span><span class="ask-nm" title="${esc(fname)}">${esc(fname)}</span><span class="ask-when"></span></li>`;
   const [a, b] = start ? ['continue', 'fresh'] : ['replace', 'keep'];
-  const choice = (id, main) => `<button type="button" class="ask-choice ${main ? 'is-main' : ''}" data-pick="${id}"><b>${esc(w(`ask_${id}`))}</b><span>${esc(w(`ask_${id}_sub`))}</span></button>`;
-  const title = start ? w('ask_start_h', { ay: q.ay || ay }) : w('ask_same_h', { kind, ay });
-  const lede = start ? w('ask_start_p', { name: q.name, ay: q.ay || ay, n: q.have.length }) : w('ask_same_p', { kind });
+  const tan = q.why === 'same_tan';               // 2026-10-08: a second Form 16 from the same employer - a revised one, or a second spell
+  const choice = (id, main) => `<button type="button" class="ask-choice ${main ? 'is-main' : ''}" data-pick="${id}"><b>${esc(w(`ask_${id}`))}</b><span>${esc(w(tan ? `ask_${id}_tan_sub` : `ask_${id}_sub`))}</span></button>`;
+  const title = start ? w('ask_start_h', { ay: q.ay || ay }) : tan ? w('ask_tan_h', { employer: q.employer || q.tan, tan: q.tan }) : w('ask_same_h', { kind, ay });
+  const lede = start ? w('ask_start_p', { name: q.name, ay: q.ay || ay, n: q.have.length }) : tan ? w('ask_tan_p', { tan: q.tan }) : w('ask_same_p', { kind });
   return new Promise((done) => {
     let picked = null;
     modal(title, `${askArt(start ? 'start' : 'same')}<p class="ask-lede">${esc(lede)}</p><ul class="ask-files">${rows}</ul>
@@ -388,20 +402,38 @@ function bizCard(r, d) {
     ${(g.vehicles || []).length ? `<p class="small"><b>${esc(w('ae_income', { income: money(g.income), n: g.vehicles.length }))}</b></p>` : ''}
     <button type="button" class="small ghost" id="mr-ae-add">${icon('plus', 12)} ${esc(w('ae_add'))}</button>` : '';
   if (b.kind && d.regime === 'old') notes.push(`<p class="small mr-warn">${icon('alert', 12)} ${esc(w('f10iea'))}</p>`);
+  // 2026-10-08: s.44AB - the cash share of payments (both sides of the 10 crore / 75 lakh provisos); s.44AD(4) - left 44AD within five years
+  const opt = (v, list) => list.map(([o, l]) => `<option value="${esc(o)}" ${String(v || '') === o ? 'selected' : ''}>${esc(l)}</option>`).join('');
+  const pay = (k) => `<div class="field"><label for="b-${k}">${esc(w(`biz_${k}`))}</label><input id="b-${k}" inputmode="decimal" data-b="${k}" value="${b[k] === '' || b[k] === undefined || b[k] === null ? '' : Math.round(b[k])}" placeholder=""/></div>`;
+  const audit = g.pl ? `<p class="small muted">${esc(w('biz_pay_p'))}</p>${g.ask_pay ? `<p class="small mr-warn">${icon('alert', 12)} ${esc(w('biz_ask_pay'))}</p>` : ''}
+      <div class="grid three">${pay('pay_total')}${pay('pay_cash')}</div>` : '';
+  const adLeft = ['44AD', 'business'].includes(b.kind) ? `<div class="grid three"><div class="field"><label for="b-ad_left">${esc(w('biz_ad_left'))}</label>
+      <select id="b-ad_left" data-b="ad_left">${opt(b.ad_left, w('biz_ad_left_opts').split('|').map((x) => x.split('=')))}</select></div></div><p class="small muted">${esc(w('biz_ad_left_p'))}</p>` : '';
+  // 2026-10-08: the GST schedule - a turnover per GSTIN, typed or read from a GSTR-3B summary
+  const typedGst = b.gst_typed || [];
+  const gstRows = typedGst.map((x, i) => `<div class="grid three mr-gst" data-gst="${i}">
+      <div class="field"><label for="g-${i}-gstin">${esc(w('f_gst_gstin'))}</label><input id="g-${i}-gstin" data-g="gstin" maxlength="15" style="text-transform:uppercase" value="${esc(x.gstin || '')}" autocomplete="off"/></div>
+      <div class="field"><label for="g-${i}-turnover">${esc(w('f_gst_turnover'))}</label><input id="g-${i}-turnover" inputmode="decimal" data-g="turnover" value="${x.turnover ? Math.round(x.turnover) : ''}" placeholder="0"/></div>
+      <div class="field"><button type="button" class="small ghost" data-gst-del="${i}" aria-label="${esc(w('gst_remove'))}">${icon('trash', 12)}</button></div></div>`).join('');
+  const read = b.gst_read || [];
+  const gst = b.kind ? `<h4 class="small">${esc(w('gst_h'))}</h4><p class="small muted">${esc(w('gst_p'))}</p>
+      ${read.length ? `<p class="small">${esc(w('gst_read', { n: read.length, amount: money(read.reduce((s, x) => s + x.turnover, 0)) }))}</p><ul class="mr-found">${read.map((x) => `<li>${esc(x.gstin)} <b>${money(x.turnover)}</b></li>`).join('')}</ul>` : ''}
+      ${gstRows || (read.length ? '' : `<p class="muted small">${esc(w('gst_none'))}</p>`)}
+      <button type="button" class="small ghost" id="mr-gst-add">${icon('plus', 12)} ${esc(w('gst_add'))}</button>` : '';
   return `<section class="card"><h3 class="rc-h">${icon('user', 15)} ${esc(w('rv_biz'))}</h3><p class="small muted">${esc(w('rv_biz_p'))}</p>
     <div class="grid three">
       <div class="field"><label for="b-kind">${esc(w('biz_kind'))}</label><select id="b-kind" data-b="kind">${kinds.map(([v, l]) => `<option value="${v}" ${b.kind === v ? 'selected' : ''}>${esc(l)}</option>`).join('')}</select></div>
       ${b.kind ? `<div class="field"><label for="b-code">${esc(w('biz_code'))}</label><select id="b-code" data-b="code"><option value="">${esc(w('biz_pick'))}</option>${codes.map(([c2, l]) => `<option value="${esc(c2)}" ${b.code === c2 ? 'selected' : ''}>${esc(c2)} - ${esc(l)}</option>`).join('')}</select></div>
       ${txt('name', 75)}` : ''}</div>
-    ${b.kind ? `<div class="grid three">${num('digital')}${num('cash')}${g.pl ? '' : num('declared')}</div><div class="grid three">${txt('gstin', 15)}${num('gst_turnover')}</div>` : ''}
+    ${b.kind ? `<div class="grid three">${num('digital')}${num('cash')}${g.pl ? '' : num('declared')}</div>` : ''}
     ${g.pl ? `<h4 class="small">${esc(w('pl_h'))}</h4><p class="small muted">${esc(w('pl_p'))}</p>
       <div class="grid three">${num('gp')}${num('expenses')}${num('np')}</div><div class="grid four">${num('debtors')}${num('creditors')}${num('stock')}${num('cash_in_hand')}</div>` : ''}
-    ${ae}${notes.join('')}</section>`;
+    ${audit}${adLeft}${gst}${ae}${notes.join('')}</section>`;
 }
 
 // 2026-10-07: a tax audit (s.44AB) or a business loss - My return does not file it; the CA-firm side does
 function caNote(ca) {
-  return `<div class="mr-warn mr-ca"><b>${icon('alert', 13)} ${esc(w('ca_h'))}</b><p class="small">${esc(w(ca.why, { receipts: money(ca.receipts), limit: money(ca.limit), net: money(ca.net), deemed: money(ca.deemed) }))}</p></div>`;
+  return `<div class="mr-warn mr-ca"><b>${icon('alert', 13)} ${esc(w('ca_h'))}</b><p class="small">${esc(w(ca.why, { receipts: money(ca.receipts), limit: money(ca.limit), net: money(ca.net), deemed: money(ca.deemed), loss: money(ca.loss) }))}</p></div>`;
 }
 
 // --- Winnings and virtual digital assets (2026-10-07): 115BB / 115BBJ / 115BBH at 30% ------------------------------------
@@ -466,6 +498,18 @@ function cgCard(r, d, field) {
     return `<p class="small">${out.join(' · ')}</p>`;
   };
   const exKinds = [['', w('ex_none')], ['54', w('ex_54')], ['54EC', w('ex_54EC')], ['54F', w('ex_54F')]];
+  // 2026-10-08: each exemption on the sale (54 + 54EC ...) - its fields carry a suffix (ex_kind, ex_kind_1 ...), the server makes the list
+  const claimsOf = (x) => ((x.ex_rows || []).length ? x.ex_rows : [x]);
+  const claim = (i, n, e, got) => {
+    const sfx = n ? `_${n}` : '';
+    const f = (k, ty = 'num', max = 60) => `<div class="field"><label for="cg-${i}-${k}${sfx}">${esc(w(`f_cg_${k}`))}</label><input id="cg-${i}-${k}${sfx}" data-c="${k}${sfx}" ${ty === 'num' ? 'inputmode="decimal" placeholder="0"' : `type="${ty === 'date' ? 'date' : 'text'}" maxlength="${max}"`} value="${esc(ty === 'num' ? (e[k] ? Math.round(e[k]) : '') : (e[k] || ''))}" autocomplete="off"/></div>`;
+    const s = (k, opts) => `<div class="field"><label for="cg-${i}-${k}${sfx}">${esc(w(`f_cg_${k}`))}</label><select id="cg-${i}-${k}${sfx}" data-c="${k}${sfx}">${opts.map(([o, l]) => `<option value="${esc(o)}" ${String(e[k] || '') === o ? 'selected' : ''}>${esc(l)}</option>`).join('')}</select></div>`;
+    const house = e.ex_kind && e.ex_kind !== '54EC';
+    return `<div class="grid four mr-claim">${n ? `<h4 class="small">${esc(w('cg_ex_n', { n: n + 1 }))}</h4>` : ''}${s('ex_kind', exKinds)}
+      ${e.ex_kind ? f('ex_amount') + f('ex_on', 'date') : ''}${house ? s('ex_build', w('cg_build_opts').split('|').map((p) => p.split('='))) + f('cgas') + f('cgas_on', 'date') + f('cgas_acc', 'text', 20) + f('cgas_ifsc', 'text', 11) : ''}
+      ${got && got.why ? `<p class="small mr-warn">${icon('alert', 12)} ${esc(w(got.why))}</p>` : got && e.ex_kind ? `<p class="small">${esc(w('cg_res_ex', { amount: money(got.amount), kind: e.ex_kind }))}</p>` : ''}
+      ${n ? `<button type="button" class="small ghost" data-cg-exdel="${i}:${n}" aria-label="${esc(w('cg_ex_remove'))}">${icon('trash', 12)}</button>` : ''}</div>`;
+  };
   const rows = typed.map((x, i) => {
     const c = (cw.rows || [])[i];
     const prop = ['land', 'house'].includes(x.asset);
@@ -474,10 +518,11 @@ function cgCard(r, d, field) {
       ${inp(i, 'acquired', x, 'date')}${inp(i, 'sold', x, 'date')}${x.acquired && x.sold ? '' : sel(i, 'term', [['', w('cg_term_auto')], ['long', w('cg_term_long')], ['short', w('cg_term_short')]], x.term)}
       ${inp(i, 'sale', x)}${inp(i, 'cost', x)}${inp(i, 'expenses', x)}${x.asset === 'equity' ? inp(i, 'fmv', x) : ''}
       ${prop ? inp(i, 'stamp', x) + inp(i, 'improve', x) + inp(i, 'improve_on', x, 'date') + inp(i, 'buyer', x, 'text', 125) + inp(i, 'buyer_pan', x, 'text', 10) + inp(i, 'address', x, 'text', 200) + inp(i, 'pin', x, 'text', 6) + inp(i, 'tds', x) : ''}
-      ${sel(i, 'ex_kind', exKinds, x.ex_kind)}
-      ${x.ex_kind ? inp(i, 'ex_amount', x) + inp(i, 'ex_on', x, 'date') : ''}${x.ex_kind && x.ex_kind !== '54EC' ? inp(i, 'cgas', x) + inp(i, 'cgas_on', x, 'date') + inp(i, 'cgas_acc', x, 'text', 20) + inp(i, 'cgas_ifsc', x, 'text', 11) : ''}
-      ${x.ex_kind === '54F' ? inp(i, 'other_houses', x) : ''}</div>
-      <div class="row tight">${res(c)}<button type="button" class="small ghost" data-cg-del="${i}" aria-label="${esc(w('cg_remove'))}">${icon('trash', 12)}</button></div></div>`;
+      ${(claimsOf(x).some((e) => e.ex_kind === '54F')) ? inp(i, 'other_houses', x) : ''}</div>
+      ${claimsOf(x).map((e, n) => claim(i, n, e, ((c || {}).claims || [])[n])).join('')}
+      <p class="small muted">${claimsOf(x).length > 1 ? esc(w('cg_ex_p')) : ''}</p>
+      <div class="row tight">${res(c)}${claimsOf(x)[0].ex_kind && claimsOf(x).length < 4 ? `<button type="button" class="small ghost" data-cg-exadd="${i}">${icon('plus', 12)} ${esc(w('cg_ex_add'))}</button>` : ''}
+        <button type="button" class="small ghost" data-cg-del="${i}" aria-label="${esc(w('cg_remove'))}">${icon('trash', 12)}</button></div></div>`;
   }).join('');
   const readList = read.length ? `<h4 class="small">${esc(w('cg_read_h', { n: read.length }))}</h4><table class="mr-cmp-t"><thead><tr><th>${esc(w('f_cg_name'))}</th><th>${esc(w('f_cg_sold'))}</th><th class="num">${esc(w('f_cg_sale'))}</th><th>${esc(w('cg_bucket'))}</th><th class="num">${esc(w('cg_gain_h'))}</th></tr></thead>
     <tbody>${read.slice(0, 200).map((c) => `<tr><td>${esc(c.name || c.isin || '-')}</td><td>${esc(c.sold || '')}</td><td class="num">${money(c.sale)}</td><td class="small">${esc(w(`b_${c.bucket}`))}</td><td class="num">${money(c.final)}</td></tr>`).join('')}</tbody></table>` : '';
@@ -509,8 +554,10 @@ function lossCard(r, d) {
   }).join('');
   const used = Object.values(cw.bf_used || {}).reduce((a, b) => a + b, 0) + ((d.regimes[d.regime].hp || {}).bf || 0);
   const prev = d.docs.some((x) => x.kind === 'filed_prev');
+  const other = (r.losses_bf_other || []).reduce((s, x) => s + (x.amount || 0), 0);   // 2026-10-08: a business loss from last year's ITR-3
   return `<section class="card"><h3 class="rc-h">${icon('clock', 15)} ${esc(w('loss_h'))}</h3><p class="small muted">${esc(w('loss_p'))}</p>
     ${rows || `<p class="muted small">${esc(w('loss_none'))}</p>`}${used ? `<p class="small"><b>${esc(w('loss_used', { amount: money(used) }))}</b></p>` : ''}
+    ${other ? `<p class="small mr-warn">${icon('alert', 12)} ${esc(w('loss_other', { amount: money(other) }))}</p>` : ''}
     <div class="row tight"><button type="button" class="small ghost" id="mr-loss-add">${icon('plus', 12)} ${esc(w('loss_add'))}</button>
     ${prev ? `<button type="button" class="small ghost" id="mr-loss-prev">${icon('refresh', 12)} ${esc(w('loss_prev'))}</button>` : `<span class="small muted">${esc(w('loss_prev_how'))}</span>`}</div></section>`;
 }

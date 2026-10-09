@@ -1,0 +1,334 @@
+{
+  "chip_id": "myreturn.check_employers",
+  "kind": "accessor",
+  "set": "myreturn",
+  "label": "My return: two employers in a year - standard deduction and 80C counted once",
+  "aliases": [
+    "two employers",
+    "job change",
+    "standard deduction twice"
+  ],
+  "params": [
+    {
+      "name": "employers",
+      "type": "number",
+      "default": 0,
+      "label": "employers this year (Form 16s of different TANs)"
+    },
+    {
+      "name": "regime",
+      "type": "text",
+      "default": "new",
+      "label": "the regime of the return"
+    },
+    {
+      "name": "via_given",
+      "type": "number",
+      "default": 0,
+      "label": "80C + 80CCC + 80CCD(1) as the Form 16s gave them, added up"
+    },
+    {
+      "name": "part",
+      "type": "text",
+      "default": "std",
+      "label": "std - the standard deduction; via - Chapter VI-A"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "what": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "eq",
+              "left": "$part",
+              "right": "via"
+            },
+            "then": "two_emp_80c"
+          }
+        ],
+        "else": "two_employers"
+      },
+      "level": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "ge",
+                  "left": "$employers",
+                  "right": 2
+                },
+                {
+                  "op": "eq",
+                  "left": "$part",
+                  "right": "std"
+                }
+              ]
+            },
+            "then": "amber"
+          },
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "ge",
+                  "left": "$employers",
+                  "right": 2
+                },
+                {
+                  "op": "eq",
+                  "left": "$part",
+                  "right": "via"
+                },
+                {
+                  "op": "gt",
+                  "left": "$via_given",
+                  "right": {
+                    "vop": "get",
+                    "value": {
+                      "chip": "myreturn.rates",
+                      "args": {}
+                    },
+                    "path": "cap_80c"
+                  }
+                }
+              ]
+            },
+            "then": "amber"
+          }
+        ],
+        "else": "ok"
+      },
+      "a": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "eq",
+              "left": "$part",
+              "right": "via"
+            },
+            "then": "$via_given"
+          }
+        ],
+        "else": {
+          "vop": "mul",
+          "a": "$employers",
+          "b": {
+            "vop": "get",
+            "value": {
+              "chip": "myreturn.rates",
+              "args": {}
+            },
+            "path": {
+              "vop": "template",
+              "text": "std_deduction.{r}",
+              "values": {
+                "vop": "record",
+                "fields": {
+                  "r": "$regime"
+                }
+              }
+            }
+          }
+        }
+      },
+      "b": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "eq",
+              "left": "$part",
+              "right": "via"
+            },
+            "then": {
+              "vop": "get",
+              "value": {
+                "chip": "myreturn.rates",
+                "args": {}
+              },
+              "path": "cap_80c"
+            }
+          }
+        ],
+        "else": {
+          "vop": "get",
+          "value": {
+            "chip": "myreturn.rates",
+            "args": {}
+          },
+          "path": {
+            "vop": "template",
+            "text": "std_deduction.{r}",
+            "values": {
+              "vop": "record",
+              "fields": {
+                "r": "$regime"
+              }
+            }
+          }
+        }
+      },
+      "gap": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "eq",
+              "left": "$part",
+              "right": "via"
+            },
+            "then": {
+              "vop": "largest",
+              "values": [
+                {
+                  "vop": "sub",
+                  "a": "$via_given",
+                  "b": {
+                    "vop": "get",
+                    "value": {
+                      "chip": "myreturn.rates",
+                      "args": {}
+                    },
+                    "path": "cap_80c"
+                  }
+                },
+                0
+              ]
+            }
+          }
+        ],
+        "else": {
+          "vop": "largest",
+          "values": [
+            {
+              "vop": "mul",
+              "a": {
+                "vop": "sub",
+                "a": "$employers",
+                "b": 1
+              },
+              "b": {
+                "vop": "get",
+                "value": {
+                  "chip": "myreturn.rates",
+                  "args": {}
+                },
+                "path": {
+                  "vop": "template",
+                  "text": "std_deduction.{r}",
+                  "values": {
+                    "vop": "record",
+                    "fields": {
+                      "r": "$regime"
+                    }
+                  }
+                }
+              }
+            },
+            0
+          ]
+        }
+      },
+      "word": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "eq",
+              "left": "$part",
+              "right": "via"
+            },
+            "then": "c_two_emp_80c_lv"
+          }
+        ],
+        "else": "c_two_employers_lv"
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-08: s.16(ia): the standard deduction is one a year (75,000 new regime / 50,000 old) however many employers paid salary - each employer's Form 16 took it off, the return takes it once (the salary of all employers is added up first). s.80C / 80CCE: 1.5 lakh in all - an investment declared to both employers counts once. The tax each employer deducted was worked out as if it were the only one: expect tax to pay. Shown as a check (amber) the person may accept.",
+  "test_cases": [
+    {
+      "args": {
+        "employers": 2,
+        "regime": "new"
+      },
+      "expect_value": {
+        "what": "two_employers",
+        "level": "amber",
+        "a": 150000,
+        "b": 75000,
+        "gap": 75000,
+        "word": "c_two_employers_lv"
+      }
+    },
+    {
+      "args": {
+        "employers": 1,
+        "regime": "new"
+      },
+      "expect_value": {
+        "what": "two_employers",
+        "level": "ok",
+        "a": 75000,
+        "b": 75000,
+        "gap": 0,
+        "word": "c_two_employers_lv"
+      }
+    },
+    {
+      "args": {
+        "employers": 2,
+        "regime": "old"
+      },
+      "expect_value": {
+        "what": "two_employers",
+        "level": "amber",
+        "a": 100000,
+        "b": 50000,
+        "gap": 50000,
+        "word": "c_two_employers_lv"
+      }
+    },
+    {
+      "args": {
+        "employers": 2,
+        "part": "via",
+        "via_given": 250000
+      },
+      "expect_value": {
+        "what": "two_emp_80c",
+        "level": "amber",
+        "a": 250000,
+        "b": 150000,
+        "gap": 100000,
+        "word": "c_two_emp_80c_lv"
+      }
+    },
+    {
+      "args": {
+        "employers": 2,
+        "part": "via",
+        "via_given": 140000
+      },
+      "expect_value": {
+        "what": "two_emp_80c",
+        "level": "ok",
+        "a": 140000,
+        "b": 150000,
+        "gap": 0,
+        "word": "c_two_emp_80c_lv"
+      }
+    }
+  ]
+}

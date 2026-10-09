@@ -173,6 +173,8 @@ WORDS = {
     "fd_cg_rows": "Sales read", "fd_cg_sale": "Total sale value", "no_cg_rows": "The statement's table was found, but no sale in it.",
     "fd_property_seen": "Property sold (194IA)", "fd_tds_194ia": "TDS by the buyer (194IA)", "fd_property_sft": "Property sold (SFT-012)",
 }
+for k2 in ("k_cg_how", "loss_prev_how"):   # 2026-10-08: wave 4 says these now (make_wave4_chips.py)
+    WORDS.pop(k2, None)
 for k2, v in WORDS.items():
     knob(w, k2, v, k2)
 save(w, "capital gains in full: each sale, exemptions, the indexation choice, losses brought forward, gifts, pre-construction interest, the statements.")

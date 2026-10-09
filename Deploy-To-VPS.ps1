@@ -25,6 +25,12 @@ if ($LASTEXITCODE -ne 0 -or -not $ahead) {
 if ([int]$ahead -gt 0) {
     Write-Host "Note: $ahead local commit(s) are not pushed - the VPS will NOT get them. Run Commit-To-GitHub.cmd first." -ForegroundColor Yellow
 }
+# Edits not committed yet never reach GitHub either: the VPS gets the last commit, without them.
+$dirty = $null
+try { $dirty = @(git status --porcelain 2>&1 | Where-Object { $_ -is [string] }) } catch { }
+if ($dirty) {
+    Write-Host "Note: $($dirty.Count) uncommitted change(s) here - the VPS will NOT get them. Run Commit-To-GitHub.cmd first." -ForegroundColor Yellow
+}
 
 $sshArgs = @('-o', 'StrictHostKeyChecking=accept-new')
 if ($Key -and (Test-Path $Key)) { $sshArgs += @('-i', $Key) }

@@ -71,7 +71,7 @@
         },
         {
           "title": "What each one gave",
-          "say": "Every document shows what was read from it - salary, tax deducted, interest, each sale - and, if you do not have it yet, how to get it. Drop the same kind again and you are asked first: replace it, or keep both.",
+          "say": "Every document shows what was read from it - salary, tax deducted, interest, each sale - and, if you do not have it yet, how to get it. Drop the same kind again and you are asked first: replace it, or keep both. A second Form 16 from the same employer is asked about too - a revised one replaces the first; one from another employer is a job change, and both count.",
           "target": ".mr-dgrid",
           "open": ".mr-node[data-step='gather']"
         },
@@ -87,7 +87,7 @@
         },
         {
           "title": "Do the documents agree?",
-          "say": "Form 16's tax deducted beside 26AS, and salary and interest beside the AIS. A gap is shown to you before the department finds it.",
+          "say": "Form 16's tax deducted beside 26AS, and salary and interest beside the AIS. Two employers in a year? Each took off the standard deduction - the return takes it once, and the check says so. A gap is shown to you before the department finds it.",
           "target": ".mr-tmap|.mr-chk",
           "open": ".mr-node[data-step='check']"
         },
@@ -117,7 +117,7 @@
         },
         {
           "title": "Salary arrears",
-          "say": "Arrears for an earlier year: each year's income and regime, and the relief under section 89 worked out, with a reminder to file Form 10E.",
+          "say": "Arrears for an earlier year: each year's income and regime, and the relief under section 89 worked out, with a reminder to file Form 10E - even for a year over fifty lakh, with that year's surcharge.",
           "target": "section.card:has(#mr-ar-add)",
           "open": ".mr-node[data-step='review']"
         },
@@ -129,7 +129,7 @@
         },
         {
           "title": "Foreign assets",
-          "say": "A resident's bank accounts, shares and property abroad, for Schedule FA.",
+          "say": "A resident's bank accounts, shares and property abroad, accounts you can sign for, trusts and other income from outside India - for Schedule FA.",
           "target": "section.card:has(#mr-fa-add)",
           "open": ".mr-node[data-step='review']"
         },
@@ -147,7 +147,7 @@
         },
         {
           "title": "Business or profession",
-          "say": "Presumptive income under 44AD, 44ADA or 44AE, or your own profit and loss. Receipts can come from your bank statement. The form follows: ITR-4, or ITR-3.",
+          "say": "Presumptive income under 44AD, 44ADA or 44AE, or your own profit and loss. Receipts can come from your bank statement. Cash received and paid decide the tax-audit limit; left 44AD in the last five years, and it stays closed. GST turnover per GSTIN, typed or read from your GSTR-3B. The form follows: ITR-4, or ITR-3.",
           "target": "section.card:has(#b-kind)",
           "open": ".mr-node[data-step='review']"
         },
@@ -171,13 +171,13 @@
         },
         {
           "title": "Capital gains",
-          "say": "Every sale from a CAMS or broker statement, or typed: shares and funds with grandfathering, and a house or land with the cheaper of the two rates. Exemptions under 54, 54EC and 54F.",
+          "say": "Every sale from a CAMS or broker statement, or typed: shares and funds with grandfathering, and a house or land with the cheaper of the two rates. Exemptions under 54, 54EC and 54F - more than one on a sale, each checked against its time limit. A CAMS or KFintech PDF is read too.",
           "target": "section.card:has(#mr-cg-add)",
           "open": ".mr-node[data-step='review']"
         },
         {
           "title": "Losses brought forward",
-          "say": "Losses from earlier years, set off this year and carried on - or filled from last year's filed return.",
+          "say": "Losses from earlier years, set off this year and carried on - or filled from last year's filed ITR-2 or ITR-3.",
           "target": "section.card:has(#mr-loss-add)",
           "open": ".mr-node[data-step='review']"
         },
@@ -213,7 +213,7 @@
         },
         {
           "title": "Updated return",
-          "say": "Missed something in an earlier year? The updated return, ITR-U: the extra tax, interest and the additional tax worked out, and whether you can file one at all.",
+          "say": "Missed something in an earlier year? The updated return, ITR-U: the extra tax, interest and the additional tax worked out at that year's rates - capital gains, surcharge and interest for each instalment - and whether you can file one at all.",
           "target": "section.card:has([data-iurow])",
           "open": ".mr-node[data-step='file']"
         }
@@ -232,7 +232,7 @@
     }
   },
   "returns": "record",
-  "version": 4,
+  "version": 5,
   "status": "published",
   "description_nl": "2026-10-06: the My return walk - the five steps, the documents, the checks, the two regimes, the review and the file; tours/sf-myreturn.json says the same. 2026-10-07: rewritten for what shipped on 6-7 October (tools/make_guides_wave4.py).",
   "test_cases": [
@@ -280,7 +280,7 @@
           },
           {
             "title": "What each one gave",
-            "say": "Every document shows what was read from it - salary, tax deducted, interest, each sale - and, if you do not have it yet, how to get it. Drop the same kind again and you are asked first: replace it, or keep both.",
+            "say": "Every document shows what was read from it - salary, tax deducted, interest, each sale - and, if you do not have it yet, how to get it. Drop the same kind again and you are asked first: replace it, or keep both. A second Form 16 from the same employer is asked about too - a revised one replaces the first; one from another employer is a job change, and both count.",
             "target": ".mr-dgrid",
             "open": ".mr-node[data-step='gather']"
           },
@@ -296,7 +296,7 @@
           },
           {
             "title": "Do the documents agree?",
-            "say": "Form 16's tax deducted beside 26AS, and salary and interest beside the AIS. A gap is shown to you before the department finds it.",
+            "say": "Form 16's tax deducted beside 26AS, and salary and interest beside the AIS. Two employers in a year? Each took off the standard deduction - the return takes it once, and the check says so. A gap is shown to you before the department finds it.",
             "target": ".mr-tmap|.mr-chk",
             "open": ".mr-node[data-step='check']"
           },
@@ -326,7 +326,7 @@
           },
           {
             "title": "Salary arrears",
-            "say": "Arrears for an earlier year: each year's income and regime, and the relief under section 89 worked out, with a reminder to file Form 10E.",
+            "say": "Arrears for an earlier year: each year's income and regime, and the relief under section 89 worked out, with a reminder to file Form 10E - even for a year over fifty lakh, with that year's surcharge.",
             "target": "section.card:has(#mr-ar-add)",
             "open": ".mr-node[data-step='review']"
           },
@@ -338,7 +338,7 @@
           },
           {
             "title": "Foreign assets",
-            "say": "A resident's bank accounts, shares and property abroad, for Schedule FA.",
+            "say": "A resident's bank accounts, shares and property abroad, accounts you can sign for, trusts and other income from outside India - for Schedule FA.",
             "target": "section.card:has(#mr-fa-add)",
             "open": ".mr-node[data-step='review']"
           },
@@ -356,7 +356,7 @@
           },
           {
             "title": "Business or profession",
-            "say": "Presumptive income under 44AD, 44ADA or 44AE, or your own profit and loss. Receipts can come from your bank statement. The form follows: ITR-4, or ITR-3.",
+            "say": "Presumptive income under 44AD, 44ADA or 44AE, or your own profit and loss. Receipts can come from your bank statement. Cash received and paid decide the tax-audit limit; left 44AD in the last five years, and it stays closed. GST turnover per GSTIN, typed or read from your GSTR-3B. The form follows: ITR-4, or ITR-3.",
             "target": "section.card:has(#b-kind)",
             "open": ".mr-node[data-step='review']"
           },
@@ -380,13 +380,13 @@
           },
           {
             "title": "Capital gains",
-            "say": "Every sale from a CAMS or broker statement, or typed: shares and funds with grandfathering, and a house or land with the cheaper of the two rates. Exemptions under 54, 54EC and 54F.",
+            "say": "Every sale from a CAMS or broker statement, or typed: shares and funds with grandfathering, and a house or land with the cheaper of the two rates. Exemptions under 54, 54EC and 54F - more than one on a sale, each checked against its time limit. A CAMS or KFintech PDF is read too.",
             "target": "section.card:has(#mr-cg-add)",
             "open": ".mr-node[data-step='review']"
           },
           {
             "title": "Losses brought forward",
-            "say": "Losses from earlier years, set off this year and carried on - or filled from last year's filed return.",
+            "say": "Losses from earlier years, set off this year and carried on - or filled from last year's filed ITR-2 or ITR-3.",
             "target": "section.card:has(#mr-loss-add)",
             "open": ".mr-node[data-step='review']"
           },
@@ -422,7 +422,7 @@
           },
           {
             "title": "Updated return",
-            "say": "Missed something in an earlier year? The updated return, ITR-U: the extra tax, interest and the additional tax worked out, and whether you can file one at all.",
+            "say": "Missed something in an earlier year? The updated return, ITR-U: the extra tax, interest and the additional tax worked out at that year's rates - capital gains, surcharge and interest for each instalment - and whether you can file one at all.",
             "target": "section.card:has([data-iurow])",
             "open": ".mr-node[data-step='file']"
           }

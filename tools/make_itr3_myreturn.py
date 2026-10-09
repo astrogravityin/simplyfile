@@ -43,15 +43,17 @@ def save(c, note=""):
 
 def knob(c, name, default, label=None):
     """A knob on a record chip that hands its params back (settings, words): param, field, and the no-args test."""
+    changed = True
     for p in c["params"]:
         if p["name"] == name:
+            changed = p["default"] != default        # 2026-10-08: an unchanged word keeps its test's answer ({product} is filled there)
             p["default"] = default
             break
     else:
         c["params"].append({"name": name, "type": "text" if isinstance(default, str) else "json", "default": default, "label": label or name.replace("_", " ")})
     c["expr"]["fields"][name] = "$" + name
     for t in c["test_cases"]:
-        if isinstance(t.get("expect_value"), dict) and not t.get("args"):
+        if isinstance(t.get("expect_value"), dict) and not t.get("args") and changed:
             t["expect_value"][name] = default
 
 
@@ -300,6 +302,8 @@ rows += [
     {"path": GEN2 + "AuditInfo.IncDclrdUs", "from": "biz3.declared_us"},
     {"path": GEN2 + "AuditInfo.LiableSec44ABflg", "from": "=N"},
     {"path": GEN2 + "NatOfBus.NatureOfBusiness", "from": "biz3.nature_pl", **z},
+    # 2026-10-08 wave 4: Schedule GST - the turnover per GSTIN (typed, or read from a GSTR-3B summary)
+    {"path": "ITR3.ScheduleGST.TurnoverGrsRcptForGSTIN", "each": "gst_rows3", "item": {"GSTINNo": "gstin", "AmtTurnGrossRcptGSTIN": "turnover"}},
     # Part A-P&L 61-63: presumptive income (44AD / 44ADA / 44AE)
     {"path": PL + "NatOfBus44AD", "from": "biz.nature_ad", **z},
     {"path": PL + "PersumptiveInc44AD.GrsTrnOverOrReceipt", "from": "biz.ad_receipts", **z},
@@ -399,12 +403,12 @@ W = {
     "pl_income": "Business income {income} (net profit) on receipts {receipts}",
     "ca_h": "This return needs a chartered accountant",
     "ca_audit_turnover": "Receipts of {receipts} are over the {limit} tax-audit limit (section 44AB): the accounts must be audited by a chartered accountant "
-                         "and the audit report filed before the return. My return does not do audits - get a CA. SimplyFile's CA-firm side "
+                         "and the audit report filed before the return. My return does not do audits - get a CA. {product}'s CA-firm side "
                          "(Intake, Reconcile, Compute, Tax audit) handles them.",
     "ca_audit_lower": "The profit typed ({net}) is below the presumptive {deemed} and your income is above the basic exemption: section 44AB(e) needs a tax "
-                      "audit by a chartered accountant. My return does not do audits - get a CA (SimplyFile's CA-firm side handles them), or take the presumptive basis.",
+                      "audit by a chartered accountant. My return does not do audits - get a CA ({product}'s CA-firm side handles them), or take the presumptive basis.",
     "ca_loss": "A business loss ({net}) is carried forward only with books of account and a return a CA prepares - My return does not file it. Get a CA "
-               "(SimplyFile's CA-firm side handles books, audits and losses).",
+               "({product}'s CA-firm side handles books, audits and losses).",
 }
 for k, v in W.items():
     knob(u, k, v)

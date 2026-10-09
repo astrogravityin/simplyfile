@@ -1,0 +1,877 @@
+{
+  "chip_id": "myreturn.cg_window",
+  "kind": "accessor",
+  "set": "myreturn",
+  "label": "My return: is an exemption's investment in time? (54 / 54F / 54EC / CGAS)",
+  "aliases": [
+    "54 time limit",
+    "54ec 6 months",
+    "cgas due date",
+    "construction 3 years"
+  ],
+  "params": [
+    {
+      "name": "kind",
+      "type": "text",
+      "default": "",
+      "label": "54 / 54F / 54EC"
+    },
+    {
+      "name": "sold",
+      "type": "text",
+      "default": "",
+      "label": "the day of the transfer (YYYY-MM-DD)"
+    },
+    {
+      "name": "on",
+      "type": "text",
+      "default": "",
+      "label": "the day the house was bought / built or the bonds were bought"
+    },
+    {
+      "name": "build",
+      "type": "boolean",
+      "default": false,
+      "label": "the new house is built (not bought)"
+    },
+    {
+      "name": "invested",
+      "type": "number",
+      "default": 0,
+      "label": "the amount invested"
+    },
+    {
+      "name": "cgas",
+      "type": "number",
+      "default": 0,
+      "label": "deposited in the Capital Gains Accounts Scheme"
+    },
+    {
+      "name": "cgas_on",
+      "type": "text",
+      "default": "",
+      "label": "the day of the deposit"
+    },
+    {
+      "name": "ay_year",
+      "type": "number",
+      "default": 2026,
+      "label": "the AY's first year (the deposit's last day is in it)"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "invest_ok": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "not",
+                  "item": {
+                    "op": "eq",
+                    "left": "$sold",
+                    "right": ""
+                  }
+                },
+                {
+                  "op": "not",
+                  "item": {
+                    "op": "eq",
+                    "left": "$on",
+                    "right": ""
+                  }
+                }
+              ]
+            },
+            "then": {
+              "vop": "choose",
+              "cases": [
+                {
+                  "when": {
+                    "op": "eq",
+                    "left": "$kind",
+                    "right": "54EC"
+                  },
+                  "then": {
+                    "vop": "choose",
+                    "cases": [
+                      {
+                        "when": {
+                          "op": "all",
+                          "items": [
+                            {
+                              "op": "ge",
+                              "left": "$on",
+                              "right": "$sold"
+                            },
+                            {
+                              "op": "le",
+                              "left": "$on",
+                              "right": {
+                                "vop": "date_shift",
+                                "date": "$sold",
+                                "months": {
+                                  "vop": "get",
+                                  "value": {
+                                    "chip": "myreturn.cg_rules",
+                                    "args": {}
+                                  },
+                                  "path": "ec_months"
+                                }
+                              }
+                            }
+                          ]
+                        },
+                        "then": true
+                      }
+                    ],
+                    "else": false
+                  }
+                }
+              ],
+              "else": {
+                "vop": "choose",
+                "cases": [
+                  {
+                    "when": {
+                      "op": "all",
+                      "items": [
+                        {
+                          "op": "ge",
+                          "left": "$on",
+                          "right": {
+                            "vop": "date_shift",
+                            "date": "$sold",
+                            "months": {
+                              "vop": "mul",
+                              "a": {
+                                "vop": "get",
+                                "value": {
+                                  "chip": "myreturn.cg_rules",
+                                  "args": {}
+                                },
+                                "path": "ex_before_months"
+                              },
+                              "b": -1
+                            }
+                          }
+                        },
+                        {
+                          "op": "le",
+                          "left": "$on",
+                          "right": {
+                            "vop": "date_shift",
+                            "date": "$sold",
+                            "months": {
+                              "vop": "choose",
+                              "cases": [
+                                {
+                                  "when": {
+                                    "op": "eq",
+                                    "left": "$build",
+                                    "right": true
+                                  },
+                                  "then": {
+                                    "vop": "get",
+                                    "value": {
+                                      "chip": "myreturn.cg_rules",
+                                      "args": {}
+                                    },
+                                    "path": "build_months"
+                                  }
+                                }
+                              ],
+                              "else": {
+                                "vop": "get",
+                                "value": {
+                                  "chip": "myreturn.cg_rules",
+                                  "args": {}
+                                },
+                                "path": "ex_after_months"
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    "then": true
+                  }
+                ],
+                "else": false
+              }
+            }
+          }
+        ],
+        "else": true
+      },
+      "cgas_ok": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "any",
+              "items": [
+                {
+                  "op": "eq",
+                  "left": "$kind",
+                  "right": "54EC"
+                },
+                {
+                  "op": "eq",
+                  "left": "$cgas_on",
+                  "right": ""
+                },
+                {
+                  "op": "le",
+                  "left": "$cgas",
+                  "right": 0
+                }
+              ]
+            },
+            "then": true
+          }
+        ],
+        "else": {
+          "vop": "choose",
+          "cases": [
+            {
+              "when": {
+                "op": "all",
+                "items": [
+                  {
+                    "op": "le",
+                    "left": "$cgas_on",
+                    "right": {
+                      "vop": "template",
+                      "text": "{y}-{md}",
+                      "values": {
+                        "vop": "record",
+                        "fields": {
+                          "y": "$ay_year",
+                          "md": {
+                            "vop": "get",
+                            "value": {
+                              "chip": "myreturn.cg_rules",
+                              "args": {}
+                            },
+                            "path": "cgas_by"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "op": "any",
+                    "items": [
+                      {
+                        "op": "eq",
+                        "left": "$sold",
+                        "right": ""
+                      },
+                      {
+                        "op": "ge",
+                        "left": "$cgas_on",
+                        "right": "$sold"
+                      }
+                    ]
+                  }
+                ]
+              },
+              "then": true
+            }
+          ],
+          "else": false
+        }
+      },
+      "from": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "eq",
+              "left": "$kind",
+              "right": "54EC"
+            },
+            "then": "$sold"
+          }
+        ],
+        "else": {
+          "vop": "date_shift",
+          "date": "$sold",
+          "months": {
+            "vop": "mul",
+            "a": {
+              "vop": "get",
+              "value": {
+                "chip": "myreturn.cg_rules",
+                "args": {}
+              },
+              "path": "ex_before_months"
+            },
+            "b": -1
+          }
+        }
+      },
+      "to": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "eq",
+              "left": "$kind",
+              "right": "54EC"
+            },
+            "then": {
+              "vop": "date_shift",
+              "date": "$sold",
+              "months": {
+                "vop": "get",
+                "value": {
+                  "chip": "myreturn.cg_rules",
+                  "args": {}
+                },
+                "path": "ec_months"
+              }
+            }
+          }
+        ],
+        "else": {
+          "vop": "date_shift",
+          "date": "$sold",
+          "months": {
+            "vop": "choose",
+            "cases": [
+              {
+                "when": {
+                  "op": "eq",
+                  "left": "$build",
+                  "right": true
+                },
+                "then": {
+                  "vop": "get",
+                  "value": {
+                    "chip": "myreturn.cg_rules",
+                    "args": {}
+                  },
+                  "path": "build_months"
+                }
+              }
+            ],
+            "else": {
+              "vop": "get",
+              "value": {
+                "chip": "myreturn.cg_rules",
+                "args": {}
+              },
+              "path": "ex_after_months"
+            }
+          }
+        }
+      },
+      "cgas_by": {
+        "vop": "template",
+        "text": "{y}-{md}",
+        "values": {
+          "vop": "record",
+          "fields": {
+            "y": "$ay_year",
+            "md": {
+              "vop": "get",
+              "value": {
+                "chip": "myreturn.cg_rules",
+                "args": {}
+              },
+              "path": "cgas_by"
+            }
+          }
+        }
+      },
+      "why": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "eq",
+              "left": {
+                "vop": "choose",
+                "cases": [
+                  {
+                    "when": {
+                      "op": "all",
+                      "items": [
+                        {
+                          "op": "not",
+                          "item": {
+                            "op": "eq",
+                            "left": "$sold",
+                            "right": ""
+                          }
+                        },
+                        {
+                          "op": "not",
+                          "item": {
+                            "op": "eq",
+                            "left": "$on",
+                            "right": ""
+                          }
+                        }
+                      ]
+                    },
+                    "then": {
+                      "vop": "choose",
+                      "cases": [
+                        {
+                          "when": {
+                            "op": "eq",
+                            "left": "$kind",
+                            "right": "54EC"
+                          },
+                          "then": {
+                            "vop": "choose",
+                            "cases": [
+                              {
+                                "when": {
+                                  "op": "all",
+                                  "items": [
+                                    {
+                                      "op": "ge",
+                                      "left": "$on",
+                                      "right": "$sold"
+                                    },
+                                    {
+                                      "op": "le",
+                                      "left": "$on",
+                                      "right": {
+                                        "vop": "date_shift",
+                                        "date": "$sold",
+                                        "months": {
+                                          "vop": "get",
+                                          "value": {
+                                            "chip": "myreturn.cg_rules",
+                                            "args": {}
+                                          },
+                                          "path": "ec_months"
+                                        }
+                                      }
+                                    }
+                                  ]
+                                },
+                                "then": true
+                              }
+                            ],
+                            "else": false
+                          }
+                        }
+                      ],
+                      "else": {
+                        "vop": "choose",
+                        "cases": [
+                          {
+                            "when": {
+                              "op": "all",
+                              "items": [
+                                {
+                                  "op": "ge",
+                                  "left": "$on",
+                                  "right": {
+                                    "vop": "date_shift",
+                                    "date": "$sold",
+                                    "months": {
+                                      "vop": "mul",
+                                      "a": {
+                                        "vop": "get",
+                                        "value": {
+                                          "chip": "myreturn.cg_rules",
+                                          "args": {}
+                                        },
+                                        "path": "ex_before_months"
+                                      },
+                                      "b": -1
+                                    }
+                                  }
+                                },
+                                {
+                                  "op": "le",
+                                  "left": "$on",
+                                  "right": {
+                                    "vop": "date_shift",
+                                    "date": "$sold",
+                                    "months": {
+                                      "vop": "choose",
+                                      "cases": [
+                                        {
+                                          "when": {
+                                            "op": "eq",
+                                            "left": "$build",
+                                            "right": true
+                                          },
+                                          "then": {
+                                            "vop": "get",
+                                            "value": {
+                                              "chip": "myreturn.cg_rules",
+                                              "args": {}
+                                            },
+                                            "path": "build_months"
+                                          }
+                                        }
+                                      ],
+                                      "else": {
+                                        "vop": "get",
+                                        "value": {
+                                          "chip": "myreturn.cg_rules",
+                                          "args": {}
+                                        },
+                                        "path": "ex_after_months"
+                                      }
+                                    }
+                                  }
+                                }
+                              ]
+                            },
+                            "then": true
+                          }
+                        ],
+                        "else": false
+                      }
+                    }
+                  }
+                ],
+                "else": true
+              },
+              "right": false
+            },
+            "then": {
+              "vop": "template",
+              "text": "ex_late_{k}",
+              "values": {
+                "vop": "record",
+                "fields": {
+                  "k": "$kind"
+                }
+              }
+            }
+          },
+          {
+            "when": {
+              "op": "eq",
+              "left": {
+                "vop": "choose",
+                "cases": [
+                  {
+                    "when": {
+                      "op": "any",
+                      "items": [
+                        {
+                          "op": "eq",
+                          "left": "$kind",
+                          "right": "54EC"
+                        },
+                        {
+                          "op": "eq",
+                          "left": "$cgas_on",
+                          "right": ""
+                        },
+                        {
+                          "op": "le",
+                          "left": "$cgas",
+                          "right": 0
+                        }
+                      ]
+                    },
+                    "then": true
+                  }
+                ],
+                "else": {
+                  "vop": "choose",
+                  "cases": [
+                    {
+                      "when": {
+                        "op": "all",
+                        "items": [
+                          {
+                            "op": "le",
+                            "left": "$cgas_on",
+                            "right": {
+                              "vop": "template",
+                              "text": "{y}-{md}",
+                              "values": {
+                                "vop": "record",
+                                "fields": {
+                                  "y": "$ay_year",
+                                  "md": {
+                                    "vop": "get",
+                                    "value": {
+                                      "chip": "myreturn.cg_rules",
+                                      "args": {}
+                                    },
+                                    "path": "cgas_by"
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "op": "any",
+                            "items": [
+                              {
+                                "op": "eq",
+                                "left": "$sold",
+                                "right": ""
+                              },
+                              {
+                                "op": "ge",
+                                "left": "$cgas_on",
+                                "right": "$sold"
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      "then": true
+                    }
+                  ],
+                  "else": false
+                }
+              },
+              "right": false
+            },
+            "then": "ex_cgas_late"
+          },
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "not",
+                  "item": {
+                    "op": "all",
+                    "items": [
+                      {
+                        "op": "not",
+                        "item": {
+                          "op": "eq",
+                          "left": "$sold",
+                          "right": ""
+                        }
+                      },
+                      {
+                        "op": "not",
+                        "item": {
+                          "op": "eq",
+                          "left": "$on",
+                          "right": ""
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "op": "gt",
+                  "left": "$invested",
+                  "right": 0
+                }
+              ]
+            },
+            "then": "ex_no_date"
+          }
+        ],
+        "else": ""
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-08: s.54 / 54F: the new house bought within 1 year before or 2 years after the transfer, or built within 3 years after it; s.54EC: the bonds bought within 6 months after the transfer; s.54(2) / 54F(4): what is not invested by the due date of the return u/s 139(1) counts only if deposited in the Capital Gains Accounts Scheme by that day. Out of time: not counted (invest_ok / cgas_ok false, and why). A date not typed is taken as in time and said so (ex_no_date) - Table D asks for it.",
+  "test_cases": [
+    {
+      "args": {
+        "kind": "54",
+        "sold": "2025-06-10",
+        "on": "2024-07-01",
+        "invested": 1
+      },
+      "expect_value": {
+        "invest_ok": true,
+        "cgas_ok": true,
+        "from": "2024-06-10",
+        "to": "2027-06-10",
+        "cgas_by": "2026-07-31",
+        "why": ""
+      }
+    },
+    {
+      "args": {
+        "kind": "54",
+        "sold": "2025-06-10",
+        "on": "2024-06-01",
+        "invested": 1
+      },
+      "expect_value": {
+        "invest_ok": false,
+        "cgas_ok": true,
+        "from": "2024-06-10",
+        "to": "2027-06-10",
+        "cgas_by": "2026-07-31",
+        "why": "ex_late_54"
+      }
+    },
+    {
+      "args": {
+        "kind": "54",
+        "sold": "2025-06-10",
+        "on": "2027-06-10"
+      },
+      "expect_value": {
+        "invest_ok": true,
+        "cgas_ok": true,
+        "from": "2024-06-10",
+        "to": "2027-06-10",
+        "cgas_by": "2026-07-31",
+        "why": ""
+      }
+    },
+    {
+      "args": {
+        "kind": "54",
+        "sold": "2025-06-10",
+        "on": "2027-06-11"
+      },
+      "expect_value": {
+        "invest_ok": false,
+        "cgas_ok": true,
+        "from": "2024-06-10",
+        "to": "2027-06-10",
+        "cgas_by": "2026-07-31",
+        "why": "ex_late_54"
+      }
+    },
+    {
+      "args": {
+        "kind": "54F",
+        "sold": "2025-06-10",
+        "on": "2028-05-01",
+        "build": true
+      },
+      "expect_value": {
+        "invest_ok": true,
+        "cgas_ok": true,
+        "from": "2024-06-10",
+        "to": "2028-06-10",
+        "cgas_by": "2026-07-31",
+        "why": ""
+      }
+    },
+    {
+      "args": {
+        "kind": "54F",
+        "sold": "2025-06-10",
+        "on": "2028-05-01"
+      },
+      "expect_value": {
+        "invest_ok": false,
+        "cgas_ok": true,
+        "from": "2024-06-10",
+        "to": "2027-06-10",
+        "cgas_by": "2026-07-31",
+        "why": "ex_late_54F"
+      }
+    },
+    {
+      "args": {
+        "kind": "54EC",
+        "sold": "2025-06-10",
+        "on": "2025-12-10"
+      },
+      "expect_value": {
+        "invest_ok": true,
+        "cgas_ok": true,
+        "from": "2025-06-10",
+        "to": "2025-12-10",
+        "cgas_by": "2026-07-31",
+        "why": ""
+      }
+    },
+    {
+      "args": {
+        "kind": "54EC",
+        "sold": "2025-06-10",
+        "on": "2025-12-11"
+      },
+      "expect_value": {
+        "invest_ok": false,
+        "cgas_ok": true,
+        "from": "2025-06-10",
+        "to": "2025-12-10",
+        "cgas_by": "2026-07-31",
+        "why": "ex_late_54EC"
+      }
+    },
+    {
+      "args": {
+        "kind": "54EC",
+        "sold": "2025-06-10",
+        "on": "2025-06-01"
+      },
+      "expect_value": {
+        "invest_ok": false,
+        "cgas_ok": true,
+        "from": "2025-06-10",
+        "to": "2025-12-10",
+        "cgas_by": "2026-07-31",
+        "why": "ex_late_54EC"
+      }
+    },
+    {
+      "args": {
+        "kind": "54",
+        "sold": "2025-06-10",
+        "cgas": 500000,
+        "cgas_on": "2026-07-31"
+      },
+      "expect_value": {
+        "invest_ok": true,
+        "cgas_ok": true,
+        "from": "2024-06-10",
+        "to": "2027-06-10",
+        "cgas_by": "2026-07-31",
+        "why": ""
+      }
+    },
+    {
+      "args": {
+        "kind": "54",
+        "sold": "2025-06-10",
+        "cgas": 500000,
+        "cgas_on": "2026-08-01"
+      },
+      "expect_value": {
+        "invest_ok": true,
+        "cgas_ok": false,
+        "from": "2024-06-10",
+        "to": "2027-06-10",
+        "cgas_by": "2026-07-31",
+        "why": "ex_cgas_late"
+      }
+    },
+    {
+      "args": {
+        "kind": "54",
+        "sold": "",
+        "invested": 900000
+      },
+      "expect_value": {
+        "invest_ok": true,
+        "cgas_ok": true,
+        "from": null,
+        "to": null,
+        "cgas_by": "2026-07-31",
+        "why": "ex_no_date"
+      }
+    }
+  ]
+}

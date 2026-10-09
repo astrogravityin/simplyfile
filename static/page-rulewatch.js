@@ -88,6 +88,8 @@ export const rulewatchPage = (name) => async (host) => {
       const btn = e.currentTarget;
       const ay = host.querySelector('#tw-ay').value;
       S.ai = host.querySelector('#tw-ai') ? host.querySelector('#tw-ai').value : '';
+      const pick = (S.ais || []).find((a) => a.provider === S.ai) || (S.ais || []).find((a) => a.ready) || {};
+      btn.dataset.work = w('fetching', { ai: pick.label || w('ai_auto') });   // the AI actually asked
       try { d = await busy(btn, () => api(`${A}/${encodeURIComponent(ay)}/fetch`, { method: 'POST', body: { provider: S.ai } })); }
       catch (x) { toast(x.message, 'bad', 10); return; }
       S.pick = new Set(d.rows.filter((r) => r.state === 'changed').map((r) => r.id)); draw();

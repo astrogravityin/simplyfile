@@ -198,5 +198,74 @@ KAV.mkdir(exist_ok=True)
     ["20/11/2025", "NEFT CR-DEMO CLIENT ONE PVT LTD-INV 117", "N2", "", "4,05,000.00", "14,09,300.00"],
     ["10/01/2026", "NEFT CR-DEMO CLIENT THREE-WORKSHOP", "N3", "", "2,40,000.00", "16,49,300.00"],
     ["31/03/2026", "INT.PD:0000000000:01-01-2026 TO 31-03-2026", "", "", "2,300.00", "16,51,600.00"]]))
+
+# --- 2026-10-08, wave 4 in the films (parts 9-11) - kept out of self/ (tools/e2e_myreturn.py reads every file there) ----------------
+# a second employer (weekend teaching, another TAN: the two-employer check), the AIS and 26AS with that employer too - and the 26AS's
+# Part IV (Part A2) with the plot buyer's 194IA TDS; the CAMS statement as a PDF; last year's filed ITR-3 (its losses); a revised
+# Form 16 from Demo Software (same TAN: replace or keep both); a GSTR-3B summary for Kavya's GSTIN. All made up.
+TAN2, EMP2 = "HYDD00043F", "DEMO TRAINING ACADEMY LLP"
+f16b = [
+    "FORM NO. 16 [See rule 31(1)(a)]", "PART A",
+    "Certificate under section 203 of the Income-tax Act, 1961 for tax deducted at source on salary paid to an employee under section 192",
+    "Certificate No. DEMO043 Last updated on 12-Jun-2026",
+    "Name and address of the Employer/Specified Bank", f"{EMP2}, Demo Learning Centre, Hyderabad 500032",
+    "Name and address of the Employee/ Specified senior citizen", "ANIL KUMAR DEMO, Flat 42, Demo Residency, Hyderabad",
+    "PAN of the Deductor TAN of the Deductor PAN of the Employee/ specified senior citizen",
+    f"AAACD0043D {TAN2} {PAN}",
+    "Assessment Year 2026-27 Period with the Employer From 01-Apr-2025 To 31-Mar-2026",
+    "Quarter(s) Receipt Numbers Amount paid/ credited Amount of tax deducted (Rs.) Amount of tax deposited/ remitted (Rs.)",
+    "Q1 DEMOQ5 60,000.00 1,500.00 1,500.00", "Q2 DEMOQ6 60,000.00 1,500.00 1,500.00",
+    "Q3 DEMOQ7 60,000.00 1,500.00 1,500.00", "Q4 DEMOQ8 60,000.00 1,500.00 1,500.00",
+    "Total (Rs.) 2,40,000.00 6,000.00 6,000.00",
+    "<page>",
+    "PART B (Annexure-I)", "Details of Salary Paid and any other income and tax deducted",
+    "A Whether opting out of taxation u/s 115BAC(1A)? No",
+    "1. Gross Salary",
+    "(a) Salary as per provisions contained in section 17(1) 2,40,000.00",
+    "(d) Total 2,40,000.00",
+    "4. Less: Deductions under section 16",
+    "(a) Standard deduction under section 16(ia) 75,000.00",
+    "6. Income chargeable under the head \"Salaries\" 1,65,000.00",
+    "12. Total taxable income 1,65,000.00", "19. Net tax payable 6,000.00",
+]
+(MORE / "02 Form 16 - Demo Training Academy - AY 2026-27.pdf").write_bytes(pdf(f16b))
+ais2 = ais[:5] + [f"2 TDS-192 Salary received {EMP2} ({TAN2}) 4 2,40,000"] + [ais[5].replace("2 TDS-194A", "3 TDS-194A")] + ais[6:]
+(MORE / "03 AIS - ZZDPK0042Q - FY 2025-26.pdf").write_bytes(pdf(ais2, PAN.lower() + "15041988"))
+BUYER = ("DEMO BUYER", "ZZDPB0050B")      # the plot's buyer (tools/showcase/pre10.py types the same PAN on the plot's row)
+s26b = s26.split("\n") + [
+    f"^3^{EMP2}^{TAN2}^^^^^240000.00^6000.00^6000.00",
+    "^^Sr. No.^Section^Transaction Date^Status of Booking*^Date of Booking^Remarks**^Amount Paid / Credited(Rs.)^Tax Deducted ##(Rs.)^TDS Deposited(Rs.)",
+    "^^1^192^31-Mar-2026^F^15-May-2026^-^240000.00^6000.00^6000.00",
+    "^PART-IV - Details of Tax Deducted at Source u/s 194IA/ 194IB/ 194M/ 194S (For Seller/Landlord of Property/Contractors or Professionals/Seller of Virtual Digital Asset)^",
+    "^Sr. No.^Acknowledgement Number^Name of Deductor^PAN of Deductor^Transaction Date^Total Transaction Amount (Rs.)^Total TDS Deposited (Rs.)^Total Amount Deposited other than TDS (Rs.)",
+    f"^1^DEMOACK42^{BUYER[0]}^{BUYER[1]}^10-Nov-2025^4800000.00^48000.00^0.00",
+    "^^Sr. No.^TDS Certificate Number^Section^Date of Deposit^Status of Booking*^Date of Booking^Demand Payment^TDS Deposited (Rs.)^Total Amount Deposited other than TDS (Rs.)",
+    "^^1^-^194IA^05-Dec-2025^F^10-Dec-2025^0.00^48000.00^0.00",
+    "^PART-V - Details of Transactions under Proviso to section 194B^"]
+(MORE / "04 26AS - ZZDPK0042Q - AY 2026-27.txt").write_text("\n".join(s26b), encoding="utf-8")
+cas = ["CAMS - Consolidated Account Statement", "Capital Gain / Loss Statement for the period 01-Apr-2025 to 31-Mar-2026",
+       "Investor ANIL KUMAR DEMO PAN ZZDPK0042Q - Demo Registrar - all made up",
+       "Demo Bluechip Equity Fund - Growth ISIN: INF000Z01011 Folio 4201",
+       "Redemption 10-Sep-2025 800.000 2,40,000.00 15-Jun-2017 80,000.00 1,20,000.00",
+       "Demo Flexicap Equity Fund - Growth ISIN: INF000Z01029 Folio 4202",
+       "Redemption 10-Sep-2025 400.000 1,10,000.00 12-Mar-2020 40,000.00",
+       "Demo Midcap Equity Fund - Growth ISIN: INF000Z01037 Folio 4203",
+       "Redemption 10-Aug-2025 200.000 52,000.00 10-Jan-2025 40,000.00",
+       "Demo Gilt Fund - Growth ISIN: INF000Z01052 Folio 4204",
+       "Redemption 01-Dec-2025 100.000 2,40,000.00 10-Jan-2021 2,00,000.00"]
+(MORE / "05 CAMS capital gains - ZZDPK0042Q - FY 2025-26.pdf").write_bytes(pdf(cas))
+itr3_prev = {"ITR": {"ITR3": {"Form_ITR3": {"FormName": "ITR-3", "AssessmentYear": "2025"},
+                              "PartA_GEN1": {"PersonalInfo": {"PAN": PAN, "AssesseeName": {"FirstName": NAME[0], "MiddleName": NAME[1], "SurNameOrOrgName": NAME[2]},
+                                                              "DOB": DOB}},
+                              "Verification": {"Date": "2025-07-28"},
+                              "ScheduleCFL": {"LossCFCurrentAssmntYear2025": {"CarryFwdLossDetail": {"DateOfFiling": "2024-07-25", "TotalSTCGPTILossCF": 20000}},
+                                              "CurrentAYloss": {"LossSummaryDetail": {"TotalLTCGPTILossCF": 15000}}}}}}
+(MORE / "07 ITR-3 AY 2025-26 filed - ZZDPK0042Q.json").write_text(json.dumps(itr3_prev, indent=1), encoding="utf-8")
+(AGAIN / "Form 16 - Demo Software - AY 2026-27 - revised.pdf").write_bytes(pdf(
+    [x.replace("Last updated on 10-Jun-2026", "Last updated on 20-Jun-2026 (revised)") for x in f16]))
+(KAV / "GSTR-3B summary - ZZDPC0044K - FY 2025-26.csv").write_text("\n".join(
+    ["GSTIN,Tax Period,Total Taxable value,Zero rated supplies,Nil rated and exempted supplies,Non-GST supplies"]
+    + [f"36ZZDPC0044K1Z5,{m} 2025,{v},0,0,0" for m, v in (("April", 405000), ("July", 60000), ("August", 540000), ("November", 405000))]
+    + ["36ZZDPC0044K1Z5,January 2026,240000,0,0,0"]) + "\n", encoding="utf-8")
 for d in (OUT, MORE, AGAIN, HUF, KAV):
     print("wrote", d.name + ":", ", ".join(sorted(p.name for p in d.iterdir())))

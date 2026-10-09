@@ -40,14 +40,15 @@ MYRETURN = {
         {"title": "Locked PDFs", "say": "An AIS or 26AS PDF opens with its password - your PAN in small letters and your date of birth. The eye shows what you typed.",
          "target": ".mr-pw", "open": G},
         {"title": "What each one gave", "say": "Every document shows what was read from it - salary, tax deducted, interest, each sale - and, if you do not "
-         "have it yet, how to get it. Drop the same kind again and you are asked first: replace it, or keep both.",
+         "have it yet, how to get it. Drop the same kind again and you are asked first: replace it, or keep both. A second Form 16 from the same "
+         "employer is asked about too - a revised one replaces the first; one from another employer is a job change, and both count.",
          "target": ".mr-dgrid", "open": G},
         {"title": "History", "say": "Every figure you change and every document you replace is in History, with who and when. Old versions are kept, "
          "ready to download.", "target": "[data-history]"},
         {"title": "Your return at a glance", "say": "Total income, tax, and the refund due or the amount to pay - kept up to date with every document and every figure.",
          "target": ".mr-glance"},
-        {"title": "Do the documents agree?", "say": "Form 16's tax deducted beside 26AS, and salary and interest beside the AIS. A gap is shown to you before "
-         "the department finds it.", "target": ".mr-tmap|.mr-chk", "open": C},
+        {"title": "Do the documents agree?", "say": "Form 16's tax deducted beside 26AS, and salary and interest beside the AIS. Two employers in a year? Each took off the standard "
+         "deduction - the return takes it once, and the check says so. A gap is shown to you before the department finds it.", "target": ".mr-tmap|.mr-chk", "open": C},
         {"title": "New or old regime", "say": "Both regimes worked out in full, the cheaper one marked. Pick either - the other stays one click away.",
          "target": ".mr-rgs|.mr-regs", "open": CH},
         {"title": "From income to tax", "say": "Gross income, what is exempt, the deductions, the taxable income and the tax - step by step.",
@@ -57,16 +58,17 @@ MYRETURN = {
         {"title": "Residential status", "say": "Days in India this year and the years before decide resident, not ordinarily resident or non-resident - "
          "and so which income counts.", "target": card("#q-days_fy"), "open": R},
         {"title": "Salary arrears", "say": "Arrears for an earlier year: each year's income and regime, and the relief under section 89 worked out, with a "
-         "reminder to file Form 10E.", "target": card("#mr-ar-add"), "open": R},
+         "reminder to file Form 10E - even for a year over fifty lakh, with that year's surcharge.", "target": card("#mr-ar-add"), "open": R},
         {"title": "Income from outside India", "say": "Foreign salary, interest or rent, by country, with the tax paid there - relief under the treaty, or section 91 without one.",
          "target": card("#mr-fi-add"), "open": R},
-        {"title": "Foreign assets", "say": "A resident's bank accounts, shares and property abroad, for Schedule FA.", "target": card("#mr-fa-add"), "open": R},
+        {"title": "Foreign assets", "say": "A resident's bank accounts, shares and property abroad, accounts you can sign for, trusts and other income from outside India - for Schedule FA.", "target": card("#mr-fa-add"), "open": R},
         {"title": "Clubbing", "say": "Your spouse's or minor child's income that the law adds to yours - with the exemption for each child.",
          "target": card("#mr-cl-add"), "open": R},
         {"title": "House property", "say": "Self-occupied or let out, rent, municipal tax and loan interest. A co-owned house is taken by your share, and "
          "interest before the house was finished in five parts.", "target": card("#mr-house-add"), "open": R},
         {"title": "Business or profession", "say": "Presumptive income under 44AD, 44ADA or 44AE, or your own profit and loss. Receipts can come from your "
-         "bank statement. The form follows: ITR-4, or ITR-3.", "target": card("#b-kind"), "open": R},
+         "bank statement. Cash received and paid decide the tax-audit limit; left 44AD in the last five years, and it stays closed. GST turnover per "
+         "GSTIN, typed or read from your GSTR-3B. The form follows: ITR-4, or ITR-3.", "target": card("#b-kind"), "open": R},
         {"title": "Other income", "say": "Savings and deposit interest, dividends, family pension - from the AIS, or typed.",
          "target": card("#e-other-savings"), "open": R},
         {"title": "Winnings and crypto", "say": "Lottery and online games, and crypto or other virtual digital assets - taxed at thirty percent, a crypto loss set off against nothing.",
@@ -74,8 +76,9 @@ MYRETURN = {
         {"title": "Tax you paid yourself", "say": "Advance tax and self-assessment tax, with the BSR code and challan number - or read from the AIS.",
          "target": card("#mr-paid-add"), "open": R},
         {"title": "Capital gains", "say": "Every sale from a CAMS or broker statement, or typed: shares and funds with grandfathering, and a house or land "
-         "with the cheaper of the two rates. Exemptions under 54, 54EC and 54F.", "target": card("#mr-cg-add"), "open": R},
-        {"title": "Losses brought forward", "say": "Losses from earlier years, set off this year and carried on - or filled from last year's filed return.",
+         "with the cheaper of the two rates. Exemptions under 54, 54EC and 54F - more than one on a sale, each checked against its time limit. A CAMS "
+         "or KFintech PDF is read too.", "target": card("#mr-cg-add"), "open": R},
+        {"title": "Losses brought forward", "say": "Losses from earlier years, set off this year and carried on - or filled from last year's filed ITR-2 or ITR-3.",
          "target": card("#mr-loss-add"), "open": R},
         {"title": "Gifts", "say": "Gifts of money or property: from a relative or on your wedding they are free; from others, over fifty thousand in a year is income.",
          "target": card("#mr-gift-add"), "open": R},
@@ -88,7 +91,7 @@ MYRETURN = {
         {"title": "File it", "say": "Download the department's JSON for ITR-1, 2, 3 or 4, checked against its schema, and upload it on the e-filing portal.",
          "target": "#mr-json|.mr-file", "open": F},
         {"title": "Updated return", "say": "Missed something in an earlier year? The updated return, ITR-U: the extra tax, interest and the additional "
-         "tax worked out, and whether you can file one at all.", "target": card("[data-iurow]"), "open": F},
+         "tax worked out at that year's rates - capital gains, surcharge and interest for each instalment - and whether you can file one at all.", "target": card("[data-iurow]"), "open": F},
     ],
 }
 

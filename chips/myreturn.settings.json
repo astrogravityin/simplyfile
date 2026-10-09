@@ -364,6 +364,35 @@
       "type": "text",
       "default": "CountryCodeExcludingIndia",
       "label": "the department's country list: the ITR-2 schema definition that holds it (code: name)"
+    },
+    {
+      "name": "tan_kinds",
+      "type": "json",
+      "default": [
+        "form16"
+      ],
+      "label": "kinds one per employer: a second one with the same TAN is asked about (replace / keep both)"
+    },
+    {
+      "name": "gst_max",
+      "type": "number",
+      "default": 20,
+      "label": "GSTINs typed, at most"
+    },
+    {
+      "name": "itr3_cfl",
+      "type": "json",
+      "default": {
+        "form": "ITR-3",
+        "block_ay": "AY\\s*(\\d{4}-\\d{2})",
+        "other_fields": {
+          "bl": "BusLossOthThanSpecLossCF",
+          "spec": "LossFrmSpecBusCF",
+          "specified": "LossFrmSpecifiedBusCF",
+          "horse": "OthSrcLossRaceHorseCF"
+        }
+      },
+      "label": "last year's ITR-3: its Schedule CFL blocks are named by their AY (LossCFCurrentAssmntYear2025 ...) - which AY each is, read from the ITR-3 schema's own block descriptions; the business / speculation / specified-business / race-horse losses it carries"
     }
   ],
   "expr": {
@@ -396,13 +425,16 @@
       "fa_max": "$fa_max",
       "club_max": "$club_max",
       "arrears_max": "$arrears_max",
-      "countries_from": "$countries_from"
+      "countries_from": "$countries_from",
+      "tan_kinds": "$tan_kinds",
+      "gst_max": "$gst_max",
+      "itr3_cfl": "$itr3_cfl"
     }
   },
   "returns": "record",
-  "version": 15,
+  "version": 16,
   "status": "published",
-  "description_nl": "2026-10-06: what may be dropped in (types, size), how many houses, which filing kinds pay the late fee, the yes/no questions a person answers and their defaults, the five steps, and the documents asked for (need = the journey nudges for it). 2026-10-06: who - where a filed return (JSON) names the person, so a return can start from documents and the client is made from them. 2026-10-06: paid_minor - a payment typed on Check as its challan minor head (100 advance, 300 self-assessment). 2026-10-06: one_per_kind - a second AIS / 26AS / pre-filled JSON / filed return asks first: replace it (the old kept in History) or keep both. 2026-10-06: business_sections - TDS sections whose amount paid is a receipt of a business or profession (shown beside the receipts typed). 2026-10-06: .xls (an old Excel bank statement). 2026-10-06: from_filed - this year's filed return gives the filing date (Verification Date), the acknowledgement (its file name) and each challan (Schedule IT). 2026-10-06: karta_name / karta_pan / formed_on - an HUF's Karta signs its return; its date of formation stands where a person's birth date does. 2026-10-07: the person's address, city, PIN, e-mail and mobile (typed on Review when no document has them - a typed answer wins), the dates of winnings (lottery_on, games_on), vda_max, vehicles_max. 2026-10-07: cg_max / losses_max / gifts_max; filed_prev (last year's return) is one document; from_prev - its Schedule CFL. 2026-10-07: biz_kinds (business / profession on the person's own profit and loss, besides 44ADA / 44AD / 44AE); pl_as (their presumptive twin, for the limits and s.44AB(e)); pl_codes (their nature-of-business codes, from the ITR-3 schema). 2026-10-07: wave 3: residential-status questions (days in India this year / the 4 and 7 years before, years as a non-resident, citizen / person of Indian origin, visiting, left for a job, taxed elsewhere, income other than from foreign sources, country of residence and TIN); foreign_max / fa_max / club_max / arrears_max; countries_from.",
+  "description_nl": "2026-10-06: what may be dropped in (types, size), how many houses, which filing kinds pay the late fee, the yes/no questions a person answers and their defaults, the five steps, and the documents asked for (need = the journey nudges for it). 2026-10-06: who - where a filed return (JSON) names the person, so a return can start from documents and the client is made from them. 2026-10-06: paid_minor - a payment typed on Check as its challan minor head (100 advance, 300 self-assessment). 2026-10-06: one_per_kind - a second AIS / 26AS / pre-filled JSON / filed return asks first: replace it (the old kept in History) or keep both. 2026-10-06: business_sections - TDS sections whose amount paid is a receipt of a business or profession (shown beside the receipts typed). 2026-10-06: .xls (an old Excel bank statement). 2026-10-06: from_filed - this year's filed return gives the filing date (Verification Date), the acknowledgement (its file name) and each challan (Schedule IT). 2026-10-06: karta_name / karta_pan / formed_on - an HUF's Karta signs its return; its date of formation stands where a person's birth date does. 2026-10-07: the person's address, city, PIN, e-mail and mobile (typed on Review when no document has them - a typed answer wins), the dates of winnings (lottery_on, games_on), vda_max, vehicles_max. 2026-10-07: cg_max / losses_max / gifts_max; filed_prev (last year's return) is one document; from_prev - its Schedule CFL. 2026-10-07: biz_kinds (business / profession on the person's own profit and loss, besides 44ADA / 44AD / 44AE); pl_as (their presumptive twin, for the limits and s.44AB(e)); pl_codes (their nature-of-business codes, from the ITR-3 schema). 2026-10-07: wave 3: residential-status questions (days in India this year / the 4 and 7 years before, years as a non-resident, citizen / person of Indian origin, visiting, left for a job, taxed elsewhere, income other than from foreign sources, country of residence and TIN); foreign_max / fa_max / club_max / arrears_max; countries_from. 2026-10-08: tan_kinds (a second Form 16 from the same employer), gst_max, itr3_cfl (losses from last year's ITR-3).",
   "test_cases": [
     {
       "args": {},
@@ -624,7 +656,21 @@
         "fa_max": 60,
         "club_max": 20,
         "arrears_max": 15,
-        "countries_from": "CountryCodeExcludingIndia"
+        "countries_from": "CountryCodeExcludingIndia",
+        "tan_kinds": [
+          "form16"
+        ],
+        "gst_max": 20,
+        "itr3_cfl": {
+          "form": "ITR-3",
+          "block_ay": "AY\\s*(\\d{4}-\\d{2})",
+          "other_fields": {
+            "bl": "BusLossOthThanSpecLossCF",
+            "spec": "LossFrmSpecBusCF",
+            "specified": "LossFrmSpecifiedBusCF",
+            "horse": "OthSrcLossRaceHorseCF"
+          }
+        }
       }
     }
   ]

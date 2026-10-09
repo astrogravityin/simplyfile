@@ -80,7 +80,7 @@
       "known": {
         "vop": "get",
         "value": {
-          "chip": "myreturn.tax_of_year",
+          "chip": "myreturn.year_tax",
           "args": {
             "fy": "$fy",
             "regime": {
@@ -118,7 +118,7 @@
               "else": "$regime"
             },
             "band": "$band",
-            "income": "$income"
+            "normal": "$income"
           }
         },
         "path": "known"
@@ -126,7 +126,7 @@
       "before": {
         "vop": "get",
         "value": {
-          "chip": "myreturn.tax_of_year",
+          "chip": "myreturn.year_tax",
           "args": {
             "fy": "$fy",
             "regime": {
@@ -164,7 +164,7 @@
               "else": "$regime"
             },
             "band": "$band",
-            "income": "$income"
+            "normal": "$income"
           }
         },
         "path": "tax"
@@ -172,7 +172,7 @@
       "after": {
         "vop": "get",
         "value": {
-          "chip": "myreturn.tax_of_year",
+          "chip": "myreturn.year_tax",
           "args": {
             "fy": "$fy",
             "regime": {
@@ -210,10 +210,12 @@
               "else": "$regime"
             },
             "band": "$band",
-            "income": {
-              "vop": "add",
-              "a": "$income",
-              "b": "$amount"
+            "normal": {
+              "vop": "total",
+              "values": [
+                "$income",
+                "$amount"
+              ]
             }
           }
         },
@@ -224,7 +226,7 @@
         "a": {
           "vop": "get",
           "value": {
-            "chip": "myreturn.tax_of_year",
+            "chip": "myreturn.year_tax",
             "args": {
               "fy": "$fy",
               "regime": {
@@ -262,10 +264,12 @@
                 "else": "$regime"
               },
               "band": "$band",
-              "income": {
-                "vop": "add",
-                "a": "$income",
-                "b": "$amount"
+              "normal": {
+                "vop": "total",
+                "values": [
+                  "$income",
+                  "$amount"
+                ]
               }
             }
           },
@@ -274,7 +278,7 @@
         "b": {
           "vop": "get",
           "value": {
-            "chip": "myreturn.tax_of_year",
+            "chip": "myreturn.year_tax",
             "args": {
               "fy": "$fy",
               "regime": {
@@ -312,68 +316,19 @@
                 "else": "$regime"
               },
               "band": "$band",
-              "income": "$income"
+              "normal": "$income"
             }
           },
           "path": "tax"
         }
       },
-      "over": {
-        "vop": "get",
-        "value": {
-          "chip": "myreturn.tax_of_year",
-          "args": {
-            "fy": "$fy",
-            "regime": {
-              "vop": "choose",
-              "cases": [
-                {
-                  "when": {
-                    "op": "eq",
-                    "left": "$regime",
-                    "right": ""
-                  },
-                  "then": {
-                    "vop": "choose",
-                    "cases": [
-                      {
-                        "when": {
-                          "op": "ge",
-                          "left": "$fy",
-                          "right": {
-                            "vop": "get",
-                            "value": {
-                              "chip": "myreturn.slabs_by_year",
-                              "args": {}
-                            },
-                            "path": "new_default_from"
-                          }
-                        },
-                        "then": "new"
-                      }
-                    ],
-                    "else": "old"
-                  }
-                }
-              ],
-              "else": "$regime"
-            },
-            "band": "$band",
-            "income": {
-              "vop": "add",
-              "a": "$income",
-              "b": "$amount"
-            }
-          }
-        },
-        "path": "over"
-      }
+      "over": false
     }
   },
   "returns": "record",
-  "version": 1,
+  "version": 2,
   "status": "published",
-  "description_nl": "2026-10-07: Form 10E, Annexure I table A: for each earlier year, the tax on that year's income with the arrears less the tax without them.",
+  "description_nl": "2026-10-07: Form 10E, Annexure I table A: for each earlier year, the tax on that year's income with the arrears less the tax without them. 2026-10-08: Form 10E table A on chip myreturn.year_tax: that year's surcharge (with marginal relief) is in the tax with and without the arrears - income over 50 lakh is no longer left to a CA (over stays false).",
   "test_cases": [
     {
       "args": {
@@ -418,6 +373,21 @@
         "before": 23400,
         "after": 33800,
         "extra": 10400,
+        "over": false
+      }
+    },
+    {
+      "args": {
+        "fy": 2019,
+        "income": 4500000,
+        "amount": 1000000
+      },
+      "expect_value": {
+        "regime": "old",
+        "known": true,
+        "before": 1209000,
+        "after": 1673100,
+        "extra": 464100,
         "over": false
       }
     }

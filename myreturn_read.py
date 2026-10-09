@@ -96,13 +96,15 @@ def read(name: str, data: bytes, password: str = "", user: dict | None = None, a
     if head[:5] == b"%PDF-":
         return _pdf(data, password, pan, dob, ay, user, ai_ok)
     if head[:8] == b"\xd0\xcf\x11\xe0\xa1\xb1\x1a\xe1":     # an old .xls
-        return cg_book(data, ".xls") or bank_book(data, ".xls")
+        return gst_book(data, ".xls") or cg_book(data, ".xls") or bank_book(data, ".xls")
     text = data.decode("utf-8-sig", errors="replace")
     low = text[:6000].lower()
     if any(w in low for w in k["words_26as"]):
         return form26as(data, ".txt" if "^" in text[:6000] else ".csv")
     if any(w in low for w in k["words_ais"]):
         return ais_rows(text)
+    if "gstin" in low and any(w in low for w in k["gst3b"]["words"]) and (got := gst_book(data, ".csv")):
+        return got                                                   # 2026-10-08: a GSTR-3B summary
     if any(w in low for w in k["cg_statement"]["words"]) and (got := cg_book(data, ".csv")):
         return got
     if any(w in low for w in k["words_bank"]) or any(w in low[:3000] for w in k["bank"]["credit_words"][:2]):
@@ -117,7 +119,7 @@ def _unknown() -> dict:
 def _zip(data: bytes, password: str, pan: str, dob: str, ay: str) -> dict:
     z = zipfile.ZipFile(io.BytesIO(data))
     if "xl/workbook.xml" in z.namelist():              # an Excel workbook is a zip too - a capital-gains statement or a bank statement
-        return cg_book(data, ".xlsx") or bank_book(data, ".xlsx")
+        return gst_book(data, ".xlsx") or cg_book(data, ".xlsx") or bank_book(data, ".xlsx")
     inner = next((n for n in z.namelist() if n.lower().endswith((".txt", ".csv", ".pdf", ".json"))), None)
     if not inner:
         return _unknown()
@@ -493,6 +495,101 @@ def cg_statement(book: dict) -> dict | None:
     return {"kind": "cg", "method": "text", "facts": {"cg_rows": out}, "found": found, "problems": [] if out else [say("no_cg_rows")]}
 
 
+# --- 2026-10-08 wave 4: a GSTR-3B summary, a CAMS / KFintech capital-gains PDF, 26AS Part A2 (194IA) ----------------------
+
+def gst_book(data: bytes, ext: str) -> dict | None:
+    """A GSTR-3B summary (CSV, Excel) - None when the book holds no such table."""
+    import intake  # noqa: PLC0415
+    try:
+        return gst3b(intake.read_book(data, ext))
+    except Exception:  # noqa: BLE001 - not a readable book: let the next reader try
+        return None
+
+
+def gst3b(book: dict) -> dict | None:
+    """Per GSTIN, the outward supplies of GSTR-3B table 3.1 (taxable, zero-rated, nil-rated / exempt, non-GST) added up over the
+    rows (a month each, or the year): the turnover the GST schedule of ITR-3 / ITR-4 asks for. Columns by chip myreturn.read gst3b."""
+    k = settings()["gst3b"]
+    low = lambda c: re.sub(r"\s+", " ", c).strip().lower() if isinstance(c, str) else ""  # noqa: E731
+    num = lambda c: float(c) if isinstance(c, (int, float)) and not isinstance(c, bool) else _num(c) if isinstance(c, str) else 0.0  # noqa: E731
+    got, heads = {}, 0
+    for rows in book.values():
+        head = None
+        for r in rows:
+            cells = [low(c) for c in r]
+            if head is None:
+                cols: dict = {}
+                for field, words in k["cols"]:
+                    i = next((i for i, c in enumerate(cells) if i not in cols.values() and any(w in c for w in words)), None)
+                    if i is not None:
+                        cols[field] = i
+                if all(f in cols for f in k["need"]):
+                    head, heads = cols, heads + 1
+                continue
+            g = re.sub(r"\s", "", str(r[head["gstin"]] or "")).upper() if head["gstin"] < len(r) else ""
+            if not re.fullmatch(k["gstin_pattern"], g):
+                continue
+            got[g] = got.get(g, 0.0) + sum(num(r[head[f]]) for f in k["add"] if f in head and head[f] < len(r))
+    if not heads:
+        return None
+    out = [{"gstin": g, "turnover": round(v, 2)} for g, v in got.items()]
+    return {"kind": "gst", "method": "text", "facts": {"gst_rows": out}, "found": [{"label": x["gstin"], "value": _inr(x["turnover"])} for x in out],
+            "problems": [] if out else [say("no_gst_rows")]}
+
+
+def cas_pdf(text: str) -> dict:
+    """A CAMS / KFintech capital-gains statement PDF: a scheme's line (its name and ISIN), then each redemption under it - the date,
+    units, amount, the purchase date and cost, and for equity bought before 1 February 2018 the value on 31 January 2018 (chip
+    myreturn.read cas_pdf). Debt or equity by the scheme's name (chip myreturn.read cg_statement asset_words) - as the CSV reader."""
+    k, kc = settings()["cas_pdf"], settings()["cg_statement"]
+    name, isin, out = "", "", []
+    for ln in (re.sub(r"\s+", " ", x).strip() for x in text.splitlines()):
+        if m := re.search(k["scheme"], ln):
+            name, isin = m["name"].strip(" -:"), m["isin"]
+            continue
+        if m := re.search(k["row"], ln, re.I):
+            asset = next((a for a, words in kc["asset_words"].items() if any(w in name.lower() for w in words)), kc["default_asset"])
+            out.append({"asset": asset, "name": name[:125], "isin": isin, "units": _num(m["units"]), "acquired": cg_day(m["acquired"]),
+                        "sold": cg_day(m["sold"]), "sale": _num(m["sale"]), "cost": _num(m["cost"]), "fmv": _num(m["fmv"] or 0), "expenses": 0.0})
+    found = [{"label": say("fd_cg_rows"), "value": str(len(out))}, {"label": say("fd_cg_sale"), "value": _inr(sum(x["sale"] for x in out))}]
+    return {"kind": "cg", "method": "text", "facts": {"cg_rows": out}, "found": found, "problems": [] if out else [say("no_cg_rows")]}
+
+
+def a2_26as(text: str) -> tuple[str, list[dict]]:
+    """26AS Part A2 (Part IV since 2023) - TDS on the sale of immovable property u/s 194IA, for the seller - taken out of the text
+    (so the Part I reader never takes the buyer for a deductor), each buyer's row read: the buyer's PAN and name, the transaction amount,
+    the TDS; its entry line gives the section (only 194IA kept). The text export ('^' between fields) or a PDF's lines (chip
+    myreturn.read a2_26as). -> (the text without that part, the rows)."""
+    k = settings()["a2_26as"]
+    keep, rows, inside = [], [], False
+    amt = re.compile(k["amount"])
+    for ln in text.splitlines():
+        lowl = ln.lower()
+        if re.match(k["part"], lowl):
+            inside = any(w in lowl for w in k["title"]) and any(w in lowl for w in k["title_also"])
+            if inside:
+                continue
+        if not inside:
+            keep.append(ln)
+            continue
+        if "^" in ln:
+            cells = [c.strip() for c in ln.split("^")]
+            p = next((i for i, c in enumerate(cells) if re.fullmatch(k["pan"], c)), None)
+            if p is not None:
+                nums = [_num(c) for c in cells[p + 1:] if amt.fullmatch(c)]
+                name = next((c for c in reversed(cells[:p]) if c and not re.fullmatch(k["serial"], c)), "")
+                rows.append({"pan": cells[p], "name": name[:125], "income": nums[0] if nums else 0.0, "tds": nums[1] if len(nums) > 1 else 0.0, "section": ""})
+            elif rows and not rows[-1]["section"]:
+                rows[-1]["section"] = next((c.upper() for c in cells if re.fullmatch(k["section"], c.upper())), "")
+            continue
+        one = re.sub(r"\s+", " ", ln).strip()
+        if m := re.match(k["pdf_deductor"], one):
+            rows.append({"pan": m["pan"], "name": m["name"][:125], "income": _num(m["amount"]), "tds": _num(m["tds"]), "section": ""})
+        elif rows and not rows[-1]["section"] and (m := re.match(k["pdf_entry"], one)):
+            rows[-1]["section"] = m["section"].upper()
+    return "\n".join(keep), [r for r in rows if r["section"] in k["sections"]]
+
+
 def ais_paid(text: str, ay: str = "") -> list[dict]:
     """AIS Part B3: tax the person paid - advance or self-assessment - with its BSR, date and challan (chip myreturn.read
     ais_paid). Only the return's own financial year counts: a payment for an earlier year (paid this year) is not this return's."""
@@ -631,7 +728,8 @@ def _ais_result(facts: dict, method: str) -> dict:
 
 def form26as(data: bytes, ext: str) -> dict:
     import recon  # noqa: PLC0415 - the same 26AS reader Reconcile uses
-    got = recon.read_portal(data, ext)
+    rest, a2 = a2_26as(data.decode("utf-8", errors="replace"))      # 2026-10-08: Part A2 (194IA) read, and kept out of Part I's reader
+    got = recon.read_portal(rest.encode("utf-8") if a2 else data, ext)
     tds, paid = {}, []
     for e in got["entries"]:
         if e["kind"] in ("tds", "tcs") and e["tax"]:
@@ -644,13 +742,15 @@ def form26as(data: bytes, ext: str) -> dict:
     rows = list(tds.values())
     found = [{"label": f"{r['name'] or r['tan']}", "value": _inr(r["tds"])} for r in rows]
     found += [{"label": say("fd_paid"), "value": _inr(sum(p["amount"] for p in paid))}] if paid else []
-    return {"kind": "26as", "method": "text", "facts": {"tds": rows, "paid": paid, "other": _income_of(rows)}, "found": found,
-            "problems": [] if rows or paid else [say("unknown_doc")]}
+    found += [{"label": say("fd_tds_194ia"), "value": _inr(sum(x["tds"] for x in a2))}] if a2 else []
+    return {"kind": "26as", "method": "text", "facts": {"tds": rows, "paid": paid, "other": _income_of(rows), "tds_194ia": a2}, "found": found,
+            "problems": [] if rows or paid or a2 else [say("unknown_doc")]}
 
 
 def form26as_pdf(text: str) -> dict:
     """The TRACES Annual Tax Statement PDF, Part I: a deductor's total line, then its entries (whose section says salary or not)."""
     k = settings()["pdf26as"]
+    text, a2 = a2_26as(text)                                  # 2026-10-08: Part A2 / IV - the buyer's 194IA TDS
     part = text.split(k["start"], 1)[-1].split(k["end"], 1)[0]
     rows = []
     for ln in (re.sub(r"\s+", " ", x).strip() for x in part.splitlines()):
@@ -660,8 +760,9 @@ def form26as_pdf(text: str) -> dict:
             rows[-1]["section"] = m.group(1)
             rows[-1]["kind"] = "salary" if m.group(1).startswith("192") else "other"
     found = [{"label": r["name"] or r["tan"], "value": _inr(r["tds"])} for r in rows]
-    return {"kind": "26as", "method": "text", "facts": {"tds": rows, "paid": [], "other": _income_of(rows)}, "found": found,
-            "problems": [] if rows else [say("unknown_doc")]}
+    found += [{"label": say("fd_tds_194ia"), "value": _inr(sum(x["tds"] for x in a2))}] if a2 else []
+    return {"kind": "26as", "method": "text", "facts": {"tds": rows, "paid": [], "other": _income_of(rows), "tds_194ia": a2}, "found": found,
+            "problems": [] if rows or a2 else [say("unknown_doc")]}
 
 
 def _income_of(rows: list[dict]) -> dict:
@@ -692,6 +793,8 @@ def _pdf(data: bytes, password: str, pan: str, dob: str, ay: str, user: dict | N
         return ais_rows(text, ay)
     if any(w in low for w in k["tis"]["words"]):
         return tis_rows(text)
+    if all(w in low for w in k["cas_pdf"]["words"]) and any(w in low for w in k["cas_pdf"]["any"]) and (got := cas_pdf(text))["facts"]["cg_rows"]:
+        return got                                                   # 2026-10-08: a CAMS / KFintech capital-gains PDF
     if any(w in low for w in k["words_bank"]):
         laid = "\n".join((p.extract_text(extraction_mode="layout") or "") for p in r.pages)
         return bank({"PDF": bank_pdf_rows(laid)})

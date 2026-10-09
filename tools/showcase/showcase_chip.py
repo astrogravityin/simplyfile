@@ -21,9 +21,9 @@ PARTS = [  # (folder, key, title, line)
     ("showcase7", "sf-part7", "History", "Every change to a client, earlier versions of documents, and the firm's own history."),
     ("showcase8", "sf-part8", "The audit, taken further", "Against earlier years, GST against the books, the riskiest first, and the statutory audit."),
     # 2026-10-07: My return for individuals and HUFs, and the year's tax rules
-    ("showcase9", "sf-part9", "Your own return, from your documents", "Pre-filled JSON, Form 16, a locked AIS, 26AS, a CAMS statement and a bank statement read; checked against each other; both regimes."),
-    ("showcase10", "sf-part10", "The review, and the return filed", "Capital gains with the cheaper rate and 54EC, a co-owned flat, gifts, crypto, arrears, clubbing - and the ITR-2 JSON, checked."),
-    ("showcase11", "sf-part11", "An HUF and a consultant", "A family HUF started from its pre-filled JSON; a consultant's 44ADA receipts from her bank statement - ITR-4, or ITR-3 on her own accounts."),
+    ("showcase9", "sf-part9", "Your own return, from your documents", "Pre-filled JSON, two employers' Form 16s, a locked AIS, 26AS with Part A2, a CAMS PDF and a bank statement read; a revised Form 16 asked about; checked against each other; both regimes."),
+    ("showcase10", "sf-part10", "The review, and the return filed", "Capital gains with the cheaper rate and 54EC + 54F within their time limits, losses from last year's ITR-3, a co-owned flat, gifts, crypto, arrears, foreign accounts, clubbing, ITR-U - and the ITR-2 JSON, checked."),
+    ("showcase11", "sf-part11", "An HUF and a consultant", "A family HUF started from its pre-filled JSON; a consultant's 44ADA receipts from her bank statement, GST per GSTIN from her GSTR-3B - ITR-4, or ITR-3 on her own accounts with cash payments and the 44AD(4) question."),
     ("showcase12", "sf-part12", "Tax rules", "The year's slabs, caps and due dates: compare the next year's with this one, and apply - with History."),
 ]
 GROUP = lambda i: "file" if i < 3 else "more" if i < 8 else "own"  # noqa: E731
@@ -36,9 +36,9 @@ TAGS = {  # 2026-10-07 find a film (showcase.js): the words people search for - 
     "sf-part6": ["tax audit", "3CD", "year on year", "audit points", "applicability"],
     "sf-part7": ["History", "changes", "versions", "documents"],
     "sf-part8": ["tax audit", "GST", "3CD", "earlier years", "statutory audit", "accounting standards"],
-    "sf-part9": ["my return", "Form 16", "AIS", "26AS", "pre-filled JSON", "bank statement", "regime", "History"],
-    "sf-part10": ["my return", "capital gains", "54EC", "indexation", "gifts", "crypto", "house property", "s.89", "ITR-2", "ITR-U"],
-    "sf-part11": ["my return", "HUF", "Karta", "44ADA", "presumptive", "ITR-4", "ITR-3", "bank statement"],
+    "sf-part9": ["my return", "Form 16", "two employers", "revised Form 16", "AIS", "26AS", "194IA", "CAMS", "pre-filled JSON", "bank statement", "regime", "History"],
+    "sf-part10": ["my return", "capital gains", "54EC", "54F", "indexation", "losses", "gifts", "crypto", "house property", "s.89", "surcharge", "Schedule FA", "ITR-2", "ITR-U", "234C"],
+    "sf-part11": ["my return", "HUF", "Karta", "44ADA", "presumptive", "GST", "GSTR-3B", "GSTIN", "cash payments", "44AD", "ITR-4", "ITR-3", "bank statement"],
     "sf-part12": ["tax rules", "slabs", "due dates", "compare", "apply", "rule book"],
 }
 

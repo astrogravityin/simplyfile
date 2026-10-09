@@ -201,7 +201,9 @@ def run(chip_id: str, args: dict | None = None, lib: dict | None = None) -> Any:
     # 2026-09-30 owner "a screen cannot slow down with more assets - we can have thousands": a chip asked with its own
     # defaults answers the same until a chip file changes, and one list page asked 10,000 times. The answer is kept per
     # loaded library (chips() hands a new one when a file changes); the top level is handed out as a copy.
-    keep = lib is None and not args
+    # 2026-10-09: a nested call is handed the live library too - kept the same way (myreturn.year_tax asks the slabs
+    # table dozens of times: 7-13 s a page without this). A builder's draft library is never kept.
+    keep = not args and (lib is None or lib is _cache["chips"])
     lib = lib if lib is not None else chips()
     if keep:
         if _memo["lib"] is not lib:

@@ -5,6 +5,10 @@
      forward, gifts, winnings and crypto, tax paid, clubbing, s.89, farm income; ITR-2 JSON checked; ITR-U.  (selfer, after pre10.py)
  11  An HUF and a consultant, from a CA firm - start from documents, the Karta, 44ADA from the bank statement -> ITR-4, own P&L -> ITR-3.
  12  Tax rules - the owner's Compare and Apply on a saved, made-up draft (pre_taxwatch.py; no AI call).  (TOUR_LOGIN=admin)
+2026-10-08, wave 4: part 9 - two employers' Form 16s (the two-employer check), a revised Form 16 from the same TAN (replace / keep
+both), the 26AS's Part A2 (the plot buyer's 194IA), the CAMS statement as a PDF, last year's ITR-3; part 10 - two exemptions on the
+plot with their time limits, losses filled from last year's ITR-3, Schedule FA table D, s.89 / ITR-U with that year's special rates,
+surcharge and 234C; part 11 - Kavya's GSTR-3B (GST per GSTIN), her payments and the cash part, the 44AD(4) question.
 Demo documents: python tools/showcase/make_myreturn_demo.py (tools/tour_video/showcase/self, self-more, self-again, huf, kavya). All made up."""
 import pathlib as _pl; _R = str(_pl.Path(__file__).resolve().parents[2])  # the repo root
 import json
@@ -17,19 +21,27 @@ click = lambda sel, **k: {"click": sel, **k}            # noqa: E731
 card = lambda inner: f"section.card:has({inner})"       # noqa: E731
 node = lambda s: click(f".mr-node[data-step='{s}']")    # noqa: E731
 SELF = "showcase/self/"
+MORE = "showcase/self-more/"   # 2026-10-08 wave 4: the AIS / 26AS with the second employer (and the 26AS's Part A2), the CAMS PDF, last year's ITR-3
 F = {"pre": SELF + "01 Pre-filled JSON - ZZDPK0042Q - AY 2026-27.json", "f16": SELF + "02 Form 16 - Demo Software - AY 2026-27.pdf",
-     "ais": SELF + "03 AIS - ZZDPK0042Q - FY 2025-26.pdf", "26as": SELF + "04 26AS - ZZDPK0042Q - AY 2026-27.txt",
-     "cams": "showcase/self-more/05 CAMS capital gains - ZZDPK0042Q - FY 2025-26.csv", "bank": "showcase/self-more/06 Bank statement - Demo Bank - FY 2025-26.csv",
-     "again": "showcase/self-again/26AS - ZZDPK0042Q - AY 2026-27 - downloaded again.txt", "huf": "showcase/huf/Pre-filled JSON - ZZDHF0045L - AY 2026-27.json",
-     "kavya": "showcase/kavya/Pre-filled JSON - ZZDPC0044K - AY 2026-27.json", "kbank": "showcase/kavya/Bank statement - Demo Bank - Kavya - FY 2025-26.csv"}
+     "f16b": MORE + "02 Form 16 - Demo Training Academy - AY 2026-27.pdf",
+     "ais": MORE + "03 AIS - ZZDPK0042Q - FY 2025-26.pdf", "26as": MORE + "04 26AS - ZZDPK0042Q - AY 2026-27.txt",
+     "cams": MORE + "05 CAMS capital gains - ZZDPK0042Q - FY 2025-26.pdf", "bank": MORE + "06 Bank statement - Demo Bank - FY 2025-26.csv",
+     "prev": MORE + "07 ITR-3 AY 2025-26 filed - ZZDPK0042Q.json",
+     "again": "showcase/self-again/Form 16 - Demo Software - AY 2026-27 - revised.pdf", "huf": "showcase/huf/Pre-filled JSON - ZZDHF0045L - AY 2026-27.json",
+     "kavya": "showcase/kavya/Pre-filled JSON - ZZDPC0044K - AY 2026-27.json", "kbank": "showcase/kavya/Bank statement - Demo Bank - Kavya - FY 2025-26.csv",
+     "kgst": "showcase/kavya/GSTR-3B summary - ZZDPC0044K - FY 2025-26.csv"}
 
 
 def S(chapter, say, *do):
     return {**({"chapter": chapter} if chapter else {}), "say": say, "do": list(do), "hold": 0.6}
 
 
+def got(f):     # 2026-10-08: a document is in when its name shows on its card (a busy server can take a while to read it)
+    return {"wait_for": f".mr-got:has-text('{F[f].rsplit('/', 1)[-1]}')", "timeout": 90}
+
+
 def up(f, wait=2.5, inp="#mr-file", btn="#mr-up"):
-    return [{"upload": inp, "files": [F[f]]}, {"wait": 0.6}, click(btn), {"wait": wait}]
+    return [{"upload": inp, "files": [F[f]]}, {"wait": 0.6}, click(btn), *([got(f)] if btn == "#mr-up" else []), {"wait": wait}]
 
 
 def typed(sel, text):   # a field saves when it is left; the page draws again - wait for it before the next one
@@ -46,66 +58,79 @@ P9 = [S("Your own return", "Part nine: your own return. Anil Kumar Demo - made u
         click("details.mr-how:has(.mr-src-table) > summary", optional=True)),
       S("The pre-filled JSON", "He starts with the pre-filled JSON from the e-filing portal. Drop it in, and read it.",
         {"scroll_to": "[data-drop='mr-file']"}, *up("pre", 1), {"wait_for": ".mr-dcard.is-in"}, {"wait": 1}),
-      S("Form 16", "Then Form 16 from his employer, as a PDF.", {"scroll_to": "[data-drop='mr-file']"}, *up("f16")),
+      S("Form 16", "Then a Form 16 from each employer, as PDFs: Demo Software, and the academy where he teaches at weekends - another "
+        "T A N, so a second employer.", {"scroll_to": "[data-drop='mr-file']"}, *up("f16"), *up("f16b")),
       S("A locked AIS", "The A I S PDF is locked the department's way: his P A N in small letters and his date of birth. He types it once - the eye "
         "shows what he typed.", {"scroll_to": "[data-drop='mr-file']"}, {"upload": "#mr-file", "files": [F["ais"]]},
-        {"fill": "#mr-pw", "text": "zzdpk0042q15041988"}, click("#mr-pw-eye"), {"wait": 1}, click("#mr-up"), {"wait": 3}),
-      S("26AS, CAMS and the bank", "The 26 A S; his C A M S capital-gains statement, as a C S V; and his bank statement.",
-        {"scroll_to": "[data-drop='mr-file']"}, *up("26as", 2), *up("cams", 2), *up("bank", 2)),
-      S("What each one gave", "Every document shows what was read from it: salary and tax deducted from Form 16, interest and dividends from the "
-        "A I S, four sales from C A M S, and the interest in his bank statement.", {"scroll_to": ".mr-dgrid"}, O(highlight=".mr-dgrid"),
-        O(highlight=".mr-dcard.is-in >> nth=4")),
-      S("Already here?", "Later he downloads the 26 A S again and drops it in - and is asked first: replace the one he has, or keep both. "
-        "Nothing is overwritten without asking.", {"scroll_to": "[data-drop='mr-file']"}, {"upload": "#mr-file", "files": [F["again"]]},
+        {"fill": "#mr-pw", "text": "zzdpk0042q15041988"}, click("#mr-pw-eye"), {"wait": 1}, click("#mr-up"), got("ais"), {"wait": 1.5}),
+      S("26AS, CAMS and the bank", "The 26 A S - its Part A 2 shows the buyer of his plot deducted tax under 194 I A. His C A M S "
+        "capital-gains statement, as the P D F C A M S sends. His bank statement. And last year's I T R 3, for the losses he carried forward.",
+        {"scroll_to": "[data-drop='mr-file']"}, *up("26as", 2), *up("cams", 2), *up("bank", 2), *up("prev", 2)),
+      S("What each one gave", "Every document shows what was read from it: salary and tax deducted from each Form 16, interest and dividends "
+        "from the A I S, the buyer's tax from the 26 A S, four sales from the C A M S P D F, and the interest in his bank statement.",
+        {"scroll_to": ".mr-dgrid"}, O(highlight=".mr-dgrid"), O(highlight=".mr-dcard.is-in >> nth=3"), O(highlight=".mr-dcard.is-in >> nth=4")),
+      S("Already here?", "Later his employer sends a revised Form 16 - the same employer, the same T A N. He is asked first: replace the first "
+        "one, for a revised Form 16 - or keep both, for two spells with one employer. A Form 16 with another T A N is simply a second "
+        "employer. Nothing is overwritten without asking.", {"scroll_to": "[data-drop='mr-file']"}, {"upload": "#mr-file", "files": [F["again"]]},
         click("#mr-up"), {"wait_for": ".ask-modal"}, {"wait": 1}, O(highlight=".ask-modal .ask-choices"), {"wait": 1},
-        click(".ask-modal [data-pick='replace']"), {"wait": 2.5}),
-      S("History", "History keeps it all: each document added, the 26 A S replaced - and the old one kept, ready to download.",
+        click(".ask-modal [data-pick='replace']"), got("again"), {"wait": 1.5}),
+      S("History", "History keeps it all: each document added, the Form 16 replaced - and the old one kept, ready to download.",
         {"scroll_to": "[data-history]"}, click("[data-history]"), {"wait_for": ".modal:has(.ch-lede)"}, {"wait": 1.5},
         O(highlight=".modal:has(.ch-lede) .body"), {"wait": 1}, click(".modal:has(.ch-lede) [data-close]", optional=True)),
       S("At a glance", "At the top, his return at a glance: total income, tax, and the refund due - kept up to date with every document.",
         O(highlight=".mr-glance")),
-      S("Do the documents agree?", "Check: Form 16's tax deducted beside the 26 A S, salary and interest beside the A I S. Here, everything agrees.",
+      S("Do the documents agree?", "Check: each Form 16's tax deducted beside the 26 A S, salary and interest beside the A I S - they agree.",
         node("check"), {"wait": 1.5}, O(highlight=".mr-tmap"), O(highlight=".mr-chk >> nth=0")),
+      S("Two employers", "Two employers: each Form 16 took off the standard deduction, and the return takes it once - so expect a little tax "
+        "to pay. And the 26 A S shows a buyer's tax on a property he has not added yet: the plot, in part ten.",
+        O(highlight=".mr-chk.lv-amber >> nth=0"), O(highlight=".mr-chk.lv-red >> nth=0")),
       S("New or old regime", "Choose: both regimes worked out in full, and the cheaper one marked.", node("choose"), {"wait": 1.5}, O(highlight=".mr-rgs"),
         O(highlight=".mr-regs")),
       S("From income to tax", "And from income to tax, step by step.", {"scroll_to": ".mr-water"}, O(highlight=".mr-water")),
       S(None, "Next, part ten: the review - capital gains, a plot sold, a flat he co-owns, gifts - and the return, ready to file.", {"wait": 1.5})]
 
 P10 = [S("The review", "Part ten: the review. Every figure in Anil's return, where it came from - and anything he types over it, marked as his.",
-         {"goto": "/#/myreturn"}, {"wait_for": ".mr-rail-card"}, node("review"), {"wait_for": card("#mr-emp-add")}, {"wait": 1}),
-       S("Salary", "Salary from Form 16, with the source beside it.", O(highlight=card("#mr-emp-add"))),
+         {"goto": "/#/myreturn"}, {"wait_for": ".mr-rail-card", "timeout": 45}, node("review"), {"wait_for": card("#mr-emp-add"), "timeout": 45}, {"wait": 1}),
+       S("Salary", "Salary from both Form 16s, each with its source beside it.", O(highlight=card("#mr-emp-add"))),
        S("Residential status", "His residential status, from the days he was in India. A resident: all his income counts, wherever it arose.",
          {"scroll_to": card("#q-days_fy")}, O(highlight=card("#q-days_fy"))),
-       S("Salary arrears", "Arrears for 2022-23 were paid to him this year. That year's income and regime give the relief under section 89 - "
-         "with a reminder to file Form 10 E.", {"scroll_to": card("#mr-ar-add")}, O(highlight=card("#mr-ar-add"))),
-       S("Abroad and clubbing", "Income and assets outside India have their own cards. And his minor son's interest is added to his income, less "
-         "the exemption for each child.", {"scroll_to": card("#mr-fi-add")}, O(highlight=card("#mr-fi-add")), {"scroll_to": card("#mr-cl-add")},
-         O(highlight=card("#mr-cl-add"))),
+       S("Salary arrears", "Arrears for 2022-23 were paid to him this year. That year's income and regime give the relief under section 89, "
+         "at that year's own slabs - and for a year over fifty lakh, that year's surcharge too - with a reminder to file Form 10 E.",
+         {"scroll_to": card("#mr-ar-add")}, O(highlight=card("#mr-ar-add"))),
+       S("Abroad and clubbing", "Income and assets outside India have their own cards. Here, his father's account in the U S that he can sign "
+         "for: Schedule F A, table D - trusts abroad and other income from outside India have their tables too. And his minor son's interest "
+         "is added to his income, less the exemption for each child.", {"scroll_to": card("#mr-fa-add")}, O(highlight=card("#mr-fa-add")),
+         {"scroll_to": card("#mr-cl-add")}, O(highlight=card("#mr-cl-add"))),
        S("A co-owned flat", "A flat he owns half of, with his wife, let out: rent, municipal tax and loan interest, each taken by his fifty percent share.",
          {"scroll_to": card("#mr-house-add")}, O(highlight=card("#mr-house-add"))),
        S("Winnings and crypto", "Online-game winnings and a crypto sale: taxed at thirty percent, whatever his slab.",
          {"scroll_to": card("#mr-vda-add")}, O(highlight=card("#mr-vda-add"))),
        S("Tax he paid", "Self-assessment tax he paid himself, with the B S R code and challan number.", {"scroll_to": card("#mr-paid-add")},
          O(highlight=card("#mr-paid-add"))),
-       S("Capital gains", "Capital gains: the four sales read from the C A M S statement - one grandfathered to January 2018 - and a plot he typed.",
-         {"scroll_to": card("#mr-cg-add")}, O(highlight=card("#mr-cg-add"))),
+       S("Capital gains", "Capital gains: the four sales read from the C A M S P D F - one grandfathered to January 2018 - and a plot he typed, "
+         "with the buyer's P A N from the 26 A S.", {"scroll_to": card("#mr-cg-add")}, O(highlight=card("#mr-cg-add"))),
        S("The plot", "The plot was bought in 2010. Twelve and a half percent without indexation, or twenty percent with it: SimplyFile works out "
-         "both and takes the cheaper. Twenty lakh went into 54 E C bonds, so that much is exempt.",
-         {"scroll_to": ".mr-cg[data-cg='0']"}, O(highlight=".mr-cg[data-cg='0']")),
-       S("Losses brought forward", "A short-term loss from 2024-25, set off against this year's gains.", {"scroll_to": card("#mr-loss-add")},
-         O(highlight=card("#mr-loss-add"))),
+         "both and takes the cheaper.", {"scroll_to": ".mr-cg[data-cg='0']"}, O(highlight=".mr-cg[data-cg='0']")),
+       S("Several exemptions", "Two exemptions on the one sale: twenty lakh in 54 E C bonds, and a new house under 54 F - each taken in turn "
+         "against the gain still left. And each is checked against its time limit: the bonds within six months, the house within two years.",
+         O(highlight=".mr-cg[data-cg='0'] .mr-claim >> nth=0"), O(highlight=".mr-cg[data-cg='0'] .mr-claim >> nth=1")),
+       S("Losses brought forward", "Losses brought forward: one click fills them from last year's I T R 3 - a short-term loss from 2024-25 and "
+         "last year's own long-term loss - set off against this year's gains.", {"scroll_to": card("#mr-loss-add")},
+         click("#mr-loss-prev"), {"wait_for": "#ls-1-kind", "timeout": 45}, {"wait": 1}, {"scroll_to": card("#mr-loss-add")}, O(highlight=card("#mr-loss-add"))),
        S("Gifts", "Two gifts: two lakh from an uncle - a relative, so it is free - and seventy-five thousand from a friend: over fifty thousand "
          "in the year, so it is income.", {"scroll_to": card("#mr-gift-add")}, O(highlight=card("#mr-gift-add"))),
        S("Deductions", "Deductions from Form 16 - and more for the old regime, 80 D D to 80 G G C, with what each schedule asks for.",
          {"scroll_to": card("#e-via-c80c")}, O(highlight=card("#e-via-c80c"))),
        S("Farm income", "A few questions last: his contact details, and his share of farm income - forty thousand. It is exempt, but it is "
          "shown in the return.", {"scroll_to": "#q-agri"}, *typed("#q-agri", "40000"), O(highlight=card("#q-father"))),
-       S("ITR-2", "File: with capital gains, his form is I T R 2.", node("file"), {"wait_for": "#mr-json"}, {"wait": 1}, O(highlight=".mr-form")),
+       S("ITR-2", "File: with capital gains, his form is I T R 2.", node("file"), {"wait_for": "#mr-json", "timeout": 45}, {"wait": 1}, O(highlight=".mr-form")),
        S("Checked against the schema", "The department's JSON, checked against its own schema - valid. He downloads it and uploads it on the "
-         "e-filing portal: SimplyFile never files for him.", O(highlight="#mr-schema.mr-ok", timeout=12), O(highlight="#mr-json")),
-       S("Already filed, and ITR-U", "Once filed, he notes the acknowledgement. And for an earlier year he missed something in, the updated "
-         "return - I T R U - is worked out here too.", {"scroll_to": card("#mr-filed-on")}, O(highlight=card("#mr-filed-on")),
-         {"scroll_to": card("[data-iurow]")}, O(highlight=card("[data-iurow]"))),
+         "e-filing portal: SimplyFile never files for him.", O(highlight="#mr-schema.mr-ok", timeout=45), O(highlight="#mr-json")),
+       S("Already filed", "Once filed, he notes the acknowledgement.", {"scroll_to": card("#mr-filed-on")}, O(highlight=card("#mr-filed-on"))),
+       S("ITR-U", "And for 2024-25 he left out two lakh of short-term gains: the updated return, I T R U. The gains at that year's own fifteen "
+         "percent, the interest - 234 C for each instalment among it - and the additional tax, all worked out. A year over fifty lakh gets "
+         "its surcharge, with marginal relief.", {"scroll_to": card("[data-iurow]")}, O(highlight=card("[data-iurow]")),
+         O(highlight=card("[data-iurow]") + " .mr-cmp-t")),
        S(None, "Next, part eleven: the same screen for a CA firm's families and consultants.", {"wait": 1.5})]
 
 P11 = [S("Families and consultants", "Part eleven: My return at a CA firm, for an H U F and for a consultant. Pick a person - or start from a document.",
@@ -125,15 +150,28 @@ P11 = [S("Families and consultants", "Part eleven: My return at a CA firm, for a
        S("Her bank statement", "Her bank statement: fifteen lakh ninety thousand of receipts, sixty thousand in cash - interest and her own "
          "transfers kept apart.", node("gather"), {"wait": 1}, {"scroll_to": "[data-drop='mr-file']"}, *up("kbank", 3), {"scroll_to": ".mr-dgrid"},
          O(highlight=".mr-dcard.is-in >> nth=1")),
+       S("Her GSTR-3B", "She is registered for G S T, so her G S T R 3 B summary goes in too: the turnover for each G S T I N, the months added up.",
+         {"scroll_to": "[data-drop='mr-file']"}, *up("kgst", 3), {"scroll_to": ".mr-dgrid"}, O(highlight=".mr-dcard.is-in >> nth=1")),
        S("Presumptive income", "On review, her work: a profession under 44 A D A. One click takes the receipts from the bank statement, and half "
          "of them is her income.", node("review"), {"wait_for": "#b-kind"}, {"scroll_to": "#b-kind"}, {"select": "#b-kind", "value": "44ADA"},
          {"wait": 2}, click("#mr-biz-bank"), {"wait": 2}, O(highlight=card("#b-kind"))),
+       S("GST per GSTIN", "The G S T schedule: her G S T I N and its turnover, read from the G S T R 3 B - and set beside the receipts in the "
+         "return. Sixteen and a half lakh both ways: they agree. Another G S T I N is one more line.", {"scroll_to": "#mr-gst-add"},
+         O(highlight=card("#b-kind") + " .mr-found"), O(highlight="#mr-gst-add")),
        S("ITR-4", "Her nature of work, and her father's name for the return. The form follows: I T R 4, Sugam.",
          {"select": "#b-code", "value": "14001"}, {"wait": 2}, {"scroll_to": "#q-father"}, *typed("#q-father", "Demo Father"),
          {"scroll_to": "header.pagehead"}, O(highlight="header.pagehead .tag")),
        S("Her own profit and loss", "If she keeps her own accounts instead - her gross profit and expenses typed, the profit worked out - it is I T R 3.",
          {"scroll_to": "#b-kind"}, {"select": "#b-kind", "value": "profession"}, {"wait": 2}, {"scroll_to": "#b-gp"},
          *typed("#b-gp", "1650000"), *typed("#b-expenses", "620000"), O(highlight=card("#b-kind"))),
+       S("Cash payments", "With her own accounts, two more figures: all she paid out in the year, and how much of it in cash. Cash under five "
+         "percent on both sides, so the tax-audit limit for a profession is seventy-five lakh, not fifty.", {"scroll_to": "#b-pay_total"},
+         *typed("#b-pay_total", "620000"), *typed("#b-pay_cash", "20000"), {"scroll_to": "#b-pay_total"}, O(highlight="#b-pay_total"),
+         O(highlight="#b-pay_cash")),
+       S("Left 44AD?", "Had she run a shop instead - a business - one more question: did she leave 44 A D in the last five years? Then 44 A D "
+         "stays closed to her for five years, and income above the exemption needs a tax audit: a CA's return.",
+         {"select": "#b-kind", "value": "business"}, {"wait": 2}, {"scroll_to": "#b-ad_left"}, O(highlight="#b-ad_left"), {"wait": 1},
+         {"select": "#b-kind", "value": "profession"}, {"wait": 2}, {"select": "#b-code", "value": "14001"}, {"wait": 2}),
        S("ITR-3, checked", "File: I T R 3, made from My return and checked against the department's schema.", node("file"), {"wait_for": ".mr-form"},
          {"wait": 1}, O(highlight=".mr-form"), O(highlight="#mr-schema.mr-ok", timeout=12)),
        S(None, "Last, part twelve: the tax rules themselves.", {"wait": 1.5})]
@@ -170,6 +208,10 @@ PARTS = [("showcase9", "SimplyFile showcase, part 9: your own return, from your 
          ("showcase12", "SimplyFile showcase, part 12: tax rules", "/#/taxwatch", P12)]
 validate = runpy.run_path(str(ROOT / "tools" / "tour_video" / "make_tour.py"), run_name="x")["validate_tour"]
 for key, title, start, steps in PARTS:
-    t = {"page_key": key, "title": title, "start_url": start, **BASE, "steps": steps}
+    for s_ in steps:          # 2026-10-08: a return with s.89 arrears takes seconds to work out (wave 4's year_tax) - wait for it
+        for a_ in s_["do"]:
+            if "wait_for" in a_:
+                a_.setdefault("timeout", 45)
+    t ={"page_key": key, "title": title, "start_url": start, **BASE, "steps": steps}
     (ROOT / "tmp" / "tour_video" / f"{key}.json").write_text(json.dumps(t, indent=1, ensure_ascii=False), encoding="utf-8")
     print(key, len(steps), "steps", validate(t) or "valid")

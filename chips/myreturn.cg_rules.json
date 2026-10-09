@@ -236,6 +236,36 @@
       "type": "boolean",
       "default": true,
       "label": "s.80 does not name s.71B: a house-property loss is carried forward from a belated return too"
+    },
+    {
+      "name": "ex_before_months",
+      "type": "number",
+      "default": 12,
+      "label": "s.54 / 54F: a house bought within 1 year before the transfer ..."
+    },
+    {
+      "name": "ex_after_months",
+      "type": "number",
+      "default": 24,
+      "label": "s.54 / 54F: ... or 2 years after it"
+    },
+    {
+      "name": "build_months",
+      "type": "number",
+      "default": 36,
+      "label": "s.54 / 54F: a house built within 3 years after the transfer"
+    },
+    {
+      "name": "cgas_by",
+      "type": "text",
+      "default": "07-31",
+      "label": "s.54(2) / 54F(4): the gain not used by the due date of the return u/s 139(1) is deposited in the Capital Gains Accounts Scheme by that day - 31 July of the AY for one whose accounts are not audited (the only kind My return files)"
+    },
+    {
+      "name": "ex_max",
+      "type": "number",
+      "default": 4,
+      "label": "exemptions claimed against one sale (54 and 54EC on one house ...), at most"
     }
   ],
   "expr": {
@@ -256,13 +286,18 @@
       "ltcl_order": "$ltcl_order",
       "loss_years": "$loss_years",
       "cf_kinds": "$cf_kinds",
-      "hp_cf_any": "$hp_cf_any"
+      "hp_cf_any": "$hp_cf_any",
+      "ex_before_months": "$ex_before_months",
+      "ex_after_months": "$ex_after_months",
+      "build_months": "$build_months",
+      "cgas_by": "$cgas_by",
+      "ex_max": "$ex_max"
     }
   },
   "returns": "record",
-  "version": 1,
+  "version": 2,
   "status": "published",
-  "description_nl": "2026-10-07: The capital-gains rules My return works by (Finance (No.2) Act 2024; AY 2026-27): holding periods, buckets, grandfathering, the indexation choice for land / building bought before 23 July 2024, s.50C, s.50AA, exemption caps, set-off order and carry-forward.",
+  "description_nl": "2026-10-07: The capital-gains rules My return works by (Finance (No.2) Act 2024; AY 2026-27): holding periods, buckets, grandfathering, the indexation choice for land / building bought before 23 July 2024, s.50C, s.50AA, exemption caps, set-off order and carry-forward. 2026-10-08: ex_before_months / ex_after_months / build_months (s.54, 54F), cgas_by (s.54(2), 54F(4)), ex_max (several exemptions on one sale).",
   "test_cases": [
     {
       "args": {},
@@ -412,7 +447,12 @@
           "original",
           "revised"
         ],
-        "hp_cf_any": true
+        "hp_cf_any": true,
+        "ex_before_months": 12,
+        "ex_after_months": 24,
+        "build_months": 36,
+        "cgas_by": "07-31",
+        "ex_max": 4
       }
     }
   ]

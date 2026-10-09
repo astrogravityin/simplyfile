@@ -56,11 +56,19 @@ export function foreignCard(r, d) {
 
 export function faCard(r, d) {
   const need = d.res && d.res.status === 'ROR';
-  const rows = (r.fa_rows || []).map((x, i) => `<div class="mr-cg" data-fa="${i}"><div class="grid four">${rowOf('fa', 'data-fav', i, x, [
-    ['kind', 'sel', pairs('fa_kinds')], ['country', 'sel', [['', ''], ...(d.countries || [])]], ['name', 'text'], ['address', 'text'], ['zip', 'text'],
-    ...(['bank', 'custodial'].includes(x.kind || 'bank') ? [['account', 'text']] : []), ['status', 'sel', pairs('fa_statuses')], ['opened', 'date'],
+  const head = [['kind', 'sel', pairs('fa_kinds')], ['country', 'sel', [['', ''], ...(d.countries || [])]], ['name', 'text'], ['address', 'text'], ['zip', 'text']];
+  const offered = [['taxed', 'num'], ['sch', 'sel', pairs('fa_schs')], ['sch_no', 'text']];
+  // 2026-10-08: Schedule FA D-F - an account you can sign for, a trust abroad, other income from outside India
+  const more = {
+    signing: [['holder', 'text'], ['account', 'text'], ['peak', 'num'], ['income', 'num'], ...offered],
+    trust: [['trustees', 'text'], ['trustees_addr', 'text'], ['settlor', 'text'], ['settlor_addr', 'text'], ['beneficiaries', 'text'], ['beneficiaries_addr', 'text'],
+      ['opened', 'date'], ['income', 'num'], ...offered],
+    income: [['income', 'num'], ['nature', 'text'], ...offered],
+  };
+  const rows = (r.fa_rows || []).map((x, i) => `<div class="mr-cg" data-fa="${i}"><div class="grid four">${rowOf('fa', 'data-fav', i, x, more[x.kind] ? [...head, ...more[x.kind]] : [
+    ...head, ...(['bank', 'custodial'].includes(x.kind || 'bank') ? [['account', 'text']] : []), ['status', 'sel', pairs('fa_statuses')], ['opened', 'date'],
     ['peak', 'num'], ['closing', 'num'], ['income', 'num'], ['cost', 'num'], ['proceeds', 'num'], ['nature', 'text'],
-    ...(['property', 'other'].includes(x.kind) ? [['taxed', 'num'], ['sch', 'sel', pairs('fa_schs')], ['sch_no', 'text']] : [])])}</div></div>`).join('');
+    ...(['property', 'other'].includes(x.kind) ? offered : [])])}</div></div>`).join('');
   return `<section class="card"><h3 class="rc-h">${icon('folder', 15)} ${esc(w('fa_h'))}</h3><p class="small muted">${esc(w('fa_p'))}</p>
     ${need ? '' : `<p class="small muted">${esc(w('fa_not_needed', { status: w(`rs_${(d.res || {}).status || 'ROR'}`) }))}</p>`}
     ${rows || `<p class="muted small">${esc(w('fa_none'))}</p>`}
@@ -99,15 +107,21 @@ export function itruCard(d) {
   const f = (k, ty, list) => rowOf('iu', 'data-iu', 0, u, [[k, ty, list]]);
   const ids = d.itru_bars || [];
   const lines = w('iu_lines', { pct: u.pct || 0 }).split('|');
-  const vals = [u.tax_before, u.tax_after, u.extra_tax, u.i234a, u.i234b, u.additional, u.fee_234f, u.pay];
+  const vals = [u.tax_before, u.tax_after, u.extra_tax, u.i234a, u.i234b, u.i234c, u.additional, u.fee_234f, u.pay];
   const result = !u.ay ? `<p class="small muted">${esc(w('iu_none'))}</p>` : !u.ok ? `<p class="small mr-warn">${icon('alert', 12)} ${esc(w(u.why))}</p>`
     : `<p class="small mr-ok">${icon('check', 12)} ${esc(w('iu_ok', { by: String(u.updated_by || '').replace(/(\d{4})(\d{2})(\d{2})/, '$3-$2-$1') }))}</p>
       <table class="mr-cmp-t"><tbody>${lines.map((l, n) => `<tr><td>${esc(l)}</td><td class="num">${money(vals[n])}</td></tr>`).join('')}</tbody></table>
+      ${u.surcharge ? `<p class="small muted">${esc(w('iu_sur', { amount: money(u.surcharge) }))}</p>` : ''}
       <ol class="small">${w('iu_steps', { ay: u.ay }).split('|').map((s) => `<li>${esc(s)}</li>`).join('')}</ol>
       ${u.schema ? '' : `<p class="small muted">${esc(w('iu_no_schema', { ay: u.ay }))}</p>`}`;
   return `<section class="card"><h3 class="rc-h">${icon('refresh', 15)} ${esc(w('iu_h'))}</h3><p class="small muted">${esc(w('iu_p'))}</p>
     <div class="grid four" data-iurow>${f('ay', 'sel', [['', ''], ...(d.itru_years || []).map((y) => [y, y])])}${f('filed', 'sel', pairs('iu_filed'))}${f('orig_income', 'num')}${f('added', 'num')}
       ${f('tds_added', 'num')}${f('tds', 'num')}${f('advance', 'num')}${f('regime', 'sel', pairs('ar_regimes'))}${f('reason', 'sel', [['', ''], ...pairs('iu_reasons')])}${f('on', 'date')}</div>
+    <details class="mr-more" ${['orig_111a', 'orig_112a', 'orig_112', 'orig_30', 'add_111a', 'add_112a', 'add_112', 'add_30'].some((k) => u[k]) ? 'open' : ''}><summary>${esc(w('iu_special_h'))}</summary>
+      <div class="grid four" data-iurow2>${['orig_111a', 'orig_112a', 'orig_112', 'orig_30', 'add_111a', 'add_112a', 'add_112', 'add_30'].map((k) => f(k, 'num')).join('')}
+        ${u.ay === '2025-26' ? f('early', 'sel', pairs('iu_early')) : ''}</div></details>
+    <details class="mr-more" ${['adv_q1', 'adv_q2', 'adv_q3', 'adv_q4'].some((k) => u[k]) ? 'open' : ''}><summary>${esc(w('iu_adv_h'))}</summary>
+      <div class="grid four">${['adv_q1', 'adv_q2', 'adv_q3', 'adv_q4'].map((k) => f(k, 'num')).join('')}</div></details>
     <h4 class="small">${esc(w('iu_bars_h'))}</h4><div class="mr-qs">${ids.map((b) => `<label class="check"><input type="checkbox" data-iub="${b}" ${(u.bars || []).includes(b) ? 'checked' : ''}/> <span>${esc(w(`iu_bar_${b}`))}</span></label>`).join('')}</div>
     ${result}</section>`;
 }

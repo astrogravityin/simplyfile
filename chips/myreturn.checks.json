@@ -35,7 +35,8 @@
         "deposits": 100,
         "dividend": 100,
         "cg_sales": 1000,
-        "property": 1000
+        "property": 1000,
+        "gst": 1000
       },
       "label": "rupees of difference that do not matter, per figure"
     }
@@ -95,9 +96,9 @@
     }
   },
   "returns": "record",
-  "version": 2,
+  "version": 3,
   "status": "published",
-  "description_nl": "2026-10-06: the same figure in two documents: within the tolerance it agrees; missing from the other one is worth a look (amber); otherwise it disagrees (red) and the person decides which is right before filing. 2026-10-07: cg_sales (AIS SFT-017 / 018 sales of shares and fund units against the rows) and property (194IA / SFT-012 against the property sold), 1,000 apart is the same.",
+  "description_nl": "2026-10-06: the same figure in two documents: within the tolerance it agrees; missing from the other one is worth a look (amber); otherwise it disagrees (red) and the person decides which is right before filing. 2026-10-07: cg_sales (AIS SFT-017 / 018 sales of shares and fund units against the rows) and property (194IA / SFT-012 against the property sold), 1,000 apart is the same. 2026-10-08: gst: the GST turnover (GSTR-3B, per GSTIN) beside the business receipts - 1,000 apart is the same.",
   "test_cases": [
     {
       "args": {
@@ -133,6 +134,30 @@
         "what": "savings",
         "gap": 8000,
         "level": "amber"
+      }
+    },
+    {
+      "args": {
+        "what": "gst",
+        "a": 1000000,
+        "b": 1000500
+      },
+      "expect_value": {
+        "what": "gst",
+        "gap": -500,
+        "level": "ok"
+      }
+    },
+    {
+      "args": {
+        "what": "gst",
+        "a": 1000000,
+        "b": 1400000
+      },
+      "expect_value": {
+        "what": "gst",
+        "gap": -400000,
+        "level": "red"
       }
     }
   ]
