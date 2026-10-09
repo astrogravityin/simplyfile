@@ -13,6 +13,12 @@ const sw = (k, v) => t('shell', k, v);      // the portal's own words: Cancel, D
 
 const GUIDE = () => `${BASE}/help/gemini-key`;
 
+// What in this portal uses a key: chip ai.features' labels (sent with the edition at sign-in), or the "needs no key" line.
+const usesLine = () => {
+  const feats = (state.edition && state.edition.ai_features) || [];
+  return feats.length ? w('uses_key', { features: feats.map((f) => `<b>${esc(f)}</b>`).join(', ') }) : w('uses_none');
+};
+
 export async function keysPage(host) {
   await loadWords('keys');
   const d = await api('/api/keys');
@@ -20,7 +26,7 @@ export async function keysPage(host) {
   const ready = !!d.set.gemini_api_key;
   const spentPct = funds.loaded_usd ? Math.min(100, (funds.spent_usd / funds.loaded_usd) * 100) : 0;
 
-  host.innerHTML = pageHead(w('title'), w('lede'),
+  host.innerHTML = pageHead(w('title'), w('lede', { uses: usesLine() }),
     `<a href="${GUIDE()}" target="_blank" rel="noopener"><button type="button">${icon('help')} ${w('how_to_get')}</button></a>`)
 
     + `<div id="k-msg"></div>

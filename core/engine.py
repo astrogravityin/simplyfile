@@ -231,26 +231,51 @@ def run(chip_id: str, args: dict | None = None, lib: dict | None = None) -> Any:
         _depth.n = depth
 
 
+def _edition_row(lib: dict | None = None) -> dict:
+    """This server's row of chip edition.settings, read from the chip itself, not run(), so naming never recurses."""
+    lib = lib if lib is not None else chips()
+    if _pn["lib"] is not lib:
+        knob = {p["name"]: p.get("default") for p in (lib.get("edition.settings") or {}).get("params", [])}
+        want = (os.getenv("PORTAL_EDITION") or os.getenv("TV_EDITION") or knob.get("default_edition") or "").strip().lower()
+        _pn.update(lib=lib, row=next((r for r in knob.get("rows") or [] if r.get("id") == want), {}), names=None)
+    return _pn["row"]
+
+
 def product_name(lib: dict | None = None) -> str:
     """The product's one name - chip edition.settings, this server's edition row (2026-10-08 owner: "the name should be
-    chip/ops - one place change, everywhere changed"). Read from the chip itself, not run(), so naming never recurses."""
-    lib = lib if lib is not None else chips()
-    if _pn["lib"] is lib:
-        return _pn["name"]
-    knob = {p["name"]: p.get("default") for p in (lib.get("edition.settings") or {}).get("params", [])}
-    want = (os.getenv("PORTAL_EDITION") or os.getenv("TV_EDITION") or knob.get("default_edition") or "").strip().lower()
-    _pn.update(lib=lib, name=next((r.get("product_name", "") for r in knob.get("rows") or [] if r.get("id") == want), ""))
-    return _pn["name"]
+    chip/ops - one place change, everywhere changed")."""
+    return _edition_row(lib).get("product_name", "")
 
 
-_pn: dict = {"lib": None, "name": ""}
+def _names(lib: dict) -> dict:
+    """The placeholders every chip word may say, from the edition row: {product}; {clients} / {Clients} / {client_one} -
+    what this domain calls its records (row client_noun {one, many}: clients, companies, patients...). 2026-10-09 owner."""
+    row = _edition_row(lib)
+    if _pn["names"] is not None:
+        return _pn["names"]
+    noun = row.get("client_noun") or {}
+    out = {"{product}": row.get("product_name", "")}
+    if noun.get("many"):
+        out |= {"{clients}": noun["many"], "{Clients}": noun["many"][:1].upper() + noun["many"][1:]}
+    if noun.get("one"):
+        out["{client_one}"] = noun["one"]
+    _pn["names"] = {k: v for k, v in out.items() if v}
+    return _pn["names"]
+
+
+_pn: dict = {"lib": None, "row": {}, "names": None}
 
 
 def _named(got: Any, lib: dict) -> Any:
-    """Every word a chip answers says {product} for the product's name; filled here, so no chip ever spells the name.
+    """Every word a chip answers says {product} for the product's name (and {clients} for its records - _names); filled
+    here, so no chip ever spells the name.
     ponytail: walks every answer (no-arg answers are memoised); skip the walk per chip if a hot rule ever shows in a profile."""
     if isinstance(got, str):
-        return got.replace("{product}", product_name(lib) or "{product}") if "{product}" in got else got
+        if "{" not in got:
+            return got
+        for k, v in _names(lib).items():
+            got = got.replace(k, v)
+        return got
     if isinstance(got, list):
         return [_named(x, lib) for x in got]
     if isinstance(got, dict):
@@ -426,6 +451,9 @@ if __name__ == "__main__":
     _lib = {"edition.settings": _ed, "x.words": _w}
     assert run("x.words", {"z": 1}, _lib) == {"hi": "Welcome to Namely", "n": [1, "Namely"]}, "{product} not filled"
     assert _w["expr"]["hi"] == "Welcome to {product}", "filling the name changed the chip itself"
+    _ed["params"][1]["default"][0]["client_noun"] = {"one": "patient", "many": "patients"}
+    _w["expr"]["c"] = "{Clients}: your {clients}, one {client_one}, {client}"
+    assert run("x.words", {"z": 2}, {"edition.settings": _ed, "x.words": _w})["c"] == "Patients: your patients, one patient, {client}", "{clients} not filled"
     if len(sys.argv) > 1:
         register_dir(sys.argv[1])
     bad = certify()

@@ -15,7 +15,7 @@
     {
       "name": "lede",
       "type": "text",
-      "default": "One thing in this portal talks to a paid service: <b>Draft with AI</b>, which sends your recording to Google Gemini. It runs on <b>your own key</b>, billed to <b>your own</b> Google account — never the portal's, never a colleague's."
+      "default": "{uses} An AI run uses <b>your own key</b>, billed to <b>your own</b> account with the provider — never the portal's, never a colleague's."
     },
     {
       "name": "how_to_get",
@@ -35,12 +35,12 @@
     {
       "name": "ready_line",
       "type": "text",
-      "default": "Draft with AI is on for your account, using <code>{model}</code>. Saved key ends {ends}."
+      "default": "AI is on for your account, using <code>{model}</code>. Saved key ends {ends}."
     },
     {
       "name": "no_key_line",
       "type": "text",
-      "default": "Everything else still works — write the script yourself, or run the LLM Bridge in a model you already pay for."
+      "default": "Everything that needs no AI works without a key."
     },
     {
       "name": "test_it",
@@ -155,7 +155,7 @@
     {
       "name": "privacy_note",
       "type": "text",
-      "default": "Your key, your recordings, your manuals and your projects are visible to your account alone. Nobody else signed in here can list them, open them or spend against your key."
+      "default": "Your keys and your runs are visible to your account alone. Nobody else signed in here can list them, open them or spend against your key."
     },
     {
       "name": "runs_card",
@@ -170,7 +170,7 @@
     {
       "name": "providers_note",
       "type": "text",
-      "default": "Gemini is the default for everything. Add another provider's key below and pick it for text (scripts, shot lists, imports, checks) or stills; the Film step picks its video model per run. Prices are the providers' published ones; every run is booked to that provider's own budget."
+      "default": "Gemini is the default. Add another provider's key below and pick it for text or pictures. Prices are the providers' published ones; every run is booked to that provider's own budget."
     },
     {
       "name": "provider_pick",
@@ -185,12 +185,12 @@
     {
       "name": "kind_image",
       "type": "text",
-      "default": "Stills"
+      "default": "Pictures"
     },
     {
       "name": "kind_video",
       "type": "text",
-      "default": "Clips"
+      "default": "Videos"
     },
     {
       "name": "choice_saved",
@@ -240,7 +240,7 @@
     {
       "name": "price_image",
       "type": "text",
-      "default": "{usd} a still"
+      "default": "{usd} a picture"
     },
     {
       "name": "price_video",
@@ -337,7 +337,7 @@
     {
       "name": "runs_note",
       "type": "text",
-      "default": "Your own runs only. Every AI and metered call, whether it cost anything or not — a free voice run is listed too, so the record is whole."
+      "default": "Your own runs only. Every AI and metered call, whether it cost anything or not — a free run is listed too, so the record is whole."
     },
     {
       "name": "col_when",
@@ -382,7 +382,7 @@
     {
       "name": "no_runs_body",
       "type": "text",
-      "default": "Every AI draft and every generated video leaves a receipt here — what it cost, how long it took."
+      "default": "Every AI run leaves a receipt here — what it cost, how long it took."
     },
     {
       "name": "budget_saved",
@@ -437,7 +437,7 @@
     {
       "name": "label_hint",
       "type": "text",
-      "default": "e.g. <i>explore.whattag Gmail</i> or <i>Work project</i>. When this key runs out, messages name it, so you know which account to top up."
+      "default": "e.g. <i>Office Gmail</i> or <i>Work project</i>. When this key runs out, messages name it, so you know which account to top up."
     },
     {
       "name": "pool_rename_hint",
@@ -452,7 +452,7 @@
     {
       "name": "model_hint",
       "type": "text",
-      "default": "Flash is the cheap one that watches video. Pro costs more and reads a busy screen better."
+      "default": "Flash is the cheap, quick one. Pro costs more and reads a busy page better."
     },
     {
       "name": "saving_tries",
@@ -482,12 +482,12 @@
     {
       "name": "works_switched",
       "type": "text",
-      "default": "Key works. Google does not offer {from} to new keys, so your model is now {model}. Draft with AI is on."
+      "default": "Key works. Google does not offer {from} to new keys, so your model is now {model}. AI is on."
     },
     {
       "name": "works",
       "type": "text",
-      "default": "Key works with {model}. Draft with AI is on."
+      "default": "Key works with {model}. AI is on."
     },
     {
       "name": "saved_but_refused",
@@ -701,7 +701,7 @@
     {
       "name": "no_usage_body",
       "type": "text",
-      "default": "Anything that costs money - a draft, a voice, a picture, a film - lands here with the key that paid for it.",
+      "default": "Anything that costs money - every AI run - lands here with the key that paid for it.",
       "label": "no_usage_body"
     },
     {
@@ -1242,7 +1242,7 @@
     {
       "name": "wallet_note",
       "type": "long",
-      "default": "The portal lends you its keys and takes what each run costs from this one balance. A picture the check throws away is never charged.",
+      "default": "The portal lends you its keys and takes what each run costs from this one balance.",
       "label": "wallet note"
     },
     {
@@ -1266,7 +1266,7 @@
     {
       "name": "wallet_added_total",
       "type": "text",
-      "default": "{added} added in all, {refunded} given back for redrawn pictures",
+      "default": "{added} added in all, {refunded} given back",
       "label": "wallet added total"
     },
     {
@@ -1352,6 +1352,18 @@
       "type": "text",
       "default": "Group the report by",
       "label": "report_group_label"
+    },
+    {
+      "name": "uses_key",
+      "type": "text",
+      "default": "In {product}, these use an AI key: {features}.",
+      "label": "uses key"
+    },
+    {
+      "name": "uses_none",
+      "type": "text",
+      "default": "{product} needs no AI key yet.",
+      "label": "uses none"
     }
   ],
   "expr": {
@@ -1601,11 +1613,13 @@
       "lent_count": "$lent_count",
       "lent_manage": "$lent_manage",
       "lent_title": "$lent_title",
-      "report_group_label": "$report_group_label"
+      "report_group_label": "$report_group_label",
+      "uses_key": "$uses_key",
+      "uses_none": "$uses_none"
     }
   },
   "returns": "record",
-  "version": 3,
+  "version": 4,
   "status": "published",
   "description_nl": "The words of one screen. {placeholders} are filled on the page. A language overrides any of them with chip ui.keys.<lang> (for example ui.keys.hi).",
   "test_cases": [
@@ -1613,12 +1627,12 @@
       "args": {},
       "expect_value": {
         "title": "Account & key",
-        "lede": "One thing in this portal talks to a paid service: <b>Draft with AI</b>, which sends your recording to Google Gemini. It runs on <b>your own key</b>, billed to <b>your own</b> Google account — never the portal's, never a colleague's.",
+        "lede": "{uses} An AI run uses <b>your own key</b>, billed to <b>your own</b> account with the provider — never the portal's, never a colleague's.",
         "how_to_get": "How to get a key",
         "key_connected": "Gemini key connected",
         "no_key": "No AI key yet",
-        "ready_line": "Draft with AI is on for your account, using <code>{model}</code>. Saved key ends {ends}.",
-        "no_key_line": "Everything else still works — write the script yourself, or run the LLM Bridge in a model you already pay for.",
+        "ready_line": "AI is on for your account, using <code>{model}</code>. Saved key ends {ends}.",
+        "no_key_line": "Everything that needs no AI works without a key.",
         "test_it": "Test it",
         "replace_key": "Replace key",
         "add_key": "Add my key",
@@ -1641,14 +1655,14 @@
         "email": "Email",
         "role": "Role",
         "change_password": "Change password",
-        "privacy_note": "Your key, your recordings, your manuals and your projects are visible to your account alone. Nobody else signed in here can list them, open them or spend against your key.",
+        "privacy_note": "Your keys and your runs are visible to your account alone. Nobody else signed in here can list them, open them or spend against your key.",
         "runs_card": "What you have run",
         "providers_card": "Other providers &amp; who does what",
-        "providers_note": "Gemini is the default for everything. Add another provider's key below and pick it for text (scripts, shot lists, imports, checks) or stills; the Film step picks its video model per run. Prices are the providers' published ones; every run is booked to that provider's own budget.",
+        "providers_note": "Gemini is the default. Add another provider's key below and pick it for text or pictures. Prices are the providers' published ones; every run is booked to that provider's own budget.",
         "provider_pick": "{kind}: {label} · {model}",
         "kind_text": "Text",
-        "kind_image": "Stills",
-        "kind_video": "Clips",
+        "kind_image": "Pictures",
+        "kind_video": "Videos",
         "choice_saved": "Saved: {kind} now goes to {label} · {model}.",
         "needs_key": "no key yet",
         "key_in": "key in",
@@ -1658,7 +1672,7 @@
         "get_key": "get one",
         "budget_for": "Money for {label}",
         "price_text": "{in} in · {out} out per million tokens",
-        "price_image": "{usd} a still",
+        "price_image": "{usd} a picture",
         "price_video": "{low}–{high} a second",
         "pool_title": "Your {label} keys",
         "pool_note": "Keep several: a call goes to the default first, a key that hits its limit steps aside for an hour and the next one takes over, an invalid one waits until it passes a test. Every key stays on this server, shown by its last four characters only.",
@@ -1677,7 +1691,7 @@
         "status_exhausted": "at its limit",
         "status_invalid": "invalid",
         "pool_since": "since {at}",
-        "runs_note": "Your own runs only. Every AI and metered call, whether it cost anything or not — a free voice run is listed too, so the record is whole.",
+        "runs_note": "Your own runs only. Every AI and metered call, whether it cost anything or not — a free run is listed too, so the record is whole.",
         "col_when": "When",
         "col_what": "What",
         "col_provider": "Provider",
@@ -1686,7 +1700,7 @@
         "free": "free",
         "tokens": "{in} in / {out} out",
         "no_runs_title": "Nothing run yet",
-        "no_runs_body": "Every AI draft and every generated video leaves a receipt here — what it cost, how long it took.",
+        "no_runs_body": "Every AI run leaves a receipt here — what it cost, how long it took.",
         "budget_saved": "Budget saved.",
         "asking": "Asking Google…",
         "test_ok": "Your key works with <code>{model}</code> — answered in {secs}s, cost {cost}.",
@@ -1697,17 +1711,17 @@
         "dialog_note": "The key stays on this server, for your account only. It is never shown to anyone — not even back to you: the box below only ever shows its last four characters. <a href=\"{guide}\" target=\"_blank\" rel=\"noopener\">How to get one, step by step →</a>",
         "key_hint": "Starts with <code>AQ.…</code> (new keys) or <code>AIza…</code> (older ones). Paste it from aistudio.google.com/apikey.",
         "label_label": "Label — whose account is this key from?",
-        "label_hint": "e.g. <i>explore.whattag Gmail</i> or <i>Work project</i>. When this key runs out, messages name it, so you know which account to top up.",
+        "label_hint": "e.g. <i>Office Gmail</i> or <i>Work project</i>. When this key runs out, messages name it, so you know which account to top up.",
         "pool_rename_hint": "Rename: say which account this key came from, so you know which one to top up.",
         "pool_renamed": "Label saved.",
-        "model_hint": "Flash is the cheap one that watches video. Pro costs more and reads a busy screen better.",
+        "model_hint": "Flash is the cheap, quick one. Pro costs more and reads a busy page better.",
         "saving_tries": "Saving also tries it once — a fraction of a cent.",
         "cancel": "Cancel",
         "save_and_test": "Save and test",
         "paste_first": "Paste your key first.",
         "saved_asking": "Saved. Asking Google whether it works…",
-        "works_switched": "Key works. Google does not offer {from} to new keys, so your model is now {model}. Draft with AI is on.",
-        "works": "Key works with {model}. Draft with AI is on.",
+        "works_switched": "Key works. Google does not offer {from} to new keys, so your model is now {model}. AI is on.",
+        "works": "Key works with {model}. AI is on.",
         "saved_but_refused": "The key is saved — fix it here and test again.",
         "share_title": "Lend this key",
         "share_note": "Someone with an account on this portal can run their own work on your key. It spends <b>your</b> balance, every run lands on your usage list, and you can take it back at any moment.",
@@ -1743,7 +1757,7 @@
         "own_tag": "Own",
         "shared_tag": "Shared",
         "no_usage_title": "No paid runs yet",
-        "no_usage_body": "Anything that costs money - a draft, a voice, a picture, a film - lands here with the key that paid for it.",
+        "no_usage_body": "Anything that costs money - every AI run - lands here with the key that paid for it.",
         "page_of": "Page {page} of {pages} · {total} {total:run|runs}",
         "prev": "Back",
         "next": "Next",
@@ -1838,11 +1852,11 @@
         "mc_retire_body": "It leaves every model picker for good (its prices stay, for the history of what was spent). Anything saved with it asks for another model the next time AI is pressed.",
         "mc_retired": "{model} retired.",
         "wallet_card": "{product} credit",
-        "wallet_note": "The portal lends you its keys and takes what each run costs from this one balance. A picture the check throws away is never charged.",
+        "wallet_note": "The portal lends you its keys and takes what each run costs from this one balance.",
         "wallet_left": "{left} left",
         "wallet_today": "{today} used today of {cap}",
         "wallet_today_nocap": "{today} used today",
-        "wallet_added_total": "{added} added in all, {refunded} given back for redrawn pictures",
+        "wallet_added_total": "{added} added in all, {refunded} given back",
         "wallets_card": "Wallets (portal owner)",
         "wallets_note": "Someone pays you by UPI or bank; add the same amount here. Your default key for each provider is lent to them, and every run draws on their one balance.",
         "wallet_email": "Their email",
@@ -1856,7 +1870,9 @@
         "lent_count": "People holding this key: {n}",
         "lent_manage": "Manage",
         "lent_title": "Who holds this key",
-        "report_group_label": "Group the report by"
+        "report_group_label": "Group the report by",
+        "uses_key": "In {product}, these use an AI key: {features}.",
+        "uses_none": "{product} needs no AI key yet."
       }
     }
   ],

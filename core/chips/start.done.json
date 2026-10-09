@@ -1,0 +1,55 @@
+{
+  "chip_id": "start.done",
+  "kind": "predicate",
+  "set": "start",
+  "label": "Is a Start here step done - its fact reached its mark",
+  "aliases": [
+    "start step done"
+  ],
+  "params": [
+    {
+      "name": "value",
+      "type": "number",
+      "default": 0,
+      "label": "the fact's count for this person (records, History lines in an area, times a screen was opened...)"
+    },
+    {
+      "name": "at_least",
+      "type": "number",
+      "default": 1,
+      "label": "how many make the step done (start.steps at_least)"
+    }
+  ],
+  "expr": {
+    "op": "ge",
+    "left": "$value",
+    "right": "$at_least"
+  },
+  "returns": "boolean",
+  "version": 1,
+  "status": "published",
+  "description_nl": "A step of chip start.steps is done when the fact it names (summed, when it names several) has reached at_least.",
+  "test_cases": [
+    {
+      "args": {
+        "value": 0,
+        "at_least": 1
+      },
+      "expect_value": false
+    },
+    {
+      "args": {
+        "value": 1,
+        "at_least": 1
+      },
+      "expect_value": true
+    },
+    {
+      "args": {
+        "value": 3,
+        "at_least": 5
+      },
+      "expect_value": false
+    }
+  ]
+}

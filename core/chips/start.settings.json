@@ -1,0 +1,59 @@
+{
+  "chip_id": "start.settings",
+  "kind": "accessor",
+  "set": "start",
+  "label": "Start here card - the knobs",
+  "aliases": [
+    "start here card - the knobs"
+  ],
+  "params": [
+    {
+      "name": "owner_sees",
+      "type": "boolean",
+      "default": false,
+      "label": "the portal owner sees the card too (it is for people starting work in a firm)"
+    },
+    {
+      "name": "scan_most",
+      "type": "number",
+      "default": 200,
+      "label": "most records whose History is counted for the done tests (a big firm's card stays quick)"
+    },
+    {
+      "name": "ticks_stay",
+      "type": "boolean",
+      "default": true,
+      "label": "a step once done stays ticked, even if the record behind it is later removed"
+    },
+    {
+      "name": "calls_most",
+      "type": "number",
+      "default": 2000,
+      "label": "most of the person's latest requests read for the steps' call patterns"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "owner_sees": "$owner_sees",
+      "scan_most": "$scan_most",
+      "ticks_stay": "$ticks_stay",
+      "calls_most": "$calls_most"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-09 owner: a Start here card for a new user who has no idea how to proceed. The steps are the domain's chip start.steps; whether a step is done is chip start.done over facts core/startcard.py counts from real work.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "owner_sees": false,
+        "scan_most": 200,
+        "ticks_stay": true,
+        "calls_most": 2000
+      }
+    }
+  ]
+}

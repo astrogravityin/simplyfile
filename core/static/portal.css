@@ -1244,3 +1244,29 @@ select option{background:var(--panel);color:var(--ink)}
 .gate .pitch .powered{color:rgba(255,255,255,.72)}
 .gate .pitch .powered b{color:#fff}
 .gate .pitch .powered:hover b{color:#fff;text-decoration:underline}
+
+/* Start here (core/static/startcard.js): a newcomer's first steps, numbered, ticked from real work */
+#startcard:empty{display:none}
+.startcard{margin-bottom:16px;border-color:var(--brand-line)}
+.startcard .sc-head{display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.startcard .sc-orb{flex:none;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:var(--brand-soft);color:var(--brand)}
+.startcard .sc-txt{flex:1 1 220px;min-width:0}
+.startcard .sc-txt h2{margin:0 0 2px;font-size:16px}
+.startcard .sc-txt p{margin:0}
+.startcard .sc-count{align-self:center}
+.startcard .sc-bar{height:6px;border-radius:99px;background:var(--bg-2);margin:12px 0 6px;overflow:hidden}
+.startcard .sc-bar i{display:block;height:100%;background:var(--ok);border-radius:99px}
+.startcard .sc-steps{list-style:none;margin:0;padding:0;display:grid;gap:2px}
+.startcard .sc-steps li{display:flex;align-items:center;gap:12px;padding:9px 4px;border-top:1px solid var(--line)}
+.startcard .sc-steps li:first-child{border-top:0}
+.startcard .sc-n{flex:none;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:12.5px;
+  border:1.5px solid var(--edge);color:var(--ink-2)}
+.startcard li.done .sc-n{background:var(--ok);border-color:var(--ok);color:var(--ok-soft)}
+.startcard .sc-body{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:1px}
+.startcard li.done .sc-body b{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--faint)}
+.startcard .sc-steps .sc-go{flex:none;white-space:nowrap}
+@media (max-width:560px){
+  .startcard .sc-steps li{display:grid;grid-template-columns:26px minmax(0,1fr);column-gap:12px;row-gap:6px;align-items:start}
+  .startcard .sc-steps .sc-go,.startcard .sc-steps li > .tag{grid-column:2;justify-self:start}
+  .startcard li.done .sc-body .muted{display:none}
+}

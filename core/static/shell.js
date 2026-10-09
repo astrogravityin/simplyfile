@@ -867,6 +867,7 @@ function shellView(route) {
               <span class="tag ${state.user.role === 'owner' ? 'brand' : ''}">${esc(state.user.role)}</span></div>
             ${slot(config.userMenu)}
             ${askable().length ? `<button type="button" id="ask-more">${icon('lock', 15)} ${w('ask_more_access')}</button>` : ''}
+            ${state.startCard ? `<button type="button" id="start-here">${icon('flag', 15)} ${esc(state.startCard.menu)}</button>` : ''}
             <button type="button" id="report-issue">${icon('alert', 15)} ${w('report_issue')}</button>
             <button type="button" id="my-reports">${icon('chat', 15)} ${w('my_reports')}</button>
             <button type="button" id="chpass">${icon('shield', 15)} ${w('change_password')}</button>
@@ -878,6 +879,7 @@ function shellView(route) {
       ${replyBanners()}
       ${ruleBanners()}
       ${backBar(route)}
+      <div id="startcard"></div>
       <div id="page"></div>
     </main></div>`;
 }
@@ -1164,6 +1166,8 @@ function wireShell(root, route) {
       <div class="nav">${askable().map((s) => `<a href="#/${esc(s.id)}" data-close>${icon('lock', 17)} <span class="lbl">${esc(s.label)}</span></a>`).join('')}</div>`, {
     onOpen: (body, close) => body.querySelectorAll('[data-close]').forEach((a) => { a.onclick = close; }) });
   root.querySelector('#chpass').onclick = () => { pop.hidden = true; passwordDialog(); };
+  const startHere = root.querySelector('#start-here');     // Start here, brought back after Hide (core/startcard.py)
+  if (startHere) startHere.onclick = () => { pop.hidden = true; import('./startcard.js').then((m) => m.reopenStartCard(root.querySelector('#startcard'), route && route.id)).catch((e) => toast(e.message, 'bad')); };
   root.querySelector('#report-issue').onclick = () => { pop.hidden = true; reportIssue({ surface: route ? route.id : '', context: location.hash }); };
   root.querySelector('#my-reports').onclick = () => { pop.hidden = true; myReports(); };   // 2026-10-03 owner: "where can I see all my feedback"
   root.querySelectorAll('[data-reply-seen]').forEach((b) => {
@@ -1264,6 +1268,7 @@ function take(d) {
   state.productName = d.product_name || state.productName;
   setProduct(state.productName);
   state.guides = d.guides || [];
+  state.startCard = d.start_card || null;          // Start here (core/startcard.py): where it is drawn, the name menu's word
   state.portalUrl = d.portal_url || '';
   state.catalog = d.catalog || [];
   state.elsewhere = d.elsewhere || null;           // screens this address sends to another (a portal's door) - core/static/shell.js render()
@@ -1381,7 +1386,13 @@ export function render() {
   page.innerHTML = `<div class="empty">${spinner(22)}<p>${w('loading')}</p></div>`;
   const view = config.views[route.id] || (CORE_VIEWS[route.id] && ((h) => CORE_VIEWS[route.id]().then((v) => v(h))));
   if (!view) { say(page, 'bad', w('no_view', { id: esc(route.id) })); return; }
-  Promise.resolve(view(page)).then(() => jumpTo(page, route)).catch((e) => {
+  Promise.resolve(view(page)).then(() => {
+    jumpTo(page, route);
+    // Start here: the first steps for a newcomer, on the screens chip start.steps names (core/startcard.py)
+    if (state.startCard && (state.startCard.screens || []).includes(route.id)) {
+      import('./startcard.js').then((m) => m.startCard(root.querySelector('#startcard'), route.id)).catch(() => {});
+    }
+  }).catch((e) => {
     if (BUILD.stale) { location.reload(); return; }    // old page code met the new server: reload, never show its crash
     // The owner reset this password while the page was open: the server now refuses until it is changed.
     if (e && e.data && e.data.must_change_password && state.user) {

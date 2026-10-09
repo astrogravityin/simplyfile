@@ -1,0 +1,248 @@
+{
+  "chip_id": "showcase.screen_tours",
+  "kind": "accessor",
+  "set": "showcase",
+  "audience": "admin",
+  "label": "Landing page -> Watch: which work screens' Tour Videos are shown publicly, as their own group",
+  "aliases": [
+    "screen tours",
+    "public tours",
+    "watch screens"
+  ],
+  "params": [
+    {
+      "name": "prefix",
+      "type": "text",
+      "default": "sf",
+      "label": "tour key prefix (<prefix>-<screen>)"
+    },
+    {
+      "name": "module",
+      "type": "text",
+      "default": "Screen tour",
+      "label": "the small word above each tour's title"
+    },
+    {
+      "name": "group",
+      "type": "json",
+      "default": {
+        "id": "screens",
+        "title": "Every screen, one by one",
+        "line": "A short guided tour of each screen, in the order the work happens."
+      },
+      "label": "the group on the Watch section: id, title, line"
+    },
+    {
+      "name": "screens",
+      "type": "json",
+      "default": [
+        {
+          "screen": "clients",
+          "title": "Clients & years",
+          "line": "Your firm's client register in {product}: every assessee once, carried into each assessment year - and each year's stage moves by itself.",
+          "tags": [
+            "the client register",
+            "active and archived",
+            "the year's stage, worked out",
+            "date of birth, signatory, 3CEB and 44AD",
+            "the party master for Form 3CD"
+          ]
+        },
+        {
+          "screen": "intake",
+          "title": "Intake & map",
+          "line": "Bring the client's statements and final accounts into {product} and give every row its SF Ref - most are suggested for you.",
+          "tags": [
+            "uploading statements",
+            "headings that add up",
+            "replacing a file",
+            "suggested refs for the income statement, balance sheet and P&L"
+          ]
+        },
+        {
+          "screen": "recon",
+          "title": "Reconcile",
+          "line": "Check the books against the Income-tax portal in {product}: 26AS, AIS and TIS.",
+          "tags": [
+            "26AS, AIS and TIS",
+            "replacing a newer download",
+            "findings and explanations"
+          ]
+        },
+        {
+          "screen": "compute",
+          "title": "Compute & close",
+          "line": "Turn the mapped books and 26AS into the return in {product}: the computation, interest, the filing files in the department's own format, sign-off, filing and revisions.",
+          "tags": [
+            "the computation",
+            "234A/B/C and 244A interest, worked out",
+            "ITR-3 / ITR-5 JSON and the 3CD JSON",
+            "balance sheet and P&L checks",
+            "original, belated, revised and updated returns"
+          ]
+        },
+        {
+          "screen": "audit",
+          "title": "Tax audit",
+          "line": "Work through an audit in {product}: is one needed, what moved against earlier years, GST against the books, the Form 3CD clauses and the Accounting Standards that apply, and the points still open.",
+          "tags": [
+            "is a tax audit needed (44AB)",
+            "this year against earlier years, with flags",
+            "GST returns against the books",
+            "the Form 3CD checklist, riskiest first",
+            "statutory audit and Accounting Standards",
+            "audit points and who clears them"
+          ]
+        },
+        {
+          "screen": "myreturn",
+          "title": "My return",
+          "line": "Your own return - ITR-1, 2, 3 or 4, for yourself or a family HUF. Start from your documents: {product} reads them, checks them against each other, works out both regimes and makes the department's JSON.",
+          "tags": [
+            "five steps",
+            "start from documents",
+            "keep these handy",
+            "where each document comes from",
+            "drop in your documents",
+            "locked PDFs",
+            "what each one gave",
+            "history"
+          ]
+        },
+        {
+          "screen": "taxwatch",
+          "title": "Tax rules",
+          "line": "The year's tax figures - slabs, rebates, caps and due dates - in one place. Everyone sees what every return uses; the portal owner fetches each year's, compares and applies.",
+          "tags": [
+            "live year",
+            "which year",
+            "fetch",
+            "at a glance",
+            "compare",
+            "only changes",
+            "edit by hand",
+            "apply"
+          ]
+        }
+      ],
+      "label": "work screens only (never admin screens): screen, title, line, tags. tools/showcase/screen_films.py publishes each whose video is current"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "prefix": "$prefix",
+      "module": "$module",
+      "group": "$group",
+      "screens": "$screens"
+    }
+  },
+  "returns": "any",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-09 owner: add the tours to the landing page Watch section. Work screens only; a stale or unrecorded tour is left out until it is recorded again.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "prefix": "sf",
+        "module": "Screen tour",
+        "group": {
+          "id": "screens",
+          "title": "Every screen, one by one",
+          "line": "A short guided tour of each screen, in the order the work happens."
+        },
+        "screens": [
+          {
+            "screen": "clients",
+            "title": "Clients & years",
+            "line": "Your firm's client register in {product}: every assessee once, carried into each assessment year - and each year's stage moves by itself.",
+            "tags": [
+              "the client register",
+              "active and archived",
+              "the year's stage, worked out",
+              "date of birth, signatory, 3CEB and 44AD",
+              "the party master for Form 3CD"
+            ]
+          },
+          {
+            "screen": "intake",
+            "title": "Intake & map",
+            "line": "Bring the client's statements and final accounts into {product} and give every row its SF Ref - most are suggested for you.",
+            "tags": [
+              "uploading statements",
+              "headings that add up",
+              "replacing a file",
+              "suggested refs for the income statement, balance sheet and P&L"
+            ]
+          },
+          {
+            "screen": "recon",
+            "title": "Reconcile",
+            "line": "Check the books against the Income-tax portal in {product}: 26AS, AIS and TIS.",
+            "tags": [
+              "26AS, AIS and TIS",
+              "replacing a newer download",
+              "findings and explanations"
+            ]
+          },
+          {
+            "screen": "compute",
+            "title": "Compute & close",
+            "line": "Turn the mapped books and 26AS into the return in {product}: the computation, interest, the filing files in the department's own format, sign-off, filing and revisions.",
+            "tags": [
+              "the computation",
+              "234A/B/C and 244A interest, worked out",
+              "ITR-3 / ITR-5 JSON and the 3CD JSON",
+              "balance sheet and P&L checks",
+              "original, belated, revised and updated returns"
+            ]
+          },
+          {
+            "screen": "audit",
+            "title": "Tax audit",
+            "line": "Work through an audit in {product}: is one needed, what moved against earlier years, GST against the books, the Form 3CD clauses and the Accounting Standards that apply, and the points still open.",
+            "tags": [
+              "is a tax audit needed (44AB)",
+              "this year against earlier years, with flags",
+              "GST returns against the books",
+              "the Form 3CD checklist, riskiest first",
+              "statutory audit and Accounting Standards",
+              "audit points and who clears them"
+            ]
+          },
+          {
+            "screen": "myreturn",
+            "title": "My return",
+            "line": "Your own return - ITR-1, 2, 3 or 4, for yourself or a family HUF. Start from your documents: {product} reads them, checks them against each other, works out both regimes and makes the department's JSON.",
+            "tags": [
+              "five steps",
+              "start from documents",
+              "keep these handy",
+              "where each document comes from",
+              "drop in your documents",
+              "locked PDFs",
+              "what each one gave",
+              "history"
+            ]
+          },
+          {
+            "screen": "taxwatch",
+            "title": "Tax rules",
+            "line": "The year's tax figures - slabs, rebates, caps and due dates - in one place. Everyone sees what every return uses; the portal owner fetches each year's, compares and applies.",
+            "tags": [
+              "live year",
+              "which year",
+              "fetch",
+              "at a glance",
+              "compare",
+              "only changes",
+              "edit by hand",
+              "apply"
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

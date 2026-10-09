@@ -81,6 +81,8 @@ def bootstrap_extra(request, u) -> dict:
         "id": row["id"], "brand_sub": row["brand_sub"], "landing": row["landing"],
         "words_prefix": row.get("words_prefix", ""), "tour": row.get("tour"), "selling": row.get("selling") or [],
         "jump_signin": bool(row.get("jump_signin")),
+        # what uses an AI key here (chip ai.features labels) - Account & key says it; signed-in people only
+        "ai_features": [f.get("label", "") for f in ai_features()] if u else [],
         # a door's "Launch Studio" (top right): the workshop's address as seen from THIS host (chip doors[].launch)
         "launch": ((d or {}).get("launch") or {}).get(str(request.headers.get("host") if request is not None else "").split(":")[0].lower(), "")}}
 

@@ -1576,6 +1576,9 @@ def _ui_sizes(html_: str) -> str:
 # its own. /k stays the public reader for a shared link, for someone with no account.
 # The landing page (public showcase, returning visitors skip it), / and /start: landing.py (boilerplate).
 landing.install(app, page=page, ui_sizes=_ui_sizes, named=named)
+# Start here (2026-10-09): a newcomer's first steps, ticked from real work - core/startcard.py, chip start.steps
+from core import startcard  # noqa: E402
+startcard.install(app)
 
 
 app.mount("/static", StaticFiles(directory=str(ROOT / "static")), name="static")

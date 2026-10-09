@@ -45,6 +45,21 @@ def row(pid: str) -> dict | None:
     return next((r for r in rows() if r["id"] == pid), None)
 
 
+def _edition() -> str:
+    import edition  # noqa: PLC0415 - which product this server is (chip edition.settings)
+    try:
+        return edition.current()["id"]
+    except RuntimeError:
+        return ""
+
+
+def shown() -> list[dict]:
+    """The providers this edition offers on its screens: a row with `editions` (chip providers.settings) only on those
+    editions - Runway and fal.ai make video clips, which only the Studio makes (2026-10-09 owner)."""
+    ed = _edition()
+    return [r for r in rows() if not r.get("editions") or ed in r["editions"]]
+
+
 def model_rows(kind: str | None = None) -> list[dict]:
     out = engine.run("providers.models")["rows"]
     return [r for r in out if not kind or r["kind"] == kind]
@@ -534,16 +549,17 @@ def catalog(kind: str) -> list[dict]:
 
 def offered(user_id: str) -> dict:
     """Every provider and model the screens can pick from, with whether this person's key is in."""
-    mine = store.keys_of(user_id)
+    mine, here = store.keys_of(user_id), shown()
+    ids = {r["id"] for r in here}
     out = {"kinds": {}, "chosen": {kind: {a: b for a, b in choice(user_id, kind).items() if a != "key"} for kind in kinds()},
            "providers": [{"id": r["id"], "label": r["label"], "kinds": r["kinds"], "key_field": r.get("key_field", ""),
-                          "where": r.get("where", ""), "free": bool(r.get("free")), "have_key": have_key(user_id, r["id"])} for r in rows()]}
+                          "where": r.get("where", ""), "free": bool(r.get("free")), "have_key": have_key(user_id, r["id"])} for r in here]}
     for kind in kinds():
-        models = catalog(kind)
+        models = [m for m in catalog(kind) if m["provider"] in ids]
         for m in models:
             m["have_key"] = have_key(user_id, m["provider"])
         out["kinds"][kind] = models
-    out["set"] = {r["key_field"]: bool(mine.get(r["key_field"])) for r in rows() if r.get("key_field")}
+    out["set"] = {r["key_field"]: bool(mine.get(r["key_field"])) for r in here if r.get("key_field")}
     return out
 
 
@@ -1081,9 +1097,17 @@ if __name__ == "__main__":  # ponytail: one runnable self-check of the wire's sh
         finally:
             globals()["_post_json"], globals()["_post_multipart"] = _pj, _pm
         assert sent[0] == ("multi", "https://x/v1/images/edits", ["image[]", "image[]"]) and sent[1][0] == "json", sent
-        off = offered(u)
+        _ed = _edition
+        globals()["_edition"] = lambda: "studio"           # the Studio makes clips: Runway and fal.ai are offered there
+        try:
+            off = offered(u)
+        finally:
+            globals()["_edition"] = _ed
         assert any(m["id"] == "gpt-4.1-nano" and m["have_key"] for m in off["kinds"]["text"]) and off["chosen"]["text"]["provider"] == "openai"
         assert any(m["provider"] == "runway" for m in off["kinds"]["video"]) and off["set"]["openai_api_key"] and not off["set"]["runway_api_key"]
+        if "studio" not in _edition():                     # 2026-10-09: an edition that makes no clips never offers their keys
+            here = offered(u)
+            assert "runway_api_key" not in here["set"] and not any(m["provider"] in ("runway", "fal") for m in here["kinds"].get("video") or []), here["set"]
         body = openai_chat_body("gpt-4.1-nano", "Say hi as JSON", None)
         assert body["response_format"] == {"type": "json_object"} and body["messages"][0]["content"] == "Say hi as JSON"
         pic = Path(tmp) / "f.png"

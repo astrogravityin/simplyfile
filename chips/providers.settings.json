@@ -16,7 +16,7 @@
       "default": [
         {
           "id": "gemini",
-          "label": "Google Gemini / Veo",
+          "label": "Google Gemini",
           "kinds": [
             "text",
             "image",
@@ -99,7 +99,10 @@
           "sdk": "runway",
           "base_url": "https://api.dev.runwayml.com/v1",
           "where": "https://dev.runwayml.com/",
-          "free": false
+          "free": false,
+          "editions": [
+            "studio"
+          ]
         },
         {
           "id": "fal",
@@ -113,7 +116,10 @@
           "test_url": "https://api.fal.ai/v1/models?limit=1",
           "test_auth": "Key",
           "where": "https://fal.ai/dashboard/keys",
-          "free": false
+          "free": false,
+          "editions": [
+            "studio"
+          ]
         }
       ]
     },
@@ -258,9 +264,9 @@
     }
   },
   "returns": "record",
-  "version": 2,
+  "version": 3,
   "status": "published",
-  "description_nl": "rows: every provider - id, label, the kinds of work it does (text / image / video), the per-person key field it reads (blank = no key needed, e.g. Ollama on this machine), sdk = the wire it is spoken to on (google = the Gemini SDK; openai = any OpenAI-shaped HTTP service, which is most of them; runway = Runway's task API; fal = fal.ai's queue API, 2026-09-20 owner: the cheap road - one key for Kling, Hailuo, Seedance and Wan at a few cents a second), base_url, where to get a key, free. A new OpenAI-shaped provider is one row here; a new model is one row in providers.models. *_default: the provider used until the person picks one (Gemini). Timeouts and Runway's API version / polling are the numbers of the wire. fal_*: the queue's words - the auth scheme in the header, the status that means done, the statuses that mean failed, the longest prompt sent. image_sizes: the still size asked of an OpenAI image model per film shape, so a storyboard still is already the clip's shape (a square still gave a vertical film black bars).",
+  "description_nl": "rows: every provider - id, label, the kinds of work it does (text / image / video), the per-person key field it reads (blank = no key needed, e.g. Ollama on this machine), sdk = the wire it is spoken to on (google = the Gemini SDK; openai = any OpenAI-shaped HTTP service, which is most of them; runway = Runway's task API; fal = fal.ai's queue API, 2026-09-20 owner: the cheap road - one key for Kling, Hailuo, Seedance and Wan at a few cents a second), base_url, where to get a key, free. A new OpenAI-shaped provider is one row here; a new model is one row in providers.models. *_default: the provider used until the person picks one (Gemini). Timeouts and Runway's API version / polling are the numbers of the wire. fal_*: the queue's words - the auth scheme in the header, the status that means done, the statuses that mean failed, the longest prompt sent. image_sizes: the still size asked of an OpenAI image model per film shape, so a storyboard still is already the clip's shape (a square still gave a vertical film black bars). editions (optional): the editions a row is offered on - blank = every edition (2026-10-09: Runway and fal.ai make video clips, which only the Studio makes).",
   "test_cases": [
     {
       "args": {},
@@ -268,7 +274,7 @@
         "rows": [
           {
             "id": "gemini",
-            "label": "Google Gemini / Veo",
+            "label": "Google Gemini",
             "kinds": [
               "text",
               "image",
@@ -351,7 +357,10 @@
             "sdk": "runway",
             "base_url": "https://api.dev.runwayml.com/v1",
             "where": "https://dev.runwayml.com/",
-            "free": false
+            "free": false,
+            "editions": [
+              "studio"
+            ]
           },
           {
             "id": "fal",
@@ -365,7 +374,10 @@
             "test_url": "https://api.fal.ai/v1/models?limit=1",
             "test_auth": "Key",
             "where": "https://fal.ai/dashboard/keys",
-            "free": false
+            "free": false,
+            "editions": [
+              "studio"
+            ]
           }
         ],
         "fal_auth_scheme": "Key",

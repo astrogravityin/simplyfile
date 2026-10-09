@@ -54,6 +54,16 @@ ca = session("demo@demo.test", "Demo-pass-1234")
 S = {}
 
 
+@step("0 Start here: a new user sees the card on My firm - first step open, an individual's steps left out")
+def _():
+    assert "start_card" in ca.get("/api/bootstrap").json(), "no Start here for a newcomer"
+    d = ca.get("/api/start", params={"screen": "firm"}).json()
+    ids = [x["id"] for x in d["steps"]]
+    assert d["show"] and d["steps"][0]["id"] == "firm" and not d["steps"][0]["done"] and "my_docs" not in ids, d
+    assert not admin.get("/api/start", params={"screen": "firm"}).json()["show"], "the portal owner is not a newcomer"
+    return f"{d['total']} steps: {', '.join(ids)}"
+
+
 @step("1 Sign-up: no firm -> Filing shut, only My firm")
 def _():
     assert ca.get("/api/clients/settings").status_code == 403
@@ -206,6 +216,19 @@ def _():
     assert stage(S["partner"]) == "filed"
     assert S["preparer"].post(ib, files={"file": ("more.csv", b"a,1")}).status_code == 409
     return f"due {fl['dates']['due']} · revise by {fl['dates']['revise_by']} · ITR-U by {fl['dates']['updated_by']}"
+
+
+@step("13b Start here: the partner's steps ticked from real work (firm, client, upload, compute, filed); Hide sticks, Start here brings it back")
+def _():
+    p = S["partner"]
+    d = p.get("/api/start", params={"screen": "clients"}).json()
+    got = {x["id"]: x["done"] for x in d["steps"]}
+    assert got.get("firm") and got.get("client") and got.get("upload") and got.get("compute") and got.get("close"), got
+    assert "team" not in got, "a partner cannot add the team: the step is left out"
+    assert p.post("/api/start/hide", json={}).status_code == 200
+    assert p.get("/api/start", params={"screen": "clients"}).json()["hidden"], "Hide did not stick"
+    assert p.post("/api/start/show", json={}).json()["hidden"] is False
+    return f"{d['done']} of {d['total']} done"
 
 
 @step("14 Revised return u/s 139(5) (ITR-U after 31 Dec): preparer refused; partner opens, re-uploads statement (replace), files revised")

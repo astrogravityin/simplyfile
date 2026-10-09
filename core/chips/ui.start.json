@@ -1,0 +1,107 @@
+{
+  "chip_id": "ui.start",
+  "kind": "accessor",
+  "set": "ui",
+  "label": "Every word of the Start here card",
+  "aliases": [
+    "every word of the start here card"
+  ],
+  "params": [
+    {
+      "name": "title",
+      "type": "text",
+      "default": "Start here",
+      "label": "card title"
+    },
+    {
+      "name": "lede",
+      "type": "text",
+      "default": "New to {product}? These first steps get you working. Each one opens its screen and ticks itself when it is done.",
+      "label": "lede"
+    },
+    {
+      "name": "progress",
+      "type": "text",
+      "default": "{done} of {total} done",
+      "label": "progress line"
+    },
+    {
+      "name": "open",
+      "type": "text",
+      "default": "Open",
+      "label": "a step's button"
+    },
+    {
+      "name": "done_tag",
+      "type": "text",
+      "default": "Done",
+      "label": "a done step's tag"
+    },
+    {
+      "name": "hide",
+      "type": "text",
+      "default": "Hide",
+      "label": "hide the card"
+    },
+    {
+      "name": "hide_tip",
+      "type": "text",
+      "default": "Hide this card. Your name menu, top right, brings it back.",
+      "label": "hide tooltip"
+    },
+    {
+      "name": "hidden_toast",
+      "type": "text",
+      "default": "Start here is hidden. Open it again from your name menu, top right, or from Guide me.",
+      "label": "after Hide"
+    },
+    {
+      "name": "menu",
+      "type": "text",
+      "default": "Start here",
+      "label": "the name menu's item that brings the card back"
+    },
+    {
+      "name": "all_done",
+      "type": "text",
+      "default": "All the first steps are done - you know your way around.",
+      "label": "when every step is done"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "title": "$title",
+      "lede": "$lede",
+      "progress": "$progress",
+      "open": "$open",
+      "done_tag": "$done_tag",
+      "hide": "$hide",
+      "hide_tip": "$hide_tip",
+      "hidden_toast": "$hidden_toast",
+      "menu": "$menu",
+      "all_done": "$all_done"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "The words of the Start here card (core/static/startcard.js). {product} is the product's name.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "title": "Start here",
+        "lede": "New to {product}? These first steps get you working. Each one opens its screen and ticks itself when it is done.",
+        "progress": "{done} of {total} done",
+        "open": "Open",
+        "done_tag": "Done",
+        "hide": "Hide",
+        "hide_tip": "Hide this card. Your name menu, top right, brings it back.",
+        "hidden_toast": "Start here is hidden. Open it again from your name menu, top right, or from Guide me.",
+        "menu": "Start here",
+        "all_done": "All the first steps are done - you know your way around."
+      }
+    }
+  ]
+}

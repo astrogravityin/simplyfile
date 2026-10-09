@@ -247,13 +247,14 @@ _POOL: list[str] = []
 
 
 def _pool() -> list[str]:
-    """Every question Chip Chat knows - the 10,000+ of tools/chat_corpus.py - built once per process."""
+    """The questions Chip Chat offers as suggestions: the plain way of asking each one tools/chat_corpus.py knows (its `clean`
+    rows - not the corpus's test variants like "... - thanks" or "Quick question - ..."), built once per process."""
     if not _POOL:
         import sys  # noqa: PLC0415
         from pathlib import Path  # noqa: PLC0415
         sys.path.insert(0, str(Path(__file__).resolve().parent / "tools"))
         import chat_corpus  # noqa: PLC0415
-        _POOL.extend(sorted({r["q"] for r in chat_corpus.build()}))
+        _POOL.extend(sorted({r["q"] for r in chat_corpus.build() if r.get("clean")}))
     return _POOL
 
 
@@ -276,9 +277,12 @@ def surprise(u: dict, n: int = 0) -> dict:
     k = engine.run("chat.surprise", {})
     since = (datetime.datetime.utcnow() - datetime.timedelta(days=int(k["asked_days"]))).isoformat()
     counts: dict[str, int] = {}
-    for t in store.read(TURNS, []):
+    canon, clean = {e["id"]: e["q"] for e in entries(u)}, set(_pool())   # a question asked is offered the way the portal asks it,
+    for t in store.read(TURNS, []):                                         # never as typed ("is the demo data real - thanks")
         if t["route"] == "answer" and t["at"] >= since and (not u.get("firm_id") or t["firm_id"] in ("", u["firm_id"])):
-            counts[t["q"]] = counts.get(t["q"], 0) + 1
+            q = canon.get(t.get("answer", "")) or (t["q"] if t["q"] in clean else "")
+            if q:
+                counts[q] = counts.get(q, 0) + 1
     sources = {"asked": [q for q, _ in sorted(counts.items(), key=lambda x: -x[1])[: int(k["asked_top"])]], "curated": k["curated"], "pool": _pool()}
     rnd = random.Random(f"{u.get('id')}|{datetime.datetime.utcnow():%Y%m%d%H}|{n}")
     live = [s for s in sources if sources[s]]

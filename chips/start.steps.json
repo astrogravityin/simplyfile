@@ -1,0 +1,243 @@
+{
+  "chip_id": "start.steps",
+  "kind": "accessor",
+  "set": "start",
+  "label": "Start here - the first steps of this portal",
+  "aliases": [
+    "start here",
+    "first steps",
+    "getting started"
+  ],
+  "params": [
+    {
+      "name": "rows",
+      "type": "json",
+      "default": [
+        {
+          "id": "firm",
+          "label": "Sign up your firm and get it approved",
+          "say": "My firm: its details and papers, then Send - the portal admin approves it. Filing your own return? Choose Individual / HUF: it opens at once.",
+          "href": "#/firm",
+          "fact": "approved",
+          "call": "",
+          "grant": "",
+          "kinds": [],
+          "at_least": 1
+        },
+        {
+          "id": "team",
+          "label": "Add your team",
+          "say": "Partners, reviewers and preparers - each with a role that decides what they may do.",
+          "href": "#/firm",
+          "fact": "team",
+          "call": "",
+          "grant": "team",
+          "kinds": [
+            "ca_firm"
+          ],
+          "at_least": 2
+        },
+        {
+          "id": "client",
+          "label": "Add your first client",
+          "say": "Name and PAN; the year's file opens with them.",
+          "href": "#/clients",
+          "fact": "records",
+          "call": "",
+          "grant": "clients.create",
+          "kinds": [],
+          "at_least": 1
+        },
+        {
+          "id": "upload",
+          "label": "Upload Form 16, the AIS or a bank statement",
+          "say": "Intake & map reads each file and maps its lines to the return.",
+          "href": "#/intake",
+          "fact": "area_statements",
+          "call": "",
+          "grant": "intake",
+          "kinds": [],
+          "at_least": 1
+        },
+        {
+          "id": "compute",
+          "label": "Compute the return",
+          "say": "Compute & close works the tax out under both regimes, from the mapped figures.",
+          "href": "#/compute",
+          "fact": "area_computation",
+          "call": "^(GET|POST|PUT) /api/compute/[^/]+/[^/]+",
+          "grant": "compute",
+          "kinds": [],
+          "at_least": 1
+        },
+        {
+          "id": "close",
+          "label": "Sign off, file and close the year",
+          "say": "Mark it filed with the acknowledgement number - the year closes.",
+          "href": "#/compute",
+          "fact": "stage_filed",
+          "call": "",
+          "grant": "compute.file",
+          "kinds": [],
+          "at_least": 1
+        },
+        {
+          "id": "my_docs",
+          "label": "Add your Form 16 or AIS",
+          "say": "My return reads them and fills in what it can.",
+          "href": "#/myreturn",
+          "fact": "area_my_return_docs",
+          "call": "",
+          "grant": "",
+          "kinds": [
+            "self"
+          ],
+          "at_least": 1
+        },
+        {
+          "id": "my_json",
+          "label": "Check your return and download its JSON",
+          "say": "My return checks it against the official rules; you upload the JSON on the income-tax portal yourself.",
+          "href": "#/myreturn",
+          "fact": "",
+          "call": "^GET /api/myreturn/.+/itr\\.json$",
+          "grant": "",
+          "kinds": [
+            "self"
+          ],
+          "at_least": 1
+        }
+      ],
+      "label": "each step: id, label, say (words), href (its screen), the done test - fact (a fact core/startcard.py counts, or a list summed) and/or call (a pattern over the person's own successful requests) reaching at_least; grant (left out for a role without it - a desk of one has no team), kinds (only these kinds of firm)"
+    },
+    {
+      "name": "screens",
+      "type": "json",
+      "default": [
+        "firm",
+        "clients",
+        "myreturn"
+      ],
+      "label": "the screens the card is drawn on (the landing first)"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "rows": "$rows",
+      "screens": "$screens"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-09 owner: a Start here card for a new user who has no idea how to proceed - this portal's first steps, each ticked from real work (chip start.done). A seam: every domain writes its own.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "rows": [
+          {
+            "id": "firm",
+            "label": "Sign up your firm and get it approved",
+            "say": "My firm: its details and papers, then Send - the portal admin approves it. Filing your own return? Choose Individual / HUF: it opens at once.",
+            "href": "#/firm",
+            "fact": "approved",
+            "call": "",
+            "grant": "",
+            "kinds": [],
+            "at_least": 1
+          },
+          {
+            "id": "team",
+            "label": "Add your team",
+            "say": "Partners, reviewers and preparers - each with a role that decides what they may do.",
+            "href": "#/firm",
+            "fact": "team",
+            "call": "",
+            "grant": "team",
+            "kinds": [
+              "ca_firm"
+            ],
+            "at_least": 2
+          },
+          {
+            "id": "client",
+            "label": "Add your first client",
+            "say": "Name and PAN; the year's file opens with them.",
+            "href": "#/clients",
+            "fact": "records",
+            "call": "",
+            "grant": "clients.create",
+            "kinds": [],
+            "at_least": 1
+          },
+          {
+            "id": "upload",
+            "label": "Upload Form 16, the AIS or a bank statement",
+            "say": "Intake & map reads each file and maps its lines to the return.",
+            "href": "#/intake",
+            "fact": "area_statements",
+            "call": "",
+            "grant": "intake",
+            "kinds": [],
+            "at_least": 1
+          },
+          {
+            "id": "compute",
+            "label": "Compute the return",
+            "say": "Compute & close works the tax out under both regimes, from the mapped figures.",
+            "href": "#/compute",
+            "fact": "area_computation",
+            "call": "^(GET|POST|PUT) /api/compute/[^/]+/[^/]+",
+            "grant": "compute",
+            "kinds": [],
+            "at_least": 1
+          },
+          {
+            "id": "close",
+            "label": "Sign off, file and close the year",
+            "say": "Mark it filed with the acknowledgement number - the year closes.",
+            "href": "#/compute",
+            "fact": "stage_filed",
+            "call": "",
+            "grant": "compute.file",
+            "kinds": [],
+            "at_least": 1
+          },
+          {
+            "id": "my_docs",
+            "label": "Add your Form 16 or AIS",
+            "say": "My return reads them and fills in what it can.",
+            "href": "#/myreturn",
+            "fact": "area_my_return_docs",
+            "call": "",
+            "grant": "",
+            "kinds": [
+              "self"
+            ],
+            "at_least": 1
+          },
+          {
+            "id": "my_json",
+            "label": "Check your return and download its JSON",
+            "say": "My return checks it against the official rules; you upload the JSON on the income-tax portal yourself.",
+            "href": "#/myreturn",
+            "fact": "",
+            "call": "^GET /api/myreturn/.+/itr\\.json$",
+            "grant": "",
+            "kinds": [
+              "self"
+            ],
+            "at_least": 1
+          }
+        ],
+        "screens": [
+          "firm",
+          "clients",
+          "myreturn"
+        ]
+      }
+    }
+  ]
+}

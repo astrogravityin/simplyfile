@@ -95,7 +95,7 @@ values = {
     "theatre": {
         "eyebrow": "See it, not a slide",
         "title": "A firm's year, recorded live on sf.valuestream.in",
-        "sub": "Twelve films with a made-up firm, made-up clients and a made-up self-filer. Press play and they run one after another - pick any part on the left, or jump to a moment under the player.",
+        "sub": "Films with a made-up firm, made-up clients and a made-up self-filer, then a short tour of each screen. Press play and they run one after another - pick any part on the left, or jump to a moment under the player.",
         "autoplay": "Play the next one by itself", "prev": "Previous", "next": "Next", "playlist": "Parts",
         "search": "Find a film - a screen, a step, a word", "found": "{n} of {total} films", "none": "No film matches that - try another word or a topic.",
         "topics": ["intake", "26AS", "reconcile", "tax audit", "3CD", "GST", "delegations", "Chip Chat", "History", "my return", "HUF", "capital gains", "tax rules"],
@@ -279,6 +279,7 @@ def owned(chip: dict) -> bool:
         mk = marks(folder) if (SRC / folder / "description.txt").is_file() else had.get(key, {}).get("marks", [])
         mk = [{**m, "title": re.sub(r"\bSimplyF(?:ile|y)\b", "{product}", m["title"])} for m in mk]
         gen.append({"key": key, "group": GROUP(i), "title": title, "module": f"Part {i + 1}", "line": line, "tags": TAGS[key], "marks": mk})
+    gen += [c for c in ps["chapters"]["default"] if c.get("group") == "screens"]   # screen tours: tools/showcase/screen_films.py owns them
     filled = json.loads(json.dumps(gen, ensure_ascii=False).replace("{product}", name))
     test = chip["test_cases"][0]["expect_value"]
     if ps["chapters"]["default"] == gen and test.get("chapters") == filled:
