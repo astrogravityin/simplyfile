@@ -3502,7 +3502,7 @@
     {
       "name": "fa_kinds",
       "type": "text",
-      "default": "bank=Bank account (A1)|custodial=Custodial / brokerage account (A2)|equity=Shares, ESOPs, debt (A3)|insurance=Cash-value insurance (A4)|property=Immovable property (B)|other=Other capital asset (C)|signing=Account you can sign for (D)|trust=Trust abroad - trustee, beneficiary or settlor (E)|income=Other income from outside India (F)",
+      "default": "bank=Bank account (A1)|custodial=Custodial / brokerage account (A2)|equity=Shares, ESOPs, debt (A3)|insurance=Cash-value insurance (A4)|financial=Interest in a foreign company, firm or other entity (B)|property=Immovable property (C)|other=Other capital asset (D)|signing=Account you can sign for (E)|trust=Trust abroad - trustee, beneficiary or settlor (F)|income=Other income from outside India (G)",
       "label": "fa_kinds"
     },
     {
@@ -4512,6 +4512,12 @@
       "type": "text",
       "default": "That year's surcharge (with marginal relief) is in the updated tax: {amount}.",
       "label": "iu_sur"
+    },
+    {
+      "name": "f_fa_inc_nature",
+      "type": "text",
+      "default": "Nature of the income from it",
+      "label": "f_fa_inc_nature"
     }
   ],
   "expr": {
@@ -5267,11 +5273,12 @@
       "f_iu_adv_q2": "$f_iu_adv_q2",
       "f_iu_adv_q3": "$f_iu_adv_q3",
       "f_iu_adv_q4": "$f_iu_adv_q4",
-      "iu_sur": "$iu_sur"
+      "iu_sur": "$iu_sur",
+      "f_fa_inc_nature": "$f_fa_inc_nature"
     }
   },
   "returns": "record",
-  "version": 32,
+  "version": 33,
   "status": "published",
   "description_nl": "2026-10-06: every word of My return - the steps, the documents and how to get each, the checks, the regimes, the review fields, the form and how to file it. 2026-10-06: start from documents. 2026-10-06: an Other card for files not read, so a locked one can be removed. 2026-10-06: how_h / how_steps - the step-by-step shown on Gather. 2026-10-06: rv_paid / pd_* - tax the person paid themselves, typed on Check. 2026-10-06: ask_* - the two questions before a file goes in: a return already under way (carry on / start again) and a second AIS / 26AS (replace / keep both). 2026-10-06: the business card on Check (44ADA / 44AD), the ITR-4 reasons, and where each document comes from. 2026-10-06: pd_bsr / pd_challan - a typed payment's BSR code and challan number; f10iea. 2026-10-06: k_bank_how, bank_kept, src_issuer, src_gives. 2026-10-06: the bank statement's figures on its card and on the business card. 2026-10-06: pw_show / pw_hide - the eye on the PDF password. 2026-10-06: back_to - the Back button on each step. 2026-10-06: from_filed / from_filed_done / from_filed_none. 2026-10-06: why_huf. 2026-10-06: the Karta's fields for an HUF. 2026-10-06: the More deductions panel on Check. 2026-10-07: co-owned houses, winnings and virtual digital assets, agricultural income, 44AE vehicles, the 80EE / 80EEA check, and the address and contact fields. 2026-10-07: what the readers found: a VDA sold, the person's address (AIS), the employer's address (Form 16). 2026-10-07: capital gains in full: each sale, exemptions, the indexation choice, losses brought forward, gifts, pre-construction interest, the statements. 2026-10-07: ITR-3 from My return: the own-profit-and-loss kinds and fields, why_biz_books, and the CA messages (tax audit s.44AB, a business loss). 2026-10-07: wave 3: residential status, foreign income and assets, clubbing, salary arrears (s.89), the updated return (ITR-U). 2026-10-08: words for the app's own warning before a delete / remove (never silently). 2026-10-08: wave 4: a second Form 16 from the same employer, two employers, the 44AB payments test and 44AD(4), GST per GSTIN, losses from last year's ITR-3, exemption time limits and several exemptions on one sale, the ITR-U of an earlier year (special rates, surcharge, 234C).",
   "test_cases": [
@@ -5860,7 +5867,7 @@
         "ca_foreign_business": "Income from a business or profession abroad needs books of account and ITR-3 Schedule BP - My return does not file it. Get a CA (SimplyFy's CA-firm side handles books and business income).",
         "fa_h": "Foreign assets (Schedule FA)",
         "fa_p": "As a resident and ordinarily resident, list everything held abroad at any time in the calendar year 1 January - 31 December 2025: bank and custodial accounts, shares and debt, insurance, property, other assets - even with no income from it. Rupee values at the SBI TT buying rate. Leaving it out can cost 10 lakh (Black Money Act).",
-        "fa_kinds": "bank=Bank account (A1)|custodial=Custodial / brokerage account (A2)|equity=Shares, ESOPs, debt (A3)|insurance=Cash-value insurance (A4)|property=Immovable property (B)|other=Other capital asset (C)|signing=Account you can sign for (D)|trust=Trust abroad - trustee, beneficiary or settlor (E)|income=Other income from outside India (F)",
+        "fa_kinds": "bank=Bank account (A1)|custodial=Custodial / brokerage account (A2)|equity=Shares, ESOPs, debt (A3)|insurance=Cash-value insurance (A4)|financial=Interest in a foreign company, firm or other entity (B)|property=Immovable property (C)|other=Other capital asset (D)|signing=Account you can sign for (E)|trust=Trust abroad - trustee, beneficiary or settlor (F)|income=Other income from outside India (G)",
         "f_fa_kind": "Asset",
         "f_fa_country": "Country",
         "f_fa_name": "Name (bank / entity / asset)",
@@ -6028,7 +6035,8 @@
         "f_iu_adv_q2": "16 June - 15 September",
         "f_iu_adv_q3": "16 September - 15 December",
         "f_iu_adv_q4": "16 December - 31 March",
-        "iu_sur": "That year's surcharge (with marginal relief) is in the updated tax: {amount}."
+        "iu_sur": "That year's surcharge (with marginal relief) is in the updated tax: {amount}.",
+        "f_fa_inc_nature": "Nature of the income from it"
       }
     }
   ]

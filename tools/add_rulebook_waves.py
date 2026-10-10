@@ -52,8 +52,7 @@ NEW = [
       "Resident on 182 days, or 60 days and 365 in the four years before (182 for a citizen leaving for work or a visiting citizen/PIO; 120 when Indian income is over 15 lakh); deemed resident; RNOR by 9 of 10 years, 729 days in 7, the 120-day visitor and the deemed resident. A non-resident: no 87A, 80TTB, 80DD/DDB/U or senior limits; ITR-2/3 only."),
     R("myreturn.dtaa_relief", "abroad", "ss.90, 90A, 91; Rule 128 (Form 67)",
       "For a resident and ordinarily resident: foreign income is taxed here, and relief per country and head is the lower of the tax paid abroad and the Indian tax at the average rate. Form 67 by 31 March of the assessment year."),
-    R("myreturn.check_fa", "abroad", "Schedule FA; Black Money Act s.42-43", "A resident and ordinarily resident with any foreign asset or foreign income must list the assets in Schedule FA: red check otherwise.",
-      "Tables D-F (signing authority, trusts, other) are not asked."),
+    R("myreturn.check_fa", "abroad", "Schedule FA; Black Money Act s.42-43", "A resident and ordinarily resident with any foreign asset or foreign income must list the assets in Schedule FA: red check otherwise."),   # 2026-10-10: every table A1-G is asked
     R("myreturn.club_row", "abroad", "s.64(1)(iv), 64(1)(vi), 64(1A), s.10(32)",
       "A minor child's income (not from their own work or skill, nor a child with an 80U disability) is added to the parent's, less 1,500 per child; income from assets given to a spouse or son's wife without consideration is added under its head; Schedule SPI."),
     R("myreturn.relief_89", "past", "s.89, Rule 21A (Form 10E)",

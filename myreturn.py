@@ -65,7 +65,8 @@ BUCKETS = ("stcg_111a", "stcg_app", "ltcg_112", "ltcg_112a")
 FOREIGN = ("country", "head", "amount", "tax_paid", "sec", "article", "tin", "controlled", "employer", "address", "city", "zip", "municipal_tax", "interest")
 FOREIGN_NUM = ("amount", "tax_paid", "municipal_tax", "interest")
 FA = ("kind", "country", "name", "address", "zip", "account", "status", "opened", "peak", "closing", "income", "nature", "cost", "proceeds",
-      "taxed", "sch", "sch_no", "holder", "trustees", "trustees_addr", "settlor", "settlor_addr", "beneficiaries", "beneficiaries_addr")   # 2026-10-08: D-F
+      "taxed", "sch", "sch_no", "holder", "trustees", "trustees_addr", "settlor", "settlor_addr", "beneficiaries", "beneficiaries_addr",   # 2026-10-08: D-F
+      "inc_nature")                                                                    # 2026-10-10: table B (a financial interest) - the income's nature
 FA_NUM = ("peak", "closing", "income", "cost", "proceeds", "taxed")
 CLUB = ("name", "pan", "relation", "head", "amount", "skill", "disabled", "municipal_tax", "interest", "address")
 ARREAR = ("fy", "amount", "income", "regime")
@@ -1647,6 +1648,7 @@ def wave3_facts(w: dict, g: dict, r: dict, js: dict, agri: int) -> dict:
             for field, src in spec["map"].items():
                 v = x.get(src)
                 one[field] = i(v) if src in FA_NUM else (str(v).strip() if str(v or "").strip() else (spec.get("defaults") or {}).get(src) or dflt.get(src, dflt["text"]))
+                one[field] = ((spec.get("values") or {}).get(src) or {}).get(one[field], one[field])   # 2026-10-10: OWNER / DIRECT as the table takes it
             rows_.append(one)
         out[f"fa_{kind}"] = rows_
     out["fa_any"] = fa_on and bool(r.get("fa_rows"))

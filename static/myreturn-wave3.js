@@ -60,6 +60,8 @@ export function faCard(r, d) {
   const offered = [['taxed', 'num'], ['sch', 'sel', pairs('fa_schs')], ['sch_no', 'text']];
   // 2026-10-08: Schedule FA D-F - an account you can sign for, a trust abroad, other income from outside India
   const more = {
+    // 2026-10-10: table B - an interest in a foreign company, firm or other entity
+    financial: [['nature', 'text'], ['status', 'sel', pairs('fa_statuses')], ['opened', 'date'], ['cost', 'num'], ['income', 'num'], ['inc_nature', 'text'], ...offered],
     signing: [['holder', 'text'], ['account', 'text'], ['peak', 'num'], ['income', 'num'], ...offered],
     trust: [['trustees', 'text'], ['trustees_addr', 'text'], ['settlor', 'text'], ['settlor_addr', 'text'], ['beneficiaries', 'text'], ['beneficiaries_addr', 'text'],
       ['opened', 'date'], ['income', 'num'], ...offered],

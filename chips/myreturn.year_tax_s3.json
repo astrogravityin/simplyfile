@@ -1,0 +1,964 @@
+{
+  "chip_id": "myreturn.year_tax_s3",
+  "kind": "accessor",
+  "set": "myreturn",
+  "label": "My return: the tax of an earlier year, stage 3 of 5 (surcharge)",
+  "aliases": [],
+  "params": [
+    {
+      "name": "fy",
+      "type": "number",
+      "default": 2019,
+      "label": "the financial year (its first year)"
+    },
+    {
+      "name": "regime",
+      "type": "text",
+      "default": "old",
+      "label": "old / new"
+    },
+    {
+      "name": "band",
+      "type": "text",
+      "default": "below60",
+      "label": "below60 / 60to80 / 80plus that year"
+    },
+    {
+      "name": "resident",
+      "type": "boolean",
+      "default": true,
+      "label": "resident that year (the unused basic exemption against special-rate gains, 87A)"
+    },
+    {
+      "name": "normal",
+      "type": "number",
+      "default": 0,
+      "label": "income at the slab rates"
+    },
+    {
+      "name": "stcg_111a",
+      "type": "number",
+      "default": 0,
+      "label": "short-term gains taxed u/s 111A"
+    },
+    {
+      "name": "ltcg_112a",
+      "type": "number",
+      "default": 0,
+      "label": "long-term gains u/s 112A (before its exemption)"
+    },
+    {
+      "name": "ltcg_112",
+      "type": "number",
+      "default": 0,
+      "label": "long-term gains u/s 112 (after indexation when that year's 112 had it)"
+    },
+    {
+      "name": "special",
+      "type": "number",
+      "default": 0,
+      "label": "income at 30%: 115BB / 115BBJ / 115BBH"
+    },
+    {
+      "name": "early",
+      "type": "boolean",
+      "default": false,
+      "label": "FY 2024-25: the gains were on transfers before 23 July 2024"
+    },
+    {
+      "name": "b",
+      "type": "json",
+      "default": {},
+      "label": "what stage 2 worked out"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "known": {
+        "vop": "get",
+        "value": "$b",
+        "path": "known"
+      },
+      "total": {
+        "vop": "get",
+        "value": "$b",
+        "path": "total"
+      },
+      "on_normal": {
+        "vop": "get",
+        "value": "$b",
+        "path": "on_normal"
+      },
+      "_raw_on_normal": {
+        "vop": "get",
+        "value": "$b",
+        "path": "_raw_on_normal"
+      },
+      "on_111a": {
+        "vop": "get",
+        "value": "$b",
+        "path": "on_111a"
+      },
+      "_raw_on_111a": {
+        "vop": "get",
+        "value": "$b",
+        "path": "_raw_on_111a"
+      },
+      "on_112a": {
+        "vop": "get",
+        "value": "$b",
+        "path": "on_112a"
+      },
+      "_raw_on_112a": {
+        "vop": "get",
+        "value": "$b",
+        "path": "_raw_on_112a"
+      },
+      "on_112": {
+        "vop": "get",
+        "value": "$b",
+        "path": "on_112"
+      },
+      "_raw_on_112": {
+        "vop": "get",
+        "value": "$b",
+        "path": "_raw_on_112"
+      },
+      "on_special": {
+        "vop": "get",
+        "value": "$b",
+        "path": "on_special"
+      },
+      "_raw_on_special": {
+        "vop": "get",
+        "value": "$b",
+        "path": "_raw_on_special"
+      },
+      "rebate": {
+        "vop": "get",
+        "value": "$b",
+        "path": "rebate"
+      },
+      "surcharge_rate": {
+        "vop": "get",
+        "value": "$b",
+        "path": "surcharge_rate"
+      },
+      "surcharge": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "gt",
+              "left": {
+                "vop": "get",
+                "value": "$b",
+                "path": "surcharge_rate"
+              },
+              "right": 0
+            },
+            "then": {
+              "vop": "round_to",
+              "value": {
+                "vop": "largest",
+                "values": [
+                  0,
+                  {
+                    "vop": "smallest",
+                    "values": [
+                      {
+                        "vop": "total",
+                        "values": [
+                          {
+                            "vop": "mul",
+                            "a": {
+                              "vop": "largest",
+                              "values": [
+                                {
+                                  "vop": "sub",
+                                  "a": {
+                                    "vop": "sub",
+                                    "a": {
+                                      "vop": "total",
+                                      "values": [
+                                        {
+                                          "vop": "get",
+                                          "value": "$b",
+                                          "path": "on_normal"
+                                        },
+                                        {
+                                          "vop": "get",
+                                          "value": "$b",
+                                          "path": "on_111a"
+                                        },
+                                        {
+                                          "vop": "get",
+                                          "value": "$b",
+                                          "path": "on_112a"
+                                        },
+                                        {
+                                          "vop": "get",
+                                          "value": "$b",
+                                          "path": "on_112"
+                                        },
+                                        {
+                                          "vop": "get",
+                                          "value": "$b",
+                                          "path": "on_special"
+                                        }
+                                      ]
+                                    },
+                                    "b": {
+                                      "vop": "get",
+                                      "value": "$b",
+                                      "path": "rebate"
+                                    }
+                                  },
+                                  "b": {
+                                    "vop": "total",
+                                    "values": [
+                                      {
+                                        "vop": "total",
+                                        "values": [
+                                          {
+                                            "vop": "get",
+                                            "value": "$b",
+                                            "path": "on_111a"
+                                          },
+                                          {
+                                            "vop": "get",
+                                            "value": "$b",
+                                            "path": "on_112a"
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "vop": "get",
+                                        "value": "$b",
+                                        "path": "on_112"
+                                      }
+                                    ]
+                                  }
+                                },
+                                0
+                              ]
+                            },
+                            "b": {
+                              "vop": "div",
+                              "a": {
+                                "vop": "get",
+                                "value": "$b",
+                                "path": "surcharge_rate"
+                              },
+                              "b": 100
+                            }
+                          },
+                          {
+                            "vop": "mul",
+                            "a": {
+                              "vop": "total",
+                              "values": [
+                                {
+                                  "vop": "get",
+                                  "value": "$b",
+                                  "path": "on_111a"
+                                },
+                                {
+                                  "vop": "get",
+                                  "value": "$b",
+                                  "path": "on_112a"
+                                }
+                              ]
+                            },
+                            "b": {
+                              "vop": "div",
+                              "a": {
+                                "vop": "smallest",
+                                "values": [
+                                  {
+                                    "vop": "get",
+                                    "value": "$b",
+                                    "path": "surcharge_rate"
+                                  },
+                                  {
+                                    "vop": "get",
+                                    "value": {
+                                      "chip": "myreturn.year_rates",
+                                      "args": {
+                                        "fy": "$fy",
+                                        "regime": "$regime",
+                                        "early": "$early"
+                                      }
+                                    },
+                                    "path": "cap_a"
+                                  }
+                                ]
+                              },
+                              "b": 100
+                            }
+                          },
+                          {
+                            "vop": "mul",
+                            "a": {
+                              "vop": "get",
+                              "value": "$b",
+                              "path": "on_112"
+                            },
+                            "b": {
+                              "vop": "div",
+                              "a": {
+                                "vop": "smallest",
+                                "values": [
+                                  {
+                                    "vop": "get",
+                                    "value": "$b",
+                                    "path": "surcharge_rate"
+                                  },
+                                  {
+                                    "vop": "get",
+                                    "value": {
+                                      "chip": "myreturn.year_rates",
+                                      "args": {
+                                        "fy": "$fy",
+                                        "regime": "$regime",
+                                        "early": "$early"
+                                      }
+                                    },
+                                    "path": "cap_112"
+                                  }
+                                ]
+                              },
+                              "b": 100
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "vop": "sub",
+                        "a": {
+                          "vop": "total",
+                          "values": [
+                            {
+                              "vop": "total",
+                              "values": [
+                                {
+                                  "vop": "round_to",
+                                  "value": {
+                                    "vop": "slab_tax",
+                                    "amount": {
+                                      "vop": "largest",
+                                      "values": [
+                                        {
+                                          "vop": "sub",
+                                          "a": "$normal",
+                                          "b": {
+                                            "vop": "sub",
+                                            "a": {
+                                              "vop": "get",
+                                              "value": "$b",
+                                              "path": "total"
+                                            },
+                                            "b": {
+                                              "vop": "coalesce",
+                                              "values": [
+                                                {
+                                                  "vop": "step_rate",
+                                                  "amount": {
+                                                    "vop": "get",
+                                                    "value": "$b",
+                                                    "path": "total"
+                                                  },
+                                                  "steps": {
+                                                    "vop": "get",
+                                                    "value": {
+                                                      "chip": "myreturn.year_rates",
+                                                      "args": {
+                                                        "fy": "$fy",
+                                                        "regime": "$regime",
+                                                        "early": "$early"
+                                                      }
+                                                    },
+                                                    "path": "surcharge"
+                                                  },
+                                                  "field": "above"
+                                                },
+                                                0
+                                              ]
+                                            }
+                                          }
+                                        },
+                                        0
+                                      ]
+                                    },
+                                    "slabs": {
+                                      "vop": "get",
+                                      "value": {
+                                        "chip": "myreturn.slabs_by_year",
+                                        "args": {}
+                                      },
+                                      "path": {
+                                        "vop": "template",
+                                        "text": "years.{y}.{r}.slabs.{b}",
+                                        "values": {
+                                          "vop": "record",
+                                          "fields": {
+                                            "y": "$fy",
+                                            "r": "$regime",
+                                            "b": "$band"
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                },
+                                {
+                                  "vop": "get",
+                                  "value": "$b",
+                                  "path": "on_111a"
+                                },
+                                {
+                                  "vop": "get",
+                                  "value": "$b",
+                                  "path": "on_112a"
+                                },
+                                {
+                                  "vop": "get",
+                                  "value": "$b",
+                                  "path": "on_112"
+                                },
+                                {
+                                  "vop": "get",
+                                  "value": "$b",
+                                  "path": "on_special"
+                                }
+                              ]
+                            },
+                            {
+                              "vop": "total",
+                              "values": [
+                                {
+                                  "vop": "mul",
+                                  "a": {
+                                    "vop": "largest",
+                                    "values": [
+                                      {
+                                        "vop": "sub",
+                                        "a": {
+                                          "vop": "total",
+                                          "values": [
+                                            {
+                                              "vop": "round_to",
+                                              "value": {
+                                                "vop": "slab_tax",
+                                                "amount": {
+                                                  "vop": "largest",
+                                                  "values": [
+                                                    {
+                                                      "vop": "sub",
+                                                      "a": "$normal",
+                                                      "b": {
+                                                        "vop": "sub",
+                                                        "a": {
+                                                          "vop": "get",
+                                                          "value": "$b",
+                                                          "path": "total"
+                                                        },
+                                                        "b": {
+                                                          "vop": "coalesce",
+                                                          "values": [
+                                                            {
+                                                              "vop": "step_rate",
+                                                              "amount": {
+                                                                "vop": "get",
+                                                                "value": "$b",
+                                                                "path": "total"
+                                                              },
+                                                              "steps": {
+                                                                "vop": "get",
+                                                                "value": {
+                                                                  "chip": "myreturn.year_rates",
+                                                                  "args": {
+                                                                    "fy": "$fy",
+                                                                    "regime": "$regime",
+                                                                    "early": "$early"
+                                                                  }
+                                                                },
+                                                                "path": "surcharge"
+                                                              },
+                                                              "field": "above"
+                                                            },
+                                                            0
+                                                          ]
+                                                        }
+                                                      }
+                                                    },
+                                                    0
+                                                  ]
+                                                },
+                                                "slabs": {
+                                                  "vop": "get",
+                                                  "value": {
+                                                    "chip": "myreturn.slabs_by_year",
+                                                    "args": {}
+                                                  },
+                                                  "path": {
+                                                    "vop": "template",
+                                                    "text": "years.{y}.{r}.slabs.{b}",
+                                                    "values": {
+                                                      "vop": "record",
+                                                      "fields": {
+                                                        "y": "$fy",
+                                                        "r": "$regime",
+                                                        "b": "$band"
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            },
+                                            {
+                                              "vop": "get",
+                                              "value": "$b",
+                                              "path": "on_111a"
+                                            },
+                                            {
+                                              "vop": "get",
+                                              "value": "$b",
+                                              "path": "on_112a"
+                                            },
+                                            {
+                                              "vop": "get",
+                                              "value": "$b",
+                                              "path": "on_112"
+                                            },
+                                            {
+                                              "vop": "get",
+                                              "value": "$b",
+                                              "path": "on_special"
+                                            }
+                                          ]
+                                        },
+                                        "b": {
+                                          "vop": "total",
+                                          "values": [
+                                            {
+                                              "vop": "total",
+                                              "values": [
+                                                {
+                                                  "vop": "get",
+                                                  "value": "$b",
+                                                  "path": "on_111a"
+                                                },
+                                                {
+                                                  "vop": "get",
+                                                  "value": "$b",
+                                                  "path": "on_112a"
+                                                }
+                                              ]
+                                            },
+                                            {
+                                              "vop": "get",
+                                              "value": "$b",
+                                              "path": "on_112"
+                                            }
+                                          ]
+                                        }
+                                      },
+                                      0
+                                    ]
+                                  },
+                                  "b": {
+                                    "vop": "div",
+                                    "a": {
+                                      "vop": "coalesce",
+                                      "values": [
+                                        {
+                                          "vop": "step_rate",
+                                          "amount": {
+                                            "vop": "coalesce",
+                                            "values": [
+                                              {
+                                                "vop": "step_rate",
+                                                "amount": {
+                                                  "vop": "get",
+                                                  "value": "$b",
+                                                  "path": "total"
+                                                },
+                                                "steps": {
+                                                  "vop": "get",
+                                                  "value": {
+                                                    "chip": "myreturn.year_rates",
+                                                    "args": {
+                                                      "fy": "$fy",
+                                                      "regime": "$regime",
+                                                      "early": "$early"
+                                                    }
+                                                  },
+                                                  "path": "surcharge"
+                                                },
+                                                "field": "above"
+                                              },
+                                              0
+                                            ]
+                                          },
+                                          "steps": {
+                                            "vop": "get",
+                                            "value": {
+                                              "chip": "myreturn.year_rates",
+                                              "args": {
+                                                "fy": "$fy",
+                                                "regime": "$regime",
+                                                "early": "$early"
+                                              }
+                                            },
+                                            "path": "surcharge"
+                                          }
+                                        },
+                                        0
+                                      ]
+                                    },
+                                    "b": 100
+                                  }
+                                },
+                                {
+                                  "vop": "mul",
+                                  "a": {
+                                    "vop": "total",
+                                    "values": [
+                                      {
+                                        "vop": "get",
+                                        "value": "$b",
+                                        "path": "on_111a"
+                                      },
+                                      {
+                                        "vop": "get",
+                                        "value": "$b",
+                                        "path": "on_112a"
+                                      }
+                                    ]
+                                  },
+                                  "b": {
+                                    "vop": "div",
+                                    "a": {
+                                      "vop": "smallest",
+                                      "values": [
+                                        {
+                                          "vop": "coalesce",
+                                          "values": [
+                                            {
+                                              "vop": "step_rate",
+                                              "amount": {
+                                                "vop": "coalesce",
+                                                "values": [
+                                                  {
+                                                    "vop": "step_rate",
+                                                    "amount": {
+                                                      "vop": "get",
+                                                      "value": "$b",
+                                                      "path": "total"
+                                                    },
+                                                    "steps": {
+                                                      "vop": "get",
+                                                      "value": {
+                                                        "chip": "myreturn.year_rates",
+                                                        "args": {
+                                                          "fy": "$fy",
+                                                          "regime": "$regime",
+                                                          "early": "$early"
+                                                        }
+                                                      },
+                                                      "path": "surcharge"
+                                                    },
+                                                    "field": "above"
+                                                  },
+                                                  0
+                                                ]
+                                              },
+                                              "steps": {
+                                                "vop": "get",
+                                                "value": {
+                                                  "chip": "myreturn.year_rates",
+                                                  "args": {
+                                                    "fy": "$fy",
+                                                    "regime": "$regime",
+                                                    "early": "$early"
+                                                  }
+                                                },
+                                                "path": "surcharge"
+                                              }
+                                            },
+                                            0
+                                          ]
+                                        },
+                                        {
+                                          "vop": "get",
+                                          "value": {
+                                            "chip": "myreturn.year_rates",
+                                            "args": {
+                                              "fy": "$fy",
+                                              "regime": "$regime",
+                                              "early": "$early"
+                                            }
+                                          },
+                                          "path": "cap_a"
+                                        }
+                                      ]
+                                    },
+                                    "b": 100
+                                  }
+                                },
+                                {
+                                  "vop": "mul",
+                                  "a": {
+                                    "vop": "get",
+                                    "value": "$b",
+                                    "path": "on_112"
+                                  },
+                                  "b": {
+                                    "vop": "div",
+                                    "a": {
+                                      "vop": "smallest",
+                                      "values": [
+                                        {
+                                          "vop": "coalesce",
+                                          "values": [
+                                            {
+                                              "vop": "step_rate",
+                                              "amount": {
+                                                "vop": "coalesce",
+                                                "values": [
+                                                  {
+                                                    "vop": "step_rate",
+                                                    "amount": {
+                                                      "vop": "get",
+                                                      "value": "$b",
+                                                      "path": "total"
+                                                    },
+                                                    "steps": {
+                                                      "vop": "get",
+                                                      "value": {
+                                                        "chip": "myreturn.year_rates",
+                                                        "args": {
+                                                          "fy": "$fy",
+                                                          "regime": "$regime",
+                                                          "early": "$early"
+                                                        }
+                                                      },
+                                                      "path": "surcharge"
+                                                    },
+                                                    "field": "above"
+                                                  },
+                                                  0
+                                                ]
+                                              },
+                                              "steps": {
+                                                "vop": "get",
+                                                "value": {
+                                                  "chip": "myreturn.year_rates",
+                                                  "args": {
+                                                    "fy": "$fy",
+                                                    "regime": "$regime",
+                                                    "early": "$early"
+                                                  }
+                                                },
+                                                "path": "surcharge"
+                                              }
+                                            },
+                                            0
+                                          ]
+                                        },
+                                        {
+                                          "vop": "get",
+                                          "value": {
+                                            "chip": "myreturn.year_rates",
+                                            "args": {
+                                              "fy": "$fy",
+                                              "regime": "$regime",
+                                              "early": "$early"
+                                            }
+                                          },
+                                          "path": "cap_112"
+                                        }
+                                      ]
+                                    },
+                                    "b": 100
+                                  }
+                                }
+                              ]
+                            },
+                            {
+                              "vop": "sub",
+                              "a": {
+                                "vop": "get",
+                                "value": "$b",
+                                "path": "total"
+                              },
+                              "b": {
+                                "vop": "coalesce",
+                                "values": [
+                                  {
+                                    "vop": "step_rate",
+                                    "amount": {
+                                      "vop": "get",
+                                      "value": "$b",
+                                      "path": "total"
+                                    },
+                                    "steps": {
+                                      "vop": "get",
+                                      "value": {
+                                        "chip": "myreturn.year_rates",
+                                        "args": {
+                                          "fy": "$fy",
+                                          "regime": "$regime",
+                                          "early": "$early"
+                                        }
+                                      },
+                                      "path": "surcharge"
+                                    },
+                                    "field": "above"
+                                  },
+                                  0
+                                ]
+                              }
+                            }
+                          ]
+                        },
+                        "b": {
+                          "vop": "sub",
+                          "a": {
+                            "vop": "total",
+                            "values": [
+                              {
+                                "vop": "get",
+                                "value": "$b",
+                                "path": "on_normal"
+                              },
+                              {
+                                "vop": "get",
+                                "value": "$b",
+                                "path": "on_111a"
+                              },
+                              {
+                                "vop": "get",
+                                "value": "$b",
+                                "path": "on_112a"
+                              },
+                              {
+                                "vop": "get",
+                                "value": "$b",
+                                "path": "on_112"
+                              },
+                              {
+                                "vop": "get",
+                                "value": "$b",
+                                "path": "on_special"
+                              }
+                            ]
+                          },
+                          "b": {
+                            "vop": "get",
+                            "value": "$b",
+                            "path": "rebate"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        ],
+        "else": 0
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-10: part of chip myreturn.year_tax, split so that no field holds a copy of another (see tools/slim_myreturn_tax.py). Stage 3 works out surcharge from its knobs and what stage 2 worked out (b); the _raw_ fields are the unrounded values the next stages use.",
+  "test_cases": [
+    {
+      "args": {
+        "b": {
+          "known": null,
+          "total": null,
+          "on_normal": null,
+          "_raw_on_normal": null,
+          "on_111a": null,
+          "_raw_on_111a": null,
+          "on_112a": null,
+          "_raw_on_112a": null,
+          "on_112": null,
+          "_raw_on_112": null,
+          "on_special": null,
+          "_raw_on_special": null,
+          "rebate": 0,
+          "surcharge_rate": 0
+        }
+      },
+      "expect_value": {
+        "known": null,
+        "total": null,
+        "on_normal": null,
+        "_raw_on_normal": null,
+        "on_111a": null,
+        "_raw_on_111a": null,
+        "on_112a": null,
+        "_raw_on_112a": null,
+        "on_112": null,
+        "_raw_on_112": null,
+        "on_special": null,
+        "_raw_on_special": null,
+        "rebate": 0,
+        "surcharge_rate": 0,
+        "surcharge": 0
+      }
+    },
+    {
+      "args": {
+        "fy": 2022,
+        "normal": 5100000,
+        "stcg_111a": 400000,
+        "ltcg_112a": 300000,
+        "ltcg_112": 200000,
+        "special": 100000,
+        "regime": "old",
+        "b": {
+          "known": null,
+          "total": null,
+          "on_normal": null,
+          "_raw_on_normal": null,
+          "on_111a": null,
+          "_raw_on_111a": null,
+          "on_112a": null,
+          "_raw_on_112a": null,
+          "on_112": null,
+          "_raw_on_112": null,
+          "on_special": null,
+          "_raw_on_special": null,
+          "rebate": 0,
+          "surcharge_rate": 0
+        }
+      },
+      "expect_value": {
+        "known": null,
+        "total": null,
+        "on_normal": null,
+        "_raw_on_normal": null,
+        "on_111a": null,
+        "_raw_on_111a": null,
+        "on_112a": null,
+        "_raw_on_112a": null,
+        "on_112": null,
+        "_raw_on_112": null,
+        "on_special": null,
+        "_raw_on_special": null,
+        "rebate": 0,
+        "surcharge_rate": 0,
+        "surcharge": 0
+      }
+    }
+  ]
+}

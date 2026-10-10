@@ -433,6 +433,11 @@
           },
           "defaults": {
             "status": "OWNER"
+          },
+          "values": {
+            "status": {
+              "DIRECT": "OWNER"
+            }
           }
         },
         "custodial": {
@@ -452,6 +457,11 @@
           "defaults": {
             "status": "OWNER",
             "nature": "N"
+          },
+          "values": {
+            "status": {
+              "DIRECT": "OWNER"
+            }
           }
         },
         "equity": {
@@ -483,6 +493,34 @@
             "TotGrossAmtPaidCredited": "income"
           }
         },
+        "financial": {
+          "list": "DetailsFinancialInterest",
+          "map": {
+            "ZipCode": "zip",
+            "NatureOfEntity": "nature",
+            "NameOfEntity": "name",
+            "AddressOfEntity": "address",
+            "NatureOfInt": "status",
+            "DateHeld": "opened",
+            "TotalInvestment": "cost",
+            "IncFromInt": "income",
+            "NatureOfInc": "inc_nature",
+            "IncTaxAmt": "taxed",
+            "IncTaxSch": "sch",
+            "IncTaxSchNo": "sch_no"
+          },
+          "defaults": {
+            "status": "DIRECT",
+            "nature": "Company",
+            "inc_nature": "None",
+            "sch": "NI"
+          },
+          "values": {
+            "status": {
+              "OWNER": "DIRECT"
+            }
+          }
+        },
         "property": {
           "list": "DetailsImmovableProperty",
           "map": {
@@ -501,6 +539,11 @@
             "status": "DIRECT",
             "nature": "Rent",
             "sch": "NI"
+          },
+          "values": {
+            "status": {
+              "OWNER": "DIRECT"
+            }
           }
         },
         "other": {
@@ -521,6 +564,11 @@
             "status": "DIRECT",
             "nature": "None",
             "sch": "NI"
+          },
+          "values": {
+            "status": {
+              "OWNER": "DIRECT"
+            }
           }
         },
         "signing": {
@@ -663,7 +711,7 @@
     }
   },
   "returns": "record",
-  "version": 9,
+  "version": 10,
   "status": "published",
   "description_nl": "2026-10-06: other-sources nature codes (SAV savings, IFD deposits, TAX refund interest, DIV dividend, FAP family pension, OTH other), and the employer category (OTH = private employer) when the person has not picked one. 2026-10-06: status_codes - I for an individual, H for an HUF. 2026-10-06: capacity - an HUF's return is verified by its Karta (K). 2026-10-07: Schedule SI codes and rates, the special-income date ranges, agricultural (AGRI), co-owned YES/NO, VDA head CG, 44AE owned / leased / hired. 2026-10-07: capital gains: Schedule 112A (BE / AE, INNOTREQUIRD), 111A code, Schedule CFL's blocks and fields, Schedule TDS3 sections (26QB ...), gifts in ITR-1 / ITR-4. 2026-10-07: tds_heads (ITR-3 Schedule TDS2: BP for a receipt of the business, OS otherwise); yn. 2026-10-07: tds_heads (ITR-3 Schedule TDS2: BP for a receipt of the business, OS otherwise); yn; ITR-3 Schedule CFL block names (by AY) and its nil business-loss columns; code_54f. 2026-10-07: wave 3: foreign state / employer codes, Schedule FSI blocks (ITR-2 / ITR-3), Schedule TR flag, Schedule FA tables, Schedule SPI words, 115H.",
   "test_cases": [
@@ -863,6 +911,11 @@
             },
             "defaults": {
               "status": "OWNER"
+            },
+            "values": {
+              "status": {
+                "DIRECT": "OWNER"
+              }
             }
           },
           "custodial": {
@@ -882,6 +935,11 @@
             "defaults": {
               "status": "OWNER",
               "nature": "N"
+            },
+            "values": {
+              "status": {
+                "DIRECT": "OWNER"
+              }
             }
           },
           "equity": {
@@ -913,6 +971,34 @@
               "TotGrossAmtPaidCredited": "income"
             }
           },
+          "financial": {
+            "list": "DetailsFinancialInterest",
+            "map": {
+              "ZipCode": "zip",
+              "NatureOfEntity": "nature",
+              "NameOfEntity": "name",
+              "AddressOfEntity": "address",
+              "NatureOfInt": "status",
+              "DateHeld": "opened",
+              "TotalInvestment": "cost",
+              "IncFromInt": "income",
+              "NatureOfInc": "inc_nature",
+              "IncTaxAmt": "taxed",
+              "IncTaxSch": "sch",
+              "IncTaxSchNo": "sch_no"
+            },
+            "defaults": {
+              "status": "DIRECT",
+              "nature": "Company",
+              "inc_nature": "None",
+              "sch": "NI"
+            },
+            "values": {
+              "status": {
+                "OWNER": "DIRECT"
+              }
+            }
+          },
           "property": {
             "list": "DetailsImmovableProperty",
             "map": {
@@ -931,6 +1017,11 @@
               "status": "DIRECT",
               "nature": "Rent",
               "sch": "NI"
+            },
+            "values": {
+              "status": {
+                "OWNER": "DIRECT"
+              }
             }
           },
           "other": {
@@ -951,6 +1042,11 @@
               "status": "DIRECT",
               "nature": "None",
               "sch": "NI"
+            },
+            "values": {
+              "status": {
+                "OWNER": "DIRECT"
+              }
             }
           },
           "signing": {

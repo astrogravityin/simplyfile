@@ -23,12 +23,18 @@ def build(screen: str) -> dict:
     head = {k: old.get(k, v) for k, v in DEFAULTS.items()}
     first = next((s["target"].split("|")[0] for s in d["steps"] if s.get("target")), "")
     steps = [{"chapter": sub(d["title"]), "say": sub(d["lede"]), "do": ([{"wait_for": first}] if first else []) + [{"wait": 1}]}]
+    # 2026-10-10: a step whose actions were added to by hand in the tour (sf-clients' Start here: the demo firm has done every
+    # step, so the card is opened from the name menu first) keeps them - as long as they still hold what the guide makes
+    was = {x.get("chapter"): x.get("do") or [] for x in old.get("steps") or []}
     for s in d["steps"]:
         do = []
         if s.get("open"):
             do += [{"click": s["open"], "optional": True}, {"wait": 1.2}]
         if s.get("target"):
             do.append({"highlight_target": s["target"], "optional": True, "timeout": 5})
+        kept = was.get(sub(s["title"])) or []
+        if len(kept) > len(do) and all(a in kept for a in do):
+            do = kept
         steps.append({"chapter": sub(s["title"]), "say": sub(s["say"]), "do": do})
     t = head | {"page_key": f"sf-{screen}", "title": sub(d["title"]), "start_url": f"/#/{screen}",
                 "covers": [s["title"][:1].lower() + s["title"][1:] for s in d["steps"]], "steps": steps}

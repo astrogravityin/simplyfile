@@ -525,8 +525,16 @@ def _gemini_model(user_id: str, kind: str) -> str:
     mine = store.keys_of(user_id)
     if kind == "text":
         return mine.get("gemini_model") or store.DEFAULT_KEYS["gemini_model"]
-    src = engine.setting("providers.settings", "default_from")[kind]      # which chip holds this kind's default model
+    src = engine.setting("providers.settings", "default_from").get(kind)   # which chip holds this kind's default model
+    if not src or src["chip"] not in engine.chips():   # 2026-10-10: an edition without Gemini's image / video chips has no such default
+        return ""
     return engine.setting(src["chip"], src["key"])
+
+
+def _edition_setting(chip_id: str, key: str, default):
+    """2026-10-10: board.settings / film.settings (Gemini's own image and video models) are one edition's chips - a portal
+    without them offers no Gemini image / video model; the other providers' (chip providers.models) stay."""
+    return engine.setting(chip_id, key) if chip_id in engine.chips() else default
 
 
 def catalog(kind: str) -> list[dict]:
@@ -537,10 +545,11 @@ def catalog(kind: str) -> list[dict]:
         for m in engine.run("store.models")["choices"]:
             models.append({"provider": k["gemini_id"], "kind": kind, "id": m, "label": m})
     elif kind == "image":
-        models.append({"provider": k["gemini_id"], "kind": kind, "id": engine.setting("board.settings", "model"),
-                       "label": engine.setting("board.settings", "model"), "usd_per_image": engine.setting("board.settings", "usd_per_image")})
+        if _edition_setting("board.settings", "model", ""):
+            models.append({"provider": k["gemini_id"], "kind": kind, "id": engine.setting("board.settings", "model"),
+                           "label": engine.setting("board.settings", "model"), "usd_per_image": engine.setting("board.settings", "usd_per_image")})
     else:
-        for m in engine.setting("film.settings", "models"):
+        for m in _edition_setting("film.settings", "models", []):
             models.append({"provider": k["gemini_id"], "kind": kind} | m)
     models += [dict(m) for m in model_rows(kind)]
     off = gone()                                        # 2026-09-26: withdrawn by the provider (seen at call time)
@@ -834,7 +843,7 @@ def text_json(user_id: str, prompt: str, images: list[Path] | None = None, model
 def video_row(model: str) -> dict | None:
     """A video model from film.settings (Gemini) or providers.models (the rest), with its provider named."""
     k = settings()
-    g = next((r for r in engine.setting("film.settings", "models") if r["id"] == model), None)
+    g = next((r for r in _edition_setting("film.settings", "models", []) if r["id"] == model), None)
     if g:
         return dict(g) | {"provider": k["gemini_id"]}
     return model_row("video", model)
@@ -1028,10 +1037,17 @@ if __name__ == "__main__":  # ponytail: one runnable self-check of the wire's sh
     globals()["pool"] = _real_pool
     # 2026-09-28 owner "auto-replace": a gone model hands over to the same provider's best model at no higher price
     _real_gone = gone
-    globals()["gone"] = lambda: {"veo-3.1-generate-preview": {"provider": "gemini"}}
-    nxt_ = successor("video", "veo-3.1-generate-preview")
-    assert nxt_.startswith("veo-3.1") and nxt_ != "veo-3.1-generate-preview", nxt_
-    assert current("video", "veo-3.1-generate-preview") == nxt_ and current("video", nxt_) == nxt_
+    # 2026-10-10: on whatever video models this portal offers (film.settings - Gemini's Veo - is one edition's chip, not every portal's):
+    # the dearest model of a provider with two or more hands over to one of that provider's at no higher price
+    vids_ = [m for m in catalog("video") if _unit_price("video", m) is not None]
+    pick_ = next((m for m in sorted(vids_, key=lambda m: -_unit_price("video", m))
+                  if any(o["provider"] == m["provider"] and o["id"] != m["id"] for o in vids_)), None)
+    if pick_:
+        globals()["gone"] = lambda: {pick_["id"]: {"provider": pick_["provider"]}}
+        nxt_ = successor("video", pick_["id"])
+        got_ = next((o for o in vids_ if o["id"] == nxt_), None)
+        assert got_ and got_["provider"] == pick_["provider"] and _unit_price("video", got_) <= _unit_price("video", pick_), (pick_["id"], nxt_)
+        assert current("video", pick_["id"]) == nxt_ and current("video", nxt_) == nxt_
     globals()["gone"] = lambda: {"gpt-image-1-mini": {"provider": "openai"}}
     assert successor("image", "gpt-image-1-mini") == "", "nothing dearer takes over a cheap model nobody chose"
     globals()["gone"] = lambda: {"gpt-image-1": {"provider": "openai"}}
@@ -1080,7 +1096,9 @@ if __name__ == "__main__":  # ponytail: one runnable self-check of the wire's sh
             raise AssertionError("a provider that makes no video was accepted for video")
         except HTTPException:
             pass
-        assert choice(u, "image")["provider"] == "gemini" and choice(u, "video")["model"] == "veo-3.1-fast-generate-preview"
+        assert choice(u, "image")["provider"] == "gemini"
+        if "film.settings" in engine.chips():              # 2026-10-10: Gemini's own video models are one edition's chip (the Studio's)
+            assert choice(u, "video")["model"] == "veo-3.1-fast-generate-preview"
         # 2026-09-23 a comic's road names the model outright: its provider follows (providers.models), Gemini for its own
         assert choice(u, "image", "gpt-image-1-mini")["provider"] == "openai" and choice(u, "image", "gpt-image-1-mini")["price"]["usd_per_image"] == 0.011
         assert choice(u, "image", "gemini-2.5-flash-image")["provider"] == "gemini" and choice(u, "text", "gemini-2.5-pro")["model"] == "gemini-2.5-pro"
@@ -1104,7 +1122,8 @@ if __name__ == "__main__":  # ponytail: one runnable self-check of the wire's sh
         finally:
             globals()["_edition"] = _ed
         assert any(m["id"] == "gpt-4.1-nano" and m["have_key"] for m in off["kinds"]["text"]) and off["chosen"]["text"]["provider"] == "openai"
-        assert any(m["provider"] == "runway" for m in off["kinds"]["video"]) and off["set"]["openai_api_key"] and not off["set"]["runway_api_key"]
+        assert "video" not in kinds() or any(m["provider"] == "runway" for m in off["kinds"]["video"])   # 2026-10-10: a portal that makes no video lists none
+        assert off["set"]["openai_api_key"] and not off["set"]["runway_api_key"]
         if "studio" not in _edition():                     # 2026-10-09: an edition that makes no clips never offers their keys
             here = offered(u)
             assert "runway_api_key" not in here["set"] and not any(m["provider"] in ("runway", "fal") for m in here["kinds"].get("video") or []), here["set"]
@@ -1115,7 +1134,8 @@ if __name__ == "__main__":  # ponytail: one runnable self-check of the wire's sh
         body = openai_chat_body("gpt-4.1-nano", "Look", [pic])
         assert body["messages"][0]["content"][1]["image_url"]["url"].startswith("data:image/png;base64,"), body
         vr = video_row("gen4_turbo")
-        assert vr and vr["provider"] == "runway" and runway_ratio("9:16", vr) == "720:1280" and video_row("veo-3.1-fast-generate-preview")["provider"] == "gemini"
+        assert vr and vr["provider"] == "runway" and runway_ratio("9:16", vr) == "720:1280"
+        assert "film.settings" not in engine.chips() or video_row("veo-3.1-fast-generate-preview")["provider"] == "gemini"   # 2026-10-10: the Studio's chip
         assert price_row("gpt-4.1-nano") == {"model": "gpt-4.1-nano", "in": 0.1, "out": 0.4} and price_row("gemini-flash-latest") is None
         # the wire, stood in for: an OpenAI-shaped answer becomes (text, tokens in, tokens out). This file runs as
         # __main__ here, so the stand-in goes into THIS module's globals (an `import providers` would be a second copy)

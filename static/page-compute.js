@@ -61,7 +61,7 @@ const datesRow = (d) => `<div class="cc-dates small"><span>${esc(w('due_on', { d
   <span>${esc(w('revise_by', { date: day(d.dates.revise_by) }))}</span><span>${esc(w('updated_by', { date: day(d.dates.updated_by) }))}</span></div>`;
 
 export async function computePage(host) {
-  await loadWords('compute', 'itrimport', 'changes');
+  await loadWords('compute', 'intake', 'itrimport', 'changes');   // the client picker speaks intake's words (2026-10-10: it showed [intake.pick])
   const p = new URLSearchParams((location.hash.split('?')[1]) || '');
   if (!p.get('c')) return clientPicker(host, 'compute');
   const K = await api('/api/clients/settings');

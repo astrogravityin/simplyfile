@@ -75,22 +75,30 @@ js = load("myreturn.json")
 FA_KINDS = {
     "bank": {"list": "DetailsForiegnBank", "map": {"Bankname": "name", "AddressOfBank": "address", "ZipCode": "zip", "ForeignAccountNumber": "account",
                                                     "OwnerStatus": "status", "AccOpenDate": "opened", "PeakBalanceDuringYear": "peak", "ClosingBalance": "closing",
-                                                    "IntrstAccured": "income"}, "defaults": {"status": "OWNER"}},
+                                                    "IntrstAccured": "income"}, "defaults": {"status": "OWNER"}, "values": {"status": {"DIRECT": "OWNER"}}},
     "custodial": {"list": "DtlsForeignCustodialAcc", "map": {"FinancialInstName": "name", "FinancialInstAddress": "address", "ZipCode": "zip", "AccountNumber": "account",
                                                             "Status": "status", "AccOpenDate": "opened", "PeakBalanceDuringPeriod": "peak", "ClosingBalance": "closing",
-                                                            "GrossAmtPaidCredited": "income", "NatureOfAmount": "nature"}, "defaults": {"status": "OWNER", "nature": "N"}},
+                                                            "GrossAmtPaidCredited": "income", "NatureOfAmount": "nature"}, "defaults": {"status": "OWNER", "nature": "N"},
+                  "values": {"status": {"DIRECT": "OWNER"}}},
     "equity": {"list": "DtlsForeignEquityDebtInterest", "map": {"NameOfEntity": "name", "AddressOfEntity": "address", "ZipCode": "zip", "NatureOfEntity": "nature",
                                                                "InterestAcquiringDate": "opened", "InitialValOfInvstmnt": "cost", "PeakBalanceDuringPeriod": "peak",
                                                                "ClosingBalance": "closing", "TotGrossAmtPaidCredited": "income", "TotGrossProceeds": "proceeds"},
                "defaults": {"nature": "Company"}},
     "insurance": {"list": "DtlsForeignCashValueInsurance", "map": {"FinancialInstName": "name", "FinancialInstAddress": "address", "ZipCode": "zip",
                                                                   "ContractDate": "opened", "CashValOrSurrenderVal": "closing", "TotGrossAmtPaidCredited": "income"}},
+    # 2026-10-10: Schedule FA table B - a financial interest in an entity abroad (a company, firm, LLP, partnership): the department's
+    # DetailsFinancialInterest - nature of the entity, the interest (direct / beneficial owner / beneficiary), held since, investment, income from it
+    "financial": {"list": "DetailsFinancialInterest", "map": {"ZipCode": "zip", "NatureOfEntity": "nature", "NameOfEntity": "name", "AddressOfEntity": "address",
+                                                             "NatureOfInt": "status", "DateHeld": "opened", "TotalInvestment": "cost", "IncFromInt": "income",
+                                                             "NatureOfInc": "inc_nature", "IncTaxAmt": "taxed", "IncTaxSch": "sch", "IncTaxSchNo": "sch_no"},
+                  "defaults": {"status": "DIRECT", "nature": "Company", "inc_nature": "None", "sch": "NI"}, "values": {"status": {"OWNER": "DIRECT"}}},
     "property": {"list": "DetailsImmovableProperty", "map": {"ZipCode": "zip", "AddressOfProperty": "address", "Ownership": "status", "DateOfAcq": "opened",
                                                             "TotalInvestment": "cost", "IncDrvProperty": "income", "NatureOfInc": "nature", "IncTaxAmt": "taxed",
-                                                            "IncTaxSch": "sch", "IncTaxSchNo": "sch_no"}, "defaults": {"status": "DIRECT", "nature": "Rent", "sch": "NI"}},
+                                                            "IncTaxSch": "sch", "IncTaxSchNo": "sch_no"}, "defaults": {"status": "DIRECT", "nature": "Rent", "sch": "NI"},
+                 "values": {"status": {"OWNER": "DIRECT"}}},
     "other": {"list": "DetailsOthAssets", "map": {"ZipCode": "zip", "NatureOfAsset": "name", "Ownership": "status", "DateOfAcq": "opened", "TotalInvestment": "cost",
                                                   "IncDrvAsset": "income", "NatureOfInc": "nature", "IncTaxAmt": "taxed", "IncTaxSch": "sch", "IncTaxSchNo": "sch_no"},
-              "defaults": {"status": "DIRECT", "nature": "None", "sch": "NI"}},
+              "defaults": {"status": "DIRECT", "nature": "None", "sch": "NI"}, "values": {"status": {"OWNER": "DIRECT"}}},
     # 2026-10-08 wave 4: Schedule FA D-F as the person knows them - accounts with signing authority, trusts abroad, other income from outside India
     # ("flag" - is the income taxable and offered in this return: Y when an amount offered is typed - myreturn.wave3_facts)
     "signing": {"list": "DetailsOfAccntsHvngSigningAuth", "map": {"NameOfInstitution": "name", "AddressOfInstitution": "address", "ZipCode": "zip",
@@ -118,7 +126,9 @@ for k2, v, lbl in [
     ("fsi_blocks_itr3", ["IncFromSal", "IncFromHP", "IncFromBusiness", "IncCapGain", "IncOthSrc"], "ITR-3 Schedule FSI: the heads of a country's row"),
     ("tr_refunded_no", "NO", "Schedule TR: tax paid abroad on which relief was allowed has since been refunded - NO"),
     ("fa_kinds", FA_KINDS, "Schedule FA: each kind of foreign asset - the department's table (A1 bank accounts, A2 custodial accounts, A3 equity and debt "
-                           "interests, A4 cash-value insurance, B immovable property, C other capital assets) and which of the row's fields goes in each column"),
+                           "interests, A4 cash-value insurance, B a financial interest in an entity, C immovable property, D other capital assets, E accounts "
+                           "with signing authority, F trusts, G other income from outside India), which of the row's fields goes in each column, and "
+                           "(values) a status typed that the table does not take, said its way"),
     ("fa_defaults", {"text": "-", "zip": "NA", "country": "", "sch_no": "-"}, "Schedule FA: what a blank text column says"),
     ("club_words", {"minor_child": "Minor child", "spouse": "Spouse", "son_wife": "Son's wife"}, "Schedule SPI: the relationship"),
 ]:
@@ -240,8 +250,10 @@ WORDS = {
                                                     "1 January - 31 December 2025: bank and custodial accounts, shares and debt, insurance, property, other assets - "
                                                     "even with no income from it. Rupee values at the SBI TT buying rate. Leaving it out can cost 10 lakh (Black Money Act).",
     "fa_kinds": "bank=Bank account (A1)|custodial=Custodial / brokerage account (A2)|equity=Shares, ESOPs, debt (A3)|insurance=Cash-value insurance (A4)"
-                "|property=Immovable property (B)|other=Other capital asset (C)|signing=Account you can sign for (D)|trust=Trust abroad - trustee, "
-                "beneficiary or settlor (E)|income=Other income from outside India (F)",
+                "|financial=Interest in a foreign company, firm or other entity (B)"
+                "|property=Immovable property (C)|other=Other capital asset (D)|signing=Account you can sign for (E)|trust=Trust abroad - trustee, "
+                "beneficiary or settlor (F)|income=Other income from outside India (G)",
+    "f_fa_inc_nature": "Nature of the income from it",
     "f_fa_holder": "Name in the account", "f_fa_trustees": "Other trustees", "f_fa_trustees_addr": "Their address", "f_fa_settlor": "Settlor",
     "f_fa_settlor_addr": "Settlor's address", "f_fa_beneficiaries": "Beneficiaries", "f_fa_beneficiaries_addr": "Beneficiaries' address",
     "f_fa_kind": "Asset", "f_fa_country": "Country", "f_fa_name": "Name (bank / entity / asset)", "f_fa_address": "Address", "f_fa_zip": "ZIP code",

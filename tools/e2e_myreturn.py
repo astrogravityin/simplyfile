@@ -1070,5 +1070,25 @@ try:
 except Exception as e:  # noqa: BLE001
     st_ = myreturn.state(rg, ay)
     ok(getattr(e, "status_code", 0) == 400 and st_["business"]["kind"] == "44ADA", f"the business taken out with the old regime: refused, nothing saved: {getattr(e, 'detail', e)}")
+
+# W11 (2026-10-10) Schedule FA table B: a financial interest in a company or firm abroad - ITR-2, then ITR-3 (with a profession);
+# a status typed that the table does not take is said its way (OWNER -> DIRECT for B / C, DIRECT -> OWNER for A1)
+fb = person("Kabir Demo Entity", "ZZDPK0101N", 101)
+w = myreturn.answer(u, fb, ay, Q | {"answers": Q["answers"] | {"foreign": True}, "regime": "new", "fa_rows": [
+    {"kind": "financial", "country": US, "name": "Demo Ventures LLC", "address": "6 Demo Avenue, Austin", "zip": "73301", "nature": "Limited liability company",
+     "status": "OWNER", "opened": "2021-06-15", "cost": 1500000, "income": 40000, "inc_nature": "Share of profit", "taxed": 40000, "sch": "OS", "sch_no": "1"},
+    {"kind": "property", "country": UK, "name": "Flat", "address": "7 Demo Mews, London", "zip": "E1 6AN", "status": "OWNER", "opened": "2019-03-01", "cost": 9000000},
+    {"kind": "bank", "country": US, "name": "Demo Bank NA", "address": "1 Demo Plaza, Seattle", "zip": "98101", "account": "US0101", "status": "DIRECT",
+     "opened": "2018-01-10", "peak": 300000, "closing": 250000, "income": 1200}]})
+ok(not any(x["what"] == "fa_missing" for x in w["checks"]), "Schedule FA with table B: no 'foreign assets not listed' check")
+fa = itr2(fb, "Schedule FA table B")["ScheduleFA"]
+b = fa["DetailsFinancialInterest"][0]
+ok(b["NameOfEntity"] == "Demo Ventures LLC" and b["NatureOfEntity"] == "Limited liability company" and b["NatureOfInt"] == "DIRECT" and b["DateHeld"] == "2021-06-15"
+   and b["TotalInvestment"] == 1500000 and b["IncFromInt"] == 40000 and b["NatureOfInc"] == "Share of profit" and b["IncTaxAmt"] == 40000 and b["IncTaxSch"] == "OS"
+   and fa["DetailsImmovableProperty"][0]["Ownership"] == "DIRECT" and fa["DetailsForiegnBank"][0]["OwnerStatus"] == "OWNER",
+   f"ITR-2 Schedule FA B (DetailsFinancialInterest) and the statuses said each table's way: {b}")
+myreturn.answer(u, fb, ay, {"business": {"kind": "44ADA", "code": "14001", "name": "Kabir Demo Consulting", "digital": 1000000}, "answers": {"filed_on": "2026-08-20"}})
+b3 = itr3(fb, "Schedule FA table B with a profession (44ADA)")["ScheduleFA"]["DetailsFinancialInterest"][0]
+ok(b3["NameOfEntity"] == "Demo Ventures LLC" and b3["IncFromInt"] == 40000, f"ITR-3 Schedule FA B: {b3}")
 print("ALL PASS" if not fails else f"{len(fails)} FAILED")
 sys.exit(1 if fails else 0)

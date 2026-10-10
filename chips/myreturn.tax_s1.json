@@ -1,0 +1,1201 @@
+{
+  "chip_id": "myreturn.tax_s1",
+  "kind": "accessor",
+  "set": "myreturn",
+  "label": "My return: the tax, stage 1 of 5 (total, basic_left, on_normal, on_aggregate, agri_rebate, on_111a, on_112a, on_112, on_115bb, on_115bbj, on_115bbh, surcharge_rate)",
+  "aliases": [],
+  "params": [
+    {
+      "name": "normal",
+      "type": "number",
+      "default": 0,
+      "label": "total income at normal rates (after Chapter VI-A), rounded"
+    },
+    {
+      "name": "stcg_111a",
+      "type": "number",
+      "default": 0,
+      "label": "short-term gains on listed shares/equity funds (111A)"
+    },
+    {
+      "name": "ltcg_112a",
+      "type": "number",
+      "default": 0,
+      "label": "long-term gains on listed shares/equity funds (112A), before the 1.25 lakh exemption"
+    },
+    {
+      "name": "ltcg_112",
+      "type": "number",
+      "default": 0,
+      "label": "other long-term gains (112)"
+    },
+    {
+      "name": "regime",
+      "type": "text",
+      "default": "new",
+      "label": "regime"
+    },
+    {
+      "name": "band",
+      "type": "text",
+      "default": "below60",
+      "label": "age band"
+    },
+    {
+      "name": "resident",
+      "type": "boolean",
+      "default": true,
+      "label": "resident in India"
+    },
+    {
+      "name": "status",
+      "type": "text",
+      "default": "individual",
+      "label": "individual / huf"
+    },
+    {
+      "name": "lottery",
+      "type": "number",
+      "default": 0,
+      "label": "115BB winnings (lottery, crossword, races, gambling, betting)"
+    },
+    {
+      "name": "online_games",
+      "type": "number",
+      "default": 0,
+      "label": "115BBJ net winnings from online games"
+    },
+    {
+      "name": "vda",
+      "type": "number",
+      "default": 0,
+      "label": "115BBH income from virtual digital assets"
+    },
+    {
+      "name": "agri",
+      "type": "number",
+      "default": 0,
+      "label": "net agricultural income (exempt, but counts for the rate)"
+    },
+    {
+      "name": "excess_112",
+      "type": "number",
+      "default": 0,
+      "label": "proviso to s.112(1)(a): the tax at 12.5% without indexation less the tax at 20% with it, land / building bought before 23 July 2024 (chip myreturn.cg_choice) - left out of the 112 tax"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "total": {
+        "vop": "total",
+        "values": [
+          "$normal",
+          "$stcg_111a",
+          {
+            "vop": "largest",
+            "values": [
+              {
+                "vop": "sub",
+                "a": "$ltcg_112a",
+                "b": {
+                  "vop": "get",
+                  "value": {
+                    "chip": "myreturn.rates",
+                    "args": {}
+                  },
+                  "path": "exempt_112a"
+                }
+              },
+              0
+            ]
+          },
+          "$ltcg_112",
+          "$lottery",
+          "$online_games",
+          "$vda"
+        ]
+      },
+      "basic_left": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "eq",
+              "left": "$resident",
+              "right": true
+            },
+            "then": {
+              "vop": "largest",
+              "values": [
+                {
+                  "vop": "sub",
+                  "a": {
+                    "vop": "get",
+                    "value": {
+                      "chip": "myreturn.rates",
+                      "args": {}
+                    },
+                    "path": {
+                      "vop": "template",
+                      "text": "basic.{a}.{b}",
+                      "values": {
+                        "vop": "record",
+                        "fields": {
+                          "a": "$regime",
+                          "b": "$band"
+                        }
+                      }
+                    }
+                  },
+                  "b": "$normal"
+                },
+                0
+              ]
+            }
+          }
+        ],
+        "else": 0
+      },
+      "on_normal": {
+        "vop": "round_to",
+        "value": {
+          "vop": "get",
+          "value": {
+            "chip": "myreturn.slab_normal",
+            "args": {
+              "normal": "$normal",
+              "agri": "$agri",
+              "total": {
+                "vop": "total",
+                "values": [
+                  "$normal",
+                  "$stcg_111a",
+                  {
+                    "vop": "largest",
+                    "values": [
+                      {
+                        "vop": "sub",
+                        "a": "$ltcg_112a",
+                        "b": {
+                          "vop": "get",
+                          "value": {
+                            "chip": "myreturn.rates",
+                            "args": {}
+                          },
+                          "path": "exempt_112a"
+                        }
+                      },
+                      0
+                    ]
+                  },
+                  "$ltcg_112",
+                  "$lottery",
+                  "$online_games",
+                  "$vda"
+                ]
+              },
+              "regime": "$regime",
+              "band": "$band"
+            }
+          },
+          "path": "tax"
+        }
+      },
+      "_raw_on_normal": {
+        "vop": "get",
+        "value": {
+          "chip": "myreturn.slab_normal",
+          "args": {
+            "normal": "$normal",
+            "agri": "$agri",
+            "total": {
+              "vop": "total",
+              "values": [
+                "$normal",
+                "$stcg_111a",
+                {
+                  "vop": "largest",
+                  "values": [
+                    {
+                      "vop": "sub",
+                      "a": "$ltcg_112a",
+                      "b": {
+                        "vop": "get",
+                        "value": {
+                          "chip": "myreturn.rates",
+                          "args": {}
+                        },
+                        "path": "exempt_112a"
+                      }
+                    },
+                    0
+                  ]
+                },
+                "$ltcg_112",
+                "$lottery",
+                "$online_games",
+                "$vda"
+              ]
+            },
+            "regime": "$regime",
+            "band": "$band"
+          }
+        },
+        "path": "tax"
+      },
+      "on_aggregate": {
+        "vop": "round_to",
+        "value": {
+          "vop": "get",
+          "value": {
+            "chip": "myreturn.slab_normal",
+            "args": {
+              "normal": "$normal",
+              "agri": "$agri",
+              "total": {
+                "vop": "total",
+                "values": [
+                  "$normal",
+                  "$stcg_111a",
+                  {
+                    "vop": "largest",
+                    "values": [
+                      {
+                        "vop": "sub",
+                        "a": "$ltcg_112a",
+                        "b": {
+                          "vop": "get",
+                          "value": {
+                            "chip": "myreturn.rates",
+                            "args": {}
+                          },
+                          "path": "exempt_112a"
+                        }
+                      },
+                      0
+                    ]
+                  },
+                  "$ltcg_112",
+                  "$lottery",
+                  "$online_games",
+                  "$vda"
+                ]
+              },
+              "regime": "$regime",
+              "band": "$band"
+            }
+          },
+          "path": "aggregate"
+        }
+      },
+      "_raw_on_aggregate": {
+        "vop": "get",
+        "value": {
+          "chip": "myreturn.slab_normal",
+          "args": {
+            "normal": "$normal",
+            "agri": "$agri",
+            "total": {
+              "vop": "total",
+              "values": [
+                "$normal",
+                "$stcg_111a",
+                {
+                  "vop": "largest",
+                  "values": [
+                    {
+                      "vop": "sub",
+                      "a": "$ltcg_112a",
+                      "b": {
+                        "vop": "get",
+                        "value": {
+                          "chip": "myreturn.rates",
+                          "args": {}
+                        },
+                        "path": "exempt_112a"
+                      }
+                    },
+                    0
+                  ]
+                },
+                "$ltcg_112",
+                "$lottery",
+                "$online_games",
+                "$vda"
+              ]
+            },
+            "regime": "$regime",
+            "band": "$band"
+          }
+        },
+        "path": "aggregate"
+      },
+      "agri_rebate": {
+        "vop": "round_to",
+        "value": {
+          "vop": "get",
+          "value": {
+            "chip": "myreturn.slab_normal",
+            "args": {
+              "normal": "$normal",
+              "agri": "$agri",
+              "total": {
+                "vop": "total",
+                "values": [
+                  "$normal",
+                  "$stcg_111a",
+                  {
+                    "vop": "largest",
+                    "values": [
+                      {
+                        "vop": "sub",
+                        "a": "$ltcg_112a",
+                        "b": {
+                          "vop": "get",
+                          "value": {
+                            "chip": "myreturn.rates",
+                            "args": {}
+                          },
+                          "path": "exempt_112a"
+                        }
+                      },
+                      0
+                    ]
+                  },
+                  "$ltcg_112",
+                  "$lottery",
+                  "$online_games",
+                  "$vda"
+                ]
+              },
+              "regime": "$regime",
+              "band": "$band"
+            }
+          },
+          "path": "rebate"
+        }
+      },
+      "_raw_agri_rebate": {
+        "vop": "get",
+        "value": {
+          "chip": "myreturn.slab_normal",
+          "args": {
+            "normal": "$normal",
+            "agri": "$agri",
+            "total": {
+              "vop": "total",
+              "values": [
+                "$normal",
+                "$stcg_111a",
+                {
+                  "vop": "largest",
+                  "values": [
+                    {
+                      "vop": "sub",
+                      "a": "$ltcg_112a",
+                      "b": {
+                        "vop": "get",
+                        "value": {
+                          "chip": "myreturn.rates",
+                          "args": {}
+                        },
+                        "path": "exempt_112a"
+                      }
+                    },
+                    0
+                  ]
+                },
+                "$ltcg_112",
+                "$lottery",
+                "$online_games",
+                "$vda"
+              ]
+            },
+            "regime": "$regime",
+            "band": "$band"
+          }
+        },
+        "path": "rebate"
+      },
+      "on_111a": {
+        "vop": "round_to",
+        "value": {
+          "vop": "mul",
+          "a": {
+            "vop": "largest",
+            "values": [
+              {
+                "vop": "sub",
+                "a": "$stcg_111a",
+                "b": {
+                  "vop": "choose",
+                  "cases": [
+                    {
+                      "when": {
+                        "op": "eq",
+                        "left": "$resident",
+                        "right": true
+                      },
+                      "then": {
+                        "vop": "largest",
+                        "values": [
+                          {
+                            "vop": "sub",
+                            "a": {
+                              "vop": "get",
+                              "value": {
+                                "chip": "myreturn.rates",
+                                "args": {}
+                              },
+                              "path": {
+                                "vop": "template",
+                                "text": "basic.{a}.{b}",
+                                "values": {
+                                  "vop": "record",
+                                  "fields": {
+                                    "a": "$regime",
+                                    "b": "$band"
+                                  }
+                                }
+                              }
+                            },
+                            "b": "$normal"
+                          },
+                          0
+                        ]
+                      }
+                    }
+                  ],
+                  "else": 0
+                }
+              },
+              0
+            ]
+          },
+          "b": {
+            "vop": "div",
+            "a": {
+              "vop": "get",
+              "value": {
+                "chip": "myreturn.rates",
+                "args": {}
+              },
+              "path": "rate_111a"
+            },
+            "b": 100
+          }
+        }
+      },
+      "_raw_on_111a": {
+        "vop": "mul",
+        "a": {
+          "vop": "largest",
+          "values": [
+            {
+              "vop": "sub",
+              "a": "$stcg_111a",
+              "b": {
+                "vop": "choose",
+                "cases": [
+                  {
+                    "when": {
+                      "op": "eq",
+                      "left": "$resident",
+                      "right": true
+                    },
+                    "then": {
+                      "vop": "largest",
+                      "values": [
+                        {
+                          "vop": "sub",
+                          "a": {
+                            "vop": "get",
+                            "value": {
+                              "chip": "myreturn.rates",
+                              "args": {}
+                            },
+                            "path": {
+                              "vop": "template",
+                              "text": "basic.{a}.{b}",
+                              "values": {
+                                "vop": "record",
+                                "fields": {
+                                  "a": "$regime",
+                                  "b": "$band"
+                                }
+                              }
+                            }
+                          },
+                          "b": "$normal"
+                        },
+                        0
+                      ]
+                    }
+                  }
+                ],
+                "else": 0
+              }
+            },
+            0
+          ]
+        },
+        "b": {
+          "vop": "div",
+          "a": {
+            "vop": "get",
+            "value": {
+              "chip": "myreturn.rates",
+              "args": {}
+            },
+            "path": "rate_111a"
+          },
+          "b": 100
+        }
+      },
+      "on_112a": {
+        "vop": "round_to",
+        "value": {
+          "vop": "mul",
+          "a": {
+            "vop": "largest",
+            "values": [
+              {
+                "vop": "sub",
+                "a": {
+                  "vop": "largest",
+                  "values": [
+                    {
+                      "vop": "sub",
+                      "a": "$ltcg_112a",
+                      "b": {
+                        "vop": "get",
+                        "value": {
+                          "chip": "myreturn.rates",
+                          "args": {}
+                        },
+                        "path": "exempt_112a"
+                      }
+                    },
+                    0
+                  ]
+                },
+                "b": {
+                  "vop": "largest",
+                  "values": [
+                    {
+                      "vop": "sub",
+                      "a": {
+                        "vop": "choose",
+                        "cases": [
+                          {
+                            "when": {
+                              "op": "eq",
+                              "left": "$resident",
+                              "right": true
+                            },
+                            "then": {
+                              "vop": "largest",
+                              "values": [
+                                {
+                                  "vop": "sub",
+                                  "a": {
+                                    "vop": "get",
+                                    "value": {
+                                      "chip": "myreturn.rates",
+                                      "args": {}
+                                    },
+                                    "path": {
+                                      "vop": "template",
+                                      "text": "basic.{a}.{b}",
+                                      "values": {
+                                        "vop": "record",
+                                        "fields": {
+                                          "a": "$regime",
+                                          "b": "$band"
+                                        }
+                                      }
+                                    }
+                                  },
+                                  "b": "$normal"
+                                },
+                                0
+                              ]
+                            }
+                          }
+                        ],
+                        "else": 0
+                      },
+                      "b": "$stcg_111a"
+                    },
+                    0
+                  ]
+                }
+              },
+              0
+            ]
+          },
+          "b": {
+            "vop": "div",
+            "a": {
+              "vop": "get",
+              "value": {
+                "chip": "myreturn.rates",
+                "args": {}
+              },
+              "path": "rate_112a"
+            },
+            "b": 100
+          }
+        }
+      },
+      "_raw_on_112a": {
+        "vop": "mul",
+        "a": {
+          "vop": "largest",
+          "values": [
+            {
+              "vop": "sub",
+              "a": {
+                "vop": "largest",
+                "values": [
+                  {
+                    "vop": "sub",
+                    "a": "$ltcg_112a",
+                    "b": {
+                      "vop": "get",
+                      "value": {
+                        "chip": "myreturn.rates",
+                        "args": {}
+                      },
+                      "path": "exempt_112a"
+                    }
+                  },
+                  0
+                ]
+              },
+              "b": {
+                "vop": "largest",
+                "values": [
+                  {
+                    "vop": "sub",
+                    "a": {
+                      "vop": "choose",
+                      "cases": [
+                        {
+                          "when": {
+                            "op": "eq",
+                            "left": "$resident",
+                            "right": true
+                          },
+                          "then": {
+                            "vop": "largest",
+                            "values": [
+                              {
+                                "vop": "sub",
+                                "a": {
+                                  "vop": "get",
+                                  "value": {
+                                    "chip": "myreturn.rates",
+                                    "args": {}
+                                  },
+                                  "path": {
+                                    "vop": "template",
+                                    "text": "basic.{a}.{b}",
+                                    "values": {
+                                      "vop": "record",
+                                      "fields": {
+                                        "a": "$regime",
+                                        "b": "$band"
+                                      }
+                                    }
+                                  }
+                                },
+                                "b": "$normal"
+                              },
+                              0
+                            ]
+                          }
+                        }
+                      ],
+                      "else": 0
+                    },
+                    "b": "$stcg_111a"
+                  },
+                  0
+                ]
+              }
+            },
+            0
+          ]
+        },
+        "b": {
+          "vop": "div",
+          "a": {
+            "vop": "get",
+            "value": {
+              "chip": "myreturn.rates",
+              "args": {}
+            },
+            "path": "rate_112a"
+          },
+          "b": 100
+        }
+      },
+      "on_112": {
+        "vop": "round_to",
+        "value": {
+          "vop": "largest",
+          "values": [
+            {
+              "vop": "sub",
+              "a": {
+                "vop": "mul",
+                "a": {
+                  "vop": "largest",
+                  "values": [
+                    {
+                      "vop": "sub",
+                      "a": "$ltcg_112",
+                      "b": {
+                        "vop": "largest",
+                        "values": [
+                          {
+                            "vop": "sub",
+                            "a": {
+                              "vop": "largest",
+                              "values": [
+                                {
+                                  "vop": "sub",
+                                  "a": {
+                                    "vop": "choose",
+                                    "cases": [
+                                      {
+                                        "when": {
+                                          "op": "eq",
+                                          "left": "$resident",
+                                          "right": true
+                                        },
+                                        "then": {
+                                          "vop": "largest",
+                                          "values": [
+                                            {
+                                              "vop": "sub",
+                                              "a": {
+                                                "vop": "get",
+                                                "value": {
+                                                  "chip": "myreturn.rates",
+                                                  "args": {}
+                                                },
+                                                "path": {
+                                                  "vop": "template",
+                                                  "text": "basic.{a}.{b}",
+                                                  "values": {
+                                                    "vop": "record",
+                                                    "fields": {
+                                                      "a": "$regime",
+                                                      "b": "$band"
+                                                    }
+                                                  }
+                                                }
+                                              },
+                                              "b": "$normal"
+                                            },
+                                            0
+                                          ]
+                                        }
+                                      }
+                                    ],
+                                    "else": 0
+                                  },
+                                  "b": "$stcg_111a"
+                                },
+                                0
+                              ]
+                            },
+                            "b": {
+                              "vop": "largest",
+                              "values": [
+                                {
+                                  "vop": "sub",
+                                  "a": "$ltcg_112a",
+                                  "b": {
+                                    "vop": "get",
+                                    "value": {
+                                      "chip": "myreturn.rates",
+                                      "args": {}
+                                    },
+                                    "path": "exempt_112a"
+                                  }
+                                },
+                                0
+                              ]
+                            }
+                          },
+                          0
+                        ]
+                      }
+                    },
+                    0
+                  ]
+                },
+                "b": {
+                  "vop": "div",
+                  "a": {
+                    "vop": "get",
+                    "value": {
+                      "chip": "myreturn.rates",
+                      "args": {}
+                    },
+                    "path": "rate_112"
+                  },
+                  "b": 100
+                }
+              },
+              "b": "$excess_112"
+            },
+            0
+          ]
+        }
+      },
+      "_raw_on_112": {
+        "vop": "largest",
+        "values": [
+          {
+            "vop": "sub",
+            "a": {
+              "vop": "mul",
+              "a": {
+                "vop": "largest",
+                "values": [
+                  {
+                    "vop": "sub",
+                    "a": "$ltcg_112",
+                    "b": {
+                      "vop": "largest",
+                      "values": [
+                        {
+                          "vop": "sub",
+                          "a": {
+                            "vop": "largest",
+                            "values": [
+                              {
+                                "vop": "sub",
+                                "a": {
+                                  "vop": "choose",
+                                  "cases": [
+                                    {
+                                      "when": {
+                                        "op": "eq",
+                                        "left": "$resident",
+                                        "right": true
+                                      },
+                                      "then": {
+                                        "vop": "largest",
+                                        "values": [
+                                          {
+                                            "vop": "sub",
+                                            "a": {
+                                              "vop": "get",
+                                              "value": {
+                                                "chip": "myreturn.rates",
+                                                "args": {}
+                                              },
+                                              "path": {
+                                                "vop": "template",
+                                                "text": "basic.{a}.{b}",
+                                                "values": {
+                                                  "vop": "record",
+                                                  "fields": {
+                                                    "a": "$regime",
+                                                    "b": "$band"
+                                                  }
+                                                }
+                                              }
+                                            },
+                                            "b": "$normal"
+                                          },
+                                          0
+                                        ]
+                                      }
+                                    }
+                                  ],
+                                  "else": 0
+                                },
+                                "b": "$stcg_111a"
+                              },
+                              0
+                            ]
+                          },
+                          "b": {
+                            "vop": "largest",
+                            "values": [
+                              {
+                                "vop": "sub",
+                                "a": "$ltcg_112a",
+                                "b": {
+                                  "vop": "get",
+                                  "value": {
+                                    "chip": "myreturn.rates",
+                                    "args": {}
+                                  },
+                                  "path": "exempt_112a"
+                                }
+                              },
+                              0
+                            ]
+                          }
+                        },
+                        0
+                      ]
+                    }
+                  },
+                  0
+                ]
+              },
+              "b": {
+                "vop": "div",
+                "a": {
+                  "vop": "get",
+                  "value": {
+                    "chip": "myreturn.rates",
+                    "args": {}
+                  },
+                  "path": "rate_112"
+                },
+                "b": 100
+              }
+            },
+            "b": "$excess_112"
+          },
+          0
+        ]
+      },
+      "on_115bb": {
+        "vop": "round_to",
+        "value": {
+          "vop": "mul",
+          "a": "$lottery",
+          "b": {
+            "vop": "div",
+            "a": {
+              "vop": "get",
+              "value": {
+                "chip": "myreturn.rates",
+                "args": {}
+              },
+              "path": "rate_115bb"
+            },
+            "b": 100
+          }
+        }
+      },
+      "_raw_on_115bb": {
+        "vop": "mul",
+        "a": "$lottery",
+        "b": {
+          "vop": "div",
+          "a": {
+            "vop": "get",
+            "value": {
+              "chip": "myreturn.rates",
+              "args": {}
+            },
+            "path": "rate_115bb"
+          },
+          "b": 100
+        }
+      },
+      "on_115bbj": {
+        "vop": "round_to",
+        "value": {
+          "vop": "mul",
+          "a": "$online_games",
+          "b": {
+            "vop": "div",
+            "a": {
+              "vop": "get",
+              "value": {
+                "chip": "myreturn.rates",
+                "args": {}
+              },
+              "path": "rate_115bbj"
+            },
+            "b": 100
+          }
+        }
+      },
+      "_raw_on_115bbj": {
+        "vop": "mul",
+        "a": "$online_games",
+        "b": {
+          "vop": "div",
+          "a": {
+            "vop": "get",
+            "value": {
+              "chip": "myreturn.rates",
+              "args": {}
+            },
+            "path": "rate_115bbj"
+          },
+          "b": 100
+        }
+      },
+      "on_115bbh": {
+        "vop": "round_to",
+        "value": {
+          "vop": "mul",
+          "a": "$vda",
+          "b": {
+            "vop": "div",
+            "a": {
+              "vop": "get",
+              "value": {
+                "chip": "myreturn.rates",
+                "args": {}
+              },
+              "path": "rate_115bbh"
+            },
+            "b": 100
+          }
+        }
+      },
+      "_raw_on_115bbh": {
+        "vop": "mul",
+        "a": "$vda",
+        "b": {
+          "vop": "div",
+          "a": {
+            "vop": "get",
+            "value": {
+              "chip": "myreturn.rates",
+              "args": {}
+            },
+            "path": "rate_115bbh"
+          },
+          "b": 100
+        }
+      },
+      "surcharge_rate": {
+        "vop": "coalesce",
+        "values": [
+          {
+            "vop": "step_rate",
+            "amount": {
+              "vop": "total",
+              "values": [
+                "$normal",
+                "$stcg_111a",
+                {
+                  "vop": "largest",
+                  "values": [
+                    {
+                      "vop": "sub",
+                      "a": "$ltcg_112a",
+                      "b": {
+                        "vop": "get",
+                        "value": {
+                          "chip": "myreturn.rates",
+                          "args": {}
+                        },
+                        "path": "exempt_112a"
+                      }
+                    },
+                    0
+                  ]
+                },
+                "$ltcg_112",
+                "$lottery",
+                "$online_games",
+                "$vda"
+              ]
+            },
+            "steps": {
+              "vop": "get",
+              "value": {
+                "chip": "myreturn.rates",
+                "args": {}
+              },
+              "path": {
+                "vop": "template",
+                "text": "surcharge.{r}",
+                "values": {
+                  "vop": "record",
+                  "fields": {
+                    "r": "$regime"
+                  }
+                }
+              }
+            }
+          },
+          0
+        ]
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-10: part of chip myreturn.tax, split so that no field holds a copy of another (see tools/slim_myreturn_tax.py). Stage 1 works out total, basic_left, on_normal, on_aggregate, agri_rebate, on_111a, on_112a, on_112, on_115bb, on_115bbj, on_115bbh, surcharge_rate; the _raw_ fields are the unrounded values the next stages use.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "total": 0.0,
+        "basic_left": 400000,
+        "on_normal": 0,
+        "_raw_on_normal": 0,
+        "on_aggregate": 0,
+        "_raw_on_aggregate": 0,
+        "agri_rebate": 0,
+        "_raw_agri_rebate": 0,
+        "on_111a": 0,
+        "_raw_on_111a": 0,
+        "on_112a": 0,
+        "_raw_on_112a": 0,
+        "on_112": 0,
+        "_raw_on_112": 0,
+        "on_115bb": 0,
+        "_raw_on_115bb": 0,
+        "on_115bbj": 0,
+        "_raw_on_115bbj": 0,
+        "on_115bbh": 0,
+        "_raw_on_115bbh": 0,
+        "surcharge_rate": 0
+      }
+    },
+    {
+      "args": {
+        "normal": 5100000,
+        "stcg_111a": 400000,
+        "ltcg_112a": 300000,
+        "vda": 100000,
+        "agri": 200000,
+        "regime": "old"
+      },
+      "expect_value": {
+        "total": 5775000.0,
+        "basic_left": 0,
+        "on_normal": 1392500,
+        "_raw_on_normal": 1392500,
+        "on_aggregate": 1402500,
+        "_raw_on_aggregate": 1402500,
+        "agri_rebate": 10000,
+        "_raw_agri_rebate": 10000,
+        "on_111a": 80000,
+        "_raw_on_111a": 80000,
+        "on_112a": 21875,
+        "_raw_on_112a": 21875,
+        "on_112": 0,
+        "_raw_on_112": 0,
+        "on_115bb": 0,
+        "_raw_on_115bb": 0,
+        "on_115bbj": 0,
+        "_raw_on_115bbj": 0,
+        "on_115bbh": 30000,
+        "_raw_on_115bbh": 30000,
+        "surcharge_rate": 10
+      }
+    }
+  ]
+}

@@ -198,7 +198,8 @@ aud = {"chip_id": "myreturn.audit_44ab", "kind": "accessor", "set": "myreturn",
            {"args": {"pl": True, "turnover": 2000000, "net": 50000, "deemed": 120000, "presumptive_open": True},
             "expect_value": {"audit": False, "limit": 100000000, "why": ""}},
            {"args": {}, "expect_value": {"audit": False, "limit": 100000000, "why": ""}}]}
-save(aud)
+if not (CH / "myreturn.audit_44ab.json").exists():   # 2026-10-10: tools/make_wave4_chips.py grows it since 2026-10-08 - a re-run here took that back
+    save(aud)
 
 # --- 3 which form: a business on its own profit and loss is ITR-3 ----------------------------------------------------------
 f = load("myreturn.form")

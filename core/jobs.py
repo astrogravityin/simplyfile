@@ -473,7 +473,9 @@ if __name__ == "__main__":  # ponytail: one runnable self-check of stop, keep an
                 live[0] += 1
                 peak[0] = max(peak[0], live[0])
                 order.append(st["key"])
-            time.sleep(0.05)
+            # ponytail: 0.3 s overlap - at 0.05 s a busy machine started the third lane after the first ended (TradyFy
+            # 2026-10-10, 1 run in 2); a barrier if even this proves flaky
+            time.sleep(0.3)
             with seen_lock:
                 live[0] -= 1
             return make(i, st)

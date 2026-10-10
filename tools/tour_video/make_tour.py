@@ -196,11 +196,36 @@ def load_path(ref: str) -> Path:
     return Path(ref) if ref.endswith(".json") else (guide_path(ref) or GUIDES / "astrostage" / f"{ref}.json")
 
 
+def portal_product() -> str:
+    """The product's one name as the portal's engine fills {product}: chip edition.settings of the repo this tool sits in
+    (its PORTAL_EDITION, else default_edition). "" when the repo has no such chip."""
+    try:
+        c = json.loads((ROOT / "chips" / "edition.settings.json").read_text(encoding="utf-8"))
+        d = {x["name"]: x["default"] for x in c["params"]}
+        want = (os.getenv("PORTAL_EDITION") or d["default_edition"]).strip().lower()
+        return next(str(r["product_name"]) for r in d["rows"] if r["id"] == want)
+    except (OSError, ValueError, KeyError, TypeError, StopIteration):
+        return ""
+
+
+def named_tour(t: dict) -> dict:
+    """2026-10-10: a raw tour (tours/<key>.json, made from a Guide me chip) says {product} - the voice read it out as "product"
+    and the subtitles showed the braces. Its title, chapters and words get the portal's name (the tour's own `product`
+    first); selectors and actions are left alone."""
+    name = str(t.get("product") or portal_product() or video_settings().get("defaults", {}).get("product") or "")
+    if not name:
+        return t
+    sub = lambda v: v.replace("{product}", name) if isinstance(v, str) else v  # noqa: E731
+    out = dict(t, title=sub(t.get("title")))
+    out["steps"] = [dict(s, **{k: sub(s[k]) for k in ("chapter", "say", "speak") if k in s}) for s in t.get("steps") or []]
+    return out
+
+
 def load_tour(ref: str, script: Path | None = None) -> dict:
     """A page key -> its Guide me script translated (`script` = another copy of it, e.g. the DB's).
-    A path to a .json -> a raw {steps:[{say, do}]} tour, as-is (the tv portal's tv/docs/tour.json)."""
+    A path to a .json -> a raw {steps:[{say, do}]} tour, as-is (the tv portal's tv/docs/tour.json) - {product} filled."""
     if ref.endswith(".json"):
-        return json.loads(Path(ref).read_text(encoding="utf-8"))
+        return named_tour(json.loads(Path(ref).read_text(encoding="utf-8")))
     src = script or guide_path(ref)
     if not src or not src.is_file():
         raise SystemExit(f"no Guide me script for '{ref}' - write backend/data/guides/<portal>/{ref}.json (skill guide-me-script)")
@@ -641,6 +666,11 @@ def revoice(tour: dict, out: Path) -> None:
     if r.returncode:
         raise SystemExit("ffmpeg failed:\n" + r.stderr[-1500:])
     tmp.replace(mp4)
+    # 2026-10-10: the words changed, so the subtitles and chapters say the new ones (the same start times)
+    srt.write_text("\n".join(f"{i}\n{stamp(st, True)} --> {stamp(st + d, True)}\n{s['say']}\n"
+                             for i, (st, d, s) in enumerate(zip(starts, durs, tour["steps"]), 1)), encoding="utf-8")
+    chapters = [f"{'00:00' if i == 0 else stamp(st, False)} {s['chapter']}" for i, (st, s) in enumerate(zip(starts, tour["steps"])) if s.get("chapter")]
+    (out / "description.txt").write_text(f"{tour['title']}\n\n" + "\n".join(chapters) + "\n", encoding="utf-8")
     print(f"revoiced: {mp4}")
 
 

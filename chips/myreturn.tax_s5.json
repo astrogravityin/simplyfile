@@ -1,0 +1,541 @@
+{
+  "chip_id": "myreturn.tax_s5",
+  "kind": "accessor",
+  "set": "myreturn",
+  "label": "My return: the tax, stage 5 of 5 (tax)",
+  "aliases": [],
+  "params": [
+    {
+      "name": "normal",
+      "type": "number",
+      "default": 0,
+      "label": "total income at normal rates (after Chapter VI-A), rounded"
+    },
+    {
+      "name": "stcg_111a",
+      "type": "number",
+      "default": 0,
+      "label": "short-term gains on listed shares/equity funds (111A)"
+    },
+    {
+      "name": "ltcg_112a",
+      "type": "number",
+      "default": 0,
+      "label": "long-term gains on listed shares/equity funds (112A), before the 1.25 lakh exemption"
+    },
+    {
+      "name": "ltcg_112",
+      "type": "number",
+      "default": 0,
+      "label": "other long-term gains (112)"
+    },
+    {
+      "name": "regime",
+      "type": "text",
+      "default": "new",
+      "label": "regime"
+    },
+    {
+      "name": "band",
+      "type": "text",
+      "default": "below60",
+      "label": "age band"
+    },
+    {
+      "name": "resident",
+      "type": "boolean",
+      "default": true,
+      "label": "resident in India"
+    },
+    {
+      "name": "status",
+      "type": "text",
+      "default": "individual",
+      "label": "individual / huf"
+    },
+    {
+      "name": "lottery",
+      "type": "number",
+      "default": 0,
+      "label": "115BB winnings (lottery, crossword, races, gambling, betting)"
+    },
+    {
+      "name": "online_games",
+      "type": "number",
+      "default": 0,
+      "label": "115BBJ net winnings from online games"
+    },
+    {
+      "name": "vda",
+      "type": "number",
+      "default": 0,
+      "label": "115BBH income from virtual digital assets"
+    },
+    {
+      "name": "agri",
+      "type": "number",
+      "default": 0,
+      "label": "net agricultural income (exempt, but counts for the rate)"
+    },
+    {
+      "name": "excess_112",
+      "type": "number",
+      "default": 0,
+      "label": "proviso to s.112(1)(a): the tax at 12.5% without indexation less the tax at 20% with it, land / building bought before 23 July 2024 (chip myreturn.cg_choice) - left out of the 112 tax"
+    },
+    {
+      "name": "b",
+      "type": "json",
+      "default": {},
+      "label": "what stage 4 worked out"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "total": {
+        "vop": "get",
+        "value": "$b",
+        "path": "total"
+      },
+      "basic_left": {
+        "vop": "get",
+        "value": "$b",
+        "path": "basic_left"
+      },
+      "on_normal": {
+        "vop": "get",
+        "value": "$b",
+        "path": "on_normal"
+      },
+      "on_special": {
+        "vop": "get",
+        "value": "$b",
+        "path": "on_special"
+      },
+      "on_aggregate": {
+        "vop": "get",
+        "value": "$b",
+        "path": "on_aggregate"
+      },
+      "agri_rebate": {
+        "vop": "get",
+        "value": "$b",
+        "path": "agri_rebate"
+      },
+      "on_111a": {
+        "vop": "get",
+        "value": "$b",
+        "path": "on_111a"
+      },
+      "on_112a": {
+        "vop": "get",
+        "value": "$b",
+        "path": "on_112a"
+      },
+      "on_112": {
+        "vop": "get",
+        "value": "$b",
+        "path": "on_112"
+      },
+      "on_115bb": {
+        "vop": "get",
+        "value": "$b",
+        "path": "on_115bb"
+      },
+      "on_115bbj": {
+        "vop": "get",
+        "value": "$b",
+        "path": "on_115bbj"
+      },
+      "on_115bbh": {
+        "vop": "get",
+        "value": "$b",
+        "path": "on_115bbh"
+      },
+      "rebate": {
+        "vop": "get",
+        "value": "$b",
+        "path": "rebate"
+      },
+      "relief_87a": {
+        "vop": "get",
+        "value": "$b",
+        "path": "relief_87a"
+      },
+      "surcharge_rate": {
+        "vop": "get",
+        "value": "$b",
+        "path": "surcharge_rate"
+      },
+      "surcharge": {
+        "vop": "get",
+        "value": "$b",
+        "path": "surcharge"
+      },
+      "cess": {
+        "vop": "get",
+        "value": "$b",
+        "path": "cess"
+      },
+      "tax": {
+        "vop": "mul",
+        "a": {
+          "vop": "round_to",
+          "value": {
+            "vop": "div",
+            "a": {
+              "vop": "total",
+              "values": [
+                {
+                  "vop": "largest",
+                  "values": [
+                    {
+                      "vop": "sub",
+                      "a": {
+                        "vop": "sub",
+                        "a": {
+                          "vop": "total",
+                          "values": [
+                            {
+                              "vop": "get",
+                              "value": "$b",
+                              "path": "_raw_on_normal"
+                            },
+                            {
+                              "vop": "get",
+                              "value": "$b",
+                              "path": "_raw_on_special"
+                            }
+                          ]
+                        },
+                        "b": {
+                          "vop": "choose",
+                          "cases": [
+                            {
+                              "when": {
+                                "op": "all",
+                                "items": [
+                                  {
+                                    "op": "all",
+                                    "items": [
+                                      {
+                                        "op": "all",
+                                        "items": [
+                                          {
+                                            "op": "eq",
+                                            "left": "$resident",
+                                            "right": true
+                                          },
+                                          {
+                                            "op": "eq",
+                                            "left": "$status",
+                                            "right": "individual"
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "op": "le",
+                                        "left": {
+                                          "vop": "get",
+                                          "value": "$b",
+                                          "path": "total"
+                                        },
+                                        "right": {
+                                          "vop": "get",
+                                          "value": {
+                                            "chip": "myreturn.rates",
+                                            "args": {}
+                                          },
+                                          "path": {
+                                            "vop": "template",
+                                            "text": "rebate_upto.{r}",
+                                            "values": {
+                                              "vop": "record",
+                                              "fields": {
+                                                "r": "$regime"
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "op": "eq",
+                                    "left": "$regime",
+                                    "right": "new"
+                                  }
+                                ]
+                              },
+                              "then": {
+                                "vop": "smallest",
+                                "values": [
+                                  {
+                                    "vop": "get",
+                                    "value": "$b",
+                                    "path": "_raw_on_normal"
+                                  },
+                                  {
+                                    "vop": "get",
+                                    "value": {
+                                      "chip": "myreturn.rates",
+                                      "args": {}
+                                    },
+                                    "path": {
+                                      "vop": "template",
+                                      "text": "rebate_most.{r}",
+                                      "values": {
+                                        "vop": "record",
+                                        "fields": {
+                                          "r": "$regime"
+                                        }
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            },
+                            {
+                              "when": {
+                                "op": "all",
+                                "items": [
+                                  {
+                                    "op": "all",
+                                    "items": [
+                                      {
+                                        "op": "eq",
+                                        "left": "$resident",
+                                        "right": true
+                                      },
+                                      {
+                                        "op": "eq",
+                                        "left": "$status",
+                                        "right": "individual"
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "op": "le",
+                                    "left": {
+                                      "vop": "get",
+                                      "value": "$b",
+                                      "path": "total"
+                                    },
+                                    "right": {
+                                      "vop": "get",
+                                      "value": {
+                                        "chip": "myreturn.rates",
+                                        "args": {}
+                                      },
+                                      "path": {
+                                        "vop": "template",
+                                        "text": "rebate_upto.{r}",
+                                        "values": {
+                                          "vop": "record",
+                                          "fields": {
+                                            "r": "$regime"
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                ]
+                              },
+                              "then": {
+                                "vop": "smallest",
+                                "values": [
+                                  {
+                                    "vop": "total",
+                                    "values": [
+                                      {
+                                        "vop": "get",
+                                        "value": "$b",
+                                        "path": "_raw_on_normal"
+                                      },
+                                      {
+                                        "vop": "get",
+                                        "value": "$b",
+                                        "path": "_raw_on_111a"
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "vop": "get",
+                                    "value": {
+                                      "chip": "myreturn.rates",
+                                      "args": {}
+                                    },
+                                    "path": {
+                                      "vop": "template",
+                                      "text": "rebate_most.{r}",
+                                      "values": {
+                                        "vop": "record",
+                                        "fields": {
+                                          "r": "$regime"
+                                        }
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            }
+                          ],
+                          "else": 0
+                        }
+                      },
+                      "b": {
+                        "vop": "get",
+                        "value": "$b",
+                        "path": "_raw_relief_87a"
+                      }
+                    },
+                    0
+                  ]
+                },
+                {
+                  "vop": "get",
+                  "value": "$b",
+                  "path": "_raw_surcharge"
+                },
+                {
+                  "vop": "get",
+                  "value": "$b",
+                  "path": "cess"
+                }
+              ]
+            },
+            "b": 10
+          }
+        },
+        "b": 10
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-10: part of chip myreturn.tax, split so that no field holds a copy of another (see tools/slim_myreturn_tax.py). Stage 5 works out tax from its knobs and what stage 4 worked out (b) - and answers the whole record.",
+  "test_cases": [
+    {
+      "args": {
+        "b": {
+          "total": null,
+          "basic_left": null,
+          "on_normal": null,
+          "_raw_on_normal": null,
+          "on_aggregate": null,
+          "_raw_on_aggregate": null,
+          "agri_rebate": null,
+          "_raw_agri_rebate": null,
+          "on_111a": null,
+          "_raw_on_111a": null,
+          "on_112a": null,
+          "_raw_on_112a": null,
+          "on_112": null,
+          "_raw_on_112": null,
+          "on_115bb": null,
+          "_raw_on_115bb": null,
+          "on_115bbj": null,
+          "_raw_on_115bbj": null,
+          "on_115bbh": null,
+          "_raw_on_115bbh": null,
+          "surcharge_rate": null,
+          "on_special": null,
+          "_raw_on_special": null,
+          "rebate": null,
+          "_raw_rebate": null,
+          "relief_87a": null,
+          "_raw_relief_87a": null,
+          "surcharge": null,
+          "_raw_surcharge": null,
+          "cess": null,
+          "_raw_cess": null
+        }
+      },
+      "expect_value": {
+        "total": null,
+        "basic_left": null,
+        "on_normal": null,
+        "on_special": null,
+        "on_aggregate": null,
+        "agri_rebate": null,
+        "on_111a": null,
+        "on_112a": null,
+        "on_112": null,
+        "on_115bb": null,
+        "on_115bbj": null,
+        "on_115bbh": null,
+        "rebate": null,
+        "relief_87a": null,
+        "surcharge_rate": null,
+        "surcharge": null,
+        "cess": null,
+        "tax": null
+      }
+    },
+    {
+      "args": {
+        "normal": 5100000,
+        "stcg_111a": 400000,
+        "ltcg_112a": 300000,
+        "vda": 100000,
+        "agri": 200000,
+        "regime": "old",
+        "b": {
+          "total": null,
+          "basic_left": null,
+          "on_normal": null,
+          "_raw_on_normal": null,
+          "on_aggregate": null,
+          "_raw_on_aggregate": null,
+          "agri_rebate": null,
+          "_raw_agri_rebate": null,
+          "on_111a": null,
+          "_raw_on_111a": null,
+          "on_112a": null,
+          "_raw_on_112a": null,
+          "on_112": null,
+          "_raw_on_112": null,
+          "on_115bb": null,
+          "_raw_on_115bb": null,
+          "on_115bbj": null,
+          "_raw_on_115bbj": null,
+          "on_115bbh": null,
+          "_raw_on_115bbh": null,
+          "surcharge_rate": null,
+          "on_special": null,
+          "_raw_on_special": null,
+          "rebate": null,
+          "_raw_rebate": null,
+          "relief_87a": null,
+          "_raw_relief_87a": null,
+          "surcharge": null,
+          "_raw_surcharge": null,
+          "cess": null,
+          "_raw_cess": null
+        }
+      },
+      "expect_value": {
+        "total": null,
+        "basic_left": null,
+        "on_normal": null,
+        "on_special": null,
+        "on_aggregate": null,
+        "agri_rebate": null,
+        "on_111a": null,
+        "on_112a": null,
+        "on_112": null,
+        "on_115bb": null,
+        "on_115bbj": null,
+        "on_115bbh": null,
+        "rebate": null,
+        "relief_87a": null,
+        "surcharge_rate": null,
+        "surcharge": null,
+        "cess": null,
+        "tax": null
+      }
+    }
+  ]
+}

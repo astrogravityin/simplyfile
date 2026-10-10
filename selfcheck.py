@@ -464,7 +464,8 @@ def chips_first_check() -> None:
     print(f"  chips first: no decision in code ({sum(len(r) for r in LEAKS.values())} shapes watched), {len(REQUIRED_CHIPS)} chips present OK")
 
 
-GUIDED = ["firm", "analytics", "delegate", "clients", "myreturn", "itrimport", "intake", "recon", "compute", "audit", "approvals", "portalstats", "server", "taxwatch"]
+GUIDED = ["firm", "analytics", "delegate", "clients", "myreturn", "itrimport", "intake", "recon", "compute", "audit", "approvals", "portalstats", "server", "taxwatch",
+          "keys"]   # 2026-10-10: Account & key - its tour rebuilt from its Guide me (the old hand-made one said "draws stills")
 
 
 def guides_tours_check() -> None:

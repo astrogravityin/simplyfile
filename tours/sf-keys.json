@@ -1,7 +1,4 @@
 {
-  "page_key": "sf-keys",
-  "title": "Account & key",
-  "start_url": "/#/keys",
   "prod_base": "https://sf.valuestream.in",
   "voice": "en-IN-NeerjaNeural",
   "rate": "+0%",
@@ -15,95 +12,141 @@
     ".tile .meta b",
     "#vd-title"
   ],
+  "page_key": "sf-keys",
+  "title": "Account & key",
+  "start_url": "/#/keys",
   "covers": [
-    "Gemini key",
-    "test",
-    "key labels",
-    "several keys",
-    "budget and currency",
+    "your AI key, at a glance",
+    "get a key",
+    "add and test your key",
+    "test at any time",
+    "set a budget",
+    "your account",
+    "more than one key",
     "other providers",
-    "who does what",
-    "runs and costs"
+    "lend a key, safely",
+    "every paid run, accounted for"
   ],
   "steps": [
     {
-      "chapter": "Welcome",
-      "say": "Account and key holds your own AI keys. Every paid run uses your key and is billed to your own account.",
+      "chapter": "Account & key",
+      "say": "{product} works with your own AI key, so the quality and the spend stay in your hands. Here is how to connect a key, set a budget and see every paid run.",
       "do": [
         {
-          "wait_for": "#k-edit"
+          "wait_for": "section.keycard"
         },
         {
-          "highlight": "#k-edit",
-          "optional": true
+          "wait": 1
         }
       ]
     },
     {
-      "say": "Add or replace your Gemini key here. Give it a label, such as which Google account it came from, so you know which one to top up.",
+      "chapter": "Your AI key, at a glance",
+      "say": "This card tells you whether a key is connected and ready. Everything in {product} that uses AI runs on the key you connect here.",
       "do": [
         {
-          "highlight": "#k-edit",
-          "optional": true
+          "highlight_target": "section.keycard",
+          "optional": true,
+          "timeout": 5
         }
       ]
     },
     {
-      "say": "Test sends a few words to Google to prove the key works. It costs a fraction of a cent.",
+      "chapter": "Get a key",
+      "say": "No key yet? How to get a key walks you through creating one in Google AI Studio in about two minutes. A free key is enough to begin.",
       "do": [
         {
-          "highlight": "#k-test",
-          "optional": true
+          "highlight_target": "header.pagehead .acts a[href*=\"gemini-key\"]|header.pagehead",
+          "optional": true,
+          "timeout": 5
         }
       ]
     },
     {
-      "chapter": "Several keys",
-      "say": "Keep several keys. When one hits its limit, the next takes over, and the message names the key by its label.",
+      "chapter": "Add and test your key",
+      "say": "Press Add my key, paste it, give it a label so you remember whose account it came from, and choose the model. Save and test checks it with Google straight away; Google is the only judge of a key.",
       "do": [
         {
-          "highlight": ".pool",
-          "optional": true
+          "highlight_target": "#k-edit",
+          "optional": true,
+          "timeout": 5
         }
       ]
     },
     {
-      "chapter": "Money",
-      "say": "Pick your currency, and set a budget. A run that would go past it stops and tells you.",
+      "chapter": "Test at any time",
+      "say": "Test it re-checks the connected key whenever you like: useful after a billing change, or when a job refuses to start.",
       "do": [
         {
-          "highlight": "#k-currency",
-          "optional": true
-        },
-        {
-          "highlight": "#k-loaded",
-          "optional": true
+          "highlight_target": "#k-test|section.keycard",
+          "optional": true,
+          "timeout": 5
         }
       ]
     },
     {
-      "say": "Other providers can take over some of the work. Add their keys, then pick who does text and who draws stills.",
+      "chapter": "Set a budget",
+      "say": "Choose the currency you think in, enter what you have budgeted and press Save budget. The meters show Budgeted, Spent here and Left, and every paid step checks this before it spends.",
       "do": [
         {
-          "highlight": ".pv-grid",
-          "optional": true
-        },
-        {
-          "highlight": ".pv-picks",
-          "optional": true
+          "highlight_target": "#k-loaded|.split > section:first-child",
+          "optional": true,
+          "timeout": 5
         }
       ]
     },
     {
-      "chapter": "Receipts",
-      "say": "Every paid run is listed with its provider, its cost and how long it took.",
+      "chapter": "Your account",
+      "say": "Your name, email and role, with Change password one click away.",
       "do": [
         {
-          "scroll": 900
-        },
+          "highlight_target": "#k-pass|.split > section:nth-child(2)",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "More than one key",
+      "say": "Keep several Gemini keys and move between them. Make default decides which works first; Test, Lend and Remove sit beside each key.",
+      "do": [
         {
-          "highlight": "table",
-          "optional": true
+          "highlight_target": "[data-pool-add=\"gemini\"]|[data-pool-secret=\"gemini\"]",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Other providers",
+      "say": "Connect other providers and decide which one does the work. You choose; the portal never picks a paid model on your behalf.",
+      "do": [
+        {
+          "highlight_target": ".pv-grid",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Lend a key, safely",
+      "say": "Press Lend on one of your keys to let a colleague use it without ever seeing it. Their spend is billed back to you, shows under Shared keys, and you can stop lending at any time.",
+      "do": [
+        {
+          "highlight_target": "[data-share]|[data-pool-add=\"gemini\"]",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Every paid run, accounted for",
+      "say": "Key usage lists every paid run: which key, who ran it, what for, how long it took and what it cost. Search it by key, person or activity.",
+      "do": [
+        {
+          "highlight_target": "#k-usage",
+          "optional": true,
+          "timeout": 5
         }
       ]
     }
