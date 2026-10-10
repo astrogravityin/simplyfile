@@ -16,7 +16,7 @@
     {
       "name": "lede",
       "type": "text",
-      "default": "Every firm on {product} - who is growing, who is stuck, and what needs you today.",
+      "default": "Every {tenant} on {product} - who is growing, who is stuck, and what needs you today.",
       "label": "lede"
     },
     {
@@ -34,7 +34,7 @@
     {
       "name": "k_firms",
       "type": "text",
-      "default": "Firms",
+      "default": "{Tenants}",
       "label": "k firms"
     },
     {
@@ -58,13 +58,13 @@
     {
       "name": "k_clients",
       "type": "text",
-      "default": "Clients",
+      "default": "{Clients}",
       "label": "k clients"
     },
     {
       "name": "k_clients_sub",
       "type": "text",
-      "default": "{n} client-years this year",
+      "default": "{n} {client_one}-years this year",
       "label": "k clients sub"
     },
     {
@@ -88,13 +88,13 @@
     {
       "name": "k_review_sub",
       "type": "text",
-      "default": "firms sent for approval",
+      "default": "{tenants} sent for approval",
       "label": "k review sub"
     },
     {
       "name": "k_space",
       "type": "text",
-      "default": "Firms' files",
+      "default": "{Tenants}' files",
       "label": "k space"
     },
     {
@@ -112,7 +112,7 @@
     {
       "name": "need_sub",
       "type": "text",
-      "default": "Firms to look at, and why.",
+      "default": "{Tenants} to look at, and why.",
       "label": "need sub"
     },
     {
@@ -130,7 +130,7 @@
     {
       "name": "f_empty",
       "type": "text",
-      "default": "Approved, no client yet",
+      "default": "Approved, no {client_one} yet",
       "label": "f empty"
     },
     {
@@ -154,25 +154,25 @@
     {
       "name": "open_approvals",
       "type": "text",
-      "default": "Open Firm approvals",
+      "default": "Open {Tenant} approvals",
       "label": "open approvals"
     },
     {
       "name": "firms_title",
       "type": "text",
-      "default": "Firms",
+      "default": "{Tenants}",
       "label": "firms title"
     },
     {
       "name": "firms_sub",
       "type": "text",
-      "default": "Each firm, busiest first.",
+      "default": "Each {tenant}, busiest first.",
       "label": "firms sub"
     },
     {
       "name": "h_firm",
       "type": "text",
-      "default": "Firm",
+      "default": "{Tenant}",
       "label": "h firm"
     },
     {
@@ -196,7 +196,7 @@
     {
       "name": "h_clients",
       "type": "text",
-      "default": "Clients",
+      "default": "{Clients}",
       "label": "h clients"
     },
     {
@@ -244,7 +244,7 @@
     {
       "name": "mix_title",
       "type": "text",
-      "default": "Firms",
+      "default": "{Tenants}",
       "label": "mix title"
     },
     {
@@ -262,7 +262,7 @@
     {
       "name": "month_title",
       "type": "text",
-      "default": "New firms by month",
+      "default": "New {tenants} by month",
       "label": "month title"
     },
     {
@@ -343,45 +343,45 @@
     }
   },
   "returns": "record",
-  "version": 2,
+  "version": 3,
   "status": "published",
-  "description_nl": "2026-10-04: every word on Portal analytics.",
+  "description_nl": "2026-10-04: every word on Portal analytics. 2026-10-10: tenant and record nouns are placeholders ({tenant}, {tenants}, {clients}, {client_one}) - each portal's edition row names them.",
   "test_cases": [
     {
       "args": {},
       "expect_value": {
         "title": "Portal analytics",
-        "lede": "Every firm on {product} - who is growing, who is stuck, and what needs you today.",
+        "lede": "Every {tenant} on {product} - who is growing, who is stuck, and what needs you today.",
         "ay": "Assessment year",
         "loading": "Adding up the portal...",
-        "k_firms": "Firms",
+        "k_firms": "{Tenants}",
         "k_firms_sub": "{n} approved",
         "k_people": "People",
         "k_people_sub": "{n} active this week",
-        "k_clients": "Clients",
-        "k_clients_sub": "{n} client-years this year",
+        "k_clients": "{Clients}",
+        "k_clients_sub": "{n} {client_one}-years this year",
         "k_filed": "Returns filed",
         "k_filed_sub": "{n} on record in all",
         "k_review": "Waiting for you",
-        "k_review_sub": "firms sent for approval",
-        "k_space": "Firms' files",
+        "k_review_sub": "{tenants} sent for approval",
+        "k_space": "{Tenants}' files",
         "k_space_sub": "papers and statements",
         "need_title": "Needs you",
-        "need_sub": "Firms to look at, and why.",
+        "need_sub": "{Tenants} to look at, and why.",
         "f_review": "Papers to review",
         "f_stuck": "Stuck in draft",
-        "f_empty": "Approved, no client yet",
+        "f_empty": "Approved, no {client_one} yet",
         "f_dormant": "No one signed in lately",
         "f_none": "None",
         "see_all": "See all {n}",
-        "open_approvals": "Open Firm approvals",
-        "firms_title": "Firms",
-        "firms_sub": "Each firm, busiest first.",
-        "h_firm": "Firm",
+        "open_approvals": "Open {Tenant} approvals",
+        "firms_title": "{Tenants}",
+        "firms_sub": "Each {tenant}, busiest first.",
+        "h_firm": "{Tenant}",
         "h_kind": "Kind",
         "h_state": "State",
         "h_team": "Team",
-        "h_clients": "Clients",
+        "h_clients": "{Clients}",
         "h_filed": "Filed",
         "h_returns": "On record",
         "h_seen": "Last seen",
@@ -389,10 +389,10 @@
         "never": "never",
         "today": "today",
         "days_ago": "{n} d ago",
-        "mix_title": "Firms",
+        "mix_title": "{Tenants}",
         "state_title": "By state",
         "kind_title": "By kind",
-        "month_title": "New firms by month",
+        "month_title": "New {tenants} by month",
         "role_title": "People by role",
         "use_title": "Use of the portal",
         "use_sub": "Requests per day, last 30 days.",

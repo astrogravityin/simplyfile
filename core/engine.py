@@ -255,10 +255,14 @@ def _names(lib: dict) -> dict:
         return _pn["names"]
     noun = row.get("client_noun") or {}
     out = {"{product}": row.get("product_name", "")}
+    cap = lambda s: s[:1].upper() + s[1:]  # noqa: E731
     if noun.get("many"):
-        out |= {"{clients}": noun["many"], "{Clients}": noun["many"][:1].upper() + noun["many"][1:]}
+        out |= {"{clients}": noun["many"], "{Clients}": cap(noun["many"])}
     if noun.get("one"):
-        out["{client_one}"] = noun["one"]
+        out |= {"{client_one}": noun["one"], "{Client_one}": cap(noun["one"])}
+    # 2026-10-10: and what it calls the tenant (row tenant_noun: firm, team, clinic, desk) - shared words never say "firm"
+    ten = row.get("tenant_noun") or {"one": "firm", "many": "firms"}
+    out |= {"{tenant}": ten["one"], "{Tenant}": cap(ten["one"]), "{tenants}": ten["many"], "{Tenants}": cap(ten["many"])}
     _pn["names"] = {k: v for k, v in out.items() if v}
     return _pn["names"]
 
@@ -454,6 +458,11 @@ if __name__ == "__main__":
     _ed["params"][1]["default"][0]["client_noun"] = {"one": "patient", "many": "patients"}
     _w["expr"]["c"] = "{Clients}: your {clients}, one {client_one}, {client}"
     assert run("x.words", {"z": 2}, {"edition.settings": _ed, "x.words": _w})["c"] == "Patients: your patients, one patient, {client}", "{clients} not filled"
+    _w["expr"]["c"] = "{Tenant} - your {tenants}, {Client_one}"
+    assert run("x.words", {"z": 3}, {"edition.settings": _ed, "x.words": _w})["c"] == "Firm - your firms, Patient", "{tenant} has no default"
+    _ed["params"][1]["default"][0]["tenant_noun"] = {"one": "clinic", "many": "clinics"}
+    _pn["names"] = None
+    assert run("x.words", {"z": 4}, {"edition.settings": _ed, "x.words": _w})["c"] == "Clinic - your clinics, Patient", "{tenant} not filled"
     if len(sys.argv) > 1:
         register_dir(sys.argv[1])
     bad = certify()

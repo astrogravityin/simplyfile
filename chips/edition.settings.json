@@ -74,10 +74,14 @@
               "sell_recon_line"
             ]
           ],
-          "jump_signin": true
+          "jump_signin": true,
+          "tenant_noun": {
+            "one": "firm",
+            "many": "firms"
+          }
         }
       ],
-      "label": "Each edition: its name, tagline, first screen and the screens it shows; client_noun {one, many}: what its records are called - chip words say {clients}, {Clients}, {client_one}"
+      "label": "Each edition: its name, tagline, first screen and the screens it shows; client_noun {one, many}: what its records are called - chip words say {clients}, {Clients}, {client_one}; tenant_noun {one, many}: what it calls the tenant (firm, team, clinic, desk) - shared words say {tenant}, {tenants}, {Tenant}, {Tenants}"
     }
   ],
   "expr": {
@@ -88,7 +92,7 @@
     }
   },
   "returns": "record",
-  "version": 15,
+  "version": 16,
   "status": "published",
   "description_nl": "One codebase, two products (owner, 2026-09-18: 'the studio is tv + new features'). A server is told which it is by PORTAL_EDITION (a hosting fact, set in its service file). This chip says what each edition is called and which of the catalog's screens it shows; the framework's own admin screens are always there. tv is frozen - new screens are added to the studio only, except what the owner names for both (2026-09-20: frames 'Frames from a video' and images 'Image Library' on tv AND the studio; on tv the library has no Studio to send a picture to, so the page hides Use for a shot / character - the server says can_use). tour: the sign-in page's own tour video, served from static/tour (video, captions, poster). selling: the cards on the sign-in page, each [icon, title word, line word] (words are ui.app, with the edition's words_prefix). jump_signin: a Sign in button at the top of the sign-in page on a phone, where the form sits below the whole pitch. 2026-09-28: guideme (Guide Me Builder) on the studio only. 2026-09-28 owner (\"make the door standard as the other sites\"): doors - another address of the same edition (a second address of the studio) with its own name, line under the logo, first screen, pitch words (words_prefix) and cards; the same shell, sign-in card and menu, never a page of its own. read (Read stories) is the studio's shelf screen, a door's first screen. A door's screens: the ONLY portal screens its menu and search show (e.g. Watch, Read, Listen - no editing; Continue this story opens the studio). The framework's own admin screens stay for those who may open them. A door's launch: the Launch Studio button (top right) - for each of the door's hosts, the workshop address to open (a door's localhost opens the local studio). 2026-09-30 owner (Groups): groups - make a group of people by email, they accept, works are shared with it - on the studio (beside Publish & Circles) and on its door. site_hides (2026-10-01 owner: \"keep the door's screens out of the main menu\"): screens the edition's OWN address leaves off its menu and search because a door shows them (the door's screens live on its own address); they still open from a link or a bell. site_sends {this address: the door's address}: a link to a site_hides screen opened HERE is sent on to the door (2026-10-01 owner: \"send door links to the door's address\") - bookmarks and bells land on the door.",
   "test_cases": [
@@ -153,7 +157,11 @@
                 "sell_recon_line"
               ]
             ],
-            "jump_signin": true
+            "jump_signin": true,
+            "tenant_noun": {
+              "one": "firm",
+              "many": "firms"
+            }
           }
         ]
       }

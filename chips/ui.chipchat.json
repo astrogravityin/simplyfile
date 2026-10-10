@@ -76,7 +76,7 @@
     {
       "name": "teach_lede",
       "type": "text",
-      "default": "Questions people asked that Chip Chat could not answer. Point one at the right answer, or write your firm's own.",
+      "default": "Questions people asked that Chip Chat could not answer. Point one at the right answer, or write your {tenant}'s own.",
       "label": "teach lede"
     },
     {
@@ -118,7 +118,7 @@
     {
       "name": "own_title",
       "type": "text",
-      "default": "Your firm's own answers",
+      "default": "Your {tenant}'s own answers",
       "label": "own title"
     },
     {
@@ -148,13 +148,13 @@
     {
       "name": "own_scope_firm",
       "type": "text",
-      "default": "Everyone in my firm",
+      "default": "Everyone in my {tenant}",
       "label": "own scope firm"
     },
     {
       "name": "own_scope_all",
       "type": "text",
-      "default": "Every firm (portal-wide)",
+      "default": "Every {tenant} (portal-wide)",
       "label": "own scope all"
     },
     {
@@ -178,7 +178,7 @@
     {
       "name": "head_sub",
       "type": "text",
-      "default": "Ask in plain words. {product}'s own rules and your firm's data answer; an unclear question gets a question back instead of a guess.",
+      "default": "Ask in plain words. {product}'s own rules and your {tenant}'s data answer; an unclear question gets a question back instead of a guess.",
       "label": "head sub"
     },
     {
@@ -262,7 +262,7 @@
     {
       "name": "train_none",
       "type": "text",
-      "default": "Only the firm admin or the portal owner trains Chip Chat.",
+      "default": "Only the {tenant} admin or the portal owner trains Chip Chat.",
       "label": "train none"
     },
     {
@@ -370,7 +370,7 @@
     {
       "name": "h_firms",
       "type": "text",
-      "default": "Firms",
+      "default": "{Tenants}",
       "label": "h firms"
     },
     {
@@ -490,7 +490,7 @@
     {
       "name": "m_own",
       "type": "text",
-      "default": "firm's own",
+      "default": "{tenant}'s own",
       "label": "m own"
     },
     {
@@ -502,19 +502,19 @@
     {
       "name": "role_none",
       "type": "text",
-      "default": "No firm",
+      "default": "No {tenant}",
       "label": "role none"
     },
     {
       "name": "pending_none",
       "type": "text",
-      "default": "Nothing is pending for you - every client-year assigned to you is filed.",
+      "default": "Nothing is pending for you - every {client_one}-year assigned to you is filed.",
       "label": "pending none"
     },
     {
       "name": "pending_head",
       "type": "text",
-      "default": "{n} client-year(s) assigned to you are open:",
+      "default": "{n} {client_one}-year(s) assigned to you are open:",
       "label": "pending head"
     },
     {
@@ -526,7 +526,7 @@
     {
       "name": "overdue_head",
       "type": "text",
-      "default": "{n} client-year(s) are past their due date:",
+      "default": "{n} {client_one}-year(s) are past their due date:",
       "label": "overdue head"
     },
     {
@@ -562,13 +562,13 @@
     {
       "name": "client_ask",
       "type": "text",
-      "default": "Which client? Type part of the name - e.g. Where does Agarwal stand?",
+      "default": "Which {client_one}? Type part of the name - e.g. Where does Agarwal stand?",
       "label": "client ask"
     },
     {
       "name": "client_none",
       "type": "text",
-      "default": "No client of yours matches that name.",
+      "default": "No {client_one} of yours matches that name.",
       "label": "client none"
     },
     {
@@ -604,7 +604,7 @@
     {
       "name": "access_none",
       "type": "text",
-      "default": "You are not in a firm yet. My firm lets you start one.",
+      "default": "You are not in a {tenant} yet. My {tenant} lets you start one.",
       "label": "access none"
     },
     {
@@ -640,19 +640,19 @@
     {
       "name": "ready_ok",
       "type": "text",
-      "default": "Your firm is {state}.",
+      "default": "Your {tenant} is {state}.",
       "label": "ready ok"
     },
     {
       "name": "ready_head",
       "type": "text",
-      "default": "Your firm is {state}. Still to give:",
+      "default": "Your {tenant} is {state}. Still to give:",
       "label": "ready head"
     },
     {
       "name": "leads_head",
       "type": "text",
-      "default": "Clients worth a conversation:",
+      "default": "{Clients} worth a conversation:",
       "label": "leads head"
     },
     {
@@ -670,13 +670,13 @@
     {
       "name": "owner_none",
       "type": "text",
-      "default": "No firm is waiting for you.",
+      "default": "No {tenant} is waiting for you.",
       "label": "owner none"
     },
     {
       "name": "owner_head",
       "type": "text",
-      "default": "{n} firm(s) waiting for approval:",
+      "default": "{n} {tenants} waiting for approval:",
       "label": "owner head"
     }
   ],
@@ -798,9 +798,9 @@
     }
   },
   "returns": "record",
-  "version": 3,
+  "version": 4,
   "status": "published",
-  "description_nl": "2026-10-04: every word of Chip Chat, including how live answers are worded.",
+  "description_nl": "2026-10-04: every word of Chip Chat, including how live answers are worded. 2026-10-10: tenant and record nouns are placeholders ({tenant}, {tenants}, {clients}, {client_one}) - each portal's edition row names them.",
   "test_cases": [
     {
       "args": {},
@@ -816,24 +816,24 @@
         "no_match": "I don't know that one yet - I have noted it so it can be taught. Try other words, or one of the questions below.",
         "teach_tab": "Teach",
         "chat_tab": "Chat",
-        "teach_lede": "Questions people asked that Chip Chat could not answer. Point one at the right answer, or write your firm's own.",
+        "teach_lede": "Questions people asked that Chip Chat could not answer. Point one at the right answer, or write your {tenant}'s own.",
         "teach_none": "Nothing waiting - every question was answered.",
         "teach_pick": "Answer with",
         "teach_own": "Or write the answer",
         "teach_save": "Teach",
         "teach_skip": "Skip",
         "taught": "Taught - the next time it is asked, this answer comes.",
-        "own_title": "Your firm's own answers",
+        "own_title": "Your {tenant}'s own answers",
         "own_q": "Question",
         "own_a": "Answer",
         "own_none": "None yet.",
         "own_add": "Add",
-        "own_scope_firm": "Everyone in my firm",
-        "own_scope_all": "Every firm (portal-wide)",
+        "own_scope_firm": "Everyone in my {tenant}",
+        "own_scope_all": "Every {tenant} (portal-wide)",
         "delete": "Delete",
         "asked_by": "asked {n} time(s)",
         "head_title": "Chip Chat - ask the chips",
-        "head_sub": "Ask in plain words. {product}'s own rules and your firm's data answer; an unclear question gets a question back instead of a guess.",
+        "head_sub": "Ask in plain words. {product}'s own rules and your {tenant}'s data answer; an unclear question gets a question back instead of a guess.",
         "new_chat": "New chat",
         "new_chat_q": "Start a new chat?",
         "new_chat_body": "This clears the conversation on screen. Your questions stay on the Train tab.",
@@ -847,7 +847,7 @@
         "ask_next": "Ask next",
         "reuse": "Ask this again",
         "train_tab": "Train",
-        "train_none": "Only the firm admin or the portal owner trains Chip Chat.",
+        "train_none": "Only the {tenant} admin or the portal owner trains Chip Chat.",
         "stats": "{total} questions - {answered} answered - {taught} taught phrases",
         "f_open": "To review",
         "f_unanswered": "Could not answer",
@@ -865,7 +865,7 @@
         "h_when": "Asked",
         "h_who": "Role",
         "h_asked": "Times asked",
-        "h_firms": "Firms",
+        "h_firms": "{Tenants}",
         "h_last": "Last asked",
         "right_answer": "Right answer",
         "or_answer_ph": "or pick the right answer",
@@ -885,38 +885,38 @@
         "m_prepared": "prepared",
         "m_family": "worked out",
         "m_taught": "taught",
-        "m_own": "firm's own",
+        "m_own": "{tenant}'s own",
         "role_owner": "Portal owner",
-        "role_none": "No firm",
-        "pending_none": "Nothing is pending for you - every client-year assigned to you is filed.",
-        "pending_head": "{n} client-year(s) assigned to you are open:",
+        "role_none": "No {tenant}",
+        "pending_none": "Nothing is pending for you - every {client_one}-year assigned to you is filed.",
+        "pending_head": "{n} {client_one}-year(s) assigned to you are open:",
         "overdue_none": "Nothing is overdue.",
-        "overdue_head": "{n} client-year(s) are past their due date:",
+        "overdue_head": "{n} {client_one}-year(s) are past their due date:",
         "soon_none": "Nothing is due in the next 7 days.",
         "soon_head": "{n} due in the next 7 days:",
         "row_due": "{name} - {form}, {stage}, due {due} ({days})",
         "days_late": "{n} days late",
         "days_left": "{n} days left",
-        "client_ask": "Which client? Type part of the name - e.g. Where does Agarwal stand?",
-        "client_none": "No client of yours matches that name.",
+        "client_ask": "Which {client_one}? Type part of the name - e.g. Where does Agarwal stand?",
+        "client_none": "No {client_one} of yours matches that name.",
         "client_row": "{name} ({pan}) - {ay}: {stage}, {form}{filed}{who}",
         "client_filed": ", filed {kind} on {on}",
         "client_who": ", assigned to {who}",
         "access_head": "You are {role}. You may:",
         "access_owner": "You are the portal owner - you may open everything.",
-        "access_none": "You are not in a firm yet. My firm lets you start one.",
+        "access_none": "You are not in a {tenant} yet. My {tenant} lets you start one.",
         "lent_none": "Nothing is delegated to you.",
         "lent_head": "Delegated to you:",
         "lent_row": "{what} - {scope}, from {lender} until {until}",
         "team_head": "{n} people in {firm}:",
         "team_row": "{name} - {role}",
-        "ready_ok": "Your firm is {state}.",
-        "ready_head": "Your firm is {state}. Still to give:",
-        "leads_head": "Clients worth a conversation:",
+        "ready_ok": "Your {tenant} is {state}.",
+        "ready_head": "Your {tenant} is {state}. Still to give:",
+        "leads_head": "{Clients} worth a conversation:",
         "leads_none": "No opportunities flagged this year yet.",
         "lead_row": "{what}: {names}",
-        "owner_none": "No firm is waiting for you.",
-        "owner_head": "{n} firm(s) waiting for approval:"
+        "owner_none": "No {tenant} is waiting for you.",
+        "owner_head": "{n} {tenants} waiting for approval:"
       }
     }
   ]

@@ -16,7 +16,7 @@
     {
       "name": "lede",
       "type": "text",
-      "default": "Lend your own powers to a colleague for one filing, one client, a year, or portal work - for set dates. Everything they do shows as done for you. Take it back any time.",
+      "default": "Lend your own powers to a colleague for one {client_one}, a year, or portal work - for set dates. Everything they do shows as done for you. Take it back any time.",
       "label": "lede"
     },
     {
@@ -40,7 +40,7 @@
     {
       "name": "firm_all",
       "type": "text",
-      "default": "Everyone in the firm",
+      "default": "Everyone in the {tenant}",
       "label": "firm all"
     },
     {
@@ -76,7 +76,7 @@
     {
       "name": "f_clients",
       "type": "text",
-      "default": "Client(s)",
+      "default": "{Clients}",
       "label": "f clients"
     },
     {
@@ -94,7 +94,7 @@
     {
       "name": "no_match",
       "type": "text",
-      "default": "No client matches.",
+      "default": "No {client_one} matches.",
       "label": "no match"
     },
     {
@@ -214,7 +214,7 @@
     {
       "name": "all_clients",
       "type": "text",
-      "default": "all clients",
+      "default": "all {clients}",
       "label": "all clients"
     },
     {
@@ -262,13 +262,13 @@
     {
       "name": "d_portal_firm",
       "type": "text",
-      "default": "Portal work can only be lent to someone outside a firm.",
+      "default": "Portal work can only be lent to someone outside a {tenant}.",
       "label": "d portal firm"
     },
     {
       "name": "d_to",
       "type": "text",
-      "default": "Pick a person from your firm.",
+      "default": "Pick a person from your {tenant}.",
       "label": "d to"
     },
     {
@@ -286,13 +286,13 @@
     {
       "name": "d_one_client",
       "type": "text",
-      "default": "Pick exactly one client.",
+      "default": "Pick exactly one {client_one}.",
       "label": "d one client"
     },
     {
       "name": "d_some_clients",
       "type": "text",
-      "default": "Pick at least one client.",
+      "default": "Pick at least one {client_one}.",
       "label": "d some clients"
     },
     {
@@ -392,28 +392,28 @@
     }
   },
   "returns": "record",
-  "version": 1,
+  "version": 2,
   "status": "published",
-  "description_nl": "2026-10-04: every word on Delegations.",
+  "description_nl": "2026-10-04: every word on Delegations. 2026-10-10: tenant and record nouns are placeholders ({tenant}, {tenants}, {clients}, {client_one}) - each portal's edition row names them.",
   "test_cases": [
     {
       "args": {},
       "expect_value": {
         "title": "Delegations",
-        "lede": "Lend your own powers to a colleague for one filing, one client, a year, or portal work - for set dates. Everything they do shows as done for you. Take it back any time.",
+        "lede": "Lend your own powers to a colleague for one {client_one}, a year, or portal work - for set dates. Everything they do shows as done for you. Take it back any time.",
         "new": "Delegate",
         "given": "Lent by me",
         "received": "Lent to me",
-        "firm_all": "Everyone in the firm",
+        "firm_all": "Everyone in the {tenant}",
         "none_given": "You have not lent anything.",
         "none_received": "Nothing is lent to you.",
         "f_to": "To",
         "f_to_pick": "Pick a person",
         "f_kind": "Scope",
-        "f_clients": "Client(s)",
+        "f_clients": "{Clients}",
         "f_find": "Search name or PAN - any part, any order",
         "n_chosen": "{n} of {all} chosen",
-        "no_match": "No client matches.",
+        "no_match": "No {client_one} matches.",
         "f_ay": "Assessment year",
         "f_grants": "What they may do",
         "f_from": "From",
@@ -433,7 +433,7 @@
         "st_future": "Starts later",
         "st_ended": "Ended",
         "st_revoked": "Taken back",
-        "all_clients": "all clients",
+        "all_clients": "all {clients}",
         "every_year": "every year",
         "on_behalf": "{who} for {lender}",
         "d_made": "Lent.",
@@ -441,12 +441,12 @@
         "d_kind": "Pick a scope.",
         "d_portal_owner": "Only the portal owner can lend portal work.",
         "d_firm_only": "The portal owner lends portal work only.",
-        "d_portal_firm": "Portal work can only be lent to someone outside a firm.",
-        "d_to": "Pick a person from your firm.",
+        "d_portal_firm": "Portal work can only be lent to someone outside a {tenant}.",
+        "d_to": "Pick a person from your {tenant}.",
         "d_none": "Tick at least one thing they may do.",
         "d_not_yours": "You can only lend what you may do yourself.",
-        "d_one_client": "Pick exactly one client.",
-        "d_some_clients": "Pick at least one client.",
+        "d_one_client": "Pick exactly one {client_one}.",
+        "d_some_clients": "Pick at least one {client_one}.",
         "d_ay": "Pick the assessment year.",
         "d_dates": "The end date is before the start date.",
         "d_too_long": "A delegation can run for at most a year.",
