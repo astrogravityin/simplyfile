@@ -8,6 +8,28 @@ import { historyButton, wireHistory } from './changes.js';
 
 const w = (k, v) => t('firm', k, v);
 const P = () => ps('firm');
+// A word for one kind of account: ui.firm key suffixed with the kind id (f_name_self) wins over the plain key (chips only).
+const kwOk = (k, kind) => !t('firm', `${k}_${kind}`).startsWith('[firm.');
+const kw = (k, kind, v) => (kwOk(k, kind) ? t('firm', `${k}_${kind}`, v) : w(k, v));
+// What the server found wrong (need_pan, bad_phone ...): the kind's own word for the field when it has one, else the plain sentence.
+const problemSay = (say, kind, v) => {
+  const m = /^(need|bad)_(.+)$/.exec(say);
+  return m && kwOk(`f_${m[2]}`, kind) ? w(`${m[1]}_any`, { label: kw(`f_${m[2]}`, kind).toLowerCase(), hint: kw(`h_${m[2]}`, kind) }) : kw(say, kind, v);
+};
+// The two kinds of illustration (chip page.firm kind_art, else by how many clients the kind holds): a person with their return, a practice.
+function art(name) {
+  const base = '<circle cx="100" cy="62" r="54" fill="var(--brand-soft,rgba(37,99,235,.1))"/>';
+  const man = (x, c) => `<circle cx="${x}" cy="50" r="10" fill="var(${c})"/><path d="M${x - 19} 98q0-26 19-26t19 26z" fill="var(${c})"/>`;
+  const svg = name === 'person'
+    ? `${base}<rect x="46" y="20" width="62" height="80" rx="7" fill="var(--panel)" stroke="var(--line-2)" stroke-width="2"/>
+       <path d="M58 40h38M58 54h38M58 68h24" stroke="var(--line-2)" stroke-width="3" stroke-linecap="round"/>
+       <circle cx="104" cy="88" r="15" fill="var(--ok)"/><path d="M96 88l6 6 11-12" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>${man(146, '--brand')}`
+    : `${base}<rect x="36" y="28" width="58" height="72" rx="6" fill="var(--panel)" stroke="var(--line-2)" stroke-width="2"/>
+       ${[0, 1, 2].map((r) => [0, 1].map((c) => `<rect x="${46 + c * 22}" y="${38 + r * 17}" width="12" height="10" rx="2" fill="var(--brand-soft,rgba(37,99,235,.18))" stroke="var(--brand)" stroke-width="1.4"/>`).join('')).join('')}
+       <rect x="58" y="82" width="14" height="18" rx="2" fill="var(--brand)"/>
+       ${man(122, '--brand')}${man(160, '--brand-2')}<path d="M104 100h74" stroke="var(--line-2)" stroke-width="2.4" stroke-linecap="round"/>`;
+  return `<svg class="fi-pick-svg" viewBox="0 0 200 120" aria-hidden="true">${svg}</svg>`;
+}
 
 // The road from sign-up to working: four dots on a line (done = filled), drawn from the server's d.firm.steps.
 function road(steps, names) {
@@ -40,7 +62,7 @@ function readyList(d, kind, f) {
   const got = (id) => !!(f && f.docs.some((x) => x.kind === id));
   const docs = kind.docs_required.map((x) => [x, true]).concat(kind.docs_optional.map((x) => [x, false]));
   return `<div class="fi-ready-col"><h4>${icon('edit', 14)} ${esc(w('ready_numbers'))}</h4><ul class="fi-ready-list">
-      ${kind.fields.map((k) => item(w(`f_${k}`), w(`h_${k}`), kind.required.includes(k), has(k))).join('')}</ul></div>
+      ${kind.fields.map((k) => item(kw(`f_${k}`, kind.id), kw(`h_${k}`, kind.id), kind.required.includes(k), has(k))).join('')}</ul></div>
     <div class="fi-ready-col"><h4>${icon('folder', 14)} ${esc(w('ready_papers'))}</h4><ul class="fi-ready-list">
       ${docs.map(([x, req]) => item(docOf(d, x).label, docOf(d, x).hint, req, got(x))).join('')}</ul>
       <p class="small muted">${esc(w('ready_files', { exts: d.settings.doc_exts.join(' '), mb: d.settings.doc_max_mb }))}</p></div>`;
@@ -56,21 +78,21 @@ function readyCard(d, f) {
 }
 
 function chooseKind(host, d) {
-  host.innerHTML = pageHead(w('title'), esc(w('lede_new')))
-    + `<section class="card fi-ready"><div class="fi-ready-h">${icon('info', 18)}<div><h3>${esc(w('ready_title'))}</h3>
-        <div class="small muted">${esc(w('ready_lede'))}</div></div></div>
-      ${d.settings.kinds.map((k) => `<details class="fi-ready-kind" ${k === d.settings.kinds[0] ? 'open' : ''}><summary><b>${esc(k.label)}</b></summary>
-        <div class="fi-ready-grid">${readyList(d, k, null)}</div></details>`).join('')}</section>`
-    + `<section class="fi-kinds">${d.settings.kinds.map((k) => `<button type="button" class="fi-kind card" data-kind="${esc(k.id)}">
-        <span class="fi-kind-ic">${icon((P().kind_icon || {})[k.id] || 'users', 26)}</span>
-        <b>${esc(k.label)}</b><span class="muted">${esc(k.sub)}</span>
-        <span class="fi-kind-docs">${k.docs_required.map((x) => `<span class="tag">${esc(docOf(d, x).label)}</span>`).join('')}</span>
-        <span class="button primary small">${esc(w('start'))} ${icon('right', 13)}</span></button>`).join('')}</section>
-      <p class="small muted fi-privacy">${icon('lock', 13)} ${esc(w('privacy'))}</p>`;
+  const ks = d.settings.kinds, arts = P().kind_art || {};
+  const tags = (k) => (kwOk('need', k.id) ? kw('need', k.id).split('|').map((x) => x.trim()).filter(Boolean) : k.docs_required.map((x) => docOf(d, x).label));
+  host.innerHTML = `<section class="fi-welcome"><h1>${esc(w('welcome'))}</h1><p class="muted">${esc(w('welcome_sub'))}</p></section>
+    <section class="fi-picks fi-picks-${ks.length}">${ks.map((k) => `<button type="button" class="fi-pick card" data-kind="${esc(k.id)}">
+        <span class="fi-pick-art">${art(arts[k.id] || (k.max_clients === 1 ? 'person' : 'practice'))}</span>
+        <b class="fi-pick-t">${esc(kwOk('pick', k.id) ? kw('pick', k.id) : k.label)}</b>
+        <span class="muted fi-pick-sub">${esc(kwOk('sub', k.id) ? kw('sub', k.id) : k.sub)}</span>
+        ${tags(k).length ? `<span class="fi-pick-need"><span class="small muted">${esc(w('pick_need'))}</span>
+          <span class="fi-pick-tags">${tags(k).map((x) => `<span class="tag">${esc(x)}</span>`).join('')}</span></span>` : ''}
+        <span class="button primary fi-pick-go">${esc(kwOk('cta', k.id) ? kw('cta', k.id) : w('start'))} ${icon('right', 14)}</span></button>`).join('')}</section>
+    <p class="small muted fi-privacy">${icon('lock', 13)} ${esc(w('privacy'))}</p>`;
   host.querySelectorAll('[data-kind]').forEach((b) => {
     b.onclick = () => busy(b, async () => {
       await api('/api/firm/start', { method: 'POST', body: { kind: b.dataset.kind } });
-      firmPage(host);
+      location.reload();                       // the menu and the Start here card now know there is a firm
     });
   });
 }
@@ -81,15 +103,15 @@ const stateOf = (d, id) => d.settings.states.find((s) => s.id === id) || { label
 function details(d) {
   const f = d.firm, kind = d.settings.kinds.find((k) => k.id === f.kind);
   const off = f.editable ? '' : 'disabled';
-  const one = (k) => `<div class="field"><label for="fi-${k}">${esc(w(`f_${k}`))}${kind.required.includes(k) ? ' <span class="fi-req">*</span>' : ''}</label>
+  const one = (k) => `<div class="field"><label for="fi-${k}">${esc(kw(`f_${k}`, kind.id))}${kind.required.includes(k) ? ' <span class="fi-req">*</span>' : ''}</label>
       ${k === 'address' ? `<textarea id="fi-${k}" rows="2" ${off}>${esc(f[k] || '')}</textarea>`
         : `<input id="fi-${k}" value="${esc(f[k] || '')}" ${off} ${d.settings.code_fields.includes(k) ? 'style="text-transform:uppercase"' : ''}/>`}
-      <div class="small muted">${esc(w(`h_${k}`))}</div></div>`;
+      <div class="small muted">${esc(kw(`h_${k}`, kind.id))}</div></div>`;
   return `<section class="card fi-card"><h3>${icon('edit', 15)} ${esc(w('details'))}</h3>
     <div class="grid two">${kind.fields.filter((k) => k !== 'address').map(one).join('')}</div>${kind.fields.includes('address') ? one('address') : ''}
-    <label class="check fi-consent"><input type="checkbox" id="fi-consent" ${f.consent_at ? 'checked' : ''} ${off}/> <span>${esc(w('consent'))}</span></label>
+    <label class="check fi-consent"><input type="checkbox" id="fi-consent" ${f.consent_at ? 'checked' : ''} ${off}/> <span>${esc(kw('consent', f.kind))}</span></label>
     ${f.editable ? `<div class="row tight fi-save"><button type="button" class="primary" id="fi-save">${icon('save', 14)} ${esc(w('save'))}</button>
-      <span class="small" id="fi-problem">${f.ready.say && f.ready.say !== 'need_docs' ? `${icon('alert', 13)} ${esc(w(f.ready.say))}` : ''}</span></div>` : ''}</section>`;
+      <span class="small" id="fi-problem">${f.ready.say && f.ready.say !== 'need_docs' ? `${icon('alert', 13)} ${esc(problemSay(f.ready.say, f.kind))}` : ''}</span></div>` : ''}</section>`;
 }
 
 function papers(d) {
@@ -113,12 +135,12 @@ function papers(d) {
 
 function banner(d) {
   const f = d.firm, last = [...(f.history || [])].reverse().find((h) => h.note);
-  const text = w(f.editable && !f.ready.say ? 'st_ready' : f.state === d.settings.working_state && !('team' in d) ? 'st_approved_solo' : `st_${f.state}`, { hours: d.settings.review_hours, at: when(f.submitted_at || '') });
+  const text = kw(f.editable && !f.ready.say ? 'st_ready' : f.state === d.settings.working_state && !('team' in d) ? 'st_approved_solo' : `st_${f.state}`, f.kind, { hours: d.settings.review_hours, at: when(f.submitted_at || '') });
   return `<div class="fi-banner fi-${esc(f.state)}">${icon((P().state_icon || {})[f.state] || 'info', 16)}
     <div><b>${esc(stateOf(d, f.state).label)}</b><div class="small">${esc(text)}</div>
     ${last && (P().note_states || []).includes(f.state) ? `<div class="small fi-note">${icon('chat', 12)} ${esc(last.note)}</div>` : ''}</div>
-    ${f.editable ? `<button type="button" class="primary" id="fi-submit" ${f.ready.say ? 'aria-disabled="true"' : ''}>${icon('send', 14)} ${esc(w('submit'))}</button>` : ''}</div>
-    ${f.editable && f.ready.say ? `<div class="small muted fi-why">${esc(w(f.ready.say, { missing: f.ready.missing.map((x) => docOf(d, x).label).join(', ') }))}</div>` : ''}`;
+    ${f.editable ? `<button type="button" class="primary" id="fi-submit" ${f.ready.say ? 'aria-disabled="true"' : ''}>${icon('send', 14)} ${esc(kw('submit', f.kind))}</button>` : ''}</div>
+    ${f.editable && f.ready.say ? `<div class="small muted fi-why">${esc(problemSay(f.ready.say, f.kind, { missing: f.ready.missing.map((x) => docOf(d, x).label).join(', ') }))}</div>` : ''}`;
 }
 
 function teamCard(d) {
@@ -173,14 +195,15 @@ export async function firmPage(host) {
   }
   if (!d.firm) { chooseKind(host, d); return; }
   const f = d.firm;
-  host.innerHTML = pageHead(w('title'), esc(w('lede')), historyButton())
+  host.innerHTML = pageHead(w('title'), esc(kw('lede', f.kind)), historyButton())
     + `<section class="card fi-hero">${badge(f.state)}<div class="fi-hero-main"><div class="fi-name">${esc(f.name || w('unnamed'))}</div>
         <div class="fi-meta"><span class="${esc(stateOf(d, f.state).tag)}">${esc(stateOf(d, f.state).label)}</span><span>${esc(f.kind_label)}</span>
           ${f.pan ? `<code>${esc(f.pan)}</code>` : ''}<span>${esc(w('you_are', { role: d.role.label }))}</span></div>
-        ${road(f.steps, d.settings.steps)}</div></section>`
+        ${road(f.steps, d.settings.steps.filter((x) => !(d.settings.kinds.find((k) => k.id === f.kind).skip_steps || []).includes(x)))}</div></section>`
     + banner(d)                                  // what to do next (Send for approval) sits right under the road, above the checklist
     + (f.editable ? readyCard(d, f) : '') + (f.state === d.settings.working_state ? teamCard(d) + details(d) + papers(d) : details(d) + papers(d) + teamCard(d))
-    + `<p class="small muted fi-privacy">${icon('lock', 13)} ${esc(w('privacy'))}</p>`;
+    + `<p class="small muted fi-privacy">${icon('lock', 13)} ${esc(w('privacy'))}</p>`
+    + (f.state === d.settings.states[0].id && !f.docs.length ? `<p class="fi-redo"><button type="button" class="ghost small" id="fi-redo">${icon('left', 13)} ${esc(w('discard_link'))}</button></p>` : '');
   const $ = (s) => host.querySelector(s);
   const values = () => {
     const kind = d.settings.kinds.find((k) => k.id === f.kind);
@@ -197,17 +220,24 @@ export async function firmPage(host) {
   });
   if ($('#fi-submit')) $('#fi-submit').onclick = (ev) => {
     const btn = ev.currentTarget;   // read now: once the click is over currentTarget is null, and busy(null) did nothing at all
-    if (f.ready.say) { toast(w(f.ready.say, { missing: f.ready.missing.map((x) => docOf(d, x).label).join(', ') }), 'warn', 8); return; }
-    confirmDialog(w('submit_title'), w('submit_body', { hours: d.settings.review_hours }), () => busy(btn, async () => {
+    if (f.ready.say) { toast(problemSay(f.ready.say, f.kind, { missing: f.ready.missing.map((x) => docOf(d, x).label).join(', ') }), 'warn', 8); return; }
+    confirmDialog(kw('submit_title', f.kind), kw('submit_body', f.kind, { hours: d.settings.review_hours }), () => busy(btn, async () => {
       try {
         await api('/api/firm', { method: 'PUT', body: values() });
         const r = await api(`/api/firm/${f.id}/move`, { method: 'POST', body: { action: 'submit' } });
         toast(r.say, 'ok');
-        if (r.state === d.settings.working_state) { setTimeout(() => location.reload(), 900); return; }   // approved at once: redraw the menu
+        if (r.state === d.settings.working_state) {   // approved at once: redraw the menu - and, where the chip says, carry on to the next screen
+          if (d.settings.after_approved_route) history.replaceState(null, '', d.settings.after_approved_route);
+          setTimeout(() => location.reload(), 900);
+          return;
+        }
         firmPage(host);
       } catch (err) { toast(err.message, 'bad', 8); }
-    }), w('submit'), { tone: 'brand' });
+    }), kw('submit', f.kind), { tone: 'brand' });
   };
+  if ($('#fi-redo')) $('#fi-redo').onclick = () => confirmDialog(w('discard_title'), w('discard_body'), async () => {   // a wrong pick must not trap
+    try { await api('/api/firm/discard', { method: 'POST', body: {} }); toast(w('discarded'), 'ok'); setTimeout(() => location.reload(), 600); } catch (err) { toast(err.message, 'bad', 8); }
+  }, w('discard_go'), { tone: 'brand' });
   wireHistory(host, { firm: true, name: f.name });
   if ($('#fi-add')) $('#fi-add').onclick = () => addPerson(d, host);
   if ($('#fi-team')) listBox($('#fi-team'), { list: 'firm_team', row: teamRow(d),

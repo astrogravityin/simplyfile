@@ -853,6 +853,11 @@ def api_firm_start(body: dict = Body(...), u: dict = Depends(screen("firm"))):
     return firms.start(u, str(body.get("kind") or ""))
 
 
+@app.post("/api/firm/discard")
+def api_firm_discard(_: dict = Body(default={}), u: dict = Depends(screen("firm"))):
+    return firms.discard(u)
+
+
 @app.put("/api/firm")
 def api_firm_update(body: dict = Body(...), u: dict = Depends(screen("firm"))):
     return firms.update(u, body)

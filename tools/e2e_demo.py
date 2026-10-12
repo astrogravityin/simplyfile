@@ -54,14 +54,47 @@ ca = session("demo@demo.test", "Demo-pass-1234")
 S = {}
 
 
-@step("0 Start here: a new user sees the card on My firm - first step open, an individual's steps left out")
+@step("0 Start here: a newcomer with no firm sees only the choice - the card waits until a firm exists, then lists the steps (an individual's left out)")
 def _():
     assert "start_card" in ca.get("/api/bootstrap").json(), "no Start here for a newcomer"
     d = ca.get("/api/start", params={"screen": "firm"}).json()
-    ids = [x["id"] for x in d["steps"]]
-    assert d["show"] and d["steps"][0]["id"] == "firm" and not d["steps"][0]["done"] and "my_docs" not in ids, d
+    assert not d["show"] and not d["steps"], f"nothing above the choice on a first screen: {d}"
     assert not admin.get("/api/start", params={"screen": "firm"}).json()["show"], "the portal owner is not a newcomer"
-    return f"{d['total']} steps: {', '.join(ids)}"
+    kinds = ca.get("/api/firm").json()["settings"]["kinds"]
+    assert [k["id"] for k in kinds] == ["ca_firm", "self"], "two big choices"
+    assert next(k for k in kinds if k["id"] == "self")["required"] == ["name", "pan", "phone", "email"], "an individual's form is short"
+    return "hidden with no firm"
+
+
+@step("0b First screen: two choices -> individual -> details -> opens at once; a wrong pick is discarded (guarded, History, no trap)")
+def _():
+    admin.post("/api/users", json={"email": "newbie@first.test", "password": "Newbie-pass-12", "display_name": "Asha Verma"})
+    n = session("newbie@first.test", "Newbie-pass-12")
+    me = n.get("/api/firm").json()
+    assert me["firm"] is None and me["settings"]["after_approved_route"] == "#/wizard"
+    assert n.post("/api/firm/discard", json={}).status_code == 404, "nothing to discard yet"
+    # a wrong pick (CA firm) is not a trap
+    n.post("/api/firm/start", json={"kind": "ca_firm"})
+    d = n.get("/api/start", params={"screen": "firm"}).json()
+    assert d["show"] and d["steps"][0]["id"] == "firm" and "firm_self" not in [x["id"] for x in d["steps"]], d
+    assert n.post("/api/firm/discard", json={}).json()["ok"]
+    assert n.get("/api/firm").json()["firm"] is None and not n.get("/api/start", params={"screen": "firm"}).json()["show"]
+    # the individual path: four details, no papers, approved at once
+    fid = n.post("/api/firm/start", json={"kind": "self"}).json()["id"]
+    n.put("/api/firm", json={"name": "Asha Verma", "pan": "ABCPV1234E", "phone": "98765 43210", "email": "newbie@first.test", "consent": True,
+                             "owner_name": "ignored", "aadhaar_last4": "1234"})
+    f = n.get("/api/firm").json()["firm"]
+    assert "aadhaar_last4" not in f and "owner_name" not in f and f["ready"]["say"] == "", f
+    assert n.post("/api/firm/discard", json={}).json()["ok"], "a draft with nothing uploaded can be discarded"
+    fid = n.post("/api/firm/start", json={"kind": "self"}).json()["id"]
+    n.put("/api/firm", json={"name": "Asha Verma", "pan": "ABCPV1234E", "phone": "9876543210", "email": "newbie@first.test", "consent": True})
+    n.post("/api/firm/docs/pan_card", files={"file": ("pan.pdf", b"%PDF-1.4 pan")})
+    assert n.post("/api/firm/discard", json={}).status_code == 409, "papers uploaded: the portal admin decides now"
+    assert n.post(f"/api/firm/{fid}/move", json={"action": "submit"}).json()["state"] == "approved"
+    assert n.post("/api/firm/discard", json={}).status_code == 409, "approved: not a draft"
+    assert n.get("/api/wizard").status_code == 200, "the wizard the route points at is open"
+    assert any(x["kind"] == "ca_firm" for x in __import__("core.store", fromlist=["store"]).read("sf_firm_discards", []))
+    return "choice -> discard -> individual -> wizard"
 
 
 @step("1 Sign-up: no firm -> Filing shut, only My firm")
@@ -70,6 +103,8 @@ def _():
     acc = ca.get("/api/bootstrap").json()["access"]
     assert acc["firm"]["allowed"] and not acc["clients"]["allowed"] and not acc["approvals"]["allowed"]
     S["fid"] = ca.post("/api/firm/start", json={"kind": "ca_firm"}).json()["id"]
+    d = ca.get("/api/start", params={"screen": "firm"}).json()
+    assert d["show"] and d["steps"][0]["id"] == "firm" and "firm_self" not in [x["id"] for x in d["steps"]], d
 
 
 @step("2 Firm details: full Aadhaar refused, bad GSTIN caught, good saved")

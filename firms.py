@@ -201,6 +201,20 @@ def start(u: dict, kind: str) -> dict:
     return f
 
 
+def discard(u: dict) -> dict:
+    """Not what you meant? A draft with nothing uploaded, nobody else in it and no clients is dropped, so the person can choose again.
+    Anything further along (papers, a team, sent) stays - the portal admin decides those."""
+    with _LOCK:
+        rows, f = _mine(u)
+        if f["state"] != settings()["states"][0]["id"] or f.get("docs") or f.get("created_by") != u["id"]                 or any(x.get("firm_id") == f["id"] and x["id"] != u["id"] for x in store.users()):
+            raise HTTPException(409, say("discard_no"))
+        _save([x for x in rows if x["id"] != f["id"]])
+        store.write("sf_firm_discards", store.read("sf_firm_discards", []) + [
+            {"at": store.now(), "firm_id": f["id"], "kind": f["kind"], "by": u["id"], "who": auth.who(u)}])
+    _set_user(u["id"], firm_id=None, firm_role=None)
+    return {"ok": True, "say": say("discarded")}
+
+
 def _mine(u: dict, grant: str = "firm") -> tuple[list[dict], dict]:
     """(all firms, this person's firm) - refused unless their role holds `grant`."""
     rows = _all()

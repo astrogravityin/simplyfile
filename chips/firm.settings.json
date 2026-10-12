@@ -70,17 +70,12 @@
           "fields": [
             "name",
             "pan",
-            "owner_name",
-            "aadhaar_last4",
             "phone",
-            "email",
-            "address"
+            "email"
           ],
           "required": [
             "name",
             "pan",
-            "owner_name",
-            "aadhaar_last4",
             "phone",
             "email"
           ],
@@ -95,7 +90,10 @@
             "P": "individual",
             "H": "huf"
           },
-          "auto_approve": true
+          "auto_approve": true,
+          "skip_steps": [
+            "s_docs"
+          ]
         }
       ],
       "label": "kinds"
@@ -311,6 +309,12 @@
         "s_approved"
       ],
       "label": "steps"
+    },
+    {
+      "name": "after_approved_route",
+      "type": "text",
+      "default": "#/wizard",
+      "label": "after approved route"
     }
   ],
   "expr": {
@@ -334,11 +338,12 @@
       "refuse_fields": "$refuse_fields",
       "owner_may_start": "$owner_may_start",
       "max_len": "$max_len",
-      "steps": "$steps"
+      "steps": "$steps",
+      "after_approved_route": "$after_approved_route"
     }
   },
   "returns": "record",
-  "version": 2,
+  "version": 4,
   "status": "published",
   "description_nl": "2026-10-04 owner: a CA firm (or an individual filing their own return) signs up, gives PAN, TAN, GSTIN, the owner's masked Aadhaar and the phone linked to the tax papers, uploads the papers, and waits for the portal admin's approval (review_hours). verify_via is manual now; DigiLocker later. A firm of kind self holds one client: itself. 2026-10-06: an individual filing their own return (kind self) is approved on submit (auto_approve) and needs no Aadhaar copy - one PAN, their own, nothing for a reviewer to check.",
   "test_cases": [
@@ -405,17 +410,12 @@
             "fields": [
               "name",
               "pan",
-              "owner_name",
-              "aadhaar_last4",
               "phone",
-              "email",
-              "address"
+              "email"
             ],
             "required": [
               "name",
               "pan",
-              "owner_name",
-              "aadhaar_last4",
               "phone",
               "email"
             ],
@@ -430,7 +430,10 @@
               "P": "individual",
               "H": "huf"
             },
-            "auto_approve": true
+            "auto_approve": true,
+            "skip_steps": [
+              "s_docs"
+            ]
           }
         ],
         "docs": [
@@ -554,7 +557,8 @@
           "s_docs",
           "s_submit",
           "s_approved"
-        ]
+        ],
+        "after_approved_route": "#/wizard"
       }
     }
   ]

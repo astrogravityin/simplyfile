@@ -11,7 +11,7 @@ ticked when it is done. Done is worked out HERE from real facts, never by the br
     + the domain's own, from clients.start_facts(u) when the domain has one.
 Which steps, their words, links and the fact each waits for are the domain's chip start.steps (a seam); whether a fact is
 enough is chip start.done; the card's words are ui.start; the knobs start.settings. A step that needs a grant the person's
-role lacks (an individual's desk has no "team") is left out, and so is a step whose `kinds` name other kinds of firm. A tick, once earned, stays; Hide is kept per person here (the
+role lacks (an individual's desk has no "team") is left out, and so is a step whose `kinds` name other kinds of firm. Until the person has a firm the card is not shown (knob needs_firm): the first screen is the choice alone. A tick, once earned, stays; Hide is kept per person here (the
 store), so it follows them to any browser; the name menu's Start here and Guide me bring it back.
 """
 from __future__ import annotations
@@ -97,6 +97,8 @@ def card(u: dict, screen: str = "") -> dict:
     s, me = steps_chip(), _who(u)
     got = facts(u)
     f = firms.firm_of(u)
+    if settings()["needs_firm"] and not f:                     # a newcomer's first screen is the choice alone: its steps are not reachable yet
+        return {"show": False, "steps": [], "done": 0, "total": 0, "hidden": bool(me.get("hidden")), "all_done": False}
     grants = set(firms.role_of(u.get("firm_role", ""))["grants"]) if f else None
     kept, rows = set(me.get("done") or []), []
     for r in s["rows"]:

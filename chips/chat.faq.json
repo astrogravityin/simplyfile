@@ -168,7 +168,7 @@
           "id": "start_steps",
           "q": "How do I get started?",
           "words": "first steps begin new start how to use getting started onboarding",
-          "a": "1. My firm: give the firm's details and papers and send them for approval. 2. Once approved, add your team. 3. Clients & years: add a client and start this assessment year. 4. Intake & map: upload the statements. 5. Reconcile against 26AS / AIS / TIS. 6. Compute & close: check, sign off, download the JSON and file it.",
+          "a": "1. My firm: pick who you are - filing your own return (your account opens at once and takes you to New filing) or running a CA practice (give the firm's details and papers and send them for approval). 2. A CA firm adds its team once approved. 3. New filing or Clients & years: add the client and start this assessment year. 4. Intake & map: upload the statements. 5. Reconcile against 26AS / AIS / TIS. 6. Compute & close: check, sign off, download the JSON and file it.",
           "roles": [],
           "go": "#/firm",
           "live": ""
@@ -294,7 +294,7 @@
           "id": "firm_docs",
           "q": "Which documents does a firm need?",
           "words": "documents papers required needed keep ready list upload firm registration proof",
-          "a": "Keep these ready: the owner's masked Aadhaar, the firm's PAN card, the TAN allotment letter, the GST certificate (if registered) and the ICAI firm registration or membership certificate - plus the firm's PAN, TAN, GSTIN, FRN, membership number, the owner's name, the last 4 Aadhaar digits, a phone linked to the tax papers and the address. My firm shows them as a ticked list.",
+          "a": "For a CA firm: the owner's masked Aadhaar, the firm's PAN card, the TAN allotment letter, the GST certificate (if registered) and the ICAI firm registration or membership certificate - plus the firm's PAN, TAN, GSTIN, FRN, membership number, the owner's name, the last 4 Aadhaar digits, a phone linked to the tax papers and the address. My firm shows them as a ticked list in the firm's draft. For an individual or HUF: only your name, PAN, mobile and email - nothing to upload.",
           "roles": [
             "firm_admin",
             "self",
@@ -308,6 +308,18 @@
           "q": "Why does my firm still show Draft?",
           "words": "draft status not sent submitted still draft send for approval button",
           "a": "A firm stays in Draft until you press Send for approval on My firm, after every item on the Keep these ready list is ticked. Then it shows Waiting for approval until the portal admin approves it or returns it with a note.",
+          "roles": [
+            "firm_admin",
+            "self"
+          ],
+          "go": "#/firm",
+          "live": ""
+        },
+        {
+          "id": "firm_choose_again",
+          "q": "I picked the wrong kind of account - how do I choose again?",
+          "words": "wrong choice picked mistake change kind individual ca firm start over choose again discard draft",
+          "a": "While the account is still a draft with nothing uploaded, open My firm and press Not what you meant? Choose again at the foot of the page, then confirm. The draft is cleared and you see the two choices again. Once papers are uploaded or the account has been sent, write to the portal admin.",
           "roles": [
             "firm_admin",
             "self"
@@ -1279,7 +1291,7 @@
     }
   },
   "returns": "record",
-  "version": 10,
+  "version": 11,
   "status": "published",
   "description_nl": "2026-10-04: every question Chip Chat knows, the answer, who sees it (roles), the screen to open, and live answers worked out from the person's own work. A firm adds its own on top (chipchat.py, Teach). 2026-10-09 owner: AI key only where AI is used, portal admin only. 2026-10-11: five questions about the New filing wizard - how to start, which documents, carry on later, Not recognised, the client made from the documents. 2026-10-11: questions about the New filing wizard - how to start, which documents, carry on later, Not recognised, the client made from the documents; later the same day: a firm's, an LLP's, an AOP's return, a company or trust (not yet), the kind of work, the worked examples. 2026-10-11: six questions about a company's return (ITR-6): how, the rate, MAT, losses and s.79, the due date, CSR; which forms are prepared now includes ITR-6; the not-yet row is about trusts (a company is filed from Clients & years).",
   "test_cases": [
@@ -1444,7 +1456,7 @@
             "id": "start_steps",
             "q": "How do I get started?",
             "words": "first steps begin new start how to use getting started onboarding",
-            "a": "1. My firm: give the firm's details and papers and send them for approval. 2. Once approved, add your team. 3. Clients & years: add a client and start this assessment year. 4. Intake & map: upload the statements. 5. Reconcile against 26AS / AIS / TIS. 6. Compute & close: check, sign off, download the JSON and file it.",
+            "a": "1. My firm: pick who you are - filing your own return (your account opens at once and takes you to New filing) or running a CA practice (give the firm's details and papers and send them for approval). 2. A CA firm adds its team once approved. 3. New filing or Clients & years: add the client and start this assessment year. 4. Intake & map: upload the statements. 5. Reconcile against 26AS / AIS / TIS. 6. Compute & close: check, sign off, download the JSON and file it.",
             "roles": [],
             "go": "#/firm",
             "live": ""
@@ -1570,7 +1582,7 @@
             "id": "firm_docs",
             "q": "Which documents does a firm need?",
             "words": "documents papers required needed keep ready list upload firm registration proof",
-            "a": "Keep these ready: the owner's masked Aadhaar, the firm's PAN card, the TAN allotment letter, the GST certificate (if registered) and the ICAI firm registration or membership certificate - plus the firm's PAN, TAN, GSTIN, FRN, membership number, the owner's name, the last 4 Aadhaar digits, a phone linked to the tax papers and the address. My firm shows them as a ticked list.",
+            "a": "For a CA firm: the owner's masked Aadhaar, the firm's PAN card, the TAN allotment letter, the GST certificate (if registered) and the ICAI firm registration or membership certificate - plus the firm's PAN, TAN, GSTIN, FRN, membership number, the owner's name, the last 4 Aadhaar digits, a phone linked to the tax papers and the address. My firm shows them as a ticked list in the firm's draft. For an individual or HUF: only your name, PAN, mobile and email - nothing to upload.",
             "roles": [
               "firm_admin",
               "self",
@@ -1584,6 +1596,18 @@
             "q": "Why does my firm still show Draft?",
             "words": "draft status not sent submitted still draft send for approval button",
             "a": "A firm stays in Draft until you press Send for approval on My firm, after every item on the Keep these ready list is ticked. Then it shows Waiting for approval until the portal admin approves it or returns it with a note.",
+            "roles": [
+              "firm_admin",
+              "self"
+            ],
+            "go": "#/firm",
+            "live": ""
+          },
+          {
+            "id": "firm_choose_again",
+            "q": "I picked the wrong kind of account - how do I choose again?",
+            "words": "wrong choice picked mistake change kind individual ca firm start over choose again discard draft",
+            "a": "While the account is still a draft with nothing uploaded, open My firm and press Not what you meant? Choose again at the foot of the page, then confirm. The draft is cleared and you see the two choices again. Once papers are uploaded or the account has been sent, write to the portal admin.",
             "roles": [
               "firm_admin",
               "self"

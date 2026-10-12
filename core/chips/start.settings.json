@@ -30,6 +30,12 @@
       "type": "number",
       "default": 2000,
       "label": "most of the person's latest requests read for the steps' call patterns"
+    },
+    {
+      "name": "needs_firm",
+      "type": "boolean",
+      "default": true,
+      "label": "the card waits until the person has a firm (the first screen is the choice alone)"
     }
   ],
   "expr": {
@@ -38,11 +44,12 @@
       "owner_sees": "$owner_sees",
       "scan_most": "$scan_most",
       "ticks_stay": "$ticks_stay",
-      "calls_most": "$calls_most"
+      "calls_most": "$calls_most",
+      "needs_firm": "$needs_firm"
     }
   },
   "returns": "record",
-  "version": 1,
+  "version": 2,
   "status": "published",
   "description_nl": "2026-10-09 owner: a Start here card for a new user who has no idea how to proceed. The steps are the domain's chip start.steps; whether a step is done is chip start.done over facts core/startcard.py counts from real work.",
   "test_cases": [
@@ -52,7 +59,8 @@
         "owner_sees": false,
         "scan_most": 200,
         "ticks_stay": true,
-        "calls_most": 2000
+        "calls_most": 2000,
+        "needs_firm": true
       }
     }
   ]

@@ -14,10 +14,12 @@
   "title": "My firm",
   "start_url": "/#/firm",
   "covers": [
-    "what to keep ready",
-    "the firm's details and papers",
-    "sending for approval",
-    "the team and roles"
+    "who you are",
+    "keep these ready",
+    "where you stand",
+    "details",
+    "papers and sending",
+    "your team"
   ],
   "steps": [
     {
@@ -25,7 +27,21 @@
       "say": "Get your firm approved in {product}, then bring in your team.",
       "do": [
         {
+          "wait_for": ".fi-picks"
+        },
+        {
           "wait": 1
+        }
+      ]
+    },
+    {
+      "chapter": "Who you are",
+      "say": "The first screen is just two cards: filing your own return (or your family HUF's), or running a CA practice. Pick the one that fits. Picked wrong? Use Not what you meant, choose again at the foot of the next page - nothing is lost.",
+      "do": [
+        {
+          "highlight_target": ".fi-picks|.fi-hero|main",
+          "optional": true,
+          "timeout": 5
         }
       ]
     },
@@ -53,7 +69,7 @@
     },
     {
       "chapter": "Details",
-      "say": "PAN, TAN, GSTIN, FRN, the owner's last 4 Aadhaar digits and the mobile linked to your tax papers.",
+      "say": "A CA firm gives PAN, TAN, GSTIN, FRN, the owner's last 4 Aadhaar digits and the mobile linked to its tax papers. An individual gives only name, PAN, mobile and email.",
       "do": [
         {
           "highlight_target": ".fi-card|main",
@@ -64,7 +80,7 @@
     },
     {
       "chapter": "Papers and sending",
-      "say": "Upload the masked Aadhaar, PAN card, TAN letter and GST certificate, then send them for approval.",
+      "say": "A CA firm uploads the masked Aadhaar, PAN card, TAN letter and GST certificate, then sends them for approval. An individual has nothing to upload: Send opens the account at once and goes straight to New filing.",
       "do": [
         {
           "highlight_target": ".fi-banner|main",

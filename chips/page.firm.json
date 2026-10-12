@@ -95,6 +95,15 @@
         "suspended"
       ],
       "label": "note states"
+    },
+    {
+      "name": "kind_art",
+      "type": "json",
+      "default": {
+        "ca_firm": "practice",
+        "self": "person"
+      },
+      "label": "kind art"
     }
   ],
   "expr": {
@@ -106,11 +115,12 @@
       "kind_icon": "$kind_icon",
       "state_color": "$state_color",
       "state_icon": "$state_icon",
-      "note_states": "$note_states"
+      "note_states": "$note_states",
+      "kind_art": "$kind_art"
     }
   },
   "returns": "record",
-  "version": 1,
+  "version": 2,
   "status": "published",
   "description_nl": "Presentation knobs; the server decides every move (firm.move).",
   "test_cases": [
@@ -170,7 +180,11 @@
           "returned",
           "rejected",
           "suspended"
-        ]
+        ],
+        "kind_art": {
+          "ca_firm": "practice",
+          "self": "person"
+        }
       }
     }
   ]
