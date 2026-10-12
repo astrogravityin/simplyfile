@@ -10,7 +10,7 @@
     {
       "name": "pattern",
       "type": "long",
-      "default": "(3CD|ITR-?3|ITR-?5)\\s+([A-Za-z0-9().]+)(?:\\s*#\\s*([\\w().]+)|\\s+([\\w().]+))?",
+      "default": "(3CD|ITR-?3|ITR-?5|ITR-?6)\\s+([A-Za-z0-9().]+)(?:\\s*#\\s*([\\w().]+)|\\s+([\\w().]+))?",
       "label": "pattern"
     }
   ],
@@ -21,14 +21,14 @@
     }
   },
   "returns": "record",
-  "version": 1,
+  "version": 2,
   "status": "published",
-  "description_nl": "An SF Ref is <form> <table> [#serial]: form 3CD, ITR3 or ITR5; for 3CD the table is a clause 1-44 with its letters, e.g. 31(a); for an ITR the table is a schedule code from this list. Several are joined with ';'.",
+  "description_nl": "An SF Ref is <form> <table> [#serial]: form 3CD, ITR3, ITR5 or ITR6; for 3CD the table is a clause 1-44 with its letters, e.g. 31(a); for an ITR the table is a schedule code from this list. Several are joined with ';'. 2026-10-11: ITR6 refs for a company (ITR6 BP profit, ITR6 DEP pm15, ITR6 MAT add_tax, ITR6 BS capital ...).",
   "test_cases": [
     {
       "args": {},
       "expect_value": {
-        "pattern": "(3CD|ITR-?3|ITR-?5)\\s+([A-Za-z0-9().]+)(?:\\s*#\\s*([\\w().]+)|\\s+([\\w().]+))?"
+        "pattern": "(3CD|ITR-?3|ITR-?5|ITR-?6)\\s+([A-Za-z0-9().]+)(?:\\s*#\\s*([\\w().]+)|\\s+([\\w().]+))?"
       }
     }
   ]

@@ -143,6 +143,14 @@
       "type": "number",
       "default": 331,
       "label": "last day to revise (in the year after the AY starts), with the s.234I fee"
+    },
+    {
+      "name": "audit_forms",
+      "type": "json",
+      "default": [
+        "ITR-6"
+      ],
+      "label": "forms whose due date is the audit date whatever the 44AB flag (a company: s.139(1) Explanation 2(a))"
     }
   ],
   "expr": {
@@ -192,9 +200,19 @@
           },
           {
             "when": {
-              "op": "eq",
-              "left": "$audit",
-              "right": true
+              "op": "any",
+              "items": [
+                {
+                  "op": "eq",
+                  "left": "$audit",
+                  "right": true
+                },
+                {
+                  "op": "in_set",
+                  "value": "$form",
+                  "set": "$audit_forms"
+                }
+              ]
             },
             "then": {
               "vop": "add",
@@ -505,9 +523,19 @@
                   },
                   {
                     "when": {
-                      "op": "eq",
-                      "left": "$audit",
-                      "right": true
+                      "op": "any",
+                      "items": [
+                        {
+                          "op": "eq",
+                          "left": "$audit",
+                          "right": true
+                        },
+                        {
+                          "op": "in_set",
+                          "value": "$form",
+                          "set": "$audit_forms"
+                        }
+                      ]
                     },
                     "then": {
                       "vop": "add",
@@ -946,9 +974,19 @@
         "cases": [
           {
             "when": {
-              "op": "eq",
-              "left": "$audit",
-              "right": true
+              "op": "any",
+              "items": [
+                {
+                  "op": "eq",
+                  "left": "$audit",
+                  "right": true
+                },
+                {
+                  "op": "in_set",
+                  "value": "$form",
+                  "set": "$audit_forms"
+                }
+              ]
             },
             "then": {
               "vop": "coalesce",
@@ -999,9 +1037,19 @@
           },
           {
             "when": {
-              "op": "eq",
-              "left": "$audit",
-              "right": true
+              "op": "any",
+              "items": [
+                {
+                  "op": "eq",
+                  "left": "$audit",
+                  "right": true
+                },
+                {
+                  "op": "in_set",
+                  "value": "$form",
+                  "set": "$audit_forms"
+                }
+              ]
             },
             "then": {
               "vop": "add",
@@ -1065,9 +1113,9 @@
     }
   },
   "returns": "record",
-  "version": 3,
+  "version": 4,
   "status": "published",
-  "description_nl": "Income-tax Act dates as amended by the Finance Acts 2025 and 2026: due date u/s 139(1) 31 July (ITR-1 / ITR-2), 31 August for business or profession without audit (ITR-3 / 4 / 5, Finance Act 2026), 31 October with a tax audit, 30 November with a transfer pricing report in Form 3CEB u/s 92E); a belated (139(4)) or revised (139(5)) return by 31 December of the AY; an updated return (ITR-U, 139(8A)) once, within 48 months from the end of the AY. Dates are numbers yyyymmdd so the chip compares them. 2026-10-06: extensions - a year's dates as CBDT extended them by circular (AY 2026-27, Circular 07/2026: audit cases' return 21 November, audit report 21 October); every other year keeps the rule's dates. From AY 2026-27 (Finance Act 2026) a return may be revised to 31 March of the AY - free to 31 December (revise_free_by), then with the s.234I fee (fee_234i). extended_by names the circular only for the returns it covers (audit cases); fee_234i only within the revise window. 2026-10-07: due_rule - the due date without a circular's extension (s.234A counts from it when the owed tax is over 1 lakh: compute.due_234a).",
+  "description_nl": "Income-tax Act dates as amended by the Finance Acts 2025 and 2026: due date u/s 139(1) 31 July (ITR-1 / ITR-2), 31 August for business or profession without audit (ITR-3 / 4 / 5, Finance Act 2026), 31 October with a tax audit, 30 November with a transfer pricing report in Form 3CEB u/s 92E); a belated (139(4)) or revised (139(5)) return by 31 December of the AY; an updated return (ITR-U, 139(8A)) once, within 48 months from the end of the AY. Dates are numbers yyyymmdd so the chip compares them. 2026-10-06: extensions - a year's dates as CBDT extended them by circular (AY 2026-27, Circular 07/2026: audit cases' return 21 November, audit report 21 October); every other year keeps the rule's dates. From AY 2026-27 (Finance Act 2026) a return may be revised to 31 March of the AY - free to 31 December (revise_free_by), then with the s.234I fee (fee_234i). extended_by names the circular only for the returns it covers (audit cases); fee_234i only within the revise window. 2026-10-07: due_rule - the due date without a circular's extension (s.234A counts from it when the owed tax is over 1 lakh: compute.due_234a). 2026-10-11: audit_forms: a company (ITR-6) files by the audit date - 31 October, s.139(1) Explanation 2(a) - with or without a 44AB audit; 30 November with Form 3CEB.",
   "test_cases": [
     {
       "args": {
@@ -1299,6 +1347,51 @@
         "audit_report_by": 20261021,
         "extended_by": "",
         "due_rule": 20260731
+      }
+    },
+    {
+      "args": {
+        "ay_year": 2026,
+        "form": "ITR-6",
+        "audit": false,
+        "filed_on": 20261015,
+        "today": 20261015
+      },
+      "expect_value": {
+        "due": 20261121,
+        "revise_by": 20270331,
+        "updated_by": 20310331,
+        "kind": "original",
+        "may_revise": false,
+        "may_update": false,
+        "revise_free_by": 20261231,
+        "fee_234i": false,
+        "audit_report_by": 20261021,
+        "extended_by": "CBDT Circular No. 07/2026 dated 28 September 2026",
+        "due_rule": 20261031
+      }
+    },
+    {
+      "args": {
+        "ay_year": 2026,
+        "form": "ITR-6",
+        "audit": false,
+        "filed_on": 20261015,
+        "today": 20261015,
+        "tp": true
+      },
+      "expect_value": {
+        "due": 20261130,
+        "revise_by": 20270331,
+        "updated_by": 20310331,
+        "kind": "original",
+        "may_revise": false,
+        "may_update": false,
+        "revise_free_by": 20261231,
+        "fee_234i": false,
+        "audit_report_by": 20261021,
+        "extended_by": "CBDT Circular No. 07/2026 dated 28 September 2026",
+        "due_rule": 20261130
       }
     }
   ]

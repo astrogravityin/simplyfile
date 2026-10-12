@@ -21,9 +21,9 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 PY = sys.executable
-MODULES = ["firms", "itr_json", "myreturn", "myreturn_read", "rulewatch", "taxwatch", "rulebook", "analytics", "portal_stats", "server", "delegation", "chipchat", "chatfam", "notes", "dock_issues", "itr_import", "clients", "intake", "recon", "compute", "audit", "changelog", "edition", "tourvideo", "manuals", "projects", "scan", "source", "keyshare",
+MODULES = ["firms", "itr_json", "myreturn", "myreturn_read", "wizard", "wizard_firm", "rulewatch", "taxwatch", "rulebook", "analytics", "portal_stats", "server", "delegation", "chipchat", "chatfam", "notes", "dock_issues", "itr_import", "clients", "intake", "recon", "compute", "company", "audit", "changelog", "edition", "tourvideo", "manuals", "projects", "scan", "source", "keyshare",
            "keysales", "wallet", "guideme"]
-SCREENS = ["firm", "analytics", "delegate", "clients", "myreturn", "itrimport", "intake", "recon", "compute", "audit", "manuals", "howto", "guideme", "tourvideo", "setup", "keys", "buykey", "keysales", "approvals", "portalstats", "server", "taxwatch"]
+SCREENS = ["firm", "analytics", "delegate", "wizard", "clients", "myreturn", "itrimport", "intake", "recon", "compute", "audit", "manuals", "howto", "guideme", "tourvideo", "setup", "keys", "buykey", "keysales", "approvals", "portalstats", "server", "taxwatch"]
 
 
 def run(args: list[str], what: str) -> None:
@@ -417,6 +417,14 @@ LEAKS = {
         ('("pan", "tan"', "which fields are codes -> chip firm.settings code_fields"),
         ('in ("return", "reject")', "which moves need a note -> chip firm.settings needs_note"),
     ],
+    "company.py": [                                   # 2026-10-11 ITR-6: the rates and limits stay in chips company.*
+        ("4000000000", "the 400 crore turnover limit -> chip company.settings rates_by_ay"),
+        ("* 0.22", "the 115BAA rate -> chip company.settings rates_by_ay options"),
+        ("* 0.15", "MAT or 115BAB -> chip company.settings rates_by_ay"),
+        ("200000)", "the house-property set-off cap -> chip company.settings hp_setoff_cap"),
+        ("age > 8", "the 8-year carry forward -> chip company.loss_ok"),
+        ('== "115BAA"', "what an option means -> chip company.rate"),
+    ],
     "itr_json.py": [
         ('"94A"', "a TDS section code -> chip itr.codes sections"),
         ('== "individual"', "who is a person -> chip itr.codes person_statuses"),
@@ -435,14 +443,17 @@ LEAKS = {
         ("['tds', 'tds_claim']", "which findings belong to which check -> chip page.recon checks"),
     ],
 }
-REQUIRED_CHIPS = ["demo.host", "start.steps", "rulebook.sections", "myreturn.business", "taxwatch.settings", "taxwatch.items", "ui.taxwatch", "guide.taxwatch", "myreturn.cyla", "myreturn.rates", "myreturn.age_band", "myreturn.hra", "myreturn.salary", "myreturn.house", "myreturn.hp_total", "myreturn.family_pension", "myreturn.deductions", "myreturn.tax", "myreturn.better", "myreturn.form", "myreturn.settings", "myreturn.sources", "myreturn.checks", "myreturn.steps", "myreturn.read", "myreturn.json", "ui.myreturn", "guide.myreturn", "audit.settings", "audit.applicable", "audit.trend", "audit.checklist", "audit.pattern", "audit.risk", "audit.risk_level", "audit.gst_read", "audit.gst", "audit.gst_month", "audit.llp_audit", "audit.as_level", "audit.as_list", "ui.audit", "page.audit", "list.delegations", "list.firm_team", "list.due_radar", "list.firm_requests", "list.portal_firms", "list.chat_turns", "chat.examples", "chat.surprise", "chat.next", "chat.train", "notes.settings", "notes.list_view", "issues.mine_view", "chat.families", "chat.fee_234f", "chat.pan_kind", "chat.pick", "ui.chatfam", "chat.settings", "chat.faq", "chat.route", "ui.chipchat", "page.dock", "ui.dock", "delegation.settings", "delegation.check", "delegation.covers", "ui.delegate", "server.settings", "server.disk", "server.backup", "server.site", "server.trend", "ui.server", "page.server", "portalstats.settings", "portalstats.firm", "portalstats.rollup", "ui.portalstats", "itr.read", "itr.codes_in", "itr.import_ok", "itr.statement", "ui.itrimport", "analytics.settings", "analytics.client", "analytics.rollup", "ui.analytics", "page.analytics", "compute.settings", "compute.tax", "compute.tax_parts", "compute.balance", "compute.regime", "compute.total_income",
+REQUIRED_CHIPS = ["demo.host", "start.steps", "wizard.settings", "wizard.scenarios", "wizard.docs", "wizard.doc_need", "wizard.offered", "wizard.form", "wizard.pan_kind", "wizard.asks", "wizard.prompts", "wizard.next_step", "wizard.who_state", "wizard.work_open", "wizard.firm_next", "wizard.entity_sniff", "wizard.constitution", "wizard.route", "wizard.biz_kind", "wizard.cases", "showcase.case_films", "myreturn.sniff", "ui.wizard", "guide.wizard", "rulebook.sections", "myreturn.business", "taxwatch.settings", "taxwatch.items", "ui.taxwatch", "guide.taxwatch", "myreturn.cyla", "myreturn.rates", "myreturn.age_band", "myreturn.hra", "myreturn.salary", "myreturn.house", "myreturn.hp_total", "myreturn.family_pension", "myreturn.deductions", "myreturn.tax", "myreturn.better", "myreturn.form", "myreturn.settings", "myreturn.sources", "myreturn.checks", "myreturn.steps", "myreturn.read", "myreturn.json", "ui.myreturn", "guide.myreturn", "audit.settings", "audit.applicable", "audit.trend", "audit.checklist", "audit.pattern", "audit.risk", "audit.risk_level", "audit.gst_read", "audit.gst", "audit.gst_month", "audit.llp_audit", "audit.as_level", "audit.as_list", "ui.audit", "page.audit", "list.delegations", "list.firm_team", "list.due_radar", "list.firm_requests", "list.portal_firms", "list.chat_turns", "chat.examples", "chat.surprise", "chat.next", "chat.train", "notes.settings", "notes.list_view", "issues.mine_view", "chat.families", "chat.fee_234f", "chat.pan_kind", "chat.pick", "ui.chatfam", "chat.settings", "chat.faq", "chat.route", "ui.chipchat", "page.dock", "ui.dock", "delegation.settings", "delegation.check", "delegation.covers", "ui.delegate", "server.settings", "server.disk", "server.backup", "server.site", "server.trend", "ui.server", "page.server", "portalstats.settings", "portalstats.firm", "portalstats.rollup", "ui.portalstats", "itr.read", "itr.codes_in", "itr.import_ok", "itr.statement", "ui.itrimport", "analytics.settings", "analytics.client", "analytics.rollup", "ui.analytics", "page.analytics", "compute.settings", "compute.tax", "compute.tax_parts", "compute.balance", "compute.regime", "compute.total_income",
                   "compute.hp", "close.move", "close.settings", "close.signoff", "close.steps", "recon.settings", "page.recon",
                   "page.intake", "ui.compute",
                   "firm.settings", "firm.roles", "firm.problem", "firm.ready", "firm.move", "firm.may", "firm.sla", "firm.steps",
                   "firm.client_room", "firm.team_ok", "ui.firm", "page.firm",
                   "close.stage", "close.dates", "close.ack_ok", "close.itr_u", "compute.interest", "compute.paid_kind", "compute.no_advance",
                   "compute.refund_interest", "itr.settings", "itr.codes", "itr.map", "itr.books", "intake.suggest", "intake.row_sign", "intake.amount_col",
-                  "tar.settings", "tar.columns", "tar.codes", "tar.map"]
+                  "tar.settings", "tar.columns", "tar.codes", "tar.map",
+                  # 2026-10-11 ITR-6 (a company's return): company.py asks these; tools/make_itr6_chips.py writes them
+                  "company.settings", "company.problem", "company.rate", "company.tax", "company.tax_s1", "company.tax_s2", "company.mat",
+                  "company.dep_block", "company.setoff", "company.loss_ok", "company.d80g", "company.d80m", "rulebook.sections"]
 
 
 MAIN = '\nif __name__ == "__main__":'
@@ -464,7 +475,7 @@ def chips_first_check() -> None:
     print(f"  chips first: no decision in code ({sum(len(r) for r in LEAKS.values())} shapes watched), {len(REQUIRED_CHIPS)} chips present OK")
 
 
-GUIDED = ["firm", "analytics", "delegate", "clients", "myreturn", "itrimport", "intake", "recon", "compute", "audit", "approvals", "portalstats", "server", "taxwatch",
+GUIDED = ["firm", "analytics", "delegate", "wizard", "clients", "myreturn", "itrimport", "intake", "recon", "compute", "audit", "approvals", "portalstats", "server", "taxwatch",
           "keys"]   # 2026-10-10: Account & key - its tour rebuilt from its Guide me (the old hand-made one said "draws stills")
 
 

@@ -63,6 +63,7 @@ import recon
 import audit
 import changelog
 import compute
+import company
 import itr_json
 import analytics
 import chipchat
@@ -73,6 +74,7 @@ import portal_stats
 import server
 import itr_import
 import myreturn
+import wizard
 import taxwatch
 import providers
 import keyshare
@@ -1111,7 +1113,7 @@ def api_approvals(state: str = "", _: dict = Depends(screen("approvals"))):
 # --- Clients & years (SimplyFile, 2026-10-03): the client master, carried into each assessment year (clients.py) ----
 @app.get("/api/clients/settings")
 def api_clients_settings(_: dict = Depends(firms.gate("clients"))):
-    return clients.settings()
+    return clients.settings() | {"company": company.settings()}    # 2026-10-11 ITR-6: the company part's kinds, options, blocks (chip company.settings)
 
 
 @app.get("/api/clients/summary")
@@ -1300,6 +1302,52 @@ async def api_myreturn_start(ay: str, file: UploadFile = File(...), password: st
     """A return begun from a document - the pre-filled JSON or a filed return names the person, who becomes the client."""
     data = await file.read()
     return await run_in_threadpool(myreturn.start, u, ay, file.filename or "file", data, password, on_old, on_same)
+
+
+# --- New filing (2026-10-11): the guided way into My return - what applies, the documents, upload, review (wizard.py) -------
+# The path names a filing ({wid}), not a client: wizard._load refuses another firm's (the tenant wall) - firms.gate checks the screen.
+@app.get("/api/wizard")
+def api_wizard_home(u: dict = Depends(firms.gate("wizard"))):
+    """Who a return may be for, what may apply, and the filings waiting to be carried on."""
+    return wizard.home(u)
+
+
+@app.post("/api/wizard")
+def api_wizard_start(body: dict = Body(...), u: dict = Depends(firms.gate("wizard"))):
+    return wizard.start(u, body)
+
+
+@app.get("/api/wizard/{wid}")
+def api_wizard_get(wid: str, u: dict = Depends(firms.gate("wizard"))):
+    return wizard.view_of(u, wid)
+
+
+@app.put("/api/wizard/{wid}")
+def api_wizard_set(wid: str, body: dict = Body(...), u: dict = Depends(firms.gate("wizard"))):
+    """Who, what applies, the step reached, the popup's answers."""
+    return wizard.update(u, wid, body)
+
+
+@app.delete("/api/wizard/{wid}")
+def api_wizard_discard(wid: str, u: dict = Depends(firms.gate("wizard"))):
+    return wizard.discard(u, wid)
+
+
+@app.post("/api/wizard/{wid}/files")
+async def api_wizard_file(wid: str, file: UploadFile = File(...), password: str = Form(""), on_same: str = Form(""),
+                          u: dict = Depends(firms.gate("wizard"))):
+    data = await file.read()
+    return await run_in_threadpool(wizard.upload, u, wid, file.filename or "file", data, password, on_same)
+
+
+@app.delete("/api/wizard/{wid}/files/{fid}")
+def api_wizard_file_remove(wid: str, fid: str, u: dict = Depends(firms.gate("wizard"))):
+    return wizard.remove(u, wid, fid)
+
+
+@app.post("/api/wizard/{wid}/finish")
+def api_wizard_finish(wid: str, u: dict = Depends(firms.gate("wizard"))):
+    return wizard.finish(u, wid)
 
 
 @app.post("/api/myreturn/{cid}/{ay}/docs")

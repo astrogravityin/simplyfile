@@ -1,0 +1,97 @@
+{
+  "chip_id": "wizard.route",
+  "kind": "accessor",
+  "set": "wizard",
+  "label": "New filing: where each read document goes in the firm flow",
+  "aliases": [
+    "new filing: where each read document goes in the firm flow"
+  ],
+  "params": [
+    {
+      "name": "dest",
+      "type": "json",
+      "default": {
+        "coi": "client",
+        "books": "intake",
+        "bank": "intake",
+        "26as": "recon",
+        "ais": "recon",
+        "tis": "recon",
+        "gst_json": "gst",
+        "gst_cert": "client",
+        "deed": "client",
+        "itr_prev": "keep",
+        "gst": "keep",
+        "filed": "keep",
+        "filed_prev": "keep",
+        "prefill": "keep",
+        "form16": "keep",
+        "cg": "keep"
+      },
+      "label": "dest"
+    },
+    {
+      "name": "dest_default",
+      "type": "text",
+      "default": "keep",
+      "label": "dest_default"
+    },
+    {
+      "name": "screen",
+      "type": "json",
+      "default": {
+        "intake": "intake",
+        "recon": "recon",
+        "gst": "audit",
+        "client": "clients",
+        "keep": ""
+      },
+      "label": "screen"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "dest": "$dest",
+      "dest_default": "$dest_default",
+      "screen": "$screen"
+    }
+  },
+  "returns": "record",
+  "status": "published",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "dest": {
+          "coi": "client",
+          "books": "intake",
+          "bank": "intake",
+          "26as": "recon",
+          "ais": "recon",
+          "tis": "recon",
+          "gst_json": "gst",
+          "gst_cert": "client",
+          "deed": "client",
+          "itr_prev": "keep",
+          "gst": "keep",
+          "filed": "keep",
+          "filed_prev": "keep",
+          "prefill": "keep",
+          "form16": "keep",
+          "cg": "keep"
+        },
+        "dest_default": "keep",
+        "screen": {
+          "intake": "intake",
+          "recon": "recon",
+          "gst": "audit",
+          "client": "clients",
+          "keep": ""
+        }
+      }
+    }
+  ],
+  "version": 2,
+  "description_nl": "2026-10-11: the firm flow's readers: the books and a bank statement into Intake & map (each row tagged), 26AS / AIS / TIS into Reconcile, GSTR-3B / GSTR-1 JSON into the tax audit's GST check, the GST certificate and the deed onto the client itself; last year's ITR-5 is kept here and brought in on Import old returns (it needs the acknowledgement number)."
+}

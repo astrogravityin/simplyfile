@@ -1,0 +1,438 @@
+{
+  "chip_id": "company.d80g",
+  "kind": "accessor",
+  "set": "company",
+  "label": "Company: Schedule 80G - donations, the qualifying limit",
+  "aliases": [
+    "company: schedule 80g - donations, the q"
+  ],
+  "params": [
+    {
+      "name": "d100",
+      "type": "number",
+      "default": 0,
+      "label": "100% without limit"
+    },
+    {
+      "name": "d50",
+      "type": "number",
+      "default": 0,
+      "label": "50% without limit"
+    },
+    {
+      "name": "d100q",
+      "type": "number",
+      "default": 0,
+      "label": "100% within the qualifying limit"
+    },
+    {
+      "name": "d50q",
+      "type": "number",
+      "default": 0,
+      "label": "50% within the qualifying limit"
+    },
+    {
+      "name": "adj_gti",
+      "type": "number",
+      "default": 0,
+      "label": "adjusted gross total income (GTI less special-rate gains and other VI-A deductions)"
+    },
+    {
+      "name": "limit_pct",
+      "type": "number",
+      "default": 10,
+      "label": "qualifying limit %"
+    },
+    {
+      "name": "allowed",
+      "type": "boolean",
+      "default": true,
+      "label": "80G may be claimed under the option (company.rate via)"
+    }
+  ],
+  "expr": {
+    "vop": "choose",
+    "cases": [
+      {
+        "when": {
+          "op": "eq",
+          "left": "$allowed",
+          "right": true
+        },
+        "then": {
+          "vop": "record",
+          "fields": {
+            "no_limit": {
+              "vop": "total",
+              "values": [
+                "$d100",
+                {
+                  "vop": "round_to",
+                  "value": {
+                    "vop": "div",
+                    "a": {
+                      "vop": "mul",
+                      "a": "$d50",
+                      "b": 50
+                    },
+                    "b": 100
+                  },
+                  "digits": 0
+                }
+              ]
+            },
+            "limit": {
+              "vop": "largest",
+              "values": [
+                0,
+                {
+                  "vop": "div",
+                  "a": {
+                    "vop": "mul",
+                    "a": "$adj_gti",
+                    "b": "$limit_pct"
+                  },
+                  "b": 100
+                }
+              ]
+            },
+            "q100": {
+              "vop": "smallest",
+              "values": [
+                "$d100q",
+                {
+                  "vop": "largest",
+                  "values": [
+                    0,
+                    {
+                      "vop": "div",
+                      "a": {
+                        "vop": "mul",
+                        "a": "$adj_gti",
+                        "b": "$limit_pct"
+                      },
+                      "b": 100
+                    }
+                  ]
+                }
+              ]
+            },
+            "q50": {
+              "vop": "round_to",
+              "value": {
+                "vop": "div",
+                "a": {
+                  "vop": "mul",
+                  "a": {
+                    "vop": "smallest",
+                    "values": [
+                      "$d50q",
+                      {
+                        "vop": "sub",
+                        "a": {
+                          "vop": "largest",
+                          "values": [
+                            0,
+                            {
+                              "vop": "div",
+                              "a": {
+                                "vop": "mul",
+                                "a": "$adj_gti",
+                                "b": "$limit_pct"
+                              },
+                              "b": 100
+                            }
+                          ]
+                        },
+                        "b": {
+                          "vop": "smallest",
+                          "values": [
+                            "$d100q",
+                            {
+                              "vop": "largest",
+                              "values": [
+                                0,
+                                {
+                                  "vop": "div",
+                                  "a": {
+                                    "vop": "mul",
+                                    "a": "$adj_gti",
+                                    "b": "$limit_pct"
+                                  },
+                                  "b": 100
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  },
+                  "b": 50
+                },
+                "b": 100
+              },
+              "digits": 0
+            },
+            "within_limit": {
+              "vop": "total",
+              "values": [
+                {
+                  "vop": "smallest",
+                  "values": [
+                    "$d100q",
+                    {
+                      "vop": "largest",
+                      "values": [
+                        0,
+                        {
+                          "vop": "div",
+                          "a": {
+                            "vop": "mul",
+                            "a": "$adj_gti",
+                            "b": "$limit_pct"
+                          },
+                          "b": 100
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "vop": "round_to",
+                  "value": {
+                    "vop": "div",
+                    "a": {
+                      "vop": "mul",
+                      "a": {
+                        "vop": "smallest",
+                        "values": [
+                          "$d50q",
+                          {
+                            "vop": "sub",
+                            "a": {
+                              "vop": "largest",
+                              "values": [
+                                0,
+                                {
+                                  "vop": "div",
+                                  "a": {
+                                    "vop": "mul",
+                                    "a": "$adj_gti",
+                                    "b": "$limit_pct"
+                                  },
+                                  "b": 100
+                                }
+                              ]
+                            },
+                            "b": {
+                              "vop": "smallest",
+                              "values": [
+                                "$d100q",
+                                {
+                                  "vop": "largest",
+                                  "values": [
+                                    0,
+                                    {
+                                      "vop": "div",
+                                      "a": {
+                                        "vop": "mul",
+                                        "a": "$adj_gti",
+                                        "b": "$limit_pct"
+                                      },
+                                      "b": 100
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          }
+                        ]
+                      },
+                      "b": 50
+                    },
+                    "b": 100
+                  },
+                  "digits": 0
+                }
+              ]
+            },
+            "total": {
+              "vop": "total",
+              "values": [
+                {
+                  "vop": "total",
+                  "values": [
+                    "$d100",
+                    {
+                      "vop": "round_to",
+                      "value": {
+                        "vop": "div",
+                        "a": {
+                          "vop": "mul",
+                          "a": "$d50",
+                          "b": 50
+                        },
+                        "b": 100
+                      },
+                      "digits": 0
+                    }
+                  ]
+                },
+                {
+                  "vop": "smallest",
+                  "values": [
+                    "$d100q",
+                    {
+                      "vop": "largest",
+                      "values": [
+                        0,
+                        {
+                          "vop": "div",
+                          "a": {
+                            "vop": "mul",
+                            "a": "$adj_gti",
+                            "b": "$limit_pct"
+                          },
+                          "b": 100
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "vop": "round_to",
+                  "value": {
+                    "vop": "div",
+                    "a": {
+                      "vop": "mul",
+                      "a": {
+                        "vop": "smallest",
+                        "values": [
+                          "$d50q",
+                          {
+                            "vop": "sub",
+                            "a": {
+                              "vop": "largest",
+                              "values": [
+                                0,
+                                {
+                                  "vop": "div",
+                                  "a": {
+                                    "vop": "mul",
+                                    "a": "$adj_gti",
+                                    "b": "$limit_pct"
+                                  },
+                                  "b": 100
+                                }
+                              ]
+                            },
+                            "b": {
+                              "vop": "smallest",
+                              "values": [
+                                "$d100q",
+                                {
+                                  "vop": "largest",
+                                  "values": [
+                                    0,
+                                    {
+                                      "vop": "div",
+                                      "a": {
+                                        "vop": "mul",
+                                        "a": "$adj_gti",
+                                        "b": "$limit_pct"
+                                      },
+                                      "b": 100
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          }
+                        ]
+                      },
+                      "b": 50
+                    },
+                    "b": 100
+                  },
+                  "digits": 0
+                }
+              ]
+            }
+          }
+        }
+      }
+    ],
+    "else": {
+      "no_limit": 0,
+      "limit": 0,
+      "q100": 0,
+      "q50": 0,
+      "within_limit": 0,
+      "total": 0
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-11: s.80G: donations without a limit at 100% / 50%; those within the qualifying limit together at most 10% of the adjusted gross total income (s.80G(4)), the 100% ones first, then 50% of the rest. A CSR contribution to the Swachh Bharat Kosh or the Clean Ganga Fund gets nothing (proviso to s.80G(2)(iiihk)/(iiihl)); a company under 115BAA / 115BAB claims no 80G at all (s.115BAA(2)(ii)).",
+  "test_cases": [
+    {
+      "args": {
+        "d100": 100000,
+        "d50": 200000
+      },
+      "expect_value": {
+        "no_limit": 200000.0,
+        "limit": 0,
+        "q100": 0,
+        "q50": 0,
+        "within_limit": 0.0,
+        "total": 200000.0
+      }
+    },
+    {
+      "args": {
+        "d50q": 500000,
+        "adj_gti": 2000000
+      },
+      "expect_value": {
+        "no_limit": 0.0,
+        "limit": 200000,
+        "q100": 0,
+        "q50": 100000,
+        "within_limit": 100000.0,
+        "total": 100000.0
+      }
+    },
+    {
+      "args": {
+        "d100q": 150000,
+        "d50q": 500000,
+        "adj_gti": 2000000
+      },
+      "expect_value": {
+        "no_limit": 0.0,
+        "limit": 200000,
+        "q100": 150000,
+        "q50": 25000,
+        "within_limit": 175000.0,
+        "total": 175000.0
+      }
+    },
+    {
+      "args": {
+        "d100": 100000,
+        "allowed": false
+      },
+      "expect_value": {
+        "no_limit": 0,
+        "limit": 0,
+        "q100": 0,
+        "q50": 0,
+        "within_limit": 0,
+        "total": 0
+      }
+    }
+  ]
+}

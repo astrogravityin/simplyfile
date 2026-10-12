@@ -1,0 +1,143 @@
+{
+  "prod_base": "https://sf.valuestream.in",
+  "voice": "en-IN-NeerjaNeural",
+  "rate": "+0%",
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "blur": [
+    "#whoami",
+    "#userpop .head"
+  ],
+  "page_key": "sf-company",
+  "title": "A company's return (ITR-6)",
+  "start_url": "/#/clients",
+  "note": "2026-10-11: the two demo companies of tools/showcase/pre_companies.py (Zenith Demo Traders - 115BAA; Kaveri Demo Fabricators - MAT, losses).",
+  "covers": [
+    "the company master: CIN, option, directors, shareholders",
+    "the final accounts, computation and fixed-asset schedule, mapped",
+    "26AS",
+    "depreciation by block, additional depreciation",
+    "losses brought forward, s.72 / s.79, unabsorbed depreciation",
+    "MAT u/s 115JB and the MAT credit",
+    "the 115BAA option",
+    "the ITR-6 JSON, checked against the CBDT schema"
+  ],
+  "steps": [
+    {
+      "chapter": "A company's return",
+      "say": "A company files ITR-6. In {product} it goes the same road as a firm: the client, its documents, 26AS, then the computation and the return in the department's own JSON.",
+      "do": [
+        {"wait_for": ".cl-row"},
+        {"wait": 1}
+      ]
+    },
+    {
+      "chapter": "The company master",
+      "say": "Status Company, PAN with the fourth letter C. Its CIN, date of incorporation, kind and tax option - normal provisions, 115BA, 115BAA or 115BAB - go into Part A General.",
+      "do": [
+        {"click": ".cl-row:has-text('Kaveri Demo') [data-open]"},
+        {"wait_for": "#co-box"},
+        {"scroll_to": "#co-box"},
+        {"highlight_target": "#co-box", "optional": true, "timeout": 5}
+      ]
+    },
+    {
+      "chapter": "Directors and shareholders",
+      "say": "The directors - the managing director signs the return - and every shareholder of one percent or more, for Schedule SH. A bad CIN, a DIN that is not eight digits, or shares over a hundred percent are stopped here.",
+      "do": [
+        {"scroll_to": "#co-holders"},
+        {"highlight_target": "#co-dirs|#co-box", "optional": true, "timeout": 5},
+        {"wait": 1},
+        {"highlight_target": "#co-holders|#co-box", "optional": true, "timeout": 5},
+        {"press": "Escape"},
+        {"wait": 1}
+      ]
+    },
+    {
+      "chapter": "The documents, mapped",
+      "say": "The final accounts in the Schedule III layout, the computation of income with the Form 29B book-profit rows, and the fixed-asset schedule by block. Every figure carries its SF Ref: ITR6 PL, ITR6 BS, ITR6 BP, ITR6 MAT, ITR6 DEP.",
+      "do": [
+        {"goto": "/#/intake"},
+        {"wait": 1.5},
+        {"click": ".in-pick-row:has-text('Kaveri Demo') [data-choose]"},
+        {"wait": 2},
+        {"highlight_target": ".in-files|.in-file|main", "optional": true, "timeout": 5}
+      ]
+    },
+    {
+      "chapter": "26AS",
+      "say": "The 26AS gives the TDS - interest, and 194Q by the buyers - and the advance tax challans. A credit with no matching income is explained once, and the year moves on.",
+      "do": [
+        {"goto": "/#/recon"},
+        {"wait": 1.5},
+        {"click": ".in-pick-row:has-text('Kaveri Demo') [data-choose]"},
+        {"wait": 2},
+        {"highlight_target": ".rc-sum|.rc-findings|main", "optional": true, "timeout": 5}
+      ]
+    },
+    {
+      "chapter": "The computation",
+      "say": "Business income from the computation statement: CSR and the 43B items added back, other income moved to its own head, and depreciation under section 32 from the schedule.",
+      "do": [
+        {"goto": "/#/compute"},
+        {"wait": 1.5},
+        {"click": ".in-pick-row:has-text('Kaveri Demo') [data-choose]"},
+        {"wait_for": ".cc-comp"},
+        {"highlight_target": ".cc-comp", "optional": true, "timeout": 5}
+      ]
+    },
+    {
+      "chapter": "Depreciation by block",
+      "say": "Each block: opening value, additions over and under 180 days, sales. New machinery of a manufacturing company gets twenty percent more - half now, half next year.",
+      "do": [
+        {"scroll_to": "#co-card"},
+        {"highlight_target": "#co-card .co-wide|#co-card", "optional": true, "timeout": 5}
+      ]
+    },
+    {
+      "chapter": "Losses set off and carried",
+      "say": "Losses brought forward: within eight years and with the shareholding test of section 79. A loss older than eight years has lapsed; unabsorbed depreciation has no limit - what is left is carried.",
+      "do": [
+        {"highlight_target": "#co-card .co-panel:nth-of-type(2)|#co-card", "optional": true, "timeout": 5}
+      ]
+    },
+    {
+      "chapter": "MAT and its credit",
+      "say": "With the losses the normal tax is nil, so MAT - fifteen percent of the book profit, with surcharge and cess - is the tax, and all of it becomes a MAT credit for fifteen years.",
+      "do": [
+        {"highlight_target": "#co-card .co-panel:nth-of-type(3)|#co-card", "optional": true, "timeout": 5}
+      ]
+    },
+    {
+      "chapter": "The year's facts",
+      "say": "What the documents do not hold is typed once: the turnover of the year 2023-24, the losses and MAT credit brought forward, the section 79 test and the dividend paid.",
+      "do": [
+        {"scroll_to": ".co-year"},
+        {"highlight_target": ".co-year|#co-card", "optional": true, "timeout": 5}
+      ]
+    },
+    {
+      "chapter": "The ITR-6 JSON",
+      "say": "The ITR-6 JSON is built and checked against the CBDT's own schema before you download it: Part A General, the balance sheet and P&L that tally, Schedule BP, the depreciation schedules, BFLA, CFL, MAT and MATC.",
+      "do": [
+        {"scroll_to": ".cc-dl"},
+        {"highlight_target": ".cc-dl|main", "optional": true, "timeout": 5},
+        {"wait": 1}
+      ]
+    },
+    {
+      "chapter": "A company under 115BAA",
+      "say": "A trading company under 115BAA: twenty-two percent with a flat ten percent surcharge and cess - no MAT, no 80G, but 80M on dividends passed on.",
+      "do": [
+        {"goto": "/#/compute"},
+        {"wait": 1.5},
+        {"click": ".in-pick-row:has-text('Zenith Demo') [data-choose]"},
+        {"wait_for": "#co-card"},
+        {"scroll_to": "#co-card"},
+        {"highlight_target": "#co-card .co-rate|#co-card", "optional": true, "timeout": 5}
+      ]
+    }
+  ]
+}

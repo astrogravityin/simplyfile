@@ -1,0 +1,855 @@
+{
+  "chip_id": "wizard.scenarios",
+  "kind": "accessor",
+  "set": "wizard",
+  "label": "New filing: what may apply to a return - in plain words, the section small",
+  "aliases": [
+    "new filing: what may apply to a return - in plain words, the section small"
+  ],
+  "params": [
+    {
+      "name": "rows",
+      "type": "json",
+      "default": [
+        {
+          "id": "salary",
+          "group": "income",
+          "art": "salary",
+          "label": "Salary or pension",
+          "sub": "From an employer, with a Form 16",
+          "sec": "s.15-17",
+          "not_for": [
+            "huf",
+            "firm",
+            "llp",
+            "aop",
+            "company",
+            "trust"
+          ],
+          "only_for": [],
+          "implies": [],
+          "excludes": []
+        },
+        {
+          "id": "employers",
+          "group": "income",
+          "art": "employers",
+          "label": "Changed jobs in the year",
+          "sub": "More than one employer - a Form 16 from each",
+          "sec": "s.192",
+          "not_for": [
+            "huf",
+            "firm",
+            "llp",
+            "aop",
+            "company",
+            "trust"
+          ],
+          "only_for": [],
+          "implies": [
+            "salary"
+          ],
+          "excludes": []
+        },
+        {
+          "id": "house",
+          "group": "income",
+          "art": "house",
+          "label": "A house",
+          "sub": "Lived in with a home loan, or let out on rent",
+          "sec": "s.22-24",
+          "not_for": [
+            "firm",
+            "llp",
+            "aop",
+            "company",
+            "trust"
+          ],
+          "only_for": [],
+          "implies": [],
+          "excludes": []
+        },
+        {
+          "id": "interest",
+          "group": "income",
+          "art": "interest",
+          "label": "Interest and dividends",
+          "sub": "Savings, deposits, dividends, a tax refund's interest",
+          "sec": "s.56",
+          "not_for": [
+            "firm",
+            "llp",
+            "aop",
+            "company",
+            "trust"
+          ],
+          "only_for": [],
+          "implies": [],
+          "excludes": []
+        },
+        {
+          "id": "shares",
+          "group": "income",
+          "art": "shares",
+          "label": "Shares or mutual funds sold",
+          "sub": "Equity, debt and fund units - CAMS, KFintech or a broker",
+          "sec": "s.111A, 112, 112A",
+          "not_for": [
+            "firm",
+            "llp",
+            "aop",
+            "company",
+            "trust"
+          ],
+          "only_for": [],
+          "implies": [],
+          "excludes": []
+        },
+        {
+          "id": "property",
+          "group": "income",
+          "art": "property",
+          "label": "Sold land or a house",
+          "sub": "The sale, the buyer's TDS, and the exemption for reinvesting",
+          "sec": "s.50C, 54, 54EC, 54F",
+          "not_for": [
+            "firm",
+            "llp",
+            "aop",
+            "company",
+            "trust"
+          ],
+          "only_for": [],
+          "implies": [],
+          "excludes": []
+        },
+        {
+          "id": "vda",
+          "group": "income",
+          "art": "vda",
+          "label": "Crypto or other virtual assets",
+          "sub": "Each transfer, at a flat 30%",
+          "sec": "s.115BBH",
+          "not_for": [
+            "firm",
+            "llp",
+            "aop",
+            "company",
+            "trust"
+          ],
+          "only_for": [],
+          "implies": [],
+          "excludes": []
+        },
+        {
+          "id": "business",
+          "group": "income",
+          "art": "business",
+          "label": "A business or profession",
+          "sub": "Consultant, freelancer, shop or trade - presumptive or own figures, with GST",
+          "sec": "s.44AD, 44ADA, 44AE",
+          "not_for": [
+            "firm",
+            "llp",
+            "aop",
+            "company",
+            "trust"
+          ],
+          "only_for": [],
+          "implies": [],
+          "excludes": []
+        },
+        {
+          "id": "foreign",
+          "group": "income",
+          "art": "foreign",
+          "label": "Foreign income or assets",
+          "sub": "Accounts, shares or RSUs abroad; tax paid outside India",
+          "sec": "Schedule FA, s.90, 91",
+          "not_for": [
+            "firm",
+            "llp",
+            "aop",
+            "company",
+            "trust"
+          ],
+          "only_for": [],
+          "implies": [],
+          "excludes": []
+        },
+        {
+          "id": "nri",
+          "group": "income",
+          "art": "nri",
+          "label": "Lived outside India",
+          "sub": "Non-resident or not ordinarily resident - the days in India decide",
+          "sec": "s.6",
+          "not_for": [
+            "firm",
+            "llp",
+            "aop",
+            "company",
+            "trust"
+          ],
+          "only_for": [],
+          "implies": [],
+          "excludes": []
+        },
+        {
+          "id": "arrears",
+          "group": "income",
+          "art": "arrears",
+          "label": "Salary arrears of earlier years",
+          "sub": "Relief so arrears are not taxed at this year's higher slab",
+          "sec": "s.89, Form 10E",
+          "not_for": [
+            "huf",
+            "firm",
+            "llp",
+            "aop",
+            "company",
+            "trust"
+          ],
+          "only_for": [],
+          "implies": [
+            "salary"
+          ],
+          "excludes": []
+        },
+        {
+          "id": "losses",
+          "group": "income",
+          "art": "losses",
+          "label": "Losses from last year",
+          "sub": "Capital, house or business losses carried forward in last year's return",
+          "sec": "s.70-80",
+          "not_for": [],
+          "only_for": [],
+          "implies": [],
+          "excludes": []
+        },
+        {
+          "id": "revise",
+          "group": "income",
+          "art": "revise",
+          "label": "Revising, or an updated return",
+          "sub": "Correcting a return filed, or adding income an earlier year left out",
+          "sec": "s.139(5), 139(8A)",
+          "not_for": [],
+          "only_for": [],
+          "implies": [],
+          "excludes": []
+        },
+        {
+          "id": "trading",
+          "group": "work",
+          "art": "trading",
+          "label": "Trading",
+          "sub": "Buying and selling goods - a shop, a wholesaler, a distributor",
+          "sec": "Trading account",
+          "not_for": [],
+          "only_for": [],
+          "implies": [
+            "business"
+          ],
+          "excludes": []
+        },
+        {
+          "id": "manufacturing",
+          "group": "work",
+          "art": "factory",
+          "label": "Manufacturing",
+          "sub": "Making goods - raw material in, finished goods out",
+          "sec": "Manufacturing account",
+          "not_for": [],
+          "only_for": [],
+          "implies": [
+            "business"
+          ],
+          "excludes": []
+        },
+        {
+          "id": "services",
+          "group": "work",
+          "art": "services",
+          "label": "Services",
+          "sub": "Contracts, agency, IT, repairs, transport",
+          "sec": "s.194C, 194J",
+          "not_for": [],
+          "only_for": [],
+          "implies": [
+            "business"
+          ],
+          "excludes": []
+        },
+        {
+          "id": "profession",
+          "group": "work",
+          "art": "profession",
+          "label": "A profession",
+          "sub": "Doctor, lawyer, CA, architect, engineer, consultant",
+          "sec": "s.44AA, 44ADA",
+          "not_for": [],
+          "only_for": [],
+          "implies": [
+            "business"
+          ],
+          "excludes": []
+        },
+        {
+          "id": "agriculture",
+          "group": "work",
+          "art": "farm",
+          "label": "Farming",
+          "sub": "Agricultural income - exempt, but it counts for the rate",
+          "sec": "s.10(1)",
+          "not_for": [],
+          "only_for": [],
+          "implies": [],
+          "excludes": []
+        },
+        {
+          "id": "gst",
+          "group": "work",
+          "art": "gst",
+          "label": "Registered for GST",
+          "sub": "A GSTIN, with GSTR-1 and GSTR-3B each month or quarter",
+          "sec": "GST",
+          "not_for": [],
+          "only_for": [],
+          "implies": [
+            "business"
+          ],
+          "excludes": []
+        },
+        {
+          "id": "presumptive",
+          "group": "work",
+          "art": "presumptive",
+          "label": "Small turnover - tax on a fixed share",
+          "sub": "Up to 3 crore of business (mostly by bank) or 75 lakh of fees: 6-8% or 50% is the income",
+          "sec": "s.44AD, 44ADA",
+          "not_for": [
+            "llp",
+            "aop",
+            "company",
+            "trust"
+          ],
+          "only_for": [],
+          "implies": [
+            "business"
+          ],
+          "excludes": [
+            "books",
+            "audit"
+          ]
+        },
+        {
+          "id": "books",
+          "group": "work",
+          "art": "books",
+          "label": "Full books of account",
+          "sub": "Profit and loss and a balance sheet - from Tally or the accountant",
+          "sec": "s.44AA",
+          "not_for": [],
+          "only_for": [],
+          "implies": [
+            "business"
+          ],
+          "excludes": [
+            "presumptive"
+          ]
+        },
+        {
+          "id": "audit",
+          "group": "work",
+          "art": "audit",
+          "label": "Tax audit",
+          "sub": "Turnover above 1 crore (10 crore mostly by bank), or 50 lakh of fees - Form 3CD",
+          "sec": "s.44AB, Form 3CA / 3CB-3CD",
+          "not_for": [],
+          "only_for": [],
+          "implies": [
+            "business",
+            "books"
+          ],
+          "excludes": [
+            "presumptive"
+          ]
+        },
+        {
+          "id": "partners_pay",
+          "group": "work",
+          "art": "partners",
+          "label": "Partners' salary and interest",
+          "sub": "Remuneration and interest on capital, within the deed and the limits",
+          "sec": "s.40(b)",
+          "not_for": [],
+          "only_for": [
+            "firm",
+            "llp"
+          ],
+          "implies": [],
+          "excludes": []
+        },
+        {
+          "id": "stock",
+          "group": "work",
+          "art": "stock",
+          "label": "Stock and inventory",
+          "sub": "Opening and closing stock, valued at cost or market",
+          "sec": "s.145A, Form 3CD cl.14",
+          "not_for": [],
+          "only_for": [],
+          "implies": [
+            "business"
+          ],
+          "excludes": []
+        },
+        {
+          "id": "depreciation",
+          "group": "work",
+          "art": "machine",
+          "label": "Machines, vehicles, buildings",
+          "sub": "Depreciation by block of assets",
+          "sec": "s.32",
+          "not_for": [],
+          "only_for": [],
+          "implies": [
+            "business"
+          ],
+          "excludes": []
+        }
+      ],
+      "label": "rows"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "rows": "$rows"
+    }
+  },
+  "returns": "record",
+  "status": "published",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "rows": [
+          {
+            "id": "salary",
+            "group": "income",
+            "art": "salary",
+            "label": "Salary or pension",
+            "sub": "From an employer, with a Form 16",
+            "sec": "s.15-17",
+            "not_for": [
+              "huf",
+              "firm",
+              "llp",
+              "aop",
+              "company",
+              "trust"
+            ],
+            "only_for": [],
+            "implies": [],
+            "excludes": []
+          },
+          {
+            "id": "employers",
+            "group": "income",
+            "art": "employers",
+            "label": "Changed jobs in the year",
+            "sub": "More than one employer - a Form 16 from each",
+            "sec": "s.192",
+            "not_for": [
+              "huf",
+              "firm",
+              "llp",
+              "aop",
+              "company",
+              "trust"
+            ],
+            "only_for": [],
+            "implies": [
+              "salary"
+            ],
+            "excludes": []
+          },
+          {
+            "id": "house",
+            "group": "income",
+            "art": "house",
+            "label": "A house",
+            "sub": "Lived in with a home loan, or let out on rent",
+            "sec": "s.22-24",
+            "not_for": [
+              "firm",
+              "llp",
+              "aop",
+              "company",
+              "trust"
+            ],
+            "only_for": [],
+            "implies": [],
+            "excludes": []
+          },
+          {
+            "id": "interest",
+            "group": "income",
+            "art": "interest",
+            "label": "Interest and dividends",
+            "sub": "Savings, deposits, dividends, a tax refund's interest",
+            "sec": "s.56",
+            "not_for": [
+              "firm",
+              "llp",
+              "aop",
+              "company",
+              "trust"
+            ],
+            "only_for": [],
+            "implies": [],
+            "excludes": []
+          },
+          {
+            "id": "shares",
+            "group": "income",
+            "art": "shares",
+            "label": "Shares or mutual funds sold",
+            "sub": "Equity, debt and fund units - CAMS, KFintech or a broker",
+            "sec": "s.111A, 112, 112A",
+            "not_for": [
+              "firm",
+              "llp",
+              "aop",
+              "company",
+              "trust"
+            ],
+            "only_for": [],
+            "implies": [],
+            "excludes": []
+          },
+          {
+            "id": "property",
+            "group": "income",
+            "art": "property",
+            "label": "Sold land or a house",
+            "sub": "The sale, the buyer's TDS, and the exemption for reinvesting",
+            "sec": "s.50C, 54, 54EC, 54F",
+            "not_for": [
+              "firm",
+              "llp",
+              "aop",
+              "company",
+              "trust"
+            ],
+            "only_for": [],
+            "implies": [],
+            "excludes": []
+          },
+          {
+            "id": "vda",
+            "group": "income",
+            "art": "vda",
+            "label": "Crypto or other virtual assets",
+            "sub": "Each transfer, at a flat 30%",
+            "sec": "s.115BBH",
+            "not_for": [
+              "firm",
+              "llp",
+              "aop",
+              "company",
+              "trust"
+            ],
+            "only_for": [],
+            "implies": [],
+            "excludes": []
+          },
+          {
+            "id": "business",
+            "group": "income",
+            "art": "business",
+            "label": "A business or profession",
+            "sub": "Consultant, freelancer, shop or trade - presumptive or own figures, with GST",
+            "sec": "s.44AD, 44ADA, 44AE",
+            "not_for": [
+              "firm",
+              "llp",
+              "aop",
+              "company",
+              "trust"
+            ],
+            "only_for": [],
+            "implies": [],
+            "excludes": []
+          },
+          {
+            "id": "foreign",
+            "group": "income",
+            "art": "foreign",
+            "label": "Foreign income or assets",
+            "sub": "Accounts, shares or RSUs abroad; tax paid outside India",
+            "sec": "Schedule FA, s.90, 91",
+            "not_for": [
+              "firm",
+              "llp",
+              "aop",
+              "company",
+              "trust"
+            ],
+            "only_for": [],
+            "implies": [],
+            "excludes": []
+          },
+          {
+            "id": "nri",
+            "group": "income",
+            "art": "nri",
+            "label": "Lived outside India",
+            "sub": "Non-resident or not ordinarily resident - the days in India decide",
+            "sec": "s.6",
+            "not_for": [
+              "firm",
+              "llp",
+              "aop",
+              "company",
+              "trust"
+            ],
+            "only_for": [],
+            "implies": [],
+            "excludes": []
+          },
+          {
+            "id": "arrears",
+            "group": "income",
+            "art": "arrears",
+            "label": "Salary arrears of earlier years",
+            "sub": "Relief so arrears are not taxed at this year's higher slab",
+            "sec": "s.89, Form 10E",
+            "not_for": [
+              "huf",
+              "firm",
+              "llp",
+              "aop",
+              "company",
+              "trust"
+            ],
+            "only_for": [],
+            "implies": [
+              "salary"
+            ],
+            "excludes": []
+          },
+          {
+            "id": "losses",
+            "group": "income",
+            "art": "losses",
+            "label": "Losses from last year",
+            "sub": "Capital, house or business losses carried forward in last year's return",
+            "sec": "s.70-80",
+            "not_for": [],
+            "only_for": [],
+            "implies": [],
+            "excludes": []
+          },
+          {
+            "id": "revise",
+            "group": "income",
+            "art": "revise",
+            "label": "Revising, or an updated return",
+            "sub": "Correcting a return filed, or adding income an earlier year left out",
+            "sec": "s.139(5), 139(8A)",
+            "not_for": [],
+            "only_for": [],
+            "implies": [],
+            "excludes": []
+          },
+          {
+            "id": "trading",
+            "group": "work",
+            "art": "trading",
+            "label": "Trading",
+            "sub": "Buying and selling goods - a shop, a wholesaler, a distributor",
+            "sec": "Trading account",
+            "not_for": [],
+            "only_for": [],
+            "implies": [
+              "business"
+            ],
+            "excludes": []
+          },
+          {
+            "id": "manufacturing",
+            "group": "work",
+            "art": "factory",
+            "label": "Manufacturing",
+            "sub": "Making goods - raw material in, finished goods out",
+            "sec": "Manufacturing account",
+            "not_for": [],
+            "only_for": [],
+            "implies": [
+              "business"
+            ],
+            "excludes": []
+          },
+          {
+            "id": "services",
+            "group": "work",
+            "art": "services",
+            "label": "Services",
+            "sub": "Contracts, agency, IT, repairs, transport",
+            "sec": "s.194C, 194J",
+            "not_for": [],
+            "only_for": [],
+            "implies": [
+              "business"
+            ],
+            "excludes": []
+          },
+          {
+            "id": "profession",
+            "group": "work",
+            "art": "profession",
+            "label": "A profession",
+            "sub": "Doctor, lawyer, CA, architect, engineer, consultant",
+            "sec": "s.44AA, 44ADA",
+            "not_for": [],
+            "only_for": [],
+            "implies": [
+              "business"
+            ],
+            "excludes": []
+          },
+          {
+            "id": "agriculture",
+            "group": "work",
+            "art": "farm",
+            "label": "Farming",
+            "sub": "Agricultural income - exempt, but it counts for the rate",
+            "sec": "s.10(1)",
+            "not_for": [],
+            "only_for": [],
+            "implies": [],
+            "excludes": []
+          },
+          {
+            "id": "gst",
+            "group": "work",
+            "art": "gst",
+            "label": "Registered for GST",
+            "sub": "A GSTIN, with GSTR-1 and GSTR-3B each month or quarter",
+            "sec": "GST",
+            "not_for": [],
+            "only_for": [],
+            "implies": [
+              "business"
+            ],
+            "excludes": []
+          },
+          {
+            "id": "presumptive",
+            "group": "work",
+            "art": "presumptive",
+            "label": "Small turnover - tax on a fixed share",
+            "sub": "Up to 3 crore of business (mostly by bank) or 75 lakh of fees: 6-8% or 50% is the income",
+            "sec": "s.44AD, 44ADA",
+            "not_for": [
+              "llp",
+              "aop",
+              "company",
+              "trust"
+            ],
+            "only_for": [],
+            "implies": [
+              "business"
+            ],
+            "excludes": [
+              "books",
+              "audit"
+            ]
+          },
+          {
+            "id": "books",
+            "group": "work",
+            "art": "books",
+            "label": "Full books of account",
+            "sub": "Profit and loss and a balance sheet - from Tally or the accountant",
+            "sec": "s.44AA",
+            "not_for": [],
+            "only_for": [],
+            "implies": [
+              "business"
+            ],
+            "excludes": [
+              "presumptive"
+            ]
+          },
+          {
+            "id": "audit",
+            "group": "work",
+            "art": "audit",
+            "label": "Tax audit",
+            "sub": "Turnover above 1 crore (10 crore mostly by bank), or 50 lakh of fees - Form 3CD",
+            "sec": "s.44AB, Form 3CA / 3CB-3CD",
+            "not_for": [],
+            "only_for": [],
+            "implies": [
+              "business",
+              "books"
+            ],
+            "excludes": [
+              "presumptive"
+            ]
+          },
+          {
+            "id": "partners_pay",
+            "group": "work",
+            "art": "partners",
+            "label": "Partners' salary and interest",
+            "sub": "Remuneration and interest on capital, within the deed and the limits",
+            "sec": "s.40(b)",
+            "not_for": [],
+            "only_for": [
+              "firm",
+              "llp"
+            ],
+            "implies": [],
+            "excludes": []
+          },
+          {
+            "id": "stock",
+            "group": "work",
+            "art": "stock",
+            "label": "Stock and inventory",
+            "sub": "Opening and closing stock, valued at cost or market",
+            "sec": "s.145A, Form 3CD cl.14",
+            "not_for": [],
+            "only_for": [],
+            "implies": [
+              "business"
+            ],
+            "excludes": []
+          },
+          {
+            "id": "depreciation",
+            "group": "work",
+            "art": "machine",
+            "label": "Machines, vehicles, buildings",
+            "sub": "Depreciation by block of assets",
+            "sec": "s.32",
+            "not_for": [],
+            "only_for": [],
+            "implies": [
+              "business"
+            ],
+            "excludes": []
+          }
+        ]
+      }
+    }
+  ],
+  "version": 2,
+  "description_nl": "2026-10-11: every card on 'What applies this year?' - its words (the list IS the content, as myreturn.checklist), the section beneath, who it is not for (an HUF has no salary), and what it brings with it (a second employer means salary). 2026-10-11: every card on 'What applies this year?' and 'What kind of work?' - its words (the list IS the content, as myreturn.checklist), the section beneath, who it is not (or only) for (an HUF has no salary, partners' pay only a firm or an LLP), what it brings with it (a second employer means salary, a tax audit means books) and what it rules out (presumptive or books)."
+}

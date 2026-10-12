@@ -1,0 +1,124 @@
+{
+  "chip_id": "wizard.firm_next",
+  "kind": "accessor",
+  "set": "wizard",
+  "label": "New filing: the firm-flow screen to open at the end (a firm, an LLP, an AOP / BOI)",
+  "aliases": [
+    "new filing: the firm-flow screen to open at the end (a firm, an llp, an aop / boi)"
+  ],
+  "params": [
+    {
+      "name": "books",
+      "type": "number",
+      "default": 0,
+      "label": "books files in Intake & map"
+    },
+    {
+      "name": "untagged",
+      "type": "number",
+      "default": 0,
+      "label": "rows with no SF Ref yet"
+    },
+    {
+      "name": "portal",
+      "type": "number",
+      "default": 0,
+      "label": "26AS / AIS / TIS in Reconcile"
+    },
+    {
+      "name": "audit",
+      "type": "boolean",
+      "default": false,
+      "label": "a tax audit was picked"
+    }
+  ],
+  "expr": {
+    "vop": "choose",
+    "cases": [
+      {
+        "when": {
+          "op": "eq",
+          "left": "$books",
+          "right": 0
+        },
+        "then": "intake"
+      },
+      {
+        "when": {
+          "op": "gt",
+          "left": "$untagged",
+          "right": 0
+        },
+        "then": "intake"
+      },
+      {
+        "when": {
+          "op": "eq",
+          "left": "$portal",
+          "right": 0
+        },
+        "then": "recon"
+      },
+      {
+        "when": {
+          "op": "eq",
+          "left": "$audit",
+          "right": true
+        },
+        "then": "audit"
+      }
+    ],
+    "else": "compute"
+  },
+  "returns": "any",
+  "status": "published",
+  "test_cases": [
+    {
+      "args": {
+        "books": 0,
+        "untagged": 0,
+        "portal": 1,
+        "audit": true
+      },
+      "expect_value": "intake"
+    },
+    {
+      "args": {
+        "books": 2,
+        "untagged": 14,
+        "portal": 1,
+        "audit": true
+      },
+      "expect_value": "intake"
+    },
+    {
+      "args": {
+        "books": 2,
+        "untagged": 0,
+        "portal": 0,
+        "audit": true
+      },
+      "expect_value": "recon"
+    },
+    {
+      "args": {
+        "books": 2,
+        "untagged": 0,
+        "portal": 1,
+        "audit": true
+      },
+      "expect_value": "audit"
+    },
+    {
+      "args": {
+        "books": 2,
+        "untagged": 0,
+        "portal": 1,
+        "audit": false
+      },
+      "expect_value": "compute"
+    }
+  ],
+  "version": 1,
+  "description_nl": "2026-10-11: the firm flow in the order the work happens: no books, or rows still to tag -> Intake & map; no 26AS / AIS -> Reconcile; a tax audit -> Tax audit; else Compute & close. Never a dead end."
+}

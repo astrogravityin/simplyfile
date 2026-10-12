@@ -1,0 +1,70 @@
+{
+  "chip_id": "wizard.work_open",
+  "kind": "predicate",
+  "set": "wizard",
+  "label": "New filing: does 'What kind of work?' show",
+  "aliases": [
+    "new filing: does 'what kind of work?' show"
+  ],
+  "params": [
+    {
+      "name": "flow",
+      "type": "text",
+      "default": "myreturn",
+      "label": "the return's flow"
+    },
+    {
+      "name": "picked",
+      "type": "json",
+      "default": [],
+      "label": "what was picked"
+    }
+  ],
+  "expr": {
+    "op": "any",
+    "items": [
+      {
+        "op": "eq",
+        "left": "$flow",
+        "right": "firm"
+      },
+      {
+        "op": "in_set",
+        "value": "business",
+        "set": "$picked"
+      }
+    ]
+  },
+  "returns": "boolean",
+  "status": "published",
+  "test_cases": [
+    {
+      "args": {
+        "flow": "firm",
+        "picked": []
+      },
+      "expect_value": true
+    },
+    {
+      "args": {
+        "flow": "myreturn",
+        "picked": [
+          "salary"
+        ]
+      },
+      "expect_value": false
+    },
+    {
+      "args": {
+        "flow": "myreturn",
+        "picked": [
+          "business",
+          "salary"
+        ]
+      },
+      "expect_value": true
+    }
+  ],
+  "version": 1,
+  "description_nl": "2026-10-11: always for a business (the firm flow); for a person or an HUF once 'A business or profession' is picked."
+}

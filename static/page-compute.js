@@ -7,6 +7,7 @@ import { clientPicker } from './page-intake.js';
 import { hue, initials } from './page-clients.js';
 import { icon } from './icons.js';
 import { historyButton, wireHistory } from './changes.js';
+import { companyCard, wireCompanyCard } from './company.js';   // 2026-10-11 ITR-6: a company's section
 
 const w = (k, v) => t('compute', k, v);
 const money = (n) => `₹${Math.round(Number(n || 0)).toLocaleString(ps('compute').money_locale)}`;
@@ -29,7 +30,8 @@ function waterfall(d) {
   const C = ps('compute').bar_color, x = d.tax;
   const items = [
     [w('wf_tax'), x.tax - x.rebate, C.tax, 'base'], [w('wf_surcharge', { rate: x.surcharge_rate }), x.surcharge, C.tax, 'step'],
-    [w('wf_relief'), -x.relief, C.credit, 'step'], [w('wf_cess'), x.cess, C.tax, 'step'], [w('wf_total'), x.total, C.tax, 'total'],
+    [w('wf_relief'), -x.relief, C.credit, 'step'], [w('wf_cess'), x.cess, C.tax, 'step'], [w('wf_credit'), -(x.credit_used || 0), C.credit, 'step'],
+    [w('wf_total'), x.total, C.tax, 'total'],
     [w('wf_interest'), d.interest, C.tax, 'step'], [w('wf_tds'), -d.tds_total, C.credit, 'step'], [w('wf_paid'), -d.paid_total, C.credit, 'step'],
     [w(`wf_${d.balance.kind}`), d.balance.net, C[`balance_${d.balance.kind}`], 'total']].filter((r) => r[3] !== 'step' || Math.round(r[1]));
   let run = 0;
@@ -96,12 +98,14 @@ export async function computePage(host) {
               <table><colgroup><col><col class="cc-numcol-s"></colgroup>${h.lines.map((l) => `<tr><td>${esc(l.label)} <span class="muted small">${esc(l.key)}</span></td><td class="num">${esc(signed(l.amount))}</td></tr>`).join('')}</table></details></td></tr>
             ${'std' in h ? line(w('hp_nav'), h.gross, 'cc-sub') + line(w('hp_std'), -h.std, 'cc-sub') : ''}
             ${line(w('head_total'), h.net, 'cc-net')}`).join('')}
+          ${d.company && Math.round(d.company.setoff_total) ? line(w('co_setoff_line'), -d.company.setoff_total, 'cc-sub') : ''}
           ${line(w('gti'), d.gti, 'cc-key')}
           ${d.deductions ? line(w('deductions'), -d.deductions) : ''}
           ${line(w('total_income'), d.income, 'cc-big')}
+          ${x.basis ? `<tr class="cc-sub"><td colspan="2">${esc(w('co_basis'))}: <b>${esc(w(`co_basis_${x.basis}`))}</b></td></tr>` : ''}
           ${line(w('t_tax'), x.tax)}${x.rebate ? line(w('t_rebate'), -x.rebate) : ''}
           ${x.surcharge ? line(w('t_surcharge', { rate: x.surcharge_rate }), x.surcharge) : ''}${x.relief ? line(w('t_relief'), -x.relief) : ''}
-          ${line(w('t_cess'), x.cess)}${line(w('t_total'), x.total, 'cc-key')}
+          ${line(w('t_cess'), x.cess)}${x.credit_used ? line(w('t_credit'), -x.credit_used) : ''}${line(w('t_total'), x.total, 'cc-key')}
           ${d.interest_auto.exempt ? `<tr class="cc-sub"><td colspan="2">${esc(w('i_exempt'))}</td></tr>` : ''}
           ${['a', 'b', 'c'].map((s) => `<tr class="cc-sub"><td>${esc(w(`i_234${s}`))}</td><td class="num">${esc(signed(d.interest_auto[s]))}</td></tr>`).join('')}
           <tr><td>${esc(w(d.interest_override === null || d.interest_override === undefined ? 't_interest_auto' : 't_interest_over'))}
@@ -159,7 +163,7 @@ export async function computePage(host) {
             <table class="cc-tbl small"><colgroup><col><col class="cc-numcol-s"></colgroup>${d.tds.map((e) => `<tr><td>${esc(e.party)}<div class="muted">${esc(e.tan)} · ${esc(e.section)} · ${esc(money(e.gross))}</div></td><td class="num">${esc(money(e.tax))}</td></tr>`).join('')}</table>
             <h3 class="rc-h" style="margin-top:14px">${icon('check', 15)} ${esc(w('paid_title'))}</h3>
             <table class="cc-tbl small"><colgroup><col><col class="cc-numcol-s"></colgroup>${d.paid.map((e) => `<tr><td>${esc(e.date)}<div class="muted">${esc(w('bsr'))} ${esc(e.bsr)} · ${esc(w('challan'))} ${esc(e.challan)}</div></td><td class="num">${esc(money(e.amount))}</td></tr>`).join('')}</table></section>
-        </div></div>`;
+        </div></div>` + (d.company ? companyCard(d, K, ro) : '');
 
     api(`${base}/itr-check`).then((r) => {                       // the CBDT schema's own verdict, shown before anyone uploads
       const el = host.querySelector('#cc-itr-check');
@@ -187,6 +191,7 @@ export async function computePage(host) {
         `<li><b>${esc(e.field)}</b> - ${esc(e.what)}</li>`).join('')}</ul><p class="muted">${esc(w('tar_where'))}</p></details>`);
     }).catch((err) => { const el = host.querySelector('#cc-3cd-check'); if (el) el.textContent = err.message; });
     wireHistory(host, { cid, ay, name: d.client.name });
+    if (d.company) wireCompanyCard(host, d, base, draw);
     host.querySelector('#cc-ay').onchange = (e) => { location.hash = `#/compute?c=${encodeURIComponent(cid)}&ay=${encodeURIComponent(e.target.value)}`; };
     const put = async (body) => { try { draw(await api(base, { method: 'PUT', body })); toast(w('saved'), 'ok'); } catch (err) { toast(err.message, 'bad', 8); } };
     const reg = host.querySelector('#cc-regime');

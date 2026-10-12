@@ -1,0 +1,1261 @@
+{
+  "chip_id": "company.tax_s2",
+  "kind": "accessor",
+  "set": "company",
+  "label": "Company: the tax, stage 2 (surcharge, marginal relief, cess, total)",
+  "aliases": [
+    "company: the tax, stage 2 (surcharge, ma"
+  ],
+  "params": [
+    {
+      "name": "main",
+      "type": "number",
+      "default": 0,
+      "label": "income at the option's rate (all normal-rate income; 115BAB: the manufacturing business)"
+    },
+    {
+      "name": "other",
+      "type": "number",
+      "default": 0,
+      "label": "income at the other rate (115BAB: income other than the business)"
+    },
+    {
+      "name": "stcg_111a",
+      "type": "number",
+      "default": 0,
+      "label": "STCG u/s 111A"
+    },
+    {
+      "name": "ltcg_112a",
+      "type": "number",
+      "default": 0,
+      "label": "LTCG u/s 112A (before the exemption)"
+    },
+    {
+      "name": "ltcg_112",
+      "type": "number",
+      "default": 0,
+      "label": "LTCG u/s 112"
+    },
+    {
+      "name": "rate",
+      "type": "number",
+      "default": 25,
+      "label": "the option's rate %"
+    },
+    {
+      "name": "other_rate",
+      "type": "number",
+      "default": 25,
+      "label": "the rate on 'other' %"
+    },
+    {
+      "name": "steps",
+      "type": "json",
+      "default": [
+        {
+          "above": 10000000,
+          "rate": 7
+        },
+        {
+          "above": 100000000,
+          "rate": 12
+        }
+      ],
+      "label": "surcharge steps"
+    },
+    {
+      "name": "cg",
+      "type": "json",
+      "default": {
+        "stcg_111a": 20,
+        "ltcg_112a": 12.5,
+        "ltcg_112": 12.5,
+        "exempt_112a": 125000
+      },
+      "label": "special rates (company.settings rates_by_ay cg)"
+    },
+    {
+      "name": "cess_pct",
+      "type": "number",
+      "default": 4,
+      "label": "cess %"
+    },
+    {
+      "name": "round_to",
+      "type": "number",
+      "default": 10,
+      "label": "tax rounded to (s.288B)"
+    },
+    {
+      "name": "b",
+      "type": "json",
+      "default": {},
+      "label": "stage 1 (chip company.tax_s1)"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "income": {
+        "vop": "get",
+        "value": "$b",
+        "path": "income"
+      },
+      "at_normal": {
+        "vop": "round_to",
+        "value": {
+          "vop": "get",
+          "value": "$b",
+          "path": "at_normal"
+        },
+        "digits": 2
+      },
+      "at_special": {
+        "vop": "round_to",
+        "value": {
+          "vop": "get",
+          "value": "$b",
+          "path": "at_special"
+        },
+        "digits": 2
+      },
+      "on_111a": {
+        "vop": "round_to",
+        "value": {
+          "vop": "get",
+          "value": "$b",
+          "path": "on_111a"
+        },
+        "digits": 2
+      },
+      "on_112a": {
+        "vop": "round_to",
+        "value": {
+          "vop": "get",
+          "value": "$b",
+          "path": "on_112a"
+        },
+        "digits": 2
+      },
+      "on_112": {
+        "vop": "round_to",
+        "value": {
+          "vop": "get",
+          "value": "$b",
+          "path": "on_112"
+        },
+        "digits": 2
+      },
+      "tax": {
+        "vop": "round_to",
+        "value": {
+          "vop": "total",
+          "values": [
+            {
+              "vop": "get",
+              "value": "$b",
+              "path": "at_normal"
+            },
+            {
+              "vop": "get",
+              "value": "$b",
+              "path": "at_special"
+            }
+          ]
+        },
+        "digits": 2
+      },
+      "surcharge_rate": {
+        "vop": "get",
+        "value": "$b",
+        "path": "rate_on"
+      },
+      "surcharge": {
+        "vop": "round_to",
+        "value": {
+          "vop": "div",
+          "a": {
+            "vop": "mul",
+            "a": {
+              "vop": "total",
+              "values": [
+                {
+                  "vop": "get",
+                  "value": "$b",
+                  "path": "at_normal"
+                },
+                {
+                  "vop": "get",
+                  "value": "$b",
+                  "path": "at_special"
+                }
+              ]
+            },
+            "b": {
+              "vop": "get",
+              "value": "$b",
+              "path": "rate_on"
+            }
+          },
+          "b": 100
+        },
+        "digits": 2
+      },
+      "relief": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "gt",
+              "left": {
+                "vop": "get",
+                "value": "$b",
+                "path": "threshold"
+              },
+              "right": 0
+            },
+            "then": {
+              "vop": "round_to",
+              "value": {
+                "vop": "largest",
+                "values": [
+                  0,
+                  {
+                    "vop": "sub",
+                    "a": {
+                      "vop": "total",
+                      "values": [
+                        {
+                          "vop": "total",
+                          "values": [
+                            {
+                              "vop": "get",
+                              "value": "$b",
+                              "path": "at_normal"
+                            },
+                            {
+                              "vop": "get",
+                              "value": "$b",
+                              "path": "at_special"
+                            }
+                          ]
+                        },
+                        {
+                          "vop": "div",
+                          "a": {
+                            "vop": "mul",
+                            "a": {
+                              "vop": "total",
+                              "values": [
+                                {
+                                  "vop": "get",
+                                  "value": "$b",
+                                  "path": "at_normal"
+                                },
+                                {
+                                  "vop": "get",
+                                  "value": "$b",
+                                  "path": "at_special"
+                                }
+                              ]
+                            },
+                            "b": {
+                              "vop": "get",
+                              "value": "$b",
+                              "path": "rate_on"
+                            }
+                          },
+                          "b": 100
+                        }
+                      ]
+                    },
+                    "b": {
+                      "vop": "total",
+                      "values": [
+                        {
+                          "vop": "largest",
+                          "values": [
+                            0,
+                            {
+                              "vop": "sub",
+                              "a": {
+                                "vop": "total",
+                                "values": [
+                                  {
+                                    "vop": "get",
+                                    "value": "$b",
+                                    "path": "at_normal"
+                                  },
+                                  {
+                                    "vop": "get",
+                                    "value": "$b",
+                                    "path": "at_special"
+                                  }
+                                ]
+                              },
+                              "b": {
+                                "vop": "div",
+                                "a": {
+                                  "vop": "mul",
+                                  "a": {
+                                    "vop": "sub",
+                                    "a": {
+                                      "vop": "get",
+                                      "value": "$b",
+                                      "path": "income"
+                                    },
+                                    "b": {
+                                      "vop": "get",
+                                      "value": "$b",
+                                      "path": "threshold"
+                                    }
+                                  },
+                                  "b": "$rate"
+                                },
+                                "b": 100
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "vop": "div",
+                          "a": {
+                            "vop": "mul",
+                            "a": {
+                              "vop": "largest",
+                              "values": [
+                                0,
+                                {
+                                  "vop": "sub",
+                                  "a": {
+                                    "vop": "total",
+                                    "values": [
+                                      {
+                                        "vop": "get",
+                                        "value": "$b",
+                                        "path": "at_normal"
+                                      },
+                                      {
+                                        "vop": "get",
+                                        "value": "$b",
+                                        "path": "at_special"
+                                      }
+                                    ]
+                                  },
+                                  "b": {
+                                    "vop": "div",
+                                    "a": {
+                                      "vop": "mul",
+                                      "a": {
+                                        "vop": "sub",
+                                        "a": {
+                                          "vop": "get",
+                                          "value": "$b",
+                                          "path": "income"
+                                        },
+                                        "b": {
+                                          "vop": "get",
+                                          "value": "$b",
+                                          "path": "threshold"
+                                        }
+                                      },
+                                      "b": "$rate"
+                                    },
+                                    "b": 100
+                                  }
+                                }
+                              ]
+                            },
+                            "b": {
+                              "vop": "coalesce",
+                              "values": [
+                                {
+                                  "vop": "step_rate",
+                                  "amount": {
+                                    "vop": "get",
+                                    "value": "$b",
+                                    "path": "threshold"
+                                  },
+                                  "steps": "$steps"
+                                },
+                                0
+                              ]
+                            }
+                          },
+                          "b": 100
+                        },
+                        {
+                          "vop": "sub",
+                          "a": {
+                            "vop": "get",
+                            "value": "$b",
+                            "path": "income"
+                          },
+                          "b": {
+                            "vop": "get",
+                            "value": "$b",
+                            "path": "threshold"
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              "digits": 2
+            }
+          }
+        ],
+        "else": 0
+      },
+      "cess": {
+        "vop": "round_to",
+        "value": {
+          "vop": "div",
+          "a": {
+            "vop": "mul",
+            "a": {
+              "vop": "sub",
+              "a": {
+                "vop": "total",
+                "values": [
+                  {
+                    "vop": "total",
+                    "values": [
+                      {
+                        "vop": "get",
+                        "value": "$b",
+                        "path": "at_normal"
+                      },
+                      {
+                        "vop": "get",
+                        "value": "$b",
+                        "path": "at_special"
+                      }
+                    ]
+                  },
+                  {
+                    "vop": "div",
+                    "a": {
+                      "vop": "mul",
+                      "a": {
+                        "vop": "total",
+                        "values": [
+                          {
+                            "vop": "get",
+                            "value": "$b",
+                            "path": "at_normal"
+                          },
+                          {
+                            "vop": "get",
+                            "value": "$b",
+                            "path": "at_special"
+                          }
+                        ]
+                      },
+                      "b": {
+                        "vop": "get",
+                        "value": "$b",
+                        "path": "rate_on"
+                      }
+                    },
+                    "b": 100
+                  }
+                ]
+              },
+              "b": {
+                "vop": "choose",
+                "cases": [
+                  {
+                    "when": {
+                      "op": "gt",
+                      "left": {
+                        "vop": "get",
+                        "value": "$b",
+                        "path": "threshold"
+                      },
+                      "right": 0
+                    },
+                    "then": {
+                      "vop": "round_to",
+                      "value": {
+                        "vop": "largest",
+                        "values": [
+                          0,
+                          {
+                            "vop": "sub",
+                            "a": {
+                              "vop": "total",
+                              "values": [
+                                {
+                                  "vop": "total",
+                                  "values": [
+                                    {
+                                      "vop": "get",
+                                      "value": "$b",
+                                      "path": "at_normal"
+                                    },
+                                    {
+                                      "vop": "get",
+                                      "value": "$b",
+                                      "path": "at_special"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "vop": "div",
+                                  "a": {
+                                    "vop": "mul",
+                                    "a": {
+                                      "vop": "total",
+                                      "values": [
+                                        {
+                                          "vop": "get",
+                                          "value": "$b",
+                                          "path": "at_normal"
+                                        },
+                                        {
+                                          "vop": "get",
+                                          "value": "$b",
+                                          "path": "at_special"
+                                        }
+                                      ]
+                                    },
+                                    "b": {
+                                      "vop": "get",
+                                      "value": "$b",
+                                      "path": "rate_on"
+                                    }
+                                  },
+                                  "b": 100
+                                }
+                              ]
+                            },
+                            "b": {
+                              "vop": "total",
+                              "values": [
+                                {
+                                  "vop": "largest",
+                                  "values": [
+                                    0,
+                                    {
+                                      "vop": "sub",
+                                      "a": {
+                                        "vop": "total",
+                                        "values": [
+                                          {
+                                            "vop": "get",
+                                            "value": "$b",
+                                            "path": "at_normal"
+                                          },
+                                          {
+                                            "vop": "get",
+                                            "value": "$b",
+                                            "path": "at_special"
+                                          }
+                                        ]
+                                      },
+                                      "b": {
+                                        "vop": "div",
+                                        "a": {
+                                          "vop": "mul",
+                                          "a": {
+                                            "vop": "sub",
+                                            "a": {
+                                              "vop": "get",
+                                              "value": "$b",
+                                              "path": "income"
+                                            },
+                                            "b": {
+                                              "vop": "get",
+                                              "value": "$b",
+                                              "path": "threshold"
+                                            }
+                                          },
+                                          "b": "$rate"
+                                        },
+                                        "b": 100
+                                      }
+                                    }
+                                  ]
+                                },
+                                {
+                                  "vop": "div",
+                                  "a": {
+                                    "vop": "mul",
+                                    "a": {
+                                      "vop": "largest",
+                                      "values": [
+                                        0,
+                                        {
+                                          "vop": "sub",
+                                          "a": {
+                                            "vop": "total",
+                                            "values": [
+                                              {
+                                                "vop": "get",
+                                                "value": "$b",
+                                                "path": "at_normal"
+                                              },
+                                              {
+                                                "vop": "get",
+                                                "value": "$b",
+                                                "path": "at_special"
+                                              }
+                                            ]
+                                          },
+                                          "b": {
+                                            "vop": "div",
+                                            "a": {
+                                              "vop": "mul",
+                                              "a": {
+                                                "vop": "sub",
+                                                "a": {
+                                                  "vop": "get",
+                                                  "value": "$b",
+                                                  "path": "income"
+                                                },
+                                                "b": {
+                                                  "vop": "get",
+                                                  "value": "$b",
+                                                  "path": "threshold"
+                                                }
+                                              },
+                                              "b": "$rate"
+                                            },
+                                            "b": 100
+                                          }
+                                        }
+                                      ]
+                                    },
+                                    "b": {
+                                      "vop": "coalesce",
+                                      "values": [
+                                        {
+                                          "vop": "step_rate",
+                                          "amount": {
+                                            "vop": "get",
+                                            "value": "$b",
+                                            "path": "threshold"
+                                          },
+                                          "steps": "$steps"
+                                        },
+                                        0
+                                      ]
+                                    }
+                                  },
+                                  "b": 100
+                                },
+                                {
+                                  "vop": "sub",
+                                  "a": {
+                                    "vop": "get",
+                                    "value": "$b",
+                                    "path": "income"
+                                  },
+                                  "b": {
+                                    "vop": "get",
+                                    "value": "$b",
+                                    "path": "threshold"
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        ]
+                      },
+                      "digits": 2
+                    }
+                  }
+                ],
+                "else": 0
+              }
+            },
+            "b": "$cess_pct"
+          },
+          "b": 100
+        },
+        "digits": 2
+      },
+      "total": {
+        "vop": "mul",
+        "a": {
+          "vop": "round_to",
+          "value": {
+            "vop": "div",
+            "a": {
+              "vop": "total",
+              "values": [
+                {
+                  "vop": "sub",
+                  "a": {
+                    "vop": "total",
+                    "values": [
+                      {
+                        "vop": "total",
+                        "values": [
+                          {
+                            "vop": "get",
+                            "value": "$b",
+                            "path": "at_normal"
+                          },
+                          {
+                            "vop": "get",
+                            "value": "$b",
+                            "path": "at_special"
+                          }
+                        ]
+                      },
+                      {
+                        "vop": "div",
+                        "a": {
+                          "vop": "mul",
+                          "a": {
+                            "vop": "total",
+                            "values": [
+                              {
+                                "vop": "get",
+                                "value": "$b",
+                                "path": "at_normal"
+                              },
+                              {
+                                "vop": "get",
+                                "value": "$b",
+                                "path": "at_special"
+                              }
+                            ]
+                          },
+                          "b": {
+                            "vop": "get",
+                            "value": "$b",
+                            "path": "rate_on"
+                          }
+                        },
+                        "b": 100
+                      }
+                    ]
+                  },
+                  "b": {
+                    "vop": "choose",
+                    "cases": [
+                      {
+                        "when": {
+                          "op": "gt",
+                          "left": {
+                            "vop": "get",
+                            "value": "$b",
+                            "path": "threshold"
+                          },
+                          "right": 0
+                        },
+                        "then": {
+                          "vop": "round_to",
+                          "value": {
+                            "vop": "largest",
+                            "values": [
+                              0,
+                              {
+                                "vop": "sub",
+                                "a": {
+                                  "vop": "total",
+                                  "values": [
+                                    {
+                                      "vop": "total",
+                                      "values": [
+                                        {
+                                          "vop": "get",
+                                          "value": "$b",
+                                          "path": "at_normal"
+                                        },
+                                        {
+                                          "vop": "get",
+                                          "value": "$b",
+                                          "path": "at_special"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "vop": "div",
+                                      "a": {
+                                        "vop": "mul",
+                                        "a": {
+                                          "vop": "total",
+                                          "values": [
+                                            {
+                                              "vop": "get",
+                                              "value": "$b",
+                                              "path": "at_normal"
+                                            },
+                                            {
+                                              "vop": "get",
+                                              "value": "$b",
+                                              "path": "at_special"
+                                            }
+                                          ]
+                                        },
+                                        "b": {
+                                          "vop": "get",
+                                          "value": "$b",
+                                          "path": "rate_on"
+                                        }
+                                      },
+                                      "b": 100
+                                    }
+                                  ]
+                                },
+                                "b": {
+                                  "vop": "total",
+                                  "values": [
+                                    {
+                                      "vop": "largest",
+                                      "values": [
+                                        0,
+                                        {
+                                          "vop": "sub",
+                                          "a": {
+                                            "vop": "total",
+                                            "values": [
+                                              {
+                                                "vop": "get",
+                                                "value": "$b",
+                                                "path": "at_normal"
+                                              },
+                                              {
+                                                "vop": "get",
+                                                "value": "$b",
+                                                "path": "at_special"
+                                              }
+                                            ]
+                                          },
+                                          "b": {
+                                            "vop": "div",
+                                            "a": {
+                                              "vop": "mul",
+                                              "a": {
+                                                "vop": "sub",
+                                                "a": {
+                                                  "vop": "get",
+                                                  "value": "$b",
+                                                  "path": "income"
+                                                },
+                                                "b": {
+                                                  "vop": "get",
+                                                  "value": "$b",
+                                                  "path": "threshold"
+                                                }
+                                              },
+                                              "b": "$rate"
+                                            },
+                                            "b": 100
+                                          }
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "vop": "div",
+                                      "a": {
+                                        "vop": "mul",
+                                        "a": {
+                                          "vop": "largest",
+                                          "values": [
+                                            0,
+                                            {
+                                              "vop": "sub",
+                                              "a": {
+                                                "vop": "total",
+                                                "values": [
+                                                  {
+                                                    "vop": "get",
+                                                    "value": "$b",
+                                                    "path": "at_normal"
+                                                  },
+                                                  {
+                                                    "vop": "get",
+                                                    "value": "$b",
+                                                    "path": "at_special"
+                                                  }
+                                                ]
+                                              },
+                                              "b": {
+                                                "vop": "div",
+                                                "a": {
+                                                  "vop": "mul",
+                                                  "a": {
+                                                    "vop": "sub",
+                                                    "a": {
+                                                      "vop": "get",
+                                                      "value": "$b",
+                                                      "path": "income"
+                                                    },
+                                                    "b": {
+                                                      "vop": "get",
+                                                      "value": "$b",
+                                                      "path": "threshold"
+                                                    }
+                                                  },
+                                                  "b": "$rate"
+                                                },
+                                                "b": 100
+                                              }
+                                            }
+                                          ]
+                                        },
+                                        "b": {
+                                          "vop": "coalesce",
+                                          "values": [
+                                            {
+                                              "vop": "step_rate",
+                                              "amount": {
+                                                "vop": "get",
+                                                "value": "$b",
+                                                "path": "threshold"
+                                              },
+                                              "steps": "$steps"
+                                            },
+                                            0
+                                          ]
+                                        }
+                                      },
+                                      "b": 100
+                                    },
+                                    {
+                                      "vop": "sub",
+                                      "a": {
+                                        "vop": "get",
+                                        "value": "$b",
+                                        "path": "income"
+                                      },
+                                      "b": {
+                                        "vop": "get",
+                                        "value": "$b",
+                                        "path": "threshold"
+                                      }
+                                    }
+                                  ]
+                                }
+                              }
+                            ]
+                          },
+                          "digits": 2
+                        }
+                      }
+                    ],
+                    "else": 0
+                  }
+                },
+                {
+                  "vop": "round_to",
+                  "value": {
+                    "vop": "div",
+                    "a": {
+                      "vop": "mul",
+                      "a": {
+                        "vop": "sub",
+                        "a": {
+                          "vop": "total",
+                          "values": [
+                            {
+                              "vop": "total",
+                              "values": [
+                                {
+                                  "vop": "get",
+                                  "value": "$b",
+                                  "path": "at_normal"
+                                },
+                                {
+                                  "vop": "get",
+                                  "value": "$b",
+                                  "path": "at_special"
+                                }
+                              ]
+                            },
+                            {
+                              "vop": "div",
+                              "a": {
+                                "vop": "mul",
+                                "a": {
+                                  "vop": "total",
+                                  "values": [
+                                    {
+                                      "vop": "get",
+                                      "value": "$b",
+                                      "path": "at_normal"
+                                    },
+                                    {
+                                      "vop": "get",
+                                      "value": "$b",
+                                      "path": "at_special"
+                                    }
+                                  ]
+                                },
+                                "b": {
+                                  "vop": "get",
+                                  "value": "$b",
+                                  "path": "rate_on"
+                                }
+                              },
+                              "b": 100
+                            }
+                          ]
+                        },
+                        "b": {
+                          "vop": "choose",
+                          "cases": [
+                            {
+                              "when": {
+                                "op": "gt",
+                                "left": {
+                                  "vop": "get",
+                                  "value": "$b",
+                                  "path": "threshold"
+                                },
+                                "right": 0
+                              },
+                              "then": {
+                                "vop": "round_to",
+                                "value": {
+                                  "vop": "largest",
+                                  "values": [
+                                    0,
+                                    {
+                                      "vop": "sub",
+                                      "a": {
+                                        "vop": "total",
+                                        "values": [
+                                          {
+                                            "vop": "total",
+                                            "values": [
+                                              {
+                                                "vop": "get",
+                                                "value": "$b",
+                                                "path": "at_normal"
+                                              },
+                                              {
+                                                "vop": "get",
+                                                "value": "$b",
+                                                "path": "at_special"
+                                              }
+                                            ]
+                                          },
+                                          {
+                                            "vop": "div",
+                                            "a": {
+                                              "vop": "mul",
+                                              "a": {
+                                                "vop": "total",
+                                                "values": [
+                                                  {
+                                                    "vop": "get",
+                                                    "value": "$b",
+                                                    "path": "at_normal"
+                                                  },
+                                                  {
+                                                    "vop": "get",
+                                                    "value": "$b",
+                                                    "path": "at_special"
+                                                  }
+                                                ]
+                                              },
+                                              "b": {
+                                                "vop": "get",
+                                                "value": "$b",
+                                                "path": "rate_on"
+                                              }
+                                            },
+                                            "b": 100
+                                          }
+                                        ]
+                                      },
+                                      "b": {
+                                        "vop": "total",
+                                        "values": [
+                                          {
+                                            "vop": "largest",
+                                            "values": [
+                                              0,
+                                              {
+                                                "vop": "sub",
+                                                "a": {
+                                                  "vop": "total",
+                                                  "values": [
+                                                    {
+                                                      "vop": "get",
+                                                      "value": "$b",
+                                                      "path": "at_normal"
+                                                    },
+                                                    {
+                                                      "vop": "get",
+                                                      "value": "$b",
+                                                      "path": "at_special"
+                                                    }
+                                                  ]
+                                                },
+                                                "b": {
+                                                  "vop": "div",
+                                                  "a": {
+                                                    "vop": "mul",
+                                                    "a": {
+                                                      "vop": "sub",
+                                                      "a": {
+                                                        "vop": "get",
+                                                        "value": "$b",
+                                                        "path": "income"
+                                                      },
+                                                      "b": {
+                                                        "vop": "get",
+                                                        "value": "$b",
+                                                        "path": "threshold"
+                                                      }
+                                                    },
+                                                    "b": "$rate"
+                                                  },
+                                                  "b": 100
+                                                }
+                                              }
+                                            ]
+                                          },
+                                          {
+                                            "vop": "div",
+                                            "a": {
+                                              "vop": "mul",
+                                              "a": {
+                                                "vop": "largest",
+                                                "values": [
+                                                  0,
+                                                  {
+                                                    "vop": "sub",
+                                                    "a": {
+                                                      "vop": "total",
+                                                      "values": [
+                                                        {
+                                                          "vop": "get",
+                                                          "value": "$b",
+                                                          "path": "at_normal"
+                                                        },
+                                                        {
+                                                          "vop": "get",
+                                                          "value": "$b",
+                                                          "path": "at_special"
+                                                        }
+                                                      ]
+                                                    },
+                                                    "b": {
+                                                      "vop": "div",
+                                                      "a": {
+                                                        "vop": "mul",
+                                                        "a": {
+                                                          "vop": "sub",
+                                                          "a": {
+                                                            "vop": "get",
+                                                            "value": "$b",
+                                                            "path": "income"
+                                                          },
+                                                          "b": {
+                                                            "vop": "get",
+                                                            "value": "$b",
+                                                            "path": "threshold"
+                                                          }
+                                                        },
+                                                        "b": "$rate"
+                                                      },
+                                                      "b": 100
+                                                    }
+                                                  }
+                                                ]
+                                              },
+                                              "b": {
+                                                "vop": "coalesce",
+                                                "values": [
+                                                  {
+                                                    "vop": "step_rate",
+                                                    "amount": {
+                                                      "vop": "get",
+                                                      "value": "$b",
+                                                      "path": "threshold"
+                                                    },
+                                                    "steps": "$steps"
+                                                  },
+                                                  0
+                                                ]
+                                              }
+                                            },
+                                            "b": 100
+                                          },
+                                          {
+                                            "vop": "sub",
+                                            "a": {
+                                              "vop": "get",
+                                              "value": "$b",
+                                              "path": "income"
+                                            },
+                                            "b": {
+                                              "vop": "get",
+                                              "value": "$b",
+                                              "path": "threshold"
+                                            }
+                                          }
+                                        ]
+                                      }
+                                    }
+                                  ]
+                                },
+                                "digits": 2
+                              }
+                            }
+                          ],
+                          "else": 0
+                        }
+                      },
+                      "b": "$cess_pct"
+                    },
+                    "b": 100
+                  },
+                  "digits": 2
+                }
+              ]
+            },
+            "b": "$round_to"
+          },
+          "digits": 0
+        },
+        "b": "$round_to"
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-11: Part of chip company.tax: surcharge on the whole tax; marginal relief - tax and surcharge above a band's edge never more than the income above it (the part above the edge taken at the main rate); cess on tax and surcharge; the total rounded to the nearest 10 (s.288B).",
+  "test_cases": [
+    {
+      "args": {
+        "main": 50000000,
+        "b": {
+          "income": 50000000,
+          "at_normal": 12500000,
+          "at_special": 0,
+          "on_111a": 0,
+          "on_112a": 0,
+          "on_112": 0,
+          "rate_on": 7,
+          "threshold": 10000000
+        }
+      },
+      "expect_value": {
+        "income": 50000000,
+        "at_normal": 12500000.0,
+        "at_special": 0.0,
+        "on_111a": 0.0,
+        "on_112a": 0.0,
+        "on_112": 0.0,
+        "tax": 12500000.0,
+        "surcharge_rate": 7,
+        "surcharge": 875000.0,
+        "relief": 0.0,
+        "cess": 535000.0,
+        "total": 13910000
+      }
+    }
+  ]
+}

@@ -1,0 +1,1329 @@
+{
+  "chip_id": "company.settings",
+  "kind": "accessor",
+  "set": "company",
+  "label": "Company: rates, options, blocks and SF Ref items (ITR-6)",
+  "aliases": [
+    "company: rates, options, blocks and sf r"
+  ],
+  "params": [
+    {
+      "name": "kinds",
+      "type": "json",
+      "default": [
+        {
+          "id": "private",
+          "label": "Private limited",
+          "code": "7"
+        },
+        {
+          "id": "public",
+          "label": "Public limited (unlisted)",
+          "code": "6"
+        },
+        {
+          "id": "listed",
+          "label": "Public limited (listed)",
+          "code": "6",
+          "listed": true
+        },
+        {
+          "id": "opc",
+          "label": "One person company",
+          "code": "7"
+        }
+      ],
+      "label": "kinds of domestic company (the code is ITR-6 StatusOrCompanyType: 6 public, 7 private)"
+    },
+    {
+      "name": "options",
+      "type": "json",
+      "default": [
+        {
+          "id": "normal",
+          "label": "Normal provisions (25% / 30%, MAT applies)"
+        },
+        {
+          "id": "115BA",
+          "label": "s.115BA (25%, manufacturing, opted earlier)"
+        },
+        {
+          "id": "115BAA",
+          "label": "s.115BAA (22% + 10% surcharge, no MAT)"
+        },
+        {
+          "id": "115BAB",
+          "label": "s.115BAB (15% new manufacturing + 10% surcharge, no MAT)"
+        }
+      ],
+      "label": "the tax options a domestic company may be under"
+    },
+    {
+      "name": "designations",
+      "type": "json",
+      "default": [
+        {
+          "id": "MD",
+          "label": "Managing director"
+        },
+        {
+          "id": "DIR",
+          "label": "Director"
+        },
+        {
+          "id": "CFO",
+          "label": "CFO"
+        },
+        {
+          "id": "SEC",
+          "label": "Company secretary"
+        }
+      ],
+      "label": "key persons' designations (ITR-6 KeyPersons codes)"
+    },
+    {
+      "name": "signer_codes",
+      "type": "json",
+      "default": {
+        "MD": "MD",
+        "DIR": "DR"
+      },
+      "label": "the verification capacity of a signing key person"
+    },
+    {
+      "name": "cin_pattern",
+      "type": "text",
+      "default": "^[LU][0-9]{5}[A-Z]{2}[0-9]{4}(PTC|PLC|OPC|NPL|ULL|ULT|FTC|GOI|SGC|GAT|GAP)[0-9]{6}$",
+      "label": "CIN shape (MCA: 21 characters)"
+    },
+    {
+      "name": "din_pattern",
+      "type": "text",
+      "default": "^[0-9]{8}$",
+      "label": "DIN shape (8 digits)"
+    },
+    {
+      "name": "default_ay",
+      "type": "text",
+      "default": "2026-27",
+      "label": "the AY whose rates are verified; another AY uses them with a warning"
+    },
+    {
+      "name": "rates_by_ay",
+      "type": "json",
+      "default": {
+        "2026-27": {
+          "turnover_limit": 4000000000,
+          "turnover_py": "2023-24",
+          "base_low": 25,
+          "base_high": 30,
+          "bands": [
+            {
+              "above": 10000000,
+              "rate": 7
+            },
+            {
+              "above": 100000000,
+              "rate": 12
+            }
+          ],
+          "options": {
+            "115BA": {
+              "rate": 25,
+              "steps": [
+                {
+                  "above": 10000000,
+                  "rate": 7
+                },
+                {
+                  "above": 100000000,
+                  "rate": 12
+                }
+              ],
+              "mat": true,
+              "addl_dep": false,
+              "via": "all"
+            },
+            "115BAA": {
+              "rate": 22,
+              "steps": [
+                {
+                  "above": 0,
+                  "rate": 10
+                }
+              ],
+              "mat": false,
+              "addl_dep": false,
+              "via": "baa"
+            },
+            "115BAB": {
+              "rate": 15,
+              "other_rate": 22,
+              "steps": [
+                {
+                  "above": 0,
+                  "rate": 10
+                }
+              ],
+              "mat": false,
+              "addl_dep": false,
+              "via": "baa",
+              "split_business": true
+            }
+          },
+          "mat_rate": 15,
+          "cess_pct": 4,
+          "round_to": 10,
+          "cg": {
+            "stcg_111a": 20,
+            "ltcg_112a": 12.5,
+            "ltcg_112": 12.5,
+            "exempt_112a": 125000
+          },
+          "source": "Finance Act 2026, First Schedule Part I-A Para E (rates unchanged from AY 2025-26 - Memorandum to the Finance Bill 2026, https://www.indiabudget.gov.in/doc/memo.pdf); CBDT ITR-6 validation rules V1.0 AY 2026-27 (rates table), https://www.incometax.gov.in/iec/foportal/downloads"
+        }
+      },
+      "label": "a company's rates per AY (normal by turnover, options, surcharge, MAT, cess, special-rate gains)"
+    },
+    {
+      "name": "via_sets",
+      "type": "json",
+      "default": {
+        "all": [
+          "80G",
+          "80GGA",
+          "80GGB",
+          "80GGC",
+          "80IA",
+          "80IAB",
+          "80IAC",
+          "80IB",
+          "80JJAA",
+          "80LA",
+          "80M"
+        ],
+        "baa": [
+          "80JJAA",
+          "80M",
+          "80LA(1A)"
+        ]
+      },
+      "label": "Chapter VI-A sections a company may claim under each set (115BAA / 115BAB: only 80JJAA, 80M, 80LA(1A))"
+    },
+    {
+      "name": "dep_blocks",
+      "type": "json",
+      "default": [
+        {
+          "id": "pm15",
+          "label": "Plant & machinery @ 15%",
+          "rate": 15,
+          "addl": true,
+          "path": "ScheduleDPM.PlantMachinery.Rate15",
+          "sum": "pm15"
+        },
+        {
+          "id": "pm30",
+          "label": "Plant & machinery @ 30%",
+          "rate": 30,
+          "addl": true,
+          "path": "ScheduleDPM.PlantMachinery.Rate30",
+          "sum": "pm30"
+        },
+        {
+          "id": "pm40",
+          "label": "Plant & machinery @ 40% (computers, software)",
+          "rate": 40,
+          "addl": false,
+          "path": "ScheduleDPM.PlantMachinery.Rate40",
+          "sum": "pm40"
+        },
+        {
+          "id": "pm45",
+          "label": "Plant & machinery @ 45%",
+          "rate": 45,
+          "addl": false,
+          "path": "ScheduleDPM.PlantMachinery.Rate45",
+          "sum": "pm45"
+        },
+        {
+          "id": "bldg5",
+          "label": "Building (residential) @ 5%",
+          "rate": 5,
+          "addl": false,
+          "path": "ScheduleDOA.Building.Rate5",
+          "sum": "b5"
+        },
+        {
+          "id": "bldg10",
+          "label": "Building (other) @ 10%",
+          "rate": 10,
+          "addl": false,
+          "path": "ScheduleDOA.Building.Rate10",
+          "sum": "b10"
+        },
+        {
+          "id": "bldg40",
+          "label": "Building (temporary) @ 40%",
+          "rate": 40,
+          "addl": false,
+          "path": "ScheduleDOA.Building.Rate40",
+          "sum": "b40"
+        },
+        {
+          "id": "furn10",
+          "label": "Furniture & fittings @ 10%",
+          "rate": 10,
+          "addl": false,
+          "path": "ScheduleDOA.FurnitureFittings.Rate10",
+          "sum": "furn"
+        },
+        {
+          "id": "intang25",
+          "label": "Intangible assets @ 25%",
+          "rate": 25,
+          "addl": false,
+          "path": "ScheduleDOA.IntangibleAssets.Rate25",
+          "sum": "intang"
+        },
+        {
+          "id": "ships20",
+          "label": "Ships @ 20%",
+          "rate": 20,
+          "addl": false,
+          "path": "ScheduleDOA.Ships.Rate20",
+          "sum": "ships"
+        }
+      ],
+      "label": "blocks of assets (Appendix I, rule 5) and their place in Schedule DPM / DOA; addl: additional depreciation 32(1)(iia) on new P&M"
+    },
+    {
+      "name": "dep_columns",
+      "type": "json",
+      "default": {
+        "opening": "(?i)opening|w\\.?\\s?d\\.?\\s?v.*(1st|first|01|as on 1)|as on 0?1[./-]0?4",
+        "new_more": "(?i)new.*(180 days or more|more than 180|before)|eligible.*(more|before)",
+        "new_less": "(?i)new.*(less than 180|after)|eligible.*(less|after)",
+        "more": "(?i)180 days or more|more than 180|>=? ?180|before 0?3[./ -]?10|up ?to 0?2[./ -]?10|first half",
+        "less": "(?i)less than 180|< ?180|after 0?2[./ -]?10|on or after 0?3[./ -]?10|second half",
+        "sales": "(?i)sale|deletion|realis|disposal",
+        "addl_bf": "(?i)additional.*(b/?f|brought|balance)"
+      },
+      "label": "a fixed-asset schedule's column titles -> opening WDV, additions 180 days or more / less, sales, new P&M, additional depreciation b/f"
+    },
+    {
+      "name": "addl_dep_rate",
+      "type": "number",
+      "default": 20,
+      "label": "additional depreciation on new plant and machinery, s.32(1)(iia) (half when used under 180 days, the balance next year)"
+    },
+    {
+      "name": "bp_items",
+      "type": "json",
+      "default": {
+        "profit": {
+          "sign": 1,
+          "key": "ProfBfrTaxPL",
+          "label": "Profit before tax as per the P&L",
+          "cite": "Schedule BP line 1"
+        },
+        "tax": {
+          "sign": 1,
+          "key": "ProfBfrTaxPL",
+          "label": "Income-tax provision added back (when the statement starts after tax)",
+          "cite": "s.40(a)(ii)"
+        },
+        "book_dep": {
+          "sign": 1,
+          "key": "DepreciationDebPLCosAct",
+          "label": "Depreciation as per the books (Companies Act)",
+          "cite": "s.32 replaces it"
+        },
+        "it_dep": {
+          "sign": -1,
+          "key": "DepreciationAllowUs32_1_ii",
+          "label": "Depreciation u/s 32 typed (when no Schedule DEP rows)",
+          "cite": "s.32(1)(ii)"
+        },
+        "csr": {
+          "sign": 1,
+          "key": "AmtDebPLDisallowUs37",
+          "label": "CSR expenditure (s.135 Companies Act) - not a business expense",
+          "cite": "Explanation 2 to s.37(1)"
+        },
+        "s37": {
+          "sign": 1,
+          "key": "AmtDebPLDisallowUs37",
+          "label": "Other expenditure disallowed u/s 37 (penalties, personal)",
+          "cite": "s.37(1)"
+        },
+        "s36": {
+          "sign": 1,
+          "key": "AmtDebPLDisallowUs36",
+          "label": "Disallowed u/s 36",
+          "cite": "s.36"
+        },
+        "s40": {
+          "sign": 1,
+          "key": "AmtDebPLDisallowUs40",
+          "label": "Disallowed u/s 40 (TDS not deducted / paid)",
+          "cite": "s.40(a)(i)/(ia)"
+        },
+        "s40a": {
+          "sign": 1,
+          "key": "AmtDebPLDisallowUs40A",
+          "label": "Disallowed u/s 40A (40A(2)(b), 40A(3) cash, 40A(7))",
+          "cite": "s.40A"
+        },
+        "s43b": {
+          "sign": 1,
+          "key": "AmtDebPLDisallowUs43B",
+          "label": "Unpaid by the due date - s.43B (taxes, PF employer share, bonus, bank interest, leave, MSME dues)",
+          "cite": "s.43B incl. 43B(h)"
+        },
+        "other_add": {
+          "sign": 1,
+          "key": "OthItemDisallowUs28To44DA",
+          "label": "Other additions u/s 28-44DA",
+          "cite": "Schedule BP"
+        },
+        "dividend": {
+          "sign": -1,
+          "key": "IncRecCredPLOthHeadDtls.Dividend",
+          "label": "Dividend credited to the P&L - taxed under other sources",
+          "cite": "s.56(2)(i)"
+        },
+        "os_income": {
+          "sign": -1,
+          "key": "IncRecCredPLOthHeadDtls.OtherThanDividend",
+          "label": "Other income credited to the P&L - taxed under other sources (interest ...)",
+          "cite": "s.56"
+        },
+        "cg_income": {
+          "sign": -1,
+          "key": "IncRecCredPLOthHeadDtls.CapitalGains",
+          "label": "Capital gains credited to the P&L - taxed under capital gains",
+          "cite": "s.45"
+        },
+        "hp_income": {
+          "sign": -1,
+          "key": "IncRecCredPLOthHeadDtls.HouseProperty",
+          "label": "Rent credited to the P&L - taxed under house property",
+          "cite": "s.22"
+        },
+        "exempt": {
+          "sign": -1,
+          "key": "IncCredPL.OthExempInc",
+          "label": "Exempt income credited to the P&L",
+          "cite": "s.10"
+        },
+        "s43b_paid": {
+          "sign": -1,
+          "key": "AmtDisallUs43BNowAllow",
+          "label": "Disallowed u/s 43B earlier, paid this year",
+          "cite": "s.43B"
+        },
+        "s40_paid": {
+          "sign": -1,
+          "key": "AmtDisallUs40NowAllow",
+          "label": "Disallowed u/s 40(a) earlier, TDS paid this year",
+          "cite": "s.40(a)(ia) proviso"
+        },
+        "other_less": {
+          "sign": -1,
+          "key": "AnyOthAmtAllDeduct",
+          "label": "Any other amount allowable as a deduction",
+          "cite": "Schedule BP"
+        }
+      },
+      "label": "SF Ref ITR6 BP <item>: the company's computation statement, line by line"
+    },
+    {
+      "name": "mat_items",
+      "type": "json",
+      "default": {
+        "pat": {
+          "sign": 1,
+          "key": "ProfAfterTaxPLAcnt",
+          "label": "Profit after tax as per the P&L (Schedule III)",
+          "cite": "s.115JB(2)"
+        },
+        "add_tax": {
+          "sign": 1,
+          "key": "Additions.ITPaidInclDefTax",
+          "label": "Income-tax paid or payable incl. deferred tax",
+          "cite": "Expl. 1(a) to s.115JB(2)"
+        },
+        "add_reserve": {
+          "sign": 1,
+          "key": "Additions.ResvrNo33AC",
+          "label": "Amounts carried to a reserve",
+          "cite": "Expl. 1(b)"
+        },
+        "add_provision": {
+          "sign": 1,
+          "key": "Additions.ProvUncertainLiab",
+          "label": "Provision for an unascertained liability",
+          "cite": "Expl. 1(c)"
+        },
+        "add_dividend": {
+          "sign": 1,
+          "key": "Additions.DividendPaidOrProposed",
+          "label": "Dividend paid or proposed",
+          "cite": "Expl. 1(e)"
+        },
+        "add_exempt_exp": {
+          "sign": 1,
+          "key": "Additions.ExpendExempIncUs10s",
+          "label": "Expenditure on exempt income",
+          "cite": "Expl. 1(f)"
+        },
+        "add_reval_dep": {
+          "sign": 1,
+          "key": "Additions.DepreciatAttribToRevalAsset",
+          "label": "Depreciation on revaluation",
+          "cite": "Expl. 1(i)"
+        },
+        "add_other": {
+          "sign": 1,
+          "key": "Additions.Others",
+          "label": "Other additions",
+          "cite": "Expl. 1"
+        },
+        "less_reserve": {
+          "sign": -1,
+          "key": "Deducts.AmtWithdrawFromResvrIfCredPL",
+          "label": "Withdrawn from a reserve and credited to the P&L",
+          "cite": "Expl. 1(i)"
+        },
+        "less_exempt": {
+          "sign": -1,
+          "key": "Deducts.IncExempIncUs10s",
+          "label": "Exempt income credited to the P&L",
+          "cite": "Expl. 1(ii)"
+        },
+        "less_bf": {
+          "sign": -1,
+          "key": "Deducts.UnAbsorbedDepreciat",
+          "label": "Lower of brought-forward loss or unabsorbed depreciation (as per the books)",
+          "cite": "Expl. 1(iii)"
+        },
+        "less_other": {
+          "sign": -1,
+          "key": "Deducts.Others",
+          "label": "Other deductions",
+          "cite": "Expl. 1"
+        }
+      },
+      "label": "SF Ref ITR6 MAT <item>: the book profit u/s 115JB (Form 29B)"
+    },
+    {
+      "name": "os_items",
+      "type": "json",
+      "default": {
+        "dividend": {
+          "key": "DividendGross"
+        },
+        "interest": {
+          "key": "IntrstFrmOthers"
+        },
+        "deposit": {
+          "key": "IntrstFrmTermDeposit"
+        },
+        "refund": {
+          "key": "IntrstFrmIncmTaxRefund"
+        },
+        "rent": {
+          "key": "RentFromMachPlantBldgs"
+        },
+        "other": {
+          "key": "AnyOtherIncome"
+        }
+      },
+      "label": "SF Ref ITR6 OS <item>: other sources by kind (Schedule OS)"
+    },
+    {
+      "name": "cg_items",
+      "type": "json",
+      "default": {
+        "stcg_111a": {
+          "kind": "st",
+          "special": true,
+          "si": "1A",
+          "label": "STCG u/s 111A (listed shares, STT paid) @ 20%"
+        },
+        "stcg": {
+          "kind": "st",
+          "special": false,
+          "label": "STCG at the normal rate"
+        },
+        "ltcg_112a": {
+          "kind": "lt",
+          "special": true,
+          "si": "2A",
+          "label": "LTCG u/s 112A @ 12.5% above 1.25 lakh"
+        },
+        "ltcg_112": {
+          "kind": "lt",
+          "special": true,
+          "si": "21",
+          "label": "LTCG u/s 112 @ 12.5%"
+        }
+      },
+      "label": "SF Ref ITR6 CG <item>: capital gains by rate (si: the Schedule SI code)"
+    },
+    {
+      "name": "g80_cats",
+      "type": "json",
+      "default": {
+        "100": {
+          "label": "100% without a limit (PM CARES, PM National Relief Fund ...)",
+          "path": "Don100Percent"
+        },
+        "50": {
+          "label": "50% without a limit (PM Drought Relief, Jawaharlal Nehru Memorial Fund ...)",
+          "path": "Don50PercentNoApprReqd"
+        },
+        "100q": {
+          "label": "100% within the qualifying limit (Govt / approved for family planning ...)",
+          "path": "Don100PercentApprReqd"
+        },
+        "50q": {
+          "label": "50% within the qualifying limit (approved trusts and institutions u/s 80G(5))",
+          "path": "Don50PercentApprReqd"
+        },
+        "csr_kosh": {
+          "label": "CSR contribution to the Swachh Bharat Kosh / Clean Ganga Fund - not deductible",
+          "path": ""
+        }
+      },
+      "label": "SF Ref ITR6 80G <category>: donations by category (Schedule 80G)"
+    },
+    {
+      "name": "g80_limit_pct",
+      "type": "number",
+      "default": 10,
+      "label": "the qualifying limit: 10% of the adjusted gross total income, s.80G(4)"
+    },
+    {
+      "name": "d80m_months",
+      "type": "number",
+      "default": 1,
+      "label": "s.80M: dividends distributed at least one month before the due date of the return"
+    },
+    {
+      "name": "hp_setoff_cap",
+      "type": "number",
+      "default": 200000,
+      "label": "house-property loss set off against other heads at most, s.71(3A)"
+    },
+    {
+      "name": "cyla_order",
+      "type": "json",
+      "default": [
+        "os",
+        "hp",
+        "stcg",
+        "stcg_111a",
+        "ltcg_112",
+        "ltcg_112a"
+      ],
+      "label": "a business loss is set off against these incomes in this order (normal-rate income first)"
+    },
+    {
+      "name": "st_loss_order",
+      "type": "json",
+      "default": [
+        "stcg",
+        "stcg_111a",
+        "ltcg_112",
+        "ltcg_112a"
+      ],
+      "label": "a short-term capital loss against these gains, s.74"
+    },
+    {
+      "name": "lt_loss_order",
+      "type": "json",
+      "default": [
+        "ltcg_112",
+        "ltcg_112a"
+      ],
+      "label": "a long-term capital loss against long-term gains only, s.74"
+    },
+    {
+      "name": "turnover_items",
+      "type": "json",
+      "default": [
+        "sales",
+        "services",
+        "professional_receipts"
+      ],
+      "label": "the P&L items (SF Ref ITR6 PL <item>) that are the year's turnover (Part A-GEN band)"
+    },
+    {
+      "name": "cfl_paths",
+      "type": "json",
+      "default": {
+        "2018-19": "LossCFFromPrevYrToAY",
+        "2019-20": "LossCFCurrentAssmntYear",
+        "2020-21": "LossCFCurrentAssmntYear2021",
+        "2021-22": "LossCFCurrentAssmntYear2022",
+        "2022-23": "LossCFCurrentAssmntYear2023",
+        "2023-24": "LossCFCurrentAssmntYear2024",
+        "2024-25": "LossCFCurrentAssmntYear2025",
+        "2025-26": "LossCFCurrentAssmntYear2026"
+      },
+      "label": "Schedule CFL's block for each earlier AY"
+    },
+    {
+      "name": "loss_years",
+      "type": "json",
+      "default": {
+        "business": 8,
+        "mat": 15
+      },
+      "label": "a business loss is carried 8 AYs (s.72(3)); MAT credit 15 AYs (s.115JAA(3A)); unabsorbed depreciation without limit (s.32(2))"
+    },
+    {
+      "name": "s79_pct",
+      "type": "number",
+      "default": 51,
+      "label": "s.79: a closely held company keeps its losses only if 51% of the voting power stays with the same holders"
+    },
+    {
+      "name": "sh_min_pct",
+      "type": "number",
+      "default": 1,
+      "label": "Schedule SH-1: shareholders of an unlisted company holding 1% or more"
+    },
+    {
+      "name": "holder_min_pct",
+      "type": "number",
+      "default": 10,
+      "label": "Part A-GEN: persons holding 10% or more of the voting power"
+    },
+    {
+      "name": "sources",
+      "type": "json",
+      "default": {
+        "rates": "Finance Act 2026, First Schedule Part I-A Para E (rates unchanged from AY 2025-26 - Memorandum to the Finance Bill 2026, https://www.indiabudget.gov.in/doc/memo.pdf); CBDT ITR-6 validation rules V1.0 AY 2026-27 (rates table), https://www.incometax.gov.in/iec/foportal/downloads",
+        "schema": "ITR-6 JSON schema V1.0 for AY 2026-27 and validation rules V1.0 (incometax.gov.in > Downloads, 04-Aug-2026)",
+        "due": "s.139(1) Explanation 2(a): a company files by 31 October; 30 November with a Form 3CEB (s.92E)",
+        "mat": "s.115JB (15% of book profit; not for 115BAA / 115BAB - s.115JB(5A)); credit s.115JAA, 15 AYs. The Finance Bill 2026 changes MAT only from tax year 2026-27 (Income-tax Act 2025)",
+        "losses": "s.70-80: CYLA s.71 (house property loss up to 2 lakh, s.71(3A)), business loss 8 AYs s.72, unabsorbed depreciation s.32(2), s.79 (51%), return in time s.80 / s.139(3)",
+        "dep": "s.32 and rule 5 Appendix I; half rate under 180 days (2nd proviso to s.32(1)); additional 20% s.32(1)(iia); s.50 gain on a block",
+        "deductions": "s.80G (CSR proviso to 80G(2)(iiihk)/(iiihl)), s.80M, s.115BAA(2)(ii) / 115BAB(2)(ii): only 80JJAA, 80M, 80LA(1A)",
+        "csr": "Explanation 2 to s.37(1): CSR spent under s.135 of the Companies Act is not a business expense",
+        "s43b": "s.43B incl. 43B(h) (MSME dues beyond the MSMED Act 45 days)"
+      },
+      "label": "where each rule comes from"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "kinds": "$kinds",
+      "options": "$options",
+      "designations": "$designations",
+      "signer_codes": "$signer_codes",
+      "cin_pattern": "$cin_pattern",
+      "din_pattern": "$din_pattern",
+      "default_ay": "$default_ay",
+      "rates_by_ay": "$rates_by_ay",
+      "via_sets": "$via_sets",
+      "dep_blocks": "$dep_blocks",
+      "dep_columns": "$dep_columns",
+      "addl_dep_rate": "$addl_dep_rate",
+      "bp_items": "$bp_items",
+      "mat_items": "$mat_items",
+      "os_items": "$os_items",
+      "cg_items": "$cg_items",
+      "g80_cats": "$g80_cats",
+      "g80_limit_pct": "$g80_limit_pct",
+      "d80m_months": "$d80m_months",
+      "hp_setoff_cap": "$hp_setoff_cap",
+      "cyla_order": "$cyla_order",
+      "st_loss_order": "$st_loss_order",
+      "lt_loss_order": "$lt_loss_order",
+      "turnover_items": "$turnover_items",
+      "cfl_paths": "$cfl_paths",
+      "loss_years": "$loss_years",
+      "s79_pct": "$s79_pct",
+      "sh_min_pct": "$sh_min_pct",
+      "holder_min_pct": "$holder_min_pct",
+      "sources": "$sources"
+    }
+  },
+  "returns": "record",
+  "version": 3,
+  "status": "published",
+  "description_nl": "2026-10-11: Every knob a company's return uses (ITR-6, AY 2026-27): the kinds of company and options (normal, 115BA, 115BAA, 115BAB), the AY's rates (25% when the turnover of the PY 2023-24 is within 400 crore, else 30%; surcharge 7% above 1 crore, 12% above 10 crore; 115BAA 22% / 115BAB 15% with a flat 10% surcharge; MAT 15%; cess 4%; 111A 20%, 112A / 112 12.5%, 112A exempt up to 1.25 lakh), the depreciation blocks, the SF Ref items of the computation statement, MAT, other sources, capital gains and 80G, and the sources.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "kinds": [
+          {
+            "id": "private",
+            "label": "Private limited",
+            "code": "7"
+          },
+          {
+            "id": "public",
+            "label": "Public limited (unlisted)",
+            "code": "6"
+          },
+          {
+            "id": "listed",
+            "label": "Public limited (listed)",
+            "code": "6",
+            "listed": true
+          },
+          {
+            "id": "opc",
+            "label": "One person company",
+            "code": "7"
+          }
+        ],
+        "options": [
+          {
+            "id": "normal",
+            "label": "Normal provisions (25% / 30%, MAT applies)"
+          },
+          {
+            "id": "115BA",
+            "label": "s.115BA (25%, manufacturing, opted earlier)"
+          },
+          {
+            "id": "115BAA",
+            "label": "s.115BAA (22% + 10% surcharge, no MAT)"
+          },
+          {
+            "id": "115BAB",
+            "label": "s.115BAB (15% new manufacturing + 10% surcharge, no MAT)"
+          }
+        ],
+        "designations": [
+          {
+            "id": "MD",
+            "label": "Managing director"
+          },
+          {
+            "id": "DIR",
+            "label": "Director"
+          },
+          {
+            "id": "CFO",
+            "label": "CFO"
+          },
+          {
+            "id": "SEC",
+            "label": "Company secretary"
+          }
+        ],
+        "signer_codes": {
+          "MD": "MD",
+          "DIR": "DR"
+        },
+        "cin_pattern": "^[LU][0-9]{5}[A-Z]{2}[0-9]{4}(PTC|PLC|OPC|NPL|ULL|ULT|FTC|GOI|SGC|GAT|GAP)[0-9]{6}$",
+        "din_pattern": "^[0-9]{8}$",
+        "default_ay": "2026-27",
+        "rates_by_ay": {
+          "2026-27": {
+            "turnover_limit": 4000000000,
+            "turnover_py": "2023-24",
+            "base_low": 25,
+            "base_high": 30,
+            "bands": [
+              {
+                "above": 10000000,
+                "rate": 7
+              },
+              {
+                "above": 100000000,
+                "rate": 12
+              }
+            ],
+            "options": {
+              "115BA": {
+                "rate": 25,
+                "steps": [
+                  {
+                    "above": 10000000,
+                    "rate": 7
+                  },
+                  {
+                    "above": 100000000,
+                    "rate": 12
+                  }
+                ],
+                "mat": true,
+                "addl_dep": false,
+                "via": "all"
+              },
+              "115BAA": {
+                "rate": 22,
+                "steps": [
+                  {
+                    "above": 0,
+                    "rate": 10
+                  }
+                ],
+                "mat": false,
+                "addl_dep": false,
+                "via": "baa"
+              },
+              "115BAB": {
+                "rate": 15,
+                "other_rate": 22,
+                "steps": [
+                  {
+                    "above": 0,
+                    "rate": 10
+                  }
+                ],
+                "mat": false,
+                "addl_dep": false,
+                "via": "baa",
+                "split_business": true
+              }
+            },
+            "mat_rate": 15,
+            "cess_pct": 4,
+            "round_to": 10,
+            "cg": {
+              "stcg_111a": 20,
+              "ltcg_112a": 12.5,
+              "ltcg_112": 12.5,
+              "exempt_112a": 125000
+            },
+            "source": "Finance Act 2026, First Schedule Part I-A Para E (rates unchanged from AY 2025-26 - Memorandum to the Finance Bill 2026, https://www.indiabudget.gov.in/doc/memo.pdf); CBDT ITR-6 validation rules V1.0 AY 2026-27 (rates table), https://www.incometax.gov.in/iec/foportal/downloads"
+          }
+        },
+        "via_sets": {
+          "all": [
+            "80G",
+            "80GGA",
+            "80GGB",
+            "80GGC",
+            "80IA",
+            "80IAB",
+            "80IAC",
+            "80IB",
+            "80JJAA",
+            "80LA",
+            "80M"
+          ],
+          "baa": [
+            "80JJAA",
+            "80M",
+            "80LA(1A)"
+          ]
+        },
+        "dep_blocks": [
+          {
+            "id": "pm15",
+            "label": "Plant & machinery @ 15%",
+            "rate": 15,
+            "addl": true,
+            "path": "ScheduleDPM.PlantMachinery.Rate15",
+            "sum": "pm15"
+          },
+          {
+            "id": "pm30",
+            "label": "Plant & machinery @ 30%",
+            "rate": 30,
+            "addl": true,
+            "path": "ScheduleDPM.PlantMachinery.Rate30",
+            "sum": "pm30"
+          },
+          {
+            "id": "pm40",
+            "label": "Plant & machinery @ 40% (computers, software)",
+            "rate": 40,
+            "addl": false,
+            "path": "ScheduleDPM.PlantMachinery.Rate40",
+            "sum": "pm40"
+          },
+          {
+            "id": "pm45",
+            "label": "Plant & machinery @ 45%",
+            "rate": 45,
+            "addl": false,
+            "path": "ScheduleDPM.PlantMachinery.Rate45",
+            "sum": "pm45"
+          },
+          {
+            "id": "bldg5",
+            "label": "Building (residential) @ 5%",
+            "rate": 5,
+            "addl": false,
+            "path": "ScheduleDOA.Building.Rate5",
+            "sum": "b5"
+          },
+          {
+            "id": "bldg10",
+            "label": "Building (other) @ 10%",
+            "rate": 10,
+            "addl": false,
+            "path": "ScheduleDOA.Building.Rate10",
+            "sum": "b10"
+          },
+          {
+            "id": "bldg40",
+            "label": "Building (temporary) @ 40%",
+            "rate": 40,
+            "addl": false,
+            "path": "ScheduleDOA.Building.Rate40",
+            "sum": "b40"
+          },
+          {
+            "id": "furn10",
+            "label": "Furniture & fittings @ 10%",
+            "rate": 10,
+            "addl": false,
+            "path": "ScheduleDOA.FurnitureFittings.Rate10",
+            "sum": "furn"
+          },
+          {
+            "id": "intang25",
+            "label": "Intangible assets @ 25%",
+            "rate": 25,
+            "addl": false,
+            "path": "ScheduleDOA.IntangibleAssets.Rate25",
+            "sum": "intang"
+          },
+          {
+            "id": "ships20",
+            "label": "Ships @ 20%",
+            "rate": 20,
+            "addl": false,
+            "path": "ScheduleDOA.Ships.Rate20",
+            "sum": "ships"
+          }
+        ],
+        "dep_columns": {
+          "opening": "(?i)opening|w\\.?\\s?d\\.?\\s?v.*(1st|first|01|as on 1)|as on 0?1[./-]0?4",
+          "new_more": "(?i)new.*(180 days or more|more than 180|before)|eligible.*(more|before)",
+          "new_less": "(?i)new.*(less than 180|after)|eligible.*(less|after)",
+          "more": "(?i)180 days or more|more than 180|>=? ?180|before 0?3[./ -]?10|up ?to 0?2[./ -]?10|first half",
+          "less": "(?i)less than 180|< ?180|after 0?2[./ -]?10|on or after 0?3[./ -]?10|second half",
+          "sales": "(?i)sale|deletion|realis|disposal",
+          "addl_bf": "(?i)additional.*(b/?f|brought|balance)"
+        },
+        "addl_dep_rate": 20,
+        "bp_items": {
+          "profit": {
+            "sign": 1,
+            "key": "ProfBfrTaxPL",
+            "label": "Profit before tax as per the P&L",
+            "cite": "Schedule BP line 1"
+          },
+          "tax": {
+            "sign": 1,
+            "key": "ProfBfrTaxPL",
+            "label": "Income-tax provision added back (when the statement starts after tax)",
+            "cite": "s.40(a)(ii)"
+          },
+          "book_dep": {
+            "sign": 1,
+            "key": "DepreciationDebPLCosAct",
+            "label": "Depreciation as per the books (Companies Act)",
+            "cite": "s.32 replaces it"
+          },
+          "it_dep": {
+            "sign": -1,
+            "key": "DepreciationAllowUs32_1_ii",
+            "label": "Depreciation u/s 32 typed (when no Schedule DEP rows)",
+            "cite": "s.32(1)(ii)"
+          },
+          "csr": {
+            "sign": 1,
+            "key": "AmtDebPLDisallowUs37",
+            "label": "CSR expenditure (s.135 Companies Act) - not a business expense",
+            "cite": "Explanation 2 to s.37(1)"
+          },
+          "s37": {
+            "sign": 1,
+            "key": "AmtDebPLDisallowUs37",
+            "label": "Other expenditure disallowed u/s 37 (penalties, personal)",
+            "cite": "s.37(1)"
+          },
+          "s36": {
+            "sign": 1,
+            "key": "AmtDebPLDisallowUs36",
+            "label": "Disallowed u/s 36",
+            "cite": "s.36"
+          },
+          "s40": {
+            "sign": 1,
+            "key": "AmtDebPLDisallowUs40",
+            "label": "Disallowed u/s 40 (TDS not deducted / paid)",
+            "cite": "s.40(a)(i)/(ia)"
+          },
+          "s40a": {
+            "sign": 1,
+            "key": "AmtDebPLDisallowUs40A",
+            "label": "Disallowed u/s 40A (40A(2)(b), 40A(3) cash, 40A(7))",
+            "cite": "s.40A"
+          },
+          "s43b": {
+            "sign": 1,
+            "key": "AmtDebPLDisallowUs43B",
+            "label": "Unpaid by the due date - s.43B (taxes, PF employer share, bonus, bank interest, leave, MSME dues)",
+            "cite": "s.43B incl. 43B(h)"
+          },
+          "other_add": {
+            "sign": 1,
+            "key": "OthItemDisallowUs28To44DA",
+            "label": "Other additions u/s 28-44DA",
+            "cite": "Schedule BP"
+          },
+          "dividend": {
+            "sign": -1,
+            "key": "IncRecCredPLOthHeadDtls.Dividend",
+            "label": "Dividend credited to the P&L - taxed under other sources",
+            "cite": "s.56(2)(i)"
+          },
+          "os_income": {
+            "sign": -1,
+            "key": "IncRecCredPLOthHeadDtls.OtherThanDividend",
+            "label": "Other income credited to the P&L - taxed under other sources (interest ...)",
+            "cite": "s.56"
+          },
+          "cg_income": {
+            "sign": -1,
+            "key": "IncRecCredPLOthHeadDtls.CapitalGains",
+            "label": "Capital gains credited to the P&L - taxed under capital gains",
+            "cite": "s.45"
+          },
+          "hp_income": {
+            "sign": -1,
+            "key": "IncRecCredPLOthHeadDtls.HouseProperty",
+            "label": "Rent credited to the P&L - taxed under house property",
+            "cite": "s.22"
+          },
+          "exempt": {
+            "sign": -1,
+            "key": "IncCredPL.OthExempInc",
+            "label": "Exempt income credited to the P&L",
+            "cite": "s.10"
+          },
+          "s43b_paid": {
+            "sign": -1,
+            "key": "AmtDisallUs43BNowAllow",
+            "label": "Disallowed u/s 43B earlier, paid this year",
+            "cite": "s.43B"
+          },
+          "s40_paid": {
+            "sign": -1,
+            "key": "AmtDisallUs40NowAllow",
+            "label": "Disallowed u/s 40(a) earlier, TDS paid this year",
+            "cite": "s.40(a)(ia) proviso"
+          },
+          "other_less": {
+            "sign": -1,
+            "key": "AnyOthAmtAllDeduct",
+            "label": "Any other amount allowable as a deduction",
+            "cite": "Schedule BP"
+          }
+        },
+        "mat_items": {
+          "pat": {
+            "sign": 1,
+            "key": "ProfAfterTaxPLAcnt",
+            "label": "Profit after tax as per the P&L (Schedule III)",
+            "cite": "s.115JB(2)"
+          },
+          "add_tax": {
+            "sign": 1,
+            "key": "Additions.ITPaidInclDefTax",
+            "label": "Income-tax paid or payable incl. deferred tax",
+            "cite": "Expl. 1(a) to s.115JB(2)"
+          },
+          "add_reserve": {
+            "sign": 1,
+            "key": "Additions.ResvrNo33AC",
+            "label": "Amounts carried to a reserve",
+            "cite": "Expl. 1(b)"
+          },
+          "add_provision": {
+            "sign": 1,
+            "key": "Additions.ProvUncertainLiab",
+            "label": "Provision for an unascertained liability",
+            "cite": "Expl. 1(c)"
+          },
+          "add_dividend": {
+            "sign": 1,
+            "key": "Additions.DividendPaidOrProposed",
+            "label": "Dividend paid or proposed",
+            "cite": "Expl. 1(e)"
+          },
+          "add_exempt_exp": {
+            "sign": 1,
+            "key": "Additions.ExpendExempIncUs10s",
+            "label": "Expenditure on exempt income",
+            "cite": "Expl. 1(f)"
+          },
+          "add_reval_dep": {
+            "sign": 1,
+            "key": "Additions.DepreciatAttribToRevalAsset",
+            "label": "Depreciation on revaluation",
+            "cite": "Expl. 1(i)"
+          },
+          "add_other": {
+            "sign": 1,
+            "key": "Additions.Others",
+            "label": "Other additions",
+            "cite": "Expl. 1"
+          },
+          "less_reserve": {
+            "sign": -1,
+            "key": "Deducts.AmtWithdrawFromResvrIfCredPL",
+            "label": "Withdrawn from a reserve and credited to the P&L",
+            "cite": "Expl. 1(i)"
+          },
+          "less_exempt": {
+            "sign": -1,
+            "key": "Deducts.IncExempIncUs10s",
+            "label": "Exempt income credited to the P&L",
+            "cite": "Expl. 1(ii)"
+          },
+          "less_bf": {
+            "sign": -1,
+            "key": "Deducts.UnAbsorbedDepreciat",
+            "label": "Lower of brought-forward loss or unabsorbed depreciation (as per the books)",
+            "cite": "Expl. 1(iii)"
+          },
+          "less_other": {
+            "sign": -1,
+            "key": "Deducts.Others",
+            "label": "Other deductions",
+            "cite": "Expl. 1"
+          }
+        },
+        "os_items": {
+          "dividend": {
+            "key": "DividendGross"
+          },
+          "interest": {
+            "key": "IntrstFrmOthers"
+          },
+          "deposit": {
+            "key": "IntrstFrmTermDeposit"
+          },
+          "refund": {
+            "key": "IntrstFrmIncmTaxRefund"
+          },
+          "rent": {
+            "key": "RentFromMachPlantBldgs"
+          },
+          "other": {
+            "key": "AnyOtherIncome"
+          }
+        },
+        "cg_items": {
+          "stcg_111a": {
+            "kind": "st",
+            "special": true,
+            "si": "1A",
+            "label": "STCG u/s 111A (listed shares, STT paid) @ 20%"
+          },
+          "stcg": {
+            "kind": "st",
+            "special": false,
+            "label": "STCG at the normal rate"
+          },
+          "ltcg_112a": {
+            "kind": "lt",
+            "special": true,
+            "si": "2A",
+            "label": "LTCG u/s 112A @ 12.5% above 1.25 lakh"
+          },
+          "ltcg_112": {
+            "kind": "lt",
+            "special": true,
+            "si": "21",
+            "label": "LTCG u/s 112 @ 12.5%"
+          }
+        },
+        "g80_cats": {
+          "100": {
+            "label": "100% without a limit (PM CARES, PM National Relief Fund ...)",
+            "path": "Don100Percent"
+          },
+          "50": {
+            "label": "50% without a limit (PM Drought Relief, Jawaharlal Nehru Memorial Fund ...)",
+            "path": "Don50PercentNoApprReqd"
+          },
+          "100q": {
+            "label": "100% within the qualifying limit (Govt / approved for family planning ...)",
+            "path": "Don100PercentApprReqd"
+          },
+          "50q": {
+            "label": "50% within the qualifying limit (approved trusts and institutions u/s 80G(5))",
+            "path": "Don50PercentApprReqd"
+          },
+          "csr_kosh": {
+            "label": "CSR contribution to the Swachh Bharat Kosh / Clean Ganga Fund - not deductible",
+            "path": ""
+          }
+        },
+        "g80_limit_pct": 10,
+        "d80m_months": 1,
+        "hp_setoff_cap": 200000,
+        "cyla_order": [
+          "os",
+          "hp",
+          "stcg",
+          "stcg_111a",
+          "ltcg_112",
+          "ltcg_112a"
+        ],
+        "st_loss_order": [
+          "stcg",
+          "stcg_111a",
+          "ltcg_112",
+          "ltcg_112a"
+        ],
+        "lt_loss_order": [
+          "ltcg_112",
+          "ltcg_112a"
+        ],
+        "turnover_items": [
+          "sales",
+          "services",
+          "professional_receipts"
+        ],
+        "cfl_paths": {
+          "2018-19": "LossCFFromPrevYrToAY",
+          "2019-20": "LossCFCurrentAssmntYear",
+          "2020-21": "LossCFCurrentAssmntYear2021",
+          "2021-22": "LossCFCurrentAssmntYear2022",
+          "2022-23": "LossCFCurrentAssmntYear2023",
+          "2023-24": "LossCFCurrentAssmntYear2024",
+          "2024-25": "LossCFCurrentAssmntYear2025",
+          "2025-26": "LossCFCurrentAssmntYear2026"
+        },
+        "loss_years": {
+          "business": 8,
+          "mat": 15
+        },
+        "s79_pct": 51,
+        "sh_min_pct": 1,
+        "holder_min_pct": 10,
+        "sources": {
+          "rates": "Finance Act 2026, First Schedule Part I-A Para E (rates unchanged from AY 2025-26 - Memorandum to the Finance Bill 2026, https://www.indiabudget.gov.in/doc/memo.pdf); CBDT ITR-6 validation rules V1.0 AY 2026-27 (rates table), https://www.incometax.gov.in/iec/foportal/downloads",
+          "schema": "ITR-6 JSON schema V1.0 for AY 2026-27 and validation rules V1.0 (incometax.gov.in > Downloads, 04-Aug-2026)",
+          "due": "s.139(1) Explanation 2(a): a company files by 31 October; 30 November with a Form 3CEB (s.92E)",
+          "mat": "s.115JB (15% of book profit; not for 115BAA / 115BAB - s.115JB(5A)); credit s.115JAA, 15 AYs. The Finance Bill 2026 changes MAT only from tax year 2026-27 (Income-tax Act 2025)",
+          "losses": "s.70-80: CYLA s.71 (house property loss up to 2 lakh, s.71(3A)), business loss 8 AYs s.72, unabsorbed depreciation s.32(2), s.79 (51%), return in time s.80 / s.139(3)",
+          "dep": "s.32 and rule 5 Appendix I; half rate under 180 days (2nd proviso to s.32(1)); additional 20% s.32(1)(iia); s.50 gain on a block",
+          "deductions": "s.80G (CSR proviso to 80G(2)(iiihk)/(iiihl)), s.80M, s.115BAA(2)(ii) / 115BAB(2)(ii): only 80JJAA, 80M, 80LA(1A)",
+          "csr": "Explanation 2 to s.37(1): CSR spent under s.135 of the Companies Act is not a business expense",
+          "s43b": "s.43B incl. 43B(h) (MSME dues beyond the MSMED Act 45 days)"
+        }
+      }
+    }
+  ]
+}

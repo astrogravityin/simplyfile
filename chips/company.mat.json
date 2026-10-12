@@ -1,0 +1,977 @@
+{
+  "chip_id": "company.mat",
+  "kind": "accessor",
+  "set": "company",
+  "label": "Company: MAT u/s 115JB and the MAT credit u/s 115JAA",
+  "aliases": [
+    "company: mat u/s 115jb and the mat credi"
+  ],
+  "params": [
+    {
+      "name": "normal_total",
+      "type": "number",
+      "default": 0,
+      "label": "tax on total income under the normal provisions, incl. surcharge and cess (company.tax total)"
+    },
+    {
+      "name": "book_profit",
+      "type": "number",
+      "default": 0,
+      "label": "book profit u/s 115JB"
+    },
+    {
+      "name": "applies",
+      "type": "boolean",
+      "default": true,
+      "label": "MAT applies (company.rate mat)"
+    },
+    {
+      "name": "mat_rate",
+      "type": "number",
+      "default": 15,
+      "label": "MAT %"
+    },
+    {
+      "name": "steps",
+      "type": "json",
+      "default": [
+        {
+          "above": 10000000,
+          "rate": 7
+        },
+        {
+          "above": 100000000,
+          "rate": 12
+        }
+      ],
+      "label": "surcharge steps on MAT"
+    },
+    {
+      "name": "cess_pct",
+      "type": "number",
+      "default": 4,
+      "label": "cess %"
+    },
+    {
+      "name": "round_to",
+      "type": "number",
+      "default": 10,
+      "label": "rounded to"
+    },
+    {
+      "name": "credit_available",
+      "type": "number",
+      "default": 0,
+      "label": "MAT credit brought forward and still within 15 AYs"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "mat": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "eq",
+              "left": "$applies",
+              "right": true
+            },
+            "then": {
+              "vop": "get",
+              "value": {
+                "chip": "compute.tax",
+                "args": {
+                  "income": {
+                    "vop": "largest",
+                    "values": [
+                      0,
+                      "$book_profit"
+                    ]
+                  },
+                  "status": "company",
+                  "slabs": [
+                    {
+                      "upto": null,
+                      "rate": "$mat_rate"
+                    }
+                  ],
+                  "steps": "$steps",
+                  "cess_pct": "$cess_pct",
+                  "round_to": "$round_to",
+                  "rebate_statuses": []
+                }
+              },
+              "path": "total"
+            }
+          }
+        ],
+        "else": 0
+      },
+      "parts": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "eq",
+              "left": "$applies",
+              "right": true
+            },
+            "then": {
+              "chip": "compute.tax",
+              "args": {
+                "income": {
+                  "vop": "largest",
+                  "values": [
+                    0,
+                    "$book_profit"
+                  ]
+                },
+                "status": "company",
+                "slabs": [
+                  {
+                    "upto": null,
+                    "rate": "$mat_rate"
+                  }
+                ],
+                "steps": "$steps",
+                "cess_pct": "$cess_pct",
+                "round_to": "$round_to",
+                "rebate_statuses": []
+              }
+            }
+          }
+        ],
+        "else": {}
+      },
+      "pays_mat": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "eq",
+                  "left": "$applies",
+                  "right": true
+                },
+                {
+                  "op": "gt",
+                  "left": {
+                    "vop": "choose",
+                    "cases": [
+                      {
+                        "when": {
+                          "op": "eq",
+                          "left": "$applies",
+                          "right": true
+                        },
+                        "then": {
+                          "vop": "get",
+                          "value": {
+                            "chip": "compute.tax",
+                            "args": {
+                              "income": {
+                                "vop": "largest",
+                                "values": [
+                                  0,
+                                  "$book_profit"
+                                ]
+                              },
+                              "status": "company",
+                              "slabs": [
+                                {
+                                  "upto": null,
+                                  "rate": "$mat_rate"
+                                }
+                              ],
+                              "steps": "$steps",
+                              "cess_pct": "$cess_pct",
+                              "round_to": "$round_to",
+                              "rebate_statuses": []
+                            }
+                          },
+                          "path": "total"
+                        }
+                      }
+                    ],
+                    "else": 0
+                  },
+                  "right": "$normal_total"
+                }
+              ]
+            },
+            "then": true
+          }
+        ],
+        "else": false
+      },
+      "gross": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "eq",
+                  "left": "$applies",
+                  "right": true
+                },
+                {
+                  "op": "gt",
+                  "left": {
+                    "vop": "choose",
+                    "cases": [
+                      {
+                        "when": {
+                          "op": "eq",
+                          "left": "$applies",
+                          "right": true
+                        },
+                        "then": {
+                          "vop": "get",
+                          "value": {
+                            "chip": "compute.tax",
+                            "args": {
+                              "income": {
+                                "vop": "largest",
+                                "values": [
+                                  0,
+                                  "$book_profit"
+                                ]
+                              },
+                              "status": "company",
+                              "slabs": [
+                                {
+                                  "upto": null,
+                                  "rate": "$mat_rate"
+                                }
+                              ],
+                              "steps": "$steps",
+                              "cess_pct": "$cess_pct",
+                              "round_to": "$round_to",
+                              "rebate_statuses": []
+                            }
+                          },
+                          "path": "total"
+                        }
+                      }
+                    ],
+                    "else": 0
+                  },
+                  "right": "$normal_total"
+                }
+              ]
+            },
+            "then": {
+              "vop": "choose",
+              "cases": [
+                {
+                  "when": {
+                    "op": "eq",
+                    "left": "$applies",
+                    "right": true
+                  },
+                  "then": {
+                    "vop": "get",
+                    "value": {
+                      "chip": "compute.tax",
+                      "args": {
+                        "income": {
+                          "vop": "largest",
+                          "values": [
+                            0,
+                            "$book_profit"
+                          ]
+                        },
+                        "status": "company",
+                        "slabs": [
+                          {
+                            "upto": null,
+                            "rate": "$mat_rate"
+                          }
+                        ],
+                        "steps": "$steps",
+                        "cess_pct": "$cess_pct",
+                        "round_to": "$round_to",
+                        "rebate_statuses": []
+                      }
+                    },
+                    "path": "total"
+                  }
+                }
+              ],
+              "else": 0
+            }
+          }
+        ],
+        "else": "$normal_total"
+      },
+      "credit_new": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "eq",
+                  "left": "$applies",
+                  "right": true
+                },
+                {
+                  "op": "gt",
+                  "left": {
+                    "vop": "choose",
+                    "cases": [
+                      {
+                        "when": {
+                          "op": "eq",
+                          "left": "$applies",
+                          "right": true
+                        },
+                        "then": {
+                          "vop": "get",
+                          "value": {
+                            "chip": "compute.tax",
+                            "args": {
+                              "income": {
+                                "vop": "largest",
+                                "values": [
+                                  0,
+                                  "$book_profit"
+                                ]
+                              },
+                              "status": "company",
+                              "slabs": [
+                                {
+                                  "upto": null,
+                                  "rate": "$mat_rate"
+                                }
+                              ],
+                              "steps": "$steps",
+                              "cess_pct": "$cess_pct",
+                              "round_to": "$round_to",
+                              "rebate_statuses": []
+                            }
+                          },
+                          "path": "total"
+                        }
+                      }
+                    ],
+                    "else": 0
+                  },
+                  "right": "$normal_total"
+                }
+              ]
+            },
+            "then": {
+              "vop": "sub",
+              "a": {
+                "vop": "choose",
+                "cases": [
+                  {
+                    "when": {
+                      "op": "eq",
+                      "left": "$applies",
+                      "right": true
+                    },
+                    "then": {
+                      "vop": "get",
+                      "value": {
+                        "chip": "compute.tax",
+                        "args": {
+                          "income": {
+                            "vop": "largest",
+                            "values": [
+                              0,
+                              "$book_profit"
+                            ]
+                          },
+                          "status": "company",
+                          "slabs": [
+                            {
+                              "upto": null,
+                              "rate": "$mat_rate"
+                            }
+                          ],
+                          "steps": "$steps",
+                          "cess_pct": "$cess_pct",
+                          "round_to": "$round_to",
+                          "rebate_statuses": []
+                        }
+                      },
+                      "path": "total"
+                    }
+                  }
+                ],
+                "else": 0
+              },
+              "b": "$normal_total"
+            }
+          }
+        ],
+        "else": 0
+      },
+      "credit_room": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "eq",
+                  "left": "$applies",
+                  "right": true
+                },
+                {
+                  "op": "gt",
+                  "left": "$normal_total",
+                  "right": {
+                    "vop": "choose",
+                    "cases": [
+                      {
+                        "when": {
+                          "op": "eq",
+                          "left": "$applies",
+                          "right": true
+                        },
+                        "then": {
+                          "vop": "get",
+                          "value": {
+                            "chip": "compute.tax",
+                            "args": {
+                              "income": {
+                                "vop": "largest",
+                                "values": [
+                                  0,
+                                  "$book_profit"
+                                ]
+                              },
+                              "status": "company",
+                              "slabs": [
+                                {
+                                  "upto": null,
+                                  "rate": "$mat_rate"
+                                }
+                              ],
+                              "steps": "$steps",
+                              "cess_pct": "$cess_pct",
+                              "round_to": "$round_to",
+                              "rebate_statuses": []
+                            }
+                          },
+                          "path": "total"
+                        }
+                      }
+                    ],
+                    "else": 0
+                  }
+                }
+              ]
+            },
+            "then": {
+              "vop": "sub",
+              "a": "$normal_total",
+              "b": {
+                "vop": "choose",
+                "cases": [
+                  {
+                    "when": {
+                      "op": "eq",
+                      "left": "$applies",
+                      "right": true
+                    },
+                    "then": {
+                      "vop": "get",
+                      "value": {
+                        "chip": "compute.tax",
+                        "args": {
+                          "income": {
+                            "vop": "largest",
+                            "values": [
+                              0,
+                              "$book_profit"
+                            ]
+                          },
+                          "status": "company",
+                          "slabs": [
+                            {
+                              "upto": null,
+                              "rate": "$mat_rate"
+                            }
+                          ],
+                          "steps": "$steps",
+                          "cess_pct": "$cess_pct",
+                          "round_to": "$round_to",
+                          "rebate_statuses": []
+                        }
+                      },
+                      "path": "total"
+                    }
+                  }
+                ],
+                "else": 0
+              }
+            }
+          }
+        ],
+        "else": 0
+      },
+      "credit_used": {
+        "vop": "smallest",
+        "values": [
+          "$credit_available",
+          {
+            "vop": "choose",
+            "cases": [
+              {
+                "when": {
+                  "op": "all",
+                  "items": [
+                    {
+                      "op": "eq",
+                      "left": "$applies",
+                      "right": true
+                    },
+                    {
+                      "op": "gt",
+                      "left": "$normal_total",
+                      "right": {
+                        "vop": "choose",
+                        "cases": [
+                          {
+                            "when": {
+                              "op": "eq",
+                              "left": "$applies",
+                              "right": true
+                            },
+                            "then": {
+                              "vop": "get",
+                              "value": {
+                                "chip": "compute.tax",
+                                "args": {
+                                  "income": {
+                                    "vop": "largest",
+                                    "values": [
+                                      0,
+                                      "$book_profit"
+                                    ]
+                                  },
+                                  "status": "company",
+                                  "slabs": [
+                                    {
+                                      "upto": null,
+                                      "rate": "$mat_rate"
+                                    }
+                                  ],
+                                  "steps": "$steps",
+                                  "cess_pct": "$cess_pct",
+                                  "round_to": "$round_to",
+                                  "rebate_statuses": []
+                                }
+                              },
+                              "path": "total"
+                            }
+                          }
+                        ],
+                        "else": 0
+                      }
+                    }
+                  ]
+                },
+                "then": {
+                  "vop": "sub",
+                  "a": "$normal_total",
+                  "b": {
+                    "vop": "choose",
+                    "cases": [
+                      {
+                        "when": {
+                          "op": "eq",
+                          "left": "$applies",
+                          "right": true
+                        },
+                        "then": {
+                          "vop": "get",
+                          "value": {
+                            "chip": "compute.tax",
+                            "args": {
+                              "income": {
+                                "vop": "largest",
+                                "values": [
+                                  0,
+                                  "$book_profit"
+                                ]
+                              },
+                              "status": "company",
+                              "slabs": [
+                                {
+                                  "upto": null,
+                                  "rate": "$mat_rate"
+                                }
+                              ],
+                              "steps": "$steps",
+                              "cess_pct": "$cess_pct",
+                              "round_to": "$round_to",
+                              "rebate_statuses": []
+                            }
+                          },
+                          "path": "total"
+                        }
+                      }
+                    ],
+                    "else": 0
+                  }
+                }
+              }
+            ],
+            "else": 0
+          }
+        ]
+      },
+      "net": {
+        "vop": "sub",
+        "a": {
+          "vop": "choose",
+          "cases": [
+            {
+              "when": {
+                "op": "all",
+                "items": [
+                  {
+                    "op": "eq",
+                    "left": "$applies",
+                    "right": true
+                  },
+                  {
+                    "op": "gt",
+                    "left": {
+                      "vop": "choose",
+                      "cases": [
+                        {
+                          "when": {
+                            "op": "eq",
+                            "left": "$applies",
+                            "right": true
+                          },
+                          "then": {
+                            "vop": "get",
+                            "value": {
+                              "chip": "compute.tax",
+                              "args": {
+                                "income": {
+                                  "vop": "largest",
+                                  "values": [
+                                    0,
+                                    "$book_profit"
+                                  ]
+                                },
+                                "status": "company",
+                                "slabs": [
+                                  {
+                                    "upto": null,
+                                    "rate": "$mat_rate"
+                                  }
+                                ],
+                                "steps": "$steps",
+                                "cess_pct": "$cess_pct",
+                                "round_to": "$round_to",
+                                "rebate_statuses": []
+                              }
+                            },
+                            "path": "total"
+                          }
+                        }
+                      ],
+                      "else": 0
+                    },
+                    "right": "$normal_total"
+                  }
+                ]
+              },
+              "then": {
+                "vop": "choose",
+                "cases": [
+                  {
+                    "when": {
+                      "op": "eq",
+                      "left": "$applies",
+                      "right": true
+                    },
+                    "then": {
+                      "vop": "get",
+                      "value": {
+                        "chip": "compute.tax",
+                        "args": {
+                          "income": {
+                            "vop": "largest",
+                            "values": [
+                              0,
+                              "$book_profit"
+                            ]
+                          },
+                          "status": "company",
+                          "slabs": [
+                            {
+                              "upto": null,
+                              "rate": "$mat_rate"
+                            }
+                          ],
+                          "steps": "$steps",
+                          "cess_pct": "$cess_pct",
+                          "round_to": "$round_to",
+                          "rebate_statuses": []
+                        }
+                      },
+                      "path": "total"
+                    }
+                  }
+                ],
+                "else": 0
+              }
+            }
+          ],
+          "else": "$normal_total"
+        },
+        "b": {
+          "vop": "smallest",
+          "values": [
+            "$credit_available",
+            {
+              "vop": "choose",
+              "cases": [
+                {
+                  "when": {
+                    "op": "all",
+                    "items": [
+                      {
+                        "op": "eq",
+                        "left": "$applies",
+                        "right": true
+                      },
+                      {
+                        "op": "gt",
+                        "left": "$normal_total",
+                        "right": {
+                          "vop": "choose",
+                          "cases": [
+                            {
+                              "when": {
+                                "op": "eq",
+                                "left": "$applies",
+                                "right": true
+                              },
+                              "then": {
+                                "vop": "get",
+                                "value": {
+                                  "chip": "compute.tax",
+                                  "args": {
+                                    "income": {
+                                      "vop": "largest",
+                                      "values": [
+                                        0,
+                                        "$book_profit"
+                                      ]
+                                    },
+                                    "status": "company",
+                                    "slabs": [
+                                      {
+                                        "upto": null,
+                                        "rate": "$mat_rate"
+                                      }
+                                    ],
+                                    "steps": "$steps",
+                                    "cess_pct": "$cess_pct",
+                                    "round_to": "$round_to",
+                                    "rebate_statuses": []
+                                  }
+                                },
+                                "path": "total"
+                              }
+                            }
+                          ],
+                          "else": 0
+                        }
+                      }
+                    ]
+                  },
+                  "then": {
+                    "vop": "sub",
+                    "a": "$normal_total",
+                    "b": {
+                      "vop": "choose",
+                      "cases": [
+                        {
+                          "when": {
+                            "op": "eq",
+                            "left": "$applies",
+                            "right": true
+                          },
+                          "then": {
+                            "vop": "get",
+                            "value": {
+                              "chip": "compute.tax",
+                              "args": {
+                                "income": {
+                                  "vop": "largest",
+                                  "values": [
+                                    0,
+                                    "$book_profit"
+                                  ]
+                                },
+                                "status": "company",
+                                "slabs": [
+                                  {
+                                    "upto": null,
+                                    "rate": "$mat_rate"
+                                  }
+                                ],
+                                "steps": "$steps",
+                                "cess_pct": "$cess_pct",
+                                "round_to": "$round_to",
+                                "rebate_statuses": []
+                              }
+                            },
+                            "path": "total"
+                          }
+                        }
+                      ],
+                      "else": 0
+                    }
+                  }
+                }
+              ],
+              "else": 0
+            }
+          ]
+        }
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-11: s.115JB: when the tax on total income is less than 15% of the book profit (with surcharge 7% / 12% above 1 / 10 crore of book profit, marginal relief and 4% cess), that MAT is the tax; the excess over the normal tax becomes a credit (s.115JAA(1A)), carried 15 AYs. In a year the normal tax is more than MAT, credit is set off up to the difference (s.115JAA(4)). A company under 115BAA / 115BAB pays no MAT (s.115JB(5A)) and cannot use a credit (CBDT Circular 29/2019).",
+  "test_cases": [
+    {
+      "args": {
+        "normal_total": 1000000,
+        "book_profit": 20000000
+      },
+      "expect_value": {
+        "mat": 3338400,
+        "parts": {
+          "tax": 3000000,
+          "rebate": 0,
+          "surcharge_rate": 7,
+          "surcharge": 210000.00000000003,
+          "relief": 0.0,
+          "cess": 128400.0,
+          "total": 3338400
+        },
+        "pays_mat": true,
+        "gross": 3338400,
+        "credit_new": 2338400,
+        "credit_room": 0,
+        "credit_used": 0,
+        "net": 3338400
+      }
+    },
+    {
+      "args": {
+        "normal_total": 5000000,
+        "book_profit": 20000000,
+        "credit_available": 3000000
+      },
+      "expect_value": {
+        "mat": 3338400,
+        "parts": {
+          "tax": 3000000,
+          "rebate": 0,
+          "surcharge_rate": 7,
+          "surcharge": 210000.00000000003,
+          "relief": 0.0,
+          "cess": 128400.0,
+          "total": 3338400
+        },
+        "pays_mat": false,
+        "gross": 5000000,
+        "credit_new": 0,
+        "credit_room": 1661600,
+        "credit_used": 1661600,
+        "net": 3338400
+      }
+    },
+    {
+      "args": {
+        "normal_total": 5000000,
+        "book_profit": 20000000,
+        "credit_available": 500000
+      },
+      "expect_value": {
+        "mat": 3338400,
+        "parts": {
+          "tax": 3000000,
+          "rebate": 0,
+          "surcharge_rate": 7,
+          "surcharge": 210000.00000000003,
+          "relief": 0.0,
+          "cess": 128400.0,
+          "total": 3338400
+        },
+        "pays_mat": false,
+        "gross": 5000000,
+        "credit_new": 0,
+        "credit_room": 1661600,
+        "credit_used": 500000,
+        "net": 4500000
+      }
+    },
+    {
+      "args": {
+        "normal_total": 1000000,
+        "book_profit": 20000000,
+        "applies": false,
+        "credit_available": 900000
+      },
+      "expect_value": {
+        "mat": 0,
+        "parts": {},
+        "pays_mat": false,
+        "gross": 1000000,
+        "credit_new": 0,
+        "credit_room": 0,
+        "credit_used": 0,
+        "net": 1000000
+      }
+    },
+    {
+      "args": {
+        "normal_total": 0,
+        "book_profit": -500000
+      },
+      "expect_value": {
+        "mat": 0,
+        "parts": {
+          "tax": 0,
+          "rebate": 0,
+          "surcharge_rate": 0,
+          "surcharge": 0,
+          "relief": 0,
+          "cess": 0.0,
+          "total": 0
+        },
+        "pays_mat": false,
+        "gross": 0,
+        "credit_new": 0,
+        "credit_room": 0,
+        "credit_used": 0,
+        "net": 0
+      }
+    }
+  ]
+}

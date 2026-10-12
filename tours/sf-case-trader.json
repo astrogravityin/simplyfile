@@ -1,0 +1,207 @@
+{
+  "prod_base": "https://sf.valuestream.in",
+  "voice": "en-IN-NeerjaNeural",
+  "rate": "+0%",
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "blur": [
+    "#whoami",
+    "#userpop .head"
+  ],
+  "page_key": "sf-case-trader",
+  "title": "A small trader on 44AD, with GST",
+  "start_url": "/#/wizard",
+  "covers": [
+    "who it is for",
+    "what applies",
+    "which form",
+    "documents you'll need",
+    "drop them in",
+    "the client, made for you",
+    "review, then the return"
+  ],
+  "steps": [
+    {
+      "chapter": "A small trader on 44AD, with GST",
+      "say": "A shopkeeper with a GST number and a small turnover.",
+      "do": [
+        {
+          "wait_for": ".wz-start"
+        },
+        {
+          "wait": 1
+        }
+      ]
+    },
+    {
+      "chapter": "Who it is for",
+      "say": "A person, an HUF, a partnership firm, an LLP, an AOP or BOI, or a company - each card starts its own filing. A trust says Not yet, with what to do meanwhile.",
+      "do": [
+        {
+          "highlight_target": ".wz-who-groups",
+          "optional": true,
+          "timeout": 5
+        },
+        {
+          "click": "[data-start='individual']"
+        },
+        {
+          "wait_for": ".wz-who"
+        },
+        {
+          "wait": 1
+        }
+      ]
+    },
+    {
+      "chapter": "What applies",
+      "say": "Trading, registered for GST, and the small-turnover card - section 44AD. ITR-4 follows.",
+      "do": [
+        {
+          "click": "[data-pick='business']"
+        },
+        {
+          "wait": 0.7
+        },
+        {
+          "click": "[data-pick='trading']"
+        },
+        {
+          "wait": 0.7
+        },
+        {
+          "click": "[data-pick='gst']"
+        },
+        {
+          "wait": 0.7
+        },
+        {
+          "click": "[data-pick='presumptive']"
+        },
+        {
+          "wait": 0.7
+        },
+        {
+          "highlight_target": ".wz-work|.wz-what",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Which form",
+      "say": "The form follows from the picks, with its reason in one line - ITR-1, 2, 3 or 4 for a person or an HUF, ITR-5 for a firm, an LLP or an AOP, ITR-6 for a company.",
+      "do": [
+        {
+          "highlight_target": ".wz-form",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Documents you'll need",
+      "say": "Needed, good to have, and what you type in - each with what it is and where to get it: TRACES, the AIS, your employer, CAMS or KFintech, the GST portal, the firm's deed and its books.",
+      "do": [
+        {
+          "click": "[data-go='docs']"
+        },
+        {
+          "wait_for": ".wz-docs"
+        },
+        {
+          "wait": 1
+        },
+        {
+          "highlight_target": ".wz-docs",
+          "optional": true,
+          "timeout": 5
+        },
+        {
+          "scroll": 420
+        }
+      ]
+    },
+    {
+      "chapter": "Drop them in",
+      "say": "The pre-filled JSON, the GSTR-3B summary and the bank statement.",
+      "do": [
+        {
+          "click": "[data-go='upload']"
+        },
+        {
+          "wait_for": "[data-drop='wz-file']"
+        },
+        {
+          "wait": 0.5
+        },
+        {
+          "upload": "#wz-file",
+          "files": [
+            "showcase/case-trader/1 Pre-filled JSON - ZZDPK0056H - AY 2026-27.json",
+            "showcase/case-trader/2 GSTR-3B summary - ZZDPK0056H - FY 2025-26.csv",
+            "showcase/case-trader/3 Bank statement - Demo Bank - Ramu - FY 2025-26.csv",
+            "showcase/case-trader/4 26AS - ZZDPK0056H - AY 2026-27.txt",
+            "showcase/case-trader/5 AIS - ZZDPK0056H - FY 2025-26.csv"
+          ]
+        },
+        {
+          "wait": 9.5
+        }
+      ]
+    },
+    {
+      "chapter": "The client, made for you",
+      "say": "The client is made from the pre-filled JSON.",
+      "do": [
+        {
+          "wait": 1
+        },
+        {
+          "highlight_target": ".wz-client",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Review, then the return",
+      "say": "Into My return: the GST turnover beside the receipts, 6% and 8% of each part as income.",
+      "do": [
+        {
+          "click": "[data-go='review']"
+        },
+        {
+          "wait_for": ".wz-review"
+        },
+        {
+          "wait": 1.5
+        },
+        {
+          "highlight_target": ".wz-go|.wz-review",
+          "optional": true,
+          "timeout": 5
+        },
+        {
+          "wait": 1
+        },
+        {
+          "click": "#wz-go"
+        },
+        {
+          "wait": 3
+        },
+        {
+          "wait_for": ".mr-rail-card",
+          "timeout": 20,
+          "optional": true
+        },
+        {
+          "wait": 2
+        }
+      ]
+    }
+  ]
+}

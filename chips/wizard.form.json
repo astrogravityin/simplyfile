@@ -1,0 +1,415 @@
+{
+  "chip_id": "wizard.form",
+  "kind": "accessor",
+  "set": "wizard",
+  "label": "New filing: the form the picks point to, and why - from myreturn.form, or the business's form",
+  "aliases": [
+    "new filing: the form the picks point to, and why - from myreturn.form, or the business's form"
+  ],
+  "params": [
+    {
+      "name": "picked",
+      "type": "json",
+      "default": [],
+      "label": "what applies"
+    },
+    {
+      "name": "who",
+      "type": "text",
+      "default": "individual",
+      "label": "who the return is for"
+    },
+    {
+      "name": "flow",
+      "type": "text",
+      "default": "myreturn",
+      "label": "the return's flow"
+    },
+    {
+      "name": "entity_form",
+      "type": "text",
+      "default": "ITR-5",
+      "label": "the business's form (wizard.settings who[].form)"
+    }
+  ],
+  "expr": {
+    "vop": "choose",
+    "cases": [
+      {
+        "when": {
+          "op": "eq",
+          "left": "$flow",
+          "right": "firm"
+        },
+        "then": {
+          "vop": "record",
+          "fields": {
+            "form": "$entity_form",
+            "why": {
+              "vop": "choose",
+              "cases": [
+                {
+                  "when": {
+                    "op": "in_set",
+                    "value": "audit",
+                    "set": "$picked"
+                  },
+                  "then": "why_e_audit"
+                },
+                {
+                  "when": {
+                    "op": "in_set",
+                    "value": "presumptive",
+                    "set": "$picked"
+                  },
+                  "then": "why_e_44ad"
+                }
+              ],
+              "else": "why_e_books"
+            },
+            "from": "wizard"
+          }
+        }
+      }
+    ],
+    "else": {
+      "chip": "myreturn.form",
+      "args": {
+        "resident": {
+          "op": "not",
+          "item": {
+            "op": "in_set",
+            "value": "nri",
+            "set": "$picked"
+          }
+        },
+        "houses": {
+          "vop": "choose",
+          "cases": [
+            {
+              "when": {
+                "op": "in_set",
+                "value": "house",
+                "set": "$picked"
+              },
+              "then": 1
+            }
+          ],
+          "else": 0
+        },
+        "other_cg": {
+          "op": "any",
+          "items": [
+            {
+              "op": "in_set",
+              "value": "shares",
+              "set": "$picked"
+            },
+            {
+              "op": "in_set",
+              "value": "property",
+              "set": "$picked"
+            }
+          ]
+        },
+        "foreign": {
+          "op": "in_set",
+          "value": "foreign",
+          "set": "$picked"
+        },
+        "loss_cf": {
+          "op": "in_set",
+          "value": "losses",
+          "set": "$picked"
+        },
+        "business": {
+          "op": "any",
+          "items": [
+            {
+              "op": "in_set",
+              "value": "business",
+              "set": "$picked"
+            },
+            {
+              "op": "in_set",
+              "value": "trading",
+              "set": "$picked"
+            },
+            {
+              "op": "in_set",
+              "value": "manufacturing",
+              "set": "$picked"
+            },
+            {
+              "op": "in_set",
+              "value": "services",
+              "set": "$picked"
+            },
+            {
+              "op": "in_set",
+              "value": "profession",
+              "set": "$picked"
+            }
+          ]
+        },
+        "huf": {
+          "op": "eq",
+          "left": "$who",
+          "right": "huf"
+        },
+        "special": {
+          "op": "in_set",
+          "value": "vda",
+          "set": "$picked"
+        },
+        "books": {
+          "op": "any",
+          "items": [
+            {
+              "op": "in_set",
+              "value": "books",
+              "set": "$picked"
+            },
+            {
+              "op": "in_set",
+              "value": "audit",
+              "set": "$picked"
+            }
+          ]
+        },
+        "over_limit": {
+          "op": "in_set",
+          "value": "audit",
+          "set": "$picked"
+        },
+        "agri": {
+          "vop": "choose",
+          "cases": [
+            {
+              "when": {
+                "op": "in_set",
+                "value": "agriculture",
+                "set": "$picked"
+              },
+              "then": 100000
+            }
+          ],
+          "else": 0
+        }
+      }
+    }
+  },
+  "returns": "record",
+  "status": "published",
+  "test_cases": [
+    {
+      "args": {
+        "picked": [
+          "salary"
+        ],
+        "who": "individual"
+      },
+      "expect_value": {
+        "form": "ITR-1",
+        "why": "why_simple"
+      }
+    },
+    {
+      "args": {
+        "picked": [
+          "salary",
+          "shares"
+        ],
+        "who": "individual"
+      },
+      "expect_value": {
+        "form": "ITR-2",
+        "why": "why_cg"
+      }
+    },
+    {
+      "args": {
+        "picked": [
+          "interest",
+          "shares"
+        ],
+        "who": "huf"
+      },
+      "expect_value": {
+        "form": "ITR-2",
+        "why": "why_cg"
+      }
+    },
+    {
+      "args": {
+        "picked": [
+          "interest"
+        ],
+        "who": "huf"
+      },
+      "expect_value": {
+        "form": "ITR-2",
+        "why": "why_huf"
+      }
+    },
+    {
+      "args": {
+        "picked": [
+          "business"
+        ],
+        "who": "self"
+      },
+      "expect_value": {
+        "form": "ITR-4",
+        "why": "why_presumptive"
+      }
+    },
+    {
+      "args": {
+        "picked": [
+          "business",
+          "shares"
+        ],
+        "who": "individual"
+      },
+      "expect_value": {
+        "form": "ITR-3",
+        "why": "why_biz_more"
+      }
+    },
+    {
+      "args": {
+        "picked": [
+          "salary",
+          "nri"
+        ],
+        "who": "individual"
+      },
+      "expect_value": {
+        "form": "ITR-2",
+        "why": "why_nonres"
+      }
+    },
+    {
+      "args": {
+        "picked": [
+          "vda"
+        ],
+        "who": "individual"
+      },
+      "expect_value": {
+        "form": "ITR-2",
+        "why": "why_special"
+      }
+    },
+    {
+      "args": {
+        "picked": [
+          "trading",
+          "business",
+          "presumptive",
+          "gst"
+        ],
+        "who": "individual"
+      },
+      "expect_value": {
+        "form": "ITR-4",
+        "why": "why_presumptive"
+      }
+    },
+    {
+      "args": {
+        "picked": [
+          "trading",
+          "business",
+          "books"
+        ],
+        "who": "individual"
+      },
+      "expect_value": {
+        "form": "ITR-3",
+        "why": "why_biz_books"
+      }
+    },
+    {
+      "args": {
+        "picked": [
+          "profession",
+          "business",
+          "books",
+          "audit"
+        ],
+        "who": "individual"
+      },
+      "expect_value": {
+        "form": "ITR-3",
+        "why": "why_biz_limit"
+      }
+    },
+    {
+      "args": {
+        "picked": [
+          "trading",
+          "gst",
+          "books",
+          "audit"
+        ],
+        "who": "firm",
+        "flow": "firm",
+        "entity_form": "ITR-5"
+      },
+      "expect_value": {
+        "form": "ITR-5",
+        "why": "why_e_audit",
+        "from": "wizard"
+      }
+    },
+    {
+      "args": {
+        "picked": [
+          "trading",
+          "presumptive"
+        ],
+        "who": "firm",
+        "flow": "firm",
+        "entity_form": "ITR-5"
+      },
+      "expect_value": {
+        "form": "ITR-5",
+        "why": "why_e_44ad",
+        "from": "wizard"
+      }
+    },
+    {
+      "args": {
+        "picked": [
+          "services",
+          "books"
+        ],
+        "who": "llp",
+        "flow": "firm",
+        "entity_form": "ITR-5"
+      },
+      "expect_value": {
+        "form": "ITR-5",
+        "why": "why_e_books",
+        "from": "wizard"
+      }
+    },
+    {
+      "args": {
+        "picked": [],
+        "who": "company",
+        "flow": "firm",
+        "entity_form": "ITR-6"
+      },
+      "expect_value": {
+        "form": "ITR-6",
+        "why": "why_e_books",
+        "from": "wizard"
+      }
+    }
+  ],
+  "version": 2,
+  "description_nl": "2026-10-11: no second form engine: the picks become myreturn.form's facts (a house = one house, shares or a property sale = a capital gain, NRI = not resident ...); the documents' amounts settle it in My return. 2026-10-11: no second form engine: a person's or an HUF's picks become myreturn.form's facts (a house = one house, shares or a property sale = a capital gain, NRI = not resident, the kind of work = a business, books or a tax audit = ITR-3 ...); a business has its card's form (ITR-5) with the reason - a tax audit, presumptive, or the books."
+}

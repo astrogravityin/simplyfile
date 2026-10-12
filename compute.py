@@ -24,6 +24,7 @@ import zipfile
 from fastapi import HTTPException
 
 import clients
+import company
 import delegation
 import recon
 from core import engine, store
@@ -140,8 +141,9 @@ def compute(cid: str, ay: str) -> dict:
     c = clients.get(cid)
     y = clients.year_of(cid, ay)
     st = store.read(_state_name(cid, ay), {})
-    reg = regime_of(k, c["status"], st.get("regime") or "", ay)
     books = recon.book_rows(cid, ay)
+    co = company.work(cid, ay, c, st, books, k) if company.is_company(c) else None   # a company (ITR-6): company.py, its own chips
+    reg = {"id": "company", "allows_via": True} if co else regime_of(k, c["status"], st.get("regime") or "", ay)
 
     heads = []
     for h in k["heads"]:
@@ -158,13 +160,16 @@ def compute(cid: str, ay: str) -> dict:
             head["net"] = net
         if lines:
             heads.append(head)
-    gti = sum(h["net"] for h in heads)
-    ded_rows = [r for r in books if r["table"] in k["deduction_tables"]] if reg["allows_via"] else []
-    ti = engine.run("compute.total_income", {"gti": gti, "deductions": sum(r["amount"] for r in ded_rows), "round_to": k["round_to"]})
-    deductions, income = ti["deductions"], ti["income"]
-    tax = engine.run("compute.tax", {"income": income, "status": c["status"], "slabs": reg["slabs"], "steps": reg["surcharge"],
-                                     "cess_pct": k["cess_pct"], "round_to": k["round_to"], "rebate_statuses": reg["rebate_statuses"], "resident": not c.get("nri"),
-                                     "rebate_upto": reg["rebate_upto"], "rebate_most": reg["rebate_most"]})
+    if co:
+        heads, gti, ded_rows, deductions, income, tax = co["heads"], co["gti"], co["deduction_rows"], co["deductions"], co["income"], co["tax"]
+    else:
+        gti = sum(h["net"] for h in heads)
+        ded_rows = [r for r in books if r["table"] in k["deduction_tables"]] if reg["allows_via"] else []
+        ti = engine.run("compute.total_income", {"gti": gti, "deductions": sum(r["amount"] for r in ded_rows), "round_to": k["round_to"]})
+        deductions, income = ti["deductions"], ti["income"]
+        tax = engine.run("compute.tax", {"income": income, "status": c["status"], "slabs": reg["slabs"], "steps": reg["surcharge"],
+                                         "cess_pct": k["cess_pct"], "round_to": k["round_to"], "rebate_statuses": reg["rebate_statuses"], "resident": not c.get("nri"),
+                                         "rebate_upto": reg["rebate_upto"], "rebate_most": reg["rebate_most"]})
 
     portal = recon.portal_entries(cid, ay)
     src = next((x for x in k["credit_sources"] if any(e["source"] == x for e in portal)), None)   # the credit as 26AS shows it
@@ -197,7 +202,7 @@ def compute(cid: str, ay: str) -> dict:
     return {"client": clients.row(clients.get(cid), ay), "ay": ay, "stage": stage, "ack_no": (cur or {}).get("ack_no", ""),
             "filings": y.get("filings", []), "current": cur, "revising": bool(y.get("revising")), "dates": (dd := dates(cid, ay)),
             "itr_u": itr_u(cid, ay, bal["net"]) if dd["kind"] == "updated" else None, "tp": bool(y.get("tp")),
-            "regime": reg["id"], "regimes": k["status_regimes"].get(c["status"], [reg["id"]]),
+            "regime": reg["id"], "regimes": k["status_regimes"].get(c["status"], [reg["id"]]), "company": co["company"] if co else None,
             "heads": heads, "gti": gti, "deductions": deductions, "deduction_rows": ded_rows, "income": income, "tax": tax,
             "tds": [{"party": e["party"], "tan": e["tan"], "section": e["section"], "gross": e["gross"], "tax": e["tax"]} for e in tds],
             "paid": [{"date": e["date"], "bsr": e["bsr"], "challan": e["challan"], "amount": e["tax"] or e["gross"], "minor": e.get("minor", "")}
@@ -220,6 +225,10 @@ def set_state(user: dict, cid: str, ay: str, body: dict) -> dict:
             if str(body["regime"]) not in {r["id"] for r in k["regimes"]}:
                 _bad("bad_regime")
             st["regime"] = str(body["regime"])
+        if "company" in body:                    # a company's year: turnover of the earlier year, losses / MAT credit b/f, s.79, dividends (company.py)
+            if not company.is_company(clients.get(cid)):
+                _bad("co_not_company")
+            st["company"] = company.clean_year(body["company"])
         if "refund_on" in body:                  # the day the refund was granted (244A interest stops there); blank = today
             v = str(body["refund_on"] or "")[:10]
             if v and not re.fullmatch(r"\d{4}-\d{2}-\d{2}", v):
@@ -402,6 +411,20 @@ def computation_xlsx(cid: str, ay: str) -> tuple[str, bytes]:
             (w["t_relief"], -d["tax"]["relief"]), (w["t_cess"], d["tax"]["cess"]), (w["t_total"], d["tax"]["total"]),
             (w["t_interest"], d["interest"]), (w["t_tds"], -d["tds_total"]), (w["t_paid"], -d["paid_total"]),
             (w["bal_" + d["balance"]["kind"]], d["balance"]["amount"])]
+    co = d.get("company")
+    if co:                                       # a company: depreciation by block, MAT u/s 115JB against the normal tax, and its credit
+        put()
+        put(w["x_dep"], font=bold, fill=band)
+        for b in co["dep"]["blocks"]:
+            put("", f"{b['label']} ({b['rate']}%)", b["total"])
+        put(w["x_mat"], font=bold, fill=band)
+        put("", w["x_book_profit"], co["book_profit"])
+        put("", w["co_normal_tax"], co["normal"]["total"])
+        put("", template(w["co_mat_tax"], {"rate": company.rates(ay)[0]["mat_rate"]}), co["mat"]["mat"])
+        if co["mat"]["credit_used"]:
+            put("", w["co_credit_used"], -co["mat"]["credit_used"])
+        if co["credit_new"]:
+            put("", w["co_credit_cf"], co["credit_new"])
     put()
     for label, v in rows:
         put(label, "", v, font=bold if label in (w["total_income"], w["t_total"], w["bal_" + d["balance"]["kind"]]) else None)

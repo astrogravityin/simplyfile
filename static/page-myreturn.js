@@ -3,7 +3,7 @@
 // figure from two documents, side by side), Choose (both regimes worked out, the cheaper one marked), Review (every
 // figure with where it came from, and the person's own over it), File (the department's JSON, checked against its schema).
 // myreturn.py decides and adds up (chips myreturn.*); this draws. Pictures: myreturn-art.js. Words: chip ui.myreturn.
-import { api, BASE, esc, toast, busy, pageHead, t, loadWords, dropZone, wireDrops, modal, confirmDialog, state } from './app.js';
+import { api, BASE, esc, toast, busy, pageHead, t, loadWords, dropZone, wireDrops, modal, confirmDialog, state, may } from './app.js';
 import { icon } from './icons.js';
 import { historyButton, wireHistory } from './changes.js';
 import { stepper, docArt, waterfall, regimeBars, tdsMap, askArt } from './myreturn-art.js';
@@ -14,13 +14,13 @@ const money = (n) => `₹${Math.round(Number(n || 0)).toLocaleString('en-IN')}`;
 const STEPS = ['gather', 'check', 'choose', 'review', 'file'];
 
 export async function myReturnPage(host) {
-  await loadWords('myreturn');
+  await loadWords('myreturn', 'wizard');
   const q = new URLSearchParams((location.hash.split('?')[1]) || '');
   const home = await api('/api/myreturn');
   let cid = q.get('c') || (home.self && home.clients[0] ? home.clients[0].id : '');
   const ay = q.get('ay') || home.current_ay;
   if (!cid) { pick(host, home, ay); return; }
-  const S = { d: await api(`/api/myreturn/${encodeURIComponent(cid)}/${encodeURIComponent(ay)}`), step: '' };
+  const S = { d: await api(`/api/myreturn/${encodeURIComponent(cid)}/${encodeURIComponent(ay)}`), step: STEPS.includes(q.get('step')) ? q.get('step') : '' };   // 2026-10-11: New filing opens a step
   const url = (p = '') => `/api/myreturn/${encodeURIComponent(cid)}/${encodeURIComponent(ay)}${p}`;
   const put = async (body, quiet) => { try { S.d = await api(url(), { method: 'PUT', body }); if (!quiet) toast(w('saved'), 'ok'); draw(); } catch (e) { toast(e.message, 'bad', 8); } };
 
@@ -30,7 +30,7 @@ export async function myReturnPage(host) {
     const step = S.step || d.step;
     const g = d.regimes[d.regime];
     const head = pageHead(w('title', { ay: d.ay }), esc(w('lede', { name: d.client.name })),
-      `<span class="tag" style="--t:var(--brand)">${esc(d.form.form)}</span> ${historyButton()}`);
+      `<span class="tag" style="--t:var(--brand)">${esc(d.form.form)}</span> ${may('wizard') ? `<button type="button" class="small" id="mr-wizard" data-href="#/wizard">${icon('spark', 13)} ${esc(t('wizard', 'mr_new'))}</button>` : ''} ${historyButton()}`);
     const rail = `<div class="card mr-rail-card">${stepper(STEPS.map((s) => ({ id: s, label: w(`s_${s}`) })), step, d.steps.done, S.W)}</div>`;
     const glance = `<div class="mr-glance">${[
       ['income', w('g_income'), money(g.tax.total)],
@@ -198,6 +198,7 @@ export async function myReturnPage(host) {
   const wire = (step) => {
     const $ = (s) => host.querySelector(s);
     wireHistory(host, { cid, ay, name: S.d.client.name });
+    if ($('#mr-wizard')) $('#mr-wizard').onclick = () => { location.hash = '#/wizard'; };
     host.querySelectorAll('.mr-node').forEach((n) => { const go = () => { S.step = n.dataset.step; draw(); }; n.onclick = go; n.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } }; });
     if ($('#mr-from-filed')) $('#mr-from-filed').onclick = (e) => busy(e.currentTarget, async () => {
       try { const r = await api(url('/from-filed'), { method: 'POST', body: {} }); S.d = r; toast(r.said, 'ok', 8); draw(); } catch (err) { toast(err.message, 'bad', 8); }
@@ -309,7 +310,7 @@ export async function myReturnPage(host) {
 }
 
 function pick(host, home, ay) {
-  host.innerHTML = pageHead(w('title', { ay }), esc(w('pick_lede')))
+  host.innerHTML = pageHead(w('title', { ay }), esc(w('pick_lede')), may('wizard') ? `<button type="button" class="primary" id="mr-wizard" data-href="#/wizard">${icon('spark', 15)} ${esc(t('wizard', 'mr_new'))}</button>` : '')
     + `<section class="card">${home.clients.length ? `<div class="mr-pick">${home.clients.filter((c) => ['individual', 'huf'].includes(c.status)).map((c) => `<a class="mr-pick-row" href="#/myreturn?c=${encodeURIComponent(c.id)}&ay=${encodeURIComponent(ay)}">
         ${icon('user', 16)}<span><b>${esc(c.name)}</b> <span class="small muted">${esc(c.pan)}</span></span>${icon('right', 14)}</a>`).join('')}</div>`
       : `<p class="muted">${esc(w('pick_none'))}</p>`}</section>
@@ -318,6 +319,7 @@ function pick(host, home, ay) {
       ${dropZone('mr-new', { accept: '.json,.pdf', title: w('drop'), hint: w('drop_hint') })}
       <div class="row tight" style="justify-content:flex-end"><button type="button" class="primary" id="mr-new-up">${icon('upload', 14)} ${esc(w('read'))}</button></div></section>`;
   wireDrops(host);
+  if (host.querySelector('#mr-wizard')) host.querySelector('#mr-wizard').onclick = () => { location.hash = '#/wizard'; };
   host.querySelector('#mr-new-up').onclick = async (e) => {
     const btn = e.currentTarget;
     const f = host.querySelector('#mr-new').files[0];
@@ -347,7 +349,7 @@ async function sendDoc(path, fd, fname, ay, btn) {
   return null;
 }
 
-function askFirst(q, fname, ay) {
+export function askFirst(q, fname, ay) {
   const start = q.why === 'start';
   const kind = w(`k_${q.kind || 'other'}`);
   const rows = q.have.map((x) => `<li><span class="ask-tag">${esc(start ? w(`k_${x.kind}`) : w('ask_have'))}</span>

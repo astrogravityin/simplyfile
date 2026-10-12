@@ -1,0 +1,182 @@
+{
+  "chip_id": "company.d80m",
+  "kind": "accessor",
+  "set": "company",
+  "label": "Company: s.80M - dividends received and passed on",
+  "aliases": [
+    "company: s.80m - dividends received and "
+  ],
+  "params": [
+    {
+      "name": "dividend_in",
+      "type": "number",
+      "default": 0,
+      "label": "dividend from domestic / foreign companies and business trusts in the gross total income"
+    },
+    {
+      "name": "paid",
+      "type": "number",
+      "default": 0,
+      "label": "dividend the company distributed"
+    },
+    {
+      "name": "paid_on",
+      "type": "number",
+      "default": 0,
+      "label": "date distributed (yyyymmdd)"
+    },
+    {
+      "name": "due",
+      "type": "number",
+      "default": 0,
+      "label": "the return's due date u/s 139(1) (yyyymmdd)"
+    },
+    {
+      "name": "months",
+      "type": "number",
+      "default": 1,
+      "label": "at least this many months before the due date"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "in_time": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "gt",
+                  "left": "$paid_on",
+                  "right": 0
+                },
+                {
+                  "op": "le",
+                  "left": "$paid_on",
+                  "right": {
+                    "vop": "sub",
+                    "a": "$due",
+                    "b": {
+                      "vop": "mul",
+                      "a": "$months",
+                      "b": 100
+                    }
+                  }
+                }
+              ]
+            },
+            "then": true
+          }
+        ],
+        "else": false
+      },
+      "deduction": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "gt",
+                  "left": "$paid_on",
+                  "right": 0
+                },
+                {
+                  "op": "le",
+                  "left": "$paid_on",
+                  "right": {
+                    "vop": "sub",
+                    "a": "$due",
+                    "b": {
+                      "vop": "mul",
+                      "a": "$months",
+                      "b": 100
+                    }
+                  }
+                }
+              ]
+            },
+            "then": {
+              "vop": "smallest",
+              "values": [
+                {
+                  "vop": "largest",
+                  "values": [
+                    0,
+                    "$dividend_in"
+                  ]
+                },
+                {
+                  "vop": "largest",
+                  "values": [
+                    0,
+                    "$paid"
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "else": 0
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-11: s.80M: a domestic company's dividend income from another domestic company, a foreign company or a business trust is deducted up to the dividend it distributed itself on or before one month prior to the due date of its return (dates as yyyymmdd numbers: the due date less 100 is the same day a month earlier for the comparison). Allowed under 115BAA / 115BAB too.",
+  "test_cases": [
+    {
+      "args": {
+        "dividend_in": 500000,
+        "paid": 300000,
+        "paid_on": 20260915,
+        "due": 20261031
+      },
+      "expect_value": {
+        "in_time": true,
+        "deduction": 300000
+      }
+    },
+    {
+      "args": {
+        "dividend_in": 500000,
+        "paid": 900000,
+        "paid_on": 20260930,
+        "due": 20261031
+      },
+      "expect_value": {
+        "in_time": true,
+        "deduction": 500000
+      }
+    },
+    {
+      "args": {
+        "dividend_in": 500000,
+        "paid": 900000,
+        "paid_on": 20261005,
+        "due": 20261031
+      },
+      "expect_value": {
+        "in_time": false,
+        "deduction": 0
+      }
+    },
+    {
+      "args": {
+        "dividend_in": 500000,
+        "paid": 900000,
+        "paid_on": 0,
+        "due": 20261031
+      },
+      "expect_value": {
+        "in_time": false,
+        "deduction": 0
+      }
+    }
+  ]
+}

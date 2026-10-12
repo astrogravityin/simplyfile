@@ -39,9 +39,9 @@
         },
         {
           "id": "client",
-          "label": "Add your first client",
-          "say": "Name and PAN; the year's file opens with them.",
-          "href": "#/clients",
+          "label": "Start a new filing",
+          "say": "Pick who the return is for and drop the documents in - the client is made from them, and only what is missing is asked.",
+          "href": "#/wizard",
           "fact": "records",
           "call": "",
           "grant": "clients.create",
@@ -83,9 +83,9 @@
         },
         {
           "id": "my_docs",
-          "label": "Add your Form 16 or AIS",
-          "say": "My return reads them and fills in what it can.",
-          "href": "#/myreturn",
+          "label": "Start your filing",
+          "say": "Say what applies, drop in Form 16, the AIS and 26AS - My return fills in what it can.",
+          "href": "#/wizard",
           "fact": "area_my_return_docs",
           "call": "",
           "grant": "",
@@ -114,6 +114,7 @@
       "name": "screens",
       "type": "json",
       "default": [
+        "wizard",
         "firm",
         "clients",
         "myreturn"
@@ -129,9 +130,9 @@
     }
   },
   "returns": "record",
-  "version": 1,
+  "version": 3,
   "status": "published",
-  "description_nl": "2026-10-09 owner: a Start here card for a new user who has no idea how to proceed - this portal's first steps, each ticked from real work (chip start.done). A seam: every domain writes its own.",
+  "description_nl": "2026-10-09 owner: a Start here card for a new user who has no idea how to proceed - this portal's first steps, each ticked from real work (chip start.done). A seam: every domain writes its own. 2026-10-11: the first work step is New filing (#/wizard): 'Start a new filing' for a firm, 'Start your filing' for a self-filer; the card shows on the wizard too.",
   "test_cases": [
     {
       "args": {},
@@ -163,9 +164,9 @@
           },
           {
             "id": "client",
-            "label": "Add your first client",
-            "say": "Name and PAN; the year's file opens with them.",
-            "href": "#/clients",
+            "label": "Start a new filing",
+            "say": "Pick who the return is for and drop the documents in - the client is made from them, and only what is missing is asked.",
+            "href": "#/wizard",
             "fact": "records",
             "call": "",
             "grant": "clients.create",
@@ -207,9 +208,9 @@
           },
           {
             "id": "my_docs",
-            "label": "Add your Form 16 or AIS",
-            "say": "My return reads them and fills in what it can.",
-            "href": "#/myreturn",
+            "label": "Start your filing",
+            "say": "Say what applies, drop in Form 16, the AIS and 26AS - My return fills in what it can.",
+            "href": "#/wizard",
             "fact": "area_my_return_docs",
             "call": "",
             "grant": "",
@@ -233,6 +234,7 @@
           }
         ],
         "screens": [
+          "wizard",
           "firm",
           "clients",
           "myreturn"

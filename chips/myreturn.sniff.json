@@ -1,0 +1,73 @@
+{
+  "chip_id": "myreturn.sniff",
+  "kind": "accessor",
+  "set": "myreturn",
+  "label": "My return: who a document names - PAN, name, AY - read from its text when its reader gives no person",
+  "aliases": [
+    "my return: who a document names - pan, name, ay - read from its text when its reader gives no person"
+  ],
+  "params": [
+    {
+      "name": "pan",
+      "type": "json",
+      "default": [
+        "Permanent Account Number\\s*\\(PAN\\)\\W{0,6}([A-Z]{5}[0-9]{4}[A-Z])",
+        "\\bPAN\\b(?: of the (?:Assessee|Employee)[^A-Z]{0,30})?\\W{0,4}([A-Z]{5}[0-9]{4}[A-Z])\\b"
+      ],
+      "label": "pan"
+    },
+    {
+      "name": "name",
+      "type": "json",
+      "default": [
+        "Name of (?:the )?Assessee\\W{0,6}([A-Za-z][A-Za-z .&'-]{2,80}?)\\s*(?:\\^|\\n|$)",
+        "\\bPAN\\s+[A-Z]{5}[0-9]{4}[A-Z]\\s+Name\\s+([A-Z][A-Z .&'-]{2,80}?)\\s+Financial Year",
+        "\\bInvestor\\s+([A-Z][A-Z .&'-]{2,80}?)\\s+PAN\\b"
+      ],
+      "label": "name"
+    },
+    {
+      "name": "ay",
+      "type": "text",
+      "default": "Assessment Year\\D{0,20}(20\\d\\d-\\d\\d)",
+      "label": "ay"
+    },
+    {
+      "name": "head_chars",
+      "type": "number",
+      "default": 6000,
+      "label": "head_chars"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "pan": "$pan",
+      "name": "$name",
+      "ay": "$ay",
+      "head_chars": "$head_chars"
+    }
+  },
+  "returns": "record",
+  "status": "published",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "pan": [
+          "Permanent Account Number\\s*\\(PAN\\)\\W{0,6}([A-Z]{5}[0-9]{4}[A-Z])",
+          "\\bPAN\\b(?: of the (?:Assessee|Employee)[^A-Z]{0,30})?\\W{0,4}([A-Z]{5}[0-9]{4}[A-Z])\\b"
+        ],
+        "name": [
+          "Name of (?:the )?Assessee\\W{0,6}([A-Za-z][A-Za-z .&'-]{2,80}?)\\s*(?:\\^|\\n|$)",
+          "\\bPAN\\s+[A-Z]{5}[0-9]{4}[A-Z]\\s+Name\\s+([A-Z][A-Z .&'-]{2,80}?)\\s+Financial Year",
+          "\\bInvestor\\s+([A-Z][A-Z .&'-]{2,80}?)\\s+PAN\\b"
+        ],
+        "ay": "Assessment Year\\D{0,20}(20\\d\\d-\\d\\d)",
+        "head_chars": 6000
+      }
+    }
+  ],
+  "version": 1,
+  "description_nl": "2026-10-11: the new filing wizard's identification: the 26AS header (Permanent Account Number, Name of Assessee), the AIS header (PAN ... Name ... Financial Year), a CAMS statement (Investor ... PAN) - the first match of each, in the first 6,000 characters of the text."
+}

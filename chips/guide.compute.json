@@ -46,6 +46,11 @@
           "target": ".cc-comp|main"
         },
         {
+          "title": "A company (ITR-6)",
+          "say": "For a company, its own section: the option's rate and surcharge, depreciation block by block, losses set off and carried (8 years, s.79, unabsorbed depreciation), MAT against the normal tax and the MAT credit, 80M and 80G - and below, the year's facts to type: the earlier year's turnover, losses and credit brought forward, dividends paid.",
+          "target": "#co-card|.cc-comp"
+        },
+        {
           "title": "Interest, worked out",
           "say": "234A, 234B and 234C come from the 26AS challans by date; a senior citizen with no business income pays no advance-tax interest. Type a figure only to override.",
           "target": "#cc-int|.cc-comp"
@@ -90,15 +95,15 @@
     }
   },
   "returns": "record",
-  "version": 2,
+  "version": 3,
   "status": "published",
-  "description_nl": "2026-10-04: the Compute & close walk, up to date with the screen; tours/sf-compute.json is made from it.",
+  "description_nl": "2026-10-04: the Compute & close walk, up to date with the screen; tours/sf-compute.json is made from it. 2026-10-11: a company's section (ITR-6).",
   "test_cases": [
     {
       "args": {},
       "expect_value": {
         "title": "Compute & close",
-        "lede": "Turn the mapped books and 26AS into the return in {product}: the computation, interest, the filing files in the department's own format, sign-off, filing and revisions.",
+        "lede": "Turn the mapped books and 26AS into the return in SimplyFy: the computation, interest, the filing files in the department's own format, sign-off, filing and revisions.",
         "icon": "money",
         "minutes": 4,
         "steps": [
@@ -111,6 +116,11 @@
             "title": "The computation",
             "say": "Each head adds its mapped rows; house property gets its 30%. Pick the regime here.",
             "target": ".cc-comp|main"
+          },
+          {
+            "title": "A company (ITR-6)",
+            "say": "For a company, its own section: the option's rate and surcharge, depreciation block by block, losses set off and carried (8 years, s.79, unabsorbed depreciation), MAT against the normal tax and the MAT credit, 80M and 80G - and below, the year's facts to type: the earlier year's turnover, losses and credit brought forward, dividends paid.",
+            "target": "#co-card|.cc-comp"
           },
           {
             "title": "Interest, worked out",

@@ -107,11 +107,12 @@ def facts(cid: str, ay: str) -> dict:
                          "head": codes["heads"].get(engine.run("recon.groups", {"section": sec})["group"] or "", codes["default_head"])})
     adv = sum(x["amount"] for x in d["paid"] if engine.run("compute.paid_kind", {
         "minor": str(x.get("minor") or ""), "paid_on": compute._day(x["date"]), "fy_end": compute.year_day(ay, "end")}) == "advance")
+    acc_types, acc_default = fc.get("account_types", codes["account_types"]), fc.get("default_account", codes["default_account"])
     banks = [{"ifsc": b.get("ifsc", ""), "bank": b.get("bank", ""), "account": b.get("account", ""),
-              "type": codes["account_types"].get(str(b.get("type") or "").strip().lower(), codes["default_account"]),
+              "type": acc_types.get(str(b.get("type") or "").strip().lower(), acc_default),
               "refund": "true" if i == 0 else "false"} for i, b in enumerate(c.get("banks") or [])]
     x = d["tax"]
-    return {
+    out = {
         "today": datetime.date.today().isoformat(), "ay_code": ay[:4], "form": form,
         "sw_id": settings()["sw_id"], "sw_version": settings()["sw_version"],
         "client": {"name": c["name"], "first": " ".join(words[:-1]) if person else "",
@@ -147,6 +148,10 @@ def facts(cid: str, ay: str) -> dict:
         "banks": banks, "has_banks": yn(banks),
         "auditor": _auditor(c) if y.get("audit") else {},
     }
+    if d.get("company"):                                  # a company (ITR-6): its schedules' facts, in our words (company.itr_facts)
+        import company  # noqa: PLC0415
+        out["co"] = company.itr_facts(cid, ay, d, out)
+    return out
 
 
 def _auditor(c: dict) -> dict:
@@ -208,6 +213,9 @@ def books(cid: str, ay: str, form_doc: dict, s: dict, root: str) -> dict:
     k = engine.run("itr.books")
     form = next((f for f, v in settings()["forms"].items() if v["root"] == root), "")
     rw = k["rewrites"].get(form, [])
+    own = form in k["form_items"]                         # a form with its own layout (ITR-6, Schedule III): its own items and totals
+    items = k["form_items"][form] if own else k["items"]
+    ch = k["checks"] | k["form_checks"].get(form, {})
 
     def at(path: str) -> str:
         for a, b in rw:
@@ -220,25 +228,27 @@ def books(cid: str, ay: str, form_doc: dict, s: dict, root: str) -> dict:
         if r["table"] not in k["tables"]:
             continue
         item = str(r.get("serial") or "").lower()
-        if item not in k["items"]:
+        if item not in items:
             unknown.add(f"{r['table']} {item or '-'}")
             continue
         sums[item] = sums.get(item, 0.0) + float(r["amount"] or 0)
+    by_path: dict[str, float] = {}                       # two items on one path (ITR-6: CSR and other expenses) add up
     for item, amt in sums.items():
-        path = at(k["items"][item])
+        path = at(items[item])
         if _has(s, root, path):
-            _seed(s, root, form_doc, path)
-            _put(form_doc, path, _int(amt))
+            by_path[path] = by_path.get(path, 0.0) + amt
         else:
             skipped.add(item)
+    for path, amt in by_path.items():
+        _seed(s, root, form_doc, path)
+        _put(form_doc, path, _int(amt))
     if sums:
-        for t in k["extra_totals"].get(form, []) + k["totals"]:
+        for t in (k["form_totals"][form] if own else k["extra_totals"].get(form, []) + k["totals"]):
             tp = at(t["path"])
             if _has(s, root, tp):
                 _seed(s, root, form_doc, tp)
                 _put(form_doc, tp, _int(sum(_val(form_doc, at(p)) for p in t.get("plus", [])) - sum(_val(form_doc, at(p)) for p in t.get("minus", []))))
-    ch = k["checks"]
-    bp = next((r["amount"] for r in rows if r["table"] in k["profit_tables"] and re.search(k["profit_pattern"], r["label"] or "")), None)
+    bp = next((r["amount"] for r in rows if r["table"] in k["profit_tables"] and re.search(ch.get("profit_pattern") or k["profit_pattern"], r["label"] or "")), None)
     pbt = _val(form_doc, at(ch["pl_profit"]))
     return {"items": len(sums), "rows": sum(1 for r in rows if r["table"] in k["tables"]), "unknown": sorted(unknown), "skipped": sorted(skipped),
             "bs_sources": _val(form_doc, at(ch["bs_sources"])), "bs_applied": _val(form_doc, at(ch["bs_applied"])),
@@ -386,7 +396,7 @@ def _fill(f: dict, spec: dict, m: list) -> tuple:
     for row in m:
         if "each" in row:
             items = []
-            for it in f.get(row["each"]) or []:
+            for it in _get(f, row["each"]) or []:      # a list fact, dotted when it sits inside another (co.g80.50q.rows)
                 one = {}
                 for p, key in row["item"].items():
                     v = _get(it, key)

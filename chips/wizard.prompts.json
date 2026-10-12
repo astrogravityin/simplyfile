@@ -1,0 +1,1038 @@
+{
+  "chip_id": "wizard.prompts",
+  "kind": "accessor",
+  "set": "wizard",
+  "label": "New filing: what the documents imply - further documents or figures to give",
+  "aliases": [
+    "new filing: what the documents imply - further documents or figures to give"
+  ],
+  "params": [
+    {
+      "name": "sales",
+      "type": "number",
+      "default": 0,
+      "label": "sales"
+    },
+    {
+      "name": "cg_docs",
+      "type": "number",
+      "default": 0,
+      "label": "cg_docs"
+    },
+    {
+      "name": "ia",
+      "type": "number",
+      "default": 0,
+      "label": "ia"
+    },
+    {
+      "name": "property_rows",
+      "type": "number",
+      "default": 0,
+      "label": "property_rows"
+    },
+    {
+      "name": "tans_missing",
+      "type": "number",
+      "default": 0,
+      "label": "tans_missing"
+    },
+    {
+      "name": "vda_seen",
+      "type": "number",
+      "default": 0,
+      "label": "vda_seen"
+    },
+    {
+      "name": "vda_rows",
+      "type": "number",
+      "default": 0,
+      "label": "vda_rows"
+    },
+    {
+      "name": "fees",
+      "type": "number",
+      "default": 0,
+      "label": "fees"
+    },
+    {
+      "name": "business",
+      "type": "boolean",
+      "default": false,
+      "label": "business"
+    },
+    {
+      "name": "gst_docs",
+      "type": "number",
+      "default": 0,
+      "label": "gst_docs"
+    },
+    {
+      "name": "losses",
+      "type": "boolean",
+      "default": false,
+      "label": "losses"
+    },
+    {
+      "name": "prev_docs",
+      "type": "number",
+      "default": 0,
+      "label": "prev_docs"
+    },
+    {
+      "name": "foreign",
+      "type": "boolean",
+      "default": false,
+      "label": "foreign"
+    },
+    {
+      "name": "fa_rows",
+      "type": "number",
+      "default": 0,
+      "label": "fa_rows"
+    },
+    {
+      "name": "arrears",
+      "type": "boolean",
+      "default": false,
+      "label": "arrears"
+    },
+    {
+      "name": "arrear_rows",
+      "type": "number",
+      "default": 0,
+      "label": "arrear_rows"
+    },
+    {
+      "name": "flow",
+      "type": "text",
+      "default": "myreturn",
+      "label": "flow"
+    },
+    {
+      "name": "books_docs",
+      "type": "number",
+      "default": 0,
+      "label": "books_docs"
+    },
+    {
+      "name": "gst_pick",
+      "type": "boolean",
+      "default": false,
+      "label": "gst_pick"
+    },
+    {
+      "name": "gst_json_docs",
+      "type": "number",
+      "default": 0,
+      "label": "gst_json_docs"
+    },
+    {
+      "name": "has_partners",
+      "type": "boolean",
+      "default": false,
+      "label": "has_partners"
+    },
+    {
+      "name": "deed_docs",
+      "type": "number",
+      "default": 0,
+      "label": "deed_docs"
+    },
+    {
+      "name": "stock_pick",
+      "type": "boolean",
+      "default": false,
+      "label": "stock_pick"
+    },
+    {
+      "name": "dep_pick",
+      "type": "boolean",
+      "default": false,
+      "label": "dep_pick"
+    },
+    {
+      "name": "prev5_docs",
+      "type": "number",
+      "default": 0,
+      "label": "prev5_docs"
+    },
+    {
+      "name": "audit_pick",
+      "type": "boolean",
+      "default": false,
+      "label": "audit_pick"
+    }
+  ],
+  "expr": {
+    "vop": "compact",
+    "values": [
+      {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "gt",
+              "left": "$tans_missing",
+              "right": 0
+            },
+            "then": "form16_more"
+          }
+        ],
+        "else": ""
+      },
+      {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "gt",
+                  "left": "$sales",
+                  "right": 0
+                },
+                {
+                  "op": "eq",
+                  "left": "$cg_docs",
+                  "right": 0
+                }
+              ]
+            },
+            "then": "cams"
+          }
+        ],
+        "else": ""
+      },
+      {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "gt",
+                  "left": "$ia",
+                  "right": 0
+                },
+                {
+                  "op": "eq",
+                  "left": "$property_rows",
+                  "right": 0
+                }
+              ]
+            },
+            "then": "property"
+          }
+        ],
+        "else": ""
+      },
+      {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "gt",
+                  "left": "$vda_seen",
+                  "right": 0
+                },
+                {
+                  "op": "eq",
+                  "left": "$vda_rows",
+                  "right": 0
+                }
+              ]
+            },
+            "then": "vda"
+          }
+        ],
+        "else": ""
+      },
+      {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "gt",
+                  "left": "$fees",
+                  "right": 0
+                },
+                {
+                  "op": "not",
+                  "item": "$business"
+                },
+                {
+                  "op": "not",
+                  "item": {
+                    "op": "eq",
+                    "left": "$flow",
+                    "right": "firm"
+                  }
+                }
+              ]
+            },
+            "then": "business"
+          }
+        ],
+        "else": ""
+      },
+      {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "eq",
+                  "left": "$business",
+                  "right": true
+                },
+                {
+                  "op": "eq",
+                  "left": "$gst_docs",
+                  "right": 0
+                },
+                {
+                  "op": "not",
+                  "item": {
+                    "op": "eq",
+                    "left": "$flow",
+                    "right": "firm"
+                  }
+                }
+              ]
+            },
+            "then": "gst"
+          }
+        ],
+        "else": ""
+      },
+      {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "eq",
+                  "left": "$losses",
+                  "right": true
+                },
+                {
+                  "op": "eq",
+                  "left": "$prev_docs",
+                  "right": 0
+                }
+              ]
+            },
+            "then": "last_itr"
+          }
+        ],
+        "else": ""
+      },
+      {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "eq",
+                  "left": "$foreign",
+                  "right": true
+                },
+                {
+                  "op": "eq",
+                  "left": "$fa_rows",
+                  "right": 0
+                }
+              ]
+            },
+            "then": "foreign"
+          }
+        ],
+        "else": ""
+      },
+      {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "eq",
+                  "left": "$arrears",
+                  "right": true
+                },
+                {
+                  "op": "eq",
+                  "left": "$arrear_rows",
+                  "right": 0
+                }
+              ]
+            },
+            "then": "arrears"
+          }
+        ],
+        "else": ""
+      },
+      {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "eq",
+                  "left": "$flow",
+                  "right": "firm"
+                },
+                {
+                  "op": "eq",
+                  "left": "$books_docs",
+                  "right": 0
+                }
+              ]
+            },
+            "then": "books"
+          }
+        ],
+        "else": ""
+      },
+      {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "eq",
+                  "left": "$flow",
+                  "right": "firm"
+                },
+                {
+                  "op": "eq",
+                  "left": "$gst_pick",
+                  "right": true
+                },
+                {
+                  "op": "eq",
+                  "left": "$gst_json_docs",
+                  "right": 0
+                }
+              ]
+            },
+            "then": "gst_json"
+          }
+        ],
+        "else": ""
+      },
+      {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "eq",
+                  "left": "$flow",
+                  "right": "firm"
+                },
+                {
+                  "op": "eq",
+                  "left": "$has_partners",
+                  "right": true
+                },
+                {
+                  "op": "eq",
+                  "left": "$deed_docs",
+                  "right": 0
+                }
+              ]
+            },
+            "then": "deed"
+          }
+        ],
+        "else": ""
+      },
+      {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "eq",
+                  "left": "$flow",
+                  "right": "firm"
+                },
+                {
+                  "op": "eq",
+                  "left": "$stock_pick",
+                  "right": true
+                }
+              ]
+            },
+            "then": "stock"
+          }
+        ],
+        "else": ""
+      },
+      {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "eq",
+                  "left": "$flow",
+                  "right": "firm"
+                },
+                {
+                  "op": "eq",
+                  "left": "$dep_pick",
+                  "right": true
+                }
+              ]
+            },
+            "then": "dep"
+          }
+        ],
+        "else": ""
+      },
+      {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "eq",
+                  "left": "$flow",
+                  "right": "firm"
+                },
+                {
+                  "op": "gt",
+                  "left": "$prev5_docs",
+                  "right": 0
+                }
+              ]
+            },
+            "then": "itr_prev"
+          }
+        ],
+        "else": ""
+      },
+      {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "eq",
+                  "left": "$flow",
+                  "right": "firm"
+                },
+                {
+                  "op": "eq",
+                  "left": "$audit_pick",
+                  "right": true
+                }
+              ]
+            },
+            "then": "audit_3cd"
+          }
+        ],
+        "else": ""
+      }
+    ]
+  },
+  "returns": "list",
+  "status": "published",
+  "test_cases": [
+    {
+      "args": {
+        "sales": 0,
+        "cg_docs": 0,
+        "ia": 0,
+        "property_rows": 0,
+        "tans_missing": 0,
+        "vda_seen": 0,
+        "vda_rows": 0,
+        "fees": 0,
+        "business": false,
+        "gst_docs": 0,
+        "losses": false,
+        "prev_docs": 0,
+        "foreign": false,
+        "fa_rows": 0,
+        "arrears": false,
+        "arrear_rows": 0,
+        "flow": "myreturn",
+        "books_docs": 0,
+        "gst_pick": false,
+        "gst_json_docs": 0,
+        "has_partners": false,
+        "deed_docs": 0,
+        "stock_pick": false,
+        "dep_pick": false,
+        "prev5_docs": 0,
+        "audit_pick": false
+      },
+      "expect_value": []
+    },
+    {
+      "args": {
+        "sales": 320000,
+        "cg_docs": 0,
+        "ia": 0,
+        "property_rows": 0,
+        "tans_missing": 0,
+        "vda_seen": 0,
+        "vda_rows": 0,
+        "fees": 0,
+        "business": false,
+        "gst_docs": 0,
+        "losses": false,
+        "prev_docs": 0,
+        "foreign": false,
+        "fa_rows": 0,
+        "arrears": false,
+        "arrear_rows": 0,
+        "flow": "myreturn",
+        "books_docs": 0,
+        "gst_pick": false,
+        "gst_json_docs": 0,
+        "has_partners": false,
+        "deed_docs": 0,
+        "stock_pick": false,
+        "dep_pick": false,
+        "prev5_docs": 0,
+        "audit_pick": false
+      },
+      "expect_value": [
+        "cams"
+      ]
+    },
+    {
+      "args": {
+        "sales": 320000,
+        "cg_docs": 1,
+        "ia": 0,
+        "property_rows": 0,
+        "tans_missing": 0,
+        "vda_seen": 0,
+        "vda_rows": 0,
+        "fees": 0,
+        "business": false,
+        "gst_docs": 0,
+        "losses": false,
+        "prev_docs": 0,
+        "foreign": false,
+        "fa_rows": 0,
+        "arrears": false,
+        "arrear_rows": 0,
+        "flow": "myreturn",
+        "books_docs": 0,
+        "gst_pick": false,
+        "gst_json_docs": 0,
+        "has_partners": false,
+        "deed_docs": 0,
+        "stock_pick": false,
+        "dep_pick": false,
+        "prev5_docs": 0,
+        "audit_pick": false
+      },
+      "expect_value": []
+    },
+    {
+      "args": {
+        "sales": 0,
+        "cg_docs": 0,
+        "ia": 1,
+        "property_rows": 0,
+        "tans_missing": 0,
+        "vda_seen": 0,
+        "vda_rows": 0,
+        "fees": 0,
+        "business": false,
+        "gst_docs": 0,
+        "losses": false,
+        "prev_docs": 0,
+        "foreign": false,
+        "fa_rows": 0,
+        "arrears": false,
+        "arrear_rows": 0,
+        "flow": "myreturn",
+        "books_docs": 0,
+        "gst_pick": false,
+        "gst_json_docs": 0,
+        "has_partners": false,
+        "deed_docs": 0,
+        "stock_pick": false,
+        "dep_pick": false,
+        "prev5_docs": 0,
+        "audit_pick": false
+      },
+      "expect_value": [
+        "property"
+      ]
+    },
+    {
+      "args": {
+        "sales": 0,
+        "cg_docs": 0,
+        "ia": 1,
+        "property_rows": 1,
+        "tans_missing": 0,
+        "vda_seen": 0,
+        "vda_rows": 0,
+        "fees": 0,
+        "business": false,
+        "gst_docs": 0,
+        "losses": false,
+        "prev_docs": 0,
+        "foreign": false,
+        "fa_rows": 0,
+        "arrears": false,
+        "arrear_rows": 0,
+        "flow": "myreturn",
+        "books_docs": 0,
+        "gst_pick": false,
+        "gst_json_docs": 0,
+        "has_partners": false,
+        "deed_docs": 0,
+        "stock_pick": false,
+        "dep_pick": false,
+        "prev5_docs": 0,
+        "audit_pick": false
+      },
+      "expect_value": []
+    },
+    {
+      "args": {
+        "sales": 0,
+        "cg_docs": 0,
+        "ia": 0,
+        "property_rows": 0,
+        "tans_missing": 1,
+        "vda_seen": 0,
+        "vda_rows": 0,
+        "fees": 0,
+        "business": false,
+        "gst_docs": 0,
+        "losses": false,
+        "prev_docs": 0,
+        "foreign": false,
+        "fa_rows": 0,
+        "arrears": false,
+        "arrear_rows": 0,
+        "flow": "myreturn",
+        "books_docs": 0,
+        "gst_pick": false,
+        "gst_json_docs": 0,
+        "has_partners": false,
+        "deed_docs": 0,
+        "stock_pick": false,
+        "dep_pick": false,
+        "prev5_docs": 0,
+        "audit_pick": false
+      },
+      "expect_value": [
+        "form16_more"
+      ]
+    },
+    {
+      "args": {
+        "sales": 0,
+        "cg_docs": 0,
+        "ia": 0,
+        "property_rows": 0,
+        "tans_missing": 0,
+        "vda_seen": 90000,
+        "vda_rows": 0,
+        "fees": 0,
+        "business": false,
+        "gst_docs": 0,
+        "losses": false,
+        "prev_docs": 0,
+        "foreign": false,
+        "fa_rows": 0,
+        "arrears": false,
+        "arrear_rows": 0,
+        "flow": "myreturn",
+        "books_docs": 0,
+        "gst_pick": false,
+        "gst_json_docs": 0,
+        "has_partners": false,
+        "deed_docs": 0,
+        "stock_pick": false,
+        "dep_pick": false,
+        "prev5_docs": 0,
+        "audit_pick": false
+      },
+      "expect_value": [
+        "vda"
+      ]
+    },
+    {
+      "args": {
+        "sales": 0,
+        "cg_docs": 0,
+        "ia": 0,
+        "property_rows": 0,
+        "tans_missing": 0,
+        "vda_seen": 0,
+        "vda_rows": 0,
+        "fees": 1500000,
+        "business": false,
+        "gst_docs": 0,
+        "losses": false,
+        "prev_docs": 0,
+        "foreign": false,
+        "fa_rows": 0,
+        "arrears": false,
+        "arrear_rows": 0,
+        "flow": "myreturn",
+        "books_docs": 0,
+        "gst_pick": false,
+        "gst_json_docs": 0,
+        "has_partners": false,
+        "deed_docs": 0,
+        "stock_pick": false,
+        "dep_pick": false,
+        "prev5_docs": 0,
+        "audit_pick": false
+      },
+      "expect_value": [
+        "business"
+      ]
+    },
+    {
+      "args": {
+        "sales": 0,
+        "cg_docs": 0,
+        "ia": 0,
+        "property_rows": 0,
+        "tans_missing": 0,
+        "vda_seen": 0,
+        "vda_rows": 0,
+        "fees": 1500000,
+        "business": true,
+        "gst_docs": 0,
+        "losses": false,
+        "prev_docs": 0,
+        "foreign": false,
+        "fa_rows": 0,
+        "arrears": false,
+        "arrear_rows": 0,
+        "flow": "myreturn",
+        "books_docs": 0,
+        "gst_pick": false,
+        "gst_json_docs": 0,
+        "has_partners": false,
+        "deed_docs": 0,
+        "stock_pick": false,
+        "dep_pick": false,
+        "prev5_docs": 0,
+        "audit_pick": false
+      },
+      "expect_value": [
+        "gst"
+      ]
+    },
+    {
+      "args": {
+        "sales": 0,
+        "cg_docs": 0,
+        "ia": 0,
+        "property_rows": 0,
+        "tans_missing": 0,
+        "vda_seen": 0,
+        "vda_rows": 0,
+        "fees": 0,
+        "business": false,
+        "gst_docs": 0,
+        "losses": true,
+        "prev_docs": 0,
+        "foreign": false,
+        "fa_rows": 0,
+        "arrears": false,
+        "arrear_rows": 0,
+        "flow": "myreturn",
+        "books_docs": 0,
+        "gst_pick": false,
+        "gst_json_docs": 0,
+        "has_partners": false,
+        "deed_docs": 0,
+        "stock_pick": false,
+        "dep_pick": false,
+        "prev5_docs": 0,
+        "audit_pick": false
+      },
+      "expect_value": [
+        "last_itr"
+      ]
+    },
+    {
+      "args": {
+        "sales": 0,
+        "cg_docs": 0,
+        "ia": 0,
+        "property_rows": 0,
+        "tans_missing": 0,
+        "vda_seen": 0,
+        "vda_rows": 0,
+        "fees": 0,
+        "business": false,
+        "gst_docs": 0,
+        "losses": false,
+        "prev_docs": 0,
+        "foreign": true,
+        "fa_rows": 0,
+        "arrears": true,
+        "arrear_rows": 0,
+        "flow": "myreturn",
+        "books_docs": 0,
+        "gst_pick": false,
+        "gst_json_docs": 0,
+        "has_partners": false,
+        "deed_docs": 0,
+        "stock_pick": false,
+        "dep_pick": false,
+        "prev5_docs": 0,
+        "audit_pick": false
+      },
+      "expect_value": [
+        "foreign",
+        "arrears"
+      ]
+    },
+    {
+      "args": {
+        "sales": 0,
+        "cg_docs": 0,
+        "ia": 0,
+        "property_rows": 0,
+        "tans_missing": 0,
+        "vda_seen": 0,
+        "vda_rows": 0,
+        "fees": 900000,
+        "business": false,
+        "gst_docs": 0,
+        "losses": false,
+        "prev_docs": 0,
+        "foreign": false,
+        "fa_rows": 0,
+        "arrears": false,
+        "arrear_rows": 0,
+        "flow": "firm",
+        "books_docs": 0,
+        "gst_pick": false,
+        "gst_json_docs": 0,
+        "has_partners": false,
+        "deed_docs": 0,
+        "stock_pick": false,
+        "dep_pick": false,
+        "prev5_docs": 0,
+        "audit_pick": false
+      },
+      "expect_value": [
+        "books"
+      ]
+    },
+    {
+      "args": {
+        "sales": 0,
+        "cg_docs": 0,
+        "ia": 0,
+        "property_rows": 0,
+        "tans_missing": 0,
+        "vda_seen": 0,
+        "vda_rows": 0,
+        "fees": 0,
+        "business": false,
+        "gst_docs": 0,
+        "losses": false,
+        "prev_docs": 0,
+        "foreign": false,
+        "fa_rows": 0,
+        "arrears": false,
+        "arrear_rows": 0,
+        "flow": "firm",
+        "books_docs": 1,
+        "gst_pick": true,
+        "gst_json_docs": 0,
+        "has_partners": true,
+        "deed_docs": 0,
+        "stock_pick": false,
+        "dep_pick": false,
+        "prev5_docs": 0,
+        "audit_pick": false
+      },
+      "expect_value": [
+        "gst_json",
+        "deed"
+      ]
+    },
+    {
+      "args": {
+        "sales": 0,
+        "cg_docs": 0,
+        "ia": 0,
+        "property_rows": 0,
+        "tans_missing": 0,
+        "vda_seen": 0,
+        "vda_rows": 0,
+        "fees": 0,
+        "business": false,
+        "gst_docs": 0,
+        "losses": false,
+        "prev_docs": 0,
+        "foreign": false,
+        "fa_rows": 0,
+        "arrears": false,
+        "arrear_rows": 0,
+        "flow": "firm",
+        "books_docs": 2,
+        "gst_pick": true,
+        "gst_json_docs": 12,
+        "has_partners": true,
+        "deed_docs": 1,
+        "stock_pick": true,
+        "dep_pick": true,
+        "prev5_docs": 1,
+        "audit_pick": true
+      },
+      "expect_value": [
+        "stock",
+        "dep",
+        "itr_prev",
+        "audit_3cd"
+      ]
+    }
+  ],
+  "version": 2,
+  "description_nl": "2026-10-11: AIS fund or share sales with no capital-gains statement; 194IA TDS (26AS / AIS) with no property sale entered; a salary TAN with no Form 16; 194S crypto with no transfer entered; 194J / 194C fees with no business; a business with no GSTR-3B; losses picked with no last year's return; foreign or arrears picked with nothing entered. 2026-10-11: AIS fund or share sales with no capital-gains statement; 194IA TDS (26AS / AIS) with no property sale entered; a salary TAN with no Form 16; 194S crypto with no transfer entered; 194J / 194C fees with no business; a business with no GSTR-3B; losses picked with no last year's return; foreign or arrears picked with nothing entered. A business (the firm flow): no books yet, GST with no GSTR-3B JSON, partners with no deed, stock and depreciation to tag, last year's ITR-5 to import, the tax audit's Form 3CD to work through."
+}

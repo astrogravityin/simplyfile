@@ -1,0 +1,237 @@
+{
+  "chip_id": "wizard.doc_need",
+  "kind": "accessor",
+  "set": "wizard",
+  "label": "New filing: is a document needed, good to have, or not asked for these picks",
+  "aliases": [
+    "new filing: is a document needed, good to have, or not asked for these picks"
+  ],
+  "params": [
+    {
+      "name": "required_for",
+      "type": "json",
+      "default": [],
+      "label": "picks it is needed for (any = every return)"
+    },
+    {
+      "name": "optional_for",
+      "type": "json",
+      "default": [],
+      "label": "picks it is good to have for"
+    },
+    {
+      "name": "picked",
+      "type": "json",
+      "default": [],
+      "label": "what was picked, and who"
+    },
+    {
+      "name": "flows",
+      "type": "json",
+      "default": [
+        "myreturn",
+        "firm"
+      ],
+      "label": "the flows it belongs to"
+    },
+    {
+      "name": "flow",
+      "type": "text",
+      "default": "myreturn",
+      "label": "this return's flow"
+    }
+  ],
+  "expr": {
+    "vop": "choose",
+    "cases": [
+      {
+        "when": {
+          "op": "not",
+          "item": {
+            "op": "in_set",
+            "value": "$flow",
+            "set": "$flows"
+          }
+        },
+        "then": ""
+      },
+      {
+        "when": {
+          "op": "any",
+          "items": [
+            {
+              "op": "in_set",
+              "value": "any",
+              "set": "$required_for"
+            },
+            {
+              "op": "lt",
+              "left": {
+                "vop": "count",
+                "items": {
+                  "vop": "missing",
+                  "want": "$required_for",
+                  "have": "$picked"
+                }
+              },
+              "right": {
+                "vop": "count",
+                "items": "$required_for"
+              }
+            }
+          ]
+        },
+        "then": "required"
+      },
+      {
+        "when": {
+          "op": "any",
+          "items": [
+            {
+              "op": "in_set",
+              "value": "any",
+              "set": "$optional_for"
+            },
+            {
+              "op": "lt",
+              "left": {
+                "vop": "count",
+                "items": {
+                  "vop": "missing",
+                  "want": "$optional_for",
+                  "have": "$picked"
+                }
+              },
+              "right": {
+                "vop": "count",
+                "items": "$optional_for"
+              }
+            }
+          ]
+        },
+        "then": "optional"
+      }
+    ],
+    "else": ""
+  },
+  "returns": "any",
+  "status": "published",
+  "test_cases": [
+    {
+      "args": {
+        "required_for": [
+          "any"
+        ],
+        "optional_for": [],
+        "picked": []
+      },
+      "expect_value": "required"
+    },
+    {
+      "args": {
+        "required_for": [
+          "salary",
+          "employers"
+        ],
+        "optional_for": [],
+        "picked": [
+          "house",
+          "salary"
+        ]
+      },
+      "expect_value": "required"
+    },
+    {
+      "args": {
+        "required_for": [
+          "salary"
+        ],
+        "optional_for": [
+          "house"
+        ],
+        "picked": [
+          "house"
+        ]
+      },
+      "expect_value": "optional"
+    },
+    {
+      "args": {
+        "required_for": [
+          "shares"
+        ],
+        "optional_for": [],
+        "picked": [
+          "salary"
+        ]
+      },
+      "expect_value": ""
+    },
+    {
+      "args": {
+        "required_for": [],
+        "optional_for": [
+          "any"
+        ],
+        "picked": []
+      },
+      "expect_value": "optional"
+    },
+    {
+      "args": {
+        "required_for": [
+          "salary"
+        ],
+        "optional_for": [],
+        "picked": [
+          "salary"
+        ],
+        "flows": [
+          "myreturn"
+        ],
+        "flow": "firm"
+      },
+      "expect_value": ""
+    },
+    {
+      "args": {
+        "required_for": [
+          "gst"
+        ],
+        "optional_for": [
+          "firm"
+        ],
+        "picked": [
+          "trading",
+          "firm"
+        ],
+        "flows": [
+          "firm"
+        ],
+        "flow": "firm"
+      },
+      "expect_value": "optional"
+    },
+    {
+      "args": {
+        "required_for": [
+          "gst"
+        ],
+        "optional_for": [
+          "firm"
+        ],
+        "picked": [
+          "gst",
+          "firm"
+        ],
+        "flows": [
+          "firm"
+        ],
+        "flow": "firm"
+      },
+      "expect_value": "required"
+    }
+  ],
+  "version": 2,
+  "description_nl": "2026-10-11: a document is needed when a pick it is needed for was made (or it is needed for every return), else good to have the same way, else not shown. 2026-10-11: a document of another flow is not shown (a Form 16 for a firm); else it is needed when a pick it is needed for was made (or it is needed for every return), else good to have the same way, else not shown."
+}

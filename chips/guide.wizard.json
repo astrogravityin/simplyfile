@@ -1,0 +1,199 @@
+{
+  "chip_id": "guide.wizard",
+  "kind": "accessor",
+  "set": "guide",
+  "label": "Guide me: New filing",
+  "aliases": [
+    "guide me: new filing"
+  ],
+  "params": [
+    {
+      "name": "title",
+      "type": "text",
+      "default": "New filing",
+      "label": "title"
+    },
+    {
+      "name": "icon",
+      "type": "text",
+      "default": "spark",
+      "label": "icon"
+    },
+    {
+      "name": "minutes",
+      "type": "number",
+      "default": 4,
+      "label": "minutes"
+    },
+    {
+      "name": "steps",
+      "type": "json",
+      "default": [
+        {
+          "title": "Who it is for",
+          "say": "A person, an HUF, a partnership firm, an LLP, an AOP or BOI, or a company - each card starts its own filing. A trust says Not yet, with what to do meanwhile.",
+          "target": ".wz-start-who|.wz-who|.wz-start"
+        },
+        {
+          "title": "Worked examples",
+          "say": "One worked example for each kind of return, with made-up documents: Watch how plays it start to finish.",
+          "target": ".wz-examples|.wz-start"
+        },
+        {
+          "title": "Carry on later",
+          "say": "Every filing not finished waits here. Carry on opens it where you left off; Discard drops the wizard's progress, never the client or the return.",
+          "target": ".wz-resume|.wz-start"
+        },
+        {
+          "title": "Four steps",
+          "say": "What you're filing, the documents, the upload, the review. Progress is saved as you go - leave, and carry on later.",
+          "target": ".wz-rail|.wz-start"
+        },
+        {
+          "title": "What applies",
+          "say": "Salary, a second employer, a house, shares and funds, a property sale, crypto, a business, foreign income, days abroad, arrears, last year's losses, a revised return - in plain words, the section small beneath.",
+          "target": ".wz-what|.wz-start"
+        },
+        {
+          "title": "What kind of work",
+          "say": "For a business: trading, manufacturing, services, a profession or farming; GST or not; a small turnover on the presumptive basis or full books; a tax audit with Form 3CD; partners' salary and interest; stock; depreciation.",
+          "target": ".wz-work|.wz-what|.wz-start"
+        },
+        {
+          "title": "Which form",
+          "say": "The form follows from the picks, with its reason in one line - ITR-1, 2, 3 or 4 for a person or an HUF, ITR-5 for a firm, an LLP or an AOP, ITR-6 for a company.",
+          "target": ".wz-form|.wz-start"
+        },
+        {
+          "title": "Documents you'll need",
+          "say": "Needed, good to have, and what you type in - each with what it is and where to get it: TRACES, the AIS, your employer, CAMS or KFintech, the GST portal, the firm's deed and its books.",
+          "target": ".wz-docs|.wz-start",
+          "open": ".wz-node[data-step='docs']"
+        },
+        {
+          "title": "Drop them in",
+          "say": "Several at once. Each file is identified by what it is - a Form 16, an AIS, a GST certificate, a deed, the books - with its PAN, name and year; a file it cannot read says so.",
+          "target": "[data-drop='wz-file']|.wz-start",
+          "open": ".wz-node[data-step='upload']"
+        },
+        {
+          "title": "The client, made for you",
+          "say": "The first document with a PAN makes the client, or finds the one already in your register. A popup asks only what is missing or does not agree: whose PAN, a date of birth, an HUF's Karta, a firm's partners from its deed, residence.",
+          "target": ".wz-client|.wz-start",
+          "open": ".wz-node[data-step='upload']"
+        },
+        {
+          "title": "What the documents imply",
+          "say": "Fund sales in the AIS - upload the CAMS statement. Another employer's TAN - that Form 16. A firm with GST - its GSTR-3B. Each hint goes once it is answered.",
+          "target": ".wz-prompts|.wz-start",
+          "open": ".wz-node[data-step='upload']"
+        },
+        {
+          "title": "Review, then the return",
+          "say": "What was understood, what is still missing, and one button on: My return at the right step for a person, Intake & map or the next firm screen for a business - never a dead end.",
+          "target": ".wz-go|.wz-review|.wz-start",
+          "open": ".wz-node[data-step='review']"
+        }
+      ],
+      "label": "steps"
+    },
+    {
+      "name": "lede",
+      "type": "long",
+      "default": "The guided way in: say who the return is for, see the documents it needs, drop them in - {product} reads each one, makes the client and asks only for what is missing.",
+      "label": "lede"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "title": "$title",
+      "lede": "$lede",
+      "icon": "$icon",
+      "minutes": "$minutes",
+      "steps": "$steps"
+    }
+  },
+  "returns": "record",
+  "status": "published",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "title": "New filing",
+        "lede": "The guided way in: say who the return is for, see the documents it needs, drop them in - SimplyFy reads each one, makes the client and asks only for what is missing.",
+        "icon": "spark",
+        "minutes": 4,
+        "steps": [
+          {
+            "title": "Who it is for",
+            "say": "A person, an HUF, a partnership firm, an LLP, an AOP or BOI, or a company - each card starts its own filing. A trust says Not yet, with what to do meanwhile.",
+            "target": ".wz-start-who|.wz-who|.wz-start"
+          },
+          {
+            "title": "Worked examples",
+            "say": "One worked example for each kind of return, with made-up documents: Watch how plays it start to finish.",
+            "target": ".wz-examples|.wz-start"
+          },
+          {
+            "title": "Carry on later",
+            "say": "Every filing not finished waits here. Carry on opens it where you left off; Discard drops the wizard's progress, never the client or the return.",
+            "target": ".wz-resume|.wz-start"
+          },
+          {
+            "title": "Four steps",
+            "say": "What you're filing, the documents, the upload, the review. Progress is saved as you go - leave, and carry on later.",
+            "target": ".wz-rail|.wz-start"
+          },
+          {
+            "title": "What applies",
+            "say": "Salary, a second employer, a house, shares and funds, a property sale, crypto, a business, foreign income, days abroad, arrears, last year's losses, a revised return - in plain words, the section small beneath.",
+            "target": ".wz-what|.wz-start"
+          },
+          {
+            "title": "What kind of work",
+            "say": "For a business: trading, manufacturing, services, a profession or farming; GST or not; a small turnover on the presumptive basis or full books; a tax audit with Form 3CD; partners' salary and interest; stock; depreciation.",
+            "target": ".wz-work|.wz-what|.wz-start"
+          },
+          {
+            "title": "Which form",
+            "say": "The form follows from the picks, with its reason in one line - ITR-1, 2, 3 or 4 for a person or an HUF, ITR-5 for a firm, an LLP or an AOP, ITR-6 for a company.",
+            "target": ".wz-form|.wz-start"
+          },
+          {
+            "title": "Documents you'll need",
+            "say": "Needed, good to have, and what you type in - each with what it is and where to get it: TRACES, the AIS, your employer, CAMS or KFintech, the GST portal, the firm's deed and its books.",
+            "target": ".wz-docs|.wz-start",
+            "open": ".wz-node[data-step='docs']"
+          },
+          {
+            "title": "Drop them in",
+            "say": "Several at once. Each file is identified by what it is - a Form 16, an AIS, a GST certificate, a deed, the books - with its PAN, name and year; a file it cannot read says so.",
+            "target": "[data-drop='wz-file']|.wz-start",
+            "open": ".wz-node[data-step='upload']"
+          },
+          {
+            "title": "The client, made for you",
+            "say": "The first document with a PAN makes the client, or finds the one already in your register. A popup asks only what is missing or does not agree: whose PAN, a date of birth, an HUF's Karta, a firm's partners from its deed, residence.",
+            "target": ".wz-client|.wz-start",
+            "open": ".wz-node[data-step='upload']"
+          },
+          {
+            "title": "What the documents imply",
+            "say": "Fund sales in the AIS - upload the CAMS statement. Another employer's TAN - that Form 16. A firm with GST - its GSTR-3B. Each hint goes once it is answered.",
+            "target": ".wz-prompts|.wz-start",
+            "open": ".wz-node[data-step='upload']"
+          },
+          {
+            "title": "Review, then the return",
+            "say": "What was understood, what is still missing, and one button on: My return at the right step for a person, Intake & map or the next firm screen for a business - never a dead end.",
+            "target": ".wz-go|.wz-review|.wz-start",
+            "open": ".wz-node[data-step='review']"
+          }
+        ]
+      }
+    }
+  ],
+  "version": 3,
+  "description_nl": "2026-10-11: the New filing walk - its four steps, resume, who / what / form, the documents, the upload, the client made from them, the hints, the review; tours/sf-wizard.json says the same (tools/guide_tour.py wizard). 2026-10-11: the New filing walk - who (people and businesses, the not-yet cards), the worked examples, resume, the four steps, what applies, the kind of work, the form, the documents, the upload, the client made from them, the hints, the review; tours/sf-wizard.json says the same (tools/guide_tour.py wizard)."
+}

@@ -1,0 +1,299 @@
+{
+  "chip_id": "company.problem",
+  "kind": "accessor",
+  "set": "company",
+  "label": "Company: what is wrong in a company's master data (empty = nothing)",
+  "aliases": [
+    "company: what is wrong in a company's ma"
+  ],
+  "params": [
+    {
+      "name": "cin",
+      "type": "text",
+      "default": "",
+      "label": "CIN"
+    },
+    {
+      "name": "cin_pattern",
+      "type": "text",
+      "default": "",
+      "label": "CIN shape (from company.settings)"
+    },
+    {
+      "name": "kind",
+      "type": "text",
+      "default": "",
+      "label": "kind of company"
+    },
+    {
+      "name": "kinds",
+      "type": "json",
+      "default": [],
+      "label": "the kinds' ids"
+    },
+    {
+      "name": "option",
+      "type": "text",
+      "default": "normal",
+      "label": "tax option"
+    },
+    {
+      "name": "options",
+      "type": "json",
+      "default": [],
+      "label": "the options' ids"
+    },
+    {
+      "name": "manufacturing",
+      "type": "boolean",
+      "default": false,
+      "label": "manufacturing company"
+    },
+    {
+      "name": "bad_din",
+      "type": "boolean",
+      "default": false,
+      "label": "a director's DIN is not 8 digits"
+    },
+    {
+      "name": "bad_share",
+      "type": "boolean",
+      "default": false,
+      "label": "a shareholding % is not 0-100"
+    },
+    {
+      "name": "share_total",
+      "type": "number",
+      "default": 0,
+      "label": "total of the shareholdings typed"
+    },
+    {
+      "name": "incorporated",
+      "type": "text",
+      "default": "",
+      "label": "date of incorporation (YYYY-MM-DD)"
+    }
+  ],
+  "expr": {
+    "vop": "choose",
+    "cases": [
+      {
+        "when": {
+          "op": "not",
+          "item": {
+            "op": "in_set",
+            "value": "$kind",
+            "set": "$kinds"
+          }
+        },
+        "then": "co_bad_kind"
+      },
+      {
+        "when": {
+          "op": "not",
+          "item": {
+            "op": "in_set",
+            "value": "$option",
+            "set": "$options"
+          }
+        },
+        "then": "co_bad_option"
+      },
+      {
+        "when": {
+          "op": "all",
+          "items": [
+            {
+              "op": "gt",
+              "left": {
+                "vop": "text_length",
+                "text": "$cin"
+              },
+              "right": 0
+            },
+            {
+              "op": "not",
+              "item": {
+                "vop": "matches",
+                "text": "$cin",
+                "pattern": "$cin_pattern"
+              }
+            }
+          ]
+        },
+        "then": "co_bad_cin"
+      },
+      {
+        "when": {
+          "op": "all",
+          "items": [
+            {
+              "op": "gt",
+              "left": {
+                "vop": "text_length",
+                "text": "$incorporated"
+              },
+              "right": 0
+            },
+            {
+              "op": "not",
+              "item": {
+                "vop": "matches",
+                "text": "$incorporated",
+                "pattern": "^[12][0-9]{3}-[01][0-9]-[0-3][0-9]$"
+              }
+            }
+          ]
+        },
+        "then": "co_bad_date"
+      },
+      {
+        "when": {
+          "op": "eq",
+          "left": "$bad_din",
+          "right": true
+        },
+        "then": "co_bad_din"
+      },
+      {
+        "when": {
+          "op": "eq",
+          "left": "$bad_share",
+          "right": true
+        },
+        "then": "co_bad_share"
+      },
+      {
+        "when": {
+          "op": "gt",
+          "left": "$share_total",
+          "right": 100.0001
+        },
+        "then": "co_share_over"
+      },
+      {
+        "when": {
+          "op": "all",
+          "items": [
+            {
+              "op": "eq",
+              "left": "$option",
+              "right": "115BAB"
+            },
+            {
+              "op": "not",
+              "item": {
+                "op": "eq",
+                "left": "$manufacturing",
+                "right": true
+              }
+            }
+          ]
+        },
+        "then": "co_bab_manufacturing"
+      }
+    ],
+    "else": ""
+  },
+  "returns": "text",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-11: The company part of a client: kind and option from the lists, the CIN in the MCA's 21-character shape, an ISO date of incorporation, 8-digit DINs, shareholdings 0-100% and not over 100% together, and s.115BAB only for a manufacturing company (s.115BAB(2)).",
+  "test_cases": [
+    {
+      "args": {
+        "kind": "private",
+        "kinds": [
+          "private"
+        ],
+        "option": "normal",
+        "options": [
+          "normal"
+        ]
+      },
+      "expect_value": ""
+    },
+    {
+      "args": {
+        "kind": "x",
+        "kinds": [
+          "private"
+        ]
+      },
+      "expect_value": "co_bad_kind"
+    },
+    {
+      "args": {
+        "kind": "private",
+        "kinds": [
+          "private"
+        ],
+        "option": "normal",
+        "options": [
+          "normal"
+        ],
+        "cin": "U12345TG2015PTC000001",
+        "cin_pattern": "^[LU][0-9]{5}[A-Z]{2}[0-9]{4}(PTC|PLC)[0-9]{6}$"
+      },
+      "expect_value": ""
+    },
+    {
+      "args": {
+        "kind": "private",
+        "kinds": [
+          "private"
+        ],
+        "option": "normal",
+        "options": [
+          "normal"
+        ],
+        "cin": "U1234",
+        "cin_pattern": "^[LU][0-9]{5}[A-Z]{2}[0-9]{4}(PTC|PLC)[0-9]{6}$"
+      },
+      "expect_value": "co_bad_cin"
+    },
+    {
+      "args": {
+        "kind": "private",
+        "kinds": [
+          "private"
+        ],
+        "option": "normal",
+        "options": [
+          "normal"
+        ],
+        "share_total": 120
+      },
+      "expect_value": "co_share_over"
+    },
+    {
+      "args": {
+        "kind": "private",
+        "kinds": [
+          "private"
+        ],
+        "option": "115BAB",
+        "options": [
+          "normal",
+          "115BAB"
+        ]
+      },
+      "expect_value": "co_bab_manufacturing"
+    },
+    {
+      "args": {
+        "kind": "private",
+        "kinds": [
+          "private"
+        ],
+        "option": "115BAB",
+        "options": [
+          "normal",
+          "115BAB"
+        ],
+        "manufacturing": true
+      },
+      "expect_value": ""
+    }
+  ]
+}

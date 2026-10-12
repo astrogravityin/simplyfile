@@ -1,0 +1,1157 @@
+{
+  "chip_id": "wizard.cases",
+  "kind": "accessor",
+  "set": "wizard",
+  "label": "New filing: the worked examples - one per path, each with its documents and its film",
+  "aliases": [
+    "new filing: the worked examples - one per path, each with its documents and its film"
+  ],
+  "params": [
+    {
+      "name": "rows",
+      "type": "json",
+      "default": [
+        {
+          "id": "salaried",
+          "who": "individual",
+          "ay": "2026-27",
+          "title": "Salaried, one employer - ITR-1",
+          "line": "Priya Demo Salaried: her pre-filled JSON, one Form 16 and the 26AS - the client made from them, nothing asked, ITR-1.",
+          "folder": "case-salaried",
+          "batches": [
+            [
+              "1 Pre-filled JSON - ZZDPS0052D - AY 2026-27.json",
+              "2 Form 16 - Demo Retail - AY 2026-27.pdf",
+              "3 26AS - ZZDPS0052D - AY 2026-27.txt",
+              "4 AIS - ZZDPS0052D - FY 2025-26.csv"
+            ]
+          ],
+          "picks": [
+            "salary",
+            "interest"
+          ],
+          "client": "PRIYA DEMO SALARIED",
+          "form": "ITR-1",
+          "opens": "myreturn",
+          "answers": {},
+          "say": {
+            "intro": "A salaried client with one employer: start a new filing, pick An individual, and let the documents do the typing.",
+            "what": "Salary from one employer, and some bank interest - two cards. The likely form says ITR-1, with its reason.",
+            "upload": "Her pre-filled JSON, the Form 16 and the 26AS, dropped in together. Each is read for what it is.",
+            "client": "The pre-filled JSON names her - PAN, name, date of birth - so the client is made and nothing is asked.",
+            "review": "Review: what was understood, nothing missing - one button into My return, at the right step."
+          },
+          "film": "sf-case-salaried"
+        },
+        {
+          "id": "two_jobs",
+          "who": "individual",
+          "ay": "2026-27",
+          "title": "Two employers in the year",
+          "line": "Arun Demo Twojobs changed jobs: the 26AS shows a second employer's TAN, the wizard asks for that Form 16.",
+          "folder": "case-two-jobs",
+          "batches": [
+            [
+              "1 26AS - ZZDPT0053E - AY 2026-27.txt",
+              "2 Form 16 - Demo Foods - AY 2026-27.pdf"
+            ],
+            [
+              "3 Form 16 - Demo Logistics - AY 2026-27.pdf",
+              "4 AIS - ZZDPT0053E - FY 2025-26.csv"
+            ]
+          ],
+          "picks": [
+            "employers"
+          ],
+          "client": "ARUN DEMO TWOJOBS",
+          "form": "ITR-1",
+          "opens": "myreturn",
+          "answers": {
+            "dob": "1990-07-21"
+          },
+          "say": {
+            "intro": "A client who changed jobs in the year - two employers, two Form 16s.",
+            "what": "Changed jobs in the year brings Salary with it. The form follows: still ITR-1.",
+            "upload": "The 26AS and the first Form 16 go in. The 26AS names him, and shows two employers' TANs.",
+            "client": "The client is made from the 26AS. The popup asks only his date of birth.",
+            "hints": "The second employer's TAN has no Form 16 here - the hint says so. Its Form 16 goes in, and the hint is gone.",
+            "review": "Both Form 16s in, nothing missing - into My return, where the two employers' standard deduction is checked."
+          },
+          "film": "sf-case-two-jobs"
+        },
+        {
+          "id": "salary_cg_property",
+          "who": "individual",
+          "ay": "2026-27",
+          "title": "Salary, funds sold and a plot sold",
+          "line": "Ravi Demo Salaried: two employers, a fund sale the AIS shows, a plot sold with 194IA TDS - CAMS and the deed figures asked for. ITR-2.",
+          "folder": "wizard-sal",
+          "batches": [
+            [
+              "1 Form 16 - Demo Analytics - AY 2026-27.pdf",
+              "2 AIS - ZZDPR0047N - FY 2025-26.pdf"
+            ],
+            [
+              "3 26AS - ZZDPR0047N - AY 2026-27.txt",
+              "4 Form 16 - Demo Cloud Services - AY 2026-27.pdf",
+              "5 CAMS capital gains - ZZDPR0047N - FY 2025-26.pdf"
+            ]
+          ],
+          "picks": [
+            "employers",
+            "shares",
+            "property"
+          ],
+          "client": "Ravi Demo Salaried",
+          "form": "ITR-2",
+          "opens": "myreturn",
+          "answers": {
+            "name": "Ravi Demo Salaried",
+            "dob": "1986-02-11"
+          },
+          "say": {
+            "intro": "Salary, mutual funds sold and a plot sold - the documents point to everything else.",
+            "what": "Two employers, shares or funds sold, land sold - the form becomes ITR-2, for the capital gains.",
+            "upload": "His Form 16 and the AIS go in first. The Form 16 names his PAN but not his name, and the AIS is locked.",
+            "client": "The popup asks his name and date of birth. With the date, the locked AIS opens by itself.",
+            "hints": "The AIS shows fund sales - upload the CAMS statement. The 26AS shows 194IA TDS on a plot - enter the sale. Another employer's TAN - its Form 16.",
+            "review": "Every needed document in; the plot's sale figures wait in My return's Review."
+          },
+          "film": "sf-case-salary-cg-property"
+        },
+        {
+          "id": "pensioner",
+          "who": "individual",
+          "ay": "2026-27",
+          "title": "A pensioner with interest",
+          "line": "Savitri Demo Pensioner, 69: a bank pension, deposit interest - the senior-citizen limits from her date of birth. ITR-1.",
+          "folder": "case-pensioner",
+          "batches": [
+            [
+              "1 Form 16 - Demo Bank pension - AY 2026-27.pdf",
+              "2 26AS - ZZDPP0054F - AY 2026-27.txt",
+              "3 AIS - ZZDPP0054F - FY 2025-26.csv"
+            ]
+          ],
+          "picks": [
+            "salary",
+            "interest"
+          ],
+          "client": "SAVITRI DEMO PENSIONER",
+          "form": "ITR-1",
+          "opens": "myreturn",
+          "answers": {
+            "dob": "1956-08-14"
+          },
+          "say": {
+            "intro": "A retired client: a pension from the bank and interest on deposits.",
+            "what": "A pension is salary - pick Salary or pension, and Interest and dividends. ITR-1.",
+            "upload": "The pension Form 16, the 26AS and the AIS - all three read.",
+            "client": "The client is made from the 26AS; her date of birth is asked once - it decides the senior-citizen limits and 80TTB.",
+            "review": "Into My return: the interest under 80TTB, the senior slab in the old regime, both regimes compared."
+          },
+          "film": "sf-case-pensioner"
+        },
+        {
+          "id": "consultant",
+          "who": "individual",
+          "ay": "2026-27",
+          "title": "A consultant on 44ADA",
+          "line": "Neha Demo Consultant: fees with 194J TDS and a bank statement - presumptive income at 50%, ITR-4.",
+          "folder": "case-consultant",
+          "batches": [
+            [
+              "1 Pre-filled JSON - ZZDPN0055G - AY 2026-27.json",
+              "2 Bank statement - Demo Bank - Neha - FY 2025-26.csv",
+              "3 26AS - ZZDPN0055G - AY 2026-27.txt",
+              "4 AIS - ZZDPN0055G - FY 2025-26.csv"
+            ]
+          ],
+          "picks": [
+            "profession",
+            "presumptive"
+          ],
+          "client": "NEHA DEMO CONSULTANT",
+          "form": "ITR-4",
+          "opens": "myreturn",
+          "answers": {},
+          "say": {
+            "intro": "A consultant with no employer: fees from clients, with TDS under 194J.",
+            "what": "A business or profession, then the kind of work: a profession, on the presumptive basis - section 44ADA, half the fees as income. ITR-4.",
+            "upload": "Her pre-filled JSON and the bank statement. The 194J fees and the receipts are read.",
+            "client": "The pre-filled JSON names her - the client is made, nothing asked.",
+            "review": "Into My return: the fees, 50% as income, the bank receipts set beside them."
+          },
+          "film": "sf-case-consultant"
+        },
+        {
+          "id": "trader",
+          "who": "individual",
+          "ay": "2026-27",
+          "title": "A small trader on 44AD, with GST",
+          "line": "Ramu Demo Kirana runs a shop: his GSTR-3B summary and bank statement - 6% of digital turnover as income, ITR-4.",
+          "folder": "case-trader",
+          "batches": [
+            [
+              "1 Pre-filled JSON - ZZDPK0056H - AY 2026-27.json",
+              "2 GSTR-3B summary - ZZDPK0056H - FY 2025-26.csv",
+              "3 Bank statement - Demo Bank - Ramu - FY 2025-26.csv",
+              "4 26AS - ZZDPK0056H - AY 2026-27.txt",
+              "5 AIS - ZZDPK0056H - FY 2025-26.csv"
+            ]
+          ],
+          "picks": [
+            "trading",
+            "gst",
+            "presumptive"
+          ],
+          "client": "RAMU DEMO KIRANA",
+          "form": "ITR-4",
+          "opens": "myreturn",
+          "answers": {},
+          "say": {
+            "intro": "A shopkeeper with a GST number and a small turnover.",
+            "what": "Trading, registered for GST, and the small-turnover card - section 44AD. ITR-4 follows.",
+            "upload": "The pre-filled JSON, the GSTR-3B summary and the bank statement.",
+            "client": "The client is made from the pre-filled JSON.",
+            "review": "Into My return: the GST turnover beside the receipts, 6% and 8% of each part as income."
+          },
+          "film": "sf-case-trader"
+        },
+        {
+          "id": "huf",
+          "who": "huf",
+          "ay": "2026-27",
+          "title": "An HUF with a house and capital gains",
+          "line": "Demo Verma HUF: deposits, a let-out flat and a fund sale; the 26AS names the HUF, the popup asks for the Karta. ITR-2.",
+          "folder": "wizard-huf",
+          "batches": [
+            [
+              "1 26AS - ZZDHW0046M - AY 2026-27.txt",
+              "2 AIS - ZZDHW0046M - FY 2025-26.csv"
+            ],
+            [
+              "3 CAMS capital gains - ZZDHW0046M - FY 2025-26.pdf"
+            ]
+          ],
+          "picks": [
+            "house",
+            "interest",
+            "shares"
+          ],
+          "client": "DEMO VERMA HUF",
+          "form": "ITR-2",
+          "opens": "myreturn",
+          "answers": {
+            "karta_name": "Mohan Demo Verma",
+            "karta_pan": "ZZDPV0046K"
+          },
+          "say": {
+            "intro": "A Hindu undivided family: deposits, a flat let out, and mutual funds sold.",
+            "what": "A family HUF - no salary cards for it. A house, interest, shares or funds sold: ITR-2.",
+            "upload": "The 26AS and the AIS go in; the 26AS names the HUF, its PAN's fourth letter is H.",
+            "client": "The client is made. The popup asks only for the Karta - name and PAN.",
+            "hints": "The AIS shows a fund sale - upload the CAMS statement. In it goes; the hint is answered.",
+            "review": "Into My return for the HUF: the rent, the fund sale and the deposits - signed by the Karta."
+          },
+          "film": "sf-case-huf"
+        },
+        {
+          "id": "firm_trading",
+          "who": "firm",
+          "ay": "2026-27",
+          "title": "A trading firm with GST and a tax audit",
+          "line": "Demo Balaji Traders: its GST certificate makes the client, the deed's partners fill the popup, the books go to Intake & map, 26AS to Reconcile, GSTR-3B to the tax audit. ITR-5 with 3CD.",
+          "folder": "case-firm-trading",
+          "batches": [
+            [
+              "1 GST certificate - Demo Balaji Traders.pdf",
+              "2 Partnership deed - Demo Balaji Traders.pdf"
+            ],
+            [
+              "3 26AS - ZZDFB0057J - AY 2026-27.txt",
+              "4 Demo Balaji Traders - Trading, P&L and Balance Sheet AY 2026-27.xlsx",
+              "5 Demo Balaji Traders - IT Stmt, Dep, Loans AY 2026-27.xlsx",
+              "6 GSTR-3B - 36ZZDFB0057J1Z3 - FY 2025-26.zip",
+              "7 ITR-5 AY 2025-26 - Demo Balaji Traders - ZZDFB0057J.json"
+            ]
+          ],
+          "picks": [
+            "trading",
+            "gst",
+            "audit",
+            "partners_pay",
+            "stock",
+            "depreciation"
+          ],
+          "client": "DEMO BALAJI TRADERS",
+          "form": "ITR-5",
+          "opens": "audit",
+          "answers": {},
+          "say": {
+            "intro": "A partnership firm that trades, with a GST number and a turnover that needs a tax audit.",
+            "what": "A partnership firm, then the kind of work: trading, GST, a tax audit, partners' salary and interest, stock, depreciation. ITR-5, with Form 3CD.",
+            "upload": "The GST certificate and the partnership deed first. The certificate gives the GSTIN, the legal name and the constitution.",
+            "client": "The client is made from the certificate - a partnership firm, its GSTIN on it. The popup shows the deed's partners and shares, to confirm.",
+            "hints": "Then the 26AS, the books, the GSTR-3B returns and last year's ITR-5. Each goes where the firm's work happens: the books to Intake & map, the 26AS to Reconcile, the GST returns to the tax audit.",
+            "review": "Review: the books came with their SF Refs and the 26AS is in, so the next screen is the Tax audit - Form 3CD by risk, then Compute & close."
+          },
+          "film": "sf-case-firm-trading"
+        },
+        {
+          "id": "firm_mfg",
+          "who": "firm",
+          "ay": "2026-27",
+          "title": "A manufacturing firm with stock and depreciation",
+          "line": "Lakshmi Narayana Textiles, already a client: its GST certificate finds it; the manufacturing account, stock and depreciation go to Intake & map. ITR-5 with 3CD.",
+          "folder": "case-firm-mfg",
+          "batches": [
+            [
+              "1 GST certificate - Lakshmi Narayana Textiles.pdf",
+              "2 Partnership deed - Lakshmi Narayana Textiles.pdf"
+            ],
+            [
+              "3 26AS - AAGFL5512K - AY 2026-27.txt",
+              "4 Lakshmi Narayana Textiles - Manufacturing, P&L and Balance Sheet AY 2026-27.xlsx",
+              "5 GSTR-3B - 36AAGFL5512K1Z2 - FY 2025-26.zip"
+            ]
+          ],
+          "picks": [
+            "manufacturing",
+            "gst",
+            "audit",
+            "stock",
+            "depreciation"
+          ],
+          "client": "Lakshmi Narayana Textiles",
+          "form": "ITR-5",
+          "opens": "audit",
+          "answers": {},
+          "say": {
+            "intro": "A firm that makes cloth: raw material in, finished goods out, machines that depreciate.",
+            "what": "Manufacturing, GST, a tax audit, stock and inventory, machines - the documents list follows from them.",
+            "upload": "The GST certificate names a firm already in the register - the documents go to its return.",
+            "client": "Lakshmi Narayana Textiles is found by its PAN. Its partners come from the deed, confirmed in the popup.",
+            "hints": "The manufacturing account goes to Intake & map. Closing stock and the depreciation schedule are tagged there.",
+            "review": "This year's filing, which waited in Collecting, now has its books, 26AS and GST returns - on to the Tax audit."
+          },
+          "film": "sf-case-firm-mfg"
+        },
+        {
+          "id": "llp_services",
+          "who": "llp",
+          "ay": "2026-27",
+          "title": "An LLP in services",
+          "line": "Demo Pixel Works LLP: an IT services LLP - its GST certificate says Limited Liability Partnership; fees with 194J in the 26AS. ITR-5.",
+          "folder": "case-llp",
+          "batches": [
+            [
+              "1 GST certificate - Demo Pixel Works LLP.pdf",
+              "2 LLP agreement - Demo Pixel Works LLP.pdf"
+            ],
+            [
+              "3 26AS - ZZDFP0058K - AY 2026-27.txt",
+              "4 Demo Pixel Works LLP - Income statement AY 2026-27.xlsx"
+            ]
+          ],
+          "picks": [
+            "services",
+            "gst",
+            "books"
+          ],
+          "client": "DEMO PIXEL WORKS LLP",
+          "form": "ITR-5",
+          "opens": "compute",
+          "answers": {},
+          "say": {
+            "intro": "A limited liability partnership selling IT services.",
+            "what": "An LLP: services, GST, full books. No presumptive card - an LLP cannot use 44AD. ITR-5.",
+            "upload": "The GST certificate and the LLP agreement. The constitution says Limited Liability Partnership - it fits the card.",
+            "client": "The client is made as an LLP; the designated partners come from the agreement.",
+            "hints": "Then the 26AS - clients' fees with 194J TDS - and the income statement.",
+            "review": "No tax audit, the books tagged, the 26AS in - straight on to Compute & close, with the fees set against the 26AS."
+          },
+          "film": "sf-case-llp-services"
+        },
+        {
+          "id": "aop",
+          "who": "aop",
+          "ay": "2026-27",
+          "title": "An association of persons",
+          "line": "Demo Residents Welfare Association: an AOP (its PAN's 4th letter A) - interest on deposits, members from its agreement. ITR-5.",
+          "folder": "case-aop",
+          "batches": [
+            [
+              "1 Agreement of association - Demo Residents Welfare Association.pdf",
+              "2 26AS - ZZDAR0059L - AY 2026-27.txt",
+              "3 Demo Residents Welfare Association - Income statement AY 2026-27.xlsx"
+            ]
+          ],
+          "picks": [
+            "services",
+            "books"
+          ],
+          "client": "DEMO RESIDENTS WELFARE ASSOCIATION",
+          "form": "ITR-5",
+          "opens": "compute",
+          "answers": {},
+          "say": {
+            "intro": "A residents' welfare association - an association of persons.",
+            "what": "An AOP or BOI: the PAN's fourth letter decides which. Services and books. ITR-5.",
+            "upload": "The agreement of association, the 26AS and the income statement.",
+            "client": "The 26AS names the association; its PAN says AOP. The members come from the agreement.",
+            "review": "On to Compute & close - the AOP's tax worked out at its own rates."
+          },
+          "film": "sf-case-aop"
+        },
+        {
+          "id": "company_trading",
+          "who": "company",
+          "ay": "2026-27",
+          "title": "A trading company on 115BAA",
+          "line": "Zenith Demo Traders Private Limited: its certificate of incorporation makes the client (CIN, date, directors), the popup takes the option - 115BAA, 22% with no MAT - the final accounts, computation and asset schedule go to Intake & map. ITR-6.",
+          "folder": "case-company-trading",
+          "batches": [
+            [
+              "00 Certificate of incorporation - Zenith Demo Traders.pdf",
+              "00 GST certificate - Zenith Demo Traders.pdf"
+            ],
+            [
+              "01 Final accounts - Zenith Demo Traders FY 2025-26.xlsx",
+              "02 Computation of income - Zenith Demo Traders AY 2026-27.xlsx",
+              "03 Fixed asset schedule - Zenith Demo Traders FY 2025-26.xlsx",
+              "04 26AS - ZZDCZ0061K - AY 2026-27.txt"
+            ]
+          ],
+          "picks": [
+            "trading",
+            "gst",
+            "audit",
+            "stock",
+            "depreciation"
+          ],
+          "client": "ZENITH DEMO TRADERS PRIVATE LIMITED",
+          "form": "ITR-6",
+          "opens": "audit",
+          "answers": {
+            "company": {
+              "option": "115BAA",
+              "manufacturing": "no"
+            }
+          },
+          "say": {
+            "intro": "A private limited company that trades - its return is ITR-6.",
+            "what": "A company, then the kind of work: trading, GST, a tax audit, stock, depreciation. ITR-6, with Form 3CD.",
+            "upload": "The certificate of incorporation and the GST certificate first: the CIN, the date, the directors, the GSTIN.",
+            "client": "The popup shows what the certificate said, and asks the tax option - section 115BAA, 22% with no MAT - and whether it manufactures. Saved: the company is made.",
+            "hints": "Then the final accounts, the computation of income, the fixed-asset schedule and the 26AS - into Intake & map and Reconcile.",
+            "review": "Review, then the Tax audit; Compute & close works out the 115BAA tax and fills the ITR-6."
+          },
+          "film": "sf-case-company-trading"
+        },
+        {
+          "id": "company_mfg",
+          "who": "company",
+          "ay": "2026-27",
+          "title": "A manufacturing company with MAT",
+          "line": "Kaveri Demo Fabricators Private Limited: normal provisions, losses brought forward, so MAT under 115JB is the tax - its certificate makes the client, its books go to Intake & map. ITR-6.",
+          "folder": "case-company-mfg",
+          "batches": [
+            [
+              "00 Certificate of incorporation - Kaveri Demo Fabricators.pdf"
+            ],
+            [
+              "01 Final accounts - Kaveri Demo Fabricators FY 2025-26.xlsx",
+              "02 Computation of income - Kaveri Demo Fabricators AY 2026-27.xlsx",
+              "03 Fixed asset schedule - Kaveri Demo Fabricators FY 2025-26.xlsx",
+              "04 26AS - ZZDCK0062L - AY 2026-27.txt"
+            ]
+          ],
+          "picks": [
+            "manufacturing",
+            "audit",
+            "stock",
+            "depreciation"
+          ],
+          "client": "KAVERI DEMO FABRICATORS PRIVATE LIMITED",
+          "form": "ITR-6",
+          "opens": "audit",
+          "answers": {
+            "company": {
+              "option": "normal",
+              "manufacturing": "yes"
+            }
+          },
+          "say": {
+            "intro": "A private limited company that makes things - normal provisions, so the minimum alternate tax may be the tax.",
+            "what": "A company: manufacturing, a tax audit, stock, machines that depreciate. ITR-6, with Form 3CD.",
+            "upload": "The certificate of incorporation: the CIN, the date of incorporation and both directors.",
+            "client": "The popup takes the option - normal provisions - and ticks that it manufactures, for the additional depreciation. Saved: the company is made.",
+            "hints": "The final accounts, the computation with the book-profit rows for MAT, the asset schedule and the 26AS go in.",
+            "review": "Review, then the Tax audit; Compute & close sets the normal tax against MAT under 115JB - MAT is the tax this year, and a credit for later."
+          },
+          "film": "sf-case-company-mfg"
+        },
+        {
+          "id": "nri",
+          "who": "individual",
+          "ay": "2026-27",
+          "title": "A non-resident with Indian income",
+          "line": "Kiran Demo Abroad lives outside India: NRO interest and rent from a flat - residence asked in the popup. ITR-2.",
+          "folder": "case-nri",
+          "batches": [
+            [
+              "1 26AS - ZZDPA0060M - AY 2026-27.txt",
+              "2 AIS - ZZDPA0060M - FY 2025-26.csv"
+            ]
+          ],
+          "picks": [
+            "nri",
+            "interest",
+            "house"
+          ],
+          "client": "KIRAN DEMO ABROAD",
+          "form": "ITR-2",
+          "opens": "myreturn",
+          "answers": {
+            "dob": "1984-03-09",
+            "residence": "no"
+          },
+          "say": {
+            "intro": "A client who lives abroad, with income in India.",
+            "what": "Lived outside India, interest, a house let out. Not resident: ITR-1 is not for him - ITR-2.",
+            "upload": "The 26AS and the AIS - interest on the NRO account, rent from the tenant.",
+            "client": "The client is made from the 26AS. The popup asks his date of birth, and whether he was resident.",
+            "review": "Into My return: the days in India decide residence; the rent and interest at the non-resident's rates."
+          },
+          "film": "sf-case-nri"
+        },
+        {
+          "id": "updated_return",
+          "who": "individual",
+          "ay": "2025-26",
+          "title": "An updated return (ITR-U)",
+          "line": "Meena Demo Updated left out deposit interest last year: the return she filed and the AIS for AY 2025-26 - the updated return under 139(8A).",
+          "folder": "case-itru",
+          "batches": [
+            [
+              "1 ITR-1 AY 2025-26 filed - ZZDPU0061N.json",
+              "2 AIS - ZZDPU0061N - FY 2024-25.csv",
+              "3 26AS - ZZDPU0061N - AY 2025-26.txt",
+              "4 Form 16 - Demo Insurance Brokers - AY 2025-26.pdf"
+            ]
+          ],
+          "picks": [
+            "salary",
+            "revise",
+            "interest"
+          ],
+          "client": "MEENA DEMO UPDATED",
+          "form": "ITR-1",
+          "opens": "myreturn",
+          "answers": {},
+          "say": {
+            "intro": "Income left out of last year's return - an updated return, with the additional tax.",
+            "what": "The assessment year is last year. Salary, interest, and Revising, or an updated return - the return filed is needed.",
+            "upload": "The return she filed, as JSON, that year's AIS and 26AS, and her Form 16: the deposit interest she missed is in the AIS.",
+            "client": "The filed return names her - the client is made, nothing asked.",
+            "review": "Into My return for AY 2025-26: every figure set beside the return filed, the updated return's extra tax worked out."
+          },
+          "film": "sf-case-updated-return"
+        }
+      ],
+      "label": "rows"
+    },
+    {
+      "name": "folder_root",
+      "type": "text",
+      "default": "tools/tour_video/showcase",
+      "label": "folder_root"
+    },
+    {
+      "name": "film_dir",
+      "type": "text",
+      "default": "static/showcase",
+      "label": "film_dir"
+    },
+    {
+      "name": "film_ext",
+      "type": "text",
+      "default": ".mp4",
+      "label": "film_ext"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "rows": "$rows",
+      "folder_root": "$folder_root",
+      "film_dir": "$film_dir",
+      "film_ext": "$film_ext"
+    }
+  },
+  "returns": "record",
+  "status": "published",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "rows": [
+          {
+            "id": "salaried",
+            "who": "individual",
+            "ay": "2026-27",
+            "title": "Salaried, one employer - ITR-1",
+            "line": "Priya Demo Salaried: her pre-filled JSON, one Form 16 and the 26AS - the client made from them, nothing asked, ITR-1.",
+            "folder": "case-salaried",
+            "batches": [
+              [
+                "1 Pre-filled JSON - ZZDPS0052D - AY 2026-27.json",
+                "2 Form 16 - Demo Retail - AY 2026-27.pdf",
+                "3 26AS - ZZDPS0052D - AY 2026-27.txt",
+                "4 AIS - ZZDPS0052D - FY 2025-26.csv"
+              ]
+            ],
+            "picks": [
+              "salary",
+              "interest"
+            ],
+            "client": "PRIYA DEMO SALARIED",
+            "form": "ITR-1",
+            "opens": "myreturn",
+            "answers": {},
+            "say": {
+              "intro": "A salaried client with one employer: start a new filing, pick An individual, and let the documents do the typing.",
+              "what": "Salary from one employer, and some bank interest - two cards. The likely form says ITR-1, with its reason.",
+              "upload": "Her pre-filled JSON, the Form 16 and the 26AS, dropped in together. Each is read for what it is.",
+              "client": "The pre-filled JSON names her - PAN, name, date of birth - so the client is made and nothing is asked.",
+              "review": "Review: what was understood, nothing missing - one button into My return, at the right step."
+            },
+            "film": "sf-case-salaried"
+          },
+          {
+            "id": "two_jobs",
+            "who": "individual",
+            "ay": "2026-27",
+            "title": "Two employers in the year",
+            "line": "Arun Demo Twojobs changed jobs: the 26AS shows a second employer's TAN, the wizard asks for that Form 16.",
+            "folder": "case-two-jobs",
+            "batches": [
+              [
+                "1 26AS - ZZDPT0053E - AY 2026-27.txt",
+                "2 Form 16 - Demo Foods - AY 2026-27.pdf"
+              ],
+              [
+                "3 Form 16 - Demo Logistics - AY 2026-27.pdf",
+                "4 AIS - ZZDPT0053E - FY 2025-26.csv"
+              ]
+            ],
+            "picks": [
+              "employers"
+            ],
+            "client": "ARUN DEMO TWOJOBS",
+            "form": "ITR-1",
+            "opens": "myreturn",
+            "answers": {
+              "dob": "1990-07-21"
+            },
+            "say": {
+              "intro": "A client who changed jobs in the year - two employers, two Form 16s.",
+              "what": "Changed jobs in the year brings Salary with it. The form follows: still ITR-1.",
+              "upload": "The 26AS and the first Form 16 go in. The 26AS names him, and shows two employers' TANs.",
+              "client": "The client is made from the 26AS. The popup asks only his date of birth.",
+              "hints": "The second employer's TAN has no Form 16 here - the hint says so. Its Form 16 goes in, and the hint is gone.",
+              "review": "Both Form 16s in, nothing missing - into My return, where the two employers' standard deduction is checked."
+            },
+            "film": "sf-case-two-jobs"
+          },
+          {
+            "id": "salary_cg_property",
+            "who": "individual",
+            "ay": "2026-27",
+            "title": "Salary, funds sold and a plot sold",
+            "line": "Ravi Demo Salaried: two employers, a fund sale the AIS shows, a plot sold with 194IA TDS - CAMS and the deed figures asked for. ITR-2.",
+            "folder": "wizard-sal",
+            "batches": [
+              [
+                "1 Form 16 - Demo Analytics - AY 2026-27.pdf",
+                "2 AIS - ZZDPR0047N - FY 2025-26.pdf"
+              ],
+              [
+                "3 26AS - ZZDPR0047N - AY 2026-27.txt",
+                "4 Form 16 - Demo Cloud Services - AY 2026-27.pdf",
+                "5 CAMS capital gains - ZZDPR0047N - FY 2025-26.pdf"
+              ]
+            ],
+            "picks": [
+              "employers",
+              "shares",
+              "property"
+            ],
+            "client": "Ravi Demo Salaried",
+            "form": "ITR-2",
+            "opens": "myreturn",
+            "answers": {
+              "name": "Ravi Demo Salaried",
+              "dob": "1986-02-11"
+            },
+            "say": {
+              "intro": "Salary, mutual funds sold and a plot sold - the documents point to everything else.",
+              "what": "Two employers, shares or funds sold, land sold - the form becomes ITR-2, for the capital gains.",
+              "upload": "His Form 16 and the AIS go in first. The Form 16 names his PAN but not his name, and the AIS is locked.",
+              "client": "The popup asks his name and date of birth. With the date, the locked AIS opens by itself.",
+              "hints": "The AIS shows fund sales - upload the CAMS statement. The 26AS shows 194IA TDS on a plot - enter the sale. Another employer's TAN - its Form 16.",
+              "review": "Every needed document in; the plot's sale figures wait in My return's Review."
+            },
+            "film": "sf-case-salary-cg-property"
+          },
+          {
+            "id": "pensioner",
+            "who": "individual",
+            "ay": "2026-27",
+            "title": "A pensioner with interest",
+            "line": "Savitri Demo Pensioner, 69: a bank pension, deposit interest - the senior-citizen limits from her date of birth. ITR-1.",
+            "folder": "case-pensioner",
+            "batches": [
+              [
+                "1 Form 16 - Demo Bank pension - AY 2026-27.pdf",
+                "2 26AS - ZZDPP0054F - AY 2026-27.txt",
+                "3 AIS - ZZDPP0054F - FY 2025-26.csv"
+              ]
+            ],
+            "picks": [
+              "salary",
+              "interest"
+            ],
+            "client": "SAVITRI DEMO PENSIONER",
+            "form": "ITR-1",
+            "opens": "myreturn",
+            "answers": {
+              "dob": "1956-08-14"
+            },
+            "say": {
+              "intro": "A retired client: a pension from the bank and interest on deposits.",
+              "what": "A pension is salary - pick Salary or pension, and Interest and dividends. ITR-1.",
+              "upload": "The pension Form 16, the 26AS and the AIS - all three read.",
+              "client": "The client is made from the 26AS; her date of birth is asked once - it decides the senior-citizen limits and 80TTB.",
+              "review": "Into My return: the interest under 80TTB, the senior slab in the old regime, both regimes compared."
+            },
+            "film": "sf-case-pensioner"
+          },
+          {
+            "id": "consultant",
+            "who": "individual",
+            "ay": "2026-27",
+            "title": "A consultant on 44ADA",
+            "line": "Neha Demo Consultant: fees with 194J TDS and a bank statement - presumptive income at 50%, ITR-4.",
+            "folder": "case-consultant",
+            "batches": [
+              [
+                "1 Pre-filled JSON - ZZDPN0055G - AY 2026-27.json",
+                "2 Bank statement - Demo Bank - Neha - FY 2025-26.csv",
+                "3 26AS - ZZDPN0055G - AY 2026-27.txt",
+                "4 AIS - ZZDPN0055G - FY 2025-26.csv"
+              ]
+            ],
+            "picks": [
+              "profession",
+              "presumptive"
+            ],
+            "client": "NEHA DEMO CONSULTANT",
+            "form": "ITR-4",
+            "opens": "myreturn",
+            "answers": {},
+            "say": {
+              "intro": "A consultant with no employer: fees from clients, with TDS under 194J.",
+              "what": "A business or profession, then the kind of work: a profession, on the presumptive basis - section 44ADA, half the fees as income. ITR-4.",
+              "upload": "Her pre-filled JSON and the bank statement. The 194J fees and the receipts are read.",
+              "client": "The pre-filled JSON names her - the client is made, nothing asked.",
+              "review": "Into My return: the fees, 50% as income, the bank receipts set beside them."
+            },
+            "film": "sf-case-consultant"
+          },
+          {
+            "id": "trader",
+            "who": "individual",
+            "ay": "2026-27",
+            "title": "A small trader on 44AD, with GST",
+            "line": "Ramu Demo Kirana runs a shop: his GSTR-3B summary and bank statement - 6% of digital turnover as income, ITR-4.",
+            "folder": "case-trader",
+            "batches": [
+              [
+                "1 Pre-filled JSON - ZZDPK0056H - AY 2026-27.json",
+                "2 GSTR-3B summary - ZZDPK0056H - FY 2025-26.csv",
+                "3 Bank statement - Demo Bank - Ramu - FY 2025-26.csv",
+                "4 26AS - ZZDPK0056H - AY 2026-27.txt",
+                "5 AIS - ZZDPK0056H - FY 2025-26.csv"
+              ]
+            ],
+            "picks": [
+              "trading",
+              "gst",
+              "presumptive"
+            ],
+            "client": "RAMU DEMO KIRANA",
+            "form": "ITR-4",
+            "opens": "myreturn",
+            "answers": {},
+            "say": {
+              "intro": "A shopkeeper with a GST number and a small turnover.",
+              "what": "Trading, registered for GST, and the small-turnover card - section 44AD. ITR-4 follows.",
+              "upload": "The pre-filled JSON, the GSTR-3B summary and the bank statement.",
+              "client": "The client is made from the pre-filled JSON.",
+              "review": "Into My return: the GST turnover beside the receipts, 6% and 8% of each part as income."
+            },
+            "film": "sf-case-trader"
+          },
+          {
+            "id": "huf",
+            "who": "huf",
+            "ay": "2026-27",
+            "title": "An HUF with a house and capital gains",
+            "line": "Demo Verma HUF: deposits, a let-out flat and a fund sale; the 26AS names the HUF, the popup asks for the Karta. ITR-2.",
+            "folder": "wizard-huf",
+            "batches": [
+              [
+                "1 26AS - ZZDHW0046M - AY 2026-27.txt",
+                "2 AIS - ZZDHW0046M - FY 2025-26.csv"
+              ],
+              [
+                "3 CAMS capital gains - ZZDHW0046M - FY 2025-26.pdf"
+              ]
+            ],
+            "picks": [
+              "house",
+              "interest",
+              "shares"
+            ],
+            "client": "DEMO VERMA HUF",
+            "form": "ITR-2",
+            "opens": "myreturn",
+            "answers": {
+              "karta_name": "Mohan Demo Verma",
+              "karta_pan": "ZZDPV0046K"
+            },
+            "say": {
+              "intro": "A Hindu undivided family: deposits, a flat let out, and mutual funds sold.",
+              "what": "A family HUF - no salary cards for it. A house, interest, shares or funds sold: ITR-2.",
+              "upload": "The 26AS and the AIS go in; the 26AS names the HUF, its PAN's fourth letter is H.",
+              "client": "The client is made. The popup asks only for the Karta - name and PAN.",
+              "hints": "The AIS shows a fund sale - upload the CAMS statement. In it goes; the hint is answered.",
+              "review": "Into My return for the HUF: the rent, the fund sale and the deposits - signed by the Karta."
+            },
+            "film": "sf-case-huf"
+          },
+          {
+            "id": "firm_trading",
+            "who": "firm",
+            "ay": "2026-27",
+            "title": "A trading firm with GST and a tax audit",
+            "line": "Demo Balaji Traders: its GST certificate makes the client, the deed's partners fill the popup, the books go to Intake & map, 26AS to Reconcile, GSTR-3B to the tax audit. ITR-5 with 3CD.",
+            "folder": "case-firm-trading",
+            "batches": [
+              [
+                "1 GST certificate - Demo Balaji Traders.pdf",
+                "2 Partnership deed - Demo Balaji Traders.pdf"
+              ],
+              [
+                "3 26AS - ZZDFB0057J - AY 2026-27.txt",
+                "4 Demo Balaji Traders - Trading, P&L and Balance Sheet AY 2026-27.xlsx",
+                "5 Demo Balaji Traders - IT Stmt, Dep, Loans AY 2026-27.xlsx",
+                "6 GSTR-3B - 36ZZDFB0057J1Z3 - FY 2025-26.zip",
+                "7 ITR-5 AY 2025-26 - Demo Balaji Traders - ZZDFB0057J.json"
+              ]
+            ],
+            "picks": [
+              "trading",
+              "gst",
+              "audit",
+              "partners_pay",
+              "stock",
+              "depreciation"
+            ],
+            "client": "DEMO BALAJI TRADERS",
+            "form": "ITR-5",
+            "opens": "audit",
+            "answers": {},
+            "say": {
+              "intro": "A partnership firm that trades, with a GST number and a turnover that needs a tax audit.",
+              "what": "A partnership firm, then the kind of work: trading, GST, a tax audit, partners' salary and interest, stock, depreciation. ITR-5, with Form 3CD.",
+              "upload": "The GST certificate and the partnership deed first. The certificate gives the GSTIN, the legal name and the constitution.",
+              "client": "The client is made from the certificate - a partnership firm, its GSTIN on it. The popup shows the deed's partners and shares, to confirm.",
+              "hints": "Then the 26AS, the books, the GSTR-3B returns and last year's ITR-5. Each goes where the firm's work happens: the books to Intake & map, the 26AS to Reconcile, the GST returns to the tax audit.",
+              "review": "Review: the books came with their SF Refs and the 26AS is in, so the next screen is the Tax audit - Form 3CD by risk, then Compute & close."
+            },
+            "film": "sf-case-firm-trading"
+          },
+          {
+            "id": "firm_mfg",
+            "who": "firm",
+            "ay": "2026-27",
+            "title": "A manufacturing firm with stock and depreciation",
+            "line": "Lakshmi Narayana Textiles, already a client: its GST certificate finds it; the manufacturing account, stock and depreciation go to Intake & map. ITR-5 with 3CD.",
+            "folder": "case-firm-mfg",
+            "batches": [
+              [
+                "1 GST certificate - Lakshmi Narayana Textiles.pdf",
+                "2 Partnership deed - Lakshmi Narayana Textiles.pdf"
+              ],
+              [
+                "3 26AS - AAGFL5512K - AY 2026-27.txt",
+                "4 Lakshmi Narayana Textiles - Manufacturing, P&L and Balance Sheet AY 2026-27.xlsx",
+                "5 GSTR-3B - 36AAGFL5512K1Z2 - FY 2025-26.zip"
+              ]
+            ],
+            "picks": [
+              "manufacturing",
+              "gst",
+              "audit",
+              "stock",
+              "depreciation"
+            ],
+            "client": "Lakshmi Narayana Textiles",
+            "form": "ITR-5",
+            "opens": "audit",
+            "answers": {},
+            "say": {
+              "intro": "A firm that makes cloth: raw material in, finished goods out, machines that depreciate.",
+              "what": "Manufacturing, GST, a tax audit, stock and inventory, machines - the documents list follows from them.",
+              "upload": "The GST certificate names a firm already in the register - the documents go to its return.",
+              "client": "Lakshmi Narayana Textiles is found by its PAN. Its partners come from the deed, confirmed in the popup.",
+              "hints": "The manufacturing account goes to Intake & map. Closing stock and the depreciation schedule are tagged there.",
+              "review": "This year's filing, which waited in Collecting, now has its books, 26AS and GST returns - on to the Tax audit."
+            },
+            "film": "sf-case-firm-mfg"
+          },
+          {
+            "id": "llp_services",
+            "who": "llp",
+            "ay": "2026-27",
+            "title": "An LLP in services",
+            "line": "Demo Pixel Works LLP: an IT services LLP - its GST certificate says Limited Liability Partnership; fees with 194J in the 26AS. ITR-5.",
+            "folder": "case-llp",
+            "batches": [
+              [
+                "1 GST certificate - Demo Pixel Works LLP.pdf",
+                "2 LLP agreement - Demo Pixel Works LLP.pdf"
+              ],
+              [
+                "3 26AS - ZZDFP0058K - AY 2026-27.txt",
+                "4 Demo Pixel Works LLP - Income statement AY 2026-27.xlsx"
+              ]
+            ],
+            "picks": [
+              "services",
+              "gst",
+              "books"
+            ],
+            "client": "DEMO PIXEL WORKS LLP",
+            "form": "ITR-5",
+            "opens": "compute",
+            "answers": {},
+            "say": {
+              "intro": "A limited liability partnership selling IT services.",
+              "what": "An LLP: services, GST, full books. No presumptive card - an LLP cannot use 44AD. ITR-5.",
+              "upload": "The GST certificate and the LLP agreement. The constitution says Limited Liability Partnership - it fits the card.",
+              "client": "The client is made as an LLP; the designated partners come from the agreement.",
+              "hints": "Then the 26AS - clients' fees with 194J TDS - and the income statement.",
+              "review": "No tax audit, the books tagged, the 26AS in - straight on to Compute & close, with the fees set against the 26AS."
+            },
+            "film": "sf-case-llp-services"
+          },
+          {
+            "id": "aop",
+            "who": "aop",
+            "ay": "2026-27",
+            "title": "An association of persons",
+            "line": "Demo Residents Welfare Association: an AOP (its PAN's 4th letter A) - interest on deposits, members from its agreement. ITR-5.",
+            "folder": "case-aop",
+            "batches": [
+              [
+                "1 Agreement of association - Demo Residents Welfare Association.pdf",
+                "2 26AS - ZZDAR0059L - AY 2026-27.txt",
+                "3 Demo Residents Welfare Association - Income statement AY 2026-27.xlsx"
+              ]
+            ],
+            "picks": [
+              "services",
+              "books"
+            ],
+            "client": "DEMO RESIDENTS WELFARE ASSOCIATION",
+            "form": "ITR-5",
+            "opens": "compute",
+            "answers": {},
+            "say": {
+              "intro": "A residents' welfare association - an association of persons.",
+              "what": "An AOP or BOI: the PAN's fourth letter decides which. Services and books. ITR-5.",
+              "upload": "The agreement of association, the 26AS and the income statement.",
+              "client": "The 26AS names the association; its PAN says AOP. The members come from the agreement.",
+              "review": "On to Compute & close - the AOP's tax worked out at its own rates."
+            },
+            "film": "sf-case-aop"
+          },
+          {
+            "id": "company_trading",
+            "who": "company",
+            "ay": "2026-27",
+            "title": "A trading company on 115BAA",
+            "line": "Zenith Demo Traders Private Limited: its certificate of incorporation makes the client (CIN, date, directors), the popup takes the option - 115BAA, 22% with no MAT - the final accounts, computation and asset schedule go to Intake & map. ITR-6.",
+            "folder": "case-company-trading",
+            "batches": [
+              [
+                "00 Certificate of incorporation - Zenith Demo Traders.pdf",
+                "00 GST certificate - Zenith Demo Traders.pdf"
+              ],
+              [
+                "01 Final accounts - Zenith Demo Traders FY 2025-26.xlsx",
+                "02 Computation of income - Zenith Demo Traders AY 2026-27.xlsx",
+                "03 Fixed asset schedule - Zenith Demo Traders FY 2025-26.xlsx",
+                "04 26AS - ZZDCZ0061K - AY 2026-27.txt"
+              ]
+            ],
+            "picks": [
+              "trading",
+              "gst",
+              "audit",
+              "stock",
+              "depreciation"
+            ],
+            "client": "ZENITH DEMO TRADERS PRIVATE LIMITED",
+            "form": "ITR-6",
+            "opens": "audit",
+            "answers": {
+              "company": {
+                "option": "115BAA",
+                "manufacturing": "no"
+              }
+            },
+            "say": {
+              "intro": "A private limited company that trades - its return is ITR-6.",
+              "what": "A company, then the kind of work: trading, GST, a tax audit, stock, depreciation. ITR-6, with Form 3CD.",
+              "upload": "The certificate of incorporation and the GST certificate first: the CIN, the date, the directors, the GSTIN.",
+              "client": "The popup shows what the certificate said, and asks the tax option - section 115BAA, 22% with no MAT - and whether it manufactures. Saved: the company is made.",
+              "hints": "Then the final accounts, the computation of income, the fixed-asset schedule and the 26AS - into Intake & map and Reconcile.",
+              "review": "Review, then the Tax audit; Compute & close works out the 115BAA tax and fills the ITR-6."
+            },
+            "film": "sf-case-company-trading"
+          },
+          {
+            "id": "company_mfg",
+            "who": "company",
+            "ay": "2026-27",
+            "title": "A manufacturing company with MAT",
+            "line": "Kaveri Demo Fabricators Private Limited: normal provisions, losses brought forward, so MAT under 115JB is the tax - its certificate makes the client, its books go to Intake & map. ITR-6.",
+            "folder": "case-company-mfg",
+            "batches": [
+              [
+                "00 Certificate of incorporation - Kaveri Demo Fabricators.pdf"
+              ],
+              [
+                "01 Final accounts - Kaveri Demo Fabricators FY 2025-26.xlsx",
+                "02 Computation of income - Kaveri Demo Fabricators AY 2026-27.xlsx",
+                "03 Fixed asset schedule - Kaveri Demo Fabricators FY 2025-26.xlsx",
+                "04 26AS - ZZDCK0062L - AY 2026-27.txt"
+              ]
+            ],
+            "picks": [
+              "manufacturing",
+              "audit",
+              "stock",
+              "depreciation"
+            ],
+            "client": "KAVERI DEMO FABRICATORS PRIVATE LIMITED",
+            "form": "ITR-6",
+            "opens": "audit",
+            "answers": {
+              "company": {
+                "option": "normal",
+                "manufacturing": "yes"
+              }
+            },
+            "say": {
+              "intro": "A private limited company that makes things - normal provisions, so the minimum alternate tax may be the tax.",
+              "what": "A company: manufacturing, a tax audit, stock, machines that depreciate. ITR-6, with Form 3CD.",
+              "upload": "The certificate of incorporation: the CIN, the date of incorporation and both directors.",
+              "client": "The popup takes the option - normal provisions - and ticks that it manufactures, for the additional depreciation. Saved: the company is made.",
+              "hints": "The final accounts, the computation with the book-profit rows for MAT, the asset schedule and the 26AS go in.",
+              "review": "Review, then the Tax audit; Compute & close sets the normal tax against MAT under 115JB - MAT is the tax this year, and a credit for later."
+            },
+            "film": "sf-case-company-mfg"
+          },
+          {
+            "id": "nri",
+            "who": "individual",
+            "ay": "2026-27",
+            "title": "A non-resident with Indian income",
+            "line": "Kiran Demo Abroad lives outside India: NRO interest and rent from a flat - residence asked in the popup. ITR-2.",
+            "folder": "case-nri",
+            "batches": [
+              [
+                "1 26AS - ZZDPA0060M - AY 2026-27.txt",
+                "2 AIS - ZZDPA0060M - FY 2025-26.csv"
+              ]
+            ],
+            "picks": [
+              "nri",
+              "interest",
+              "house"
+            ],
+            "client": "KIRAN DEMO ABROAD",
+            "form": "ITR-2",
+            "opens": "myreturn",
+            "answers": {
+              "dob": "1984-03-09",
+              "residence": "no"
+            },
+            "say": {
+              "intro": "A client who lives abroad, with income in India.",
+              "what": "Lived outside India, interest, a house let out. Not resident: ITR-1 is not for him - ITR-2.",
+              "upload": "The 26AS and the AIS - interest on the NRO account, rent from the tenant.",
+              "client": "The client is made from the 26AS. The popup asks his date of birth, and whether he was resident.",
+              "review": "Into My return: the days in India decide residence; the rent and interest at the non-resident's rates."
+            },
+            "film": "sf-case-nri"
+          },
+          {
+            "id": "updated_return",
+            "who": "individual",
+            "ay": "2025-26",
+            "title": "An updated return (ITR-U)",
+            "line": "Meena Demo Updated left out deposit interest last year: the return she filed and the AIS for AY 2025-26 - the updated return under 139(8A).",
+            "folder": "case-itru",
+            "batches": [
+              [
+                "1 ITR-1 AY 2025-26 filed - ZZDPU0061N.json",
+                "2 AIS - ZZDPU0061N - FY 2024-25.csv",
+                "3 26AS - ZZDPU0061N - AY 2025-26.txt",
+                "4 Form 16 - Demo Insurance Brokers - AY 2025-26.pdf"
+              ]
+            ],
+            "picks": [
+              "salary",
+              "revise",
+              "interest"
+            ],
+            "client": "MEENA DEMO UPDATED",
+            "form": "ITR-1",
+            "opens": "myreturn",
+            "answers": {},
+            "say": {
+              "intro": "Income left out of last year's return - an updated return, with the additional tax.",
+              "what": "The assessment year is last year. Salary, interest, and Revising, or an updated return - the return filed is needed.",
+              "upload": "The return she filed, as JSON, that year's AIS and 26AS, and her Form 16: the deposit interest she missed is in the AIS.",
+              "client": "The filed return names her - the client is made, nothing asked.",
+              "review": "Into My return for AY 2025-26: every figure set beside the return filed, the updated return's extra tax worked out."
+            },
+            "film": "sf-case-updated-return"
+          }
+        ],
+        "folder_root": "tools/tour_video/showcase",
+        "film_dir": "static/showcase",
+        "film_ext": ".mp4"
+      }
+    }
+  ],
+  "version": 6,
+  "description_nl": "2026-10-11: every path the wizard takes, worked through with made-up documents (ZZ... PANs, @demo.example, Demo ... names): who, the AY, what was picked, the documents in upload order (each batch, then the popup's answers), the client it makes or finds, the form, where it opens - and the narration of its film (tours/sf-case-<id>.json, tools/make_case_tours.py). The demo seed plays each through the wizard (tools/showcase/pre_cases.py), so every case is there after the nightly reset."
+}

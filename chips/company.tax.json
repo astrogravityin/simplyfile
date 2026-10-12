@@ -1,0 +1,282 @@
+{
+  "chip_id": "company.tax",
+  "kind": "accessor",
+  "set": "company",
+  "label": "Company: tax on total income (option rate, special rates, surcharge with marginal relief, cess)",
+  "aliases": [
+    "company: tax on total income (option rat"
+  ],
+  "params": [
+    {
+      "name": "main",
+      "type": "number",
+      "default": 0,
+      "label": "income at the option's rate (all normal-rate income; 115BAB: the manufacturing business)"
+    },
+    {
+      "name": "other",
+      "type": "number",
+      "default": 0,
+      "label": "income at the other rate (115BAB: income other than the business)"
+    },
+    {
+      "name": "stcg_111a",
+      "type": "number",
+      "default": 0,
+      "label": "STCG u/s 111A"
+    },
+    {
+      "name": "ltcg_112a",
+      "type": "number",
+      "default": 0,
+      "label": "LTCG u/s 112A (before the exemption)"
+    },
+    {
+      "name": "ltcg_112",
+      "type": "number",
+      "default": 0,
+      "label": "LTCG u/s 112"
+    },
+    {
+      "name": "rate",
+      "type": "number",
+      "default": 25,
+      "label": "the option's rate %"
+    },
+    {
+      "name": "other_rate",
+      "type": "number",
+      "default": 25,
+      "label": "the rate on 'other' %"
+    },
+    {
+      "name": "steps",
+      "type": "json",
+      "default": [
+        {
+          "above": 10000000,
+          "rate": 7
+        },
+        {
+          "above": 100000000,
+          "rate": 12
+        }
+      ],
+      "label": "surcharge steps"
+    },
+    {
+      "name": "cg",
+      "type": "json",
+      "default": {
+        "stcg_111a": 20,
+        "ltcg_112a": 12.5,
+        "ltcg_112": 12.5,
+        "exempt_112a": 125000
+      },
+      "label": "special rates (company.settings rates_by_ay cg)"
+    },
+    {
+      "name": "cess_pct",
+      "type": "number",
+      "default": 4,
+      "label": "cess %"
+    },
+    {
+      "name": "round_to",
+      "type": "number",
+      "default": 10,
+      "label": "tax rounded to (s.288B)"
+    }
+  ],
+  "expr": {
+    "chip": "company.tax_s2",
+    "args": {
+      "main": "$main",
+      "other": "$other",
+      "stcg_111a": "$stcg_111a",
+      "ltcg_112a": "$ltcg_112a",
+      "ltcg_112": "$ltcg_112",
+      "rate": "$rate",
+      "other_rate": "$other_rate",
+      "steps": "$steps",
+      "cg": "$cg",
+      "cess_pct": "$cess_pct",
+      "round_to": "$round_to",
+      "b": {
+        "chip": "company.tax_s1",
+        "args": {
+          "main": "$main",
+          "other": "$other",
+          "stcg_111a": "$stcg_111a",
+          "ltcg_112a": "$ltcg_112a",
+          "ltcg_112": "$ltcg_112",
+          "rate": "$rate",
+          "other_rate": "$other_rate",
+          "steps": "$steps",
+          "cg": "$cg",
+          "cess_pct": "$cess_pct",
+          "round_to": "$round_to"
+        }
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-11: A domestic company's tax for AY 2026-27: income at the option's rate (25% / 30% normal, 115BA 25%, 115BAA 22%, 115BAB 15% on the manufacturing business and 22% on the rest), STCG u/s 111A at 20%, LTCG u/s 112A at 12.5% above 1.25 lakh and u/s 112 at 12.5%; surcharge 7% / 12% above 1 / 10 crore with marginal relief, or a flat 10% under 115BAA / 115BAB; 4% Health and Education Cess; rounded to 10. Finance Act 2026, First Schedule Part I-A Para E (rates unchanged from AY 2025-26 - Memorandum to the Finance Bill 2026, https://www.indiabudget.gov.in/doc/memo.pdf); CBDT ITR-6 validation rules V1.0 AY 2026-27 (rates table), https://www.incometax.gov.in/iec/foportal/downloads",
+  "test_cases": [
+    {
+      "args": {
+        "main": 50000000
+      },
+      "expect_value": {
+        "income": 50000000.0,
+        "at_normal": 12500000.0,
+        "at_special": 0.0,
+        "on_111a": 0.0,
+        "on_112a": 0.0,
+        "on_112": 0.0,
+        "tax": 12500000.0,
+        "surcharge_rate": 7,
+        "surcharge": 875000.0,
+        "relief": 0.0,
+        "cess": 535000.0,
+        "total": 13910000
+      }
+    },
+    {
+      "args": {
+        "main": 10050000
+      },
+      "expect_value": {
+        "income": 10050000.0,
+        "at_normal": 2512500.0,
+        "at_special": 0.0,
+        "on_111a": 0.0,
+        "on_112a": 0.0,
+        "on_112": 0.0,
+        "tax": 2512500.0,
+        "surcharge_rate": 7,
+        "surcharge": 175875.0,
+        "relief": 138375.0,
+        "cess": 102000.0,
+        "total": 2652000
+      }
+    },
+    {
+      "args": {
+        "main": 100500000,
+        "rate": 30
+      },
+      "expect_value": {
+        "income": 100500000.0,
+        "at_normal": 30150000.0,
+        "at_special": 0.0,
+        "on_111a": 0.0,
+        "on_112a": 0.0,
+        "on_112": 0.0,
+        "tax": 30150000.0,
+        "surcharge_rate": 12,
+        "surcharge": 3618000.0,
+        "relief": 1168000.0,
+        "cess": 1304000.0,
+        "total": 33904000
+      }
+    },
+    {
+      "args": {
+        "main": 2000000,
+        "rate": 22,
+        "steps": [
+          {
+            "above": 0,
+            "rate": 10
+          }
+        ]
+      },
+      "expect_value": {
+        "income": 2000000.0,
+        "at_normal": 440000.0,
+        "at_special": 0.0,
+        "on_111a": 0.0,
+        "on_112a": 0.0,
+        "on_112": 0.0,
+        "tax": 440000.0,
+        "surcharge_rate": 10,
+        "surcharge": 44000.0,
+        "relief": 0,
+        "cess": 19360.0,
+        "total": 503360
+      }
+    },
+    {
+      "args": {
+        "main": 30000000,
+        "other": 1000000,
+        "rate": 15,
+        "other_rate": 22,
+        "steps": [
+          {
+            "above": 0,
+            "rate": 10
+          }
+        ]
+      },
+      "expect_value": {
+        "income": 31000000.0,
+        "at_normal": 4720000.0,
+        "at_special": 0.0,
+        "on_111a": 0.0,
+        "on_112a": 0.0,
+        "on_112": 0.0,
+        "tax": 4720000.0,
+        "surcharge_rate": 10,
+        "surcharge": 472000.0,
+        "relief": 0,
+        "cess": 207680.0,
+        "total": 5399680
+      }
+    },
+    {
+      "args": {
+        "main": 5000000,
+        "stcg_111a": 1000000,
+        "ltcg_112a": 1125000,
+        "ltcg_112": 400000
+      },
+      "expect_value": {
+        "income": 7525000.0,
+        "at_normal": 1250000.0,
+        "at_special": 375000.0,
+        "on_111a": 200000.0,
+        "on_112a": 125000.0,
+        "on_112": 50000.0,
+        "tax": 1625000.0,
+        "surcharge_rate": 0,
+        "surcharge": 0.0,
+        "relief": 0,
+        "cess": 65000.0,
+        "total": 1690000
+      }
+    },
+    {
+      "args": {
+        "main": 0
+      },
+      "expect_value": {
+        "income": 0.0,
+        "at_normal": 0.0,
+        "at_special": 0.0,
+        "on_111a": 0.0,
+        "on_112a": 0.0,
+        "on_112": 0.0,
+        "tax": 0.0,
+        "surcharge_rate": 0,
+        "surcharge": 0.0,
+        "relief": 0,
+        "cess": 0.0,
+        "total": 0
+      }
+    }
+  ]
+}

@@ -22,7 +22,7 @@ Check everything, no paid call: `python selfcheck.py`.
 
 | Group | Screens |
 |---|---|
-| Filing | **Clients & years** · **Intake & map** · **Reconcile** |
+| Filing | **New filing** · **Clients & years** · **My return** · **Intake & map** · **Reconcile** |
 | Document | User manuals · How to Use links · Guide Me Builder · Tour Video |
 | Portal | Projects & portal · Account & key |
 | Account | Buy a key |
@@ -31,8 +31,16 @@ Check everything, no paid call: `python selfcheck.py`.
 
 ## The Filing screens
 
+- **New filing** (`wizard.py`, `static/page-wizard.js`, 2026-10-11): the guided way in - say who the return is for and what applies (plain-word cards, the section small), see the documents it needs and where to get each, drop them in. Each file is identified by My return's own readers (type, PAN, name, AY, TAN); the client is made from the PAN and name found (or found by PAN), a popup asks only what is missing or does not agree, and the documents' hints ask for more (fund sales -> CAMS, 194IA -> the property sale, a second TAN -> that Form 16). Then My return opens at the right step. Progress is kept on the server (carry on later). Chips `wizard.*`, `myreturn.sniff`, words `ui.wizard`; test `tools/e2e_wizard.py`; tour `tours/sf-wizard.json`. Later the same day it covers every return: a person, an HUF, a partnership firm, an LLP, an AOP / BOI, a company (the firm flow - the GST certificate makes the client, the deed's partners in the popup, each document into Intake & map / Reconcile / Tax audit), with "What kind of work?" for a business; a company (ITR-6, its certificate of incorporation makes the client) - and a trust shows as not yet (one chip switch). Every path, its worked example (demo seed `tools/showcase/pre_cases.py`) and its film (`tours/sf-case-*.json`): **[FILING-PATHS.md](FILING-PATHS.md)**.
 - **Clients & years** (`clients.py`): each assessee once — name, PAN, status, address, contacts, GSTIN, banks,
-  partners — carried into every assessment year with its form (ITR-3 / ITR-5), 3CD audit flag and stage.
+  partners — carried into every assessment year with its form (ITR-3 / ITR-5 / ITR-6), 3CD audit flag and stage.
+- **A company's return - ITR-6** (`company.py`, `static/company.js`, 2026-10-11): status *Company* (PAN letter C) with its
+  CIN, option (normal / 115BA / 115BAA / 115BAB), directors and shareholders; the same Intake & map (refs `ITR6 BP / DEP /
+  MAT / OS / CG / 80G / BS / PL`), Reconcile and Compute & close, where a company section works out depreciation by block,
+  losses set off and carried (s.72, s.79, unabsorbed depreciation), 80M / 80G, MAT u/s 115JB and its credit, and the
+  ITR-6 JSON checked against the CBDT schema; audit report 3CA-3CD; due 31 October. Chips `company.*`
+  (`tools/make_itr6_chips.py`); test `tools/e2e_itr6.py`; demo `tools/showcase/pre_companies.py`; tour `tours/sf-company.json`.
+  Everything, the sources and what is left: **[docs/ITR6.md](docs/ITR6.md)**.
 - **Intake & map** (`intake.py`): the client's Excel (.xls / .xlsx / .csv, Tally exports included) per year. Every
   row with a figure gets an **SF Ref** — `3CD 31(a) #2`, `ITR3 HP`, several joined with `;` — from a person, from the
   file's own SF Ref column, or from a suggestion a person accepts. Download the workbook back with the column filled.
@@ -68,6 +76,7 @@ that site's `data/` folder, never in git.
 |---|---|
 | `app.py` | the routes |
 | `clients.py` `intake.py` `recon.py` | the Filing screens |
+| `compute.py` `company.py` `itr_json.py` | the computation (a company's in `company.py`), the ITR / 3CD JSON |
 | `store.py` `wallet.py` `providers.py` `keyshare.py` `keysales.py` `narrator.py` `media.py` | accounts' AI keys, money, buying and selling key credit |
 | `projects.py` `scan.py` `source.py` `manuals.py` `guideme.py` `tourvideo.py` | Projects & portal, How to Use, manuals, Guide Me, Tour Video |
 | `core/` | the framework |

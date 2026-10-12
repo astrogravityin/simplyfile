@@ -1,0 +1,207 @@
+{
+  "prod_base": "https://sf.valuestream.in",
+  "voice": "en-IN-NeerjaNeural",
+  "rate": "+0%",
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "blur": [
+    "#whoami",
+    "#userpop .head"
+  ],
+  "page_key": "sf-case-updated-return",
+  "title": "An updated return (ITR-U)",
+  "start_url": "/#/wizard",
+  "covers": [
+    "who it is for",
+    "what applies",
+    "which form",
+    "documents you'll need",
+    "drop them in",
+    "the client, made for you",
+    "review, then the return"
+  ],
+  "steps": [
+    {
+      "chapter": "An updated return (ITR-U)",
+      "say": "Income left out of last year's return - an updated return, with the additional tax.",
+      "do": [
+        {
+          "wait_for": ".wz-start"
+        },
+        {
+          "wait": 1
+        },
+        {
+          "select": "#wz-ay",
+          "value": "2025-26"
+        },
+        {
+          "wait": 0.6
+        }
+      ]
+    },
+    {
+      "chapter": "Who it is for",
+      "say": "A person, an HUF, a partnership firm, an LLP, an AOP or BOI, or a company - each card starts its own filing. A trust says Not yet, with what to do meanwhile.",
+      "do": [
+        {
+          "highlight_target": ".wz-who-groups",
+          "optional": true,
+          "timeout": 5
+        },
+        {
+          "click": "[data-start='individual']"
+        },
+        {
+          "wait_for": ".wz-who"
+        },
+        {
+          "wait": 1
+        }
+      ]
+    },
+    {
+      "chapter": "What applies",
+      "say": "The assessment year is last year. Salary, interest, and Revising, or an updated return - the return filed is needed.",
+      "do": [
+        {
+          "click": "[data-pick='salary']"
+        },
+        {
+          "wait": 0.7
+        },
+        {
+          "click": "[data-pick='revise']"
+        },
+        {
+          "wait": 0.7
+        },
+        {
+          "click": "[data-pick='interest']"
+        },
+        {
+          "wait": 0.7
+        },
+        {
+          "highlight_target": ".wz-work|.wz-what",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Which form",
+      "say": "The form follows from the picks, with its reason in one line - ITR-1, 2, 3 or 4 for a person or an HUF, ITR-5 for a firm, an LLP or an AOP, ITR-6 for a company.",
+      "do": [
+        {
+          "highlight_target": ".wz-form",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Documents you'll need",
+      "say": "Needed, good to have, and what you type in - each with what it is and where to get it: TRACES, the AIS, your employer, CAMS or KFintech, the GST portal, the firm's deed and its books.",
+      "do": [
+        {
+          "click": "[data-go='docs']"
+        },
+        {
+          "wait_for": ".wz-docs"
+        },
+        {
+          "wait": 1
+        },
+        {
+          "highlight_target": ".wz-docs",
+          "optional": true,
+          "timeout": 5
+        },
+        {
+          "scroll": 420
+        }
+      ]
+    },
+    {
+      "chapter": "Drop them in",
+      "say": "The return she filed, as JSON, that year's AIS and 26AS, and her Form 16: the deposit interest she missed is in the AIS.",
+      "do": [
+        {
+          "click": "[data-go='upload']"
+        },
+        {
+          "wait_for": "[data-drop='wz-file']"
+        },
+        {
+          "wait": 0.5
+        },
+        {
+          "upload": "#wz-file",
+          "files": [
+            "showcase/case-itru/1 ITR-1 AY 2025-26 filed - ZZDPU0061N.json",
+            "showcase/case-itru/2 AIS - ZZDPU0061N - FY 2024-25.csv",
+            "showcase/case-itru/3 26AS - ZZDPU0061N - AY 2025-26.txt",
+            "showcase/case-itru/4 Form 16 - Demo Insurance Brokers - AY 2025-26.pdf"
+          ]
+        },
+        {
+          "wait": 8.0
+        }
+      ]
+    },
+    {
+      "chapter": "The client, made for you",
+      "say": "The filed return names her - the client is made, nothing asked.",
+      "do": [
+        {
+          "wait": 1
+        },
+        {
+          "highlight_target": ".wz-client",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Review, then the return",
+      "say": "Into My return for AY 2025-26: every figure set beside the return filed, the updated return's extra tax worked out.",
+      "do": [
+        {
+          "click": "[data-go='review']"
+        },
+        {
+          "wait_for": ".wz-review"
+        },
+        {
+          "wait": 1.5
+        },
+        {
+          "highlight_target": ".wz-go|.wz-review",
+          "optional": true,
+          "timeout": 5
+        },
+        {
+          "wait": 1
+        },
+        {
+          "click": "#wz-go"
+        },
+        {
+          "wait": 3
+        },
+        {
+          "wait_for": ".mr-rail-card",
+          "timeout": 20,
+          "optional": true
+        },
+        {
+          "wait": 2
+        }
+      ]
+    }
+  ]
+}

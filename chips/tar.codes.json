@@ -16,7 +16,8 @@
         "firm": 3,
         "llp": 4,
         "aop": 7,
-        "boi": 12
+        "boi": 12,
+        "company": 5
       },
       "label": "statuses"
     },
@@ -259,9 +260,9 @@
     }
   },
   "returns": "record",
-  "version": 1,
+  "version": 2,
   "status": "published",
-  "description_nl": "The report speaks as 'We / Our / Us' when the CA is a firm (it has an FRN), else 'I / My / Me'; Profit or Loss from the P&L. From the schema's descriptions: PartA Status 1 individual, 2 HUF, 3 firm, 4 LLP, 7 AOP, 12 BOI; depreciation blocks 1-7 plant and machinery @15/30/40/50/60/80/100%, 8/9/47/10 building @5/10/40/100%, 11 furniture @10%, 12 intangibles @25%, 13 ships @20%; payment modes C cheque, BD bank draft, E ECS, NB net banking, NEFT, RTGS, IMPS, UPI. 2026-10-05 owner (3CD from a party master): yes_pattern: a statement's Yes; mode_default: the mode when neither the statement nor the party master says (by account payee cheque, else cash); relation_default / natures / nature_default: clause 23's relationship and nature of transaction when the master or statement does not give them.",
+  "description_nl": "The report speaks as 'We / Our / Us' when the CA is a firm (it has an FRN), else 'I / My / Me'; Profit or Loss from the P&L. From the schema's descriptions: PartA Status 1 individual, 2 HUF, 3 firm, 4 LLP, 7 AOP, 12 BOI; depreciation blocks 1-7 plant and machinery @15/30/40/50/60/80/100%, 8/9/47/10 building @5/10/40/100%, 11 furniture @10%, 12 intangibles @25%, 13 ships @20%; payment modes C cheque, BD bank draft, E ECS, NB net banking, NEFT, RTGS, IMPS, UPI. 2026-10-05 owner (3CD from a party master): yes_pattern: a statement's Yes; mode_default: the mode when neither the statement nor the party master says (by account payee cheque, else cash); relation_default / natures / nature_default: clause 23's relationship and nature of transaction when the master or statement does not give them. 2026-10-11: Form 3CA-3CD PartA Status 5 = Company.",
   "test_cases": [
     {
       "args": {},
@@ -272,7 +273,8 @@
           "firm": 3,
           "llp": 4,
           "aop": 7,
-          "boi": 12
+          "boi": 12,
+          "company": 5
         },
         "blocks": [
           {

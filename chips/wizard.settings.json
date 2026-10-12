@@ -1,0 +1,803 @@
+{
+  "chip_id": "wizard.settings",
+  "kind": "accessor",
+  "set": "wizard",
+  "label": "New filing: the wizard's steps, who a return may be for, its limits, the popup's fields and the prompts",
+  "aliases": [
+    "new filing: the wizard's steps, who a return may be for, its limits, the popup's fields and the prompts"
+  ],
+  "params": [
+    {
+      "name": "steps",
+      "type": "json",
+      "default": [
+        "what",
+        "docs",
+        "upload",
+        "review"
+      ],
+      "label": "steps"
+    },
+    {
+      "name": "who",
+      "type": "json",
+      "default": [
+        {
+          "id": "self",
+          "status": "individual",
+          "statuses": [
+            "individual"
+          ],
+          "for": "self",
+          "flow": "myreturn",
+          "group": "people",
+          "supported": true,
+          "art": "self",
+          "label": "Myself",
+          "sub": "My own return",
+          "form": "",
+          "note": "",
+          "instead": ""
+        },
+        {
+          "id": "individual",
+          "status": "individual",
+          "statuses": [
+            "individual"
+          ],
+          "for": "firm",
+          "flow": "myreturn",
+          "group": "people",
+          "supported": true,
+          "art": "person",
+          "label": "An individual",
+          "sub": "Salaried, pensioner, investor, professional or business owner",
+          "form": "",
+          "note": "",
+          "instead": ""
+        },
+        {
+          "id": "huf",
+          "status": "huf",
+          "statuses": [
+            "huf"
+          ],
+          "for": "firm",
+          "flow": "myreturn",
+          "group": "people",
+          "supported": true,
+          "art": "family",
+          "label": "A family HUF",
+          "sub": "A Hindu undivided family, signed by its Karta",
+          "form": "",
+          "note": "",
+          "instead": ""
+        },
+        {
+          "id": "firm",
+          "status": "firm",
+          "statuses": [
+            "firm"
+          ],
+          "for": "firm",
+          "flow": "firm",
+          "group": "business",
+          "supported": true,
+          "art": "firm",
+          "label": "A partnership firm",
+          "sub": "Partners and a deed - trading, making goods or services, often GST and a tax audit",
+          "form": "ITR-5",
+          "note": "",
+          "instead": ""
+        },
+        {
+          "id": "llp",
+          "status": "llp",
+          "statuses": [
+            "llp"
+          ],
+          "for": "firm",
+          "flow": "firm",
+          "group": "business",
+          "supported": true,
+          "art": "llp",
+          "label": "An LLP",
+          "sub": "A limited liability partnership - its agreement and designated partners",
+          "form": "ITR-5",
+          "note": "",
+          "instead": ""
+        },
+        {
+          "id": "aop",
+          "status": "aop",
+          "statuses": [
+            "aop",
+            "boi"
+          ],
+          "for": "firm",
+          "flow": "firm",
+          "group": "business",
+          "supported": true,
+          "art": "aop",
+          "label": "An AOP or BOI",
+          "sub": "An association of persons or a body of individuals - a society, a joint venture",
+          "form": "ITR-5",
+          "note": "",
+          "instead": ""
+        },
+        {
+          "id": "company",
+          "status": "company",
+          "statuses": [
+            "company"
+          ],
+          "for": "firm",
+          "flow": "firm",
+          "group": "business",
+          "supported": true,
+          "art": "company",
+          "label": "A company",
+          "sub": "Private or public limited - its CIN, tax option (115BAA, 115BAB or normal with MAT), directors",
+          "form": "ITR-6",
+          "note": "",
+          "instead": "individual"
+        },
+        {
+          "id": "trust",
+          "status": "trust",
+          "statuses": [
+            "trust"
+          ],
+          "for": "firm",
+          "flow": "firm",
+          "group": "business",
+          "supported": false,
+          "art": "trust",
+          "label": "A trust",
+          "sub": "A charitable or religious trust or institution",
+          "form": "ITR-7",
+          "note": "ny_trust",
+          "instead": "individual"
+        }
+      ],
+      "label": "who"
+    },
+    {
+      "name": "files_max",
+      "type": "number",
+      "default": 30,
+      "label": "files_max"
+    },
+    {
+      "name": "sessions_max",
+      "type": "number",
+      "default": 30,
+      "label": "sessions_max"
+    },
+    {
+      "name": "asks",
+      "type": "json",
+      "default": [
+        {
+          "id": "pan_pick",
+          "input": "choice",
+          "to": "wizard"
+        },
+        {
+          "id": "pan",
+          "input": "pan",
+          "to": "client"
+        },
+        {
+          "id": "status",
+          "input": "choice",
+          "to": "wizard"
+        },
+        {
+          "id": "name",
+          "input": "text",
+          "to": "client"
+        },
+        {
+          "id": "huf_name",
+          "input": "text",
+          "to": "client"
+        },
+        {
+          "id": "dob",
+          "input": "date",
+          "to": "client"
+        },
+        {
+          "id": "karta_name",
+          "input": "text",
+          "to": "return"
+        },
+        {
+          "id": "karta_pan",
+          "input": "pan",
+          "to": "return"
+        },
+        {
+          "id": "residence",
+          "input": "choice",
+          "to": "return"
+        },
+        {
+          "id": "partners",
+          "input": "partners",
+          "to": "client"
+        },
+        {
+          "id": "gstin",
+          "input": "gstin",
+          "to": "client"
+        },
+        {
+          "id": "company",
+          "input": "company",
+          "to": "client"
+        }
+      ],
+      "label": "asks"
+    },
+    {
+      "name": "prompts",
+      "type": "json",
+      "default": [
+        {
+          "id": "form16_more",
+          "kind": "form16",
+          "step": "gather",
+          "screen": "myreturn"
+        },
+        {
+          "id": "cams",
+          "kind": "cg",
+          "step": "gather",
+          "screen": "myreturn"
+        },
+        {
+          "id": "property",
+          "kind": "",
+          "step": "review",
+          "screen": "myreturn"
+        },
+        {
+          "id": "vda",
+          "kind": "",
+          "step": "review",
+          "screen": "myreturn"
+        },
+        {
+          "id": "business",
+          "kind": "",
+          "step": "check",
+          "screen": "myreturn"
+        },
+        {
+          "id": "gst",
+          "kind": "gst",
+          "step": "gather",
+          "screen": "myreturn"
+        },
+        {
+          "id": "last_itr",
+          "kind": "filed_prev",
+          "step": "gather",
+          "screen": "myreturn"
+        },
+        {
+          "id": "foreign",
+          "kind": "",
+          "step": "review",
+          "screen": "myreturn"
+        },
+        {
+          "id": "arrears",
+          "kind": "",
+          "step": "review",
+          "screen": "myreturn"
+        },
+        {
+          "id": "books",
+          "kind": "books",
+          "step": "",
+          "screen": "intake"
+        },
+        {
+          "id": "gst_json",
+          "kind": "gst_json",
+          "step": "",
+          "screen": "audit"
+        },
+        {
+          "id": "deed",
+          "kind": "deed",
+          "step": "",
+          "screen": "clients"
+        },
+        {
+          "id": "stock",
+          "kind": "",
+          "step": "",
+          "screen": "intake"
+        },
+        {
+          "id": "dep",
+          "kind": "",
+          "step": "",
+          "screen": "intake"
+        },
+        {
+          "id": "itr_prev",
+          "kind": "",
+          "step": "",
+          "screen": "itrimport"
+        },
+        {
+          "id": "audit_3cd",
+          "kind": "",
+          "step": "",
+          "screen": "audit"
+        }
+      ],
+      "label": "prompts"
+    },
+    {
+      "name": "kept_kinds",
+      "type": "json",
+      "default": [
+        "prefill",
+        "ais",
+        "26as",
+        "form16",
+        "cg",
+        "gst",
+        "bank",
+        "filed",
+        "filed_prev"
+      ],
+      "label": "kept_kinds"
+    },
+    {
+      "name": "typed_kinds",
+      "type": "json",
+      "default": [
+        ""
+      ],
+      "label": "typed_kinds"
+    },
+    {
+      "name": "self_mode",
+      "type": "text",
+      "default": "self",
+      "label": "self_mode"
+    },
+    {
+      "name": "firm_mode",
+      "type": "text",
+      "default": "firm",
+      "label": "firm_mode"
+    },
+    {
+      "name": "firm_flow",
+      "type": "text",
+      "default": "firm",
+      "label": "firm_flow"
+    },
+    {
+      "name": "work_kinds",
+      "type": "json",
+      "default": [
+        "trading",
+        "manufacturing",
+        "services",
+        "profession",
+        "agriculture",
+        "gst",
+        "presumptive",
+        "books",
+        "audit",
+        "partners_pay",
+        "stock",
+        "depreciation"
+      ],
+      "label": "work_kinds"
+    },
+    {
+      "name": "firm_kinds",
+      "type": "json",
+      "default": [
+        "gst_cert",
+        "deed",
+        "books",
+        "gst_json",
+        "itr_prev"
+      ],
+      "label": "firm_kinds"
+    },
+    {
+      "name": "partners_max",
+      "type": "number",
+      "default": 20,
+      "label": "partners_max"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "steps": "$steps",
+      "who": "$who",
+      "files_max": "$files_max",
+      "sessions_max": "$sessions_max",
+      "asks": "$asks",
+      "prompts": "$prompts",
+      "kept_kinds": "$kept_kinds",
+      "typed_kinds": "$typed_kinds",
+      "self_mode": "$self_mode",
+      "firm_mode": "$firm_mode",
+      "firm_flow": "$firm_flow",
+      "work_kinds": "$work_kinds",
+      "firm_kinds": "$firm_kinds",
+      "partners_max": "$partners_max"
+    }
+  },
+  "returns": "record",
+  "status": "published",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "steps": [
+          "what",
+          "docs",
+          "upload",
+          "review"
+        ],
+        "who": [
+          {
+            "id": "self",
+            "status": "individual",
+            "statuses": [
+              "individual"
+            ],
+            "for": "self",
+            "flow": "myreturn",
+            "group": "people",
+            "supported": true,
+            "art": "self",
+            "label": "Myself",
+            "sub": "My own return",
+            "form": "",
+            "note": "",
+            "instead": ""
+          },
+          {
+            "id": "individual",
+            "status": "individual",
+            "statuses": [
+              "individual"
+            ],
+            "for": "firm",
+            "flow": "myreturn",
+            "group": "people",
+            "supported": true,
+            "art": "person",
+            "label": "An individual",
+            "sub": "Salaried, pensioner, investor, professional or business owner",
+            "form": "",
+            "note": "",
+            "instead": ""
+          },
+          {
+            "id": "huf",
+            "status": "huf",
+            "statuses": [
+              "huf"
+            ],
+            "for": "firm",
+            "flow": "myreturn",
+            "group": "people",
+            "supported": true,
+            "art": "family",
+            "label": "A family HUF",
+            "sub": "A Hindu undivided family, signed by its Karta",
+            "form": "",
+            "note": "",
+            "instead": ""
+          },
+          {
+            "id": "firm",
+            "status": "firm",
+            "statuses": [
+              "firm"
+            ],
+            "for": "firm",
+            "flow": "firm",
+            "group": "business",
+            "supported": true,
+            "art": "firm",
+            "label": "A partnership firm",
+            "sub": "Partners and a deed - trading, making goods or services, often GST and a tax audit",
+            "form": "ITR-5",
+            "note": "",
+            "instead": ""
+          },
+          {
+            "id": "llp",
+            "status": "llp",
+            "statuses": [
+              "llp"
+            ],
+            "for": "firm",
+            "flow": "firm",
+            "group": "business",
+            "supported": true,
+            "art": "llp",
+            "label": "An LLP",
+            "sub": "A limited liability partnership - its agreement and designated partners",
+            "form": "ITR-5",
+            "note": "",
+            "instead": ""
+          },
+          {
+            "id": "aop",
+            "status": "aop",
+            "statuses": [
+              "aop",
+              "boi"
+            ],
+            "for": "firm",
+            "flow": "firm",
+            "group": "business",
+            "supported": true,
+            "art": "aop",
+            "label": "An AOP or BOI",
+            "sub": "An association of persons or a body of individuals - a society, a joint venture",
+            "form": "ITR-5",
+            "note": "",
+            "instead": ""
+          },
+          {
+            "id": "company",
+            "status": "company",
+            "statuses": [
+              "company"
+            ],
+            "for": "firm",
+            "flow": "firm",
+            "group": "business",
+            "supported": true,
+            "art": "company",
+            "label": "A company",
+            "sub": "Private or public limited - its CIN, tax option (115BAA, 115BAB or normal with MAT), directors",
+            "form": "ITR-6",
+            "note": "",
+            "instead": "individual"
+          },
+          {
+            "id": "trust",
+            "status": "trust",
+            "statuses": [
+              "trust"
+            ],
+            "for": "firm",
+            "flow": "firm",
+            "group": "business",
+            "supported": false,
+            "art": "trust",
+            "label": "A trust",
+            "sub": "A charitable or religious trust or institution",
+            "form": "ITR-7",
+            "note": "ny_trust",
+            "instead": "individual"
+          }
+        ],
+        "files_max": 30,
+        "sessions_max": 30,
+        "asks": [
+          {
+            "id": "pan_pick",
+            "input": "choice",
+            "to": "wizard"
+          },
+          {
+            "id": "pan",
+            "input": "pan",
+            "to": "client"
+          },
+          {
+            "id": "status",
+            "input": "choice",
+            "to": "wizard"
+          },
+          {
+            "id": "name",
+            "input": "text",
+            "to": "client"
+          },
+          {
+            "id": "huf_name",
+            "input": "text",
+            "to": "client"
+          },
+          {
+            "id": "dob",
+            "input": "date",
+            "to": "client"
+          },
+          {
+            "id": "karta_name",
+            "input": "text",
+            "to": "return"
+          },
+          {
+            "id": "karta_pan",
+            "input": "pan",
+            "to": "return"
+          },
+          {
+            "id": "residence",
+            "input": "choice",
+            "to": "return"
+          },
+          {
+            "id": "partners",
+            "input": "partners",
+            "to": "client"
+          },
+          {
+            "id": "gstin",
+            "input": "gstin",
+            "to": "client"
+          },
+          {
+            "id": "company",
+            "input": "company",
+            "to": "client"
+          }
+        ],
+        "prompts": [
+          {
+            "id": "form16_more",
+            "kind": "form16",
+            "step": "gather",
+            "screen": "myreturn"
+          },
+          {
+            "id": "cams",
+            "kind": "cg",
+            "step": "gather",
+            "screen": "myreturn"
+          },
+          {
+            "id": "property",
+            "kind": "",
+            "step": "review",
+            "screen": "myreturn"
+          },
+          {
+            "id": "vda",
+            "kind": "",
+            "step": "review",
+            "screen": "myreturn"
+          },
+          {
+            "id": "business",
+            "kind": "",
+            "step": "check",
+            "screen": "myreturn"
+          },
+          {
+            "id": "gst",
+            "kind": "gst",
+            "step": "gather",
+            "screen": "myreturn"
+          },
+          {
+            "id": "last_itr",
+            "kind": "filed_prev",
+            "step": "gather",
+            "screen": "myreturn"
+          },
+          {
+            "id": "foreign",
+            "kind": "",
+            "step": "review",
+            "screen": "myreturn"
+          },
+          {
+            "id": "arrears",
+            "kind": "",
+            "step": "review",
+            "screen": "myreturn"
+          },
+          {
+            "id": "books",
+            "kind": "books",
+            "step": "",
+            "screen": "intake"
+          },
+          {
+            "id": "gst_json",
+            "kind": "gst_json",
+            "step": "",
+            "screen": "audit"
+          },
+          {
+            "id": "deed",
+            "kind": "deed",
+            "step": "",
+            "screen": "clients"
+          },
+          {
+            "id": "stock",
+            "kind": "",
+            "step": "",
+            "screen": "intake"
+          },
+          {
+            "id": "dep",
+            "kind": "",
+            "step": "",
+            "screen": "intake"
+          },
+          {
+            "id": "itr_prev",
+            "kind": "",
+            "step": "",
+            "screen": "itrimport"
+          },
+          {
+            "id": "audit_3cd",
+            "kind": "",
+            "step": "",
+            "screen": "audit"
+          }
+        ],
+        "kept_kinds": [
+          "prefill",
+          "ais",
+          "26as",
+          "form16",
+          "cg",
+          "gst",
+          "bank",
+          "filed",
+          "filed_prev"
+        ],
+        "typed_kinds": [
+          ""
+        ],
+        "self_mode": "self",
+        "firm_mode": "firm",
+        "firm_flow": "firm",
+        "work_kinds": [
+          "trading",
+          "manufacturing",
+          "services",
+          "profession",
+          "agriculture",
+          "gst",
+          "presumptive",
+          "books",
+          "audit",
+          "partners_pay",
+          "stock",
+          "depreciation"
+        ],
+        "firm_kinds": [
+          "gst_cert",
+          "deed",
+          "books",
+          "gst_json",
+          "itr_prev"
+        ],
+        "partners_max": 20
+      }
+    }
+  ],
+  "version": 3,
+  "description_nl": "2026-10-11: the wizard's own knobs - steps, who (Myself for a self-filer's desk; a client or an HUF for a firm), at most 30 files and 12 open filings, the popup's fields (which input, where the answer goes) and the prompts (upload a kind, or enter it at a My return step). 2026-10-11: the wizard's own knobs - steps, who (Myself for a self-filer's desk; an individual, an HUF, a partnership firm, an LLP, an AOP / BOI for a firm; a company and a trust shown as not yet - supported false is the one switch), at most 30 files and 30 open filings, the popup's fields (which input, where the answer goes) and the prompts (upload a kind, or enter it at a My return step or a firm screen)."
+}

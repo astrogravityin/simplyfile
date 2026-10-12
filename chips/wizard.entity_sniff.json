@@ -1,0 +1,263 @@
+{
+  "chip_id": "wizard.entity_sniff",
+  "kind": "accessor",
+  "set": "wizard",
+  "label": "New filing: what a business's document is, and who it names - read from its text",
+  "aliases": [
+    "new filing: what a business's document is, and who it names - read from its text"
+  ],
+  "params": [
+    {
+      "name": "kinds",
+      "type": "json",
+      "default": [
+        {
+          "id": "gst_cert",
+          "words": [
+            "form gst reg-06",
+            "registration certificate"
+          ],
+          "all": true
+        },
+        {
+          "id": "coi",
+          "words": [
+            "certificate of incorporation"
+          ],
+          "all": true
+        },
+        {
+          "id": "deed",
+          "words": [
+            "deed of partnership",
+            "partnership deed",
+            "limited liability partnership agreement",
+            "llp agreement",
+            "agreement of association",
+            "trust deed",
+            "memorandum of association"
+          ],
+          "all": false
+        },
+        {
+          "id": "books",
+          "words": [
+            "profit and loss",
+            "balance sheet",
+            "trial balance",
+            "total income statement",
+            "manufacturing account",
+            "trading account"
+          ],
+          "all": false
+        }
+      ],
+      "label": "kinds"
+    },
+    {
+      "name": "gstin",
+      "type": "text",
+      "default": "\\b(\\d{2}[A-Z]{5}\\d{4}[A-Z][0-9A-Z]Z[0-9A-Z])\\b",
+      "label": "gstin"
+    },
+    {
+      "name": "gstin_pan_from",
+      "type": "number",
+      "default": 2,
+      "label": "gstin_pan_from"
+    },
+    {
+      "name": "gstin_pan_to",
+      "type": "number",
+      "default": 12,
+      "label": "gstin_pan_to"
+    },
+    {
+      "name": "legal_name",
+      "type": "json",
+      "default": [
+        "Legal Name(?: of Business)?\\s*[:\\-]?\\s*([A-Za-z0-9][A-Za-z0-9 .&'()/-]{2,120}?)\\s*(?:\\n|$|Trade Name)"
+      ],
+      "label": "legal_name"
+    },
+    {
+      "name": "constitution",
+      "type": "long",
+      "default": "Constitution of Business\\s*[:\\-]?\\s*([A-Za-z ]{3,60}?)\\s*(?:\\n|$|Address)",
+      "label": "constitution"
+    },
+    {
+      "name": "deed_name",
+      "type": "json",
+      "default": [
+        "(?:M/s\\.?|firm name\\s*[:\\-])\\s*([A-Z][A-Za-z0-9 .&'-]{2,100}?)\\s*(?:\\(|,|\\n|$)",
+        "(?:LLP|association|trust) (?:name|known as)\\s*[:\\-]?\\s*([A-Z][A-Za-z0-9 .&'-]{2,100}?)\\s*(?:\\(|,|\\n|$)"
+      ],
+      "label": "deed_name"
+    },
+    {
+      "name": "partner",
+      "type": "long",
+      "default": "(?:Partner|Member|Trustee)\\s*\\d+\\s*[:\\-]\\s*([A-Za-z][A-Za-z .]{2,80}?),\\s*PAN\\s*([A-Z]{5}\\d{4}[A-Z]),\\s*(?:profit )?share\\s*(\\d{1,3}(?:\\.\\d+)?)\\s*%",
+      "label": "partner"
+    },
+    {
+      "name": "pan",
+      "type": "json",
+      "default": [
+        "\\bPAN\\s*(?:of the (?:firm|assessee|LLP|company))?\\s*[:\\-]?\\s*([A-Z]{5}\\d{4}[A-Z])\\b"
+      ],
+      "label": "pan"
+    },
+    {
+      "name": "book_name",
+      "type": "text",
+      "default": "\\A\\s*([A-Z][A-Z0-9 .&'()-]{2,100}?)\\s*\\n",
+      "label": "book_name"
+    },
+    {
+      "name": "cin",
+      "type": "text",
+      "default": "\\b([LU]\\d{5}[A-Z]{2}\\d{4}[A-Z]{3}\\d{6})\\b",
+      "label": "cin"
+    },
+    {
+      "name": "coi_name",
+      "type": "json",
+      "default": [
+        "certify that\\s+([A-Z][A-Za-z0-9 .&'()-]{2,120}?)\\s+is incorporated"
+      ],
+      "label": "coi_name"
+    },
+    {
+      "name": "incorporated",
+      "type": "text",
+      "default": "Date of incorporation\\s*[:\\-]?\\s*(\\d{4}-\\d{2}-\\d{2})",
+      "label": "incorporated"
+    },
+    {
+      "name": "director",
+      "type": "long",
+      "default": "Director\\s*\\d+\\s*[:\\-]\\s*([A-Za-z][A-Za-z .]{2,80}?),\\s*DIN\\s*(\\d{8}),\\s*PAN\\s*([A-Z]{5}\\d{4}[A-Z])",
+      "label": "director"
+    },
+    {
+      "name": "itr_roots",
+      "type": "json",
+      "default": {
+        "ITR5": "ITR-5",
+        "ITR6": "ITR-6",
+        "ITR7": "ITR-7"
+      },
+      "label": "itr_roots"
+    },
+    {
+      "name": "head_chars",
+      "type": "number",
+      "default": 8000,
+      "label": "head_chars"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "kinds": "$kinds",
+      "gstin": "$gstin",
+      "gstin_pan_from": "$gstin_pan_from",
+      "gstin_pan_to": "$gstin_pan_to",
+      "legal_name": "$legal_name",
+      "constitution": "$constitution",
+      "deed_name": "$deed_name",
+      "partner": "$partner",
+      "pan": "$pan",
+      "book_name": "$book_name",
+      "cin": "$cin",
+      "coi_name": "$coi_name",
+      "incorporated": "$incorporated",
+      "director": "$director",
+      "itr_roots": "$itr_roots",
+      "head_chars": "$head_chars"
+    }
+  },
+  "returns": "record",
+  "status": "published",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "kinds": [
+          {
+            "id": "gst_cert",
+            "words": [
+              "form gst reg-06",
+              "registration certificate"
+            ],
+            "all": true
+          },
+          {
+            "id": "coi",
+            "words": [
+              "certificate of incorporation"
+            ],
+            "all": true
+          },
+          {
+            "id": "deed",
+            "words": [
+              "deed of partnership",
+              "partnership deed",
+              "limited liability partnership agreement",
+              "llp agreement",
+              "agreement of association",
+              "trust deed",
+              "memorandum of association"
+            ],
+            "all": false
+          },
+          {
+            "id": "books",
+            "words": [
+              "profit and loss",
+              "balance sheet",
+              "trial balance",
+              "total income statement",
+              "manufacturing account",
+              "trading account"
+            ],
+            "all": false
+          }
+        ],
+        "gstin": "\\b(\\d{2}[A-Z]{5}\\d{4}[A-Z][0-9A-Z]Z[0-9A-Z])\\b",
+        "gstin_pan_from": 2,
+        "gstin_pan_to": 12,
+        "legal_name": [
+          "Legal Name(?: of Business)?\\s*[:\\-]?\\s*([A-Za-z0-9][A-Za-z0-9 .&'()/-]{2,120}?)\\s*(?:\\n|$|Trade Name)"
+        ],
+        "constitution": "Constitution of Business\\s*[:\\-]?\\s*([A-Za-z ]{3,60}?)\\s*(?:\\n|$|Address)",
+        "deed_name": [
+          "(?:M/s\\.?|firm name\\s*[:\\-])\\s*([A-Z][A-Za-z0-9 .&'-]{2,100}?)\\s*(?:\\(|,|\\n|$)",
+          "(?:LLP|association|trust) (?:name|known as)\\s*[:\\-]?\\s*([A-Z][A-Za-z0-9 .&'-]{2,100}?)\\s*(?:\\(|,|\\n|$)"
+        ],
+        "partner": "(?:Partner|Member|Trustee)\\s*\\d+\\s*[:\\-]\\s*([A-Za-z][A-Za-z .]{2,80}?),\\s*PAN\\s*([A-Z]{5}\\d{4}[A-Z]),\\s*(?:profit )?share\\s*(\\d{1,3}(?:\\.\\d+)?)\\s*%",
+        "pan": [
+          "\\bPAN\\s*(?:of the (?:firm|assessee|LLP|company))?\\s*[:\\-]?\\s*([A-Z]{5}\\d{4}[A-Z])\\b"
+        ],
+        "book_name": "\\A\\s*([A-Z][A-Z0-9 .&'()-]{2,100}?)\\s*\\n",
+        "cin": "\\b([LU]\\d{5}[A-Z]{2}\\d{4}[A-Z]{3}\\d{6})\\b",
+        "coi_name": [
+          "certify that\\s+([A-Z][A-Za-z0-9 .&'()-]{2,120}?)\\s+is incorporated"
+        ],
+        "incorporated": "Date of incorporation\\s*[:\\-]?\\s*(\\d{4}-\\d{2}-\\d{2})",
+        "director": "Director\\s*\\d+\\s*[:\\-]\\s*([A-Za-z][A-Za-z .]{2,80}?),\\s*DIN\\s*(\\d{8}),\\s*PAN\\s*([A-Z]{5}\\d{4}[A-Z])",
+        "itr_roots": {
+          "ITR5": "ITR-5",
+          "ITR6": "ITR-6",
+          "ITR7": "ITR-7"
+        },
+        "head_chars": 8000
+      }
+    }
+  ],
+  "version": 3,
+  "description_nl": "2026-10-11: the new filing wizard's identification of a business's papers: a GST certificate (REG-06 - GSTIN, legal name, constitution of business; the PAN is the GSTIN's 3rd-12th characters), a partnership deed / LLP agreement / trust deed (the firm's name, each partner's name, PAN and share), the books (trading / manufacturing account, P&L, balance sheet - the name on the first line, the PAN after 'PAN :'), last year's ITR-5 / 6 / 7 JSON. A GSTR-3B / GSTR-1 JSON is the tax audit's reader (audit.read_gst); 26AS, AIS and a bank statement My return's readers. 2026-10-11: the new filing wizard's identification of a business's papers: a GST certificate (REG-06 - GSTIN, legal name, constitution of business; the PAN is the GSTIN's 3rd-12th characters), a partnership deed / LLP agreement / trust deed (the firm's name, each partner's name, PAN and share), the books (trading / manufacturing account, P&L, balance sheet - the name on the first line, the PAN after 'PAN :'), a certificate of incorporation (the CIN, the company's name, the date, each director's name, DIN and PAN), last year's ITR-5 / 6 / 7 JSON. A GSTR-3B / GSTR-1 JSON is the tax audit's reader (audit.read_gst); 26AS, AIS and a bank statement My return's readers."
+}

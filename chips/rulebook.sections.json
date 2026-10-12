@@ -86,7 +86,7 @@
           "chip": "close.dates",
           "area": "form",
           "law": "s.139(1) as amended by the Finance Act 2026; s.139(4) belated; s.139(5) revised; s.139(8A) updated",
-          "plain": "The due date for the form (non-business 31 July; ITR-3 / ITR-4 without audit 31 August; audit 31 October; transfer pricing 30 November), any date CBDT extended for that year by circular (AY 2026-27: Circular 07/2026 - audit cases 21 November, audit report 21 October), and what a return filed on a given day is: on time, belated, revised (free to 31 December, then to 31 March with the s.234I fee) or updated.",
+          "plain": "The due date for the form (non-business 31 July; ITR-3 / ITR-4 without audit 31 August; audit 31 October - and always for a company (ITR-6); transfer pricing 30 November), any date CBDT extended for that year by circular (AY 2026-27: Circular 07/2026 - audit cases 21 November, audit report 21 October), and what a return filed on a given day is: on time, belated, revised (free to 31 December, then to 31 March with the s.234I fee) or updated.",
           "gaps": ""
         },
         {
@@ -356,6 +356,69 @@
           "gaps": ""
         },
         {
+          "chip": "company.rate",
+          "area": "ca",
+          "law": "Finance Act 2026, First Schedule Part I-A Para E (AY 2026-27); ss.115BA, 115BAA, 115BAB; s.115JB(5A)",
+          "plain": "A domestic company's rate from its option: normal provisions 25% when the total turnover or gross receipts of the PY 2023-24 did not exceed 400 crore, else 30% (a turnover not typed counts as above, and the screen says so); 115BA 25%; 115BAA 22%; 115BAB 15% on the manufacturing business and 22% on other income. Under 115BAA / 115BAB: a flat 10% surcharge, no MAT, no additional depreciation, only 80JJAA / 80M / 80LA(1A) of Chapter VI-A.",
+          "gaps": "115BAB's 15% is applied to the whole business income (the Act: income derived from or incidental to manufacturing); short-term gains on non-depreciable assets at 22% are not split out."
+        },
+        {
+          "chip": "company.tax",
+          "area": "ca",
+          "law": "First Schedule Part I-A Paras E and F (surcharge, marginal relief); ss.111A, 112, 112A; Health and Education Cess; s.288B",
+          "plain": "Tax on the total income: the option's rate on normal income, 20% on STCG u/s 111A, 12.5% on LTCG u/s 112A above 1.25 lakh and u/s 112; surcharge 7% above 1 crore and 12% above 10 crore with marginal relief (or a flat 10% under 115BAA / 115BAB); 4% cess; rounded to 10.",
+          "gaps": "Marginal relief takes the income above the band's edge at the main rate (the usual case); a company whose special-rate gains straddle the edge should be checked by hand."
+        },
+        {
+          "chip": "company.mat",
+          "area": "ca",
+          "law": "s.115JB (15% of book profit; Explanation 1 adjustments, Form 29B); s.115JAA (credit, 15 AYs); CBDT Circular 29/2019",
+          "plain": "When the normal tax is below 15% of the book profit (with its own surcharge and cess), that MAT is the tax and the excess becomes a MAT credit; in a year the normal tax is higher, brought-forward credit is set off up to the difference, oldest first. No MAT and no credit under 115BAA / 115BAB. Book profit comes from rows tagged ITR6 MAT <item> (Form 29B); without them, from the P&L's profit before tax - and the screen says so.",
+          "gaps": "Form 29B itself (the CA's report) is not produced; Ind AS transition adjustments (s.115JB(2A)-(2C)) are not worked out. The Finance Bill 2026's MAT changes (14%, MAT as final tax) apply from tax year 2026-27 under the Income-tax Act 2025, not to AY 2026-27."
+        },
+        {
+          "chip": "company.dep_block",
+          "area": "ca",
+          "law": "s.32(1)(ii) and rule 5 / Appendix I; 2nd proviso to s.32(1) (under 180 days); s.32(1)(iia) and its 3rd proviso; s.50",
+          "plain": "Each block from the fixed-asset schedule (rows tagged ITR6 DEP <block>): opening WDV + additions - sales; half rate on additions used under 180 days; additional 20% on new plant and machinery of a manufacturing company (half now, half next year); sales above the block are a short-term gain u/s 50.",
+          "gaps": "Additional depreciation for the specified backward areas (35%, s.32(1)(iia) proviso), SLM for power units (s.32(1)(i)) and s.43(6)(c) adjustments for a block that ceases are not worked out."
+        },
+        {
+          "chip": "company.loss_ok",
+          "area": "ca",
+          "law": "ss.72(3), 32(2), 79(1)(a), 80 / 139(3), 115JAA(3A)",
+          "plain": "A brought-forward business loss is used only within 8 AYs, only when that year's return was in time, and - for a closely held company - only when 51% of the voting power stayed with the same holders; unabsorbed depreciation without limit; MAT credit within 15 AYs.",
+          "gaps": "s.79(1)(b) (an eligible start-up whose original holders stay) and the s.79(2) exceptions (death, gift to a relative, amalgamation of a foreign company) are not taken; type s.79 as held when they apply."
+        },
+        {
+          "chip": "company.setoff",
+          "area": "ca",
+          "law": "ss.70-74, 71(3A)",
+          "plain": "One loss against one income, never more than either: a house-property loss up to 2 lakh, a business loss against other heads (normal-rate income first), brought-forward business loss against business income only, unabsorbed depreciation against any head, short-term capital loss against any gain, long-term loss against long-term gains.",
+          "gaps": ""
+        },
+        {
+          "chip": "company.d80g",
+          "area": "ca",
+          "law": "s.80G (incl. the 10% qualifying limit, s.80G(4)); proviso to s.80G(2)(iiihk)/(iiihl); s.115BAA(2)(ii)",
+          "plain": "Donations without a limit at 100% / 50%; those within the qualifying limit together at most 10% of the adjusted gross total income; CSR contributions to the Swachh Bharat Kosh / Clean Ganga Fund get nothing; none under 115BAA / 115BAB.",
+          "gaps": "Whether other CSR donations get 80G is contested; the category chosen on the row (ITR6 80G <category>) is the CA's call."
+        },
+        {
+          "chip": "company.d80m",
+          "area": "ca",
+          "law": "s.80M",
+          "plain": "Dividend received from another domestic company, a foreign company or a business trust is deducted up to the dividend the company itself distributed on or before one month prior to the due date of its return. Allowed under 115BAA / 115BAB too.",
+          "gaps": ""
+        },
+        {
+          "chip": "company.problem",
+          "area": "ca",
+          "law": "Companies Act 2013 (CIN, DIN); s.115BAB(2)",
+          "plain": "A company client's master data is checked: the CIN in the MCA's 21-character shape, 8-digit DINs, shareholdings 0-100% and not over 100% together, and 115BAB only for a manufacturing company.",
+          "gaps": ""
+        },
+        {
           "chip": "myreturn.sources",
           "area": "reading",
           "law": "-",
@@ -535,9 +598,9 @@
     }
   },
   "returns": "record",
-  "version": 3,
+  "version": 4,
   "status": "published",
-  "description_nl": "2026-10-06 owner: the rule book a CA reviews - for each rule chip the section of the Act it follows, what it does in plain words and what it does not cover yet. Figures, worked examples and the chip's own wording are read from the rule chips by tools/rulebook.py, so the book cannot drift from the engine. 2026-10-07: 21 rules added (capital gains, residence and foreign income, clubbing, s.89, ITR-U, s.234A in an extended year, 44AE, agri, special rates). 2026-10-10: Schedule FA - every table A1-G is asked now (B a financial interest in an entity; D-F 2026-10-08), the gap note cleared.",
+  "description_nl": "2026-10-06 owner: the rule book a CA reviews - for each rule chip the section of the Act it follows, what it does in plain words and what it does not cover yet. Figures, worked examples and the chip's own wording are read from the rule chips by tools/rulebook.py, so the book cannot drift from the engine. 2026-10-07: 21 rules added (capital gains, residence and foreign income, clubbing, s.89, ITR-U, s.234A in an extended year, 44AE, agri, special rates). 2026-10-10: Schedule FA - every table A1-G is asked now (B a financial interest in an entity; D-F 2026-10-08), the gap note cleared. 2026-10-11: nine rules for a company's return (ITR-6): company.rate, company.tax, company.mat, company.dep_block, company.loss_ok, company.setoff, company.d80g, company.d80m, company.problem - each with what it does not cover yet.",
   "test_cases": [
     {
       "args": {},
@@ -612,7 +675,7 @@
             "chip": "close.dates",
             "area": "form",
             "law": "s.139(1) as amended by the Finance Act 2026; s.139(4) belated; s.139(5) revised; s.139(8A) updated",
-            "plain": "The due date for the form (non-business 31 July; ITR-3 / ITR-4 without audit 31 August; audit 31 October; transfer pricing 30 November), any date CBDT extended for that year by circular (AY 2026-27: Circular 07/2026 - audit cases 21 November, audit report 21 October), and what a return filed on a given day is: on time, belated, revised (free to 31 December, then to 31 March with the s.234I fee) or updated.",
+            "plain": "The due date for the form (non-business 31 July; ITR-3 / ITR-4 without audit 31 August; audit 31 October - and always for a company (ITR-6); transfer pricing 30 November), any date CBDT extended for that year by circular (AY 2026-27: Circular 07/2026 - audit cases 21 November, audit report 21 October), and what a return filed on a given day is: on time, belated, revised (free to 31 December, then to 31 March with the s.234I fee) or updated.",
             "gaps": ""
           },
           {
@@ -879,6 +942,69 @@
             "area": "ca",
             "law": "Form 3CD (the tax audit report)",
             "plain": "The Form 3CD clauses that apply to this client, each shown only when its facts hold.",
+            "gaps": ""
+          },
+          {
+            "chip": "company.rate",
+            "area": "ca",
+            "law": "Finance Act 2026, First Schedule Part I-A Para E (AY 2026-27); ss.115BA, 115BAA, 115BAB; s.115JB(5A)",
+            "plain": "A domestic company's rate from its option: normal provisions 25% when the total turnover or gross receipts of the PY 2023-24 did not exceed 400 crore, else 30% (a turnover not typed counts as above, and the screen says so); 115BA 25%; 115BAA 22%; 115BAB 15% on the manufacturing business and 22% on other income. Under 115BAA / 115BAB: a flat 10% surcharge, no MAT, no additional depreciation, only 80JJAA / 80M / 80LA(1A) of Chapter VI-A.",
+            "gaps": "115BAB's 15% is applied to the whole business income (the Act: income derived from or incidental to manufacturing); short-term gains on non-depreciable assets at 22% are not split out."
+          },
+          {
+            "chip": "company.tax",
+            "area": "ca",
+            "law": "First Schedule Part I-A Paras E and F (surcharge, marginal relief); ss.111A, 112, 112A; Health and Education Cess; s.288B",
+            "plain": "Tax on the total income: the option's rate on normal income, 20% on STCG u/s 111A, 12.5% on LTCG u/s 112A above 1.25 lakh and u/s 112; surcharge 7% above 1 crore and 12% above 10 crore with marginal relief (or a flat 10% under 115BAA / 115BAB); 4% cess; rounded to 10.",
+            "gaps": "Marginal relief takes the income above the band's edge at the main rate (the usual case); a company whose special-rate gains straddle the edge should be checked by hand."
+          },
+          {
+            "chip": "company.mat",
+            "area": "ca",
+            "law": "s.115JB (15% of book profit; Explanation 1 adjustments, Form 29B); s.115JAA (credit, 15 AYs); CBDT Circular 29/2019",
+            "plain": "When the normal tax is below 15% of the book profit (with its own surcharge and cess), that MAT is the tax and the excess becomes a MAT credit; in a year the normal tax is higher, brought-forward credit is set off up to the difference, oldest first. No MAT and no credit under 115BAA / 115BAB. Book profit comes from rows tagged ITR6 MAT <item> (Form 29B); without them, from the P&L's profit before tax - and the screen says so.",
+            "gaps": "Form 29B itself (the CA's report) is not produced; Ind AS transition adjustments (s.115JB(2A)-(2C)) are not worked out. The Finance Bill 2026's MAT changes (14%, MAT as final tax) apply from tax year 2026-27 under the Income-tax Act 2025, not to AY 2026-27."
+          },
+          {
+            "chip": "company.dep_block",
+            "area": "ca",
+            "law": "s.32(1)(ii) and rule 5 / Appendix I; 2nd proviso to s.32(1) (under 180 days); s.32(1)(iia) and its 3rd proviso; s.50",
+            "plain": "Each block from the fixed-asset schedule (rows tagged ITR6 DEP <block>): opening WDV + additions - sales; half rate on additions used under 180 days; additional 20% on new plant and machinery of a manufacturing company (half now, half next year); sales above the block are a short-term gain u/s 50.",
+            "gaps": "Additional depreciation for the specified backward areas (35%, s.32(1)(iia) proviso), SLM for power units (s.32(1)(i)) and s.43(6)(c) adjustments for a block that ceases are not worked out."
+          },
+          {
+            "chip": "company.loss_ok",
+            "area": "ca",
+            "law": "ss.72(3), 32(2), 79(1)(a), 80 / 139(3), 115JAA(3A)",
+            "plain": "A brought-forward business loss is used only within 8 AYs, only when that year's return was in time, and - for a closely held company - only when 51% of the voting power stayed with the same holders; unabsorbed depreciation without limit; MAT credit within 15 AYs.",
+            "gaps": "s.79(1)(b) (an eligible start-up whose original holders stay) and the s.79(2) exceptions (death, gift to a relative, amalgamation of a foreign company) are not taken; type s.79 as held when they apply."
+          },
+          {
+            "chip": "company.setoff",
+            "area": "ca",
+            "law": "ss.70-74, 71(3A)",
+            "plain": "One loss against one income, never more than either: a house-property loss up to 2 lakh, a business loss against other heads (normal-rate income first), brought-forward business loss against business income only, unabsorbed depreciation against any head, short-term capital loss against any gain, long-term loss against long-term gains.",
+            "gaps": ""
+          },
+          {
+            "chip": "company.d80g",
+            "area": "ca",
+            "law": "s.80G (incl. the 10% qualifying limit, s.80G(4)); proviso to s.80G(2)(iiihk)/(iiihl); s.115BAA(2)(ii)",
+            "plain": "Donations without a limit at 100% / 50%; those within the qualifying limit together at most 10% of the adjusted gross total income; CSR contributions to the Swachh Bharat Kosh / Clean Ganga Fund get nothing; none under 115BAA / 115BAB.",
+            "gaps": "Whether other CSR donations get 80G is contested; the category chosen on the row (ITR6 80G <category>) is the CA's call."
+          },
+          {
+            "chip": "company.d80m",
+            "area": "ca",
+            "law": "s.80M",
+            "plain": "Dividend received from another domestic company, a foreign company or a business trust is deducted up to the dividend the company itself distributed on or before one month prior to the due date of its return. Allowed under 115BAA / 115BAB too.",
+            "gaps": ""
+          },
+          {
+            "chip": "company.problem",
+            "area": "ca",
+            "law": "Companies Act 2013 (CIN, DIN); s.115BAB(2)",
+            "plain": "A company client's master data is checked: the CIN in the MCA's 21-character shape, 8-digit DINs, shareholdings 0-100% and not over 100% together, and 115BAB only for a manufacturing company.",
             "gaps": ""
           },
           {

@@ -98,9 +98,9 @@ def check_code(response: Response, body: dict = Body(...)):
         auth.check_fields(email=email, name=name)
         u = store.add_user(email, secrets.token_urlsafe(24), name, settings()["seat_role"] or "", verified=True)
         _mark_visitor(u["id"])
-        for seat in SEATERS:
-            seat(u)
-        u = store.find_user(email)
+    for seat in SEATERS:   # every sign-in: a seat left pointing at a firm the snapshot no longer has is put back (2026-10-11)
+        seat(u)
+    u = store.find_user(email)
     return auth._sign_in(response, u) | {"signed_in": True}  # noqa: SLF001 - the one way a session starts
 
 

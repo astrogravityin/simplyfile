@@ -1,0 +1,236 @@
+{
+  "prod_base": "https://sf.valuestream.in",
+  "voice": "en-IN-NeerjaNeural",
+  "rate": "+0%",
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "blur": [
+    "#whoami",
+    "#userpop .head"
+  ],
+  "page_key": "sf-case-llp-services",
+  "title": "An LLP in services",
+  "start_url": "/#/wizard",
+  "covers": [
+    "who it is for",
+    "what applies",
+    "which form",
+    "documents you'll need",
+    "drop them in",
+    "the client, made for you",
+    "what the documents imply",
+    "review, then the return"
+  ],
+  "steps": [
+    {
+      "chapter": "An LLP in services",
+      "say": "A limited liability partnership selling IT services.",
+      "do": [
+        {
+          "wait_for": ".wz-start"
+        },
+        {
+          "wait": 1
+        }
+      ]
+    },
+    {
+      "chapter": "Who it is for",
+      "say": "A person, an HUF, a partnership firm, an LLP, an AOP or BOI, or a company - each card starts its own filing. A trust says Not yet, with what to do meanwhile.",
+      "do": [
+        {
+          "highlight_target": ".wz-who-groups",
+          "optional": true,
+          "timeout": 5
+        },
+        {
+          "click": "[data-start='llp']"
+        },
+        {
+          "wait_for": ".wz-who"
+        },
+        {
+          "wait": 1
+        }
+      ]
+    },
+    {
+      "chapter": "What applies",
+      "say": "An LLP: services, GST, full books. No presumptive card - an LLP cannot use 44AD. ITR-5.",
+      "do": [
+        {
+          "click": "[data-pick='services']"
+        },
+        {
+          "wait": 0.7
+        },
+        {
+          "click": "[data-pick='gst']"
+        },
+        {
+          "wait": 0.7
+        },
+        {
+          "click": "[data-pick='books']"
+        },
+        {
+          "wait": 0.7
+        },
+        {
+          "highlight_target": ".wz-work|.wz-what",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Which form",
+      "say": "The form follows from the picks, with its reason in one line - ITR-1, 2, 3 or 4 for a person or an HUF, ITR-5 for a firm, an LLP or an AOP, ITR-6 for a company.",
+      "do": [
+        {
+          "highlight_target": ".wz-form",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Documents you'll need",
+      "say": "Needed, good to have, and what you type in - each with what it is and where to get it: TRACES, the AIS, your employer, CAMS or KFintech, the GST portal, the firm's deed and its books.",
+      "do": [
+        {
+          "click": "[data-go='docs']"
+        },
+        {
+          "wait_for": ".wz-docs"
+        },
+        {
+          "wait": 1
+        },
+        {
+          "highlight_target": ".wz-docs",
+          "optional": true,
+          "timeout": 5
+        },
+        {
+          "scroll": 420
+        }
+      ]
+    },
+    {
+      "chapter": "Drop them in",
+      "say": "The GST certificate and the LLP agreement. The constitution says Limited Liability Partnership - it fits the card.",
+      "do": [
+        {
+          "click": "[data-go='upload']"
+        },
+        {
+          "wait_for": "[data-drop='wz-file']"
+        },
+        {
+          "wait": 0.5
+        },
+        {
+          "upload": "#wz-file",
+          "files": [
+            "showcase/case-llp/1 GST certificate - Demo Pixel Works LLP.pdf",
+            "showcase/case-llp/2 LLP agreement - Demo Pixel Works LLP.pdf"
+          ]
+        },
+        {
+          "wait": 5.0
+        }
+      ]
+    },
+    {
+      "chapter": "The client, made for you",
+      "say": "The client is made as an LLP; the designated partners come from the agreement.",
+      "do": [
+        {
+          "wait_for": ".wz-ask-modal",
+          "timeout": 40
+        },
+        {
+          "wait": 1.5
+        },
+        {
+          "wait": 1
+        },
+        {
+          "click": ".wz-ask-modal [data-save]"
+        },
+        {
+          "wait": 3
+        },
+        {
+          "highlight_target": ".wz-client",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "What the documents imply",
+      "say": "Then the 26AS - clients' fees with 194J TDS - and the income statement.",
+      "do": [
+        {
+          "upload": "#wz-file",
+          "files": [
+            "showcase/case-llp/3 26AS - ZZDFP0058K - AY 2026-27.txt",
+            "showcase/case-llp/4 Demo Pixel Works LLP - Income statement AY 2026-27.xlsx"
+          ]
+        },
+        {
+          "wait": 5.0
+        },
+        {
+          "wait": 1
+        },
+        {
+          "highlight_target": ".wz-prompts",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Review, then the return",
+      "say": "No tax audit, the books tagged, the 26AS in - straight on to Compute & close, with the fees set against the 26AS.",
+      "do": [
+        {
+          "click": "[data-go='review']"
+        },
+        {
+          "wait_for": ".wz-review"
+        },
+        {
+          "wait": 1.5
+        },
+        {
+          "highlight_target": ".wz-go|.wz-review",
+          "optional": true,
+          "timeout": 5
+        },
+        {
+          "wait": 1
+        },
+        {
+          "click": "#wz-go"
+        },
+        {
+          "wait": 3
+        },
+        {
+          "wait_for": "#cc-ay",
+          "timeout": 20,
+          "optional": true
+        },
+        {
+          "wait": 2
+        }
+      ]
+    }
+  ]
+}

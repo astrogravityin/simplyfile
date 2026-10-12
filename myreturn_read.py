@@ -112,6 +112,44 @@ def read(name: str, data: bytes, password: str = "", user: dict | None = None, a
     return _unknown()
 
 
+def who_of(data: bytes, password: str = "", pan: str = "", dob: str = "") -> dict:
+    """2026-10-11 (New filing): who a document names - PAN, name, AY - from its own text, for a document whose reader gives no
+    person (26AS, an AIS, a CAMS statement). The first match of each pattern of chip myreturn.sniff in the text's head."""
+    k = engine.run("myreturn.sniff")
+    head = _text_of(data, password, pan, dob)[: int(k["head_chars"])]
+    out = {}
+    for f in ("pan", "name"):
+        for pat in k[f]:
+            if m := re.search(pat, head):
+                out[f] = re.sub(r"\s+", " ", m.group(1)).strip()
+                break
+    if m := re.search(k["ay"], head):
+        out["ay"] = m.group(1)
+    return out
+
+
+def _text_of(data: bytes, password: str, pan: str, dob: str) -> str:
+    """A document's text: a PDF's (opened with the usual passwords), a zip's first text inside, else the bytes as text."""
+    if data[:2] == b"PK":
+        z = zipfile.ZipFile(io.BytesIO(data))
+        inner = next((n for n in z.namelist() if n.lower().endswith((".txt", ".csv", ".pdf"))), None)
+        for pw in ([None] + _passwords(password, pan, dob)) if inner else []:
+            try:
+                return _text_of(z.read(inner, pwd=pw.encode() if pw else None), password, pan, dob)
+            except RuntimeError:
+                continue
+        return ""
+    if data[:5] == b"%PDF-":
+        import pypdf  # noqa: PLC0415
+        r = pypdf.PdfReader(io.BytesIO(data))
+        if r.is_encrypted and not any(r.decrypt(pw) for pw in _passwords(password, pan, dob)):
+            return ""
+        return "\n".join((p.extract_text() or "") for p in r.pages[:2])
+    if data.lstrip()[:1] in (b"{", b"["):
+        return ""
+    return data[:20000].decode("utf-8-sig", errors="replace")
+
+
 def _unknown() -> dict:
     return {"kind": "other", "method": "text", "facts": {}, "found": [], "problems": [say("unknown_doc")]}
 

@@ -100,7 +100,11 @@ def clean(body: dict) -> dict:
     dob = str(body.get("dob") or "").strip()[:10]
     if dob and not shape_ok("date", dob):
         _bad("bad_dob", dob=dob)
-    return {"name": name, "pan": pan, "status": st["id"], "relation": _txt(body.get("relation"), "relation"),
+    extra = {}
+    if st.get("has_company"):                        # 2026-10-11 a company (ITR-6): CIN, incorporation, option, key persons, shareholders
+        import company  # noqa: PLC0415 - company imports this module
+        extra["company"] = company.clean(body.get("company") or {})
+    return extra | {"name": name, "pan": pan, "status": st["id"], "relation": _txt(body.get("relation"), "relation"),
             "dob": dob, "nri": bool(body.get("nri")), "father": _txt(body.get("father"), "relation"), "signer_pan": signer,
             "address": _txt(body.get("address"), "address"), "email": email, "phone": _txt(body.get("phone"), "phone"),
             "gst": gst, "banks": banks, "partners": partners if st["has_partners"] else [], "parties": parties,

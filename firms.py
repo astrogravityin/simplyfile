@@ -24,7 +24,7 @@ from core import access, auth, demo, engine, lists, mailer, ops, store
 
 FILE = "sf_firms"
 _LOCK = threading.Lock()  # ponytail: one lock for every firm; per-firm locks if sign-ups ever queue
-FILING = ("clients", "myreturn", "taxwatch", "intake", "recon", "compute", "audit", "analytics", "itrimport")
+FILING = ("wizard", "clients", "myreturn", "taxwatch", "intake", "recon", "compute", "audit", "analytics", "itrimport")
 
 
 def settings() -> dict:
@@ -393,7 +393,11 @@ def team(u: dict) -> list[dict]:
 
 
 def seat_demo(u: dict) -> None:
-    """A demo visitor's new account joins the demo firm (chip demo.host) - core/demo.py calls this once per visitor."""
+    """A demo visitor's account joins the demo firm (chip demo.host) - core/demo.py calls this at each code sign-in.
+    2026-10-11 owner "I lost all the demo data": a seat kept in the snapshot pointed at a firm an older snapshot had, so
+    the visitor sat in no firm and saw nothing. A seat whose firm still exists is left alone; any other is re-seated."""
+    if u.get("firm_id") and any(x.get("id") == u["firm_id"] for x in _all()):
+        return
     k = engine.run("demo.host")
     f = next((x for x in _all() if x.get("name") == k["firm_name"]), None)
     if f:

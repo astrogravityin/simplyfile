@@ -41,6 +41,11 @@
           "target": "#cl-list|main"
         },
         {
+          "title": "Start a new filing",
+          "say": "The quickest way in: pick who the return is for right here - a person, an HUF, a firm, an LLP or an AOP - and New filing lists the documents, reads them and makes the client.",
+          "target": "#cl-wizard|.cl-hero"
+        },
+        {
           "title": "Start here",
           "say": "New here? Start here lists your first steps in {product}, each with a button to its screen. A step ticks itself once it is really done. Hide puts the card away; your name menu, top right, brings it back.",
           "target": "#startcard .startcard|#page",
@@ -67,6 +72,11 @@
         {
           "title": "A new client",
           "say": "Name, status, PAN, GSTIN, banks - plus date of birth, non-resident, and the signatory's father's name and PAN for the ITR. The PAN's fourth letter must fit the status.",
+          "target": "#cl-new"
+        },
+        {
+          "title": "A company",
+          "say": "Status Company - the PAN's fourth letter C - opens its own box: CIN, date of incorporation, kind and tax option (normal, 115BA, 115BAA or 115BAB), the directors who sign and the shareholders of 1% or more. ITR-6's Part A-GEN and Schedule SH come from here.",
           "target": "#cl-new"
         },
         {
@@ -104,15 +114,15 @@
     }
   },
   "returns": "record",
-  "version": 3,
+  "version": 6,
   "status": "published",
-  "description_nl": "2026-10-04: the Clients & years walk, up to date with the screen; tours/sf-clients.json is made from it. 2026-10-05: + Parties, typed once (the party master for Form 3CD).",
+  "description_nl": "2026-10-04: the Clients & years walk, up to date with the screen; tours/sf-clients.json is made from it. 2026-10-05: + Parties, typed once (the party master for Form 3CD). 2026-10-11: a step pointing to New filing (the wizard). 2026-10-11: a company's box (ITR-6).",
   "test_cases": [
     {
       "args": {},
       "expect_value": {
         "title": "Clients & years",
-        "lede": "Your firm's client register in {product}: every assessee once, carried into each assessment year - and each year's stage moves by itself.",
+        "lede": "Your firm's client register in SimplyFy: every assessee once, carried into each assessment year - and each year's stage moves by itself.",
         "icon": "users",
         "minutes": 3,
         "steps": [
@@ -122,8 +132,13 @@
             "target": "#cl-list|main"
           },
           {
+            "title": "Start a new filing",
+            "say": "The quickest way in: pick who the return is for right here - a person, an HUF, a firm, an LLP or an AOP - and New filing lists the documents, reads them and makes the client.",
+            "target": "#cl-wizard|.cl-hero"
+          },
+          {
             "title": "Start here",
-            "say": "New here? Start here lists your first steps in {product}, each with a button to its screen. A step ticks itself once it is really done. Hide puts the card away; your name menu, top right, brings it back.",
+            "say": "New here? Start here lists your first steps in SimplyFy, each with a button to its screen. A step ticks itself once it is really done. Hide puts the card away; your name menu, top right, brings it back.",
             "target": "#startcard .startcard|#page",
             "art": {
               "kind": "hero",
@@ -148,6 +163,11 @@
           {
             "title": "A new client",
             "say": "Name, status, PAN, GSTIN, banks - plus date of birth, non-resident, and the signatory's father's name and PAN for the ITR. The PAN's fourth letter must fit the status.",
+            "target": "#cl-new"
+          },
+          {
+            "title": "A company",
+            "say": "Status Company - the PAN's fourth letter C - opens its own box: CIN, date of incorporation, kind and tax option (normal, 115BA, 115BAA or 115BAB), the directors who sign and the shareholders of 1% or more. ITR-6's Part A-GEN and Schedule SH come from here.",
             "target": "#cl-new"
           },
           {

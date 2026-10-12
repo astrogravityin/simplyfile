@@ -1,0 +1,114 @@
+{
+  "chip_id": "wizard.offered",
+  "kind": "predicate",
+  "set": "wizard",
+  "label": "New filing: is a card offered to this person / for this return",
+  "aliases": [
+    "new filing: is a card offered to this person / for this return"
+  ],
+  "params": [
+    {
+      "name": "who",
+      "type": "text",
+      "default": "",
+      "label": "who the return is for, or the person's mode (self / firm)"
+    },
+    {
+      "name": "not_for",
+      "type": "json",
+      "default": [],
+      "label": "never for these"
+    },
+    {
+      "name": "only_for",
+      "type": "json",
+      "default": [],
+      "label": "only for these (empty = anyone)"
+    }
+  ],
+  "expr": {
+    "op": "all",
+    "items": [
+      {
+        "op": "not",
+        "item": {
+          "op": "in_set",
+          "value": "$who",
+          "set": "$not_for"
+        }
+      },
+      {
+        "op": "any",
+        "items": [
+          {
+            "op": "eq",
+            "left": {
+              "vop": "count",
+              "items": "$only_for"
+            },
+            "right": 0
+          },
+          {
+            "op": "in_set",
+            "value": "$who",
+            "set": "$only_for"
+          }
+        ]
+      }
+    ]
+  },
+  "returns": "boolean",
+  "status": "published",
+  "test_cases": [
+    {
+      "args": {
+        "who": "huf",
+        "not_for": [
+          "huf"
+        ],
+        "only_for": []
+      },
+      "expect_value": false
+    },
+    {
+      "args": {
+        "who": "individual",
+        "not_for": [
+          "huf"
+        ],
+        "only_for": []
+      },
+      "expect_value": true
+    },
+    {
+      "args": {
+        "who": "self",
+        "not_for": [],
+        "only_for": [
+          "self"
+        ]
+      },
+      "expect_value": true
+    },
+    {
+      "args": {
+        "who": "firm",
+        "not_for": [],
+        "only_for": [
+          "self"
+        ]
+      },
+      "expect_value": false
+    },
+    {
+      "args": {
+        "who": "firm",
+        "not_for": [],
+        "only_for": []
+      },
+      "expect_value": true
+    }
+  ],
+  "version": 1,
+  "description_nl": "2026-10-11: an HUF is offered no salary, second employer or arrears; Myself only on a self-filer's desk, a client or an HUF only in a firm."
+}

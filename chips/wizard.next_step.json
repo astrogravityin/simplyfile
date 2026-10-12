@@ -1,0 +1,97 @@
+{
+  "chip_id": "wizard.next_step",
+  "kind": "accessor",
+  "set": "wizard",
+  "label": "New filing: the My return step to open at the end",
+  "aliases": [
+    "new filing: the my return step to open at the end"
+  ],
+  "params": [
+    {
+      "name": "required_missing",
+      "type": "number",
+      "default": 0,
+      "label": "needed documents not in"
+    },
+    {
+      "name": "typed",
+      "type": "number",
+      "default": 0,
+      "label": "prompts to enter on Review"
+    },
+    {
+      "name": "red",
+      "type": "number",
+      "default": 0,
+      "label": "red checks"
+    }
+  ],
+  "expr": {
+    "vop": "choose",
+    "cases": [
+      {
+        "when": {
+          "op": "gt",
+          "left": "$required_missing",
+          "right": 0
+        },
+        "then": "gather"
+      },
+      {
+        "when": {
+          "op": "gt",
+          "left": "$typed",
+          "right": 0
+        },
+        "then": "review"
+      },
+      {
+        "when": {
+          "op": "gt",
+          "left": "$red",
+          "right": 0
+        },
+        "then": "check"
+      }
+    ],
+    "else": "choose"
+  },
+  "returns": "any",
+  "status": "published",
+  "test_cases": [
+    {
+      "args": {
+        "required_missing": 1,
+        "typed": 1,
+        "red": 1
+      },
+      "expect_value": "gather"
+    },
+    {
+      "args": {
+        "required_missing": 0,
+        "typed": 2,
+        "red": 1
+      },
+      "expect_value": "review"
+    },
+    {
+      "args": {
+        "required_missing": 0,
+        "typed": 0,
+        "red": 1
+      },
+      "expect_value": "check"
+    },
+    {
+      "args": {
+        "required_missing": 0,
+        "typed": 0,
+        "red": 0
+      },
+      "expect_value": "choose"
+    }
+  ],
+  "version": 1,
+  "description_nl": "2026-10-11: never a dead end: a needed document still missing opens Gather, figures to type open Review, a red check opens Check, else Choose (the two regimes)."
+}

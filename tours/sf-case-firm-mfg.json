@@ -1,0 +1,249 @@
+{
+  "prod_base": "https://sf.valuestream.in",
+  "voice": "en-IN-NeerjaNeural",
+  "rate": "+0%",
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "blur": [
+    "#whoami",
+    "#userpop .head"
+  ],
+  "page_key": "sf-case-firm-mfg",
+  "title": "A manufacturing firm with stock and depreciation",
+  "start_url": "/#/wizard",
+  "covers": [
+    "who it is for",
+    "what applies",
+    "which form",
+    "documents you'll need",
+    "drop them in",
+    "the client, made for you",
+    "what the documents imply",
+    "review, then the return"
+  ],
+  "steps": [
+    {
+      "chapter": "A manufacturing firm with stock and depreciation",
+      "say": "A firm that makes cloth: raw material in, finished goods out, machines that depreciate.",
+      "do": [
+        {
+          "wait_for": ".wz-start"
+        },
+        {
+          "wait": 1
+        }
+      ]
+    },
+    {
+      "chapter": "Who it is for",
+      "say": "A person, an HUF, a partnership firm, an LLP, an AOP or BOI, or a company - each card starts its own filing. A trust says Not yet, with what to do meanwhile.",
+      "do": [
+        {
+          "highlight_target": ".wz-who-groups",
+          "optional": true,
+          "timeout": 5
+        },
+        {
+          "click": "[data-start='firm']"
+        },
+        {
+          "wait_for": ".wz-who"
+        },
+        {
+          "wait": 1
+        }
+      ]
+    },
+    {
+      "chapter": "What applies",
+      "say": "Manufacturing, GST, a tax audit, stock and inventory, machines - the documents list follows from them.",
+      "do": [
+        {
+          "click": "[data-pick='manufacturing']"
+        },
+        {
+          "wait": 0.7
+        },
+        {
+          "click": "[data-pick='gst']"
+        },
+        {
+          "wait": 0.7
+        },
+        {
+          "click": "[data-pick='audit']"
+        },
+        {
+          "wait": 0.7
+        },
+        {
+          "click": "[data-pick='stock']"
+        },
+        {
+          "wait": 0.7
+        },
+        {
+          "click": "[data-pick='depreciation']"
+        },
+        {
+          "wait": 0.7
+        },
+        {
+          "highlight_target": ".wz-work|.wz-what",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Which form",
+      "say": "The form follows from the picks, with its reason in one line - ITR-1, 2, 3 or 4 for a person or an HUF, ITR-5 for a firm, an LLP or an AOP, ITR-6 for a company.",
+      "do": [
+        {
+          "highlight_target": ".wz-form",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Documents you'll need",
+      "say": "Needed, good to have, and what you type in - each with what it is and where to get it: TRACES, the AIS, your employer, CAMS or KFintech, the GST portal, the firm's deed and its books.",
+      "do": [
+        {
+          "click": "[data-go='docs']"
+        },
+        {
+          "wait_for": ".wz-docs"
+        },
+        {
+          "wait": 1
+        },
+        {
+          "highlight_target": ".wz-docs",
+          "optional": true,
+          "timeout": 5
+        },
+        {
+          "scroll": 420
+        }
+      ]
+    },
+    {
+      "chapter": "Drop them in",
+      "say": "The GST certificate names a firm already in the register - the documents go to its return.",
+      "do": [
+        {
+          "click": "[data-go='upload']"
+        },
+        {
+          "wait_for": "[data-drop='wz-file']"
+        },
+        {
+          "wait": 0.5
+        },
+        {
+          "upload": "#wz-file",
+          "files": [
+            "showcase/case-firm-mfg/1 GST certificate - Lakshmi Narayana Textiles.pdf",
+            "showcase/case-firm-mfg/2 Partnership deed - Lakshmi Narayana Textiles.pdf"
+          ]
+        },
+        {
+          "wait": 5.0
+        }
+      ]
+    },
+    {
+      "chapter": "The client, made for you",
+      "say": "Lakshmi Narayana Textiles is found by its PAN. Its partners come from the deed, confirmed in the popup.",
+      "do": [
+        {
+          "wait_for": ".wz-ask-modal",
+          "timeout": 40
+        },
+        {
+          "wait": 1.5
+        },
+        {
+          "wait": 1
+        },
+        {
+          "click": ".wz-ask-modal [data-save]"
+        },
+        {
+          "wait": 3
+        },
+        {
+          "highlight_target": ".wz-client",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "What the documents imply",
+      "say": "The manufacturing account goes to Intake & map. Closing stock and the depreciation schedule are tagged there.",
+      "do": [
+        {
+          "upload": "#wz-file",
+          "files": [
+            "showcase/case-firm-mfg/3 26AS - AAGFL5512K - AY 2026-27.txt",
+            "showcase/case-firm-mfg/4 Lakshmi Narayana Textiles - Manufacturing, P&L and Balance Sheet AY 2026-27.xlsx",
+            "showcase/case-firm-mfg/5 GSTR-3B - 36AAGFL5512K1Z2 - FY 2025-26.zip"
+          ]
+        },
+        {
+          "wait": 6.5
+        },
+        {
+          "wait": 1
+        },
+        {
+          "highlight_target": ".wz-prompts",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Review, then the return",
+      "say": "This year's filing, which waited in Collecting, now has its books, 26AS and GST returns - on to the Tax audit.",
+      "do": [
+        {
+          "click": "[data-go='review']"
+        },
+        {
+          "wait_for": ".wz-review"
+        },
+        {
+          "wait": 1.5
+        },
+        {
+          "highlight_target": ".wz-go|.wz-review",
+          "optional": true,
+          "timeout": 5
+        },
+        {
+          "wait": 1
+        },
+        {
+          "click": "#wz-go"
+        },
+        {
+          "wait": 3
+        },
+        {
+          "wait_for": "#au-ay",
+          "timeout": 20,
+          "optional": true
+        },
+        {
+          "wait": 2
+        }
+      ]
+    }
+  ]
+}

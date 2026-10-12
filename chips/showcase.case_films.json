@@ -1,0 +1,117 @@
+{
+  "chip_id": "showcase.case_films",
+  "kind": "accessor",
+  "set": "showcase",
+  "label": "Landing page: the worked examples' films - their group in Watch",
+  "aliases": [
+    "landing page: the worked examples' films - their group in watch"
+  ],
+  "params": [
+    {
+      "name": "group",
+      "type": "json",
+      "default": {
+        "id": "cases",
+        "title": "Every filing, step by step",
+        "line": "One worked example for each kind of return - a salaried ITR-1 to a company's ITR-6 with Form 3CD - from the first card to the return."
+      },
+      "label": "group"
+    },
+    {
+      "name": "tags",
+      "type": "json",
+      "default": [
+        "new filing",
+        "worked example"
+      ],
+      "label": "tags"
+    },
+    {
+      "name": "topics",
+      "type": "json",
+      "default": [
+        "new filing"
+      ],
+      "label": "topics"
+    },
+    {
+      "name": "before",
+      "type": "text",
+      "default": "screens",
+      "label": "before"
+    },
+    {
+      "name": "play_counts",
+      "type": "json",
+      "default": {
+        "Clients": "36",
+        "In review": "8",
+        "Tax audits": "7"
+      },
+      "label": "play_counts"
+    },
+    {
+      "name": "play_sub_from",
+      "type": "text",
+      "default": "\\d+ clients",
+      "label": "play_sub_from"
+    },
+    {
+      "name": "play_sub_to",
+      "type": "text",
+      "default": "36 clients",
+      "label": "play_sub_to"
+    },
+    {
+      "name": "play_try",
+      "type": "long",
+      "default": "Carry on any of New filing's 15 worked examples - from a salaried ITR-1 to a company's ITR-6 with Form 3CD",
+      "label": "play_try"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "group": "$group",
+      "tags": "$tags",
+      "topics": "$topics",
+      "before": "$before",
+      "play_counts": "$play_counts",
+      "play_sub_from": "$play_sub_from",
+      "play_sub_to": "$play_sub_to",
+      "play_try": "$play_try"
+    }
+  },
+  "returns": "record",
+  "status": "published",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "group": {
+          "id": "cases",
+          "title": "Every filing, step by step",
+          "line": "One worked example for each kind of return - a salaried ITR-1 to a company's ITR-6 with Form 3CD - from the first card to the return."
+        },
+        "tags": [
+          "new filing",
+          "worked example"
+        ],
+        "topics": [
+          "new filing"
+        ],
+        "before": "screens",
+        "play_counts": {
+          "Clients": "36",
+          "In review": "8",
+          "Tax audits": "7"
+        },
+        "play_sub_from": "\\d+ clients",
+        "play_sub_to": "36 clients",
+        "play_try": "Carry on any of New filing's 15 worked examples - from a salaried ITR-1 to a company's ITR-6 with Form 3CD"
+      }
+    }
+  ],
+  "version": 5,
+  "description_nl": "2026-10-11: the Watch section's group for New filing's worked examples (chip wizard.cases, one film each; tools/showcase/case_films.py writes the chapters into showcase.page, before the screen tours, and leaves every other group as it is). 2026-10-11: the Watch section's group for New filing's worked examples (chip wizard.cases, one film each; tools/showcase/case_films.py writes the chapters into showcase.page, before the screen tours, and leaves every other group as it is) - and Try it live's counts (34 clients, 5 tax audits once the worked examples are in the demo) with one more thing to try. 2026-10-11: the Watch section's group for New filing's worked examples (chip wizard.cases, one film each; tools/showcase/case_films.py writes the chapters into showcase.page, before the screen tours, and leaves every other group as it is) - and Try it live's counts (36 clients, 8 in review, 7 tax audits once the worked examples and the two companies are in the demo) with one more thing to try."
+}

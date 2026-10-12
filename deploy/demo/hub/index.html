@@ -88,6 +88,10 @@
   .btn.primary:hover { transform:translateX(2px); }
   .btn.ghost { border:1px solid var(--line); }
   .btn.ghost:hover { background:var(--soft); }
+  .deckband { display:grid; grid-template-columns:240px 1fr; gap:32px; align-items:center; background:var(--paper); border:1px solid var(--line); border-radius:24px; padding:28px 32px; box-shadow:var(--shadow); }
+  .deckband h3 { margin:6px 0 8px; } .deckband .acts { display:flex; gap:12px; flex-wrap:wrap; margin-top:14px; }
+  .deckart { width:240px; height:auto; }
+  @media (max-width:640px) { .deckband { grid-template-columns:1fr; } .deckart { width:180px; } }
   .tag { display:inline-block; font-size:13px; color:var(--muted); border:1px solid var(--line); padding:6px 12px; border-radius:99px; }
 
   .trust { display:grid; grid-template-columns:repeat(3, 1fr); gap:28px; }
@@ -182,6 +186,11 @@
   </div>
 </div>
 
+<section id="deck" hidden><div class="wrap"><div class="deckband">
+  <svg class="deckart" viewBox="0 0 240 150" aria-hidden="true"><rect x="8" y="10" width="224" height="130" rx="16" fill="var(--paper)" stroke="var(--line)" stroke-width="2"/><rect x="24" y="28" width="96" height="10" rx="5" fill="var(--brand)"/><rect x="24" y="48" width="140" height="7" rx="3.5" fill="var(--line)"/><rect x="24" y="62" width="118" height="7" rx="3.5" fill="var(--line)"/><circle cx="182" cy="94" r="26" fill="var(--brand)"/><path d="M175 82 L194 94 L175 106 Z" fill="var(--bg)"/><path d="M24 112 C60 92 90 122 130 100" fill="none" stroke="var(--gold)" stroke-width="3" stroke-linecap="round"/></svg>
+  <div><span class="kind" id="deck-kind"></span><h3 id="deck-title"></h3><p class="about" id="deck-about"></p>
+  <div class="acts"><a class="btn primary" id="deck-play" target="_blank" rel="noopener"></a><a class="btn ghost" id="deck-save" download></a></div></div>
+</div></div></section>
 <section id="how"><div class="wrap"><h2 class="sec-h" id="steps-title"></h2><div class="steps" id="steps"></div></div></section>
 <section id="products"><div class="wrap"><h2 class="sec-h" id="products-title"></h2><div class="products" id="grid"></div></div></section>
 <section id="trust"><div class="wrap"><h2 class="sec-h" id="trust-title"></h2><div class="trust" id="trustlist"></div></div></section>
@@ -242,6 +251,12 @@
           ? `<a class="btn primary" href="${esc(p.href)}">${esc(d.try)} &rarr;</a>${p.videos ? `<a class="btn ghost" href="${esc(p.videos)}" target="_blank" rel="noopener">${esc(d.watch)}</a>` : ''}`
           : `<span class="tag">${esc(d.soon)}</span>${p.videos ? `<a class="btn ghost" href="${esc(p.videos)}" target="_blank" rel="noopener">${esc(d.watch)}</a>` : ''}`}</div></article>`;
     }).join('');
+    if (d.deck && d.deck.href) {   // 2026-10-11: the narrated product deck (one offline HTML file beside this page)
+      $('deck-kind').textContent = d.deck.kind || ''; $('deck-title').textContent = d.deck.title || ''; $('deck-about').textContent = d.deck.about || '';
+      $('deck-play').href = d.deck.href; $('deck-play').textContent = d.deck.play || '';
+      $('deck-save').href = d.deck.href; $('deck-save').textContent = d.deck.save || '';
+      $('deck').hidden = false;
+    }
     startClock(d);
   }).catch(() => { $('lede').textContent = 'The demo list could not be loaded - please refresh.'; });
 </script>

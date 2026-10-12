@@ -5,6 +5,9 @@
 import { api, esc, toast, busy, pageHead, confirmDialog, t, loadWords, listBox, modal, may } from './app.js';
 import { icon } from './icons.js';
 import { historyButton, wireHistory } from './changes.js';
+import { hero as wizardHero } from './wizard-art.js';
+import { whoCards, wireWho } from './page-wizard.js';
+import { companyBox, wireCompanyBox, readCompany } from './company.js';
 
 const w = (k, v) => t('clients', k, v);
 let K = null;      // chip clients.settings
@@ -57,18 +60,25 @@ function kpis(sum) {
 }
 
 export async function clientsPage(host) {
-  await loadWords('clients', 'changes');
+  await loadWords('clients', 'changes', 'wizard');
   K = K || await api('/api/clients/settings');
   AY = AY || K.current_ay;
+  const WZ = may('wizard') ? await api('/api/wizard').catch(() => null) : null;
   host.innerHTML = pageHead(w('title'), esc(w('lede')),
     `<label class="cl-ay" for="cl-ay">${icon('clock', 14)}<span>${esc(w('ay'))}</span>
        <select id="cl-ay">${K.years.map((y) => `<option ${y === AY ? 'selected' : ''}>${esc(y)}</option>`).join('')}</select></label>
-     <button type="button" class="primary" id="cl-new">${icon('plus', 15)} ${esc(w('new'))}</button>`)
+     <button type="button" class="${may('wizard') ? '' : 'primary'}" id="cl-new">${icon('plus', 15)} ${esc(w('new'))}</button>`)
+    + (WZ ? `<section class="card cl-hero"><div class="cl-hero-top">${wizardHero()}<div class="cl-hero-b"><h2>${esc(t('wizard', 'hero_h'))}</h2>
+        <p class="muted">${esc(t('wizard', 'hero_p'))}</p></div>
+        <button type="button" class="ghost cl-hero-go" id="cl-wizard">${icon('spark', 15)} ${esc(t('wizard', WZ.sessions.length ? 'hero_resume' : 'hero_all', { n: WZ.sessions.length }))} ${icon('right', 14)}</button></div>
+        ${whoCards(WZ, { compact: true })}</section>` : '')   // 2026-10-11: New filing first - every who-card right here
     + '<section class="sf-kpis cl-kpis" id="cl-kpis" aria-live="polite"></section>'
     + `<section class="card cl-card"><div class="cl-bar"><div class="tabs cl-tabs" role="tablist">${[['', 'tab_active', 'active'], ['archived', 'tab_archived', 'archived']].map(([id, label, n]) =>
       `<button type="button" role="tab" data-view="${id}" data-n="${n}" class="${VIEW === id ? 'on' : ''}" aria-selected="${VIEW === id}">${esc(w(label))}<span class="cl-count"></span></button>`).join('')}</div></div>
       <div class="row tight cl-bulk" id="cl-bulk" hidden></div><div id="cl-list"></div></section>`;
   host.querySelectorAll('[data-view]').forEach((b) => { b.onclick = () => { VIEW = b.dataset.view; PICKED.clear(); clientsPage(host); }; });
+  if (host.querySelector('#cl-wizard')) host.querySelector('#cl-wizard').onclick = () => { location.hash = '#/wizard'; };
+  if (WZ) wireWho(host.querySelector('.cl-hero'), WZ, () => AY);
   const canPick = may('clients', 'archive');
   const bar = () => {
     const box = host.querySelector('#cl-bulk');
@@ -188,6 +198,7 @@ function editor(c, reload) {
     <button type="button" class="small ghost" id="c-add-bank">${icon('plus', 12)} ${esc(w('add_bank'))}</button>
     <div id="c-partners-box"><h3>${esc(w('partners'))}</h3><div id="c-partners">${partners.html}</div>
     <button type="button" class="small ghost" id="c-add-partner">${icon('plus', 12)} ${esc(w('add_partner'))}</button></div>
+    ${companyBox(c, K)}
     <h3 style="margin-top:14px">${esc(w('parties'))}</h3><div class="small muted">${esc(w('parties_lede'))}</div>
     <div id="c-parties">${parties.html}</div>
     <div class="row tight"><button type="button" class="small ghost" id="c-add-party">${icon('plus', 12)} ${esc(w('add_party'))}</button>
@@ -219,13 +230,14 @@ function editor(c, reload) {
     });
     $('#c-status').onchange = showPartners;
     wireRm(); showPartners();
-    const read = (kind) => [...card.querySelectorAll(`[data-${kind}]`)].map((r) =>
+    wireCompanyBox(card, K);                  // 2026-10-11 ITR-6: the company part, shown for status Company (static/company.js)
+    const read =(kind) => [...card.querySelectorAll(`[data-${kind}]`)].map((r) =>
       Object.fromEntries([...r.querySelectorAll('[data-f]')].map((i) => [i.dataset.f, i.value])));
     $('[data-save]').onclick = (e) => busy(e.currentTarget, async () => {
       const v = (id) => $(id).value;
       const data = { name: v('#c-name'), relation: v('#c-relation'), status: v('#c-status'), pan: v('#c-pan'),
         email: v('#c-email'), phone: v('#c-phone'), gst: v('#c-gst'), address: v('#c-address'), notes: v('#c-notes'), dob: v('#c-dob'), father: v('#c-father'), signer_pan: v('#c-signer'), nri: $('#c-nri').checked,
-        banks: read('bank'), partners: read('partner'), parties: read('party'), ay: AY };
+        banks: read('bank'), partners: read('partner'), parties: read('party'), company: readCompany(card), ay: AY };
       try {
         await api(isNew ? '/api/clients' : `/api/clients/${c.id}`, { method: isNew ? 'POST' : 'PUT', body: data });
         toast(w('saved'), 'ok'); close(true); reload();

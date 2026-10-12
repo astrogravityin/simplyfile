@@ -1,0 +1,766 @@
+{
+  "chip_id": "company.rate",
+  "kind": "accessor",
+  "set": "company",
+  "label": "Company: the rate, surcharge and deductions an option brings",
+  "aliases": [
+    "company: the rate, surcharge and deducti"
+  ],
+  "params": [
+    {
+      "name": "option",
+      "type": "text",
+      "default": "normal",
+      "label": "tax option"
+    },
+    {
+      "name": "turnover",
+      "type": "number",
+      "default": 0,
+      "label": "total turnover / gross receipts of the PY named by the rates (rupees)"
+    },
+    {
+      "name": "rates",
+      "type": "json",
+      "default": {
+        "turnover_limit": 4000000000,
+        "turnover_py": "2023-24",
+        "base_low": 25,
+        "base_high": 30,
+        "bands": [
+          {
+            "above": 10000000,
+            "rate": 7
+          },
+          {
+            "above": 100000000,
+            "rate": 12
+          }
+        ],
+        "options": {
+          "115BA": {
+            "rate": 25,
+            "steps": [
+              {
+                "above": 10000000,
+                "rate": 7
+              },
+              {
+                "above": 100000000,
+                "rate": 12
+              }
+            ],
+            "mat": true,
+            "addl_dep": false,
+            "via": "all"
+          },
+          "115BAA": {
+            "rate": 22,
+            "steps": [
+              {
+                "above": 0,
+                "rate": 10
+              }
+            ],
+            "mat": false,
+            "addl_dep": false,
+            "via": "baa"
+          },
+          "115BAB": {
+            "rate": 15,
+            "other_rate": 22,
+            "steps": [
+              {
+                "above": 0,
+                "rate": 10
+              }
+            ],
+            "mat": false,
+            "addl_dep": false,
+            "via": "baa",
+            "split_business": true
+          }
+        },
+        "mat_rate": 15,
+        "cess_pct": 4,
+        "round_to": 10,
+        "cg": {
+          "stcg_111a": 20,
+          "ltcg_112a": 12.5,
+          "ltcg_112": 12.5,
+          "exempt_112a": 125000
+        },
+        "source": "Finance Act 2026, First Schedule Part I-A Para E (rates unchanged from AY 2025-26 - Memorandum to the Finance Bill 2026, https://www.indiabudget.gov.in/doc/memo.pdf); CBDT ITR-6 validation rules V1.0 AY 2026-27 (rates table), https://www.incometax.gov.in/iec/foportal/downloads"
+      },
+      "label": "the AY's rates (company.settings rates_by_ay)"
+    },
+    {
+      "name": "via_sets",
+      "type": "json",
+      "default": {
+        "all": [
+          "80G",
+          "80GGA",
+          "80GGB",
+          "80GGC",
+          "80IA",
+          "80IAB",
+          "80IAC",
+          "80IB",
+          "80JJAA",
+          "80LA",
+          "80M"
+        ],
+        "baa": [
+          "80JJAA",
+          "80M",
+          "80LA(1A)"
+        ]
+      },
+      "label": "Chapter VI-A sets (company.settings)"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "rate": {
+        "vop": "coalesce",
+        "values": [
+          {
+            "vop": "get",
+            "value": {
+              "vop": "get",
+              "value": "$rates",
+              "path": {
+                "vop": "template",
+                "text": "options.{o}",
+                "values": {
+                  "vop": "record",
+                  "fields": {
+                    "o": "$option"
+                  }
+                }
+              }
+            },
+            "path": "rate"
+          },
+          {
+            "vop": "choose",
+            "cases": [
+              {
+                "when": {
+                  "op": "all",
+                  "items": [
+                    {
+                      "op": "gt",
+                      "left": "$turnover",
+                      "right": 0
+                    },
+                    {
+                      "op": "le",
+                      "left": "$turnover",
+                      "right": {
+                        "vop": "get",
+                        "value": "$rates",
+                        "path": "turnover_limit"
+                      }
+                    }
+                  ]
+                },
+                "then": {
+                  "vop": "get",
+                  "value": "$rates",
+                  "path": "base_low"
+                }
+              }
+            ],
+            "else": {
+              "vop": "get",
+              "value": "$rates",
+              "path": "base_high"
+            }
+          }
+        ]
+      },
+      "other_rate": {
+        "vop": "coalesce",
+        "values": [
+          {
+            "vop": "get",
+            "value": {
+              "vop": "get",
+              "value": "$rates",
+              "path": {
+                "vop": "template",
+                "text": "options.{o}",
+                "values": {
+                  "vop": "record",
+                  "fields": {
+                    "o": "$option"
+                  }
+                }
+              }
+            },
+            "path": "other_rate"
+          },
+          {
+            "vop": "get",
+            "value": {
+              "vop": "get",
+              "value": "$rates",
+              "path": {
+                "vop": "template",
+                "text": "options.{o}",
+                "values": {
+                  "vop": "record",
+                  "fields": {
+                    "o": "$option"
+                  }
+                }
+              }
+            },
+            "path": "rate"
+          },
+          {
+            "vop": "choose",
+            "cases": [
+              {
+                "when": {
+                  "op": "all",
+                  "items": [
+                    {
+                      "op": "gt",
+                      "left": "$turnover",
+                      "right": 0
+                    },
+                    {
+                      "op": "le",
+                      "left": "$turnover",
+                      "right": {
+                        "vop": "get",
+                        "value": "$rates",
+                        "path": "turnover_limit"
+                      }
+                    }
+                  ]
+                },
+                "then": {
+                  "vop": "get",
+                  "value": "$rates",
+                  "path": "base_low"
+                }
+              }
+            ],
+            "else": {
+              "vop": "get",
+              "value": "$rates",
+              "path": "base_high"
+            }
+          }
+        ]
+      },
+      "steps": {
+        "vop": "coalesce",
+        "values": [
+          {
+            "vop": "get",
+            "value": {
+              "vop": "get",
+              "value": "$rates",
+              "path": {
+                "vop": "template",
+                "text": "options.{o}",
+                "values": {
+                  "vop": "record",
+                  "fields": {
+                    "o": "$option"
+                  }
+                }
+              }
+            },
+            "path": "steps"
+          },
+          {
+            "vop": "get",
+            "value": "$rates",
+            "path": "bands"
+          }
+        ]
+      },
+      "flat": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "eq",
+              "left": {
+                "vop": "get",
+                "value": {
+                  "vop": "coalesce",
+                  "values": [
+                    {
+                      "vop": "get",
+                      "value": {
+                        "vop": "get",
+                        "value": "$rates",
+                        "path": {
+                          "vop": "template",
+                          "text": "options.{o}",
+                          "values": {
+                            "vop": "record",
+                            "fields": {
+                              "o": "$option"
+                            }
+                          }
+                        }
+                      },
+                      "path": "steps"
+                    },
+                    {
+                      "vop": "get",
+                      "value": "$rates",
+                      "path": "bands"
+                    }
+                  ]
+                },
+                "path": "0.above"
+              },
+              "right": 0
+            },
+            "then": true
+          }
+        ],
+        "else": false
+      },
+      "mat": {
+        "vop": "coalesce",
+        "values": [
+          {
+            "vop": "get",
+            "value": {
+              "vop": "get",
+              "value": "$rates",
+              "path": {
+                "vop": "template",
+                "text": "options.{o}",
+                "values": {
+                  "vop": "record",
+                  "fields": {
+                    "o": "$option"
+                  }
+                }
+              }
+            },
+            "path": "mat"
+          },
+          true
+        ]
+      },
+      "addl_dep": {
+        "vop": "coalesce",
+        "values": [
+          {
+            "vop": "get",
+            "value": {
+              "vop": "get",
+              "value": "$rates",
+              "path": {
+                "vop": "template",
+                "text": "options.{o}",
+                "values": {
+                  "vop": "record",
+                  "fields": {
+                    "o": "$option"
+                  }
+                }
+              }
+            },
+            "path": "addl_dep"
+          },
+          true
+        ]
+      },
+      "split_business": {
+        "vop": "coalesce",
+        "values": [
+          {
+            "vop": "get",
+            "value": {
+              "vop": "get",
+              "value": "$rates",
+              "path": {
+                "vop": "template",
+                "text": "options.{o}",
+                "values": {
+                  "vop": "record",
+                  "fields": {
+                    "o": "$option"
+                  }
+                }
+              }
+            },
+            "path": "split_business"
+          },
+          false
+        ]
+      },
+      "via": {
+        "vop": "get",
+        "value": "$via_sets",
+        "path": {
+          "vop": "coalesce",
+          "values": [
+            {
+              "vop": "get",
+              "value": {
+                "vop": "get",
+                "value": "$rates",
+                "path": {
+                  "vop": "template",
+                  "text": "options.{o}",
+                  "values": {
+                    "vop": "record",
+                    "fields": {
+                      "o": "$option"
+                    }
+                  }
+                }
+              },
+              "path": "via"
+            },
+            "all"
+          ]
+        }
+      },
+      "low_turnover": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "gt",
+                  "left": "$turnover",
+                  "right": 0
+                },
+                {
+                  "op": "le",
+                  "left": "$turnover",
+                  "right": {
+                    "vop": "get",
+                    "value": "$rates",
+                    "path": "turnover_limit"
+                  }
+                }
+              ]
+            },
+            "then": true
+          }
+        ],
+        "else": false
+      },
+      "why": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "in_set",
+              "value": "$option",
+              "set": [
+                "115BA",
+                "115BAA",
+                "115BAB"
+              ]
+            },
+            "then": {
+              "vop": "template",
+              "text": "why_{o}",
+              "values": {
+                "vop": "record",
+                "fields": {
+                  "o": "$option"
+                }
+              }
+            }
+          },
+          {
+            "when": {
+              "op": "le",
+              "left": "$turnover",
+              "right": 0
+            },
+            "then": "why_turnover_missing"
+          },
+          {
+            "when": {
+              "op": "le",
+              "left": "$turnover",
+              "right": {
+                "vop": "get",
+                "value": "$rates",
+                "path": "turnover_limit"
+              }
+            },
+            "then": "why_low"
+          }
+        ],
+        "else": "why_high"
+      }
+    }
+  },
+  "returns": "record",
+  "version": 2,
+  "status": "published",
+  "description_nl": "2026-10-11: Normal provisions: 25% when the total turnover or gross receipts of the PY 2023-24 did not exceed 400 crore, else 30% (Finance Act 2026 Part I-A Para E) - a turnover not typed counts as above the limit, and the screen says so; surcharge 7% above 1 crore, 12% above 10 crore, MAT applies, additional depreciation and every Chapter VI-A deduction allowed. s.115BA 25% (bands, MAT, no additional depreciation). s.115BAA 22% and s.115BAB 15% on the manufacturing business (22% on other income), each with a flat 10% surcharge on any income, no MAT (s.115JB(5A)), no additional depreciation, and only 80JJAA / 80M / 80LA(1A) of Chapter VI-A. Finance Act 2026, First Schedule Part I-A Para E (rates unchanged from AY 2025-26 - Memorandum to the Finance Bill 2026, https://www.indiabudget.gov.in/doc/memo.pdf); CBDT ITR-6 validation rules V1.0 AY 2026-27 (rates table), https://www.incometax.gov.in/iec/foportal/downloads",
+  "test_cases": [
+    {
+      "args": {
+        "option": "normal",
+        "turnover": 3000000000
+      },
+      "expect_value": {
+        "rate": 25,
+        "other_rate": 25,
+        "steps": [
+          {
+            "above": 10000000,
+            "rate": 7
+          },
+          {
+            "above": 100000000,
+            "rate": 12
+          }
+        ],
+        "flat": false,
+        "mat": true,
+        "addl_dep": true,
+        "split_business": false,
+        "via": [
+          "80G",
+          "80GGA",
+          "80GGB",
+          "80GGC",
+          "80IA",
+          "80IAB",
+          "80IAC",
+          "80IB",
+          "80JJAA",
+          "80LA",
+          "80M"
+        ],
+        "low_turnover": true,
+        "why": "why_low"
+      }
+    },
+    {
+      "args": {
+        "option": "normal",
+        "turnover": 4000000000
+      },
+      "expect_value": {
+        "rate": 25,
+        "other_rate": 25,
+        "steps": [
+          {
+            "above": 10000000,
+            "rate": 7
+          },
+          {
+            "above": 100000000,
+            "rate": 12
+          }
+        ],
+        "flat": false,
+        "mat": true,
+        "addl_dep": true,
+        "split_business": false,
+        "via": [
+          "80G",
+          "80GGA",
+          "80GGB",
+          "80GGC",
+          "80IA",
+          "80IAB",
+          "80IAC",
+          "80IB",
+          "80JJAA",
+          "80LA",
+          "80M"
+        ],
+        "low_turnover": true,
+        "why": "why_low"
+      }
+    },
+    {
+      "args": {
+        "option": "normal",
+        "turnover": 4000000001
+      },
+      "expect_value": {
+        "rate": 30,
+        "other_rate": 30,
+        "steps": [
+          {
+            "above": 10000000,
+            "rate": 7
+          },
+          {
+            "above": 100000000,
+            "rate": 12
+          }
+        ],
+        "flat": false,
+        "mat": true,
+        "addl_dep": true,
+        "split_business": false,
+        "via": [
+          "80G",
+          "80GGA",
+          "80GGB",
+          "80GGC",
+          "80IA",
+          "80IAB",
+          "80IAC",
+          "80IB",
+          "80JJAA",
+          "80LA",
+          "80M"
+        ],
+        "low_turnover": false,
+        "why": "why_high"
+      }
+    },
+    {
+      "args": {
+        "option": "normal",
+        "turnover": 0
+      },
+      "expect_value": {
+        "rate": 30,
+        "other_rate": 30,
+        "steps": [
+          {
+            "above": 10000000,
+            "rate": 7
+          },
+          {
+            "above": 100000000,
+            "rate": 12
+          }
+        ],
+        "flat": false,
+        "mat": true,
+        "addl_dep": true,
+        "split_business": false,
+        "via": [
+          "80G",
+          "80GGA",
+          "80GGB",
+          "80GGC",
+          "80IA",
+          "80IAB",
+          "80IAC",
+          "80IB",
+          "80JJAA",
+          "80LA",
+          "80M"
+        ],
+        "low_turnover": false,
+        "why": "why_turnover_missing"
+      }
+    },
+    {
+      "args": {
+        "option": "115BAA",
+        "turnover": 100000
+      },
+      "expect_value": {
+        "rate": 22,
+        "other_rate": 22,
+        "steps": [
+          {
+            "above": 0,
+            "rate": 10
+          }
+        ],
+        "flat": true,
+        "mat": false,
+        "addl_dep": false,
+        "split_business": false,
+        "via": [
+          "80JJAA",
+          "80M",
+          "80LA(1A)"
+        ],
+        "low_turnover": true,
+        "why": "why_115BAA"
+      }
+    },
+    {
+      "args": {
+        "option": "115BAB"
+      },
+      "expect_value": {
+        "rate": 15,
+        "other_rate": 22,
+        "steps": [
+          {
+            "above": 0,
+            "rate": 10
+          }
+        ],
+        "flat": true,
+        "mat": false,
+        "addl_dep": false,
+        "split_business": true,
+        "via": [
+          "80JJAA",
+          "80M",
+          "80LA(1A)"
+        ],
+        "low_turnover": false,
+        "why": "why_115BAB"
+      }
+    },
+    {
+      "args": {
+        "option": "115BA",
+        "turnover": 9000000000
+      },
+      "expect_value": {
+        "rate": 25,
+        "other_rate": 25,
+        "steps": [
+          {
+            "above": 10000000,
+            "rate": 7
+          },
+          {
+            "above": 100000000,
+            "rate": 12
+          }
+        ],
+        "flat": false,
+        "mat": true,
+        "addl_dep": false,
+        "split_business": false,
+        "via": [
+          "80G",
+          "80GGA",
+          "80GGB",
+          "80GGC",
+          "80IA",
+          "80IAB",
+          "80IAC",
+          "80IB",
+          "80JJAA",
+          "80LA",
+          "80M"
+        ],
+        "low_turnover": false,
+        "why": "why_115BA"
+      }
+    }
+  ]
+}

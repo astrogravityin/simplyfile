@@ -1,0 +1,863 @@
+{
+  "chip_id": "wizard.docs",
+  "kind": "accessor",
+  "set": "wizard",
+  "label": "New filing: the documents each kind of return needs - what each is, and where to get it",
+  "aliases": [
+    "new filing: the documents each kind of return needs - what each is, and where to get it"
+  ],
+  "params": [
+    {
+      "name": "rows",
+      "type": "json",
+      "default": [
+        {
+          "id": "ais",
+          "kind": "ais",
+          "flows": [
+            "myreturn"
+          ],
+          "required_for": [
+            "any"
+          ],
+          "optional_for": [],
+          "label": "AIS - Annual Information Statement",
+          "what": "Everything reported on the PAN: salary, interest, dividends, sales of shares, funds and property, tax paid.",
+          "where": "incometax.gov.in > Services > Annual Information Statement (AIS) > download the PDF. Its password: the PAN in small letters and the date of birth (DDMMYYYY)."
+        },
+        {
+          "id": "ais_e",
+          "kind": "ais",
+          "flows": [
+            "firm"
+          ],
+          "required_for": [],
+          "optional_for": [
+            "any"
+          ],
+          "label": "AIS of the business (CSV)",
+          "what": "Receipts, interest and TDS reported on the business's PAN - set beside the books in Reconcile.",
+          "where": "incometax.gov.in (signed in as the business) > Services > Annual Information Statement (AIS) > download as CSV."
+        },
+        {
+          "id": "26as",
+          "kind": "26as",
+          "flows": [
+            "myreturn",
+            "firm"
+          ],
+          "required_for": [
+            "any"
+          ],
+          "optional_for": [],
+          "label": "Form 26AS",
+          "what": "Every TDS and TCS credited to the PAN, and the tax paid - as the department holds it.",
+          "where": "incometax.gov.in > e-File > Income Tax Returns > View Form 26AS > TRACES > Export as text (or PDF)."
+        },
+        {
+          "id": "prefill",
+          "kind": "prefill",
+          "flows": [
+            "myreturn"
+          ],
+          "required_for": [],
+          "optional_for": [
+            "any"
+          ],
+          "label": "Pre-filled JSON",
+          "what": "Who you are, salary, TDS, taxes paid and bank accounts in one file - the quickest start.",
+          "where": "incometax.gov.in > e-File > Income Tax Returns > Download Pre-Filled Data > AY {ay}."
+        },
+        {
+          "id": "form16",
+          "kind": "form16",
+          "flows": [
+            "myreturn"
+          ],
+          "required_for": [
+            "salary",
+            "employers",
+            "arrears"
+          ],
+          "optional_for": [],
+          "label": "Form 16 from each employer",
+          "what": "Part A: TDS by quarter (from TRACES). Part B: salary, exempt allowances and deductions.",
+          "where": "Your employer's HR or payroll portal - due by 15 June."
+        },
+        {
+          "id": "cg",
+          "kind": "cg",
+          "flows": [
+            "myreturn"
+          ],
+          "required_for": [
+            "shares"
+          ],
+          "optional_for": [],
+          "label": "Capital-gains statement",
+          "what": "Each sale: units, dates, cost, sale value and the 31 January 2018 value.",
+          "where": "CAMS (camsonline.com) or KFintech (kfintech.com) > Capital gains statement for FY {fy}; your broker's back office > Tax P&L."
+        },
+        {
+          "id": "sale_deed",
+          "kind": "",
+          "flows": [
+            "myreturn"
+          ],
+          "required_for": [
+            "property"
+          ],
+          "optional_for": [],
+          "label": "Sale deed and purchase papers",
+          "what": "Sale price, stamp-duty value, the buyer's PAN and TDS, what the property cost, a new house or bonds bought.",
+          "where": "The registered deed from the sub-registrar; the buyer's Form 16B for the TDS. Entered on Review."
+        },
+        {
+          "id": "home_loan",
+          "kind": "",
+          "flows": [
+            "myreturn"
+          ],
+          "required_for": [],
+          "optional_for": [
+            "house"
+          ],
+          "label": "Home-loan interest certificate; rent received",
+          "what": "Interest paid (s.24(b)), principal (80C), and for a house let out the rent and municipal tax.",
+          "where": "Your lender's portal or branch; the rent agreement. Entered on Review."
+        },
+        {
+          "id": "bank",
+          "kind": "bank",
+          "flows": [
+            "myreturn",
+            "firm"
+          ],
+          "required_for": [],
+          "optional_for": [
+            "business",
+            "interest",
+            "firm",
+            "llp",
+            "aop"
+          ],
+          "label": "Bank statement",
+          "what": "Receipts with no TDS, cash deposits, interest the AIS may not show.",
+          "where": "Net banking > Statements > the financial year, as Excel, CSV or PDF."
+        },
+        {
+          "id": "gst",
+          "kind": "gst",
+          "flows": [
+            "myreturn"
+          ],
+          "required_for": [],
+          "optional_for": [
+            "gst"
+          ],
+          "label": "GSTR-3B summary",
+          "what": "The GST turnover per GSTIN - set beside the receipts.",
+          "where": "gst.gov.in > Services > Returns > View filed returns > GSTR-3B for each month (or the year's summary)."
+        },
+        {
+          "id": "vda_report",
+          "kind": "",
+          "flows": [
+            "myreturn"
+          ],
+          "required_for": [
+            "vda"
+          ],
+          "optional_for": [],
+          "label": "Your exchange's tax report",
+          "what": "Each crypto transfer: what it cost, what it sold for, the dates.",
+          "where": "The exchange's tax or P&L report. Entered on Review."
+        },
+        {
+          "id": "foreign_docs",
+          "kind": "",
+          "flows": [
+            "myreturn"
+          ],
+          "required_for": [
+            "foreign"
+          ],
+          "optional_for": [],
+          "label": "Foreign account and holding statements",
+          "what": "Peak and closing balance, income and tax paid abroad - for the calendar year {cy}.",
+          "where": "The foreign bank, broker or employer's stock plan. Entered on Review (Schedule FA); Form 67 for the credit."
+        },
+        {
+          "id": "travel",
+          "kind": "",
+          "flows": [
+            "myreturn"
+          ],
+          "required_for": [
+            "nri"
+          ],
+          "optional_for": [],
+          "label": "Days in India",
+          "what": "Days in India this year and the years before decide residence.",
+          "where": "Passport stamps or the immigration record. Entered on Review."
+        },
+        {
+          "id": "form10e",
+          "kind": "",
+          "flows": [
+            "myreturn"
+          ],
+          "required_for": [
+            "arrears"
+          ],
+          "optional_for": [],
+          "label": "Arrears by year (Form 10E)",
+          "what": "Which years the arrears belong to, and each year's income.",
+          "where": "Your employer; Form 10E is filed on incometax.gov.in before the return."
+        },
+        {
+          "id": "filed_prev",
+          "kind": "filed_prev",
+          "flows": [
+            "myreturn"
+          ],
+          "required_for": [
+            "losses"
+          ],
+          "optional_for": [
+            "revise"
+          ],
+          "label": "Last year's return (JSON)",
+          "what": "Its Schedule CFL - the losses still to carry forward.",
+          "where": "incometax.gov.in > e-File > Income Tax Returns > View Filed Returns > the year before > Download JSON."
+        },
+        {
+          "id": "filed",
+          "kind": "filed",
+          "flows": [
+            "myreturn"
+          ],
+          "required_for": [
+            "revise"
+          ],
+          "optional_for": [],
+          "label": "The return being revised (JSON)",
+          "what": "Compared figure by figure with the one you are making now.",
+          "where": "incometax.gov.in > e-File > Income Tax Returns > View Filed Returns > AY {ay} > Download JSON."
+        },
+        {
+          "id": "proofs",
+          "kind": "",
+          "flows": [
+            "myreturn"
+          ],
+          "required_for": [],
+          "optional_for": [
+            "salary",
+            "house",
+            "interest",
+            "self"
+          ],
+          "label": "Deduction proofs",
+          "what": "80C (PPF, ELSS, LIC, tuition), 80D health cover, NPS, donations - old regime only, except the employer's NPS.",
+          "where": "Each provider's statement. Entered on Review."
+        },
+        {
+          "id": "gst_cert",
+          "kind": "gst_cert",
+          "flows": [
+            "firm"
+          ],
+          "required_for": [
+            "gst"
+          ],
+          "optional_for": [
+            "firm",
+            "llp",
+            "aop",
+            "company"
+          ],
+          "label": "GST registration certificate (REG-06)",
+          "what": "The GSTIN, the legal name and the constitution - the client is made from it.",
+          "where": "gst.gov.in > Services > User Services > View / Download Certificates."
+        },
+        {
+          "id": "deed",
+          "kind": "deed",
+          "flows": [
+            "firm"
+          ],
+          "required_for": [
+            "firm",
+            "llp",
+            "partners_pay",
+            "trust"
+          ],
+          "optional_for": [
+            "aop"
+          ],
+          "label": "Partnership deed, LLP agreement or trust deed",
+          "what": "Who the partners (or members) are, their shares, and the salary and interest the deed allows (s.40(b)).",
+          "where": "The firm's own signed copy; for an LLP the agreement filed with the MCA (Form 3)."
+        },
+        {
+          "id": "books",
+          "kind": "books",
+          "flows": [
+            "firm"
+          ],
+          "required_for": [
+            "books",
+            "audit",
+            "company"
+          ],
+          "optional_for": [
+            "firm",
+            "llp",
+            "aop",
+            "trust"
+          ],
+          "label": "Financial statements or trial balance (Excel)",
+          "what": "Trading or manufacturing account, profit and loss, balance sheet - each row tagged in Intake & map.",
+          "where": "Tally > Display > Statements of accounts > export to Excel; or the accountant's final accounts."
+        },
+        {
+          "id": "gst_json",
+          "kind": "gst_json",
+          "flows": [
+            "firm"
+          ],
+          "required_for": [],
+          "optional_for": [
+            "gst"
+          ],
+          "label": "GSTR-3B and GSTR-1 (JSON)",
+          "what": "Each month's returns from the GST portal - the tax audit sets them against the books.",
+          "where": "gst.gov.in > Returns > View e-filed returns > Download JSON for each month (or the zip of them)."
+        },
+        {
+          "id": "stock_list",
+          "kind": "",
+          "flows": [
+            "firm"
+          ],
+          "required_for": [
+            "stock"
+          ],
+          "optional_for": [],
+          "label": "Closing stock list and valuation",
+          "what": "Quantity and value of raw material, work in progress and finished goods on 31 March.",
+          "where": "The stock register; tagged with the books in Intake & map."
+        },
+        {
+          "id": "asset_register",
+          "kind": "",
+          "flows": [
+            "firm"
+          ],
+          "required_for": [
+            "depreciation"
+          ],
+          "optional_for": [],
+          "label": "Fixed-asset register",
+          "what": "Each block's opening value, additions (with dates), sales and depreciation.",
+          "where": "A sheet in the books' Excel - tagged in Intake & map (Form 3CD clause 18)."
+        },
+        {
+          "id": "itr_prev",
+          "kind": "itr_prev",
+          "flows": [
+            "firm"
+          ],
+          "required_for": [
+            "losses"
+          ],
+          "optional_for": [
+            "firm",
+            "llp",
+            "aop",
+            "company"
+          ],
+          "label": "Last year's return (ITR-5 JSON)",
+          "what": "Last year's figures and losses - brought in on Import old returns.",
+          "where": "incometax.gov.in (signed in as the business) > e-File > Income Tax Returns > View Filed Returns > Download JSON."
+        },
+        {
+          "id": "coi",
+          "kind": "coi",
+          "flows": [
+            "firm"
+          ],
+          "required_for": [
+            "company"
+          ],
+          "optional_for": [],
+          "label": "Certificate of incorporation",
+          "what": "The CIN, the date of incorporation and the directors - the company is made from it.",
+          "where": "MCA21 > View company master data / public documents; the company's own copy."
+        },
+        {
+          "id": "comp_income",
+          "kind": "books",
+          "flows": [
+            "firm"
+          ],
+          "required_for": [
+            "company"
+          ],
+          "optional_for": [],
+          "label": "Computation of income (Excel)",
+          "what": "The CA's computation - with the Form 29B book-profit rows for MAT.",
+          "where": "The tax working for the year, exported to Excel - tagged in Intake & map."
+        },
+        {
+          "id": "asset_schedule",
+          "kind": "books",
+          "flows": [
+            "firm"
+          ],
+          "required_for": [
+            "company"
+          ],
+          "optional_for": [],
+          "label": "Fixed-asset schedule (Excel)",
+          "what": "Each block's opening value, additions (the 180-day split), sales and depreciation.",
+          "where": "The depreciation schedule as per the Income-tax Rules - tagged in Intake & map."
+        }
+      ],
+      "label": "rows"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "rows": "$rows"
+    }
+  },
+  "returns": "record",
+  "status": "published",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "rows": [
+          {
+            "id": "ais",
+            "kind": "ais",
+            "flows": [
+              "myreturn"
+            ],
+            "required_for": [
+              "any"
+            ],
+            "optional_for": [],
+            "label": "AIS - Annual Information Statement",
+            "what": "Everything reported on the PAN: salary, interest, dividends, sales of shares, funds and property, tax paid.",
+            "where": "incometax.gov.in > Services > Annual Information Statement (AIS) > download the PDF. Its password: the PAN in small letters and the date of birth (DDMMYYYY)."
+          },
+          {
+            "id": "ais_e",
+            "kind": "ais",
+            "flows": [
+              "firm"
+            ],
+            "required_for": [],
+            "optional_for": [
+              "any"
+            ],
+            "label": "AIS of the business (CSV)",
+            "what": "Receipts, interest and TDS reported on the business's PAN - set beside the books in Reconcile.",
+            "where": "incometax.gov.in (signed in as the business) > Services > Annual Information Statement (AIS) > download as CSV."
+          },
+          {
+            "id": "26as",
+            "kind": "26as",
+            "flows": [
+              "myreturn",
+              "firm"
+            ],
+            "required_for": [
+              "any"
+            ],
+            "optional_for": [],
+            "label": "Form 26AS",
+            "what": "Every TDS and TCS credited to the PAN, and the tax paid - as the department holds it.",
+            "where": "incometax.gov.in > e-File > Income Tax Returns > View Form 26AS > TRACES > Export as text (or PDF)."
+          },
+          {
+            "id": "prefill",
+            "kind": "prefill",
+            "flows": [
+              "myreturn"
+            ],
+            "required_for": [],
+            "optional_for": [
+              "any"
+            ],
+            "label": "Pre-filled JSON",
+            "what": "Who you are, salary, TDS, taxes paid and bank accounts in one file - the quickest start.",
+            "where": "incometax.gov.in > e-File > Income Tax Returns > Download Pre-Filled Data > AY {ay}."
+          },
+          {
+            "id": "form16",
+            "kind": "form16",
+            "flows": [
+              "myreturn"
+            ],
+            "required_for": [
+              "salary",
+              "employers",
+              "arrears"
+            ],
+            "optional_for": [],
+            "label": "Form 16 from each employer",
+            "what": "Part A: TDS by quarter (from TRACES). Part B: salary, exempt allowances and deductions.",
+            "where": "Your employer's HR or payroll portal - due by 15 June."
+          },
+          {
+            "id": "cg",
+            "kind": "cg",
+            "flows": [
+              "myreturn"
+            ],
+            "required_for": [
+              "shares"
+            ],
+            "optional_for": [],
+            "label": "Capital-gains statement",
+            "what": "Each sale: units, dates, cost, sale value and the 31 January 2018 value.",
+            "where": "CAMS (camsonline.com) or KFintech (kfintech.com) > Capital gains statement for FY {fy}; your broker's back office > Tax P&L."
+          },
+          {
+            "id": "sale_deed",
+            "kind": "",
+            "flows": [
+              "myreturn"
+            ],
+            "required_for": [
+              "property"
+            ],
+            "optional_for": [],
+            "label": "Sale deed and purchase papers",
+            "what": "Sale price, stamp-duty value, the buyer's PAN and TDS, what the property cost, a new house or bonds bought.",
+            "where": "The registered deed from the sub-registrar; the buyer's Form 16B for the TDS. Entered on Review."
+          },
+          {
+            "id": "home_loan",
+            "kind": "",
+            "flows": [
+              "myreturn"
+            ],
+            "required_for": [],
+            "optional_for": [
+              "house"
+            ],
+            "label": "Home-loan interest certificate; rent received",
+            "what": "Interest paid (s.24(b)), principal (80C), and for a house let out the rent and municipal tax.",
+            "where": "Your lender's portal or branch; the rent agreement. Entered on Review."
+          },
+          {
+            "id": "bank",
+            "kind": "bank",
+            "flows": [
+              "myreturn",
+              "firm"
+            ],
+            "required_for": [],
+            "optional_for": [
+              "business",
+              "interest",
+              "firm",
+              "llp",
+              "aop"
+            ],
+            "label": "Bank statement",
+            "what": "Receipts with no TDS, cash deposits, interest the AIS may not show.",
+            "where": "Net banking > Statements > the financial year, as Excel, CSV or PDF."
+          },
+          {
+            "id": "gst",
+            "kind": "gst",
+            "flows": [
+              "myreturn"
+            ],
+            "required_for": [],
+            "optional_for": [
+              "gst"
+            ],
+            "label": "GSTR-3B summary",
+            "what": "The GST turnover per GSTIN - set beside the receipts.",
+            "where": "gst.gov.in > Services > Returns > View filed returns > GSTR-3B for each month (or the year's summary)."
+          },
+          {
+            "id": "vda_report",
+            "kind": "",
+            "flows": [
+              "myreturn"
+            ],
+            "required_for": [
+              "vda"
+            ],
+            "optional_for": [],
+            "label": "Your exchange's tax report",
+            "what": "Each crypto transfer: what it cost, what it sold for, the dates.",
+            "where": "The exchange's tax or P&L report. Entered on Review."
+          },
+          {
+            "id": "foreign_docs",
+            "kind": "",
+            "flows": [
+              "myreturn"
+            ],
+            "required_for": [
+              "foreign"
+            ],
+            "optional_for": [],
+            "label": "Foreign account and holding statements",
+            "what": "Peak and closing balance, income and tax paid abroad - for the calendar year {cy}.",
+            "where": "The foreign bank, broker or employer's stock plan. Entered on Review (Schedule FA); Form 67 for the credit."
+          },
+          {
+            "id": "travel",
+            "kind": "",
+            "flows": [
+              "myreturn"
+            ],
+            "required_for": [
+              "nri"
+            ],
+            "optional_for": [],
+            "label": "Days in India",
+            "what": "Days in India this year and the years before decide residence.",
+            "where": "Passport stamps or the immigration record. Entered on Review."
+          },
+          {
+            "id": "form10e",
+            "kind": "",
+            "flows": [
+              "myreturn"
+            ],
+            "required_for": [
+              "arrears"
+            ],
+            "optional_for": [],
+            "label": "Arrears by year (Form 10E)",
+            "what": "Which years the arrears belong to, and each year's income.",
+            "where": "Your employer; Form 10E is filed on incometax.gov.in before the return."
+          },
+          {
+            "id": "filed_prev",
+            "kind": "filed_prev",
+            "flows": [
+              "myreturn"
+            ],
+            "required_for": [
+              "losses"
+            ],
+            "optional_for": [
+              "revise"
+            ],
+            "label": "Last year's return (JSON)",
+            "what": "Its Schedule CFL - the losses still to carry forward.",
+            "where": "incometax.gov.in > e-File > Income Tax Returns > View Filed Returns > the year before > Download JSON."
+          },
+          {
+            "id": "filed",
+            "kind": "filed",
+            "flows": [
+              "myreturn"
+            ],
+            "required_for": [
+              "revise"
+            ],
+            "optional_for": [],
+            "label": "The return being revised (JSON)",
+            "what": "Compared figure by figure with the one you are making now.",
+            "where": "incometax.gov.in > e-File > Income Tax Returns > View Filed Returns > AY {ay} > Download JSON."
+          },
+          {
+            "id": "proofs",
+            "kind": "",
+            "flows": [
+              "myreturn"
+            ],
+            "required_for": [],
+            "optional_for": [
+              "salary",
+              "house",
+              "interest",
+              "self"
+            ],
+            "label": "Deduction proofs",
+            "what": "80C (PPF, ELSS, LIC, tuition), 80D health cover, NPS, donations - old regime only, except the employer's NPS.",
+            "where": "Each provider's statement. Entered on Review."
+          },
+          {
+            "id": "gst_cert",
+            "kind": "gst_cert",
+            "flows": [
+              "firm"
+            ],
+            "required_for": [
+              "gst"
+            ],
+            "optional_for": [
+              "firm",
+              "llp",
+              "aop",
+              "company"
+            ],
+            "label": "GST registration certificate (REG-06)",
+            "what": "The GSTIN, the legal name and the constitution - the client is made from it.",
+            "where": "gst.gov.in > Services > User Services > View / Download Certificates."
+          },
+          {
+            "id": "deed",
+            "kind": "deed",
+            "flows": [
+              "firm"
+            ],
+            "required_for": [
+              "firm",
+              "llp",
+              "partners_pay",
+              "trust"
+            ],
+            "optional_for": [
+              "aop"
+            ],
+            "label": "Partnership deed, LLP agreement or trust deed",
+            "what": "Who the partners (or members) are, their shares, and the salary and interest the deed allows (s.40(b)).",
+            "where": "The firm's own signed copy; for an LLP the agreement filed with the MCA (Form 3)."
+          },
+          {
+            "id": "books",
+            "kind": "books",
+            "flows": [
+              "firm"
+            ],
+            "required_for": [
+              "books",
+              "audit",
+              "company"
+            ],
+            "optional_for": [
+              "firm",
+              "llp",
+              "aop",
+              "trust"
+            ],
+            "label": "Financial statements or trial balance (Excel)",
+            "what": "Trading or manufacturing account, profit and loss, balance sheet - each row tagged in Intake & map.",
+            "where": "Tally > Display > Statements of accounts > export to Excel; or the accountant's final accounts."
+          },
+          {
+            "id": "gst_json",
+            "kind": "gst_json",
+            "flows": [
+              "firm"
+            ],
+            "required_for": [],
+            "optional_for": [
+              "gst"
+            ],
+            "label": "GSTR-3B and GSTR-1 (JSON)",
+            "what": "Each month's returns from the GST portal - the tax audit sets them against the books.",
+            "where": "gst.gov.in > Returns > View e-filed returns > Download JSON for each month (or the zip of them)."
+          },
+          {
+            "id": "stock_list",
+            "kind": "",
+            "flows": [
+              "firm"
+            ],
+            "required_for": [
+              "stock"
+            ],
+            "optional_for": [],
+            "label": "Closing stock list and valuation",
+            "what": "Quantity and value of raw material, work in progress and finished goods on 31 March.",
+            "where": "The stock register; tagged with the books in Intake & map."
+          },
+          {
+            "id": "asset_register",
+            "kind": "",
+            "flows": [
+              "firm"
+            ],
+            "required_for": [
+              "depreciation"
+            ],
+            "optional_for": [],
+            "label": "Fixed-asset register",
+            "what": "Each block's opening value, additions (with dates), sales and depreciation.",
+            "where": "A sheet in the books' Excel - tagged in Intake & map (Form 3CD clause 18)."
+          },
+          {
+            "id": "itr_prev",
+            "kind": "itr_prev",
+            "flows": [
+              "firm"
+            ],
+            "required_for": [
+              "losses"
+            ],
+            "optional_for": [
+              "firm",
+              "llp",
+              "aop",
+              "company"
+            ],
+            "label": "Last year's return (ITR-5 JSON)",
+            "what": "Last year's figures and losses - brought in on Import old returns.",
+            "where": "incometax.gov.in (signed in as the business) > e-File > Income Tax Returns > View Filed Returns > Download JSON."
+          },
+          {
+            "id": "coi",
+            "kind": "coi",
+            "flows": [
+              "firm"
+            ],
+            "required_for": [
+              "company"
+            ],
+            "optional_for": [],
+            "label": "Certificate of incorporation",
+            "what": "The CIN, the date of incorporation and the directors - the company is made from it.",
+            "where": "MCA21 > View company master data / public documents; the company's own copy."
+          },
+          {
+            "id": "comp_income",
+            "kind": "books",
+            "flows": [
+              "firm"
+            ],
+            "required_for": [
+              "company"
+            ],
+            "optional_for": [],
+            "label": "Computation of income (Excel)",
+            "what": "The CA's computation - with the Form 29B book-profit rows for MAT.",
+            "where": "The tax working for the year, exported to Excel - tagged in Intake & map."
+          },
+          {
+            "id": "asset_schedule",
+            "kind": "books",
+            "flows": [
+              "firm"
+            ],
+            "required_for": [
+              "company"
+            ],
+            "optional_for": [],
+            "label": "Fixed-asset schedule (Excel)",
+            "what": "Each block's opening value, additions (the 180-day split), sales and depreciation.",
+            "where": "The depreciation schedule as per the Income-tax Rules - tagged in Intake & map."
+          }
+        ]
+      }
+    }
+  ],
+  "version": 3,
+  "description_nl": "2026-10-11: the checklist of 'Documents you'll need': each document's reader kind (blank = typed on Review), the picks it is needed or good to have for ('any' = every return), what it is and where to get it ({ay} {fy} {cy} filled from the year). 2026-10-11: the checklist of 'Documents you'll need': each document's reader kind (blank = typed later), the flows it belongs to (My return, the firm flow), the picks and who it is needed or good to have for ('any' = every return), what it is and where to get it ({ay} {fy} {cy} filled from the year)."
+}

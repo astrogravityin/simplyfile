@@ -1,0 +1,169 @@
+{
+  "chip_id": "wizard.biz_kind",
+  "kind": "accessor",
+  "set": "wizard",
+  "label": "New filing: the business kind My return starts with, from the kind of work picked",
+  "aliases": [
+    "new filing: the business kind my return starts with, from the kind of work picked"
+  ],
+  "params": [
+    {
+      "name": "picked",
+      "type": "json",
+      "default": [],
+      "label": "what was picked"
+    }
+  ],
+  "expr": {
+    "vop": "choose",
+    "cases": [
+      {
+        "when": {
+          "op": "all",
+          "items": [
+            {
+              "op": "in_set",
+              "value": "profession",
+              "set": "$picked"
+            },
+            {
+              "op": "any",
+              "items": [
+                {
+                  "op": "in_set",
+                  "value": "books",
+                  "set": "$picked"
+                },
+                {
+                  "op": "in_set",
+                  "value": "audit",
+                  "set": "$picked"
+                }
+              ]
+            }
+          ]
+        },
+        "then": "profession"
+      },
+      {
+        "when": {
+          "op": "any",
+          "items": [
+            {
+              "op": "in_set",
+              "value": "books",
+              "set": "$picked"
+            },
+            {
+              "op": "in_set",
+              "value": "audit",
+              "set": "$picked"
+            }
+          ]
+        },
+        "then": "business"
+      },
+      {
+        "when": {
+          "op": "in_set",
+          "value": "profession",
+          "set": "$picked"
+        },
+        "then": "44ADA"
+      },
+      {
+        "when": {
+          "op": "any",
+          "items": [
+            {
+              "op": "in_set",
+              "value": "presumptive",
+              "set": "$picked"
+            },
+            {
+              "op": "in_set",
+              "value": "trading",
+              "set": "$picked"
+            },
+            {
+              "op": "in_set",
+              "value": "manufacturing",
+              "set": "$picked"
+            },
+            {
+              "op": "in_set",
+              "value": "services",
+              "set": "$picked"
+            }
+          ]
+        },
+        "then": "44AD"
+      }
+    ],
+    "else": ""
+  },
+  "returns": "any",
+  "status": "published",
+  "test_cases": [
+    {
+      "args": {
+        "picked": [
+          "profession",
+          "presumptive",
+          "business"
+        ]
+      },
+      "expect_value": "44ADA"
+    },
+    {
+      "args": {
+        "picked": [
+          "trading",
+          "gst",
+          "presumptive",
+          "business"
+        ]
+      },
+      "expect_value": "44AD"
+    },
+    {
+      "args": {
+        "picked": [
+          "trading",
+          "books",
+          "business"
+        ]
+      },
+      "expect_value": "business"
+    },
+    {
+      "args": {
+        "picked": [
+          "profession",
+          "audit",
+          "books",
+          "business"
+        ]
+      },
+      "expect_value": "profession"
+    },
+    {
+      "args": {
+        "picked": [
+          "business"
+        ]
+      },
+      "expect_value": ""
+    },
+    {
+      "args": {
+        "picked": [
+          "salary"
+        ]
+      },
+      "expect_value": ""
+    }
+  ],
+  "version": 1,
+  "description_nl": "2026-10-11: a person's or an HUF's kind of work becomes My return's business kind (myreturn.settings biz_kinds) once the client is known and none is set: a profession on the presumptive basis 44ADA, a trade or service 44AD, full books or a tax audit their own profit and loss (profession / business, ITR-3); just 'a business' leaves it to choose on Check."
+}

@@ -54,7 +54,7 @@ TOOL = Path(__file__).resolve().parent
 GUIDES = ROOT / "backend" / "data" / "guides"      # Guide me scripts: <portal with ':'->'-'>/<page>.json
 SETTINGS = TOOL / "video_settings.json"            # video-only knobs per page key
 OUT = ROOT / "tmp" / "tour_video"
-AUTH = OUT / "auth.json"
+AUTH = Path(os.environ["TOUR_AUTH"]) if os.environ.get("TOUR_AUTH") else OUT / "auth.json"   # 2026-10-11: a second session signs in to its own file
 # Sign-in boxes on every portal: the studio names them username/password, this framework au-ident/au-pass;
 # both carry the standard autocomplete words, so match either.
 USER_BOX = "input[name=username], input[autocomplete=username] >> visible=true"

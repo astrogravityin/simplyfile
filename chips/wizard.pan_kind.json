@@ -1,0 +1,185 @@
+{
+  "chip_id": "wizard.pan_kind",
+  "kind": "accessor",
+  "set": "wizard",
+  "label": "New filing: does a PAN fit the return chosen (its 4th letter: P a person, H an HUF, F a firm or LLP ...)",
+  "aliases": [
+    "new filing: does a pan fit the return chosen (its 4th letter: p a person, h an huf, f a firm or llp ...)"
+  ],
+  "params": [
+    {
+      "name": "pan",
+      "type": "text",
+      "default": "",
+      "label": "the PAN"
+    },
+    {
+      "name": "letter",
+      "type": "text",
+      "default": "",
+      "label": "its 4th letter"
+    },
+    {
+      "name": "wants",
+      "type": "json",
+      "default": [],
+      "label": "the letters the chosen return takes"
+    },
+    {
+      "name": "found_status",
+      "type": "text",
+      "default": "",
+      "label": "the status a GST certificate's constitution names"
+    },
+    {
+      "name": "want_statuses",
+      "type": "json",
+      "default": [],
+      "label": "the statuses the chosen card takes"
+    }
+  ],
+  "expr": {
+    "vop": "choose",
+    "cases": [
+      {
+        "when": {
+          "op": "eq",
+          "left": "$pan",
+          "right": ""
+        },
+        "then": "none"
+      },
+      {
+        "when": {
+          "op": "not",
+          "item": {
+            "chip": "clients.shape_ok",
+            "args": {
+              "kind": "pan",
+              "value": "$pan"
+            }
+          }
+        },
+        "then": "bad"
+      },
+      {
+        "when": {
+          "op": "not",
+          "item": {
+            "op": "in_set",
+            "value": "$letter",
+            "set": "$wants"
+          }
+        },
+        "then": "clash"
+      },
+      {
+        "when": {
+          "op": "all",
+          "items": [
+            {
+              "op": "ne",
+              "left": "$found_status",
+              "right": ""
+            },
+            {
+              "op": "not",
+              "item": {
+                "op": "in_set",
+                "value": "$found_status",
+                "set": "$want_statuses"
+              }
+            }
+          ]
+        },
+        "then": "clash"
+      }
+    ],
+    "else": "ok"
+  },
+  "returns": "any",
+  "status": "published",
+  "test_cases": [
+    {
+      "args": {
+        "pan": "",
+        "letter": "",
+        "wants": [
+          "P"
+        ]
+      },
+      "expect_value": "none"
+    },
+    {
+      "args": {
+        "pan": "ZZDP1",
+        "letter": "P",
+        "wants": [
+          "P"
+        ]
+      },
+      "expect_value": "bad"
+    },
+    {
+      "args": {
+        "pan": "ZZDHW0046M",
+        "letter": "H",
+        "wants": [
+          "P"
+        ]
+      },
+      "expect_value": "clash"
+    },
+    {
+      "args": {
+        "pan": "ZZDPR0047N",
+        "letter": "P",
+        "wants": [
+          "P"
+        ]
+      },
+      "expect_value": "ok"
+    },
+    {
+      "args": {
+        "pan": "ZZDAR0059L",
+        "letter": "A",
+        "wants": [
+          "A",
+          "B"
+        ]
+      },
+      "expect_value": "ok"
+    },
+    {
+      "args": {
+        "pan": "ZZDFP0058K",
+        "letter": "F",
+        "wants": [
+          "F"
+        ],
+        "found_status": "llp",
+        "want_statuses": [
+          "firm"
+        ]
+      },
+      "expect_value": "clash"
+    },
+    {
+      "args": {
+        "pan": "ZZDFP0058K",
+        "letter": "F",
+        "wants": [
+          "F"
+        ],
+        "found_status": "llp",
+        "want_statuses": [
+          "llp"
+        ]
+      },
+      "expect_value": "ok"
+    }
+  ],
+  "version": 2,
+  "description_nl": "2026-10-11: a PAN's 4th letter says whose it is (clients.settings statuses pan_letter); one that is not the return chosen is asked about. 2026-10-11: a PAN's 4th letter says whose it is (clients.settings statuses pan_letter) - an AOP card takes A or B; a GST certificate's constitution (a partnership firm or an LLP share the letter F) must fit the card too. One that does not is asked about."
+}

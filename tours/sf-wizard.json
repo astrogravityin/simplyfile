@@ -1,0 +1,290 @@
+{
+  "prod_base": "https://sf.valuestream.in",
+  "voice": "en-IN-NeerjaNeural",
+  "rate": "+0%",
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "blur": [
+    "#whoami",
+    "#userpop .head"
+  ],
+  "page_key": "sf-wizard",
+  "title": "New filing",
+  "start_url": "/#/wizard",
+  "covers": [
+    "who it is for",
+    "worked examples",
+    "carry on later",
+    "four steps",
+    "what applies",
+    "what kind of work",
+    "which form",
+    "documents you'll need",
+    "drop them in",
+    "the client, made for you",
+    "what the documents imply",
+    "review, then the return"
+  ],
+  "steps": [
+    {
+      "chapter": "New filing",
+      "say": "The guided way in: say who the return is for, see the documents it needs, drop them in - {product} reads each one, makes the client and asks only for what is missing.",
+      "do": [
+        {
+          "wait_for": ".wz-start"
+        },
+        {
+          "wait": 1
+        }
+      ]
+    },
+    {
+      "chapter": "Who it is for",
+      "say": "A person, an HUF, a partnership firm, an LLP, an AOP or BOI, or a company - each card starts its own filing. A trust says Not yet, with what to do meanwhile.",
+      "do": [
+        {
+          "highlight_target": ".wz-who-groups|.wz-start",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Worked examples",
+      "say": "One worked example for each kind of return, with made-up documents: Watch how plays it start to finish.",
+      "do": [
+        {
+          "highlight_target": ".wz-examples|.wz-start",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Carry on later",
+      "say": "Every filing not finished waits here. Carry on opens it where you left off; Discard drops the wizard's progress, never the client or the return.",
+      "do": [
+        {
+          "highlight_target": ".wz-resume|.wz-start",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Four steps",
+      "say": "What you're filing, the documents, the upload, the review. Progress is saved as you go - leave, and carry on later.",
+      "do": [
+        {
+          "click": "[data-start='individual']"
+        },
+        {
+          "wait_for": ".wz-who"
+        },
+        {
+          "wait": 1
+        },
+        {
+          "highlight_target": ".wz-rail|.wz-start",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "What applies",
+      "say": "Salary, a second employer, a house, shares and funds, a property sale, crypto, a business, foreign income, days abroad, arrears, last year's losses, a revised return - in plain words, the section small beneath.",
+      "do": [
+        {
+          "click": "[data-pick='employers']"
+        },
+        {
+          "wait": 0.8
+        },
+        {
+          "click": "[data-pick='shares']"
+        },
+        {
+          "wait": 0.8
+        },
+        {
+          "click": "[data-pick='property']"
+        },
+        {
+          "wait": 0.8
+        },
+        {
+          "highlight_target": ".wz-what|.wz-start",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "What kind of work",
+      "say": "For a business: trading, manufacturing, services, a profession or farming; GST or not; a small turnover on the presumptive basis or full books; a tax audit with Form 3CD; partners' salary and interest; stock; depreciation.",
+      "do": [
+        {
+          "click": "[data-pick='business']"
+        },
+        {
+          "wait": 1
+        },
+        {
+          "highlight_target": ".wz-work|.wz-what|.wz-start",
+          "optional": true,
+          "timeout": 5
+        },
+        {
+          "wait": 2
+        },
+        {
+          "click": "[data-pick='business']"
+        },
+        {
+          "wait": 0.8
+        }
+      ]
+    },
+    {
+      "chapter": "Which form",
+      "say": "The form follows from the picks, with its reason in one line - ITR-1, 2, 3 or 4 for a person or an HUF, ITR-5 for a firm, an LLP or an AOP, ITR-6 for a company.",
+      "do": [
+        {
+          "highlight_target": ".wz-form|.wz-start",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Documents you'll need",
+      "say": "Needed, good to have, and what you type in - each with what it is and where to get it: TRACES, the AIS, your employer, CAMS or KFintech, the GST portal, the firm's deed and its books.",
+      "do": [
+        {
+          "click": "[data-go='docs']"
+        },
+        {
+          "wait_for": ".wz-docs"
+        },
+        {
+          "wait": 1
+        },
+        {
+          "highlight_target": ".wz-docs|.wz-start",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Drop them in",
+      "say": "Several at once. Each file is identified by what it is - a Form 16, an AIS, a GST certificate, a deed, the books - with its PAN, name and year; a file it cannot read says so.",
+      "do": [
+        {
+          "click": "[data-go='upload']"
+        },
+        {
+          "wait_for": "[data-drop='wz-file']"
+        },
+        {
+          "wait": 0.5
+        },
+        {
+          "highlight_target": "[data-drop='wz-file']|.wz-start",
+          "optional": true,
+          "timeout": 5
+        },
+        {
+          "wait": 2
+        },
+        {
+          "upload": "#wz-file",
+          "files": [
+            "showcase/wizard-sal/1 Form 16 - Demo Analytics - AY 2026-27.pdf",
+            "showcase/wizard-sal/2 AIS - ZZDPR0047N - FY 2025-26.pdf"
+          ]
+        },
+        {
+          "wait_for": ".wz-ask-modal",
+          "timeout": 30
+        }
+      ]
+    },
+    {
+      "chapter": "The client, made for you",
+      "say": "The first document with a PAN makes the client, or finds the one already in your register. A popup asks only what is missing or does not agree: whose PAN, a date of birth, an HUF's Karta, a firm's partners from its deed, residence.",
+      "do": [
+        {
+          "wait": 2
+        },
+        {
+          "fill": "[data-ask='name']",
+          "text": "Ravi Demo Salaried",
+          "optional": true
+        },
+        {
+          "fill": "[data-ask='dob']",
+          "text": "1986-02-11",
+          "optional": true
+        },
+        {
+          "wait": 1
+        },
+        {
+          "click": ".wz-ask-modal [data-save]"
+        },
+        {
+          "wait": 3
+        },
+        {
+          "highlight_target": ".wz-client|.wz-start",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "What the documents imply",
+      "say": "Fund sales in the AIS - upload the CAMS statement. Another employer's TAN - that Form 16. A firm with GST - its GSTR-3B. Each hint goes once it is answered.",
+      "do": [
+        {
+          "upload": "#wz-file",
+          "files": [
+            "showcase/wizard-sal/3 26AS - ZZDPR0047N - AY 2026-27.txt"
+          ]
+        },
+        {
+          "wait": 4
+        },
+        {
+          "highlight_target": ".wz-prompts|.wz-start",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Review, then the return",
+      "say": "What was understood, what is still missing, and one button on: My return at the right step for a person, Intake & map or the next firm screen for a business - never a dead end.",
+      "do": [
+        {
+          "click": "[data-go='review']"
+        },
+        {
+          "wait_for": ".wz-review"
+        },
+        {
+          "wait": 1
+        },
+        {
+          "highlight_target": ".wz-go|.wz-review|.wz-start",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    }
+  ]
+}

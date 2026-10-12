@@ -41,6 +41,11 @@
           "target": ".mr-rail-card"
         },
         {
+          "title": "New filing",
+          "say": "New here? Start a new filing: the wizard asks what you are filing, lists the documents, reads them, makes the client and opens this return at the right step.",
+          "target": "#mr-wizard|.mr-pick|.mr-rail-card"
+        },
+        {
           "title": "Start from documents",
           "say": "No client to add first. Drop the pre-filled JSON or a return already filed, and the person - or the HUF - is made from it: PAN, name, date of birth. A CA firm sees its people here; you go straight to your own return.",
           "target": "#mr-new|.mr-pick|.mr-rail-card"
@@ -232,15 +237,15 @@
     }
   },
   "returns": "record",
-  "version": 6,
+  "version": 7,
   "status": "published",
-  "description_nl": "2026-10-06: the My return walk - the five steps, the documents, the checks, the two regimes, the review and the file; tours/sf-myreturn.json says the same. 2026-10-07: rewritten for what shipped on 6-7 October (tools/make_guides_wave4.py). 2026-10-10: Foreign assets step names table B (an interest in a foreign company or firm).",
+  "description_nl": "2026-10-06: the My return walk - the five steps, the documents, the checks, the two regimes, the review and the file; tours/sf-myreturn.json says the same. 2026-10-07: rewritten for what shipped on 6-7 October (tools/make_guides_wave4.py). 2026-10-10: Foreign assets step names table B (an interest in a foreign company or firm). 2026-10-11: a step pointing to New filing (the wizard).",
   "test_cases": [
     {
       "args": {},
       "expect_value": {
         "title": "My return",
-        "lede": "Your own return - ITR-1, 2, 3 or 4, for yourself or a family HUF. Start from your documents: {product} reads them, checks them against each other, works out both regimes and makes the department's JSON.",
+        "lede": "Your own return - ITR-1, 2, 3 or 4, for yourself or a family HUF. Start from your documents: SimplyFy reads them, checks them against each other, works out both regimes and makes the department's JSON.",
         "icon": "user",
         "minutes": 7,
         "steps": [
@@ -248,6 +253,11 @@
             "title": "Five steps",
             "say": "Gather, check, choose, review, file. Each step ticks itself off as it is done, and you can click any step to go back to it.",
             "target": ".mr-rail-card"
+          },
+          {
+            "title": "New filing",
+            "say": "New here? Start a new filing: the wizard asks what you are filing, lists the documents, reads them, makes the client and opens this return at the right step.",
+            "target": "#mr-wizard|.mr-pick|.mr-rail-card"
           },
           {
             "title": "Start from documents",
@@ -410,7 +420,7 @@
           },
           {
             "title": "Already filed?",
-            "say": "Once filed, note the date and acknowledgement - and compare what was filed with what {product} worked out.",
+            "say": "Once filed, note the date and acknowledgement - and compare what was filed with what SimplyFy worked out.",
             "target": "section.card:has(#mr-filed-on)",
             "open": ".mr-node[data-step='file']"
           },

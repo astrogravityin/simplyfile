@@ -1,0 +1,138 @@
+{
+  "chip_id": "company.setoff",
+  "kind": "accessor",
+  "set": "company",
+  "label": "Company: one loss set off against one income",
+  "aliases": [
+    "company: one loss set off against one in"
+  ],
+  "params": [
+    {
+      "name": "available",
+      "type": "number",
+      "default": 0,
+      "label": "loss (or credit) available"
+    },
+    {
+      "name": "against",
+      "type": "number",
+      "default": 0,
+      "label": "income (or room) it may be set off against"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "used": {
+        "vop": "smallest",
+        "values": [
+          {
+            "vop": "largest",
+            "values": [
+              0,
+              "$available"
+            ]
+          },
+          {
+            "vop": "largest",
+            "values": [
+              0,
+              "$against"
+            ]
+          }
+        ]
+      },
+      "loss_left": {
+        "vop": "sub",
+        "a": {
+          "vop": "largest",
+          "values": [
+            0,
+            "$available"
+          ]
+        },
+        "b": {
+          "vop": "smallest",
+          "values": [
+            {
+              "vop": "largest",
+              "values": [
+                0,
+                "$available"
+              ]
+            },
+            {
+              "vop": "largest",
+              "values": [
+                0,
+                "$against"
+              ]
+            }
+          ]
+        }
+      },
+      "income_left": {
+        "vop": "sub",
+        "a": "$against",
+        "b": {
+          "vop": "smallest",
+          "values": [
+            {
+              "vop": "largest",
+              "values": [
+                0,
+                "$available"
+              ]
+            },
+            {
+              "vop": "largest",
+              "values": [
+                0,
+                "$against"
+              ]
+            }
+          ]
+        }
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-11: Set-off is never more than the loss, nor more than the income it meets; what is left of each goes on (s.70-74, s.115JAA(4)).",
+  "test_cases": [
+    {
+      "args": {
+        "available": 500000,
+        "against": 300000
+      },
+      "expect_value": {
+        "used": 300000,
+        "loss_left": 200000,
+        "income_left": 0
+      }
+    },
+    {
+      "args": {
+        "available": 100000,
+        "against": 300000
+      },
+      "expect_value": {
+        "used": 100000,
+        "loss_left": 0,
+        "income_left": 200000
+      }
+    },
+    {
+      "args": {
+        "available": 100000,
+        "against": -5000
+      },
+      "expect_value": {
+        "used": 0,
+        "loss_left": 100000,
+        "income_left": -5000
+      }
+    }
+  ]
+}

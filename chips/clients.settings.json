@@ -52,6 +52,14 @@
           "pan_letter": "B",
           "form": "ITR-5",
           "has_partners": true
+        },
+        {
+          "id": "company",
+          "label": "Company (domestic)",
+          "pan_letter": "C",
+          "form": "ITR-6",
+          "has_partners": false,
+          "has_company": true
         }
       ],
       "label": "statuses"
@@ -61,7 +69,8 @@
       "type": "list",
       "default": [
         "ITR-3",
-        "ITR-5"
+        "ITR-5",
+        "ITR-6"
       ],
       "label": "forms"
     },
@@ -181,9 +190,9 @@
     }
   },
   "returns": "record",
-  "version": 2,
+  "version": 3,
   "status": "published",
-  "description_nl": "Which statuses an assessee can have (with the PAN 4th letter and the ITR form each files), the PAN / GSTIN / IFSC shapes, the assessment years on offer and the stages a year moves through. An LLP's PAN carries F, like a firm. 2026-10-04 owner: \"multi select and move to Archive; archive a client -> all its filings; archive a filing alone -> the client stays; parent archived -> child archived\". 2026-10-05 owner (3CD from a party master: \"we need to input 30-40 names, addresses and PANs\"): each client keeps a party master - lenders, payees, relatives - with name, address, PAN, relationship and usual payment mode; the party fields fit the Form 3CD schema (name 125, address 150). party_name_drop: honorifics a statement may put before a name, ignored when matching a party by name.",
+  "description_nl": "Which statuses an assessee can have (with the PAN 4th letter and the ITR form each files), the PAN / GSTIN / IFSC shapes, the assessment years on offer and the stages a year moves through. An LLP's PAN carries F, like a firm. 2026-10-04 owner: \"multi select and move to Archive; archive a client -> all its filings; archive a filing alone -> the client stays; parent archived -> child archived\". 2026-10-05 owner (3CD from a party master: \"we need to input 30-40 names, addresses and PANs\"): each client keeps a party master - lenders, payees, relatives - with name, address, PAN, relationship and usual payment mode; the party fields fit the Form 3CD schema (name 125, address 150). party_name_drop: honorifics a statement may put before a name, ignored when matching a party by name. 2026-10-11: status company - a domestic company (PAN 4th letter C) files ITR-6; has_company: the client carries a company part (CIN, date of incorporation, kind, tax option, listed, manufacturing, key persons, shareholders) - company.py, chip company.settings / company.problem.",
   "test_cases": [
     {
       "args": {},
@@ -230,11 +239,20 @@
             "pan_letter": "B",
             "form": "ITR-5",
             "has_partners": true
+          },
+          {
+            "id": "company",
+            "label": "Company (domestic)",
+            "pan_letter": "C",
+            "form": "ITR-6",
+            "has_partners": false,
+            "has_company": true
           }
         ],
         "forms": [
           "ITR-3",
-          "ITR-5"
+          "ITR-5",
+          "ITR-6"
         ],
         "current_ay": "2026-27",
         "years": [

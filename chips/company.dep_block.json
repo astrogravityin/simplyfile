@@ -1,0 +1,838 @@
+{
+  "chip_id": "company.dep_block",
+  "kind": "accessor",
+  "set": "company",
+  "label": "Company: depreciation on one block of assets (WDV, half rate, additional depreciation, s.50)",
+  "aliases": [
+    "company: depreciation on one block of as"
+  ],
+  "params": [
+    {
+      "name": "opening",
+      "type": "number",
+      "default": 0,
+      "label": "WDV on the first day of the year"
+    },
+    {
+      "name": "more",
+      "type": "number",
+      "default": 0,
+      "label": "additions put to use 180 days or more"
+    },
+    {
+      "name": "less",
+      "type": "number",
+      "default": 0,
+      "label": "additions put to use less than 180 days"
+    },
+    {
+      "name": "sales",
+      "type": "number",
+      "default": 0,
+      "label": "moneys received on sale / transfer during the year"
+    },
+    {
+      "name": "rate",
+      "type": "number",
+      "default": 15,
+      "label": "the block's rate %"
+    },
+    {
+      "name": "addl_ok",
+      "type": "boolean",
+      "default": false,
+      "label": "additional depreciation allowed (the block allows it, the option allows it, a manufacturing company)"
+    },
+    {
+      "name": "addl_rate",
+      "type": "number",
+      "default": 20,
+      "label": "additional depreciation % (s.32(1)(iia))"
+    },
+    {
+      "name": "new_more",
+      "type": "number",
+      "default": 0,
+      "label": "of the additions: new P&M used 180 days or more"
+    },
+    {
+      "name": "new_less",
+      "type": "number",
+      "default": 0,
+      "label": "of the additions: new P&M used less than 180 days"
+    },
+    {
+      "name": "addl_bf",
+      "type": "number",
+      "default": 0,
+      "label": "additional depreciation brought forward (the half held back last year)"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "full_base": {
+        "vop": "largest",
+        "values": [
+          0,
+          {
+            "vop": "sub",
+            "a": {
+              "vop": "total",
+              "values": [
+                "$opening",
+                "$more"
+              ]
+            },
+            "b": "$sales"
+          }
+        ]
+      },
+      "real_full": {
+        "vop": "smallest",
+        "values": [
+          "$sales",
+          {
+            "vop": "total",
+            "values": [
+              "$opening",
+              "$more"
+            ]
+          }
+        ]
+      },
+      "half_base": {
+        "vop": "largest",
+        "values": [
+          0,
+          {
+            "vop": "sub",
+            "a": "$less",
+            "b": {
+              "vop": "largest",
+              "values": [
+                0,
+                {
+                  "vop": "sub",
+                  "a": "$sales",
+                  "b": {
+                    "vop": "total",
+                    "values": [
+                      "$opening",
+                      "$more"
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "real_half": {
+        "vop": "smallest",
+        "values": [
+          {
+            "vop": "largest",
+            "values": [
+              0,
+              {
+                "vop": "sub",
+                "a": "$sales",
+                "b": {
+                  "vop": "total",
+                  "values": [
+                    "$opening",
+                    "$more"
+                  ]
+                }
+              }
+            ]
+          },
+          "$less"
+        ]
+      },
+      "dep_full": {
+        "vop": "round_to",
+        "value": {
+          "vop": "div",
+          "a": {
+            "vop": "mul",
+            "a": {
+              "vop": "largest",
+              "values": [
+                0,
+                {
+                  "vop": "sub",
+                  "a": {
+                    "vop": "total",
+                    "values": [
+                      "$opening",
+                      "$more"
+                    ]
+                  },
+                  "b": "$sales"
+                }
+              ]
+            },
+            "b": "$rate"
+          },
+          "b": 100
+        },
+        "digits": 0
+      },
+      "dep_half": {
+        "vop": "round_to",
+        "value": {
+          "vop": "div",
+          "a": {
+            "vop": "mul",
+            "a": {
+              "vop": "largest",
+              "values": [
+                0,
+                {
+                  "vop": "sub",
+                  "a": "$less",
+                  "b": {
+                    "vop": "largest",
+                    "values": [
+                      0,
+                      {
+                        "vop": "sub",
+                        "a": "$sales",
+                        "b": {
+                          "vop": "total",
+                          "values": [
+                            "$opening",
+                            "$more"
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            "b": {
+              "vop": "div",
+              "a": "$rate",
+              "b": 2
+            }
+          },
+          "b": 100
+        },
+        "digits": 0
+      },
+      "addl_more": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "eq",
+              "left": "$addl_ok",
+              "right": true
+            },
+            "then": {
+              "vop": "round_to",
+              "value": {
+                "vop": "div",
+                "a": {
+                  "vop": "mul",
+                  "a": "$new_more",
+                  "b": "$addl_rate"
+                },
+                "b": 100
+              },
+              "digits": 0
+            }
+          }
+        ],
+        "else": 0
+      },
+      "addl_less": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "eq",
+              "left": "$addl_ok",
+              "right": true
+            },
+            "then": {
+              "vop": "round_to",
+              "value": {
+                "vop": "div",
+                "a": {
+                  "vop": "mul",
+                  "a": "$new_less",
+                  "b": {
+                    "vop": "div",
+                    "a": "$addl_rate",
+                    "b": 2
+                  }
+                },
+                "b": 100
+              },
+              "digits": 0
+            }
+          }
+        ],
+        "else": 0
+      },
+      "addl_bf": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "eq",
+              "left": "$addl_ok",
+              "right": true
+            },
+            "then": "$addl_bf"
+          }
+        ],
+        "else": 0
+      },
+      "addl": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "eq",
+              "left": "$addl_ok",
+              "right": true
+            },
+            "then": {
+              "vop": "total",
+              "values": [
+                {
+                  "vop": "round_to",
+                  "value": {
+                    "vop": "div",
+                    "a": {
+                      "vop": "mul",
+                      "a": "$new_more",
+                      "b": "$addl_rate"
+                    },
+                    "b": 100
+                  },
+                  "digits": 0
+                },
+                {
+                  "vop": "round_to",
+                  "value": {
+                    "vop": "div",
+                    "a": {
+                      "vop": "mul",
+                      "a": "$new_less",
+                      "b": {
+                        "vop": "div",
+                        "a": "$addl_rate",
+                        "b": 2
+                      }
+                    },
+                    "b": 100
+                  },
+                  "digits": 0
+                },
+                "$addl_bf"
+              ]
+            }
+          }
+        ],
+        "else": 0
+      },
+      "addl_carry": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "eq",
+              "left": "$addl_ok",
+              "right": true
+            },
+            "then": {
+              "vop": "round_to",
+              "value": {
+                "vop": "div",
+                "a": {
+                  "vop": "mul",
+                  "a": "$new_less",
+                  "b": {
+                    "vop": "div",
+                    "a": "$addl_rate",
+                    "b": 2
+                  }
+                },
+                "b": 100
+              },
+              "digits": 0
+            }
+          }
+        ],
+        "else": 0
+      },
+      "total": {
+        "vop": "total",
+        "values": [
+          {
+            "vop": "round_to",
+            "value": {
+              "vop": "div",
+              "a": {
+                "vop": "mul",
+                "a": {
+                  "vop": "largest",
+                  "values": [
+                    0,
+                    {
+                      "vop": "sub",
+                      "a": {
+                        "vop": "total",
+                        "values": [
+                          "$opening",
+                          "$more"
+                        ]
+                      },
+                      "b": "$sales"
+                    }
+                  ]
+                },
+                "b": "$rate"
+              },
+              "b": 100
+            },
+            "digits": 0
+          },
+          {
+            "vop": "round_to",
+            "value": {
+              "vop": "div",
+              "a": {
+                "vop": "mul",
+                "a": {
+                  "vop": "largest",
+                  "values": [
+                    0,
+                    {
+                      "vop": "sub",
+                      "a": "$less",
+                      "b": {
+                        "vop": "largest",
+                        "values": [
+                          0,
+                          {
+                            "vop": "sub",
+                            "a": "$sales",
+                            "b": {
+                              "vop": "total",
+                              "values": [
+                                "$opening",
+                                "$more"
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                },
+                "b": {
+                  "vop": "div",
+                  "a": "$rate",
+                  "b": 2
+                }
+              },
+              "b": 100
+            },
+            "digits": 0
+          },
+          {
+            "vop": "choose",
+            "cases": [
+              {
+                "when": {
+                  "op": "eq",
+                  "left": "$addl_ok",
+                  "right": true
+                },
+                "then": {
+                  "vop": "total",
+                  "values": [
+                    {
+                      "vop": "round_to",
+                      "value": {
+                        "vop": "div",
+                        "a": {
+                          "vop": "mul",
+                          "a": "$new_more",
+                          "b": "$addl_rate"
+                        },
+                        "b": 100
+                      },
+                      "digits": 0
+                    },
+                    {
+                      "vop": "round_to",
+                      "value": {
+                        "vop": "div",
+                        "a": {
+                          "vop": "mul",
+                          "a": "$new_less",
+                          "b": {
+                            "vop": "div",
+                            "a": "$addl_rate",
+                            "b": 2
+                          }
+                        },
+                        "b": 100
+                      },
+                      "digits": 0
+                    },
+                    "$addl_bf"
+                  ]
+                }
+              }
+            ],
+            "else": 0
+          }
+        ]
+      },
+      "wdv_last": {
+        "vop": "largest",
+        "values": [
+          0,
+          {
+            "vop": "sub",
+            "a": {
+              "vop": "total",
+              "values": [
+                {
+                  "vop": "largest",
+                  "values": [
+                    0,
+                    {
+                      "vop": "sub",
+                      "a": {
+                        "vop": "total",
+                        "values": [
+                          "$opening",
+                          "$more"
+                        ]
+                      },
+                      "b": "$sales"
+                    }
+                  ]
+                },
+                {
+                  "vop": "largest",
+                  "values": [
+                    0,
+                    {
+                      "vop": "sub",
+                      "a": "$less",
+                      "b": {
+                        "vop": "largest",
+                        "values": [
+                          0,
+                          {
+                            "vop": "sub",
+                            "a": "$sales",
+                            "b": {
+                              "vop": "total",
+                              "values": [
+                                "$opening",
+                                "$more"
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            "b": {
+              "vop": "total",
+              "values": [
+                {
+                  "vop": "round_to",
+                  "value": {
+                    "vop": "div",
+                    "a": {
+                      "vop": "mul",
+                      "a": {
+                        "vop": "largest",
+                        "values": [
+                          0,
+                          {
+                            "vop": "sub",
+                            "a": {
+                              "vop": "total",
+                              "values": [
+                                "$opening",
+                                "$more"
+                              ]
+                            },
+                            "b": "$sales"
+                          }
+                        ]
+                      },
+                      "b": "$rate"
+                    },
+                    "b": 100
+                  },
+                  "digits": 0
+                },
+                {
+                  "vop": "round_to",
+                  "value": {
+                    "vop": "div",
+                    "a": {
+                      "vop": "mul",
+                      "a": {
+                        "vop": "largest",
+                        "values": [
+                          0,
+                          {
+                            "vop": "sub",
+                            "a": "$less",
+                            "b": {
+                              "vop": "largest",
+                              "values": [
+                                0,
+                                {
+                                  "vop": "sub",
+                                  "a": "$sales",
+                                  "b": {
+                                    "vop": "total",
+                                    "values": [
+                                      "$opening",
+                                      "$more"
+                                    ]
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        ]
+                      },
+                      "b": {
+                        "vop": "div",
+                        "a": "$rate",
+                        "b": 2
+                      }
+                    },
+                    "b": 100
+                  },
+                  "digits": 0
+                },
+                {
+                  "vop": "choose",
+                  "cases": [
+                    {
+                      "when": {
+                        "op": "eq",
+                        "left": "$addl_ok",
+                        "right": true
+                      },
+                      "then": {
+                        "vop": "total",
+                        "values": [
+                          {
+                            "vop": "round_to",
+                            "value": {
+                              "vop": "div",
+                              "a": {
+                                "vop": "mul",
+                                "a": "$new_more",
+                                "b": "$addl_rate"
+                              },
+                              "b": 100
+                            },
+                            "digits": 0
+                          },
+                          {
+                            "vop": "round_to",
+                            "value": {
+                              "vop": "div",
+                              "a": {
+                                "vop": "mul",
+                                "a": "$new_less",
+                                "b": {
+                                  "vop": "div",
+                                  "a": "$addl_rate",
+                                  "b": 2
+                                }
+                              },
+                              "b": 100
+                            },
+                            "digits": 0
+                          },
+                          "$addl_bf"
+                        ]
+                      }
+                    }
+                  ],
+                  "else": 0
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "gain_50": {
+        "vop": "largest",
+        "values": [
+          0,
+          {
+            "vop": "sub",
+            "a": "$sales",
+            "b": {
+              "vop": "total",
+              "values": [
+                "$opening",
+                "$more",
+                "$less"
+              ]
+            }
+          }
+        ]
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-11: s.32(1)(ii) on the written-down value of the block: opening WDV + additions - moneys from sales; additions put to use for less than 180 days get half the rate (2nd proviso to s.32(1)), sales coming first out of the full-rate part. Additional depreciation u/s 32(1)(iia) - 20% of new plant and machinery of a manufacturing company, half when used under 180 days and the other half next year (the 3rd proviso) - not under 115BA / 115BAA / 115BAB. Sales above the whole block are a short-term capital gain u/s 50.",
+  "test_cases": [
+    {
+      "args": {
+        "opening": 1000000,
+        "more": 200000,
+        "less": 100000,
+        "rate": 15
+      },
+      "expect_value": {
+        "full_base": 1200000,
+        "real_full": 0,
+        "half_base": 100000,
+        "real_half": 0,
+        "dep_full": 180000,
+        "dep_half": 7500,
+        "addl_more": 0,
+        "addl_less": 0,
+        "addl_bf": 0,
+        "addl": 0,
+        "addl_carry": 0,
+        "total": 187500.0,
+        "wdv_last": 1112500,
+        "gain_50": 0
+      }
+    },
+    {
+      "args": {
+        "opening": 1000000,
+        "more": 500000,
+        "less": 400000,
+        "rate": 15,
+        "addl_ok": true,
+        "new_more": 500000,
+        "new_less": 400000
+      },
+      "expect_value": {
+        "full_base": 1500000,
+        "real_full": 0,
+        "half_base": 400000,
+        "real_half": 0,
+        "dep_full": 225000,
+        "dep_half": 30000,
+        "addl_more": 100000,
+        "addl_less": 40000,
+        "addl_bf": 0,
+        "addl": 140000.0,
+        "addl_carry": 40000,
+        "total": 395000.0,
+        "wdv_last": 1505000,
+        "gain_50": 0
+      }
+    },
+    {
+      "args": {
+        "opening": 1000000,
+        "more": 500000,
+        "less": 400000,
+        "rate": 15,
+        "addl_ok": false,
+        "new_more": 500000,
+        "new_less": 400000,
+        "addl_bf": 30000
+      },
+      "expect_value": {
+        "full_base": 1500000,
+        "real_full": 0,
+        "half_base": 400000,
+        "real_half": 0,
+        "dep_full": 225000,
+        "dep_half": 30000,
+        "addl_more": 0,
+        "addl_less": 0,
+        "addl_bf": 0,
+        "addl": 0,
+        "addl_carry": 0,
+        "total": 255000.0,
+        "wdv_last": 1645000,
+        "gain_50": 0
+      }
+    },
+    {
+      "args": {
+        "opening": 100000,
+        "more": 0,
+        "less": 50000,
+        "sales": 120000,
+        "rate": 15
+      },
+      "expect_value": {
+        "full_base": 0,
+        "real_full": 100000,
+        "half_base": 30000,
+        "real_half": 20000,
+        "dep_full": 0,
+        "dep_half": 2250,
+        "addl_more": 0,
+        "addl_less": 0,
+        "addl_bf": 0,
+        "addl": 0,
+        "addl_carry": 0,
+        "total": 2250.0,
+        "wdv_last": 27750,
+        "gain_50": 0
+      }
+    },
+    {
+      "args": {
+        "opening": 100000,
+        "sales": 180000,
+        "rate": 40
+      },
+      "expect_value": {
+        "full_base": 0,
+        "real_full": 100000,
+        "half_base": 0,
+        "real_half": 0,
+        "dep_full": 0,
+        "dep_half": 0,
+        "addl_more": 0,
+        "addl_less": 0,
+        "addl_bf": 0,
+        "addl": 0,
+        "addl_carry": 0,
+        "total": 0.0,
+        "wdv_last": 0,
+        "gain_50": 80000
+      }
+    }
+  ]
+}

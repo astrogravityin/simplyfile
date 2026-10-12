@@ -1,0 +1,729 @@
+{
+  "chip_id": "wizard.asks",
+  "kind": "accessor",
+  "set": "wizard",
+  "label": "New filing: what the popup asks - only what the documents did not give, or gave two ways",
+  "aliases": [
+    "new filing: what the popup asks - only what the documents did not give, or gave two ways"
+  ],
+  "params": [
+    {
+      "name": "client",
+      "type": "boolean",
+      "default": false,
+      "label": "client"
+    },
+    {
+      "name": "files",
+      "type": "number",
+      "default": 1,
+      "label": "files"
+    },
+    {
+      "name": "pans",
+      "type": "number",
+      "default": 1,
+      "label": "pans"
+    },
+    {
+      "name": "name",
+      "type": "text",
+      "default": "X",
+      "label": "name"
+    },
+    {
+      "name": "dob",
+      "type": "text",
+      "default": "2000-01-01",
+      "label": "dob"
+    },
+    {
+      "name": "who",
+      "type": "text",
+      "default": "individual",
+      "label": "who"
+    },
+    {
+      "name": "karta_name",
+      "type": "text",
+      "default": "",
+      "label": "karta_name"
+    },
+    {
+      "name": "karta_pan",
+      "type": "text",
+      "default": "",
+      "label": "karta_pan"
+    },
+    {
+      "name": "clash",
+      "type": "boolean",
+      "default": false,
+      "label": "clash"
+    },
+    {
+      "name": "nri",
+      "type": "boolean",
+      "default": false,
+      "label": "nri"
+    },
+    {
+      "name": "resident",
+      "type": "text",
+      "default": "",
+      "label": "resident"
+    },
+    {
+      "name": "partners_need",
+      "type": "boolean",
+      "default": false,
+      "label": "partners_need"
+    },
+    {
+      "name": "gstin_need",
+      "type": "boolean",
+      "default": false,
+      "label": "gstin_need"
+    },
+    {
+      "name": "company_need",
+      "type": "boolean",
+      "default": false,
+      "label": "company_need"
+    }
+  ],
+  "expr": {
+    "vop": "compact",
+    "values": [
+      {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "not",
+                  "item": "$client"
+                },
+                {
+                  "op": "gt",
+                  "left": "$pans",
+                  "right": 1
+                }
+              ]
+            },
+            "then": "pan_pick"
+          }
+        ],
+        "else": ""
+      },
+      {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "not",
+                  "item": "$client"
+                },
+                {
+                  "op": "gt",
+                  "left": "$files",
+                  "right": 0
+                },
+                {
+                  "op": "eq",
+                  "left": "$pans",
+                  "right": 0
+                }
+              ]
+            },
+            "then": "pan"
+          }
+        ],
+        "else": ""
+      },
+      {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "eq",
+              "left": "$clash",
+              "right": true
+            },
+            "then": "status"
+          }
+        ],
+        "else": ""
+      },
+      {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "not",
+                  "item": "$client"
+                },
+                {
+                  "op": "gt",
+                  "left": "$files",
+                  "right": 0
+                },
+                {
+                  "op": "le",
+                  "left": "$pans",
+                  "right": 1
+                },
+                {
+                  "op": "eq",
+                  "left": "$name",
+                  "right": ""
+                },
+                {
+                  "op": "ne",
+                  "left": "$who",
+                  "right": "huf"
+                }
+              ]
+            },
+            "then": "name"
+          }
+        ],
+        "else": ""
+      },
+      {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "not",
+                  "item": "$client"
+                },
+                {
+                  "op": "gt",
+                  "left": "$files",
+                  "right": 0
+                },
+                {
+                  "op": "le",
+                  "left": "$pans",
+                  "right": 1
+                },
+                {
+                  "op": "eq",
+                  "left": "$name",
+                  "right": ""
+                },
+                {
+                  "op": "eq",
+                  "left": "$who",
+                  "right": "huf"
+                }
+              ]
+            },
+            "then": "huf_name"
+          }
+        ],
+        "else": ""
+      },
+      {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "gt",
+                  "left": "$files",
+                  "right": 0
+                },
+                {
+                  "op": "in_set",
+                  "value": "$who",
+                  "set": [
+                    "self",
+                    "individual"
+                  ]
+                },
+                {
+                  "op": "eq",
+                  "left": "$dob",
+                  "right": ""
+                }
+              ]
+            },
+            "then": "dob"
+          }
+        ],
+        "else": ""
+      },
+      {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "gt",
+                  "left": "$files",
+                  "right": 0
+                },
+                {
+                  "op": "eq",
+                  "left": "$who",
+                  "right": "huf"
+                },
+                {
+                  "op": "eq",
+                  "left": "$karta_name",
+                  "right": ""
+                }
+              ]
+            },
+            "then": "karta_name"
+          }
+        ],
+        "else": ""
+      },
+      {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "gt",
+                  "left": "$files",
+                  "right": 0
+                },
+                {
+                  "op": "eq",
+                  "left": "$who",
+                  "right": "huf"
+                },
+                {
+                  "op": "eq",
+                  "left": "$karta_pan",
+                  "right": ""
+                }
+              ]
+            },
+            "then": "karta_pan"
+          }
+        ],
+        "else": ""
+      },
+      {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "eq",
+                  "left": "$nri",
+                  "right": true
+                },
+                {
+                  "op": "eq",
+                  "left": "$resident",
+                  "right": ""
+                }
+              ]
+            },
+            "then": "residence"
+          }
+        ],
+        "else": ""
+      },
+      {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "gt",
+                  "left": "$files",
+                  "right": 0
+                },
+                {
+                  "op": "eq",
+                  "left": "$partners_need",
+                  "right": true
+                }
+              ]
+            },
+            "then": "partners"
+          }
+        ],
+        "else": ""
+      },
+      {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "gt",
+                  "left": "$files",
+                  "right": 0
+                },
+                {
+                  "op": "eq",
+                  "left": "$gstin_need",
+                  "right": true
+                }
+              ]
+            },
+            "then": "gstin"
+          }
+        ],
+        "else": ""
+      },
+      {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "gt",
+                  "left": "$files",
+                  "right": 0
+                },
+                {
+                  "op": "eq",
+                  "left": "$company_need",
+                  "right": true
+                }
+              ]
+            },
+            "then": "company"
+          }
+        ],
+        "else": ""
+      }
+    ]
+  },
+  "returns": "list",
+  "status": "published",
+  "test_cases": [
+    {
+      "args": {
+        "client": false,
+        "files": 1,
+        "pans": 1,
+        "name": "X",
+        "dob": "2000-01-01",
+        "who": "individual",
+        "karta_name": "",
+        "karta_pan": "",
+        "clash": false,
+        "nri": false,
+        "resident": "",
+        "partners_need": false,
+        "gstin_need": false,
+        "company_need": false
+      },
+      "expect_value": []
+    },
+    {
+      "args": {
+        "client": false,
+        "files": 1,
+        "pans": 0,
+        "name": "",
+        "dob": "",
+        "who": "individual",
+        "karta_name": "",
+        "karta_pan": "",
+        "clash": false,
+        "nri": false,
+        "resident": "",
+        "partners_need": false,
+        "gstin_need": false,
+        "company_need": false
+      },
+      "expect_value": [
+        "pan",
+        "name",
+        "dob"
+      ]
+    },
+    {
+      "args": {
+        "client": false,
+        "files": 1,
+        "pans": 2,
+        "name": "X",
+        "dob": "2000-01-01",
+        "who": "individual",
+        "karta_name": "",
+        "karta_pan": "",
+        "clash": false,
+        "nri": false,
+        "resident": "",
+        "partners_need": false,
+        "gstin_need": false,
+        "company_need": false
+      },
+      "expect_value": [
+        "pan_pick"
+      ]
+    },
+    {
+      "args": {
+        "client": false,
+        "files": 1,
+        "pans": 1,
+        "name": "",
+        "dob": "",
+        "who": "individual",
+        "karta_name": "",
+        "karta_pan": "",
+        "clash": false,
+        "nri": false,
+        "resident": "",
+        "partners_need": false,
+        "gstin_need": false,
+        "company_need": false
+      },
+      "expect_value": [
+        "name",
+        "dob"
+      ]
+    },
+    {
+      "args": {
+        "client": true,
+        "files": 1,
+        "pans": 1,
+        "name": "",
+        "dob": "",
+        "who": "huf",
+        "karta_name": "",
+        "karta_pan": "",
+        "clash": false,
+        "nri": false,
+        "resident": "",
+        "partners_need": false,
+        "gstin_need": false,
+        "company_need": false
+      },
+      "expect_value": [
+        "karta_name",
+        "karta_pan"
+      ]
+    },
+    {
+      "args": {
+        "client": false,
+        "files": 1,
+        "pans": 1,
+        "name": "",
+        "dob": "",
+        "who": "huf",
+        "karta_name": "",
+        "karta_pan": "",
+        "clash": false,
+        "nri": false,
+        "resident": "",
+        "partners_need": false,
+        "gstin_need": false,
+        "company_need": false
+      },
+      "expect_value": [
+        "huf_name",
+        "karta_name",
+        "karta_pan"
+      ]
+    },
+    {
+      "args": {
+        "client": false,
+        "files": 1,
+        "pans": 1,
+        "name": "X",
+        "dob": "2000-01-01",
+        "who": "individual",
+        "karta_name": "",
+        "karta_pan": "",
+        "clash": true,
+        "nri": false,
+        "resident": "",
+        "partners_need": false,
+        "gstin_need": false,
+        "company_need": false
+      },
+      "expect_value": [
+        "status"
+      ]
+    },
+    {
+      "args": {
+        "client": false,
+        "files": 1,
+        "pans": 1,
+        "name": "X",
+        "dob": "2000-01-01",
+        "who": "individual",
+        "karta_name": "",
+        "karta_pan": "",
+        "clash": false,
+        "nri": true,
+        "resident": "",
+        "partners_need": false,
+        "gstin_need": false,
+        "company_need": false
+      },
+      "expect_value": [
+        "residence"
+      ]
+    },
+    {
+      "args": {
+        "client": false,
+        "files": 0,
+        "pans": 0,
+        "name": "",
+        "dob": "",
+        "who": "individual",
+        "karta_name": "",
+        "karta_pan": "",
+        "clash": false,
+        "nri": false,
+        "resident": "",
+        "partners_need": false,
+        "gstin_need": false,
+        "company_need": false
+      },
+      "expect_value": []
+    },
+    {
+      "args": {
+        "client": true,
+        "files": 1,
+        "pans": 1,
+        "name": "X",
+        "dob": "",
+        "who": "self",
+        "karta_name": "",
+        "karta_pan": "",
+        "clash": false,
+        "nri": false,
+        "resident": "",
+        "partners_need": false,
+        "gstin_need": false,
+        "company_need": false
+      },
+      "expect_value": [
+        "dob"
+      ]
+    },
+    {
+      "args": {
+        "client": false,
+        "files": 1,
+        "pans": 1,
+        "name": "X",
+        "dob": "",
+        "who": "firm",
+        "karta_name": "",
+        "karta_pan": "",
+        "clash": false,
+        "nri": false,
+        "resident": "",
+        "partners_need": true,
+        "gstin_need": false,
+        "company_need": false
+      },
+      "expect_value": [
+        "partners"
+      ]
+    },
+    {
+      "args": {
+        "client": false,
+        "files": 1,
+        "pans": 1,
+        "name": "",
+        "dob": "",
+        "who": "llp",
+        "karta_name": "",
+        "karta_pan": "",
+        "clash": false,
+        "nri": false,
+        "resident": "",
+        "partners_need": true,
+        "gstin_need": true,
+        "company_need": false
+      },
+      "expect_value": [
+        "name",
+        "partners",
+        "gstin"
+      ]
+    },
+    {
+      "args": {
+        "client": false,
+        "files": 0,
+        "pans": 1,
+        "name": "X",
+        "dob": "",
+        "who": "aop",
+        "karta_name": "",
+        "karta_pan": "",
+        "clash": false,
+        "nri": false,
+        "resident": "",
+        "partners_need": true,
+        "gstin_need": false,
+        "company_need": false
+      },
+      "expect_value": []
+    },
+    {
+      "args": {
+        "client": false,
+        "files": 1,
+        "pans": 1,
+        "name": "X",
+        "dob": "",
+        "who": "company",
+        "karta_name": "",
+        "karta_pan": "",
+        "clash": false,
+        "nri": false,
+        "resident": "",
+        "partners_need": false,
+        "gstin_need": false,
+        "company_need": true
+      },
+      "expect_value": [
+        "company"
+      ]
+    }
+  ],
+  "version": 3,
+  "description_nl": "2026-10-11: the popup's questions: two PANs found (whose return?), none found, a PAN that is not the return chosen, no name, an HUF's name and Karta, a date of birth (it opens a locked AIS and decides the senior limits), residence when NRI was picked - nothing before a document is in. 2026-10-11: the popup's questions: two PANs found (whose return?), none found, a PAN (or a GST certificate's constitution) that is not the return chosen, no name, an HUF's name and Karta, a date of birth (it opens a locked AIS and decides the senior limits), residence when NRI was picked, a business's partners or members (filled in from its deed), its GSTIN when GST was picked and no document gave one - nothing before a document is in. 2026-10-11: the popup's questions: two PANs found (whose return?), none found, a PAN (or a GST certificate's constitution) that is not the return chosen, no name, an HUF's name and Karta, a date of birth (it opens a locked AIS and decides the senior limits), residence when NRI was picked, a business's partners or members (filled in from its deed), its GSTIN when GST was picked and no document gave one, a company's CIN, incorporation, tax option, manufacturing and directors (filled in from its certificate of incorporation) - nothing before a document is in."
+}

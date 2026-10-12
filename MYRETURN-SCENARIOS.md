@@ -43,6 +43,17 @@ resident, D foreign income + Schedule FA (ITR-2 and ITR-3), E clubbing, F s.89 (
 
 Wave 4 (2026-10-08) closed the gaps wave 3 left (tools/make_wave4_chips.py - chips myreturn.doc_clash / check_employers / audit_44ab / cg_window / year_rates / year_tax / arrear_row / itru, knobs on myreturn.settings / cg_rules / read / checks / itru_rules, the words; Schedule FA D-F in tools/make_wave3_map.py FA_KINDS; ITR-3 Schedule GST in tools/make_itr3_myreturn.py). Tests: tools/e2e_myreturn.py, wave 4 section W1-W10.
 
+## The way in: New filing (wizard) - 2026-10-11
+
+Owner, after a client demo: "the flow is not intuitive - it must be a wizard". **New filing** (Filing menu, first; Start a new filing on Clients & years, My return and the Start here card) puts four steps in front of My return - **done**:
+1. *What you're filing*: who (Myself on a self-filer's desk; a client or a family HUF in a firm - chip wizard.settings who, wizard.offered) and what applies - salary, a second employer, a house, interest, shares and funds sold, land or a house sold, crypto, a business or profession, foreign income or assets, days abroad, salary arrears, last year's losses, a revised or updated return (chip wizard.scenarios: plain words, the section beneath; an HUF is offered no salary / arrears). The likely form in one line - chip wizard.form on myreturn.form (no second engine).
+2. *Documents you'll need*: chip wizard.docs (each with what it is and where to get it), needed / good to have by wizard.doc_need; what is typed waits for Review.
+3. *Upload*: one drop zone, several files; each read by myreturn_read.read (the same readers), who it names by myreturn.who or the text (chip myreturn.sniff: 26AS / AIS / CAMS headers). A card per file; a file not read says **Not recognised** and stays out; another PAN's document stays out; a locked AIS opens by itself once the date of birth is given. The client is made from the PAN + name (or found by PAN) and every waiting document goes into the return (myreturn.add_doc, the same "already here?" question). The popup asks only what is missing or does not agree (chip wizard.asks: whose PAN when two, a PAN, the PAN's kind against the return chosen, name, an HUF's name, date of birth, the Karta's name and PAN, residence). The hints (chip wizard.prompts): AIS fund / share sales without a capital-gains statement, 194IA in 26AS / AIS without a property sale, a salary TAN without its Form 16, 194S crypto, 194J / 194C fees without a business, a business without GSTR-3B, losses without last year's ITR, foreign assets / arrears to enter.
+4. *Review*: what was understood, what is missing, and Continue in My return at the step chip wizard.next_step names (Gather / Review / Check / Choose).
+Saved on the server per filing (sf_wizard/<firm>/<id>), listed under *Carry on where you left off*; Discard drops only the wizard's progress. Tests: tools/e2e_wizard.py (HUF, salaried + capital gains, Not recognised, the popup, the tenant wall). Demo documents: tools/showcase/make_myreturn_demo.py -> wizard-sal/, wizard-huf/, wizard-misc/.
+
+Later on 2026-10-11 the wizard covers every return SimplyFy files - people, HUFs, firms, LLPs, AOP / BOI, companies (trusts: not yet) - with one worked example and film per path: see **FILING-PATHS.md**.
+
 ## Scenarios
 
 ### Salary and pension

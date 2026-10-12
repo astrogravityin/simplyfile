@@ -1,0 +1,252 @@
+{
+  "chip_id": "company.loss_ok",
+  "kind": "accessor",
+  "set": "company",
+  "label": "Company: may this brought-forward loss or credit be used this year?",
+  "aliases": [
+    "company: may this brought-forward loss o"
+  ],
+  "params": [
+    {
+      "name": "kind",
+      "type": "text",
+      "default": "business",
+      "label": "business | dep (unabsorbed depreciation) | mat (MAT credit)"
+    },
+    {
+      "name": "age",
+      "type": "number",
+      "default": 1,
+      "label": "AYs since the loss's AY"
+    },
+    {
+      "name": "filed_ok",
+      "type": "boolean",
+      "default": true,
+      "label": "that year's return was filed by its due date (s.80 / s.139(3))"
+    },
+    {
+      "name": "listed",
+      "type": "boolean",
+      "default": false,
+      "label": "a company in which the public are substantially interested (listed)"
+    },
+    {
+      "name": "s79_ok",
+      "type": "boolean",
+      "default": true,
+      "label": "51% of the voting power with the same holders on the last day of the loss year and of this year"
+    },
+    {
+      "name": "years",
+      "type": "json",
+      "default": {
+        "business": 8,
+        "mat": 15
+      },
+      "label": "how many AYs each may be carried (company.settings loss_years)"
+    }
+  ],
+  "expr": {
+    "vop": "choose",
+    "cases": [
+      {
+        "when": {
+          "op": "eq",
+          "left": "$kind",
+          "right": "dep"
+        },
+        "then": {
+          "ok": true,
+          "why": "lo_dep"
+        }
+      },
+      {
+        "when": {
+          "op": "all",
+          "items": [
+            {
+              "op": "eq",
+              "left": "$kind",
+              "right": "mat"
+            },
+            {
+              "op": "gt",
+              "left": "$age",
+              "right": {
+                "vop": "get",
+                "value": "$years",
+                "path": "mat"
+              }
+            }
+          ]
+        },
+        "then": {
+          "ok": false,
+          "why": "lo_mat_lapsed"
+        }
+      },
+      {
+        "when": {
+          "op": "eq",
+          "left": "$kind",
+          "right": "mat"
+        },
+        "then": {
+          "ok": true,
+          "why": "lo_mat"
+        }
+      },
+      {
+        "when": {
+          "op": "gt",
+          "left": "$age",
+          "right": {
+            "vop": "get",
+            "value": "$years",
+            "path": "business"
+          }
+        },
+        "then": {
+          "ok": false,
+          "why": "lo_lapsed"
+        }
+      },
+      {
+        "when": {
+          "op": "not",
+          "item": {
+            "op": "eq",
+            "left": "$filed_ok",
+            "right": true
+          }
+        },
+        "then": {
+          "ok": false,
+          "why": "lo_late"
+        }
+      },
+      {
+        "when": {
+          "op": "all",
+          "items": [
+            {
+              "op": "not",
+              "item": {
+                "op": "eq",
+                "left": "$listed",
+                "right": true
+              }
+            },
+            {
+              "op": "not",
+              "item": {
+                "op": "eq",
+                "left": "$s79_ok",
+                "right": true
+              }
+            }
+          ]
+        },
+        "then": {
+          "ok": false,
+          "why": "lo_s79"
+        }
+      }
+    ],
+    "else": {
+      "ok": true,
+      "why": "lo_business"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-11: Unabsorbed depreciation goes on without limit (s.32(2)) and is not hit by s.79. A business loss: 8 AYs (s.72(3)), only when that year's return was in time (s.80 / s.139(3)), and - for a company in which the public are not substantially interested - only when 51% of the voting power stayed with the same holders (s.79(1)(a)). MAT credit: 15 AYs (s.115JAA(3A)). (The s.79 relief for eligible start-ups, s.79(1)(b), is not taken here.)",
+  "test_cases": [
+    {
+      "args": {
+        "kind": "dep",
+        "age": 20
+      },
+      "expect_value": {
+        "ok": true,
+        "why": "lo_dep"
+      }
+    },
+    {
+      "args": {
+        "kind": "business",
+        "age": 8
+      },
+      "expect_value": {
+        "ok": true,
+        "why": "lo_business"
+      }
+    },
+    {
+      "args": {
+        "kind": "business",
+        "age": 9
+      },
+      "expect_value": {
+        "ok": false,
+        "why": "lo_lapsed"
+      }
+    },
+    {
+      "args": {
+        "kind": "business",
+        "age": 2,
+        "filed_ok": false
+      },
+      "expect_value": {
+        "ok": false,
+        "why": "lo_late"
+      }
+    },
+    {
+      "args": {
+        "kind": "business",
+        "age": 2,
+        "s79_ok": false
+      },
+      "expect_value": {
+        "ok": false,
+        "why": "lo_s79"
+      }
+    },
+    {
+      "args": {
+        "kind": "business",
+        "age": 2,
+        "s79_ok": false,
+        "listed": true
+      },
+      "expect_value": {
+        "ok": true,
+        "why": "lo_business"
+      }
+    },
+    {
+      "args": {
+        "kind": "mat",
+        "age": 15
+      },
+      "expect_value": {
+        "ok": true,
+        "why": "lo_mat"
+      }
+    },
+    {
+      "args": {
+        "kind": "mat",
+        "age": 16
+      },
+      "expect_value": {
+        "ok": false,
+        "why": "lo_mat_lapsed"
+      }
+    }
+  ]
+}

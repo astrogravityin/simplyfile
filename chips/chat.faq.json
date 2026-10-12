@@ -174,6 +174,105 @@
           "live": ""
         },
         {
+          "id": "wizard_firm",
+          "q": "How do I file a partnership firm's return?",
+          "words": "partnership firm return itr-5 itr5 file firm return partners deed gst certificate trading firm new firm client how to file a firm",
+          "a": "New filing > A partnership firm: pick the kind of work (trading, manufacturing, services, GST, a tax audit, partners' pay, stock, depreciation), then drop in the GST certificate, the deed, the books in Excel, the 26AS and the GSTR-3B JSON. The certificate makes the client (GSTIN, name, partnership), the popup shows the deed's partners to confirm, the books go to Intake & map, the 26AS to Reconcile, the GST returns to the tax audit. ITR-5, with Form 3CD when audited.",
+          "roles": [],
+          "go": "#/wizard",
+          "live": ""
+        },
+        {
+          "id": "wizard_llp",
+          "q": "Can I file an LLP's return?",
+          "words": "llp limited liability partnership return itr-5 llp agreement designated partners file llp",
+          "a": "Yes - New filing > An LLP. Its GST certificate's constitution (Limited Liability Partnership) must fit the card; the designated partners come from the LLP agreement. An LLP cannot use the presumptive 44AD, so its books go to Intake & map. ITR-5.",
+          "roles": [],
+          "go": "#/wizard",
+          "live": ""
+        },
+        {
+          "id": "wizard_aop",
+          "q": "What about an AOP, BOI or a society?",
+          "words": "aop boi association of persons body of individuals society residents welfare association club joint venture return",
+          "a": "New filing > An AOP or BOI: the PAN's fourth letter decides which (A an AOP, B a BOI). The members come from its agreement, the books go to Intake & map, the 26AS to Reconcile. ITR-5.",
+          "roles": [],
+          "go": "#/wizard",
+          "live": ""
+        },
+        {
+          "id": "wizard_company",
+          "q": "Can I file a trust's return?",
+          "words": "trust itr-7 itr7 charitable trust religious trust society trust return not yet company itr-6 itr6",
+          "a": "Not yet: trusts (ITR-7) show on New filing as Not yet - meanwhile file the trustees' own returns, one press away on the card. A company's return (ITR-6) starts at New filing > A company: its certificate of incorporation makes the client (CIN, date, directors), the popup asks the tax option (115BAA, 115BAB or normal with MAT) and whether it manufactures, and the books go to Intake & map.",
+          "roles": [],
+          "go": "#/wizard",
+          "live": ""
+        },
+        {
+          "id": "wizard_work",
+          "q": "What is 'What kind of work' in New filing?",
+          "words": "what kind of work trading manufacturing services profession farming presumptive 44ad 44ada books tax audit 44ab 3cd partners remuneration 40b stock depreciation",
+          "a": "For a business (and a person with one): trading, manufacturing, services, a profession or farming; GST or not; a small turnover on the presumptive basis (44AD / 44ADA) or full books; a tax audit (44AB, Form 3CD); partners' salary and interest (40(b)); stock; depreciation. The picks decide the documents, the form and the hints.",
+          "roles": [],
+          "go": "#/wizard",
+          "live": ""
+        },
+        {
+          "id": "wizard_examples",
+          "q": "Is there a worked example of each kind of return?",
+          "words": "example worked example video watch how film demo case sample filing walkthrough each kind of return",
+          "a": "Yes - New filing's Worked examples: a salaried ITR-1, two employers, salary with funds and a plot sold, a pensioner, a 44ADA consultant, a 44AD trader, an HUF, a trading firm with GST and a tax audit, a manufacturing firm, an LLP, an AOP, a trading company on 115BAA, a manufacturing company with MAT, a non-resident and an updated return. Watch how plays each start to finish; in the demo each is there to carry on.",
+          "roles": [],
+          "go": "#/wizard",
+          "live": ""
+        },
+        {
+          "id": "wizard_start",
+          "q": "How do I start a new filing?",
+          "words": "start new filing wizard guided step by step walk me through filing where to begin first return new return from documents",
+          "a": "New filing (the first screen under Filing, and the cards at the top of Clients & years): pick who the return is for - a person, an HUF, a firm, an LLP or an AOP - say what applies, see the documents it needs, drop them in. Each is read, the client is made from the PAN and name found, and a popup asks only for what is missing. Then the return opens at the right step.",
+          "roles": [],
+          "go": "#/wizard",
+          "live": ""
+        },
+        {
+          "id": "wizard_docs",
+          "q": "Which documents do I need for my return?",
+          "words": "which documents need for my return checklist form 16 ais 26as cams what to collect papers for return tax documents list",
+          "a": "New filing lists them from what applies: the AIS and 26AS always, Form 16 from each employer, a CAMS / KFintech statement for funds sold, the GSTR-3B for a business, last year's ITR for losses - each with where to get it.",
+          "roles": [],
+          "go": "#/wizard",
+          "live": ""
+        },
+        {
+          "id": "wizard_resume",
+          "q": "Can I leave a new filing and carry on later?",
+          "words": "carry on later resume continue saved progress left off come back unfinished half done filing wizard",
+          "a": "Yes. The wizard saves each step on the server. Open New filing: every filing not finished waits under Carry on where you left off. Discard drops only the wizard's progress - the client and the return stay.",
+          "roles": [],
+          "go": "#/wizard",
+          "live": ""
+        },
+        {
+          "id": "wizard_unknown",
+          "q": "Why does a file say Not recognised?",
+          "words": "not recognised unrecognised unknown file wrong document cannot identify file type which document is this",
+          "a": "It is not one of the documents the wizard reads (pre-filled JSON, AIS, 26AS, Form 16, a CAMS / KFintech or broker statement, GSTR-3B, a bank statement, a filed ITR JSON; for a business also the GST certificate, the deed or LLP agreement, the books in Excel and the GST returns' JSON). It stays on the card, out of the return - remove it, or upload the right file. A locked PDF says Locked instead.",
+          "roles": [],
+          "go": "#/wizard",
+          "live": ""
+        },
+        {
+          "id": "wizard_client",
+          "q": "Does the wizard make the client from the documents?",
+          "words": "make client from documents automatically created client pan name from form 16 ais popup asks missing details karta",
+          "a": "Yes - the first document with a PAN makes the client (or finds the one already in your register). Only what no document gave is asked in a popup: the name, date of birth, an HUF's name and Karta, a firm's partners, which PAN when two are found, residence.",
+          "roles": [],
+          "go": "#/wizard",
+          "live": ""
+        },
+        {
           "id": "guide_me",
           "q": "Is there a guided tour of a screen?",
           "words": "guide me tour walkthrough help on this screen how to use this page",
@@ -886,7 +985,7 @@
           "id": "other_forms",
           "q": "Which ITR forms are supported?",
           "words": "itr-1 itr-2 itr-4 itr-6 itr-7 company trust sahaj sugam forms supported",
-          "a": "ITR-3 (individuals and HUFs with business income) and ITR-5 (firms, LLPs, AOPs), plus Form 3CA/3CB-3CD for a tax audit. ITR-1, 2, 4, 6 and 7 are not prepared here.",
+          "a": "ITR-1, ITR-2, ITR-3 and ITR-4 (My return, and ITR-3 on the CA side too), ITR-5 (firms, LLPs, AOPs) and ITR-6 (companies), plus Form 3CA/3CB-3CD for a tax audit. ITR-7 (trusts) is not prepared here.",
           "roles": [],
           "go": "",
           "live": ""
@@ -1114,6 +1213,60 @@
           ],
           "go": "#/portalstats",
           "live": ""
+        },
+        {
+          "id": "company_how",
+          "q": "How do I file a company's return (ITR-6)?",
+          "words": "company return itr-6 itr6 private limited pvt ltd domestic company corporate file a company how to file company",
+          "a": "Clients & years > New client, status Company (the PAN's fourth letter is C): CIN, date of incorporation, kind, tax option (normal, 115BA, 115BAA, 115BAB), directors and shareholders. Then Intake & map (final accounts, computation of income, fixed-asset schedule - refs ITR6 PL / BS / BP / DEP / MAT), Reconcile (26AS) and Compute & close: its company section works out depreciation, losses, MAT and its credit, and the ITR-6 JSON comes out checked against the CBDT schema.",
+          "roles": [],
+          "go": "#/clients",
+          "live": ""
+        },
+        {
+          "id": "company_rate",
+          "q": "What is the tax rate for a company?",
+          "words": "company tax rate corporate tax rate 25 30 percent 22 15 115baa 115bab 115ba surcharge 7 12 percent 400 crore turnover",
+          "a": "AY {ay}, a domestic company: 25% when the turnover of the year 2023-24 was within 400 crore, else 30%; surcharge 7% above 1 crore and 12% above 10 crore (with marginal relief); 4% cess. Under 115BAA 22%, under 115BAB 15% - each with a flat 10% surcharge, no MAT and only 80JJAA / 80M / 80LA(1A).",
+          "roles": [],
+          "go": "#/compute",
+          "live": ""
+        },
+        {
+          "id": "company_mat",
+          "q": "How is MAT worked out for a company?",
+          "words": "mat minimum alternate tax 115jb book profit mat credit 115jaa form 29b 15 percent",
+          "a": "When the normal tax is less than 15% of the book profit (plus surcharge and cess), that MAT is the tax and the difference becomes a MAT credit for 15 years; in a year the normal tax is higher, the credit is set off up to the difference. Tag the Form 29B rows ITR6 MAT pat / add_tax / less_bf ...; without them the P&L profit before tax is used and the screen says so. No MAT under 115BAA / 115BAB.",
+          "roles": [],
+          "go": "#/compute",
+          "live": ""
+        },
+        {
+          "id": "company_losses",
+          "q": "Does a company keep its losses when the shareholding changes?",
+          "words": "section 79 shareholding change 51 percent voting power company loss carry forward lost unabsorbed depreciation lapse 8 years",
+          "a": "A closely held company keeps a brought-forward business loss only if 51% of the voting power stayed with the same holders (s.79), the loss is within 8 years and that year's return was in time. Unabsorbed depreciation is not hit by s.79 and has no time limit. Tick or untick the s.79 box in the company's year on Compute & close.",
+          "roles": [],
+          "go": "#/compute",
+          "live": ""
+        },
+        {
+          "id": "company_due",
+          "q": "When is a company's return due?",
+          "words": "company due date itr-6 deadline last date company return 31 october 30 november 3ceb transfer pricing",
+          "a": "31 October for every company, audited under 44AB or not (s.139(1)); 30 November when a Form 3CEB is due. A CBDT extension of the audit date for the year applies to companies too; the ITR-6 JSON still names the Act's date.",
+          "roles": [],
+          "go": "#/compute",
+          "live": ""
+        },
+        {
+          "id": "company_csr",
+          "q": "Is CSR expenditure deductible?",
+          "words": "csr corporate social responsibility deduction deductible disallowed added back 37 80g kosh ganga",
+          "a": "No as a business expense: CSR spent under s.135 of the Companies Act is added back (Explanation 2 to s.37(1)) - tag it ITR6 BP csr. A CSR contribution to the Swachh Bharat Kosh or the Clean Ganga Fund gets no 80G either (ITR6 80G csr_kosh).",
+          "roles": [],
+          "go": "#/compute",
+          "live": ""
         }
       ],
       "label": "rows"
@@ -1126,9 +1279,9 @@
     }
   },
   "returns": "record",
-  "version": 2,
+  "version": 10,
   "status": "published",
-  "description_nl": "2026-10-04: every question Chip Chat knows, the answer, who sees it (roles), the screen to open, and live answers worked out from the person's own work. A firm adds its own on top (chipchat.py, Teach). 2026-10-09 owner: AI key only where AI is used, portal admin only.",
+  "description_nl": "2026-10-04: every question Chip Chat knows, the answer, who sees it (roles), the screen to open, and live answers worked out from the person's own work. A firm adds its own on top (chipchat.py, Teach). 2026-10-09 owner: AI key only where AI is used, portal admin only. 2026-10-11: five questions about the New filing wizard - how to start, which documents, carry on later, Not recognised, the client made from the documents. 2026-10-11: questions about the New filing wizard - how to start, which documents, carry on later, Not recognised, the client made from the documents; later the same day: a firm's, an LLP's, an AOP's return, a company or trust (not yet), the kind of work, the worked examples. 2026-10-11: six questions about a company's return (ITR-6): how, the rate, MAT, losses and s.79, the due date, CSR; which forms are prepared now includes ITR-6; the not-yet row is about trusts (a company is filed from Clients & years).",
   "test_cases": [
     {
       "args": {},
@@ -1280,9 +1433,9 @@
           },
           {
             "id": "what_is",
-            "q": "What is {product}?",
+            "q": "What is SimplyFy?",
             "words": "about this portal what does it do purpose overview",
-            "a": "{product} takes a client's statements (Excel or CSV), gives every row its SF Ref - the ITR schedule or 3CD clause it belongs to - checks them against 26AS, AIS and TIS, works out the tax, interest and refund, and writes the return in the Income-tax Department's own JSON (ITR-3, ITR-5, and the 3CB-3CD for an audit). Many CA firms work on it, each seeing only its own clients.",
+            "a": "SimplyFy takes a client's statements (Excel or CSV), gives every row its SF Ref - the ITR schedule or 3CD clause it belongs to - checks them against 26AS, AIS and TIS, works out the tax, interest and refund, and writes the return in the Income-tax Department's own JSON (ITR-3, ITR-5, and the 3CB-3CD for an audit). Many CA firms work on it, each seeing only its own clients.",
             "roles": [],
             "go": "",
             "live": ""
@@ -1294,6 +1447,105 @@
             "a": "1. My firm: give the firm's details and papers and send them for approval. 2. Once approved, add your team. 3. Clients & years: add a client and start this assessment year. 4. Intake & map: upload the statements. 5. Reconcile against 26AS / AIS / TIS. 6. Compute & close: check, sign off, download the JSON and file it.",
             "roles": [],
             "go": "#/firm",
+            "live": ""
+          },
+          {
+            "id": "wizard_firm",
+            "q": "How do I file a partnership firm's return?",
+            "words": "partnership firm return itr-5 itr5 file firm return partners deed gst certificate trading firm new firm client how to file a firm",
+            "a": "New filing > A partnership firm: pick the kind of work (trading, manufacturing, services, GST, a tax audit, partners' pay, stock, depreciation), then drop in the GST certificate, the deed, the books in Excel, the 26AS and the GSTR-3B JSON. The certificate makes the client (GSTIN, name, partnership), the popup shows the deed's partners to confirm, the books go to Intake & map, the 26AS to Reconcile, the GST returns to the tax audit. ITR-5, with Form 3CD when audited.",
+            "roles": [],
+            "go": "#/wizard",
+            "live": ""
+          },
+          {
+            "id": "wizard_llp",
+            "q": "Can I file an LLP's return?",
+            "words": "llp limited liability partnership return itr-5 llp agreement designated partners file llp",
+            "a": "Yes - New filing > An LLP. Its GST certificate's constitution (Limited Liability Partnership) must fit the card; the designated partners come from the LLP agreement. An LLP cannot use the presumptive 44AD, so its books go to Intake & map. ITR-5.",
+            "roles": [],
+            "go": "#/wizard",
+            "live": ""
+          },
+          {
+            "id": "wizard_aop",
+            "q": "What about an AOP, BOI or a society?",
+            "words": "aop boi association of persons body of individuals society residents welfare association club joint venture return",
+            "a": "New filing > An AOP or BOI: the PAN's fourth letter decides which (A an AOP, B a BOI). The members come from its agreement, the books go to Intake & map, the 26AS to Reconcile. ITR-5.",
+            "roles": [],
+            "go": "#/wizard",
+            "live": ""
+          },
+          {
+            "id": "wizard_company",
+            "q": "Can I file a trust's return?",
+            "words": "trust itr-7 itr7 charitable trust religious trust society trust return not yet company itr-6 itr6",
+            "a": "Not yet: trusts (ITR-7) show on New filing as Not yet - meanwhile file the trustees' own returns, one press away on the card. A company's return (ITR-6) starts at New filing > A company: its certificate of incorporation makes the client (CIN, date, directors), the popup asks the tax option (115BAA, 115BAB or normal with MAT) and whether it manufactures, and the books go to Intake & map.",
+            "roles": [],
+            "go": "#/wizard",
+            "live": ""
+          },
+          {
+            "id": "wizard_work",
+            "q": "What is 'What kind of work' in New filing?",
+            "words": "what kind of work trading manufacturing services profession farming presumptive 44ad 44ada books tax audit 44ab 3cd partners remuneration 40b stock depreciation",
+            "a": "For a business (and a person with one): trading, manufacturing, services, a profession or farming; GST or not; a small turnover on the presumptive basis (44AD / 44ADA) or full books; a tax audit (44AB, Form 3CD); partners' salary and interest (40(b)); stock; depreciation. The picks decide the documents, the form and the hints.",
+            "roles": [],
+            "go": "#/wizard",
+            "live": ""
+          },
+          {
+            "id": "wizard_examples",
+            "q": "Is there a worked example of each kind of return?",
+            "words": "example worked example video watch how film demo case sample filing walkthrough each kind of return",
+            "a": "Yes - New filing's Worked examples: a salaried ITR-1, two employers, salary with funds and a plot sold, a pensioner, a 44ADA consultant, a 44AD trader, an HUF, a trading firm with GST and a tax audit, a manufacturing firm, an LLP, an AOP, a trading company on 115BAA, a manufacturing company with MAT, a non-resident and an updated return. Watch how plays each start to finish; in the demo each is there to carry on.",
+            "roles": [],
+            "go": "#/wizard",
+            "live": ""
+          },
+          {
+            "id": "wizard_start",
+            "q": "How do I start a new filing?",
+            "words": "start new filing wizard guided step by step walk me through filing where to begin first return new return from documents",
+            "a": "New filing (the first screen under Filing, and the cards at the top of Clients & years): pick who the return is for - a person, an HUF, a firm, an LLP or an AOP - say what applies, see the documents it needs, drop them in. Each is read, the client is made from the PAN and name found, and a popup asks only for what is missing. Then the return opens at the right step.",
+            "roles": [],
+            "go": "#/wizard",
+            "live": ""
+          },
+          {
+            "id": "wizard_docs",
+            "q": "Which documents do I need for my return?",
+            "words": "which documents need for my return checklist form 16 ais 26as cams what to collect papers for return tax documents list",
+            "a": "New filing lists them from what applies: the AIS and 26AS always, Form 16 from each employer, a CAMS / KFintech statement for funds sold, the GSTR-3B for a business, last year's ITR for losses - each with where to get it.",
+            "roles": [],
+            "go": "#/wizard",
+            "live": ""
+          },
+          {
+            "id": "wizard_resume",
+            "q": "Can I leave a new filing and carry on later?",
+            "words": "carry on later resume continue saved progress left off come back unfinished half done filing wizard",
+            "a": "Yes. The wizard saves each step on the server. Open New filing: every filing not finished waits under Carry on where you left off. Discard drops only the wizard's progress - the client and the return stay.",
+            "roles": [],
+            "go": "#/wizard",
+            "live": ""
+          },
+          {
+            "id": "wizard_unknown",
+            "q": "Why does a file say Not recognised?",
+            "words": "not recognised unrecognised unknown file wrong document cannot identify file type which document is this",
+            "a": "It is not one of the documents the wizard reads (pre-filled JSON, AIS, 26AS, Form 16, a CAMS / KFintech or broker statement, GSTR-3B, a bank statement, a filed ITR JSON; for a business also the GST certificate, the deed or LLP agreement, the books in Excel and the GST returns' JSON). It stays on the card, out of the return - remove it, or upload the right file. A locked PDF says Locked instead.",
+            "roles": [],
+            "go": "#/wizard",
+            "live": ""
+          },
+          {
+            "id": "wizard_client",
+            "q": "Does the wizard make the client from the documents?",
+            "words": "make client from documents automatically created client pan name from form 16 ais popup asks missing details karta",
+            "a": "Yes - the first document with a PAN makes the client (or finds the one already in your register). Only what no document gave is asked in a popup: the name, date of birth, an HUF's name and Karta, a firm's partners, which PAN when two are found, residence.",
+            "roles": [],
+            "go": "#/wizard",
             "live": ""
           },
           {
@@ -1432,9 +1684,9 @@
           },
           {
             "id": "own_return",
-            "q": "Can I prepare my own return in {product}?",
+            "q": "Can I prepare my own return in SimplyFy?",
             "words": "my own return myself self file own filing personal return partner own itr",
-            "a": "Yes. In a firm, add yourself as a client (Clients & years - New client, with your own PAN) and work your return like any other: statements, reconcile, compute, sign off, the JSON. Without a firm, sign up as Individual / HUF - {product} then makes you its one client. It prepares ITR-3 (business or profession) and ITR-5; salary (Schedule S) and capital gains at special rates are not worked out yet - add those in the department's utility.",
+            "a": "Yes. In a firm, add yourself as a client (Clients & years - New client, with your own PAN) and work your return like any other: statements, reconcile, compute, sign off, the JSON. Without a firm, sign up as Individual / HUF - SimplyFy then makes you its one client. It prepares ITR-3 (business or profession) and ITR-5; salary (Schedule S) and capital gains at special rates are not worked out yet - add those in the department's utility.",
             "roles": [],
             "go": "#/clients",
             "live": ""
@@ -1542,7 +1794,7 @@
             "id": "nri",
             "q": "Can I file for a non-resident (NRI)?",
             "words": "nri non resident abroad foreign",
-            "a": "Yes - tick Non-resident on the client. {product} then gives no 87A rebate. Salary and capital gains at special rates are not worked out yet - add those in the department's utility.",
+            "a": "Yes - tick Non-resident on the client. SimplyFy then gives no 87A rebate. Salary and capital gains at special rates are not worked out yet - add those in the department's utility.",
             "roles": [
               "firm_admin",
               "partner",
@@ -1572,9 +1824,9 @@
           },
           {
             "id": "pdf_scan",
-            "q": "Can {product} read a PDF or a scanned statement?",
+            "q": "Can SimplyFy read a PDF or a scanned statement?",
             "words": "pdf scanned scan photo picture image ocr bank statement pdf read",
-            "a": "A PDF with text in it is read best-effort - columns can shift, so check every row before mapping. A scanned PDF or a photo cannot be read: {product} has no text recognition (OCR). Ask the client for the Excel, or a PDF exported with text.",
+            "a": "A PDF with text in it is read best-effort - columns can shift, so check every row before mapping. A scanned PDF or a photo cannot be read: SimplyFy has no text recognition (OCR). Ask the client for the Excel, or a PDF exported with text.",
             "roles": [
               "firm_admin",
               "partner",
@@ -1622,7 +1874,7 @@
             "id": "sf_ref",
             "q": "What is an SF Ref?",
             "words": "sf ref meaning reference tag code schedule clause mapping",
-            "a": "The SF Ref says where a row belongs: the ITR schedule or the 3CD clause, e.g. ITR3 HP or 3CD 31(a) #2. {product} suggests one for every row; you accept or change it. Put the SF Ref in a column of the client's own sheet and next year's file maps itself.",
+            "a": "The SF Ref says where a row belongs: the ITR schedule or the 3CD clause, e.g. ITR3 HP or 3CD 31(a) #2. SimplyFy suggests one for every row; you accept or change it. Put the SF Ref in a column of the client's own sheet and next year's file maps itself.",
             "roles": [
               "firm_admin",
               "partner",
@@ -1810,7 +2062,7 @@
           },
           {
             "id": "audit_3cd",
-            "q": "Does {product} do the tax audit report?",
+            "q": "Does SimplyFy do the tax audit report?",
             "words": "tax audit 3cd 3cb 3ca 44ab audit report",
             "a": "Yes - for an audit year it writes the Form 3CB-3CD (or 3CA-3CD) JSON from the SF Refs, checked against the CBDT schema, next to the ITR.",
             "roles": [
@@ -1890,7 +2142,7 @@
           },
           {
             "id": "not_supported",
-            "q": "What does {product} not do yet?",
+            "q": "What does SimplyFy not do yet?",
             "words": "not supported limitations missing salary capital gains marginal relief",
             "a": "Not yet: salary (Schedule S), capital gains at special rates, and 87A marginal relief. Complete those in the department's offline utility after importing the JSON.",
             "roles": [],
@@ -1949,7 +2201,7 @@
             "id": "late_fee",
             "q": "What is the late fee for filing after the due date?",
             "words": "late fee 234f penalty filing late belated fee",
-            "a": "Filing after the due date costs a late fee under 234F: Rs 5,000, or Rs 1,000 when total income is up to Rs 5 lakh - plus interest under 234A for the months late. {product} works out 234A; add the 234F fee in the department's utility if it applies.",
+            "a": "Filing after the due date costs a late fee under 234F: Rs 5,000, or Rs 1,000 when total income is up to Rs 5 lakh - plus interest under 234A for the months late. SimplyFy works out 234A; add the 234F fee in the department's utility if it applies.",
             "roles": [],
             "go": "",
             "live": ""
@@ -1998,9 +2250,9 @@
           },
           {
             "id": "gst_tds",
-            "q": "Does {product} file GST or TDS returns?",
+            "q": "Does SimplyFy file GST or TDS returns?",
             "words": "gst return gstr tds return 24q 26q 27q tcs return",
-            "a": "No - {product} prepares income-tax returns (ITR-3, ITR-5) and the tax audit report. GST and TDS returns are filed elsewhere; their figures still show here through AIS, TIS and 26AS.",
+            "a": "No - SimplyFy prepares income-tax returns (ITR-3, ITR-5) and the tax audit report. GST and TDS returns are filed elsewhere; their figures still show here through AIS, TIS and 26AS.",
             "roles": [],
             "go": "",
             "live": ""
@@ -2009,7 +2261,7 @@
             "id": "other_forms",
             "q": "Which ITR forms are supported?",
             "words": "itr-1 itr-2 itr-4 itr-6 itr-7 company trust sahaj sugam forms supported",
-            "a": "ITR-3 (individuals and HUFs with business income) and ITR-5 (firms, LLPs, AOPs), plus Form 3CA/3CB-3CD for a tax audit. ITR-1, 2, 4, 6 and 7 are not prepared here.",
+            "a": "ITR-1, ITR-2, ITR-3 and ITR-4 (My return, and ITR-3 on the CA side too), ITR-5 (firms, LLPs, AOPs) and ITR-6 (companies), plus Form 3CA/3CB-3CD for a tax audit. ITR-7 (trusts) is not prepared here.",
             "roles": [],
             "go": "",
             "live": ""
@@ -2034,7 +2286,7 @@
             "id": "json_upload",
             "q": "Can I upload the JSON straight to the Income-tax portal?",
             "words": "upload json portal direct e-filing import utility",
-            "a": "Open it in the department's offline utility, complete any remaining schedules, validate, and upload from there. A direct upload needs a CBDT software ID, which {product} does not have yet.",
+            "a": "Open it in the department's offline utility, complete any remaining schedules, validate, and upload from there. A direct upload needs a CBDT software ID, which SimplyFy does not have yet.",
             "roles": [
               "firm_admin",
               "partner",
@@ -2200,7 +2452,7 @@
             "id": "ai_key",
             "q": "Do I need an AI key?",
             "words": "ai key gemini api key needed",
-            "a": "No - {product}'s computations, checks and Chip Chat work without one. Only the portal admin uses an AI key: to fetch new tax rules and to read a Form 16 with AI.",
+            "a": "No - SimplyFy's computations, checks and Chip Chat work without one. Only the portal admin uses an AI key: to fetch new tax rules and to read a Form 16 with AI.",
             "roles": [],
             "go": "",
             "live": ""
@@ -2220,7 +2472,7 @@
             "id": "backups",
             "q": "How are the backups kept?",
             "words": "backup policy retention offsite restore",
-            "a": "{product}'s data is copied every hour (24 kept), daily (7) and weekly (5); the daily and weekly copies also go off-site, encrypted. Server & sites shows each backup's newest copy and flags a late one.",
+            "a": "SimplyFy's data is copied every hour (24 kept), daily (7) and weekly (5); the daily and weekly copies also go off-site, encrypted. Server & sites shows each backup's newest copy and flags a late one.",
             "roles": [
               "owner"
             ],
@@ -2236,6 +2488,60 @@
               "owner"
             ],
             "go": "#/portalstats",
+            "live": ""
+          },
+          {
+            "id": "company_how",
+            "q": "How do I file a company's return (ITR-6)?",
+            "words": "company return itr-6 itr6 private limited pvt ltd domestic company corporate file a company how to file company",
+            "a": "Clients & years > New client, status Company (the PAN's fourth letter is C): CIN, date of incorporation, kind, tax option (normal, 115BA, 115BAA, 115BAB), directors and shareholders. Then Intake & map (final accounts, computation of income, fixed-asset schedule - refs ITR6 PL / BS / BP / DEP / MAT), Reconcile (26AS) and Compute & close: its company section works out depreciation, losses, MAT and its credit, and the ITR-6 JSON comes out checked against the CBDT schema.",
+            "roles": [],
+            "go": "#/clients",
+            "live": ""
+          },
+          {
+            "id": "company_rate",
+            "q": "What is the tax rate for a company?",
+            "words": "company tax rate corporate tax rate 25 30 percent 22 15 115baa 115bab 115ba surcharge 7 12 percent 400 crore turnover",
+            "a": "AY {ay}, a domestic company: 25% when the turnover of the year 2023-24 was within 400 crore, else 30%; surcharge 7% above 1 crore and 12% above 10 crore (with marginal relief); 4% cess. Under 115BAA 22%, under 115BAB 15% - each with a flat 10% surcharge, no MAT and only 80JJAA / 80M / 80LA(1A).",
+            "roles": [],
+            "go": "#/compute",
+            "live": ""
+          },
+          {
+            "id": "company_mat",
+            "q": "How is MAT worked out for a company?",
+            "words": "mat minimum alternate tax 115jb book profit mat credit 115jaa form 29b 15 percent",
+            "a": "When the normal tax is less than 15% of the book profit (plus surcharge and cess), that MAT is the tax and the difference becomes a MAT credit for 15 years; in a year the normal tax is higher, the credit is set off up to the difference. Tag the Form 29B rows ITR6 MAT pat / add_tax / less_bf ...; without them the P&L profit before tax is used and the screen says so. No MAT under 115BAA / 115BAB.",
+            "roles": [],
+            "go": "#/compute",
+            "live": ""
+          },
+          {
+            "id": "company_losses",
+            "q": "Does a company keep its losses when the shareholding changes?",
+            "words": "section 79 shareholding change 51 percent voting power company loss carry forward lost unabsorbed depreciation lapse 8 years",
+            "a": "A closely held company keeps a brought-forward business loss only if 51% of the voting power stayed with the same holders (s.79), the loss is within 8 years and that year's return was in time. Unabsorbed depreciation is not hit by s.79 and has no time limit. Tick or untick the s.79 box in the company's year on Compute & close.",
+            "roles": [],
+            "go": "#/compute",
+            "live": ""
+          },
+          {
+            "id": "company_due",
+            "q": "When is a company's return due?",
+            "words": "company due date itr-6 deadline last date company return 31 october 30 november 3ceb transfer pricing",
+            "a": "31 October for every company, audited under 44AB or not (s.139(1)); 30 November when a Form 3CEB is due. A CBDT extension of the audit date for the year applies to companies too; the ITR-6 JSON still names the Act's date.",
+            "roles": [],
+            "go": "#/compute",
+            "live": ""
+          },
+          {
+            "id": "company_csr",
+            "q": "Is CSR expenditure deductible?",
+            "words": "csr corporate social responsibility deduction deductible disallowed added back 37 80g kosh ganga",
+            "a": "No as a business expense: CSR spent under s.135 of the Companies Act is added back (Explanation 2 to s.37(1)) - tag it ITR6 BP csr. A CSR contribution to the Swachh Bharat Kosh or the Clean Ganga Fund gets no 80G either (ITR6 80G csr_kosh).",
+            "roles": [],
+            "go": "#/compute",
             "live": ""
           }
         ]

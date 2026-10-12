@@ -1,0 +1,250 @@
+{
+  "prod_base": "https://sf.valuestream.in",
+  "voice": "en-IN-NeerjaNeural",
+  "rate": "+0%",
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "blur": [
+    "#whoami",
+    "#userpop .head"
+  ],
+  "page_key": "sf-case-company-mfg",
+  "title": "A manufacturing company with MAT",
+  "start_url": "/#/wizard",
+  "covers": [
+    "who it is for",
+    "what applies",
+    "which form",
+    "documents you'll need",
+    "drop them in",
+    "the client, made for you",
+    "what the documents imply",
+    "review, then the return"
+  ],
+  "steps": [
+    {
+      "chapter": "A manufacturing company with MAT",
+      "say": "A private limited company that makes things - normal provisions, so the minimum alternate tax may be the tax.",
+      "do": [
+        {
+          "wait_for": ".wz-start"
+        },
+        {
+          "wait": 1
+        }
+      ]
+    },
+    {
+      "chapter": "Who it is for",
+      "say": "A person, an HUF, a partnership firm, an LLP, an AOP or BOI, or a company - each card starts its own filing. A trust says Not yet, with what to do meanwhile.",
+      "do": [
+        {
+          "highlight_target": ".wz-who-groups",
+          "optional": true,
+          "timeout": 5
+        },
+        {
+          "click": "[data-start='company']"
+        },
+        {
+          "wait_for": ".wz-who"
+        },
+        {
+          "wait": 1
+        }
+      ]
+    },
+    {
+      "chapter": "What applies",
+      "say": "A company: manufacturing, a tax audit, stock, machines that depreciate. ITR-6, with Form 3CD.",
+      "do": [
+        {
+          "click": "[data-pick='manufacturing']"
+        },
+        {
+          "wait": 0.7
+        },
+        {
+          "click": "[data-pick='audit']"
+        },
+        {
+          "wait": 0.7
+        },
+        {
+          "click": "[data-pick='stock']"
+        },
+        {
+          "wait": 0.7
+        },
+        {
+          "click": "[data-pick='depreciation']"
+        },
+        {
+          "wait": 0.7
+        },
+        {
+          "highlight_target": ".wz-work|.wz-what",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Which form",
+      "say": "The form follows from the picks, with its reason in one line - ITR-1, 2, 3 or 4 for a person or an HUF, ITR-5 for a firm, an LLP or an AOP, ITR-6 for a company.",
+      "do": [
+        {
+          "highlight_target": ".wz-form",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Documents you'll need",
+      "say": "Needed, good to have, and what you type in - each with what it is and where to get it: TRACES, the AIS, your employer, CAMS or KFintech, the GST portal, the firm's deed and its books.",
+      "do": [
+        {
+          "click": "[data-go='docs']"
+        },
+        {
+          "wait_for": ".wz-docs"
+        },
+        {
+          "wait": 1
+        },
+        {
+          "highlight_target": ".wz-docs",
+          "optional": true,
+          "timeout": 5
+        },
+        {
+          "scroll": 420
+        }
+      ]
+    },
+    {
+      "chapter": "Drop them in",
+      "say": "The certificate of incorporation: the CIN, the date of incorporation and both directors.",
+      "do": [
+        {
+          "click": "[data-go='upload']"
+        },
+        {
+          "wait_for": "[data-drop='wz-file']"
+        },
+        {
+          "wait": 0.5
+        },
+        {
+          "upload": "#wz-file",
+          "files": [
+            "showcase/case-company-mfg/00 Certificate of incorporation - Kaveri Demo Fabricators.pdf"
+          ]
+        },
+        {
+          "wait": 3.5
+        }
+      ]
+    },
+    {
+      "chapter": "The client, made for you",
+      "say": "The popup takes the option - normal provisions - and ticks that it manufactures, for the additional depreciation. Saved: the company is made.",
+      "do": [
+        {
+          "wait_for": ".wz-ask-modal",
+          "timeout": 40
+        },
+        {
+          "wait": 1.5
+        },
+        {
+          "select": "[data-co='option']",
+          "value": "normal"
+        },
+        {
+          "click": "[data-co='manufacturing']"
+        },
+        {
+          "wait": 1
+        },
+        {
+          "click": ".wz-ask-modal [data-save]"
+        },
+        {
+          "wait": 3
+        },
+        {
+          "highlight_target": ".wz-client",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "What the documents imply",
+      "say": "The final accounts, the computation with the book-profit rows for MAT, the asset schedule and the 26AS go in.",
+      "do": [
+        {
+          "upload": "#wz-file",
+          "files": [
+            "showcase/case-company-mfg/01 Final accounts - Kaveri Demo Fabricators FY 2025-26.xlsx",
+            "showcase/case-company-mfg/02 Computation of income - Kaveri Demo Fabricators AY 2026-27.xlsx",
+            "showcase/case-company-mfg/03 Fixed asset schedule - Kaveri Demo Fabricators FY 2025-26.xlsx",
+            "showcase/case-company-mfg/04 26AS - ZZDCK0062L - AY 2026-27.txt"
+          ]
+        },
+        {
+          "wait": 8.0
+        },
+        {
+          "wait": 1
+        },
+        {
+          "highlight_target": ".wz-prompts",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Review, then the return",
+      "say": "Review, then the Tax audit; Compute & close sets the normal tax against MAT under 115JB - MAT is the tax this year, and a credit for later.",
+      "do": [
+        {
+          "click": "[data-go='review']"
+        },
+        {
+          "wait_for": ".wz-review"
+        },
+        {
+          "wait": 1.5
+        },
+        {
+          "highlight_target": ".wz-go|.wz-review",
+          "optional": true,
+          "timeout": 5
+        },
+        {
+          "wait": 1
+        },
+        {
+          "click": "#wz-go"
+        },
+        {
+          "wait": 3
+        },
+        {
+          "wait_for": "#au-ay",
+          "timeout": 20,
+          "optional": true
+        },
+        {
+          "wait": 2
+        }
+      ]
+    }
+  ]
+}

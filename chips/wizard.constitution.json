@@ -1,0 +1,106 @@
+{
+  "chip_id": "wizard.constitution",
+  "kind": "accessor",
+  "set": "wizard",
+  "label": "New filing: the client status a GST certificate's 'Constitution of Business' names",
+  "aliases": [
+    "new filing: the client status a gst certificate's 'constitution of business' names"
+  ],
+  "params": [
+    {
+      "name": "text",
+      "type": "text",
+      "default": "",
+      "label": "the constitution, as the certificate says it"
+    },
+    {
+      "name": "rows",
+      "type": "json",
+      "default": [
+        {
+          "pattern": "(?i)limited liability partnership|\\bLLP\\b",
+          "name": "llp"
+        },
+        {
+          "pattern": "(?i)partnership",
+          "name": "firm"
+        },
+        {
+          "pattern": "(?i)association of persons|society|club",
+          "name": "aop"
+        },
+        {
+          "pattern": "(?i)body of individuals",
+          "name": "boi"
+        },
+        {
+          "pattern": "(?i)(private|public) limited company|company",
+          "name": "company"
+        },
+        {
+          "pattern": "(?i)trust",
+          "name": "trust"
+        },
+        {
+          "pattern": "(?i)hindu undivided family",
+          "name": "huf"
+        },
+        {
+          "pattern": "(?i)proprietorship",
+          "name": "individual"
+        }
+      ],
+      "label": "pattern -> status, the first that matches"
+    }
+  ],
+  "expr": {
+    "vop": "first_matching",
+    "text": "$text",
+    "rows": "$rows",
+    "pattern_field": "pattern",
+    "value_field": "name",
+    "default": ""
+  },
+  "returns": "any",
+  "status": "published",
+  "test_cases": [
+    {
+      "args": {
+        "text": "Partnership"
+      },
+      "expect_value": "firm"
+    },
+    {
+      "args": {
+        "text": "Limited Liability Partnership"
+      },
+      "expect_value": "llp"
+    },
+    {
+      "args": {
+        "text": "Society/ Club/ Trust/ AOP"
+      },
+      "expect_value": "aop"
+    },
+    {
+      "args": {
+        "text": "Private Limited Company"
+      },
+      "expect_value": "company"
+    },
+    {
+      "args": {
+        "text": "Proprietorship"
+      },
+      "expect_value": "individual"
+    },
+    {
+      "args": {
+        "text": "Something else"
+      },
+      "expect_value": ""
+    }
+  ],
+  "version": 1,
+  "description_nl": "2026-10-11: the GST portal's constitution words -> the client status (an LLP before a partnership, a society or club an AOP); none matching = nothing said, and the card's own status stands."
+}

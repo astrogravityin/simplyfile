@@ -163,6 +163,47 @@
             "aop": "PO",
             "boi": "PO"
           }
+        },
+        "ITR-6": {
+          "statuses": {},
+          "substatus": {},
+          "capacity": {},
+          "default_account": "CA",
+          "account_types": {
+            "current": "CA",
+            "ca": "CA",
+            "cc": "CC",
+            "cash credit": "CC",
+            "od": "OD",
+            "overdraft": "OD",
+            "nro": "NRO",
+            "cgas": "CGAS",
+            "savings": "OTH",
+            "saving": "OTH",
+            "sb": "OTH"
+          },
+          "flags": {
+            "true": "Y",
+            "false": "N"
+          },
+          "residential": {
+            "true": "NRI",
+            "false": "RES"
+          },
+          "share_type": "ES",
+          "no_option": "NA",
+          "mat_yes": "1",
+          "turnover_bands": [
+            {
+              "upto": 10000000,
+              "code": "Upto1CR"
+            },
+            {
+              "upto": 100000000,
+              "code": "Upto10CR"
+            }
+          ],
+          "turnover_band_top": "MoreThan10CR"
         }
       },
       "label": "by form"
@@ -185,9 +226,9 @@
     }
   },
   "returns": "record",
-  "version": 1,
+  "version": 2,
   "status": "published",
-  "description_nl": "From the schemas' own descriptions: TDS sections are written without the leading 1 (194A = 94A, 194-I(b) rent = 4-IB, 194J professional = 94J-B); ReturnFileSec 11 = 139(1), 12 = 139(4), 17 = 139(5) revised, 21 = 139(8A) updated; ITR-3 status I / H and verifies as S (self) / K (karta); ITR-5 status 1 firm (sub 10 partnership, 5 LLP), 14 AOP/BOI.",
+  "description_nl": "From the schemas' own descriptions: TDS sections are written without the leading 1 (194A = 94A, 194-I(b) rent = 4-IB, 194J professional = 94J-B); ReturnFileSec 11 = 139(1), 12 = 139(4), 17 = 139(5) revised, 21 = 139(8A) updated; ITR-3 status I / H and verifies as S (self) / K (karta); ITR-5 status 1 firm (sub 10 partnership, 5 LLP), 14 AOP/BOI. 2026-10-11: ITR-6 (from its schema): bank account types CA / CC / OD / NRO / CGAS / OTH (no savings account for a company), the default CA; Section115BA NA when no option; ScheduleMAT 1 = Yes; Part A-GEN turnover bands Upto1CR / Upto10CR / MoreThan10CR; share type ES.",
   "test_cases": [
     {
       "args": {},
@@ -295,6 +336,47 @@
               "aop": "PO",
               "boi": "PO"
             }
+          },
+          "ITR-6": {
+            "statuses": {},
+            "substatus": {},
+            "capacity": {},
+            "default_account": "CA",
+            "account_types": {
+              "current": "CA",
+              "ca": "CA",
+              "cc": "CC",
+              "cash credit": "CC",
+              "od": "OD",
+              "overdraft": "OD",
+              "nro": "NRO",
+              "cgas": "CGAS",
+              "savings": "OTH",
+              "saving": "OTH",
+              "sb": "OTH"
+            },
+            "flags": {
+              "true": "Y",
+              "false": "N"
+            },
+            "residential": {
+              "true": "NRI",
+              "false": "RES"
+            },
+            "share_type": "ES",
+            "no_option": "NA",
+            "mat_yes": "1",
+            "turnover_bands": [
+              {
+                "upto": 10000000,
+                "code": "Upto1CR"
+              },
+              {
+                "upto": 100000000,
+                "code": "Upto10CR"
+              }
+            ],
+            "turnover_band_top": "MoreThan10CR"
           }
         }
       }

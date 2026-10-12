@@ -1,0 +1,81 @@
+{
+  "chip_id": "wizard.who_state",
+  "kind": "accessor",
+  "set": "wizard",
+  "label": "New filing: is a who-card open, or shown as not yet",
+  "aliases": [
+    "new filing: is a who-card open, or shown as not yet"
+  ],
+  "params": [
+    {
+      "name": "supported",
+      "type": "boolean",
+      "default": true,
+      "label": "the card's switch (wizard.settings who[].supported)"
+    },
+    {
+      "name": "status_known",
+      "type": "boolean",
+      "default": true,
+      "label": "clients.settings has its status"
+    }
+  ],
+  "expr": {
+    "vop": "choose",
+    "cases": [
+      {
+        "when": {
+          "op": "all",
+          "items": [
+            {
+              "op": "eq",
+              "left": "$supported",
+              "right": true
+            },
+            {
+              "op": "eq",
+              "left": "$status_known",
+              "right": true
+            }
+          ]
+        },
+        "then": "open"
+      }
+    ],
+    "else": "not_yet"
+  },
+  "returns": "any",
+  "status": "published",
+  "test_cases": [
+    {
+      "args": {
+        "supported": true,
+        "status_known": true
+      },
+      "expect_value": "open"
+    },
+    {
+      "args": {
+        "supported": false,
+        "status_known": true
+      },
+      "expect_value": "not_yet"
+    },
+    {
+      "args": {
+        "supported": true,
+        "status_known": false
+      },
+      "expect_value": "not_yet"
+    },
+    {
+      "args": {
+        "supported": false,
+        "status_known": false
+      },
+      "expect_value": "not_yet"
+    }
+  ],
+  "version": 1,
+  "description_nl": "2026-10-11: a card opens only when it is switched on AND the client register knows its status (a company needs clients.settings' company status and ITR-6): switched on too early, it still says not yet - never a dead end."
+}
