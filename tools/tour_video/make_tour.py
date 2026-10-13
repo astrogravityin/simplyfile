@@ -64,10 +64,16 @@ ACTIONS = {"goto", "click", "fill", "select", "press", "hover", "highlight", "wa
            "click_target", "highlight_target"}   # *_target: a Guide me `open` / `target`, found as the kit finds it (FIND_JS)
 ACTION_KEYS = ACTIONS | {"nth", "text", "value", "files", "frame", "optional", "timeout", "unless"}
 DEMO = TOOL   # upload "files" are relative to tools/tour_video/
+
+
+def upload_path(f: str) -> Path:
+    """An upload file's path: under tools/tour_video/, or "@tmp/..." under the repo's gitignored tmp/ (2026-10-13: a real record
+    for a private, masked recording stays out of the repo)."""
+    return ROOT / "tmp" / f[5:] if f.startswith("@tmp/") else DEMO / f
 STEP_KEYS = {"say", "speak", "chapter", "do", "hold", "picture"}
 PICTURE = re.compile(r"^pictures/(?!\.\.?/)[\w.-]+/[0-9a-f]{8}\.(png|jpg)$")
-TOUR_KEYS = {"page_key", "title", "start_url", "prod_base", "also", "anonymous", "review", "covers", "voice", "rate", "viewport", "vars", "steps", "note", "blur", "settle_ms", "type_emails", "locale", "tags"}
-SETTING_KEYS = {"start_url", "anonymous", "vars", "before", "viewport", "voice", "rate", "prod_base", "blur", "note", "product", "settle_ms"}
+TOUR_KEYS = {"page_key", "title", "start_url", "prod_base", "also", "anonymous", "review", "covers", "voice", "rate", "viewport", "vars", "steps", "note", "blur", "settle_ms", "type_emails", "locale", "tags", "mask", "mask_words"}
+SETTING_KEYS = {"start_url", "anonymous", "vars", "before", "viewport", "voice", "rate", "prod_base", "blur", "note", "product", "settle_ms", "mask"}
 PROD_BASE = "https://astrostage.in"   # a tour on another production host (tedbook.in) says so in prod_base
 
 # Headless video has no mouse pointer - draw one, plus a ring on whatever the tour touches.
@@ -97,6 +103,74 @@ def blur_js(selectors: list[str]) -> str:
     return ("(() => { const add = () => { const s = document.createElement('style'); s.textContent = %s;"
             " document.head.appendChild(s); };"
             " document.readyState === 'loading' ? addEventListener('DOMContentLoaded', add) : add(); })();" % json.dumps(css))
+
+
+def mask_config(tour: dict) -> dict | None:
+    """2026-10-13 privacy mask: None when off. On with env TOUR_MASK=1 or a tour's "mask": true. What is blurred is chip tour.mask
+    (patterns, selectors) plus every word of the JSON list file named by env TOUR_MASK_WORDS (a real record's holder and
+    counterparty names, written at record time under tmp/ - never kept in the repo) and the tour's own "mask_words"."""
+    if not (os.environ.get("TOUR_MASK") == "1" or tour.get("mask")):
+        return None
+    chip = json.loads((ROOT / "chips" / "tour.mask.json").read_text(encoding="utf-8"))
+    cfg = {p["name"]: p["default"] for p in chip["params"]}
+    words = list(tour.get("mask_words") or [])
+    f = os.environ.get("TOUR_MASK_WORDS")
+    if f and Path(f).is_file():
+        words += json.loads(Path(f).read_text(encoding="utf-8"))
+    mw = int(cfg["min_word"])
+    cfg["words"] = sorted({w for w in (str(x).strip() for x in words) if len(w) >= mw}, key=len, reverse=True)
+    return cfg
+
+
+def mask_js(cfg: dict) -> str:
+    """The recorder's privacy mask, in the page for the length of the recording (nothing on the server changes): text that matches a
+    pattern or a word, and elements that match a selector, are blurred by a MutationObserver - before the next frame is painted -
+    and window.__tourAudit() lists anything still readable (a leak), which a recording refuses."""
+    return r"""
+(() => { if (window.__tourMaskOn) return; window.__tourMaskOn = 1;
+  const C = %s;
+  const esc = (w) => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const parts = C.patterns.map((p) => p.regex).concat(C.words.length ? ['(?<![A-Za-z])(?:' + C.words.map(esc).join('|') + ')(?![A-Za-z])'] : []);
+  const RX = () => new RegExp(parts.join('|'), 'gi');
+  const css = document.createElement('style');
+  css.textContent = '.__tourmask{filter:blur(' + C.blur_px + 'px)!important}' + C.selectors.join(',') + '{filter:blur(' + C.blur_px + 'px)!important}';
+  const skip = (n) => { for (let e = n.parentElement; e; e = e.parentElement) { if (/^(SCRIPT|STYLE|TEXTAREA)$/.test(e.tagName) || e.classList.contains('__tourmask')) return true; } return false; };
+  const pass = () => {
+    if (!document.body) return;
+    const it = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    const hit = [];
+    for (let n = it.nextNode(); n; n = it.nextNode()) { if (n.nodeValue && !skip(n) && RX().test(n.nodeValue)) hit.push(n); }
+    for (const n of hit) {
+      const text = n.nodeValue; const re = RX(); let last = 0; const frag = document.createDocumentFragment();
+      for (let m = re.exec(text); m; m = re.exec(text)) {
+        if (!m[0]) { re.lastIndex++; continue; }
+        frag.append(text.slice(last, m.index));
+        const sp = document.createElement('span'); sp.className = '__tourmask'; sp.textContent = m[0]; frag.append(sp); last = m.index + m[0].length;
+      }
+      frag.append(text.slice(last));
+      n.replaceWith(frag);
+    }
+    for (const el of document.querySelectorAll('input,textarea,select')) {
+      const v = el.tagName === 'SELECT' ? (el.selectedOptions[0] ? el.selectedOptions[0].textContent : '') : el.value;
+      const ph = el.getAttribute('placeholder') || '';
+      if ((v && RX().test(v)) || (ph && RX().test(ph))) el.classList.add('__tourmask');
+    }
+  };
+  let queued = false;
+  const later = () => { if (queued) return; queued = true; queueMicrotask(() => { queued = false; pass(); }); };
+  const start = () => { document.head.appendChild(css); pass(); new MutationObserver(later).observe(document.documentElement, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ['value'] }); setInterval(pass, C.scan_ms || 250); };
+  document.readyState === 'loading' ? addEventListener('DOMContentLoaded', start) : start();
+  window.__tourAudit = () => {
+    pass();
+    const it = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT); const bad = [];
+    for (let n = it.nextNode(); n; n = it.nextNode()) { if (n.nodeValue && !skip(n) && RX().test(n.nodeValue)) bad.push('text'); }
+    const inSel = C.selectors.length ? [...document.querySelectorAll(C.selectors.join(','))] : [];
+    const unblurred = inSel.filter((e) => getComputedStyle(e).filter === 'none').length;
+    for (let i = 0; i < unblurred; i++) bad.push('selector');
+    return bad;
+  };
+})();
+""" % json.dumps(cfg)
 
 
 MASK_JS = """
@@ -273,7 +347,7 @@ def validate_tour(t: dict) -> list[str]:
                 files = a.get("files")
                 if not (isinstance(files, list) and files and all(isinstance(f, str) for f in files)):
                     err.append(f"step {i} action {j}: 'upload' needs 'files', a list of paths under tools/tour_video/")
-                elif any(".." in f or not (DEMO / f).is_file() for f in files):
+                elif any(".." in f or not upload_path(f).is_file() for f in files):
                     err.append(f"step {i} action {j}: upload file missing or outside tools/tour_video/: {files}")
     return err
 
@@ -415,7 +489,7 @@ def run_action(page, base: str, a: dict) -> None:
         if verb == "click_target":
             el.click(timeout=ms)
     elif "upload" in a:   # demo birth files into a (usually hidden) <input type=file>: multi-chart screens
-        t.locator(a["upload"]).first.set_input_files([str(DEMO / f) for f in a["files"]], timeout=ms)
+        t.locator(a["upload"]).first.set_input_files([str(upload_path(f)) for f in a["files"]], timeout=ms)
     else:
         verb = next(k for k in ("click", "fill", "select", "hover", "highlight", "scroll_to") if k in a)
         el = loc(a[verb])
@@ -556,6 +630,9 @@ def walk(tour: dict, base: str, out: Path, durs: list[float] | None, headed: boo
         ctx.add_init_script(MASK_JS)      # no real email address is ever recorded
         if tour.get("blur"):              # names, titles: anything personal the tour lists stays unreadable
             ctx.add_init_script(blur_js(tour["blur"]))
+        mask = mask_config(tour)          # 2026-10-13: a real record on screen - patterns, selectors and names blurred, a leak fails the run
+        if mask:
+            ctx.add_init_script(mask_js(mask))
         page = ctx.new_page()
         t0 = time.monotonic()
         su = tour["start_url"]
@@ -583,6 +660,13 @@ def walk(tour: dict, base: str, out: Path, durs: list[float] | None, headed: boo
                     raise SystemExit("FAILED " + msg)
             if i == 0:
                 blocked(page, tour)
+            if mask:
+                page.wait_for_timeout(350)
+                leaks = page.evaluate("() => window.__tourAudit ? window.__tourAudit() : ['no mask']")
+                if leaks:
+                    evidence(page, out)
+                    ctx.close(); browser.close()
+                    raise SystemExit(f"PRIVACY: step {i + 1} shows {len(leaks)} readable private value(s) ({sorted(set(leaks))}) - nothing was kept")
             if s.get("picture") and not record:
                 page.wait_for_timeout(400)
             if not record:

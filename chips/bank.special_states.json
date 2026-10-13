@@ -1,0 +1,63 @@
+{
+  "chip_id": "bank.special_states",
+  "kind": "accessor",
+  "set": "bank",
+  "label": "Bank only: the special-category states for the GST limit",
+  "aliases": [
+    "bank only: the special-category states f"
+  ],
+  "params": [
+    {
+      "name": "states",
+      "type": "json",
+      "default": [
+        "Manipur",
+        "Mizoram",
+        "Nagaland",
+        "Tripura"
+      ],
+      "label": "states"
+    },
+    {
+      "name": "codes",
+      "type": "json",
+      "default": [
+        "20",
+        "22",
+        "23",
+        "30"
+      ],
+      "label": "codes"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "states": "$states",
+      "codes": "$codes"
+    }
+  },
+  "returns": "record",
+  "version": 2,
+  "status": "published",
+  "description_nl": "2026-10-13: Services: Manipur, Mizoram, Nagaland, Tripura (notification 10/2017-CT). Compared with the state of the person's address.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "states": [
+          "Manipur",
+          "Mizoram",
+          "Nagaland",
+          "Tripura"
+        ],
+        "codes": [
+          "20",
+          "22",
+          "23",
+          "30"
+        ]
+      }
+    }
+  ]
+}

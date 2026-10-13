@@ -1,0 +1,61 @@
+{
+  "chip_id": "bank.upload",
+  "kind": "accessor",
+  "set": "bank",
+  "label": "Bank only: the steps of uploading the JSON on the income-tax portal",
+  "aliases": [
+    "bank only: the steps of uploading the js"
+  ],
+  "params": [
+    {
+      "name": "steps",
+      "type": "json",
+      "default": [
+        "Download the JSON file from {product} to your phone or computer. Do not open or edit it.",
+        "Go to incometax.gov.in and log in with your PAN and password. Keep your mobile near you for the OTP.",
+        "Click e-File, then Income Tax Returns, then File Income Tax Return.",
+        "Choose Assessment Year 2026-27, mode Online, and your status Individual. Click Continue.",
+        "Choose Upload (import) a JSON file instead of filling the form, pick the ITR-4 JSON, and upload it.",
+        "The portal checks the file. If it says errors, tell us the message - do not change the file yourself.",
+        "Check the summary, tick the declaration, and pay any tax due through e-Pay Tax (a challan), then come back to Submit.",
+        "Verify the return - Aadhaar OTP is quickest. The return is not filed until it is verified (within 30 days)."
+      ],
+      "label": "steps"
+    },
+    {
+      "name": "portal",
+      "type": "text",
+      "default": "incometax.gov.in",
+      "label": "portal"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "steps": "$steps",
+      "portal": "$portal"
+    }
+  },
+  "returns": "record",
+  "version": 2,
+  "status": "published",
+  "description_nl": "2026-10-13: Plain words, in order - the page draws them as a numbered list.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "steps": [
+          "Download the JSON file from {product} to your phone or computer. Do not open or edit it.",
+          "Go to incometax.gov.in and log in with your PAN and password. Keep your mobile near you for the OTP.",
+          "Click e-File, then Income Tax Returns, then File Income Tax Return.",
+          "Choose Assessment Year 2026-27, mode Online, and your status Individual. Click Continue.",
+          "Choose Upload (import) a JSON file instead of filling the form, pick the ITR-4 JSON, and upload it.",
+          "The portal checks the file. If it says errors, tell us the message - do not change the file yourself.",
+          "Check the summary, tick the declaration, and pay any tax due through e-Pay Tax (a challan), then come back to Submit.",
+          "Verify the return - Aadhaar OTP is quickest. The return is not filed until it is verified (within 30 days)."
+        ],
+        "portal": "incometax.gov.in"
+      }
+    }
+  ]
+}

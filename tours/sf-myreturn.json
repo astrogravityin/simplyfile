@@ -22,6 +22,8 @@
     "drop in your documents",
     "locked PDFs",
     "what each one gave",
+    "classify the money",
+    "turnover, profit and the GST limit",
     "history",
     "your return at a glance",
     "do the documents agree?",
@@ -178,6 +180,42 @@
         },
         {
           "highlight_target": ".mr-dgrid",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Classify the money",
+      "say": "A bank statement read row by row: money in, grouped by who paid. Tap Customer receipts, Cash takings, Own money, Loan or Not income - the turnover and the profit change at once. Own money, loans, refunds and interest never count.",
+      "do": [
+        {
+          "click": ".mr-node[data-step='classify']",
+          "optional": true
+        },
+        {
+          "wait": 1.2
+        },
+        {
+          "highlight_target": ".bk-list|.mr-rail-card",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Turnover, profit and the GST limit",
+      "say": "Customer receipts at 6% (cash at 8%) are the presumptive profit under 44AD - with the late fee if the return is after the due date. A turnover over the GST limit is flagged here too.",
+      "do": [
+        {
+          "click": ".mr-node[data-step='classify']",
+          "optional": true
+        },
+        {
+          "wait": 1.2
+        },
+        {
+          "highlight_target": ".bk-summary|.mr-rail-card",
           "optional": true,
           "timeout": 5
         }

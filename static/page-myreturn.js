@@ -8,37 +8,41 @@ import { icon } from './icons.js';
 import { historyButton, wireHistory } from './changes.js';
 import { stepper, docArt, waterfall, regimeBars, tdsMap, askArt } from './myreturn-art.js';
 import { resCard, foreignCard, faCard, clubCard, arrearCard, itruCard, wireWave3 } from './myreturn-wave3.js';
+import { classifyCard, wireClassify } from './myreturn-bank.js';
 
 const w = (k, v) => t('myreturn', k, v);
 const money = (n) => `₹${Math.round(Number(n || 0)).toLocaleString('en-IN')}`;
 const STEPS = ['gather', 'check', 'choose', 'review', 'file'];
+const BANK_STEPS = ['gather', 'classify', 'check', 'choose', 'review', 'file'];   // 2026-10-13: a bank statement read row by row adds Classify
+const stepsOf = (d) => (d && d.bank && d.bank.classify ? BANK_STEPS : STEPS);
 
 export async function myReturnPage(host) {
-  await loadWords('myreturn', 'wizard');
+  await loadWords('myreturn', 'wizard', 'bankonly');
   const q = new URLSearchParams((location.hash.split('?')[1]) || '');
   const home = await api('/api/myreturn');
   let cid = q.get('c') || (home.self && home.clients[0] ? home.clients[0].id : '');
   const ay = q.get('ay') || home.current_ay;
   if (!cid) { pick(host, home, ay); return; }
-  const S = { d: await api(`/api/myreturn/${encodeURIComponent(cid)}/${encodeURIComponent(ay)}`), step: STEPS.includes(q.get('step')) ? q.get('step') : '' };   // 2026-10-11: New filing opens a step
+  const S = { d: await api(`/api/myreturn/${encodeURIComponent(cid)}/${encodeURIComponent(ay)}`), step: BANK_STEPS.includes(q.get('step')) ? q.get('step') : '' };   // 2026-10-11: New filing opens a step
   const url = (p = '') => `/api/myreturn/${encodeURIComponent(cid)}/${encodeURIComponent(ay)}${p}`;
   const put = async (body, quiet) => { try { S.d = await api(url(), { method: 'PUT', body }); if (!quiet) toast(w('saved'), 'ok'); draw(); } catch (e) { toast(e.message, 'bad', 8); } };
 
   const draw = () => {
     S.W = Math.round(Math.min(720, Math.max(300, (host.clientWidth || 720) - 40)));   // the pictures are drawn at the width they get, never shrunk
     const d = S.d;
-    const step = S.step || d.step;
+    const order = stepsOf(d);
+    const step = order.includes(S.step) ? S.step : order.includes(d.step) ? d.step : order[0];
     const g = d.regimes[d.regime];
     const head = pageHead(w('title', { ay: d.ay }), esc(w('lede', { name: d.client.name })),
       `<span class="tag" style="--t:var(--brand)">${esc(d.form.form)}</span> ${may('wizard') ? `<button type="button" class="small" id="mr-wizard" data-href="#/wizard">${icon('spark', 13)} ${esc(t('wizard', 'mr_new'))}</button>` : ''} ${historyButton()}`);
-    const rail = `<div class="card mr-rail-card">${stepper(STEPS.map((s) => ({ id: s, label: w(`s_${s}`) })), step, d.steps.done, S.W)}</div>`;
+    const rail = `<div class="card mr-rail-card">${stepper(order.map((s) => ({ id: s, label: w(`s_${s}`) })), step, d.steps.done, S.W)}</div>`;
     const glance = `<div class="mr-glance">${[
       ['income', w('g_income'), money(g.tax.total)],
       ['tax', w('g_tax'), money(g.net_tax ?? g.tax.tax)],
       [g.balance > 0 ? 'pay' : 'refund', w(g.balance > 0 ? 'g_pay' : 'g_refund'), money(Math.abs(g.balance))],
       ['regime', w('g_regime'), w(`r_${d.regime}`)],
     ].map(([k, l, v]) => `<div class="mr-kpi k-${k}"><span>${esc(l)}</span><b>${esc(v)}</b></div>`).join('')}</div>`;
-    host.innerHTML = head + rail + glance + `<div class="mr-panel">${({ gather, check, choose, review, file })[step](d, g)}</div>`;
+    host.innerHTML = head + rail + glance + `<div class="mr-panel">${({ gather, classify, check, choose, review, file })[step](d, g)}</div>`;
     wire(step);
   };
 
@@ -81,8 +85,11 @@ export async function myReturnPage(host) {
           ${state.user && state.user.role === 'owner' ? `<label class="check mr-ai"><input type="checkbox" id="mr-ai" ${d.answers.ai_ok ? 'checked' : ''}/> <span>${esc(w('ai_ok'))}</span></label>` : ''}</div>
         <div class="row tight" style="justify-content:flex-end"><button type="button" class="primary" id="mr-up">${icon('upload', 14)} ${esc(w('read'))}</button></div></section>
       <div class="mr-dgrid">${cards}</div>
-      ${next('check')}`;
+      ${next(stepsOf(d)[1])}`;
   };
+
+  // --- 1b Classify (a bank statement's money) --------------------------------------------------------------------------
+  const classify = (d) => classifyCard(d, S);
 
   // --- 2 Check ---------------------------------------------------------------------------------------------------------
   const check = (d) => {
@@ -121,7 +128,7 @@ export async function myReturnPage(host) {
           : `<button type="button" class="${d.regime === id ? 'primary' : ''}" data-regime="${id}">${esc(w(d.regime === id ? 'chosen' : 'choose_this'))}</button>`}</article>`;
     return `<section class="card"><h3 class="rc-h">${icon('money', 15)} ${esc(w('choose_h'))}</h3>
         <p class="mr-verdict">${esc(b.saving ? w('verdict', { regime: w(`r_${b.better}`), saving: money(b.saving) }) : w('verdict_same'))}</p>
-        ${d.old_ok ? '' : `<p class="small muted">${icon('info', 12)} ${esc(w('old_closed'))}</p>`}
+        ${d.old_ok ? '' : `<p class="small muted">${icon('info', 12)} ${esc(w('old_closed', { due: String(d.dates.due).replace(/(\d{4})(\d\d)(\d\d)/, '$3-$2-$1') }))}</p>`}
         ${regimeBars({ label: w('r_new'), tax: (n.net_tax ?? n.tax.tax) + n.fee_234f + n.interest.total }, { label: w('r_old'), tax: (o.net_tax ?? o.tax.tax) + o.fee_234f + o.interest.total }, b.better, { best: w('cheaper') }, S.W)}
         <div class="mr-regs">${side(n, 'new')}${side(o, 'old')}</div></section>
       <section class="card"><h3 class="rc-h">${icon('pulse', 15)} ${esc(w('flow_h', { regime: w(`r_${d.regime}`) }))}</h3>${waterfall(flow(d.regimes[d.regime]), S.W)}</section>
@@ -189,11 +196,11 @@ export async function myReturnPage(host) {
         <h3>${esc(w('file_h', { form: d.form.form }))}</h3><p>${esc(w(d.form.why))}</p>
         ${d.ca_needed ? caNote(d.ca_needed) : `<div id="mr-schema" class="small muted">${esc(w('schema_wait'))}</div>`}</div></div>
       ${d.ca_needed ? '' : `<div class="row tight mr-acts"><button type="button" class="primary" id="mr-json">${icon('download', 14)} ${esc(w('download', { form: d.form.form }))}</button></div>`}
-      <h4>${esc(w('upload_h'))}</h4><ol class="mr-up">${w('upload_steps').split('|').map((s) => `<li>${esc(s)}</li>`).join('')}</ol>
+      <h4>${esc(d.bank ? t('bankonly', 'upload_h') : w('upload_h'))}</h4>${d.bank ? `<p class="small muted">${esc(t('bankonly', 'upload_p'))}</p>` : ''}<ol class="mr-up">${(d.bank ? d.bank.upload.steps : w('upload_steps').split('|')).map((s) => `<li>${esc(s)}</li>`).join('')}</ol>
       <p class="small muted">${esc(w('file_note'))}</p></section>${itruCard(d)}<div class="row tight mr-next">${back('file')}<span></span></div>`;
 
-  const back = (at) => { const prev = STEPS[STEPS.indexOf(at) - 1]; return prev ? `<button type="button" class="mr-back" data-back="${prev}">${icon('left', 14)} ${esc(w('back_to', { step: w(`s_${prev}`) }))}</button>` : '<span></span>'; };
-  const next = (to, flags) => `<div class="row tight mr-next">${back(STEPS[STEPS.indexOf(to) - 1])}<button type="button" class="primary" data-next="${to}" data-flags='${flags ? esc(JSON.stringify(flags)) : ''}'>${esc(w(`go_${to}`))} ${icon('right', 14)}</button></div>`;
+  const back = (at) => { const order = stepsOf(S.d); const prev = order[order.indexOf(at) - 1]; return prev ? `<button type="button" class="mr-back" data-back="${prev}">${icon('left', 14)} ${esc(w('back_to', { step: w(`s_${prev}`) }))}</button>` : '<span></span>'; };
+  const next = (to, flags) => `<div class="row tight mr-next">${back(stepsOf(S.d)[stepsOf(S.d).indexOf(to) - 1])}<button type="button" class="primary" data-next="${to}" data-flags='${flags ? esc(JSON.stringify(flags)) : ''}'>${esc(w(`go_${to}`))} ${icon('right', 14)}</button></div>`;
 
   const wire = (step) => {
     const $ = (s) => host.querySelector(s);
@@ -209,6 +216,7 @@ export async function myReturnPage(host) {
       if (f) await put(f, true); else draw();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }); });
+    if (step === 'classify') wireClassify(host, S, put, url, draw);
     if (step === 'gather') {
       wireDrops(host);
       $('#mr-pw-eye').onclick = (e) => {                // the eye: see what was typed, then hide it again

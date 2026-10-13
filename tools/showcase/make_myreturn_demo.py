@@ -649,3 +649,7 @@ for key, folder in (("zenith", "case-company-trading"), ("kaveri", "case-company
     for name, data in company_demo.documents(key):      # the very names pre_companies.py uploads: in the demo seed they are "already there"
         (d / name).write_bytes(data)
     print("wrote", folder + ":", ", ".join(sorted(p.name for p in d.iterdir())))
+
+# 2026-10-13: the bank-statement-only worked example (case-bank-only): a made-up Kotak-style statement PDF
+import runpy  # noqa: E402
+runpy.run_path(str(Path(__file__).with_name("make_bankonly_demo.py")), run_name="__main__")

@@ -1,0 +1,1089 @@
+{
+  "chip_id": "bank.classify",
+  "kind": "accessor",
+  "set": "bank",
+  "label": "Bank only: what each credit and debit of a bank statement is",
+  "aliases": [
+    "bank only: what each credit and debit of"
+  ],
+  "params": [
+    {
+      "name": "ui_credit",
+      "type": "json",
+      "default": [
+        "receipt",
+        "cash",
+        "own",
+        "loan",
+        "other"
+      ],
+      "label": "ui credit"
+    },
+    {
+      "name": "ui_debit",
+      "type": "json",
+      "default": [
+        "personal",
+        "business",
+        "own",
+        "loan"
+      ],
+      "label": "ui debit"
+    },
+    {
+      "name": "cash_choice_for",
+      "type": "json",
+      "default": [
+        "cash"
+      ],
+      "label": "cash choice for"
+    },
+    {
+      "name": "default_credit",
+      "type": "text",
+      "default": "receipt",
+      "label": "default credit"
+    },
+    {
+      "name": "default_debit",
+      "type": "text",
+      "default": "personal",
+      "label": "default debit"
+    },
+    {
+      "name": "counterparty",
+      "type": "json",
+      "default": [
+        "^UPI/([^/]*)/",
+        "^(?:REV-)?UPI/([^/]*)/",
+        "^(?:NEFT|RTGS|IMPS)[-/ ]*(?:CR[-/ ]*|DR[-/ ]*)?[A-Z0-9*]{6,}\\s+(.+?)(?:\\s+[A-Z0-9*]{8,})?$",
+        "^NACH[-A-Z]*\\s*[-0-9A-Z]*\\s*[-]?\\s*\\d*\\s+(.+?)(?:\\s+\\d[\\d ]*)?$",
+        "^(?:CLG TO|CLG FROM|BY CLG|TO|BY)\\s+(.+?)(?:\\s+\\d.*)?$"
+      ],
+      "label": "counterparty"
+    },
+    {
+      "name": "name_noise",
+      "type": "text",
+      "default": "[^a-z ]+",
+      "label": "name noise"
+    },
+    {
+      "name": "name_min_letters",
+      "type": "number",
+      "default": 3,
+      "label": "name min letters"
+    },
+    {
+      "name": "name_max",
+      "type": "number",
+      "default": 40,
+      "label": "name max"
+    },
+    {
+      "name": "own_min_letters",
+      "type": "number",
+      "default": 5,
+      "label": "own min letters"
+    },
+    {
+      "name": "own_ratio",
+      "type": "number",
+      "default": 0.85,
+      "label": "own ratio"
+    },
+    {
+      "name": "own_words",
+      "type": "json",
+      "default": [
+        "self",
+        "own a/c",
+        "own account",
+        "to self",
+        "from self",
+        "sweep",
+        "fd closure",
+        "fd proceeds",
+        "td closure",
+        "rd closure",
+        "redemption"
+      ],
+      "label": "own words"
+    },
+    {
+      "name": "credit_rules",
+      "type": "json",
+      "default": [
+        {
+          "kind": "own",
+          "by": "holder"
+        },
+        {
+          "kind": "interest",
+          "words": [
+            "int.pd",
+            "int pd",
+            "int.cr",
+            " interest ",
+            "sb int",
+            "int credit",
+            "int.coll"
+          ]
+        },
+        {
+          "kind": "refund",
+          "words": [
+            "rev-",
+            "reversal",
+            "reversed",
+            "refund",
+            "chargeback",
+            "cashback",
+            "imps return",
+            "return of"
+          ]
+        },
+        {
+          "kind": "own",
+          "by": "own_words"
+        },
+        {
+          "kind": "loan",
+          "words": [
+            "kreditbee",
+            "krazybee",
+            "navi",
+            "slice",
+            "paytm postpaid",
+            "postpaid",
+            "lazypay",
+            "simpl",
+            "zestmoney",
+            "kissht",
+            "moneyview",
+            "money view",
+            "cashe",
+            "earlysalary",
+            "early salary",
+            "fibe",
+            "stashfin",
+            "mpokket",
+            "truebalance",
+            "true balance",
+            "dhani",
+            "indiabulls",
+            "bajaj finserv",
+            "bajaj finance",
+            "hdb financial",
+            "tata capital",
+            "aditya birla",
+            "poonawalla",
+            "fullerton",
+            "muthoot",
+            "manappuram",
+            "iifl",
+            "lendingkart",
+            "capital float",
+            "flexsalary",
+            "olyv",
+            "nira finance",
+            "smartcoin",
+            "moneytap",
+            "loantap",
+            "branch international",
+            "credy",
+            "rupeeredee",
+            "fatakpay",
+            "ramfin",
+            "snapmint",
+            "kredx",
+            "axio",
+            "freo",
+            "payme india",
+            "home credit",
+            "hero fincorp",
+            "piramal",
+            "ujjivan",
+            "satin",
+            "creditaccess",
+            "jana small",
+            "finserv",
+            "microfin",
+            "fincorp",
+            "capital limit",
+            "capital ltd",
+            "capital serv",
+            "capital pvt",
+            "finance lim",
+            "finance ltd",
+            "finance pvt",
+            "nbfc",
+            " capital ",
+            " finance ",
+            " finserv ",
+            " fincorp ",
+            "loan",
+            "emi "
+          ]
+        },
+        {
+          "kind": "cash",
+          "words": [
+            "cash dep",
+            "by cash",
+            "cash deposit",
+            "cdm",
+            "csh dep",
+            "cash-dep"
+          ]
+        },
+        {
+          "kind": "salary",
+          "words": [
+            "salary",
+            "sal cr",
+            "payroll"
+          ]
+        },
+        {
+          "kind": "ask",
+          "words": [
+            "credit by p",
+            "phonepe credit",
+            "credit line",
+            "wallet load",
+            "added to wallet",
+            "pocket"
+          ]
+        },
+        {
+          "kind": "ask",
+          "words": [
+            " limite",
+            " ltd",
+            " pvt",
+            " private ",
+            " llp",
+            " corporation",
+            " enterprises",
+            " bank "
+          ]
+        },
+        {
+          "kind": "refund",
+          "words": [
+            "zomato",
+            "swiggy",
+            "blinkit",
+            "zepto",
+            "bigbasket",
+            "amazon",
+            "flipkart",
+            "myntra",
+            "meesho",
+            "uber",
+            "ola ",
+            "rapido",
+            "irctc",
+            "makemytrip",
+            "bookmyshow",
+            "netflix",
+            "spotify",
+            "google play",
+            "apple",
+            "jio",
+            "airtel",
+            "vodafone",
+            "bsnl",
+            "phonepe merchant",
+            "razorpay",
+            "payu",
+            "cashfree",
+            "billdesk",
+            "paytm",
+            "cred",
+            "dmart",
+            "reliance",
+            "star bazaar",
+            "more retail",
+            "decathlon",
+            "croma",
+            "nykaa",
+            "pharmeasy",
+            "1mg",
+            "apollo pharmacy",
+            "medplus",
+            "petrol",
+            "fuel",
+            "metro",
+            "bescom",
+            "electricity",
+            "insurance",
+            "lic ",
+            "mutual fund",
+            "groww",
+            "zerodha",
+            "upstox",
+            "cult.fit",
+            "cultfit"
+          ]
+        }
+      ],
+      "label": "credit rules"
+    },
+    {
+      "name": "debit_rules",
+      "type": "json",
+      "default": [
+        {
+          "kind": "own",
+          "by": "holder"
+        },
+        {
+          "kind": "own",
+          "by": "own_words"
+        },
+        {
+          "kind": "loan",
+          "words": [
+            "kreditbee",
+            "krazybee",
+            "navi",
+            "slice",
+            "paytm postpaid",
+            "postpaid",
+            "lazypay",
+            "simpl",
+            "zestmoney",
+            "kissht",
+            "moneyview",
+            "money view",
+            "cashe",
+            "earlysalary",
+            "early salary",
+            "fibe",
+            "stashfin",
+            "mpokket",
+            "truebalance",
+            "true balance",
+            "dhani",
+            "indiabulls",
+            "bajaj finserv",
+            "bajaj finance",
+            "hdb financial",
+            "tata capital",
+            "aditya birla",
+            "poonawalla",
+            "fullerton",
+            "muthoot",
+            "manappuram",
+            "iifl",
+            "lendingkart",
+            "capital float",
+            "flexsalary",
+            "olyv",
+            "nira finance",
+            "smartcoin",
+            "moneytap",
+            "loantap",
+            "branch international",
+            "credy",
+            "rupeeredee",
+            "fatakpay",
+            "ramfin",
+            "snapmint",
+            "kredx",
+            "axio",
+            "freo",
+            "payme india",
+            "home credit",
+            "hero fincorp",
+            "piramal",
+            "ujjivan",
+            "satin",
+            "creditaccess",
+            "jana small",
+            "finserv",
+            "microfin",
+            "fincorp",
+            "capital limit",
+            "capital ltd",
+            "capital serv",
+            "capital pvt",
+            "finance lim",
+            "finance ltd",
+            "finance pvt",
+            "nbfc",
+            " capital ",
+            " finance ",
+            " finserv ",
+            " fincorp ",
+            "loan",
+            "emi ",
+            "nach",
+            "ecs ",
+            "si cr",
+            "auto debit"
+          ]
+        },
+        {
+          "kind": "tax",
+          "words": [
+            "income tax",
+            "gst ",
+            "tds ",
+            "advance tax",
+            "challan"
+          ]
+        },
+        {
+          "kind": "personal",
+          "words": [
+            "zomato",
+            "swiggy",
+            "blinkit",
+            "zepto",
+            "bigbasket",
+            "amazon",
+            "flipkart",
+            "myntra",
+            "meesho",
+            "uber",
+            "ola ",
+            "rapido",
+            "irctc",
+            "makemytrip",
+            "bookmyshow",
+            "netflix",
+            "spotify",
+            "google play",
+            "apple",
+            "jio",
+            "airtel",
+            "vodafone",
+            "bsnl",
+            "phonepe merchant",
+            "razorpay",
+            "payu",
+            "cashfree",
+            "billdesk",
+            "paytm",
+            "cred",
+            "dmart",
+            "reliance",
+            "star bazaar",
+            "more retail",
+            "decathlon",
+            "croma",
+            "nykaa",
+            "pharmeasy",
+            "1mg",
+            "apollo pharmacy",
+            "medplus",
+            "petrol",
+            "fuel",
+            "metro",
+            "bescom",
+            "electricity",
+            "insurance",
+            "lic ",
+            "mutual fund",
+            "groww",
+            "zerodha",
+            "upstox",
+            "cult.fit",
+            "cultfit"
+          ]
+        }
+      ],
+      "label": "debit rules"
+    },
+    {
+      "name": "kind_class",
+      "type": "json",
+      "default": {
+        "receipt": "receipt",
+        "cash": "cash",
+        "own": "own",
+        "loan": "loan",
+        "refund": "other",
+        "interest": "other",
+        "salary": "other",
+        "ask": "ask",
+        "personal": "personal",
+        "tax": "business",
+        "business": "business"
+      },
+      "label": "kind class"
+    },
+    {
+      "name": "income_kinds",
+      "type": "json",
+      "default": [
+        "interest"
+      ],
+      "label": "income kinds"
+    },
+    {
+      "name": "salary_kinds",
+      "type": "json",
+      "default": [
+        "salary"
+      ],
+      "label": "salary kinds"
+    },
+    {
+      "name": "passthrough",
+      "type": "json",
+      "default": {
+        "days": 2,
+        "tolerance": 1.0,
+        "min_amount": 5000,
+        "share": 0.5
+      },
+      "label": "passthrough"
+    },
+    {
+      "name": "watch",
+      "type": "json",
+      "default": {
+        "round_to": 1000,
+        "min_amount": 10000,
+        "share": 0.5
+      },
+      "label": "watch"
+    },
+    {
+      "name": "group_show",
+      "type": "number",
+      "default": 12,
+      "label": "group show"
+    },
+    {
+      "name": "common_codes",
+      "type": "json",
+      "default": [
+        "20023",
+        "20020",
+        "20021",
+        "21001",
+        "21005",
+        "17006",
+        "14009",
+        "09021",
+        "10008",
+        "09002"
+      ],
+      "label": "common codes"
+    },
+    {
+      "name": "top_names",
+      "type": "number",
+      "default": 6,
+      "label": "top names"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "ui_credit": "$ui_credit",
+      "ui_debit": "$ui_debit",
+      "cash_choice_for": "$cash_choice_for",
+      "default_credit": "$default_credit",
+      "default_debit": "$default_debit",
+      "counterparty": "$counterparty",
+      "name_noise": "$name_noise",
+      "name_min_letters": "$name_min_letters",
+      "name_max": "$name_max",
+      "own_min_letters": "$own_min_letters",
+      "own_ratio": "$own_ratio",
+      "own_words": "$own_words",
+      "credit_rules": "$credit_rules",
+      "debit_rules": "$debit_rules",
+      "kind_class": "$kind_class",
+      "income_kinds": "$income_kinds",
+      "salary_kinds": "$salary_kinds",
+      "passthrough": "$passthrough",
+      "watch": "$watch",
+      "group_show": "$group_show",
+      "common_codes": "$common_codes",
+      "top_names": "$top_names"
+    }
+  },
+  "returns": "record",
+  "version": 4,
+  "status": "published",
+  "description_nl": "2026-10-13: Counterparty patterns, the holder-name comparison, lender and merchant words, the rules in order (first match wins), the classes the person taps, the pass-through check and the watch thresholds. Words are matched in the lower-case narration.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "ui_credit": [
+          "receipt",
+          "cash",
+          "own",
+          "loan",
+          "other"
+        ],
+        "ui_debit": [
+          "personal",
+          "business",
+          "own",
+          "loan"
+        ],
+        "cash_choice_for": [
+          "cash"
+        ],
+        "default_credit": "receipt",
+        "default_debit": "personal",
+        "counterparty": [
+          "^UPI/([^/]*)/",
+          "^(?:REV-)?UPI/([^/]*)/",
+          "^(?:NEFT|RTGS|IMPS)[-/ ]*(?:CR[-/ ]*|DR[-/ ]*)?[A-Z0-9*]{6,}\\s+(.+?)(?:\\s+[A-Z0-9*]{8,})?$",
+          "^NACH[-A-Z]*\\s*[-0-9A-Z]*\\s*[-]?\\s*\\d*\\s+(.+?)(?:\\s+\\d[\\d ]*)?$",
+          "^(?:CLG TO|CLG FROM|BY CLG|TO|BY)\\s+(.+?)(?:\\s+\\d.*)?$"
+        ],
+        "name_noise": "[^a-z ]+",
+        "name_min_letters": 3,
+        "name_max": 40,
+        "own_min_letters": 5,
+        "own_ratio": 0.85,
+        "own_words": [
+          "self",
+          "own a/c",
+          "own account",
+          "to self",
+          "from self",
+          "sweep",
+          "fd closure",
+          "fd proceeds",
+          "td closure",
+          "rd closure",
+          "redemption"
+        ],
+        "credit_rules": [
+          {
+            "kind": "own",
+            "by": "holder"
+          },
+          {
+            "kind": "interest",
+            "words": [
+              "int.pd",
+              "int pd",
+              "int.cr",
+              " interest ",
+              "sb int",
+              "int credit",
+              "int.coll"
+            ]
+          },
+          {
+            "kind": "refund",
+            "words": [
+              "rev-",
+              "reversal",
+              "reversed",
+              "refund",
+              "chargeback",
+              "cashback",
+              "imps return",
+              "return of"
+            ]
+          },
+          {
+            "kind": "own",
+            "by": "own_words"
+          },
+          {
+            "kind": "loan",
+            "words": [
+              "kreditbee",
+              "krazybee",
+              "navi",
+              "slice",
+              "paytm postpaid",
+              "postpaid",
+              "lazypay",
+              "simpl",
+              "zestmoney",
+              "kissht",
+              "moneyview",
+              "money view",
+              "cashe",
+              "earlysalary",
+              "early salary",
+              "fibe",
+              "stashfin",
+              "mpokket",
+              "truebalance",
+              "true balance",
+              "dhani",
+              "indiabulls",
+              "bajaj finserv",
+              "bajaj finance",
+              "hdb financial",
+              "tata capital",
+              "aditya birla",
+              "poonawalla",
+              "fullerton",
+              "muthoot",
+              "manappuram",
+              "iifl",
+              "lendingkart",
+              "capital float",
+              "flexsalary",
+              "olyv",
+              "nira finance",
+              "smartcoin",
+              "moneytap",
+              "loantap",
+              "branch international",
+              "credy",
+              "rupeeredee",
+              "fatakpay",
+              "ramfin",
+              "snapmint",
+              "kredx",
+              "axio",
+              "freo",
+              "payme india",
+              "home credit",
+              "hero fincorp",
+              "piramal",
+              "ujjivan",
+              "satin",
+              "creditaccess",
+              "jana small",
+              "finserv",
+              "microfin",
+              "fincorp",
+              "capital limit",
+              "capital ltd",
+              "capital serv",
+              "capital pvt",
+              "finance lim",
+              "finance ltd",
+              "finance pvt",
+              "nbfc",
+              " capital ",
+              " finance ",
+              " finserv ",
+              " fincorp ",
+              "loan",
+              "emi "
+            ]
+          },
+          {
+            "kind": "cash",
+            "words": [
+              "cash dep",
+              "by cash",
+              "cash deposit",
+              "cdm",
+              "csh dep",
+              "cash-dep"
+            ]
+          },
+          {
+            "kind": "salary",
+            "words": [
+              "salary",
+              "sal cr",
+              "payroll"
+            ]
+          },
+          {
+            "kind": "ask",
+            "words": [
+              "credit by p",
+              "phonepe credit",
+              "credit line",
+              "wallet load",
+              "added to wallet",
+              "pocket"
+            ]
+          },
+          {
+            "kind": "ask",
+            "words": [
+              " limite",
+              " ltd",
+              " pvt",
+              " private ",
+              " llp",
+              " corporation",
+              " enterprises",
+              " bank "
+            ]
+          },
+          {
+            "kind": "refund",
+            "words": [
+              "zomato",
+              "swiggy",
+              "blinkit",
+              "zepto",
+              "bigbasket",
+              "amazon",
+              "flipkart",
+              "myntra",
+              "meesho",
+              "uber",
+              "ola ",
+              "rapido",
+              "irctc",
+              "makemytrip",
+              "bookmyshow",
+              "netflix",
+              "spotify",
+              "google play",
+              "apple",
+              "jio",
+              "airtel",
+              "vodafone",
+              "bsnl",
+              "phonepe merchant",
+              "razorpay",
+              "payu",
+              "cashfree",
+              "billdesk",
+              "paytm",
+              "cred",
+              "dmart",
+              "reliance",
+              "star bazaar",
+              "more retail",
+              "decathlon",
+              "croma",
+              "nykaa",
+              "pharmeasy",
+              "1mg",
+              "apollo pharmacy",
+              "medplus",
+              "petrol",
+              "fuel",
+              "metro",
+              "bescom",
+              "electricity",
+              "insurance",
+              "lic ",
+              "mutual fund",
+              "groww",
+              "zerodha",
+              "upstox",
+              "cult.fit",
+              "cultfit"
+            ]
+          }
+        ],
+        "debit_rules": [
+          {
+            "kind": "own",
+            "by": "holder"
+          },
+          {
+            "kind": "own",
+            "by": "own_words"
+          },
+          {
+            "kind": "loan",
+            "words": [
+              "kreditbee",
+              "krazybee",
+              "navi",
+              "slice",
+              "paytm postpaid",
+              "postpaid",
+              "lazypay",
+              "simpl",
+              "zestmoney",
+              "kissht",
+              "moneyview",
+              "money view",
+              "cashe",
+              "earlysalary",
+              "early salary",
+              "fibe",
+              "stashfin",
+              "mpokket",
+              "truebalance",
+              "true balance",
+              "dhani",
+              "indiabulls",
+              "bajaj finserv",
+              "bajaj finance",
+              "hdb financial",
+              "tata capital",
+              "aditya birla",
+              "poonawalla",
+              "fullerton",
+              "muthoot",
+              "manappuram",
+              "iifl",
+              "lendingkart",
+              "capital float",
+              "flexsalary",
+              "olyv",
+              "nira finance",
+              "smartcoin",
+              "moneytap",
+              "loantap",
+              "branch international",
+              "credy",
+              "rupeeredee",
+              "fatakpay",
+              "ramfin",
+              "snapmint",
+              "kredx",
+              "axio",
+              "freo",
+              "payme india",
+              "home credit",
+              "hero fincorp",
+              "piramal",
+              "ujjivan",
+              "satin",
+              "creditaccess",
+              "jana small",
+              "finserv",
+              "microfin",
+              "fincorp",
+              "capital limit",
+              "capital ltd",
+              "capital serv",
+              "capital pvt",
+              "finance lim",
+              "finance ltd",
+              "finance pvt",
+              "nbfc",
+              " capital ",
+              " finance ",
+              " finserv ",
+              " fincorp ",
+              "loan",
+              "emi ",
+              "nach",
+              "ecs ",
+              "si cr",
+              "auto debit"
+            ]
+          },
+          {
+            "kind": "tax",
+            "words": [
+              "income tax",
+              "gst ",
+              "tds ",
+              "advance tax",
+              "challan"
+            ]
+          },
+          {
+            "kind": "personal",
+            "words": [
+              "zomato",
+              "swiggy",
+              "blinkit",
+              "zepto",
+              "bigbasket",
+              "amazon",
+              "flipkart",
+              "myntra",
+              "meesho",
+              "uber",
+              "ola ",
+              "rapido",
+              "irctc",
+              "makemytrip",
+              "bookmyshow",
+              "netflix",
+              "spotify",
+              "google play",
+              "apple",
+              "jio",
+              "airtel",
+              "vodafone",
+              "bsnl",
+              "phonepe merchant",
+              "razorpay",
+              "payu",
+              "cashfree",
+              "billdesk",
+              "paytm",
+              "cred",
+              "dmart",
+              "reliance",
+              "star bazaar",
+              "more retail",
+              "decathlon",
+              "croma",
+              "nykaa",
+              "pharmeasy",
+              "1mg",
+              "apollo pharmacy",
+              "medplus",
+              "petrol",
+              "fuel",
+              "metro",
+              "bescom",
+              "electricity",
+              "insurance",
+              "lic ",
+              "mutual fund",
+              "groww",
+              "zerodha",
+              "upstox",
+              "cult.fit",
+              "cultfit"
+            ]
+          }
+        ],
+        "kind_class": {
+          "receipt": "receipt",
+          "cash": "cash",
+          "own": "own",
+          "loan": "loan",
+          "refund": "other",
+          "interest": "other",
+          "salary": "other",
+          "ask": "ask",
+          "personal": "personal",
+          "tax": "business",
+          "business": "business"
+        },
+        "income_kinds": [
+          "interest"
+        ],
+        "salary_kinds": [
+          "salary"
+        ],
+        "passthrough": {
+          "days": 2,
+          "tolerance": 1.0,
+          "min_amount": 5000,
+          "share": 0.5
+        },
+        "watch": {
+          "round_to": 1000,
+          "min_amount": 10000,
+          "share": 0.5
+        },
+        "group_show": 12,
+        "common_codes": [
+          "20023",
+          "20020",
+          "20021",
+          "21001",
+          "21005",
+          "17006",
+          "14009",
+          "09021",
+          "10008",
+          "09002"
+        ],
+        "top_names": 6
+      }
+    }
+  ]
+}

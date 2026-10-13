@@ -24,6 +24,7 @@ from pathlib import Path
 
 from fastapi import HTTPException
 
+import bankclass
 import clients
 import compute
 from core import engine, store
@@ -178,6 +179,7 @@ def add_doc(user: dict, cid: str, ay: str, filename: str, data: bytes, password:
                "facts": got["facts"], "found": got.get("found", []), "problems": got.get("problems", []),
                "added_at": store.now(), "added_by": user["id"]}
         st["docs"] = [x for x in st.get("docs") or [] if x["id"] != fid] + [doc]
+        _bank_apply(st)
         _save(cid, ay, st)
     return work(cid, ay) | {"added": {k2: doc[k2] for k2 in ("id", "name", "kind", "method", "found", "problems")}}
 
@@ -188,6 +190,8 @@ def who(got: dict) -> dict:
     p = (got.get("facts") or {}).get("person") or {}
     if p.get("pan"):
         return {"pan": p["pan"], "name": p.get("name") or "", "dob": p.get("dob") or ""}
+    if p.get("name") and (got.get("facts") or {}).get("bank"):        # 2026-10-13: a bank statement names its holder, never a PAN
+        return {"pan": "", "name": p["name"], "dob": ""}
     k, stack = settings()["who"], [(got.get("facts") or {}).get("filed_json")]
     while stack:                                            # PersonalInfo sits at a different depth in ITR-1 and ITR-2
         x = stack.pop()
@@ -245,6 +249,7 @@ def remove_doc(user: dict, cid: str, ay: str, fid: str) -> dict:
         if not d:
             _bad("no_doc", 404)
         st["docs"] = [x for x in docs if x["id"] != fid]
+        _bank_apply(st, removed=True)
         _save(cid, ay, st)
     f = folder(cid, ay) / f"{fid}{d['ext']}"
     if f.exists():                                          # kept for History (<fid>.v<n><ext>), never deleted
@@ -404,7 +409,10 @@ def answer(user: dict, cid: str, ay: str, body: dict) -> dict:
                     _bad("bad_gstin", gstin=g or "-")       # a blank row (just added) is kept to be typed in; the JSON takes only GSTINs
                 gst_rows.append({"gstin": g, "turnover": _num(x.get("turnover"))})
             opt = {f: ("" if str(b.get(f) if b.get(f) is not None else "").strip() == "" else _num(b.get(f))) for f in BIZ_OPT}
-            st["business"] = {f: (str(b.get(f) or "").strip()[:120] if f in BIZ_TEXT else _num(b.get(f))) for f in BIZ} | {"vehicles": vehicles, "gst_rows": gst_rows} | opt
+            was = st.get("business") or {}        # 2026-10-13: a save that names only some fields (New filing sets the kind) keeps the rest
+            st["business"] = {f: (str(b.get(f) if f in b else was.get(f) or "").strip()[:120] if f in BIZ_TEXT else _num(b.get(f) if f in b else was.get(f)))
+                              for f in BIZ} | {"vehicles": vehicles, "gst_rows": gst_rows} | opt
+            _bank_apply(st)
             if "gst_rows" in b:                              # the rows say it all now: the single GSTIN of before goes
                 st["business"] |= {"gstin": "", "gst_turnover": 0.0}
             if st["business"]["ad_left"] not in ("", "yes"):
@@ -435,6 +443,21 @@ def answer(user: dict, cid: str, ay: str, body: dict) -> dict:
             if body["regime"] not in ("", "new", "old"):
                 _bad("bad_field", field="regime")
             st["regime"] = body["regime"]       # checked below, on the return with the rest of this save in it
+        if "bank_class" in body:                           # 2026-10-13: what each group of a bank statement is (Classify step)
+            bk = bankclass.settings()
+            keep = st.setdefault("bank_class", {})
+            for key, v in (body["bank_class"] or {}).items():
+                dr = str(key).split("|")[0]
+                if dr not in ("cr", "dr") or len(str(key)) > 120 or v not in ("", None) and str(v) not in bk["ui_credit" if dr == "cr" else "ui_debit"] + ["ask"]:
+                    _bad("bad_field", field="bank_class")
+                if v in ("", None):
+                    keep.pop(key, None)
+                else:
+                    keep[str(key)] = str(v)
+            _bank_apply(st)
+        if "bank_confirmed" in body:
+            st["bank_confirmed"] = bool(body["bank_confirmed"])
+            _bank_apply(st)
         if body.get("step"):
             st["step"] = str(body["step"])[:20]
         for flag in ("reviewed", "regime_seen"):           # the person has looked: the step counts as done
@@ -449,10 +472,43 @@ def answer(user: dict, cid: str, ay: str, body: dict) -> dict:
         _save(cid, ay, st)
         # 2026-10-08: 115BAC(6) - the old regime is open when THIS return (with the business, the dates ... of this same save) is filed by
         # its form's due date (chip myreturn.settings old_regime_kinds on close.dates): asked after the save, the save undone when it is not
-        if body.get("regime") == "old" and not work(cid, ay)["old_ok"]:
+        if body.get("regime") == "old" and not (w0 := work(cid, ay))["old_ok"]:
             _save(cid, ay, before)
-            _bad("old_closed")
+            _bad("old_closed", due=re.sub(r"(\d{4})(\d\d)(\d\d)", r"--", str(w0["dates"]["due"])))
     return work(cid, ay)
+
+
+def _bank_docs(st: dict, serial_only: bool = False) -> list[dict]:
+    """The bank statements read row by row (chip bank.statement); by default only those that add up - one that does not is not used."""
+    return [d for d in st.get("docs") or [] if d["kind"] == "bank" and ((d.get("facts") or {}).get("bank") or {}).get("txns")
+            and (not serial_only or d["facts"]["bank"]["recon"]["ok"])]
+
+
+def bank_open(st: dict) -> bool:
+    """A bank statement is read, adds up, and its money is not yet confirmed as classified (the Classify step)."""
+    return bool(_bank_docs(st, True)) and not st.get("bank_confirmed")
+
+
+def _bank_class(st: dict) -> dict | None:
+    return bankclass.of_docs(_bank_docs(st, True), st.get("bank_class"))
+
+
+def _bank_apply(st: dict, removed: bool = False) -> None:
+    """2026-10-13: the classified customer receipts are the business's digital turnover, the cash takings its cash - written into
+    the business card unless the person typed their own figures (what was last written by this is replaced; anything else stays)."""
+    cl = _bank_class(st)
+    biz = st.get("business") or {}
+    last = st.get("bank_applied") or {}
+    cur = (_num(biz.get("digital")), _num(biz.get("cash")))
+    if cur not in ((0.0, 0.0), (_num(last.get("digital")), _num(last.get("cash")))):
+        return
+    if cl is None:
+        if removed and last:
+            st["business"] = biz | {"digital": 0.0, "cash": 0.0}
+            st.pop("bank_applied", None)
+        return
+    st["business"] = biz | {"digital": round(cl["digital"], 2), "cash": round(cl["cash"], 2)}
+    st["bank_applied"] = {"digital": round(cl["digital"], 2), "cash": round(cl["cash"], 2)}
 
 
 def _wave3(body: dict, st: dict, k: dict, ay: str) -> None:
@@ -602,8 +658,12 @@ def merged(cid: str, ay: str) -> dict:
             if d["kind"] == kind:
                 pp |= {f: v for f, v in ((d["facts"] or {}).get("person") or {}).items() if v not in (None, "") and f not in pp}
     out["person"] = pp
+    bank_cl = _bank_class(st)
+    out["bank_class"] = bank_cl
     for sec, keys in (("other", OTHER), ("cg", CG), ("via", VIA)):
         base = {k: _num((out.get(sec) or {}).get(k)) for k in keys}
+        if sec == "other" and bank_cl and not base.get("savings") and bank_cl["interest"]:     # 2026-10-13: the savings interest the statement shows
+            base["savings"] = bank_cl["interest"]
         mine = (st.get("edits") or {}).get(sec) or {}
         out[sec] = base | {k: v for k, v in mine.items() if k in keys}
         out.setdefault("typed", {})[sec] = sorted(mine)
@@ -623,7 +683,12 @@ def merged(cid: str, ay: str) -> dict:
     seen = sum(_num(x.get("income")) for x in out.get("tds") or [] if re.sub(r"\s+", "", str(x.get("section") or "")).upper() in secs)
     biz = st.get("business") or {}
     bk = [d["facts"]["bank"] for d in st.get("docs") or [] if d["kind"] == "bank" and (d.get("facts") or {}).get("bank")]
-    out["bank"] = {f: round(sum(_num(x.get(f)) for x in bk), 2) for f in ("credits", "receipts", "cash", "interest")} | {"statements": len(bk)}
+    cl = bank_cl                                          # 2026-10-13: a statement read row by row - the person's classes, else the chip's guess
+    plain = [x for x in bk if not x.get("txns")]
+    out["bank"] = {f: round(sum(_num(x.get(f)) for x in plain), 2) for f in ("credits", "receipts", "cash", "interest")} | {"statements": len(bk)}
+    if cl:
+        out["bank"] |= {"credits": round(out["bank"]["credits"] + cl["credits"], 2), "receipts": round(out["bank"]["receipts"] + cl["digital"], 2),
+                        "cash": round(out["bank"]["cash"] + cl["cash"], 2), "interest": round(out["bank"]["interest"] + cl["interest"], 2)}
     out["business"] = {f: (str(biz.get(f) or "") if f in BIZ_TEXT else _num(biz.get(f))) for f in BIZ} | {"seen": seen, "vehicles": biz.get("vehicles") or []}
     out["business"] |= {f: biz.get(f, "") for f in BIZ_OPT}
     # 2026-10-08: the GST schedule - the rows typed, else what each GSTR-3B summary read gives (a GSTIN's months added up), else the one GSTIN typed
@@ -1093,6 +1158,12 @@ def work(cid: str, ay: str) -> dict:
     if r["business"]["kind"] and r["business"]["gst_rows"]:    # 2026-10-08: the GST turnover beside the receipts of the return
         a, b = gb["turnover"] or gb.get("receipts", 0), r["business"]["gst_turnover"]
         checks.append(engine.run("myreturn.checks", {"what": "gst", "a": a, "b": b}) | {"field": "gst", "a": a, "b": b})
+    bank = bank_view(st, r, c, ans, dd, g)
+    if bank:                                                   # 2026-10-13: a statement that does not add up is red; money left "Not sure" is amber
+        for what, args in (("bank_recon", {"recon_ok": bank["ok"]}), ("bank_undecided", {"undecided": (bank.get("classify") or {}).get("undecided", 0)})):
+            ck = engine.run("bank.check", {"what": what} | args)
+            if ck["level"] != "ok":
+                checks.append(ck)
     docs = [{k2: d[k2] for k2 in ("id", "name", "kind", "method", "found", "problems", "added_at", "size")} for d in st.get("docs") or []]
     have = {d["kind"] for d in docs}
     for x in checks:
@@ -1100,7 +1171,8 @@ def work(cid: str, ay: str) -> dict:
         x["accepted"] = x["key"] in (st.get("accepted") or [])
     steps = engine.run("myreturn.steps", {"has_docs": bool(docs), "has_income": bool(g["gti"]),
                                           "open_checks": sum(1 for x in checks if x["level"] == "red" and not x["accepted"]),
-                                          "regime_seen": bool(st.get("regime_seen") or st.get("regime")), "reviewed": bool(st.get("reviewed"))})
+                                          "regime_seen": bool(st.get("regime_seen") or st.get("regime")), "reviewed": bool(st.get("reviewed")),
+                                          "bank_open": bool(bank and bank.get("classify") and not bank["confirmed"])})
     return {"client": clients.row(c, ay) | {"status_id": c.get("status", "")}, "ay": ay, "docs": docs, "have": sorted(have), "return": r, "answers": ans, "band": band,
             "regimes": both, "better": best, "regime": chosen, "old_ok": old_ok, "chosen_by": "you" if st.get("regime") else "best",
             "form": form, "checks": checks, "steps": steps, "step": st.get("step") or steps["now"], "dates": dd, "late": late, "ca_needed": ca,
@@ -1108,7 +1180,43 @@ def work(cid: str, ay: str) -> dict:
             "checklist": engine.run("myreturn.checklist"),
             "locked": clients.locked(cid, ay), "biz_codes": biz_codes() if r["business"]["kind"] else {},
             "res": res, "countries": countries(), "itru": itru_work(cid, ay, st, dob, status),
-            "itru_years": [y for y in clients.settings()["years"] if y < ay], "itru_bars": engine.run("myreturn.itru_rules")["bars"]}
+            "itru_years": [y for y in clients.settings()["years"] if y < ay], "itru_bars": engine.run("myreturn.itru_rules")["bars"], "bank": bank}
+
+
+def bank_view(st: dict, r: dict, c: dict, ans: dict, dd: dict, g: dict) -> dict | None:
+    """2026-10-13 (bank statement only): what the Classify step draws - each statement read row by row and whether it adds up, the
+    groups with the class suggested or tapped, the turnover and its 6% / 8% profit, the GST limit and what is still needed."""
+    docs = _bank_docs(st)
+    if not docs:
+        return None
+    k = bankclass.settings()
+    rows = []
+    for d in docs:
+        b = d["facts"]["bank"]
+        rc = b["recon"]
+        rows.append({"id": d["id"], "name": d["name"], "ok": rc["ok"], "rows": rc["rows"], "opening": rc["opening"], "closing": rc["closing"],
+                     "credits": rc["credits"], "debits": rc["debits"], "from": b["from"], "to": b["to"], "bad_n": rc["bad_n"], "missing_n": rc["missing_n"]})
+    cl = r.get("bank_class")
+    biz = r["business"]
+    digital, cash = _num(biz.get("digital")), _num(biz.get("cash"))
+    p6 = engine.run("myreturn.business", {"kind": "44AD", "digital": digital, "cash": 0})["deemed"]
+    p8 = engine.run("myreturn.business", {"kind": "44AD", "digital": 0, "cash": cash})["deemed"]
+    person = r.get("person") or {}
+    special = engine.run("bank.special_states")["codes"]
+    gst = engine.run("bank.gst_gap", {"supply": ans.get("supply") or "services", "turnover": digital + cash,
+                                      "special_state": str(ans.get("state") or person.get("state") or "") in special})
+    need = [n for n, have in (("pan", c.get("pan")), ("dob", r.get("dob") or c.get("dob")),
+                              ("mobile", ans.get("mobile") or person.get("mobile") or c.get("phone")),
+                              ("address", ans.get("address") or person.get("flat") or c.get("address")),
+                              ("email", ans.get("email") or person.get("email") or c.get("email")), ("father", ans.get("father")),
+                              ("code", biz.get("code"))) if not have]
+    return {"docs": rows, "ok": all(x["ok"] for x in rows), "confirmed": bool(st.get("bank_confirmed")), "classify": cl,
+            "choices": {"cr": k["ui_credit"], "dr": k["ui_debit"], "cash_for": k["cash_choice_for"], "show": k["group_show"],
+                        "days": k["passthrough"]["days"]},
+            "digital": digital, "cash": cash, "p6": p6, "p8": p8, "profit": p6 + p8, "gst": gst, "supply": ans.get("supply") or "services",
+            "rate": {"digital": engine.knobs("myreturn.business")["ad_digital_pct"], "cash": engine.knobs("myreturn.business")["ad_cash_pct"]},
+            "common_codes": k["common_codes"],
+            "need": need, "upload": engine.run("bank.upload"), "due": dd.get("due", 0)}
 
 
 def itru_work(cid: str, ay: str, st: dict, dob: str, status: str) -> dict | None:

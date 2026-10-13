@@ -1,0 +1,643 @@
+{
+  "chip_id": "ui.bankonly",
+  "kind": "accessor",
+  "set": "ui",
+  "label": "Small business, only a bank statement: words",
+  "aliases": [
+    "small business, only a bank statement: w"
+  ],
+  "params": [
+    {
+      "name": "title",
+      "type": "text",
+      "default": "Where did the money come from?",
+      "label": "title"
+    },
+    {
+      "name": "lede",
+      "type": "text",
+      "default": "This is what your bank statement says. Money paid by customers is your business turnover. Your own money moving between your accounts, loans and refunds are not. We have guessed each one - tap to change.",
+      "label": "lede"
+    },
+    {
+      "name": "stmt",
+      "type": "text",
+      "default": "{rows} entries, {from} to {to} - opening {opening}, closing {closing}",
+      "label": "stmt"
+    },
+    {
+      "name": "recon_ok",
+      "type": "text",
+      "default": "The statement adds up: opening {opening} + credits {credits} - debits {debits} = closing {closing}.",
+      "label": "recon ok"
+    },
+    {
+      "name": "recon_bad",
+      "type": "text",
+      "default": "This statement does not add up, so its figures are not used. Upload the original PDF again (all pages) from net banking.",
+      "label": "recon bad"
+    },
+    {
+      "name": "tab_in",
+      "type": "text",
+      "default": "Money in",
+      "label": "tab in"
+    },
+    {
+      "name": "tab_out",
+      "type": "text",
+      "default": "Money out",
+      "label": "tab out"
+    },
+    {
+      "name": "c_receipt",
+      "type": "text",
+      "default": "Customer receipts",
+      "label": "c receipt"
+    },
+    {
+      "name": "c_cash",
+      "type": "text",
+      "default": "Cash takings",
+      "label": "c cash"
+    },
+    {
+      "name": "c_own",
+      "type": "text",
+      "default": "Own money",
+      "label": "c own"
+    },
+    {
+      "name": "c_loan",
+      "type": "text",
+      "default": "Loan",
+      "label": "c loan"
+    },
+    {
+      "name": "c_other",
+      "type": "text",
+      "default": "Not income",
+      "label": "c other"
+    },
+    {
+      "name": "c_ask",
+      "type": "text",
+      "default": "Not sure",
+      "label": "c ask"
+    },
+    {
+      "name": "d_personal",
+      "type": "text",
+      "default": "Personal",
+      "label": "d personal"
+    },
+    {
+      "name": "d_business",
+      "type": "text",
+      "default": "Business cost",
+      "label": "d business"
+    },
+    {
+      "name": "d_own",
+      "type": "text",
+      "default": "Own money",
+      "label": "d own"
+    },
+    {
+      "name": "d_loan",
+      "type": "text",
+      "default": "Loan repayment",
+      "label": "d loan"
+    },
+    {
+      "name": "d_ask",
+      "type": "text",
+      "default": "Not sure",
+      "label": "d ask"
+    },
+    {
+      "name": "n_payments",
+      "type": "text",
+      "default": "{n} payments",
+      "label": "n payments"
+    },
+    {
+      "name": "dates",
+      "type": "text",
+      "default": "{first} to {last}",
+      "label": "dates"
+    },
+    {
+      "name": "f_through",
+      "type": "text",
+      "default": "An equal amount went out within {days} days - is this a loan or own money passing through?",
+      "label": "f through"
+    },
+    {
+      "name": "f_round",
+      "type": "text",
+      "default": "Round amounts - is this a customer?",
+      "label": "f round"
+    },
+    {
+      "name": "more",
+      "type": "text",
+      "default": "Show {n} more",
+      "label": "more"
+    },
+    {
+      "name": "fewer",
+      "type": "text",
+      "default": "Show fewer",
+      "label": "fewer"
+    },
+    {
+      "name": "sum_h",
+      "type": "text",
+      "default": "What this makes",
+      "label": "sum h"
+    },
+    {
+      "name": "sum_receipt",
+      "type": "text",
+      "default": "Business turnover (UPI and bank receipts)",
+      "label": "sum receipt"
+    },
+    {
+      "name": "sum_cash",
+      "type": "text",
+      "default": "Cash takings (deposits you say are fees)",
+      "label": "sum cash"
+    },
+    {
+      "name": "sum_own",
+      "type": "text",
+      "default": "Own money moved (left out)",
+      "label": "sum own"
+    },
+    {
+      "name": "sum_loan",
+      "type": "text",
+      "default": "Loans (not income)",
+      "label": "sum loan"
+    },
+    {
+      "name": "sum_other",
+      "type": "text",
+      "default": "Refunds, reversals, interest (not turnover)",
+      "label": "sum other"
+    },
+    {
+      "name": "sum_ask",
+      "type": "text",
+      "default": "Not decided yet (left out)",
+      "label": "sum ask"
+    },
+    {
+      "name": "line",
+      "type": "text",
+      "default": "Turnover {digital} received by UPI or bank at {rd}% = {p6}, cash {cash} at {rc}% = {p8}. Presumptive profit under s.44AD: {profit}.",
+      "label": "line"
+    },
+    {
+      "name": "line_none",
+      "type": "text",
+      "default": "No customer receipts counted yet - tap the groups that are your customers.",
+      "label": "line none"
+    },
+    {
+      "name": "line_rule",
+      "type": "text",
+      "default": "s.44AD: {rd}% of the turnover received through a bank or UPI, {rc}% of cash; loans, own money and refunds are not turnover.",
+      "label": "line rule"
+    },
+    {
+      "name": "res_h",
+      "type": "text",
+      "default": "Your return so far",
+      "label": "res h"
+    },
+    {
+      "name": "res_income",
+      "type": "text",
+      "default": "Total income",
+      "label": "res income"
+    },
+    {
+      "name": "res_tax",
+      "type": "text",
+      "default": "Income tax",
+      "label": "res tax"
+    },
+    {
+      "name": "res_fee",
+      "type": "text",
+      "default": "Late fee and interest",
+      "label": "res fee"
+    },
+    {
+      "name": "res_pay",
+      "type": "text",
+      "default": "To pay",
+      "label": "res pay"
+    },
+    {
+      "name": "res_refund",
+      "type": "text",
+      "default": "Refund",
+      "label": "res refund"
+    },
+    {
+      "name": "res_regime",
+      "type": "text",
+      "default": "{regime} regime - the cheaper one is chosen for you on the next steps.",
+      "label": "res regime"
+    },
+    {
+      "name": "res_nil",
+      "type": "text",
+      "default": "No income tax - the income is below the basic exemption.",
+      "label": "res nil"
+    },
+    {
+      "name": "contact_h",
+      "type": "text",
+      "default": "Still needed to file",
+      "label": "contact h"
+    },
+    {
+      "name": "contact_p",
+      "type": "text",
+      "default": "Type what is missing - nothing else is asked.",
+      "label": "contact p"
+    },
+    {
+      "name": "tap_h",
+      "type": "text",
+      "default": "Tap what each one is",
+      "label": "tap h"
+    },
+    {
+      "name": "none_out",
+      "type": "text",
+      "default": "No money out.",
+      "label": "none out"
+    },
+    {
+      "name": "code_name",
+      "type": "text",
+      "default": "Name of the business",
+      "label": "code name"
+    },
+    {
+      "name": "docs_h",
+      "type": "text",
+      "default": "Statement",
+      "label": "docs h"
+    },
+    {
+      "name": "undecided",
+      "type": "text",
+      "default": "{n} groups worth {amount} are not decided and are left out of your turnover. Tap what they are.",
+      "label": "undecided"
+    },
+    {
+      "name": "interest",
+      "type": "text",
+      "default": "Interest of {amount} on your savings is income from other sources - it is added for you.",
+      "label": "interest"
+    },
+    {
+      "name": "salary",
+      "type": "text",
+      "default": "Salary credits of {amount} found - these are not business turnover. Give the Form 16 so the salary can be added.",
+      "label": "salary"
+    },
+    {
+      "name": "confirm",
+      "type": "text",
+      "default": "Looks right - continue",
+      "label": "confirm"
+    },
+    {
+      "name": "gst_over",
+      "type": "text",
+      "default": "Your turnover of {turnover} is above {limit}, the GST registration limit for a {supply} supplier (s.22 CGST Act). You may have to register for GST - ask a GST practitioner. This does not change the income-tax return.",
+      "label": "gst over"
+    },
+    {
+      "name": "gst_near",
+      "type": "text",
+      "default": "Your turnover of {turnover} is close to the GST registration limit of {limit}. Above it you must register for GST.",
+      "label": "gst near"
+    },
+    {
+      "name": "supply_services",
+      "type": "text",
+      "default": "services",
+      "label": "supply services"
+    },
+    {
+      "name": "supply_goods",
+      "type": "text",
+      "default": "goods",
+      "label": "supply goods"
+    },
+    {
+      "name": "need_h",
+      "type": "text",
+      "default": "Still needed to file",
+      "label": "need h"
+    },
+    {
+      "name": "need_pan",
+      "type": "text",
+      "default": "PAN",
+      "label": "need pan"
+    },
+    {
+      "name": "need_dob",
+      "type": "text",
+      "default": "Date of birth",
+      "label": "need dob"
+    },
+    {
+      "name": "need_mobile",
+      "type": "text",
+      "default": "Mobile number",
+      "label": "need mobile"
+    },
+    {
+      "name": "need_address",
+      "type": "text",
+      "default": "Address",
+      "label": "need address"
+    },
+    {
+      "name": "need_email",
+      "type": "text",
+      "default": "E-mail address",
+      "label": "need email"
+    },
+    {
+      "name": "need_father",
+      "type": "text",
+      "default": "Father's name",
+      "label": "need father"
+    },
+    {
+      "name": "need_code",
+      "type": "text",
+      "default": "What the business does (the department's code)",
+      "label": "need code"
+    },
+    {
+      "name": "need_ok",
+      "type": "text",
+      "default": "Nothing more is needed - the JSON is ready on the last step.",
+      "label": "need ok"
+    },
+    {
+      "name": "late",
+      "type": "text",
+      "default": "Filed after the due date of {due}: late fee under s.234F {fee} and interest under s.234A, 234B and 234C {interest} are in the amount to pay.",
+      "label": "late"
+    },
+    {
+      "name": "code_h",
+      "type": "text",
+      "default": "What does the business do?",
+      "label": "code h"
+    },
+    {
+      "name": "code_p",
+      "type": "text",
+      "default": "The department wants one code for the work. The common ones are first.",
+      "label": "code p"
+    },
+    {
+      "name": "code_pick",
+      "type": "text",
+      "default": "Pick the nearest",
+      "label": "code pick"
+    },
+    {
+      "name": "code_common",
+      "type": "text",
+      "default": "Common",
+      "label": "code common"
+    },
+    {
+      "name": "code_all",
+      "type": "text",
+      "default": "All",
+      "label": "code all"
+    },
+    {
+      "name": "upload_h",
+      "type": "text",
+      "default": "How to upload the JSON on the income-tax portal",
+      "label": "upload h"
+    },
+    {
+      "name": "upload_p",
+      "type": "text",
+      "default": "Takes about five minutes. You need your PAN, password and mobile (for the OTP).",
+      "label": "upload p"
+    },
+    {
+      "name": "path_label",
+      "type": "text",
+      "default": "Small business - only a bank statement",
+      "label": "path label"
+    },
+    {
+      "name": "path_sub",
+      "type": "text",
+      "default": "No books, no Form 16 - the bank statement alone makes an ITR-4 (tax on a fixed share of receipts)",
+      "label": "path sub"
+    },
+    {
+      "name": "debit_note",
+      "type": "text",
+      "default": "Presumptive tax: costs are not claimed, so money out does not change the tax. It is shown for completeness.",
+      "label": "debit note"
+    },
+    {
+      "name": "show_out",
+      "type": "text",
+      "default": "Money out ({n} groups)",
+      "label": "show out"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "title": "$title",
+      "lede": "$lede",
+      "stmt": "$stmt",
+      "recon_ok": "$recon_ok",
+      "recon_bad": "$recon_bad",
+      "tab_in": "$tab_in",
+      "tab_out": "$tab_out",
+      "c_receipt": "$c_receipt",
+      "c_cash": "$c_cash",
+      "c_own": "$c_own",
+      "c_loan": "$c_loan",
+      "c_other": "$c_other",
+      "c_ask": "$c_ask",
+      "d_personal": "$d_personal",
+      "d_business": "$d_business",
+      "d_own": "$d_own",
+      "d_loan": "$d_loan",
+      "d_ask": "$d_ask",
+      "n_payments": "$n_payments",
+      "dates": "$dates",
+      "f_through": "$f_through",
+      "f_round": "$f_round",
+      "more": "$more",
+      "fewer": "$fewer",
+      "sum_h": "$sum_h",
+      "sum_receipt": "$sum_receipt",
+      "sum_cash": "$sum_cash",
+      "sum_own": "$sum_own",
+      "sum_loan": "$sum_loan",
+      "sum_other": "$sum_other",
+      "sum_ask": "$sum_ask",
+      "line": "$line",
+      "line_none": "$line_none",
+      "line_rule": "$line_rule",
+      "res_h": "$res_h",
+      "res_income": "$res_income",
+      "res_tax": "$res_tax",
+      "res_fee": "$res_fee",
+      "res_pay": "$res_pay",
+      "res_refund": "$res_refund",
+      "res_regime": "$res_regime",
+      "res_nil": "$res_nil",
+      "contact_h": "$contact_h",
+      "contact_p": "$contact_p",
+      "tap_h": "$tap_h",
+      "none_out": "$none_out",
+      "code_name": "$code_name",
+      "docs_h": "$docs_h",
+      "undecided": "$undecided",
+      "interest": "$interest",
+      "salary": "$salary",
+      "confirm": "$confirm",
+      "gst_over": "$gst_over",
+      "gst_near": "$gst_near",
+      "supply_services": "$supply_services",
+      "supply_goods": "$supply_goods",
+      "need_h": "$need_h",
+      "need_pan": "$need_pan",
+      "need_dob": "$need_dob",
+      "need_mobile": "$need_mobile",
+      "need_address": "$need_address",
+      "need_email": "$need_email",
+      "need_father": "$need_father",
+      "need_code": "$need_code",
+      "need_ok": "$need_ok",
+      "late": "$late",
+      "code_h": "$code_h",
+      "code_p": "$code_p",
+      "code_pick": "$code_pick",
+      "code_common": "$code_common",
+      "code_all": "$code_all",
+      "upload_h": "$upload_h",
+      "upload_p": "$upload_p",
+      "path_label": "$path_label",
+      "path_sub": "$path_sub",
+      "debit_note": "$debit_note",
+      "show_out": "$show_out"
+    }
+  },
+  "returns": "record",
+  "version": 3,
+  "status": "published",
+  "description_nl": "2026-10-13: Every word of the Classify step (customer receipts, own money, loan, not income), the 6% / 8% line, the GST limit warning, what is still needed, and how to upload the JSON on the income-tax portal.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "title": "Where did the money come from?",
+        "lede": "This is what your bank statement says. Money paid by customers is your business turnover. Your own money moving between your accounts, loans and refunds are not. We have guessed each one - tap to change.",
+        "stmt": "{rows} entries, {from} to {to} - opening {opening}, closing {closing}",
+        "recon_ok": "The statement adds up: opening {opening} + credits {credits} - debits {debits} = closing {closing}.",
+        "recon_bad": "This statement does not add up, so its figures are not used. Upload the original PDF again (all pages) from net banking.",
+        "tab_in": "Money in",
+        "tab_out": "Money out",
+        "c_receipt": "Customer receipts",
+        "c_cash": "Cash takings",
+        "c_own": "Own money",
+        "c_loan": "Loan",
+        "c_other": "Not income",
+        "c_ask": "Not sure",
+        "d_personal": "Personal",
+        "d_business": "Business cost",
+        "d_own": "Own money",
+        "d_loan": "Loan repayment",
+        "d_ask": "Not sure",
+        "n_payments": "{n} payments",
+        "dates": "{first} to {last}",
+        "f_through": "An equal amount went out within {days} days - is this a loan or own money passing through?",
+        "f_round": "Round amounts - is this a customer?",
+        "more": "Show {n} more",
+        "fewer": "Show fewer",
+        "sum_h": "What this makes",
+        "sum_receipt": "Business turnover (UPI and bank receipts)",
+        "sum_cash": "Cash takings (deposits you say are fees)",
+        "sum_own": "Own money moved (left out)",
+        "sum_loan": "Loans (not income)",
+        "sum_other": "Refunds, reversals, interest (not turnover)",
+        "sum_ask": "Not decided yet (left out)",
+        "line": "Turnover {digital} received by UPI or bank at {rd}% = {p6}, cash {cash} at {rc}% = {p8}. Presumptive profit under s.44AD: {profit}.",
+        "line_none": "No customer receipts counted yet - tap the groups that are your customers.",
+        "line_rule": "s.44AD: {rd}% of the turnover received through a bank or UPI, {rc}% of cash; loans, own money and refunds are not turnover.",
+        "res_h": "Your return so far",
+        "res_income": "Total income",
+        "res_tax": "Income tax",
+        "res_fee": "Late fee and interest",
+        "res_pay": "To pay",
+        "res_refund": "Refund",
+        "res_regime": "{regime} regime - the cheaper one is chosen for you on the next steps.",
+        "res_nil": "No income tax - the income is below the basic exemption.",
+        "contact_h": "Still needed to file",
+        "contact_p": "Type what is missing - nothing else is asked.",
+        "tap_h": "Tap what each one is",
+        "none_out": "No money out.",
+        "code_name": "Name of the business",
+        "docs_h": "Statement",
+        "undecided": "{n} groups worth {amount} are not decided and are left out of your turnover. Tap what they are.",
+        "interest": "Interest of {amount} on your savings is income from other sources - it is added for you.",
+        "salary": "Salary credits of {amount} found - these are not business turnover. Give the Form 16 so the salary can be added.",
+        "confirm": "Looks right - continue",
+        "gst_over": "Your turnover of {turnover} is above {limit}, the GST registration limit for a {supply} supplier (s.22 CGST Act). You may have to register for GST - ask a GST practitioner. This does not change the income-tax return.",
+        "gst_near": "Your turnover of {turnover} is close to the GST registration limit of {limit}. Above it you must register for GST.",
+        "supply_services": "services",
+        "supply_goods": "goods",
+        "need_h": "Still needed to file",
+        "need_pan": "PAN",
+        "need_dob": "Date of birth",
+        "need_mobile": "Mobile number",
+        "need_address": "Address",
+        "need_email": "E-mail address",
+        "need_father": "Father's name",
+        "need_code": "What the business does (the department's code)",
+        "need_ok": "Nothing more is needed - the JSON is ready on the last step.",
+        "late": "Filed after the due date of {due}: late fee under s.234F {fee} and interest under s.234A, 234B and 234C {interest} are in the amount to pay.",
+        "code_h": "What does the business do?",
+        "code_p": "The department wants one code for the work. The common ones are first.",
+        "code_pick": "Pick the nearest",
+        "code_common": "Common",
+        "code_all": "All",
+        "upload_h": "How to upload the JSON on the income-tax portal",
+        "upload_p": "Takes about five minutes. You need your PAN, password and mobile (for the OTP).",
+        "path_label": "Small business - only a bank statement",
+        "path_sub": "No books, no Form 16 - the bank statement alone makes an ITR-4 (tax on a fixed share of receipts)",
+        "debit_note": "Presumptive tax: costs are not claimed, so money out does not change the tax. It is shown for completeness.",
+        "show_out": "Money out ({n} groups)"
+      }
+    }
+  ]
+}

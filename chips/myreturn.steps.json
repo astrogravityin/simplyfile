@@ -36,6 +36,12 @@
       "type": "boolean",
       "default": false,
       "label": "the figures reviewed"
+    },
+    {
+      "name": "bank_open",
+      "type": "boolean",
+      "default": false,
+      "label": "a bank statement is read and its money is not yet classified"
     }
   ],
   "expr": {
@@ -83,6 +89,11 @@
             "op": "eq",
             "left": "$reviewed",
             "right": true
+          },
+          "classify": {
+            "op": "eq",
+            "left": "$bank_open",
+            "right": false
           }
         }
       },
@@ -109,6 +120,14 @@
               }
             },
             "then": "gather"
+          },
+          {
+            "when": {
+              "op": "eq",
+              "left": "$bank_open",
+              "right": true
+            },
+            "then": "classify"
           },
           {
             "when": {
@@ -146,9 +165,9 @@
     }
   },
   "returns": "record",
-  "version": 1,
+  "version": 2,
   "status": "published",
-  "description_nl": "2026-10-06: gather until a document with income is in; check while a figure disagrees; choose until the two regimes have been seen; review until the figures are confirmed; then file.",
+  "description_nl": "2026-10-06: gather until a document with income is in; check while a figure disagrees; choose until the two regimes have been seen; review until the figures are confirmed; then file. 2026-10-13: classify - a read bank statement's money is classified before the checks.",
   "test_cases": [
     {
       "args": {},
@@ -157,7 +176,8 @@
           "gather": false,
           "check": false,
           "choose": false,
-          "review": false
+          "review": false,
+          "classify": true
         },
         "now": "gather"
       }
@@ -173,7 +193,8 @@
           "gather": true,
           "check": false,
           "choose": false,
-          "review": false
+          "review": false,
+          "classify": true
         },
         "now": "check"
       }
@@ -190,9 +211,42 @@
           "gather": true,
           "check": true,
           "choose": true,
-          "review": true
+          "review": true,
+          "classify": true
         },
         "now": "file"
+      }
+    },
+    {
+      "args": {
+        "has_docs": true,
+        "has_income": true,
+        "bank_open": true
+      },
+      "expect_value": {
+        "done": {
+          "gather": true,
+          "check": true,
+          "choose": false,
+          "review": false,
+          "classify": false
+        },
+        "now": "classify"
+      }
+    },
+    {
+      "args": {
+        "bank_open": true
+      },
+      "expect_value": {
+        "done": {
+          "gather": false,
+          "check": false,
+          "choose": false,
+          "review": false,
+          "classify": false
+        },
+        "now": "gather"
       }
     }
   ]

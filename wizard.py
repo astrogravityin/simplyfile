@@ -31,7 +31,7 @@ from core.ops import template
 
 _LOCK = threading.Lock()
 CARD = ("id", "name", "ext", "size", "kind", "method", "found", "problems", "who", "state", "doc_id", "seen", "added_at", "dest", "already")
-WHO_KEYS = ("pan", "name", "dob", "ay", "gstin", "status", "partners", "company")
+WHO_KEYS = ("pan", "name", "dob", "ay", "gstin", "status", "partners", "company", "address")
 
 
 def settings() -> dict:
@@ -298,6 +298,12 @@ def _answers(u: dict, s: dict, a: dict) -> None:
             s["who"] = to["id"]
             s["picked"] = [p for p in s["picked"] if p in offered(s["who"])]
             continue
+        if f == "mobile":
+            v = re.sub(r"\D", "", v)[-10:]
+            if v and not re.fullmatch(r"[6-9]\d{9}", v):
+                _bad("bad_mobile")
+        if f == "email" and v and not re.fullmatch(r"[\w.+-]+@[\w-]+(?:\.[\w-]+)+", v):
+            _bad("bad_email")
         if f == "residence" and v not in ("yes", "no", "later"):
             _bad("bad_choice", value=v)
         if f == "pan_pick" and v not in _found(s)["pans"]:
@@ -348,10 +354,10 @@ def _found(s: dict) -> dict:
     pans = list(dict.fromkeys(c["who"]["pan"] for c in cards if (c.get("who") or {}).get("pan")))
     g = s.get("given") or {}
     pan = g.get("pan") or g.get("pan_pick") or (pans[0] if len(pans) == 1 else "")
-    mine = [c["who"] for c in cards if (c.get("who") or {}).get("pan") == pan]
+    mine = [c["who"] for c in cards if (c.get("who") or {}).get("pan") == pan or (c["kind"] == "bank" and not (c.get("who") or {}).get("pan"))]
     first = lambda f: next((w[f] for w in mine if w.get(f)), "")  # noqa: E731
     cert = next((c["who"] for c in cards if c["kind"] in ("gst_cert", "coi") and c["who"].get("pan") == pan), {})
-    return {"pans": pans, "pan": pan, "name": cert.get("name") or first("name"), "dob": first("dob"), "gstin": first("gstin"),
+    return {"pans": pans, "pan": pan, "name": cert.get("name") or first("name"), "dob": first("dob"), "gstin": first("gstin"), "address": first("address"),
             "status": cert.get("status") or "", "partners": next((w["partners"] for w in mine if w.get("partners")), []),
             "company": next((w["company"] for w in mine if w.get("company")), {})}
 
@@ -398,7 +404,7 @@ def _resolve(u: dict, s: dict) -> None:
                 _into_return(u, s, card, replay=True)
     if not firm_flow:
         ans = {}
-        for f2 in ("karta_name", "karta_pan"):
+        for f2 in ("karta_name", "karta_pan", "mobile", "address", "email", "father"):
             if g.get(f2) and (myreturn.state(s["cid"], s["ay"]).get("answers") or {}).get(f2) != g[f2]:
                 ans[f2] = g[f2]
         if g.get("residence") in ("yes", "no") and "resident" not in (myreturn.state(s["cid"], s["ay"]).get("answers") or {}):
@@ -464,6 +470,7 @@ def upload(u: dict, wid: str, filename: str, data: bytes, password: str = "", on
         who = myreturn.who(got)
         if not who.get("pan") and got["kind"] not in ("form16", "prefill", "filed", "filed_prev"):
             who = myreturn_read.who_of(data, password, pan, dob) | who
+    who = who | {"address": ((got.get("facts") or {}).get("person") or {}).get("flat", "")}   # 2026-10-13: a bank statement's address
     locked = got["kind"] == "other" and any(p in (myreturn_read.say("need_password"), myreturn_read.say("bad_password")) for p in got.get("problems") or [])
     fid = store.new_id()
     card = {"id": fid, "name": Path(filename).name[:120], "ext": ext, "size": len(data), "kind": got["kind"], "method": got["method"],
@@ -579,7 +586,8 @@ def view(u: dict, s: dict, deep: bool = False) -> dict:
     docs = []
     for r in engine.run("wizard.docs")["rows"]:
         need = engine.run("wizard.doc_need", {"required_for": r["required_for"], "optional_for": r["optional_for"], "picked": picked + [s["who"]],
-                                              "flows": r.get("flows") or [flow], "flow": flow})
+                                              "flows": r.get("flows") or [flow], "flow": flow,
+                                              "except_for": r.get("except_for") or []})
         if need:
             docs.append(_filled(r, ay) | {"need": need, "have": kinds.count(r["kind"]) if r["kind"] else 0, "typed": not r["kind"]})
     c = _client(s)
@@ -597,7 +605,14 @@ def view(u: dict, s: dict, deep: bool = False) -> dict:
         "who": s["who"], "karta_name": g.get("karta_name") or (st.get("answers") or {}).get("karta_name") or "",
         "karta_pan": g.get("karta_pan") or (st.get("answers") or {}).get("karta_pan") or "", "clash": clash,
         "nri": "nri" in picked, "resident": g.get("residence") or ("x" if "resident" in (st.get("answers") or {}) else ""),
-        "partners_need": partners_need, "gstin_need": firm_flow and "gst" in picked and not ((c or {}).get("gst") or g.get("gstin") or f["gstin"]), "company_need": company_need})
+        "partners_need": partners_need, "gstin_need": firm_flow and "gst" in picked and not ((c or {}).get("gst") or g.get("gstin") or f["gstin"]), "company_need": company_need,
+        # 2026-10-13: the bank-statement-only path asks the mobile and the address when the statement / return does not have them
+        "bank_only": "bankonly" in picked and not firm_flow,
+        "mobile": g.get("mobile") or (st.get("answers") or {}).get("mobile") or (c or {}).get("phone") or "",
+        "address": g.get("address") or (st.get("answers") or {}).get("address") or (c or {}).get("address")
+        or next((x for d in st.get("docs") or [] if (x := ((d.get("facts") or {}).get("person") or {}).get("flat"))), "") or f.get("address", ""),
+        "email": g.get("email") or (st.get("answers") or {}).get("email") or (c or {}).get("email") or "",
+        "father": g.get("father") or (st.get("answers") or {}).get("father") or ""})
     fst = _found_status(s, pan) or {}
     ask_rows = [x | {"options": f["pans"] if x["id"] == "pan_pick" else ["yes", "no", "later"] if x["id"] == "residence" else ["switch"] if x["id"] == "status" else [],
                      "pan": pan, "kind": fst.get("id", ""), "chosen": want["id"], "partners": f["partners"] if x["id"] == "partners" else [],
@@ -642,7 +657,8 @@ def view(u: dict, s: dict, deep: bool = False) -> dict:
             out["form"] = w["form"] | {"from": "return"}
         missing = sum(1 for d in docs if d["need"] == "required" and not d["typed"] and not d["have"])
         typed = sum(1 for p in prompts if not p["kind"])
-        out["next"] = engine.run("wizard.next_step", {"required_missing": missing, "typed": typed, "red": red})
+        out["next"] = engine.run("wizard.next_step", {"required_missing": missing, "typed": typed, "red": red,
+                                                      "classify": "bankonly" in picked and myreturn.bank_open(st)})
         out["link"] = f"#/myreturn?c={c['id']}&ay={ay}&step={out['next']}"
     return out
 

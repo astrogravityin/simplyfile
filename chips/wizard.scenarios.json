@@ -12,6 +12,32 @@
       "type": "json",
       "default": [
         {
+          "id": "bankonly",
+          "group": "income",
+          "art": "services",
+          "label": "Small business - only a bank statement",
+          "sub": "No books, no Form 16 - the bank statement alone makes an ITR-4 (tax on a fixed share of receipts)",
+          "sec": "s.44AD",
+          "not_for": [
+            "huf",
+            "firm",
+            "llp",
+            "aop",
+            "company",
+            "trust"
+          ],
+          "only_for": [],
+          "implies": [
+            "business",
+            "services",
+            "presumptive"
+          ],
+          "excludes": [
+            "books",
+            "audit"
+          ]
+        },
+        {
           "id": "salary",
           "group": "income",
           "art": "salary",
@@ -438,6 +464,32 @@
       "expect_value": {
         "rows": [
           {
+            "id": "bankonly",
+            "group": "income",
+            "art": "services",
+            "label": "Small business - only a bank statement",
+            "sub": "No books, no Form 16 - the bank statement alone makes an ITR-4 (tax on a fixed share of receipts)",
+            "sec": "s.44AD",
+            "not_for": [
+              "huf",
+              "firm",
+              "llp",
+              "aop",
+              "company",
+              "trust"
+            ],
+            "only_for": [],
+            "implies": [
+              "business",
+              "services",
+              "presumptive"
+            ],
+            "excludes": [
+              "books",
+              "audit"
+            ]
+          },
+          {
             "id": "salary",
             "group": "income",
             "art": "salary",
@@ -850,6 +902,6 @@
       }
     }
   ],
-  "version": 2,
-  "description_nl": "2026-10-11: every card on 'What applies this year?' - its words (the list IS the content, as myreturn.checklist), the section beneath, who it is not for (an HUF has no salary), and what it brings with it (a second employer means salary). 2026-10-11: every card on 'What applies this year?' and 'What kind of work?' - its words (the list IS the content, as myreturn.checklist), the section beneath, who it is not (or only) for (an HUF has no salary, partners' pay only a firm or an LLP), what it brings with it (a second employer means salary, a tax audit means books) and what it rules out (presumptive or books)."
+  "version": 4,
+  "description_nl": "2026-10-11: every card on 'What applies this year?' - its words (the list IS the content, as myreturn.checklist), the section beneath, who it is not for (an HUF has no salary), and what it brings with it (a second employer means salary). 2026-10-11: every card on 'What applies this year?' and 'What kind of work?' - its words (the list IS the content, as myreturn.checklist), the section beneath, who it is not (or only) for (an HUF has no salary, partners' pay only a firm or an LLP), what it brings with it (a second employer means salary, a tax audit means books) and what it rules out (presumptive or books). 2026-10-13: the bank-statement-only path (bankonly): a small business with no books - presumptive, ITR-4."
 }

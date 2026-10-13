@@ -558,6 +558,155 @@
             "review": "Into My return for AY 2025-26: every figure set beside the return filed, the updated return's extra tax worked out."
           },
           "film": "sf-case-updated-return"
+        },
+        {
+          "id": "bank_only",
+          "who": "individual",
+          "ay": "2026-27",
+          "title": "Small business - only a bank statement (ITR-4)",
+          "line": "Anil Trainer Demo runs a small gym with no books: one bank statement, the money classified, ITR-4 on 6% of the UPI receipts.",
+          "folder": "case-bank-only",
+          "batches": [
+            [
+              "1 Bank statement - Demo Savings - FY 2025-26.pdf"
+            ]
+          ],
+          "picks": [
+            "bankonly"
+          ],
+          "client": "ZZ ANIL KUMAR DEMO",
+          "form": "ITR-4",
+          "opens": "myreturn",
+          "answers": {
+            "pan": "ZZDPK0066M",
+            "dob": "1990-01-01",
+            "mobile": "9000000066",
+            "email": "anil.trainer@demo.example",
+            "father": "Demo Father"
+          },
+          "say": {
+            "intro": "A gym trainer with no books and no Form 16 - only a bank statement. Start a new filing and pick An individual.",
+            "what": "One card does it: Small business - only a bank statement. The form says ITR-4, with its reason.",
+            "upload": "The statement alone, dropped in. It is read row by row and checked: opening plus credits minus debits must be the closing balance.",
+            "client": "The statement names the holder, the address and the refund account. Only the PAN, date of birth, mobile, e-mail and father's name are asked.",
+            "review": "Review: nothing missing - one button into My return, at the Classify step."
+          },
+          "more": [
+            {
+              "chapter": "Classify the money in",
+              "say": "Money in, grouped by who paid, each one guessed: customers, own money, a loan, a refund. Tap to change - the PhonePe credit is Not sure until you say what it is.",
+              "do": [
+                {
+                  "wait_for": ".bk-list",
+                  "timeout": 30
+                },
+                {
+                  "wait": 1.5
+                },
+                {
+                  "highlight_target": ".bk-list",
+                  "optional": true,
+                  "timeout": 5
+                },
+                {
+                  "wait": 2
+                },
+                {
+                  "click": ".bk-row.cls-ask [data-cls='loan']",
+                  "optional": true
+                },
+                {
+                  "wait": 2
+                },
+                {
+                  "select": "#bk-code",
+                  "value": "20023",
+                  "optional": true
+                },
+                {
+                  "wait": 2
+                }
+              ]
+            },
+            {
+              "chapter": "Turnover, profit and the GST limit",
+              "say": "Customer receipts only are the turnover. At 6% they give the presumptive profit under 44AD; cash would be 8%. Below the GST limit, nothing to register.",
+              "do": [
+                {
+                  "highlight_target": "#bk-summary",
+                  "optional": true,
+                  "timeout": 5
+                },
+                {
+                  "wait": 3
+                }
+              ]
+            },
+            {
+              "chapter": "Tax, with the late fee",
+              "say": "The new regime against the old, the tax, and the late fee under 234F because the due date has passed. The cheaper regime is chosen for you.",
+              "do": [
+                {
+                  "click": "[data-next='check']"
+                },
+                {
+                  "wait": 2
+                },
+                {
+                  "click": "[data-next='choose']"
+                },
+                {
+                  "wait_for": ".mr-regs",
+                  "timeout": 15
+                },
+                {
+                  "wait": 1
+                },
+                {
+                  "highlight_target": ".mr-regs",
+                  "optional": true,
+                  "timeout": 5
+                },
+                {
+                  "wait": 2
+                }
+              ]
+            },
+            {
+              "chapter": "The ITR-4 JSON and how to upload it",
+              "say": "The JSON is checked against the department's ITR-4 schema. Download it, then follow the steps: log in, e-File, upload the JSON, pay, verify.",
+              "do": [
+                {
+                  "click": ".mr-node[data-step='file']"
+                },
+                {
+                  "wait_for": "#mr-json",
+                  "timeout": 20,
+                  "optional": true
+                },
+                {
+                  "wait": 1
+                },
+                {
+                  "highlight_target": ".mr-file",
+                  "optional": true,
+                  "timeout": 5
+                },
+                {
+                  "wait": 2
+                },
+                {
+                  "highlight_target": ".mr-up",
+                  "optional": true,
+                  "timeout": 5
+                },
+                {
+                  "wait": 2
+                }
+              ]
+            }
+          ],
+          "film": "sf-case-bank-only"
         }
       ],
       "label": "rows"
@@ -1144,6 +1293,155 @@
               "review": "Into My return for AY 2025-26: every figure set beside the return filed, the updated return's extra tax worked out."
             },
             "film": "sf-case-updated-return"
+          },
+          {
+            "id": "bank_only",
+            "who": "individual",
+            "ay": "2026-27",
+            "title": "Small business - only a bank statement (ITR-4)",
+            "line": "Anil Trainer Demo runs a small gym with no books: one bank statement, the money classified, ITR-4 on 6% of the UPI receipts.",
+            "folder": "case-bank-only",
+            "batches": [
+              [
+                "1 Bank statement - Demo Savings - FY 2025-26.pdf"
+              ]
+            ],
+            "picks": [
+              "bankonly"
+            ],
+            "client": "ZZ ANIL KUMAR DEMO",
+            "form": "ITR-4",
+            "opens": "myreturn",
+            "answers": {
+              "pan": "ZZDPK0066M",
+              "dob": "1990-01-01",
+              "mobile": "9000000066",
+              "email": "anil.trainer@demo.example",
+              "father": "Demo Father"
+            },
+            "say": {
+              "intro": "A gym trainer with no books and no Form 16 - only a bank statement. Start a new filing and pick An individual.",
+              "what": "One card does it: Small business - only a bank statement. The form says ITR-4, with its reason.",
+              "upload": "The statement alone, dropped in. It is read row by row and checked: opening plus credits minus debits must be the closing balance.",
+              "client": "The statement names the holder, the address and the refund account. Only the PAN, date of birth, mobile, e-mail and father's name are asked.",
+              "review": "Review: nothing missing - one button into My return, at the Classify step."
+            },
+            "more": [
+              {
+                "chapter": "Classify the money in",
+                "say": "Money in, grouped by who paid, each one guessed: customers, own money, a loan, a refund. Tap to change - the PhonePe credit is Not sure until you say what it is.",
+                "do": [
+                  {
+                    "wait_for": ".bk-list",
+                    "timeout": 30
+                  },
+                  {
+                    "wait": 1.5
+                  },
+                  {
+                    "highlight_target": ".bk-list",
+                    "optional": true,
+                    "timeout": 5
+                  },
+                  {
+                    "wait": 2
+                  },
+                  {
+                    "click": ".bk-row.cls-ask [data-cls='loan']",
+                    "optional": true
+                  },
+                  {
+                    "wait": 2
+                  },
+                  {
+                    "select": "#bk-code",
+                    "value": "20023",
+                    "optional": true
+                  },
+                  {
+                    "wait": 2
+                  }
+                ]
+              },
+              {
+                "chapter": "Turnover, profit and the GST limit",
+                "say": "Customer receipts only are the turnover. At 6% they give the presumptive profit under 44AD; cash would be 8%. Below the GST limit, nothing to register.",
+                "do": [
+                  {
+                    "highlight_target": "#bk-summary",
+                    "optional": true,
+                    "timeout": 5
+                  },
+                  {
+                    "wait": 3
+                  }
+                ]
+              },
+              {
+                "chapter": "Tax, with the late fee",
+                "say": "The new regime against the old, the tax, and the late fee under 234F because the due date has passed. The cheaper regime is chosen for you.",
+                "do": [
+                  {
+                    "click": "[data-next='check']"
+                  },
+                  {
+                    "wait": 2
+                  },
+                  {
+                    "click": "[data-next='choose']"
+                  },
+                  {
+                    "wait_for": ".mr-regs",
+                    "timeout": 15
+                  },
+                  {
+                    "wait": 1
+                  },
+                  {
+                    "highlight_target": ".mr-regs",
+                    "optional": true,
+                    "timeout": 5
+                  },
+                  {
+                    "wait": 2
+                  }
+                ]
+              },
+              {
+                "chapter": "The ITR-4 JSON and how to upload it",
+                "say": "The JSON is checked against the department's ITR-4 schema. Download it, then follow the steps: log in, e-File, upload the JSON, pay, verify.",
+                "do": [
+                  {
+                    "click": ".mr-node[data-step='file']"
+                  },
+                  {
+                    "wait_for": "#mr-json",
+                    "timeout": 20,
+                    "optional": true
+                  },
+                  {
+                    "wait": 1
+                  },
+                  {
+                    "highlight_target": ".mr-file",
+                    "optional": true,
+                    "timeout": 5
+                  },
+                  {
+                    "wait": 2
+                  },
+                  {
+                    "highlight_target": ".mr-up",
+                    "optional": true,
+                    "timeout": 5
+                  },
+                  {
+                    "wait": 2
+                  }
+                ]
+              }
+            ],
+            "film": "sf-case-bank-only"
           }
         ],
         "folder_root": "tools/tour_video/showcase",
@@ -1152,6 +1450,6 @@
       }
     }
   ],
-  "version": 6,
-  "description_nl": "2026-10-11: every path the wizard takes, worked through with made-up documents (ZZ... PANs, @demo.example, Demo ... names): who, the AY, what was picked, the documents in upload order (each batch, then the popup's answers), the client it makes or finds, the form, where it opens - and the narration of its film (tours/sf-case-<id>.json, tools/make_case_tours.py). The demo seed plays each through the wizard (tools/showcase/pre_cases.py), so every case is there after the nightly reset."
+  "version": 8,
+  "description_nl": "2026-10-11: every path the wizard takes, worked through with made-up documents (ZZ... PANs, @demo.example, Demo ... names): who, the AY, what was picked, the documents in upload order (each batch, then the popup's answers), the client it makes or finds, the form, where it opens - and the narration of its film (tours/sf-case-<id>.json, tools/make_case_tours.py). The demo seed plays each through the wizard (tools/showcase/pre_cases.py), so every case is there after the nightly reset. 2026-10-13: worked example: small business, only a bank statement (ITR-4)."
 }

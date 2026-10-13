@@ -1,0 +1,292 @@
+{
+  "chip_id": "bank.gst_gap",
+  "kind": "accessor",
+  "set": "bank",
+  "label": "Bank only: the GST registration limit and whether the turnover is over it",
+  "aliases": [
+    "bank only: the gst registration limit"
+  ],
+  "params": [
+    {
+      "name": "supply",
+      "type": "text",
+      "default": "services",
+      "label": "goods or services"
+    },
+    {
+      "name": "turnover",
+      "type": "number",
+      "default": 0,
+      "label": "aggregate turnover of the year"
+    },
+    {
+      "name": "special_state",
+      "type": "boolean",
+      "default": false,
+      "label": "a special-category state (Manipur, Mizoram, Nagaland, Tripura for services)"
+    },
+    {
+      "name": "services_limit",
+      "type": "number",
+      "default": 2000000,
+      "label": "services: Rs 20 lakh - s.22(1) CGST Act, notification 10/2017-CT"
+    },
+    {
+      "name": "services_limit_special",
+      "type": "number",
+      "default": 1000000,
+      "label": "services, special-category state: Rs 10 lakh"
+    },
+    {
+      "name": "goods_limit",
+      "type": "number",
+      "default": 4000000,
+      "label": "goods: Rs 40 lakh - notification 10/2019-CT"
+    },
+    {
+      "name": "goods_limit_special",
+      "type": "number",
+      "default": 2000000,
+      "label": "goods, special-category state: Rs 20 lakh"
+    },
+    {
+      "name": "near_pct",
+      "type": "number",
+      "default": 80,
+      "label": "within this percent of the limit: say so"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "limit": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "eq",
+                  "left": "$supply",
+                  "right": "goods"
+                },
+                "$special_state"
+              ]
+            },
+            "then": "$goods_limit_special"
+          },
+          {
+            "when": {
+              "op": "eq",
+              "left": "$supply",
+              "right": "goods"
+            },
+            "then": "$goods_limit"
+          },
+          {
+            "when": "$special_state",
+            "then": "$services_limit_special"
+          }
+        ],
+        "else": "$services_limit"
+      },
+      "over": {
+        "op": "gt",
+        "left": "$turnover",
+        "right": {
+          "vop": "choose",
+          "cases": [
+            {
+              "when": {
+                "op": "all",
+                "items": [
+                  {
+                    "op": "eq",
+                    "left": "$supply",
+                    "right": "goods"
+                  },
+                  "$special_state"
+                ]
+              },
+              "then": "$goods_limit_special"
+            },
+            {
+              "when": {
+                "op": "eq",
+                "left": "$supply",
+                "right": "goods"
+              },
+              "then": "$goods_limit"
+            },
+            {
+              "when": "$special_state",
+              "then": "$services_limit_special"
+            }
+          ],
+          "else": "$services_limit"
+        }
+      },
+      "near": {
+        "op": "all",
+        "items": [
+          {
+            "op": "ge",
+            "left": {
+              "vop": "mul",
+              "a": "$turnover",
+              "b": 100
+            },
+            "right": {
+              "vop": "mul",
+              "a": {
+                "vop": "choose",
+                "cases": [
+                  {
+                    "when": {
+                      "op": "all",
+                      "items": [
+                        {
+                          "op": "eq",
+                          "left": "$supply",
+                          "right": "goods"
+                        },
+                        "$special_state"
+                      ]
+                    },
+                    "then": "$goods_limit_special"
+                  },
+                  {
+                    "when": {
+                      "op": "eq",
+                      "left": "$supply",
+                      "right": "goods"
+                    },
+                    "then": "$goods_limit"
+                  },
+                  {
+                    "when": "$special_state",
+                    "then": "$services_limit_special"
+                  }
+                ],
+                "else": "$services_limit"
+              },
+              "b": "$near_pct"
+            }
+          },
+          {
+            "op": "le",
+            "left": "$turnover",
+            "right": {
+              "vop": "choose",
+              "cases": [
+                {
+                  "when": {
+                    "op": "all",
+                    "items": [
+                      {
+                        "op": "eq",
+                        "left": "$supply",
+                        "right": "goods"
+                      },
+                      "$special_state"
+                    ]
+                  },
+                  "then": "$goods_limit_special"
+                },
+                {
+                  "when": {
+                    "op": "eq",
+                    "left": "$supply",
+                    "right": "goods"
+                  },
+                  "then": "$goods_limit"
+                },
+                {
+                  "when": "$special_state",
+                  "then": "$services_limit_special"
+                }
+              ],
+              "else": "$services_limit"
+            }
+          }
+        ]
+      },
+      "special": "$special_state"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-13: A service supplier is liable to register under GST above Rs 20 lakh aggregate turnover in the year (Rs 10 lakh in the special-category states Manipur, Mizoram, Nagaland and Tripura); a goods supplier above Rs 40 lakh (Rs 20 lakh). s.22(1) CGST Act 2017, notifications 10/2017-CT and 10/2019-CT. {product} warns - it does not register.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "limit": 2000000,
+        "over": false,
+        "near": false,
+        "special": false
+      }
+    },
+    {
+      "args": {
+        "turnover": 1700000
+      },
+      "expect_value": {
+        "limit": 2000000,
+        "over": false,
+        "near": true,
+        "special": false
+      }
+    },
+    {
+      "args": {
+        "turnover": 2000001
+      },
+      "expect_value": {
+        "limit": 2000000,
+        "over": true,
+        "near": false,
+        "special": false
+      }
+    },
+    {
+      "args": {
+        "turnover": 1500000,
+        "special_state": true
+      },
+      "expect_value": {
+        "limit": 1000000,
+        "over": true,
+        "near": false,
+        "special": true
+      }
+    },
+    {
+      "args": {
+        "supply": "goods",
+        "turnover": 3000000
+      },
+      "expect_value": {
+        "limit": 4000000,
+        "over": false,
+        "near": false,
+        "special": false
+      }
+    },
+    {
+      "args": {
+        "supply": "goods",
+        "turnover": 2500000,
+        "special_state": true
+      },
+      "expect_value": {
+        "limit": 2000000,
+        "over": true,
+        "near": false,
+        "special": true
+      }
+    }
+  ]
+}

@@ -24,6 +24,12 @@
       "type": "number",
       "default": 0,
       "label": "red checks"
+    },
+    {
+      "name": "classify",
+      "type": "boolean",
+      "default": false,
+      "label": "a bank statement's money still to classify"
     }
   ],
   "expr": {
@@ -36,6 +42,14 @@
           "right": 0
         },
         "then": "gather"
+      },
+      {
+        "when": {
+          "op": "eq",
+          "left": "$classify",
+          "right": true
+        },
+        "then": "classify"
       },
       {
         "when": {
@@ -90,8 +104,26 @@
         "red": 0
       },
       "expect_value": "choose"
+    },
+    {
+      "args": {
+        "required_missing": 0,
+        "typed": 2,
+        "red": 1,
+        "classify": true
+      },
+      "expect_value": "classify"
+    },
+    {
+      "args": {
+        "required_missing": 1,
+        "typed": 0,
+        "red": 0,
+        "classify": true
+      },
+      "expect_value": "gather"
     }
   ],
-  "version": 1,
-  "description_nl": "2026-10-11: never a dead end: a needed document still missing opens Gather, figures to type open Review, a red check opens Check, else Choose (the two regimes)."
+  "version": 2,
+  "description_nl": "2026-10-11: never a dead end: a needed document still missing opens Gather, figures to type open Review, a red check opens Check, else Choose (the two regimes). 2026-10-13: classify after the documents when a bank statement's money is not yet classified."
 }

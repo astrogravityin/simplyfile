@@ -1,0 +1,340 @@
+{
+  "prod_base": "https://sf.valuestream.in",
+  "voice": "en-IN-NeerjaNeural",
+  "rate": "+0%",
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "blur": [
+    "#whoami",
+    "#userpop .head"
+  ],
+  "page_key": "sf-case-bank-only",
+  "title": "Small business - only a bank statement (ITR-4)",
+  "start_url": "/#/wizard",
+  "covers": [
+    "who it is for",
+    "what applies",
+    "which form",
+    "documents you'll need",
+    "drop them in",
+    "the client, made for you",
+    "review, then the return",
+    "classify the money in",
+    "turnover, profit and the GST limit",
+    "tax, with the late fee",
+    "the ITR-4 JSON and how to upload it"
+  ],
+  "steps": [
+    {
+      "chapter": "Small business - only a bank statement (ITR-4)",
+      "say": "A gym trainer with no books and no Form 16 - only a bank statement. Start a new filing and pick An individual.",
+      "do": [
+        {
+          "wait_for": ".wz-start"
+        },
+        {
+          "wait": 1
+        }
+      ]
+    },
+    {
+      "chapter": "Who it is for",
+      "say": "A person, an HUF, a partnership firm, an LLP, an AOP or BOI, or a company - each card starts its own filing. A trust says Not yet, with what to do meanwhile.",
+      "do": [
+        {
+          "highlight_target": ".wz-who-groups",
+          "optional": true,
+          "timeout": 5
+        },
+        {
+          "click": "[data-start='individual']"
+        },
+        {
+          "wait_for": ".wz-who"
+        },
+        {
+          "wait": 1
+        }
+      ]
+    },
+    {
+      "chapter": "What applies",
+      "say": "One card does it: Small business - only a bank statement. The form says ITR-4, with its reason.",
+      "do": [
+        {
+          "click": "[data-pick='bankonly']"
+        },
+        {
+          "wait": 0.7
+        },
+        {
+          "highlight_target": ".wz-work|.wz-what",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Which form",
+      "say": "The form follows from the picks, with its reason in one line - ITR-1, 2, 3 or 4 for a person or an HUF, ITR-5 for a firm, an LLP or an AOP, ITR-6 for a company.",
+      "do": [
+        {
+          "highlight_target": ".wz-form",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Documents you'll need",
+      "say": "Needed, good to have, and what you type in - each with what it is and where to get it: TRACES, the AIS, your employer, CAMS or KFintech, the GST portal, the firm's deed and its books.",
+      "do": [
+        {
+          "click": "[data-go='docs']"
+        },
+        {
+          "wait_for": ".wz-docs"
+        },
+        {
+          "wait": 1
+        },
+        {
+          "highlight_target": ".wz-docs",
+          "optional": true,
+          "timeout": 5
+        },
+        {
+          "scroll": 420
+        }
+      ]
+    },
+    {
+      "chapter": "Drop them in",
+      "say": "The statement alone, dropped in. It is read row by row and checked: opening plus credits minus debits must be the closing balance.",
+      "do": [
+        {
+          "click": "[data-go='upload']"
+        },
+        {
+          "wait_for": "[data-drop='wz-file']"
+        },
+        {
+          "wait": 0.5
+        },
+        {
+          "upload": "#wz-file",
+          "files": [
+            "showcase/case-bank-only/1 Bank statement - Demo Savings - FY 2025-26.pdf"
+          ]
+        },
+        {
+          "wait": 3.5
+        }
+      ]
+    },
+    {
+      "chapter": "The client, made for you",
+      "say": "The statement names the holder, the address and the refund account. Only the PAN, date of birth, mobile, e-mail and father's name are asked.",
+      "do": [
+        {
+          "wait_for": ".wz-ask-modal",
+          "timeout": 40
+        },
+        {
+          "wait": 1.5
+        },
+        {
+          "fill": "[data-ask='pan']",
+          "text": "ZZDPK0066M",
+          "optional": true
+        },
+        {
+          "fill": "[data-ask='dob']",
+          "text": "1990-01-01",
+          "optional": true
+        },
+        {
+          "fill": "[data-ask='mobile']",
+          "text": "9000000066",
+          "optional": true
+        },
+        {
+          "fill": "[data-ask='email']",
+          "text": "anil.trainer@demo.example",
+          "optional": true
+        },
+        {
+          "fill": "[data-ask='father']",
+          "text": "Demo Father",
+          "optional": true
+        },
+        {
+          "wait": 1
+        },
+        {
+          "click": ".wz-ask-modal [data-save]"
+        },
+        {
+          "wait": 3
+        },
+        {
+          "highlight_target": ".wz-client",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Review, then the return",
+      "say": "Review: nothing missing - one button into My return, at the Classify step.",
+      "do": [
+        {
+          "click": "[data-go='review']"
+        },
+        {
+          "wait_for": ".wz-review"
+        },
+        {
+          "wait": 1.5
+        },
+        {
+          "highlight_target": ".wz-go|.wz-review",
+          "optional": true,
+          "timeout": 5
+        },
+        {
+          "wait": 1
+        },
+        {
+          "click": "#wz-go"
+        },
+        {
+          "wait": 3
+        },
+        {
+          "wait_for": ".mr-rail-card",
+          "timeout": 20,
+          "optional": true
+        },
+        {
+          "wait": 2
+        }
+      ]
+    },
+    {
+      "chapter": "Classify the money in",
+      "say": "Money in, grouped by who paid, each one guessed: customers, own money, a loan, a refund. Tap to change - the PhonePe credit is Not sure until you say what it is.",
+      "do": [
+        {
+          "wait_for": ".bk-list",
+          "timeout": 30
+        },
+        {
+          "wait": 1.5
+        },
+        {
+          "highlight_target": ".bk-list",
+          "optional": true,
+          "timeout": 5
+        },
+        {
+          "wait": 2
+        },
+        {
+          "click": ".bk-row.cls-ask [data-cls='loan']",
+          "optional": true
+        },
+        {
+          "wait": 2
+        },
+        {
+          "select": "#bk-code",
+          "value": "20023",
+          "optional": true
+        },
+        {
+          "wait": 2
+        }
+      ]
+    },
+    {
+      "chapter": "Turnover, profit and the GST limit",
+      "say": "Customer receipts only are the turnover. At 6% they give the presumptive profit under 44AD; cash would be 8%. Below the GST limit, nothing to register.",
+      "do": [
+        {
+          "highlight_target": "#bk-summary",
+          "optional": true,
+          "timeout": 5
+        },
+        {
+          "wait": 3
+        }
+      ]
+    },
+    {
+      "chapter": "Tax, with the late fee",
+      "say": "The new regime against the old, the tax, and the late fee under 234F because the due date has passed. The cheaper regime is chosen for you.",
+      "do": [
+        {
+          "click": "[data-next='check']"
+        },
+        {
+          "wait": 2
+        },
+        {
+          "click": "[data-next='choose']"
+        },
+        {
+          "wait_for": ".mr-regs",
+          "timeout": 15
+        },
+        {
+          "wait": 1
+        },
+        {
+          "highlight_target": ".mr-regs",
+          "optional": true,
+          "timeout": 5
+        },
+        {
+          "wait": 2
+        }
+      ]
+    },
+    {
+      "chapter": "The ITR-4 JSON and how to upload it",
+      "say": "The JSON is checked against the department's ITR-4 schema. Download it, then follow the steps: log in, e-File, upload the JSON, pay, verify.",
+      "do": [
+        {
+          "click": ".mr-node[data-step='file']"
+        },
+        {
+          "wait_for": "#mr-json",
+          "timeout": 20,
+          "optional": true
+        },
+        {
+          "wait": 1
+        },
+        {
+          "highlight_target": ".mr-file",
+          "optional": true,
+          "timeout": 5
+        },
+        {
+          "wait": 2
+        },
+        {
+          "highlight_target": ".mr-up",
+          "optional": true,
+          "timeout": 5
+        },
+        {
+          "wait": 2
+        }
+      ]
+    }
+  ]
+}

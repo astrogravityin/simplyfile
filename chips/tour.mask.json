@@ -1,0 +1,155 @@
+{
+  "chip_id": "tour.mask",
+  "kind": "accessor",
+  "set": "tour",
+  "label": "Tour recorder: what is blurred when a real record is shown (privacy mask)",
+  "aliases": [
+    "tour recorder: what is blurred when a re"
+  ],
+  "params": [
+    {
+      "name": "patterns",
+      "type": "json",
+      "default": [
+        {
+          "id": "pan",
+          "regex": "\\b[A-Za-z]{5}[0-9]{4}[A-Za-z]\\b"
+        },
+        {
+          "id": "aadhaar",
+          "regex": "\\b[2-9][0-9]{3}[ -]?[0-9]{4}[ -]?[0-9]{4}\\b"
+        },
+        {
+          "id": "phone",
+          "regex": "(?:\\+91[ -]?)?\\b[6-9][0-9]{9}\\b"
+        },
+        {
+          "id": "account",
+          "regex": "\\b[0-9]{9,18}\\b"
+        },
+        {
+          "id": "email",
+          "regex": "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}"
+        },
+        {
+          "id": "upi_id",
+          "regex": "\\b[A-Za-z0-9._-]{2,}@[a-z]{2,}\\b"
+        },
+        {
+          "id": "upi_ref",
+          "regex": "\\bUPI-[0-9*]{6,}\\b"
+        },
+        {
+          "id": "pin",
+          "regex": "\\b[1-9][0-9]{5}\\b"
+        },
+        {
+          "id": "ifsc",
+          "regex": "\\b[A-Z]{4}0[A-Z0-9]{6}\\b"
+        }
+      ],
+      "label": "patterns"
+    },
+    {
+      "name": "selectors",
+      "type": "json",
+      "default": [
+        "[data-sens]",
+        "#whoami",
+        "#userpop .head",
+        "input[type=password]",
+        ".bk-who b",
+        ".wz-ask-f input"
+      ],
+      "label": "selectors"
+    },
+    {
+      "name": "blur_px",
+      "type": "number",
+      "default": 9,
+      "label": "blur px"
+    },
+    {
+      "name": "min_word",
+      "type": "number",
+      "default": 3,
+      "label": "min word"
+    },
+    {
+      "name": "audit",
+      "type": "boolean",
+      "default": true,
+      "label": "audit"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "patterns": "$patterns",
+      "selectors": "$selectors",
+      "blur_px": "$blur_px",
+      "min_word": "$min_word",
+      "audit": "$audit"
+    }
+  },
+  "returns": "record",
+  "version": 2,
+  "status": "published",
+  "description_nl": "2026-10-13: TOUR_MASK=1 (or a tour's \"mask\": true) blurs, before every frame, anything matching these patterns, every element matching these selectors (data-sens is the attribute the pages put on names and numbers), and every word of the file named by TOUR_MASK_WORDS (the holder's and counterparties' names, read at record time - never kept in the repo). A leak left on screen fails the recording.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "patterns": [
+          {
+            "id": "pan",
+            "regex": "\\b[A-Za-z]{5}[0-9]{4}[A-Za-z]\\b"
+          },
+          {
+            "id": "aadhaar",
+            "regex": "\\b[2-9][0-9]{3}[ -]?[0-9]{4}[ -]?[0-9]{4}\\b"
+          },
+          {
+            "id": "phone",
+            "regex": "(?:\\+91[ -]?)?\\b[6-9][0-9]{9}\\b"
+          },
+          {
+            "id": "account",
+            "regex": "\\b[0-9]{9,18}\\b"
+          },
+          {
+            "id": "email",
+            "regex": "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}"
+          },
+          {
+            "id": "upi_id",
+            "regex": "\\b[A-Za-z0-9._-]{2,}@[a-z]{2,}\\b"
+          },
+          {
+            "id": "upi_ref",
+            "regex": "\\bUPI-[0-9*]{6,}\\b"
+          },
+          {
+            "id": "pin",
+            "regex": "\\b[1-9][0-9]{5}\\b"
+          },
+          {
+            "id": "ifsc",
+            "regex": "\\b[A-Z]{4}0[A-Z0-9]{6}\\b"
+          }
+        ],
+        "selectors": [
+          "[data-sens]",
+          "#whoami",
+          "#userpop .head",
+          "input[type=password]",
+          ".bk-who b",
+          ".wz-ask-f input"
+        ],
+        "blur_px": 9,
+        "min_word": 3,
+        "audit": true
+      }
+    }
+  ]
+}

@@ -1,0 +1,152 @@
+{
+  "chip_id": "bank.check",
+  "kind": "accessor",
+  "set": "bank",
+  "label": "Bank only: the checks a read bank statement adds",
+  "aliases": [
+    "bank only: the checks a read bank statement adds"
+  ],
+  "params": [
+    {
+      "name": "what",
+      "type": "text",
+      "default": "bank_recon",
+      "label": "bank_recon or bank_undecided"
+    },
+    {
+      "name": "recon_ok",
+      "type": "boolean",
+      "default": true,
+      "label": "the statement adds up"
+    },
+    {
+      "name": "undecided",
+      "type": "number",
+      "default": 0,
+      "label": "credit groups not decided"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "what": "$what",
+      "level": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "eq",
+                  "left": "$what",
+                  "right": "bank_recon"
+                },
+                {
+                  "op": "eq",
+                  "left": "$recon_ok",
+                  "right": false
+                }
+              ]
+            },
+            "then": "bad"
+          },
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "eq",
+                  "left": "$what",
+                  "right": "bank_undecided"
+                },
+                {
+                  "op": "gt",
+                  "left": "$undecided",
+                  "right": 0
+                }
+              ]
+            },
+            "then": "warn"
+          }
+        ],
+        "else": "ok"
+      },
+      "word": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "eq",
+              "left": "$what",
+              "right": "bank_recon"
+            },
+            "then": "lv_bank_recon"
+          }
+        ],
+        "else": "lv_bank_undecided"
+      },
+      "a": "$undecided",
+      "b": 0,
+      "gap": 0
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-13: bank_recon is red when opening + credits - debits is not the closing balance or an entry is missing; bank_undecided is amber while credit groups are left as Not sure.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "what": "bank_recon",
+        "level": "ok",
+        "word": "lv_bank_recon",
+        "a": 0,
+        "b": 0,
+        "gap": 0
+      }
+    },
+    {
+      "args": {
+        "recon_ok": false
+      },
+      "expect_value": {
+        "what": "bank_recon",
+        "level": "bad",
+        "word": "lv_bank_recon",
+        "a": 0,
+        "b": 0,
+        "gap": 0
+      }
+    },
+    {
+      "args": {
+        "what": "bank_undecided",
+        "undecided": 2
+      },
+      "expect_value": {
+        "what": "bank_undecided",
+        "level": "warn",
+        "word": "lv_bank_undecided",
+        "a": 2,
+        "b": 0,
+        "gap": 0
+      }
+    },
+    {
+      "args": {
+        "what": "bank_undecided",
+        "recon_ok": false
+      },
+      "expect_value": {
+        "what": "bank_undecided",
+        "level": "ok",
+        "word": "lv_bank_undecided",
+        "a": 0,
+        "b": 0,
+        "gap": 0
+      }
+    }
+  ]
+}

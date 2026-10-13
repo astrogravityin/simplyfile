@@ -1279,6 +1279,54 @@
           "roles": [],
           "go": "#/compute",
           "live": ""
+        },
+        {
+          "id": "bank_only",
+          "q": "I only have a bank statement - no books, no Form 16. Can I file?",
+          "words": "only bank statement no books no form 16 small business trainer gym tutor shop presumptive 44AD itr-4 upi receipts no accounts",
+          "a": "Yes, if your turnover is under 2 crore (3 crore when almost all of it is digital). In New filing pick Small business - only a bank statement and upload the statement. Tap which money is from customers and which is your own money or a loan. Tax is on 6% of what came by UPI or bank (8% of cash) - ITR-4. You get the JSON to upload on the income-tax portal.",
+          "roles": [
+            "firm_admin",
+            "partner",
+            "reviewer",
+            "auditor",
+            "preparer",
+            "self"
+          ],
+          "go": "#/wizard",
+          "live": ""
+        },
+        {
+          "id": "gst_limit",
+          "q": "Do I need GST registration?",
+          "words": "gst registration limit threshold 20 lakh 40 lakh services goods turnover register gym",
+          "a": "A service provider has to register above Rs 20 lakh of turnover in a year (Rs 10 lakh in Manipur, Mizoram, Nagaland and Tripura); a supplier of goods above Rs 40 lakh (Rs 20 lakh there). Below that, GST registration is optional. The Classify step warns when your turnover is above the limit.",
+          "roles": [
+            "firm_admin",
+            "partner",
+            "reviewer",
+            "auditor",
+            "preparer",
+            "self"
+          ],
+          "go": "#/myreturn",
+          "live": ""
+        },
+        {
+          "id": "own_money",
+          "q": "Which money in my bank statement counts as business turnover?",
+          "words": "which money counts turnover own transfer loan refund interest classify customer receipts upi statement",
+          "a": "Money paid by customers by UPI or bank. Not your own money moved between your accounts, loans (also from apps), refunds and reversals, or interest. Cash you deposited counts, at 8%, if it is your takings. Only you can tell some apart - tap each group.",
+          "roles": [
+            "firm_admin",
+            "partner",
+            "reviewer",
+            "auditor",
+            "preparer",
+            "self"
+          ],
+          "go": "#/myreturn",
+          "live": ""
         }
       ],
       "label": "rows"
@@ -1291,9 +1339,9 @@
     }
   },
   "returns": "record",
-  "version": 11,
+  "version": 12,
   "status": "published",
-  "description_nl": "2026-10-04: every question Chip Chat knows, the answer, who sees it (roles), the screen to open, and live answers worked out from the person's own work. A firm adds its own on top (chipchat.py, Teach). 2026-10-09 owner: AI key only where AI is used, portal admin only. 2026-10-11: five questions about the New filing wizard - how to start, which documents, carry on later, Not recognised, the client made from the documents. 2026-10-11: questions about the New filing wizard - how to start, which documents, carry on later, Not recognised, the client made from the documents; later the same day: a firm's, an LLP's, an AOP's return, a company or trust (not yet), the kind of work, the worked examples. 2026-10-11: six questions about a company's return (ITR-6): how, the rate, MAT, losses and s.79, the due date, CSR; which forms are prepared now includes ITR-6; the not-yet row is about trusts (a company is filed from Clients & years).",
+  "description_nl": "2026-10-04: every question Chip Chat knows, the answer, who sees it (roles), the screen to open, and live answers worked out from the person's own work. A firm adds its own on top (chipchat.py, Teach). 2026-10-09 owner: AI key only where AI is used, portal admin only. 2026-10-11: five questions about the New filing wizard - how to start, which documents, carry on later, Not recognised, the client made from the documents. 2026-10-11: questions about the New filing wizard - how to start, which documents, carry on later, Not recognised, the client made from the documents; later the same day: a firm's, an LLP's, an AOP's return, a company or trust (not yet), the kind of work, the worked examples. 2026-10-11: six questions about a company's return (ITR-6): how, the rate, MAT, losses and s.79, the due date, CSR; which forms are prepared now includes ITR-6; the not-yet row is about trusts (a company is filed from Clients & years). 2026-10-13: I only have a bank statement; the GST limit; which money is turnover.",
   "test_cases": [
     {
       "args": {},
@@ -2566,6 +2614,54 @@
             "a": "No as a business expense: CSR spent under s.135 of the Companies Act is added back (Explanation 2 to s.37(1)) - tag it ITR6 BP csr. A CSR contribution to the Swachh Bharat Kosh or the Clean Ganga Fund gets no 80G either (ITR6 80G csr_kosh).",
             "roles": [],
             "go": "#/compute",
+            "live": ""
+          },
+          {
+            "id": "bank_only",
+            "q": "I only have a bank statement - no books, no Form 16. Can I file?",
+            "words": "only bank statement no books no form 16 small business trainer gym tutor shop presumptive 44AD itr-4 upi receipts no accounts",
+            "a": "Yes, if your turnover is under 2 crore (3 crore when almost all of it is digital). In New filing pick Small business - only a bank statement and upload the statement. Tap which money is from customers and which is your own money or a loan. Tax is on 6% of what came by UPI or bank (8% of cash) - ITR-4. You get the JSON to upload on the income-tax portal.",
+            "roles": [
+              "firm_admin",
+              "partner",
+              "reviewer",
+              "auditor",
+              "preparer",
+              "self"
+            ],
+            "go": "#/wizard",
+            "live": ""
+          },
+          {
+            "id": "gst_limit",
+            "q": "Do I need GST registration?",
+            "words": "gst registration limit threshold 20 lakh 40 lakh services goods turnover register gym",
+            "a": "A service provider has to register above Rs 20 lakh of turnover in a year (Rs 10 lakh in Manipur, Mizoram, Nagaland and Tripura); a supplier of goods above Rs 40 lakh (Rs 20 lakh there). Below that, GST registration is optional. The Classify step warns when your turnover is above the limit.",
+            "roles": [
+              "firm_admin",
+              "partner",
+              "reviewer",
+              "auditor",
+              "preparer",
+              "self"
+            ],
+            "go": "#/myreturn",
+            "live": ""
+          },
+          {
+            "id": "own_money",
+            "q": "Which money in my bank statement counts as business turnover?",
+            "words": "which money counts turnover own transfer loan refund interest classify customer receipts upi statement",
+            "a": "Money paid by customers by UPI or bank. Not your own money moved between your accounts, loans (also from apps), refunds and reversals, or interest. Cash you deposited counts, at 8%, if it is your takings. Only you can tell some apart - tap each group.",
+            "roles": [
+              "firm_admin",
+              "partner",
+              "reviewer",
+              "auditor",
+              "preparer",
+              "self"
+            ],
+            "go": "#/myreturn",
             "live": ""
           }
         ]

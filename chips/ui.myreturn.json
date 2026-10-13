@@ -382,7 +382,7 @@
     {
       "name": "old_closed",
       "type": "text",
-      "default": "The old regime can only be chosen in a return filed by the due date (31 July) - a belated return is under the new regime.",
+      "default": "The old regime can only be chosen in a return filed by the due date ({due}) - a belated return is under the new regime.",
       "label": "old_closed"
     },
     {
@@ -4518,6 +4518,72 @@
       "type": "text",
       "default": "Nature of the income from it",
       "label": "f_fa_inc_nature"
+    },
+    {
+      "name": "fd_bank_rows",
+      "type": "text",
+      "default": "Entries read",
+      "label": "fd bank rows"
+    },
+    {
+      "name": "fd_bank_recon",
+      "type": "text",
+      "default": "Adds up",
+      "label": "fd bank recon"
+    },
+    {
+      "name": "recon_ok_short",
+      "type": "text",
+      "default": "Yes - opening + credits - debits = closing",
+      "label": "recon ok short"
+    },
+    {
+      "name": "recon_bad_short",
+      "type": "text",
+      "default": "No - some entries are missing or unclear",
+      "label": "recon bad short"
+    },
+    {
+      "name": "recon_bad",
+      "type": "text",
+      "default": "This statement does not add up. {rows} entries were read (the last is number {read}); opening {opening} + credits {credits} - debits {debits} should come to {closing}, and {gaps} entries do not fit the running balance (entry numbers: {at}). Download the original PDF again from your bank's net banking or app - all pages, not a photo or a print - and upload that. {product} does not use a statement that does not add up.",
+      "label": "recon bad"
+    },
+    {
+      "name": "s_classify",
+      "type": "text",
+      "default": "Classify",
+      "label": "s classify"
+    },
+    {
+      "name": "go_classify",
+      "type": "text",
+      "default": "Classify the money",
+      "label": "go classify"
+    },
+    {
+      "name": "c_bank_recon",
+      "type": "text",
+      "default": "Bank statement adds up",
+      "label": "c bank recon"
+    },
+    {
+      "name": "lv_bank_recon",
+      "type": "text",
+      "default": "The statement does not add up - upload the original PDF again, all pages.",
+      "label": "lv bank recon"
+    },
+    {
+      "name": "c_bank_undecided",
+      "type": "text",
+      "default": "Money to classify",
+      "label": "c bank undecided"
+    },
+    {
+      "name": "lv_bank_undecided",
+      "type": "text",
+      "default": "Some money in is still marked Not sure and is left out of your turnover.",
+      "label": "lv bank undecided"
     }
   ],
   "expr": {
@@ -5274,13 +5340,24 @@
       "f_iu_adv_q3": "$f_iu_adv_q3",
       "f_iu_adv_q4": "$f_iu_adv_q4",
       "iu_sur": "$iu_sur",
-      "f_fa_inc_nature": "$f_fa_inc_nature"
+      "f_fa_inc_nature": "$f_fa_inc_nature",
+      "fd_bank_rows": "$fd_bank_rows",
+      "fd_bank_recon": "$fd_bank_recon",
+      "recon_ok_short": "$recon_ok_short",
+      "recon_bad_short": "$recon_bad_short",
+      "recon_bad": "$recon_bad",
+      "s_classify": "$s_classify",
+      "go_classify": "$go_classify",
+      "c_bank_recon": "$c_bank_recon",
+      "lv_bank_recon": "$lv_bank_recon",
+      "c_bank_undecided": "$c_bank_undecided",
+      "lv_bank_undecided": "$lv_bank_undecided"
     }
   },
   "returns": "record",
-  "version": 33,
+  "version": 37,
   "status": "published",
-  "description_nl": "2026-10-06: every word of My return - the steps, the documents and how to get each, the checks, the regimes, the review fields, the form and how to file it. 2026-10-06: start from documents. 2026-10-06: an Other card for files not read, so a locked one can be removed. 2026-10-06: how_h / how_steps - the step-by-step shown on Gather. 2026-10-06: rv_paid / pd_* - tax the person paid themselves, typed on Check. 2026-10-06: ask_* - the two questions before a file goes in: a return already under way (carry on / start again) and a second AIS / 26AS (replace / keep both). 2026-10-06: the business card on Check (44ADA / 44AD), the ITR-4 reasons, and where each document comes from. 2026-10-06: pd_bsr / pd_challan - a typed payment's BSR code and challan number; f10iea. 2026-10-06: k_bank_how, bank_kept, src_issuer, src_gives. 2026-10-06: the bank statement's figures on its card and on the business card. 2026-10-06: pw_show / pw_hide - the eye on the PDF password. 2026-10-06: back_to - the Back button on each step. 2026-10-06: from_filed / from_filed_done / from_filed_none. 2026-10-06: why_huf. 2026-10-06: the Karta's fields for an HUF. 2026-10-06: the More deductions panel on Check. 2026-10-07: co-owned houses, winnings and virtual digital assets, agricultural income, 44AE vehicles, the 80EE / 80EEA check, and the address and contact fields. 2026-10-07: what the readers found: a VDA sold, the person's address (AIS), the employer's address (Form 16). 2026-10-07: capital gains in full: each sale, exemptions, the indexation choice, losses brought forward, gifts, pre-construction interest, the statements. 2026-10-07: ITR-3 from My return: the own-profit-and-loss kinds and fields, why_biz_books, and the CA messages (tax audit s.44AB, a business loss). 2026-10-07: wave 3: residential status, foreign income and assets, clubbing, salary arrears (s.89), the updated return (ITR-U). 2026-10-08: words for the app's own warning before a delete / remove (never silently). 2026-10-08: wave 4: a second Form 16 from the same employer, two employers, the 44AB payments test and 44AD(4), GST per GSTIN, losses from last year's ITR-3, exemption time limits and several exemptions on one sale, the ITR-U of an earlier year (special rates, surcharge, 234C).",
+  "description_nl": "2026-10-06: every word of My return - the steps, the documents and how to get each, the checks, the regimes, the review fields, the form and how to file it. 2026-10-06: start from documents. 2026-10-06: an Other card for files not read, so a locked one can be removed. 2026-10-06: how_h / how_steps - the step-by-step shown on Gather. 2026-10-06: rv_paid / pd_* - tax the person paid themselves, typed on Check. 2026-10-06: ask_* - the two questions before a file goes in: a return already under way (carry on / start again) and a second AIS / 26AS (replace / keep both). 2026-10-06: the business card on Check (44ADA / 44AD), the ITR-4 reasons, and where each document comes from. 2026-10-06: pd_bsr / pd_challan - a typed payment's BSR code and challan number; f10iea. 2026-10-06: k_bank_how, bank_kept, src_issuer, src_gives. 2026-10-06: the bank statement's figures on its card and on the business card. 2026-10-06: pw_show / pw_hide - the eye on the PDF password. 2026-10-06: back_to - the Back button on each step. 2026-10-06: from_filed / from_filed_done / from_filed_none. 2026-10-06: why_huf. 2026-10-06: the Karta's fields for an HUF. 2026-10-06: the More deductions panel on Check. 2026-10-07: co-owned houses, winnings and virtual digital assets, agricultural income, 44AE vehicles, the 80EE / 80EEA check, and the address and contact fields. 2026-10-07: what the readers found: a VDA sold, the person's address (AIS), the employer's address (Form 16). 2026-10-07: capital gains in full: each sale, exemptions, the indexation choice, losses brought forward, gifts, pre-construction interest, the statements. 2026-10-07: ITR-3 from My return: the own-profit-and-loss kinds and fields, why_biz_books, and the CA messages (tax audit s.44AB, a business loss). 2026-10-07: wave 3: residential status, foreign income and assets, clubbing, salary arrears (s.89), the updated return (ITR-U). 2026-10-08: words for the app's own warning before a delete / remove (never silently). 2026-10-08: wave 4: a second Form 16 from the same employer, two employers, the 44AB payments test and 44AD(4), GST per GSTIN, losses from last year's ITR-3, exemption time limits and several exemptions on one sale, the ITR-U of an earlier year (special rates, surcharge, 234C). 2026-10-13: the serial-numbered bank statement: entries read, whether it adds up, the Classify step's name.",
   "test_cases": [
     {
       "args": {},
@@ -5347,7 +5424,7 @@
         "accept": "I have checked this",
         "choose_h": "New or old regime?",
         "verdict": "{regime} costs you {saving} less.",
-        "old_closed": "The old regime can only be chosen in a return filed by the due date (31 July) - a belated return is under the new regime.",
+        "old_closed": "The old regime can only be chosen in a return filed by the due date ({due}) - a belated return is under the new regime.",
         "old_closed_short": "Closed for a belated return",
         "verdict_same": "Both regimes come to the same tax - the new regime needs nothing more from you.",
         "cheaper": "Cheaper",
@@ -6036,7 +6113,18 @@
         "f_iu_adv_q3": "16 September - 15 December",
         "f_iu_adv_q4": "16 December - 31 March",
         "iu_sur": "That year's surcharge (with marginal relief) is in the updated tax: {amount}.",
-        "f_fa_inc_nature": "Nature of the income from it"
+        "f_fa_inc_nature": "Nature of the income from it",
+        "fd_bank_rows": "Entries read",
+        "fd_bank_recon": "Adds up",
+        "recon_ok_short": "Yes - opening + credits - debits = closing",
+        "recon_bad_short": "No - some entries are missing or unclear",
+        "recon_bad": "This statement does not add up. {rows} entries were read (the last is number {read}); opening {opening} + credits {credits} - debits {debits} should come to {closing}, and {gaps} entries do not fit the running balance (entry numbers: {at}). Download the original PDF again from your bank's net banking or app - all pages, not a photo or a print - and upload that. SimplyFy does not use a statement that does not add up.",
+        "s_classify": "Classify",
+        "go_classify": "Classify the money",
+        "c_bank_recon": "Bank statement adds up",
+        "lv_bank_recon": "The statement does not add up - upload the original PDF again, all pages.",
+        "c_bank_undecided": "Money to classify",
+        "lv_bank_undecided": "Some money in is still marked Not sure and is left out of your turnover."
       }
     }
   ]

@@ -1512,6 +1512,42 @@
       "type": "text",
       "default": "Opening the return",
       "label": "done"
+    },
+    {
+      "name": "a_mobile",
+      "type": "text",
+      "default": "Your mobile number (10 digits) - the return needs one",
+      "label": "a mobile"
+    },
+    {
+      "name": "a_address",
+      "type": "text",
+      "default": "Your address (flat, street, area, city, PIN) - the return needs one",
+      "label": "a address"
+    },
+    {
+      "name": "bad_mobile",
+      "type": "text",
+      "default": "That is not a mobile number - 10 digits, starting 6, 7, 8 or 9.",
+      "label": "bad mobile"
+    },
+    {
+      "name": "a_email",
+      "type": "text",
+      "default": "Your e-mail address - the return and the portal's mails go here",
+      "label": "a email"
+    },
+    {
+      "name": "a_father",
+      "type": "text",
+      "default": "Your father's name - the return's declaration asks for it",
+      "label": "a father"
+    },
+    {
+      "name": "bad_email",
+      "type": "text",
+      "default": "That does not look like an e-mail address.",
+      "label": "bad email"
     }
   ],
   "expr": {
@@ -1767,7 +1803,13 @@
       "bad_choice": "$bad_choice",
       "self_other": "$self_other",
       "too_many_partners": "$too_many_partners",
-      "done": "$done"
+      "done": "$done",
+      "a_mobile": "$a_mobile",
+      "a_address": "$a_address",
+      "bad_mobile": "$bad_mobile",
+      "a_email": "$a_email",
+      "a_father": "$a_father",
+      "bad_email": "$bad_email"
     }
   },
   "returns": "record",
@@ -2026,10 +2068,16 @@
         "bad_choice": "{value} is not one of the choices.",
         "self_other": "Your desk files only your own return.",
         "too_many_partners": "At most {n} partners.",
-        "done": "Opening the return"
+        "done": "Opening the return",
+        "a_mobile": "Your mobile number (10 digits) - the return needs one",
+        "a_address": "Your address (flat, street, area, city, PIN) - the return needs one",
+        "bad_mobile": "That is not a mobile number - 10 digits, starting 6, 7, 8 or 9.",
+        "a_email": "Your e-mail address - the return and the portal's mails go here",
+        "a_father": "Your father's name - the return's declaration asks for it",
+        "bad_email": "That does not look like an e-mail address."
       }
     }
   ],
-  "version": 5,
-  "description_nl": "2026-10-11: every word of the New filing wizard (static/page-wizard.js) and its button on Clients & years / My return. 2026-10-11: every word of the New filing wizard (static/page-wizard.js) and its hero on Clients & years / My return."
+  "version": 8,
+  "description_nl": "2026-10-11: every word of the New filing wizard (static/page-wizard.js) and its button on Clients & years / My return. 2026-10-11: every word of the New filing wizard (static/page-wizard.js) and its hero on Clients & years / My return. 2026-10-13: the bank-statement-only path: the mobile and address questions."
 }

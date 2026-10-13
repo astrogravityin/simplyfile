@@ -172,7 +172,7 @@ export async function wizardPage(host) {
     const c = v.client;
     const pic = whoRow(v.who).art || (v.self ? 'self' : 'person');
     return `<section class="card wz-client"><h3 class="rc-h">${icon('users', 15)} ${esc(w('client_h'))}</h3>
-      ${c ? `<div class="wz-client-b">${art(pic)}<div><b>${esc(c.name)}</b>
+      ${c ? `<div class="wz-client-b">${art(pic)}<div><b data-sens>${esc(c.name)}</b>
           <div class="small muted">${esc(c.pan)}${c.dob ? ` · ${esc(c.dob)}` : ''}${c.gst ? ` · ${esc(c.gst)}` : ''}${c.partners ? ` · ${esc(w('client_partners', { n: c.partners }))}` : ''}</div>
           <span class="tag ${c.made ? 'ok' : ''}">${esc(w(v.self ? 'client_self' : c.made ? 'client_new' : 'client_found'))}</span></div></div>`
         : `<p class="small muted">${esc(w('client_wait'))}</p>`}

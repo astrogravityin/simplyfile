@@ -2462,3 +2462,39 @@ button.fi-pick:hover,button.fi-pick:focus-visible{border-color:var(--brand);box-
 .fi-pick-go{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:6px;padding:10px 14px;border-radius:10px;font-weight:600;color:var(--brand-ink);background:linear-gradient(180deg,var(--brand-2),var(--brand));box-shadow:0 1px 2px rgba(91,91,214,.35),0 4px 14px rgba(91,91,214,.18)}
 .fi-redo{margin:4px 0 0;text-align:center}
 @media(max-width:480px){button.fi-pick{padding:16px}.fi-pick-svg{max-width:180px}}
+
+/* --- 2026-10-13 Classify (a bank statement's money) - My return, "Small business - only a bank statement" ------------------- */
+.bk-docs{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:6px}
+.bk-docs li{display:grid;grid-template-columns:20px 1fr;gap:2px 8px;align-items:start;font-size:13.5px}
+.bk-docs li .small{grid-column:2}
+.bk-ok svg{color:var(--ok)}
+.bk-bad svg{color:var(--bad)}
+.bk-grid{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:16px;align-items:start}
+.bk-side{position:sticky;top:12px}
+.bk-sums{display:grid;gap:6px;margin:8px 0}
+.bk-sum{display:flex;justify-content:space-between;gap:10px;font-size:14px;padding:6px 10px;border-radius:10px;background:var(--panel-2)}
+.bk-sum b{font-variant-numeric:tabular-nums}
+.bk-sum-receipt{background:var(--ok-soft)}
+.bk-sum-receipt b{color:var(--ok)}
+.bk-sum-ask{background:var(--warn-soft)}
+.bk-line{margin:8px 0 2px}
+.bk-res{margin-top:12px;border-top:1px solid var(--line);padding-top:10px}
+.bk-tabs{display:flex;gap:6px;margin:6px 0 10px;flex-wrap:wrap}
+.bk-tab{border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:6px 14px;font:inherit;cursor:pointer;color:var(--ink-2)}
+.bk-tab.is-on{border-color:var(--brand);color:var(--brand);background:var(--brand-soft,var(--panel-2));font-weight:600}
+.bk-rows{display:grid;gap:8px}
+.bk-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 12px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--panel)}
+.bk-row.cls-ask{border-color:var(--warn);background:var(--warn-soft)}
+.bk-row.cls-receipt,.bk-row.cls-cash{border-left:4px solid var(--ok)}
+.bk-row.cls-own,.bk-row.cls-loan,.bk-row.cls-other{border-left:4px solid var(--line-2,var(--line))}
+.bk-who{display:flex;flex-direction:column;gap:2px;min-width:0}
+.bk-who b{overflow-wrap:anywhere;text-transform:capitalize}
+.bk-amt{font-weight:700;font-variant-numeric:tabular-nums;text-align:right;align-self:center}
+.bk-choices{grid-column:1 / -1;display:flex;gap:6px;flex-wrap:wrap}
+.bk-c{border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:5px 12px;font:inherit;font-size:13px;cursor:pointer;color:var(--ink-2)}
+.bk-c[aria-pressed="true"]{border-color:var(--brand);background:var(--brand);color:#fff}
+.bk-c-receipt[aria-pressed="true"],.bk-c-cash[aria-pressed="true"]{background:var(--ok);border-color:var(--ok)}
+.bk-flag{font-size:11.5px}
+.bk-need .grid{margin-top:8px}
+.bk-privacy-blur{filter:blur(6px)!important}
+@media (max-width:860px){.bk-grid{grid-template-columns:1fr}.bk-side{position:static;order:-1}}

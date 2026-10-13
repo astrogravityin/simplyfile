@@ -453,7 +453,9 @@ REQUIRED_CHIPS = ["demo.host", "start.steps", "wizard.settings", "wizard.scenari
                   "tar.settings", "tar.columns", "tar.codes", "tar.map",
                   # 2026-10-11 ITR-6 (a company's return): company.py asks these; tools/make_itr6_chips.py writes them
                   "company.settings", "company.problem", "company.rate", "company.tax", "company.tax_s1", "company.tax_s2", "company.mat",
-                  "company.dep_block", "company.setoff", "company.loss_ok", "company.d80g", "company.d80m", "rulebook.sections"]
+                  "company.dep_block", "company.setoff", "company.loss_ok", "company.d80g", "company.d80m", "rulebook.sections",
+                  # 2026-10-13 "Small business - only a bank statement": tools/make_bankonly_chips.py (+ part2, part3) writes these
+                  "bank.statement", "bank.classify", "bank.gst_gap", "bank.check", "bank.upload", "bank.special_states", "ui.bankonly", "tour.mask"]
 
 
 MAIN = '\nif __name__ == "__main__":'

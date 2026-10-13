@@ -1,0 +1,313 @@
+{
+  "chip_id": "bank.statement",
+  "kind": "accessor",
+  "set": "bank",
+  "label": "Bank only: how a serial-numbered bank statement is read",
+  "aliases": [
+    "bank only: how a serial-numbered bank st"
+  ],
+  "params": [
+    {
+      "name": "row_start",
+      "type": "text",
+      "default": "^\\s*(\\d{1,6})\\s+(\\d{1,2}[ \\-/.][A-Za-z]{3}[ \\-/.]\\d{2,4}|\\d{1,2}[/.-]\\d{1,2}[/.-]\\d{2,4})\\s*(.*)$",
+      "label": "row start"
+    },
+    {
+      "name": "table_head",
+      "type": "text",
+      "default": "(?i)^\\s*#?\\s*(?:sr\\.?\\s*no\\.?\\s*)?date\\b.*\\b(?:description|narration|particulars|details)\\b",
+      "label": "table head"
+    },
+    {
+      "name": "opening",
+      "type": "text",
+      "default": "(?i)opening\\s+balance\\D{0,12}(-?[\\d,]+\\.\\d{2})",
+      "label": "opening"
+    },
+    {
+      "name": "closing",
+      "type": "text",
+      "default": "(?im)^\\s*closing\\s+balance\\D{0,12}(-?[\\d,]+\\.\\d{2})",
+      "label": "closing"
+    },
+    {
+      "name": "holder",
+      "type": "json",
+      "default": [
+        "(?m)^([^\\n]+)\\nAccount No\\.?\\s*\\d+\\s*\\nAccount Statement",
+        "(?mi)^Account Statement[^\\n]*\\n([^\\n]+)\\n(?:CRN|[^\\n]*\\n[^\\n]*MICR)",
+        "(?im)^\\s*(?:account holder|customer name|account name|name)\\s*[:\\-]\\s*(.+?)\\s*$"
+      ],
+      "label": "holder"
+    },
+    {
+      "name": "account",
+      "type": "text",
+      "default": "(?i)Account\\s*(?:No|Number)\\.?\\s*:?\\s*(\\d{6,18})",
+      "label": "account"
+    },
+    {
+      "name": "ifsc",
+      "type": "text",
+      "default": "(?i)\\bIFSC(?:\\s*Code)?\\s*:?\\s*([A-Z]{4}0[A-Z0-9]{6})\\b",
+      "label": "ifsc"
+    },
+    {
+      "name": "ifsc_banks",
+      "type": "json",
+      "default": {
+        "KKBK": "Kotak Mahindra Bank",
+        "HDFC": "HDFC Bank",
+        "ICIC": "ICICI Bank",
+        "SBIN": "State Bank of India",
+        "UTIB": "Axis Bank",
+        "PUNB": "Punjab National Bank",
+        "BARB": "Bank of Baroda",
+        "CNRB": "Canara Bank",
+        "IDIB": "Indian Bank",
+        "YESB": "Yes Bank",
+        "INDB": "IndusInd Bank",
+        "IDFB": "IDFC First Bank",
+        "FDRL": "Federal Bank",
+        "UBIN": "Union Bank of India",
+        "BKID": "Bank of India",
+        "KARB": "Karnataka Bank",
+        "RATN": "RBL Bank",
+        "SIBL": "South Indian Bank",
+        "MAHB": "Bank of Maharashtra",
+        "CBIN": "Central Bank of India"
+      },
+      "label": "ifsc banks"
+    },
+    {
+      "name": "address",
+      "type": "text",
+      "default": "(?ms)^Account Statement[^\\n]*\\n[^\\n]+\\n(?:CRN[^\\n]*\\n)?(.+?)\\n[^\\n]*MICR",
+      "label": "address"
+    },
+    {
+      "name": "pin",
+      "type": "text",
+      "default": "\\b([1-9]\\d{5})\\b",
+      "label": "pin"
+    },
+    {
+      "name": "page_join",
+      "type": "json",
+      "default": [
+        "(Page\\s+\\d+\\s+of)\\s*\\n\\s*(\\d+)",
+        "\\1 \\2"
+      ],
+      "label": "page join"
+    },
+    {
+      "name": "skip_lines",
+      "type": "json",
+      "default": [
+        "^\\s*Account Statement\\b",
+        "^\\s*Account No\\.?\\b",
+        "^\\s*Statement Generated\\b",
+        "^\\s*Page\\s+\\d+\\s+of\\s+\\d+",
+        "^\\s*[A-Za-z ]*Account Transactions\\s*$",
+        "^\\s*#?\\s*(?:Sr\\.?\\s*No\\.?\\s*)?Date\\s+(?:Description|Narration|Particulars)",
+        "^\\s*$",
+        "^\\s*Opening Balance\\b",
+        "^\\s*-\\s+-\\s+Opening Balance"
+      ],
+      "label": "skip lines"
+    },
+    {
+      "name": "stop_lines",
+      "type": "json",
+      "default": [
+        "^\\s*Important Information",
+        "^\\s*Closing Balance\\b",
+        "^\\s*Statement Summary",
+        "^\\s*End of Statement",
+        "^\\s*Legends?\\b",
+        "^\\s*Total\\s+(?:Debit|Credit|Withdrawal|Deposit)"
+      ],
+      "label": "stop lines"
+    },
+    {
+      "name": "amount",
+      "type": "text",
+      "default": "-?\\d[\\d,]*\\.\\d{2}",
+      "label": "amount"
+    },
+    {
+      "name": "ref",
+      "type": "text",
+      "default": "(?:^|\\s)((?:UPI|IMPS|NEFT|RTGS|CHQ|NACH|ATM|POS|MB|IB|ECS)[-/]?[A-Z0-9*]{5,})\\s*$",
+      "label": "ref"
+    },
+    {
+      "name": "date_formats",
+      "type": "json",
+      "default": [
+        "%d %b %Y",
+        "%d-%b-%Y",
+        "%d/%b/%Y",
+        "%d/%m/%Y",
+        "%d-%m-%Y",
+        "%d.%m.%Y",
+        "%d/%m/%y",
+        "%d-%m-%y"
+      ],
+      "label": "date formats"
+    },
+    {
+      "name": "tolerance",
+      "type": "number",
+      "default": 0.01,
+      "label": "tolerance"
+    },
+    {
+      "name": "min_rows",
+      "type": "number",
+      "default": 1,
+      "label": "min rows"
+    },
+    {
+      "name": "marks",
+      "type": "json",
+      "default": {
+        "debit": [
+          "dr",
+          "d"
+        ],
+        "credit": [
+          "cr",
+          "c"
+        ]
+      },
+      "label": "marks"
+    },
+    {
+      "name": "bad_rows_shown",
+      "type": "number",
+      "default": 8,
+      "label": "bad rows shown"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "row_start": "$row_start",
+      "table_head": "$table_head",
+      "opening": "$opening",
+      "closing": "$closing",
+      "holder": "$holder",
+      "account": "$account",
+      "ifsc": "$ifsc",
+      "ifsc_banks": "$ifsc_banks",
+      "address": "$address",
+      "pin": "$pin",
+      "page_join": "$page_join",
+      "skip_lines": "$skip_lines",
+      "stop_lines": "$stop_lines",
+      "amount": "$amount",
+      "ref": "$ref",
+      "date_formats": "$date_formats",
+      "tolerance": "$tolerance",
+      "min_rows": "$min_rows",
+      "marks": "$marks",
+      "bad_rows_shown": "$bad_rows_shown"
+    }
+  },
+  "returns": "record",
+  "version": 3,
+  "status": "published",
+  "description_nl": "2026-10-13: The layout of a bank statement PDF whose rows start with a serial number and a date, the narration wraps onto the next lines and the amount and balance close the row; its page headers and footers; the holder, account and address.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "row_start": "^\\s*(\\d{1,6})\\s+(\\d{1,2}[ \\-/.][A-Za-z]{3}[ \\-/.]\\d{2,4}|\\d{1,2}[/.-]\\d{1,2}[/.-]\\d{2,4})\\s*(.*)$",
+        "table_head": "(?i)^\\s*#?\\s*(?:sr\\.?\\s*no\\.?\\s*)?date\\b.*\\b(?:description|narration|particulars|details)\\b",
+        "opening": "(?i)opening\\s+balance\\D{0,12}(-?[\\d,]+\\.\\d{2})",
+        "closing": "(?im)^\\s*closing\\s+balance\\D{0,12}(-?[\\d,]+\\.\\d{2})",
+        "holder": [
+          "(?m)^([^\\n]+)\\nAccount No\\.?\\s*\\d+\\s*\\nAccount Statement",
+          "(?mi)^Account Statement[^\\n]*\\n([^\\n]+)\\n(?:CRN|[^\\n]*\\n[^\\n]*MICR)",
+          "(?im)^\\s*(?:account holder|customer name|account name|name)\\s*[:\\-]\\s*(.+?)\\s*$"
+        ],
+        "account": "(?i)Account\\s*(?:No|Number)\\.?\\s*:?\\s*(\\d{6,18})",
+        "ifsc": "(?i)\\bIFSC(?:\\s*Code)?\\s*:?\\s*([A-Z]{4}0[A-Z0-9]{6})\\b",
+        "ifsc_banks": {
+          "KKBK": "Kotak Mahindra Bank",
+          "HDFC": "HDFC Bank",
+          "ICIC": "ICICI Bank",
+          "SBIN": "State Bank of India",
+          "UTIB": "Axis Bank",
+          "PUNB": "Punjab National Bank",
+          "BARB": "Bank of Baroda",
+          "CNRB": "Canara Bank",
+          "IDIB": "Indian Bank",
+          "YESB": "Yes Bank",
+          "INDB": "IndusInd Bank",
+          "IDFB": "IDFC First Bank",
+          "FDRL": "Federal Bank",
+          "UBIN": "Union Bank of India",
+          "BKID": "Bank of India",
+          "KARB": "Karnataka Bank",
+          "RATN": "RBL Bank",
+          "SIBL": "South Indian Bank",
+          "MAHB": "Bank of Maharashtra",
+          "CBIN": "Central Bank of India"
+        },
+        "address": "(?ms)^Account Statement[^\\n]*\\n[^\\n]+\\n(?:CRN[^\\n]*\\n)?(.+?)\\n[^\\n]*MICR",
+        "pin": "\\b([1-9]\\d{5})\\b",
+        "page_join": [
+          "(Page\\s+\\d+\\s+of)\\s*\\n\\s*(\\d+)",
+          "\\1 \\2"
+        ],
+        "skip_lines": [
+          "^\\s*Account Statement\\b",
+          "^\\s*Account No\\.?\\b",
+          "^\\s*Statement Generated\\b",
+          "^\\s*Page\\s+\\d+\\s+of\\s+\\d+",
+          "^\\s*[A-Za-z ]*Account Transactions\\s*$",
+          "^\\s*#?\\s*(?:Sr\\.?\\s*No\\.?\\s*)?Date\\s+(?:Description|Narration|Particulars)",
+          "^\\s*$",
+          "^\\s*Opening Balance\\b",
+          "^\\s*-\\s+-\\s+Opening Balance"
+        ],
+        "stop_lines": [
+          "^\\s*Important Information",
+          "^\\s*Closing Balance\\b",
+          "^\\s*Statement Summary",
+          "^\\s*End of Statement",
+          "^\\s*Legends?\\b",
+          "^\\s*Total\\s+(?:Debit|Credit|Withdrawal|Deposit)"
+        ],
+        "amount": "-?\\d[\\d,]*\\.\\d{2}",
+        "ref": "(?:^|\\s)((?:UPI|IMPS|NEFT|RTGS|CHQ|NACH|ATM|POS|MB|IB|ECS)[-/]?[A-Z0-9*]{5,})\\s*$",
+        "date_formats": [
+          "%d %b %Y",
+          "%d-%b-%Y",
+          "%d/%b/%Y",
+          "%d/%m/%Y",
+          "%d-%m-%Y",
+          "%d.%m.%Y",
+          "%d/%m/%y",
+          "%d-%m-%y"
+        ],
+        "tolerance": 0.01,
+        "min_rows": 1,
+        "marks": {
+          "debit": [
+            "dr",
+            "d"
+          ],
+          "credit": [
+            "cr",
+            "c"
+          ]
+        },
+        "bad_rows_shown": 8
+      }
+    }
+  ]
+}

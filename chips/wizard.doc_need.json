@@ -39,6 +39,12 @@
       "type": "text",
       "default": "myreturn",
       "label": "this return's flow"
+    },
+    {
+      "name": "except_for",
+      "type": "json",
+      "default": [],
+      "label": "picks that make this document optional"
     }
   ],
   "expr": {
@@ -54,6 +60,24 @@
           }
         },
         "then": ""
+      },
+      {
+        "when": {
+          "op": "lt",
+          "left": {
+            "vop": "count",
+            "items": {
+              "vop": "missing",
+              "want": "$except_for",
+              "have": "$picked"
+            }
+          },
+          "right": {
+            "vop": "count",
+            "items": "$except_for"
+          }
+        },
+        "then": "optional"
       },
       {
         "when": {
@@ -230,8 +254,38 @@
         "flow": "firm"
       },
       "expect_value": "required"
+    },
+    {
+      "args": {
+        "required_for": [
+          "any"
+        ],
+        "optional_for": [],
+        "picked": [
+          "bankonly"
+        ],
+        "except_for": [
+          "bankonly"
+        ]
+      },
+      "expect_value": "optional"
+    },
+    {
+      "args": {
+        "required_for": [
+          "any"
+        ],
+        "optional_for": [],
+        "picked": [
+          "salary"
+        ],
+        "except_for": [
+          "bankonly"
+        ]
+      },
+      "expect_value": "required"
     }
   ],
-  "version": 2,
-  "description_nl": "2026-10-11: a document is needed when a pick it is needed for was made (or it is needed for every return), else good to have the same way, else not shown. 2026-10-11: a document of another flow is not shown (a Form 16 for a firm); else it is needed when a pick it is needed for was made (or it is needed for every return), else good to have the same way, else not shown."
+  "version": 3,
+  "description_nl": "2026-10-11: a document is needed when a pick it is needed for was made (or it is needed for every return), else good to have the same way, else not shown. 2026-10-11: a document of another flow is not shown (a Form 16 for a firm); else it is needed when a pick it is needed for was made (or it is needed for every return), else good to have the same way, else not shown. 2026-10-13: except_for: a pick (bankonly) makes the AIS and 26AS optional."
 }

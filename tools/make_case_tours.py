@@ -87,6 +87,7 @@ def case_tour(c, g, steps_by_title):
     steps.append({"chapter": t("Review, then the return")["title"], "say": say["review"],
                   "do": [{"click": "[data-go='review']"}, {"wait_for": ".wz-review"}, {"wait": 1.5}, hl(".wz-go|.wz-review"), {"wait": 1},
                          {"click": "#wz-go"}, {"wait": 3}, {"wait_for": LANDS.get(c["opens"], ".card"), "timeout": 20, "optional": True}, {"wait": 2}]})
+    steps += [{"chapter": m["chapter"], "say": m["say"], "do": m["do"]} for m in c.get("more", [])]   # 2026-10-13: what happens in My return after Review
     return HEAD | {"page_key": c["film"], "title": c["title"], "start_url": "/#/wizard", "covers": [s["chapter"][:1].lower() + s["chapter"][1:] for s in steps[1:]],
                    "steps": steps}
 

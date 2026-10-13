@@ -14,7 +14,8 @@
         "person": [
           "prefill",
           "ais",
-          "form16"
+          "form16",
+          "bank"
         ],
         "employers": [
           "form16",
@@ -45,7 +46,8 @@
           "prefill"
         ],
         "banks": [
-          "prefill"
+          "prefill",
+          "bank"
         ]
       },
       "label": "for each part of the return, the documents in the order they are trusted"
@@ -53,9 +55,9 @@
   ],
   "expr": "$order",
   "returns": "record",
-  "version": 2,
+  "version": 3,
   "status": "published",
-  "description_nl": "2026-10-06: salary from Form 16 (each employer's own certificate), interest and dividends from the AIS, tax credit as 26AS shows it (it is what the department checks against), personal details and refund banks from the pre-filled JSON. A figure the person types wins over all. 2026-10-06: other income falls back to 26AS (interest / dividend paid) when no AIS or pre-filled JSON.",
+  "description_nl": "2026-10-06: salary from Form 16 (each employer's own certificate), interest and dividends from the AIS, tax credit as 26AS shows it (it is what the department checks against), personal details and refund banks from the pre-filled JSON. A figure the person types wins over all. 2026-10-06: other income falls back to 26AS (interest / dividend paid) when no AIS or pre-filled JSON. 2026-10-13: a bank statement names the holder, the address and the refund account.",
   "test_cases": [
     {
       "args": {},
@@ -63,7 +65,8 @@
         "person": [
           "prefill",
           "ais",
-          "form16"
+          "form16",
+          "bank"
         ],
         "employers": [
           "form16",
@@ -94,7 +97,8 @@
           "prefill"
         ],
         "banks": [
-          "prefill"
+          "prefill",
+          "bank"
         ]
       }
     }

@@ -81,6 +81,18 @@
           "open": ".mr-node[data-step='gather']"
         },
         {
+          "title": "Classify the money",
+          "say": "A bank statement read row by row: money in, grouped by who paid. Tap Customer receipts, Cash takings, Own money, Loan or Not income - the turnover and the profit change at once. Own money, loans, refunds and interest never count.",
+          "target": ".bk-list|.mr-rail-card",
+          "open": ".mr-node[data-step='classify']"
+        },
+        {
+          "title": "Turnover, profit and the GST limit",
+          "say": "Customer receipts at 6% (cash at 8%) are the presumptive profit under 44AD - with the late fee if the return is after the due date. A turnover over the GST limit is flagged here too.",
+          "target": ".bk-summary|.mr-rail-card",
+          "open": ".mr-node[data-step='classify']"
+        },
+        {
           "title": "History",
           "say": "Every figure you change and every document you replace is in History, with who and when. Old versions are kept, ready to download.",
           "target": "[data-history]"
@@ -237,9 +249,9 @@
     }
   },
   "returns": "record",
-  "version": 7,
+  "version": 8,
   "status": "published",
-  "description_nl": "2026-10-06: the My return walk - the five steps, the documents, the checks, the two regimes, the review and the file; tours/sf-myreturn.json says the same. 2026-10-07: rewritten for what shipped on 6-7 October (tools/make_guides_wave4.py). 2026-10-10: Foreign assets step names table B (an interest in a foreign company or firm). 2026-10-11: a step pointing to New filing (the wizard).",
+  "description_nl": "2026-10-06: the My return walk - the five steps, the documents, the checks, the two regimes, the review and the file; tours/sf-myreturn.json says the same. 2026-10-07: rewritten for what shipped on 6-7 October (tools/make_guides_wave4.py). 2026-10-10: Foreign assets step names table B (an interest in a foreign company or firm). 2026-10-11: a step pointing to New filing (the wizard). 2026-10-13: the Classify step and the GST limit.",
   "test_cases": [
     {
       "args": {},
@@ -293,6 +305,18 @@
             "say": "Every document shows what was read from it - salary, tax deducted, interest, each sale - and, if you do not have it yet, how to get it. Drop the same kind again and you are asked first: replace it, or keep both. A second Form 16 from the same employer is asked about too - a revised one replaces the first; one from another employer is a job change, and both count.",
             "target": ".mr-dgrid",
             "open": ".mr-node[data-step='gather']"
+          },
+          {
+            "title": "Classify the money",
+            "say": "A bank statement read row by row: money in, grouped by who paid. Tap Customer receipts, Cash takings, Own money, Loan or Not income - the turnover and the profit change at once. Own money, loans, refunds and interest never count.",
+            "target": ".bk-list|.mr-rail-card",
+            "open": ".mr-node[data-step='classify']"
+          },
+          {
+            "title": "Turnover, profit and the GST limit",
+            "say": "Customer receipts at 6% (cash at 8%) are the presumptive profit under 44AD - with the late fee if the return is after the due date. A turnover over the GST limit is flagged here too.",
+            "target": ".bk-summary|.mr-rail-card",
+            "open": ".mr-node[data-step='classify']"
           },
           {
             "title": "History",

@@ -63,8 +63,33 @@ after the nightly reset (21:30 UTC) every one waits under *Carry on where you le
 | 15 | Manufacturing company with MAT | company (Kaveri Demo Fabricators Pvt Ltd) | ITR-6 + 3CD | certificate of incorporation, final accounts, computation (29B rows), asset schedule, 26AS (`case-company-mfg`) | Tax audit | `sf-case-company-mfg` |
 | 12 | Non-resident | individual | ITR-2 | 26AS (195, 194I), AIS - residence asked (`case-nri`) | My return | `sf-case-nri` |
 | 13 | Updated return (ITR-U), AY 2025-26 | individual | ITR-1 | the return filed (JSON), AIS, 26AS of that year (`case-itru`) | My return | `sf-case-updated-return` |
+| 16 | Small business - only a bank statement (gym trainer) | individual | ITR-4 | one bank statement, read row by row (`case-bank-only`) | My return, Classify step | `sf-case-bank-only` |
 
 The screen's own walk: `tours/sf-wizard.json` (= chip guide.wizard, held together by selfcheck).
+
+## Small business - only a bank statement (2026-10-13)
+
+A gym trainer, tutor or shop-keeper with no books and no Form 16. In New filing pick **An individual**, then **Small business - only a
+bank statement** (`wizard.scenarios` bankonly; implies business, services, presumptive; rules out books and a tax audit). The bank
+statement is the one document (`wizard.docs`: AIS and 26AS become optional through `wizard.doc_need` except_for).
+
+1. **Read** - `myreturn_read.bank_pdf_serial` (chip `bank.statement`): serial number + date rows, wrapped narration, repeated page
+   heads / footers; each entry's direction from the running balance; the holder, account, IFSC (bank) and address from the header.
+   **Reconciled**: opening + credits - debits = closing and no entry missing - otherwise said in plain words and the statement is
+   not used (`bank.check` bank_recon, red).
+2. **Classify** - `bankclass.py` (chip `bank.classify`): counterparty of each narration, own name compared loosely with the holder's,
+   lender and merchant words, a credit followed by an equal debit within 2 days (pass-through). Classes the person taps: Customer
+   receipts / Cash takings / Own money / Loan / Not income (money out: Personal / Business cost / Own money / Loan repayment).
+   Only customer receipts are digital turnover; interest goes to Other sources; "Not sure" is left out until decided (amber check).
+3. **Tax** - the existing machinery: 44AD 6% of digital / 8% of cash (`myreturn.business`), ITR-4 eligibility, 44AB(e), both regimes,
+   234F / 234A / 234B / 234C for a belated return (`close.dates`: 31 August for business returns from AY 2026-27).
+4. **GST** - `bank.gst_gap`: services Rs 20 lakh (Rs 10 lakh Manipur, Mizoram, Nagaland, Tripura), goods Rs 40 lakh (Rs 20 lakh); a
+   warning on the Classify step, never a registration.
+5. **JSON** - ITR-4 (`schemas/itr/ITR-4_2026_Main_V1.1.json`), checked before download; the steps of uploading it on the income-tax
+   portal are chip `bank.upload`.
+Asked in the popup only when the statement did not give them: PAN, date of birth, mobile, e-mail, father's name (address from the
+statement). Tests: `tools/e2e_bankonly.py`. Documents: `tools/showcase/make_bankonly_demo.py` (a made-up Kotak-style statement).
+The recorder's privacy mask (a real statement on a recording): `TOUR_MASK=1`, chip `tour.mask`, `TOUR_MASK_WORDS=<json list>`.
 
 ## Tests
 

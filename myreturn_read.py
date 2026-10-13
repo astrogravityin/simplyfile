@@ -15,6 +15,7 @@ label and limit is chip myreturn.read; every sentence is ui.myreturn.
 from __future__ import annotations
 
 import base64
+import copy
 import hashlib
 import io
 import json
@@ -466,6 +467,144 @@ def bank(book: dict) -> dict:
     return {"kind": "bank", "method": "text", "facts": facts, "found": found, "problems": []}
 
 
+# --- a serial-numbered bank statement (2026-10-13: "Small business - only a bank statement") ----------------------------------
+
+def bank_pdf_serial(text: str) -> dict | None:
+    """A bank statement PDF whose rows start with a serial number and a date ("# Date Description Chq/Ref. No. Withdrawal
+    Deposit Balance"; the narration wraps over the next lines, the amount and balance close the row, page headers and
+    footers come back on every page; chip bank.statement). Each row's direction is read from the running balance (a printed
+    Dr / Cr mark or a Withdrawal / Deposit column is cross-checked against it). None when no such rows are found.
+    Result: {"txns": [{n, date, narration, ref, debit, credit, balance, bad}], "holder", "opening", "closing", "account", "ifsc",
+    "bank", "address", "pin", "recon": {...}} - recon says whether opening + credits - debits = closing and no row is missing."""
+    import datetime  # noqa: PLC0415
+    k = engine.run("bank.statement")
+    rd = settings()["bank"]
+    text = re.sub(k["page_join"][0], k["page_join"][1], text or "")
+    first = lambda pats: next((re.sub(r"\s+", " ", m.group(1)).strip() for p in pats if (m := re.search(p, text))), "")  # noqa: E731
+    holder = first(k["holder"])
+    amt = k["amount"]
+    mark = r"(?:\s?(?:dr|cr)\b)?"
+    run = re.compile(r"(?:^|\s)((?:%s%s\s+){1,2})(%s%s)(?=\s|$)" % (amt, mark, amt, mark), re.I)
+    started, cur, raw = False, None, []
+    for ln in text.splitlines():
+        if not started:
+            started = re.search(k["table_head"], ln) is not None
+            continue
+        if raw and any(re.search(p, ln) for p in k["stop_lines"]):
+            break
+        if (holder and ln.strip().lower() == holder.lower()) or any(re.search(p, ln) for p in k["skip_lines"]):
+            continue
+        if m := re.match(k["row_start"], ln):
+            cur = {"n": int(m.group(1)), "date": m.group(2), "text": m.group(3).strip()}
+            raw.append(cur)
+        elif cur is not None:
+            cur["text"] += " " + ln.strip()
+    if not raw:
+        return None
+    om = re.search(k["opening"], text)
+    opening = _num(om.group(1)) if om else None
+    cm = re.search(k["closing"], text)
+
+    def parts(s: str) -> tuple[float, str]:
+        m2 = re.fullmatch(r"(%s)(?:\s?(dr|cr))?" % amt, s.strip(), re.I)
+        return (_num(m2.group(1)), (m2.group(2) or "").lower()) if m2 else (0.0, "")
+
+    def day(s: str) -> str:
+        for f in k["date_formats"]:
+            try:
+                return datetime.datetime.strptime(re.sub(r"\s+", " ", s.strip()), f).date().isoformat()
+            except ValueError:
+                continue
+        return s
+    # a Withdrawal column before a Deposit column, or the other way round (the table head says)
+    head = next((ln for ln in text.splitlines() if re.search(k["table_head"], ln)), "").lower()
+    pos = lambda words: min([m3.start() for w in words if (m3 := re.search(r"(?<![a-z])" + re.escape(w) + r"(?![a-z])", head))] or [10 ** 6])  # noqa: E731
+    dr_first = pos(rd["debit_words"]) <= pos(rd["credit_words"])
+    txns, prev, bad = [], opening, []
+    for r in raw:
+        m = run.search(r["text"])
+        if not m:
+            bad.append({"n": r["n"], "why": "no_amount"})
+            continue
+        figs = [parts(x) for x in re.findall(amt + mark, m.group(1), re.I)]
+        bal, _bm = parts(m.group(2))
+        body = (r["text"][: m.start()] + " " + r["text"][m.end():]).strip()
+        ref = ""
+        if rm := re.search(k["ref"], body):
+            ref, body = rm.group(1), body[: rm.start()].strip()
+        credit = debit = 0.0
+        if len(figs) == 2:
+            a, b = figs[0][0], figs[1][0]
+            debit, credit = (a, b) if dr_first else (b, a)
+        else:
+            v, mk = figs[0]
+            if mk in k["marks"]["credit"]:
+                credit = v
+            elif mk in k["marks"]["debit"]:
+                debit = v
+            elif prev is not None:
+                credit, debit = (v, 0.0) if bal - prev > 0 else (0.0, v)
+            else:
+                bad.append({"n": r["n"], "why": "no_direction"})
+                continue
+        flag = False
+        if prev is not None:
+            delta = round(bal - prev, 2)
+            if abs(delta - (credit - debit)) > float(k["tolerance"]):
+                flag = True
+                bad.append({"n": r["n"], "why": "gap", "amount": round(credit or debit, 2), "moved": delta})
+        txns.append({"n": r["n"], "date": day(r["date"]), "narration": re.sub(r"\s+", " ", body), "ref": ref,
+                     "debit": round(debit, 2), "credit": round(credit, 2), "balance": bal, "bad": flag})
+        prev = bal
+    if len(txns) < int(k["min_rows"]):
+        return None
+    credits = round(sum(x["credit"] for x in txns), 2)
+    debits = round(sum(x["debit"] for x in txns), 2)
+    closing = _num(cm.group(1)) if cm else txns[-1]["balance"]
+    serials = [r["n"] for r in raw]
+    have = set(serials)
+    missing = [n for n in range(serials[0], serials[-1] + 1) if n not in have]
+    ok = opening is not None and abs(round(opening + credits - debits, 2) - closing) <= float(k["tolerance"]) and not bad and not missing
+    ifsc = first([k["ifsc"]]).upper()
+    am = re.search(k["address"], text)
+    lines = [x.strip(" ,") for x in (am.group(1).splitlines() if am else []) if x.strip(" ,")]
+    return {"txns": txns, "holder": holder, "opening": opening, "closing": closing, "account": first([k["account"]]), "ifsc": ifsc,
+            "bank": k["ifsc_banks"].get(ifsc[:4], ""), "address": ", ".join(lines),
+            "recon": {"ok": ok, "rows": len(txns), "read": len(raw), "serial_last": serials[-1], "opening": opening, "credits": credits,
+                      "debits": debits, "closing": closing, "bad": bad[: int(k["bad_rows_shown"])], "bad_n": len(bad),
+                      "missing": missing[: int(k["bad_rows_shown"])], "missing_n": len(missing)}}
+
+
+def bank_serial_result(s: dict) -> dict:
+    """The reader's answer for a serial-numbered statement: the usual bank summary (credits, receipts, cash, interest), the rows
+    themselves (for the Classify step), who holds the account and whether it adds up."""
+    rows = [["Date", "Narration", "Debit", "Credit", "Balance"]] + [
+        [x["date"], x["narration"], x["debit"] or None, x["credit"] or None, x["balance"]] for x in s["txns"]]
+    got = bank({"PDF": rows})
+    rc = s["recon"]
+    if not (got["facts"] or {}).get("bank"):
+        got = {"kind": "bank", "method": "text", "found": [], "problems": [],
+               "facts": {"bank": {"credits": 0.0, "receipts": 0.0, "cash": 0.0, "interest": 0.0, "by_kind": {}, "rows": 0, "from": "", "to": "", "top": []}}}
+    b = got["facts"]["bank"]
+    b |= {"txns": s["txns"], "holder": s["holder"], "opening": s["opening"], "closing": s["closing"], "account": s["account"], "ifsc": s["ifsc"],
+          "bank": s["bank"], "recon": rc, "serial": True, "rows": rc["rows"], "from": s["txns"][0]["date"], "to": s["txns"][-1]["date"]}
+    facts = got["facts"]
+    person = _person(s["address"], "", "")
+    if s["holder"]:
+        person = {"name": s["holder"]} | person
+    if person:
+        facts["person"] = person
+    if s["account"] and s["ifsc"]:
+        facts["banks"] = [{"ifsc": s["ifsc"], "bank": s["bank"], "account": s["account"], "type": "savings"}]
+    got["found"] = [{"label": say("fd_bank_period"), "value": f"{b['from']} - {b['to']}"}, {"label": say("fd_bank_rows"), "value": str(rc["rows"])},
+                    {"label": say("fd_bank_credits"), "value": _inr(rc["credits"])},
+                    {"label": say("fd_bank_recon"), "value": say("recon_ok_short" if rc["ok"] else "recon_bad_short")}]
+    got["problems"] = [] if rc["ok"] else [say("recon_bad", rows=rc["rows"], read=rc["serial_last"], gaps=rc["bad_n"] + rc["missing_n"],
+                                               opening=_inr(rc["opening"] or 0), credits=_inr(rc["credits"]), debits=_inr(rc["debits"]),
+                                               closing=_inr(rc["closing"]), at=", ".join(str(x["n"]) for x in rc["bad"]) or ", ".join(str(n) for n in rc["missing"]))]
+    return got
+
+
 # --- capital-gains statement (2026-10-07) --------------------------------------------------------------------------------
 
 def cg_book(data: bytes, ext: str) -> dict | None:
@@ -814,13 +953,20 @@ def _income_of(rows: list[dict]) -> dict:
 
 # --- PDFs: Form 16, AIS, 26AS ----------------------------------------------------------------------------------------------
 
+_BANK_CACHE: dict = {}
+
+
 def _pdf(data: bytes, password: str, pan: str, dob: str, ay: str, user: dict | None, ai_ok: bool) -> dict:
     import pypdf  # noqa: PLC0415
     r = pypdf.PdfReader(io.BytesIO(data))
     if r.is_encrypted:
         if not any(r.decrypt(pw) for pw in _passwords(password, pan, dob)):
             return {"kind": "other", "method": "text", "facts": {}, "found": [], "problems": [say("bad_password" if password else "need_password")]}
-    text = "\n".join((p.extract_text() or "") for p in r.pages[: int(settings()["pdf_pages_max"])])
+    key = hashlib.sha1(data).hexdigest()
+    if key in _BANK_CACHE:                                           # 2026-10-13: a 28-page statement is read once (the wizard reads it twice)
+        return copy.deepcopy(_BANK_CACHE[key])
+    head = [(p.extract_text() or "") for p in r.pages[: int(settings()["pdf_pages_max"])]]
+    text = "\n".join(head)
     low = text.lower()
     k = settings()
     if any(w in low for w in k["words_form16"]):
@@ -834,6 +980,13 @@ def _pdf(data: bytes, password: str, pan: str, dob: str, ay: str, user: dict | N
     if all(w in low for w in k["cas_pdf"]["words"]) and any(w in low for w in k["cas_pdf"]["any"]) and (got := cas_pdf(text))["facts"]["cg_rows"]:
         return got                                                   # 2026-10-08: a CAMS / KFintech capital-gains PDF
     if any(w in low for w in k["words_bank"]):
+        whole = "\n".join(head + [(p.extract_text() or "") for p in r.pages[len(head):]])   # 2026-10-13: a serial-numbered statement first
+        if (serial := bank_pdf_serial(whole)) is not None:
+            got = bank_serial_result(serial)
+            if len(_BANK_CACHE) >= 4:
+                _BANK_CACHE.pop(next(iter(_BANK_CACHE)))
+            _BANK_CACHE[key] = got
+            return copy.deepcopy(got)
         laid = "\n".join((p.extract_text(extraction_mode="layout") or "") for p in r.pages)
         return bank({"PDF": bank_pdf_rows(laid)})
     if any(w in low for w in k["words_26as"]):

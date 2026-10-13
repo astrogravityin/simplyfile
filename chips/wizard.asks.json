@@ -90,6 +90,36 @@
       "type": "boolean",
       "default": false,
       "label": "company_need"
+    },
+    {
+      "name": "bank_only",
+      "type": "boolean",
+      "default": false,
+      "label": "bank only"
+    },
+    {
+      "name": "mobile",
+      "type": "text",
+      "default": "",
+      "label": "mobile"
+    },
+    {
+      "name": "address",
+      "type": "text",
+      "default": "",
+      "label": "address"
+    },
+    {
+      "name": "email",
+      "type": "text",
+      "default": "",
+      "label": "email"
+    },
+    {
+      "name": "father",
+      "type": "text",
+      "default": "",
+      "label": "father"
     }
   ],
   "expr": {
@@ -421,6 +451,122 @@
           }
         ],
         "else": ""
+      },
+      {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "gt",
+                  "left": "$files",
+                  "right": 0
+                },
+                {
+                  "op": "eq",
+                  "left": "$bank_only",
+                  "right": true
+                },
+                {
+                  "op": "eq",
+                  "left": "$mobile",
+                  "right": ""
+                }
+              ]
+            },
+            "then": "mobile"
+          }
+        ],
+        "else": ""
+      },
+      {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "gt",
+                  "left": "$files",
+                  "right": 0
+                },
+                {
+                  "op": "eq",
+                  "left": "$bank_only",
+                  "right": true
+                },
+                {
+                  "op": "eq",
+                  "left": "$address",
+                  "right": ""
+                }
+              ]
+            },
+            "then": "address"
+          }
+        ],
+        "else": ""
+      },
+      {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "gt",
+                  "left": "$files",
+                  "right": 0
+                },
+                {
+                  "op": "eq",
+                  "left": "$bank_only",
+                  "right": true
+                },
+                {
+                  "op": "eq",
+                  "left": "$email",
+                  "right": ""
+                }
+              ]
+            },
+            "then": "email"
+          }
+        ],
+        "else": ""
+      },
+      {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "all",
+              "items": [
+                {
+                  "op": "gt",
+                  "left": "$files",
+                  "right": 0
+                },
+                {
+                  "op": "eq",
+                  "left": "$bank_only",
+                  "right": true
+                },
+                {
+                  "op": "eq",
+                  "left": "$father",
+                  "right": ""
+                }
+              ]
+            },
+            "then": "father"
+          }
+        ],
+        "else": ""
       }
     ]
   },
@@ -722,8 +868,82 @@
       "expect_value": [
         "company"
       ]
+    },
+    {
+      "args": {
+        "client": false,
+        "files": 1,
+        "pans": 1,
+        "name": "X",
+        "dob": "2000-01-01",
+        "who": "individual",
+        "karta_name": "",
+        "karta_pan": "",
+        "clash": false,
+        "nri": false,
+        "resident": "",
+        "partners_need": false,
+        "gstin_need": false,
+        "company_need": false,
+        "bank_only": true
+      },
+      "expect_value": [
+        "mobile",
+        "address",
+        "email",
+        "father"
+      ]
+    },
+    {
+      "args": {
+        "client": false,
+        "files": 1,
+        "pans": 1,
+        "name": "X",
+        "dob": "2000-01-01",
+        "who": "individual",
+        "karta_name": "",
+        "karta_pan": "",
+        "clash": false,
+        "nri": false,
+        "resident": "",
+        "partners_need": false,
+        "gstin_need": false,
+        "company_need": false,
+        "bank_only": true,
+        "mobile": "9999900000",
+        "address": "x"
+      },
+      "expect_value": [
+        "email",
+        "father"
+      ]
+    },
+    {
+      "args": {
+        "client": false,
+        "files": 1,
+        "pans": 1,
+        "name": "X",
+        "dob": "2000-01-01",
+        "who": "individual",
+        "karta_name": "",
+        "karta_pan": "",
+        "clash": false,
+        "nri": false,
+        "resident": "",
+        "partners_need": false,
+        "gstin_need": false,
+        "company_need": false,
+        "bank_only": true,
+        "mobile": "9999900000",
+        "address": "x",
+        "email": "a@b.co",
+        "father": "Z"
+      },
+      "expect_value": []
     }
   ],
-  "version": 3,
-  "description_nl": "2026-10-11: the popup's questions: two PANs found (whose return?), none found, a PAN that is not the return chosen, no name, an HUF's name and Karta, a date of birth (it opens a locked AIS and decides the senior limits), residence when NRI was picked - nothing before a document is in. 2026-10-11: the popup's questions: two PANs found (whose return?), none found, a PAN (or a GST certificate's constitution) that is not the return chosen, no name, an HUF's name and Karta, a date of birth (it opens a locked AIS and decides the senior limits), residence when NRI was picked, a business's partners or members (filled in from its deed), its GSTIN when GST was picked and no document gave one - nothing before a document is in. 2026-10-11: the popup's questions: two PANs found (whose return?), none found, a PAN (or a GST certificate's constitution) that is not the return chosen, no name, an HUF's name and Karta, a date of birth (it opens a locked AIS and decides the senior limits), residence when NRI was picked, a business's partners or members (filled in from its deed), its GSTIN when GST was picked and no document gave one, a company's CIN, incorporation, tax option, manufacturing and directors (filled in from its certificate of incorporation) - nothing before a document is in."
+  "version": 5,
+  "description_nl": "2026-10-11: the popup's questions: two PANs found (whose return?), none found, a PAN that is not the return chosen, no name, an HUF's name and Karta, a date of birth (it opens a locked AIS and decides the senior limits), residence when NRI was picked - nothing before a document is in. 2026-10-11: the popup's questions: two PANs found (whose return?), none found, a PAN (or a GST certificate's constitution) that is not the return chosen, no name, an HUF's name and Karta, a date of birth (it opens a locked AIS and decides the senior limits), residence when NRI was picked, a business's partners or members (filled in from its deed), its GSTIN when GST was picked and no document gave one - nothing before a document is in. 2026-10-11: the popup's questions: two PANs found (whose return?), none found, a PAN (or a GST certificate's constitution) that is not the return chosen, no name, an HUF's name and Karta, a date of birth (it opens a locked AIS and decides the senior limits), residence when NRI was picked, a business's partners or members (filled in from its deed), its GSTIN when GST was picked and no document gave one, a company's CIN, incorporation, tax option, manufacturing and directors (filled in from its certificate of incorporation) - nothing before a document is in. 2026-10-13: bank_only: the mobile and the address are asked when the statement did not give them. 2026-10-13: email and father's name: the return needs them too."
 }
