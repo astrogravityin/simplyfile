@@ -12,6 +12,7 @@
       "type": "json",
       "default": [
         "receipt",
+        "friend",
         "cash",
         "own",
         "loan",
@@ -512,7 +513,9 @@
         "ask": "ask",
         "personal": "personal",
         "tax": "business",
-        "business": "business"
+        "business": "business",
+        "fee": "receipt",
+        "friend": "friend"
       },
       "label": "kind class"
     },
@@ -581,6 +584,29 @@
       "type": "number",
       "default": 6,
       "label": "top names"
+    },
+    {
+      "name": "fee_rule",
+      "type": "json",
+      "default": {
+        "on": true,
+        "min_count": 3,
+        "min_amount": 100,
+        "fee_kind": "fee",
+        "other_kind": "friend"
+      },
+      "label": "fee rule"
+    },
+    {
+      "name": "receipt_kinds",
+      "type": "json",
+      "default": [
+        "receipt",
+        "fee",
+        "friend",
+        "ask"
+      ],
+      "label": "receipt kinds"
     }
   ],
   "expr": {
@@ -607,7 +633,9 @@
       "watch": "$watch",
       "group_show": "$group_show",
       "common_codes": "$common_codes",
-      "top_names": "$top_names"
+      "top_names": "$top_names",
+      "fee_rule": "$fee_rule",
+      "receipt_kinds": "$receipt_kinds"
     }
   },
   "returns": "record",
@@ -620,6 +648,7 @@
       "expect_value": {
         "ui_credit": [
           "receipt",
+          "friend",
           "cash",
           "own",
           "loan",
@@ -1050,7 +1079,9 @@
           "ask": "ask",
           "personal": "personal",
           "tax": "business",
-          "business": "business"
+          "business": "business",
+          "fee": "receipt",
+          "friend": "friend"
         },
         "income_kinds": [
           "interest"
@@ -1082,7 +1113,20 @@
           "10008",
           "09002"
         ],
-        "top_names": 6
+        "top_names": 6,
+        "fee_rule": {
+          "on": true,
+          "min_count": 3,
+          "min_amount": 100,
+          "fee_kind": "fee",
+          "other_kind": "friend"
+        },
+        "receipt_kinds": [
+          "receipt",
+          "fee",
+          "friend",
+          "ask"
+        ]
       }
     }
   ]

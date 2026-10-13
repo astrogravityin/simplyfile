@@ -8,7 +8,7 @@ import { icon } from './icons.js';
 
 const k = (key, v) => t('bankonly', key, v);
 const money = (n) => `₹${Math.round(Number(n || 0)).toLocaleString('en-IN')}`;
-const SUMS = ['receipt', 'cash', 'own', 'loan', 'other', 'ask'];
+const SUMS = ['receipt', 'friend', 'cash', 'own', 'loan', 'other', 'ask'];
 
 /** The totals of a classification, by class, for credits - from the groups as they stand now (taps included). */
 function sums(groups) {
@@ -23,7 +23,7 @@ const summary = (b, d) => {
   const digital = s.receipt; const cash = s.cash;
   const p6 = Math.round((digital * b.rate.digital) / 100); const p8 = Math.round((cash * b.rate.cash) / 100);
   const g = d.regimes[d.regime];
-  const rows = [['receipt', 'sum_receipt'], ['cash', 'sum_cash'], ['own', 'sum_own'], ['loan', 'sum_loan'], ['other', 'sum_other'], ['ask', 'sum_ask']]
+  const rows = [['receipt', 'sum_receipt'], ['friend', 'sum_friend'], ['cash', 'sum_cash'], ['own', 'sum_own'], ['loan', 'sum_loan'], ['other', 'sum_other'], ['ask', 'sum_ask']]
     .filter(([c]) => s[c] || c === 'receipt')
     .map(([c, key]) => `<div class="bk-sum bk-sum-${c}"><span>${esc(k(key))}</span><b>${money(s[c])}</b></div>`).join('');
   const gst = b.gst;
@@ -36,6 +36,7 @@ const summary = (b, d) => {
     <p class="bk-line"><b>${digital || cash ? esc(k('line', { digital: money(digital), cash: money(cash), p6: money(p6), p8: money(p8), profit: money(p6 + p8), rd: b.rate.digital, rc: b.rate.cash })) : esc(k('line_none'))}</b></p>
     <p class="small muted">${esc(k('line_rule', { rd: b.rate.digital, rc: b.rate.cash }))}</p>
     ${undecided.length ? `<p class="small mr-warn">${icon('alert', 12)} ${esc(k('undecided', { n: undecided.length, amount: money(s.ask) }))}</p>` : ''}
+    ${s.friend ? `<p class="small">${icon('info', 12)} ${esc(k('friend_note', { amount: money(s.friend) }))}</p>` : ''}
     ${cl.interest ? `<p class="small">${icon('check', 12)} ${esc(k('interest', { amount: money(cl.interest) }))}</p>` : ''}
     ${cl.salary ? `<p class="small mr-warn">${icon('alert', 12)} ${esc(k('salary', { amount: money(cl.salary) }))}</p>` : ''}
     ${gstNote}

@@ -16,7 +16,7 @@
     {
       "name": "lede",
       "type": "text",
-      "default": "This is what your bank statement says. Money paid by customers is your business turnover. Your own money moving between your accounts, loans and refunds are not. We have guessed each one - tap to change.",
+      "default": "This is what your bank statement says. Money paid by customers as fees is your business turnover. The same amount coming again and again looks like a fee; everything else we take as family and friends. Your own money moving between your accounts, loans and refunds are not turnover. We have guessed each one - tap to change.",
       "label": "lede"
     },
     {
@@ -52,7 +52,7 @@
     {
       "name": "c_receipt",
       "type": "text",
-      "default": "Customer receipts",
+      "default": "Fee from customers",
       "label": "c receipt"
     },
     {
@@ -160,7 +160,7 @@
     {
       "name": "sum_receipt",
       "type": "text",
-      "default": "Business turnover (UPI and bank receipts)",
+      "default": "Business turnover (fees received by UPI or bank)",
       "label": "sum receipt"
     },
     {
@@ -468,6 +468,24 @@
       "type": "text",
       "default": "Money out ({n} groups)",
       "label": "show out"
+    },
+    {
+      "name": "c_friend",
+      "type": "text",
+      "default": "Family & friends",
+      "label": "c friend"
+    },
+    {
+      "name": "sum_friend",
+      "type": "text",
+      "default": "Family and friends (not income)",
+      "label": "sum friend"
+    },
+    {
+      "name": "friend_note",
+      "type": "text",
+      "default": "{amount} came from people who paid once or in odd amounts - we have taken them as family and friends, not fees. Tap any that is a customer. Money from a relative is not income; a gift above Rs 50,000 in the year from anyone who is not a relative is taxable.",
+      "label": "friend note"
     }
   ],
   "expr": {
@@ -549,7 +567,10 @@
       "path_label": "$path_label",
       "path_sub": "$path_sub",
       "debit_note": "$debit_note",
-      "show_out": "$show_out"
+      "show_out": "$show_out",
+      "c_friend": "$c_friend",
+      "sum_friend": "$sum_friend",
+      "friend_note": "$friend_note"
     }
   },
   "returns": "record",
@@ -561,13 +582,13 @@
       "args": {},
       "expect_value": {
         "title": "Where did the money come from?",
-        "lede": "This is what your bank statement says. Money paid by customers is your business turnover. Your own money moving between your accounts, loans and refunds are not. We have guessed each one - tap to change.",
+        "lede": "This is what your bank statement says. Money paid by customers as fees is your business turnover. The same amount coming again and again looks like a fee; everything else we take as family and friends. Your own money moving between your accounts, loans and refunds are not turnover. We have guessed each one - tap to change.",
         "stmt": "{rows} entries, {from} to {to} - opening {opening}, closing {closing}",
         "recon_ok": "The statement adds up: opening {opening} + credits {credits} - debits {debits} = closing {closing}.",
         "recon_bad": "This statement does not add up, so its figures are not used. Upload the original PDF again (all pages) from net banking.",
         "tab_in": "Money in",
         "tab_out": "Money out",
-        "c_receipt": "Customer receipts",
+        "c_receipt": "Fee from customers",
         "c_cash": "Cash takings",
         "c_own": "Own money",
         "c_loan": "Loan",
@@ -585,7 +606,7 @@
         "more": "Show {n} more",
         "fewer": "Show fewer",
         "sum_h": "What this makes",
-        "sum_receipt": "Business turnover (UPI and bank receipts)",
+        "sum_receipt": "Business turnover (fees received by UPI or bank)",
         "sum_cash": "Cash takings (deposits you say are fees)",
         "sum_own": "Own money moved (left out)",
         "sum_loan": "Loans (not income)",
@@ -636,7 +657,10 @@
         "path_label": "Small business - only a bank statement",
         "path_sub": "No books, no Form 16 - the bank statement alone makes an ITR-4 (tax on a fixed share of receipts)",
         "debit_note": "Presumptive tax: costs are not claimed, so money out does not change the tax. It is shown for completeness.",
-        "show_out": "Money out ({n} groups)"
+        "show_out": "Money out ({n} groups)",
+        "c_friend": "Family & friends",
+        "sum_friend": "Family and friends (not income)",
+        "friend_note": "{amount} came from people who paid once or in odd amounts - we have taken them as family and friends, not fees. Tap any that is a customer. Money from a relative is not income; a gift above Rs 50,000 in the year from anyone who is not a relative is taxable."
       }
     }
   ]

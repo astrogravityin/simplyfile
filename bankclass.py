@@ -91,6 +91,11 @@ def classify(txns: list[dict], holder: str, saved: dict | None = None) -> dict:
     k = settings()
     saved = saved or {}
     pt = passthrough(txns, k)
+    fr = k["fee_rule"]
+    same = {}                                                     # how often each plain credit amount occurs
+    for x in txns:
+        if x["credit"] and kind_of(x["narration"], counterparty(x["narration"], k), "cr", holder, k) == k["default_credit"]:
+            same[x["credit"]] = same.get(x["credit"], 0) + 1
     groups: dict[str, dict] = {}
     for x in txns:
         direction = "cr" if x["credit"] else "dr" if x["debit"] else ""
@@ -98,6 +103,8 @@ def classify(txns: list[dict], holder: str, saved: dict | None = None) -> dict:
             continue
         name = counterparty(x["narration"], k)
         kind = kind_of(x["narration"], name, direction, holder, k)
+        if direction == "cr" and kind == k["default_credit"] and fr["on"]:     # the same amount again and again is a fee, the rest family and friends
+            kind = fr["fee_kind"] if same[x["credit"]] >= int(fr["min_count"]) and x["credit"] >= float(fr["min_amount"]) else fr["other_kind"]
         key = f"{direction}|{kind}|{name}"
         amount = x["credit"] or x["debit"]
         g = groups.setdefault(key, {"key": key, "dir": direction, "name": name, "kind": kind, "count": 0, "total": 0.0, "first": x["date"],
@@ -112,12 +119,12 @@ def classify(txns: list[dict], holder: str, saved: dict | None = None) -> dict:
     out, totals = [], {"cr": {}, "dr": {}}
     for g in groups.values():
         flags = []
-        if g["dir"] == "cr" and g["kind"] in (k["default_credit"], "ask") and g["through"] and g["through"] >= g["count"] * float(k["passthrough"]["share"]):
+        if g["dir"] == "cr" and g["kind"] in k["receipt_kinds"] and g["through"] and g["through"] >= g["count"] * float(k["passthrough"]["share"]):
             flags.append("through")
-        if g["kind"] == k["default_credit"] and g["dir"] == "cr" and g["round"] and g["round"] >= g["count"] * float(k["watch"]["share"]):
+        if g["kind"] in k["receipt_kinds"] and g["dir"] == "cr" and g["round"] and g["round"] >= g["count"] * float(k["watch"]["share"]):
             flags.append("round")
         suggest = k["kind_class"].get(g["kind"], "other")
-        if "through" in flags and g["kind"] == k["default_credit"]:
+        if "through" in flags and g["kind"] in k["receipt_kinds"]:
             suggest = "ask"
         chosen = saved.get(g["key"])
         cls = chosen if chosen else suggest
@@ -158,6 +165,12 @@ if __name__ == "__main__":  # ponytail: one runnable self-check - made-up rows t
             t(5, "2025-04-03", "UPI/BLINKIT/500000000005/Refund", 250)]
     c = classify(rows, "RAVI DEMO KUMAR ZZ")
     cls = {g["name"]: g["class"] for g in c["groups"] if g["dir"] == "cr"}
-    assert cls == {"kreditbee demo": "loan", "zz ravi demo kumar": "own", "asha demo member": "receipt", "blinkit": "other"}, cls
-    assert c["digital"] == 1500 and c["credits"] == 51750, c
+    rows += [t(6, "2025-05-01", "UPI/MEERA DEMO MEMBER/500000000006/Payment from Ph", 1500),
+             t(7, "2025-06-01", "UPI/ZZ SUNIL DEMO FRIEND/500000000007/Payment from Ph", 1500),
+             t(8, "2025-06-02", "UPI/ZZ SUNIL DEMO FRIEND/500000000008/Payment from Ph", 7300)]
+    c = classify(rows, "RAVI DEMO KUMAR ZZ")
+    cls = {g["key"]: g["class"] for g in c["groups"] if g["dir"] == "cr"}
+    assert cls["cr|fee|asha demo member"] == "receipt" and cls["cr|friend|zz sunil demo friend"] == "friend", cls   # 1500 three times = fee; 7300 once = friend
+    assert cls["cr|loan|kreditbee demo"] == "loan" and cls["cr|own|zz ravi demo kumar"] == "own" and cls["cr|refund|blinkit"] == "other", cls
+    assert c["digital"] == 4500 and c["credits"] == 62050, c
     print("bankclass self-check OK")
