@@ -91,7 +91,10 @@
         "days_7y",
         "res_country",
         "res_tin",
-        "supply"
+        "supply",
+        "foreign_travel",
+        "electricity",
+        "current_deposits"
       ],
       "label": "questions"
     },
@@ -136,7 +139,10 @@
         "days_7y": "",
         "res_country": "",
         "res_tin": "",
-        "supply": ""
+        "supply": "",
+        "foreign_travel": false,
+        "electricity": false,
+        "current_deposits": false
       },
       "label": "answer defaults"
     },
@@ -434,9 +440,9 @@
     }
   },
   "returns": "record",
-  "version": 18,
+  "version": 20,
   "status": "published",
-  "description_nl": "2026-10-06: what may be dropped in (types, size), how many houses, which filing kinds pay the late fee, the yes/no questions a person answers and their defaults, the five steps, and the documents asked for (need = the journey nudges for it). 2026-10-06: who - where a filed return (JSON) names the person, so a return can start from documents and the client is made from them. 2026-10-06: paid_minor - a payment typed on Check as its challan minor head (100 advance, 300 self-assessment). 2026-10-06: one_per_kind - a second AIS / 26AS / pre-filled JSON / filed return asks first: replace it (the old kept in History) or keep both. 2026-10-06: business_sections - TDS sections whose amount paid is a receipt of a business or profession (shown beside the receipts typed). 2026-10-06: .xls (an old Excel bank statement). 2026-10-06: from_filed - this year's filed return gives the filing date (Verification Date), the acknowledgement (its file name) and each challan (Schedule IT). 2026-10-06: karta_name / karta_pan / formed_on - an HUF's Karta signs its return; its date of formation stands where a person's birth date does. 2026-10-07: the person's address, city, PIN, e-mail and mobile (typed on Review when no document has them - a typed answer wins), the dates of winnings (lottery_on, games_on), vda_max, vehicles_max. 2026-10-07: cg_max / losses_max / gifts_max; filed_prev (last year's return) is one document; from_prev - its Schedule CFL. 2026-10-07: biz_kinds (business / profession on the person's own profit and loss, besides 44ADA / 44AD / 44AE); pl_as (their presumptive twin, for the limits and s.44AB(e)); pl_codes (their nature-of-business codes, from the ITR-3 schema). 2026-10-07: wave 3: residential-status questions (days in India this year / the 4 and 7 years before, years as a non-resident, citizen / person of Indian origin, visiting, left for a job, taxed elsewhere, income other than from foreign sources, country of residence and TIN); foreign_max / fa_max / club_max / arrears_max; countries_from. 2026-10-08: tan_kinds (a second Form 16 from the same employer), gst_max, itr3_cfl (losses from last year's ITR-3). 2026-10-13: supply: goods or services (the GST limit of a bank-only filing). 2026-10-13: supply.",
+  "description_nl": "2026-10-06: what may be dropped in (types, size), how many houses, which filing kinds pay the late fee, the yes/no questions a person answers and their defaults, the five steps, and the documents asked for (need = the journey nudges for it). 2026-10-06: who - where a filed return (JSON) names the person, so a return can start from documents and the client is made from them. 2026-10-06: paid_minor - a payment typed on Check as its challan minor head (100 advance, 300 self-assessment). 2026-10-06: one_per_kind - a second AIS / 26AS / pre-filled JSON / filed return asks first: replace it (the old kept in History) or keep both. 2026-10-06: business_sections - TDS sections whose amount paid is a receipt of a business or profession (shown beside the receipts typed). 2026-10-06: .xls (an old Excel bank statement). 2026-10-06: from_filed - this year's filed return gives the filing date (Verification Date), the acknowledgement (its file name) and each challan (Schedule IT). 2026-10-06: karta_name / karta_pan / formed_on - an HUF's Karta signs its return; its date of formation stands where a person's birth date does. 2026-10-07: the person's address, city, PIN, e-mail and mobile (typed on Review when no document has them - a typed answer wins), the dates of winnings (lottery_on, games_on), vda_max, vehicles_max. 2026-10-07: cg_max / losses_max / gifts_max; filed_prev (last year's return) is one document; from_prev - its Schedule CFL. 2026-10-07: biz_kinds (business / profession on the person's own profit and loss, besides 44ADA / 44AD / 44AE); pl_as (their presumptive twin, for the limits and s.44AB(e)); pl_codes (their nature-of-business codes, from the ITR-3 schema). 2026-10-07: wave 3: residential-status questions (days in India this year / the 4 and 7 years before, years as a non-resident, citizen / person of Indian origin, visiting, left for a job, taxed elsewhere, income other than from foreign sources, country of residence and TIN); foreign_max / fa_max / club_max / arrears_max; countries_from. 2026-10-08: tan_kinds (a second Form 16 from the same employer), gst_max, itr3_cfl (losses from last year's ITR-3). 2026-10-13: supply: goods or services (the GST limit of a bank-only filing). 2026-10-13: supply. 2026-10-13: confirm questions of the s.139(1) 7th proviso.",
   "test_cases": [
     {
       "args": {},
@@ -497,7 +503,10 @@
           "days_7y",
           "res_country",
           "res_tin",
-          "supply"
+          "supply",
+          "foreign_travel",
+          "electricity",
+          "current_deposits"
         ],
         "answer_defaults": {
           "resident": true,
@@ -537,7 +546,10 @@
           "days_7y": "",
           "res_country": "",
           "res_tin": "",
-          "supply": ""
+          "supply": "",
+          "foreign_travel": false,
+          "electricity": false,
+          "current_deposits": false
         },
         "steps": [
           "gather",

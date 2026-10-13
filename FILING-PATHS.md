@@ -82,7 +82,11 @@ statement is the one document (`wizard.docs`: AIS and 26AS become optional throu
    receipts / Cash takings / Own money / Loan / Not income (money out: Personal / Business cost / Own money / Loan repayment).
    Only customer receipts are digital turnover; interest goes to Other sources; "Not sure" is left out until decided (amber check).
 3. **Tax** - the existing machinery: 44AD 6% of digital / 8% of cash (`myreturn.business`), ITR-4 eligibility, 44AB(e), both regimes,
-   234F / 234A / 234B / 234C for a belated return (`close.dates`: 31 August for business returns from AY 2026-27).
+   234F / 234A / 234B / 234C for a belated return (`close.dates`: 31 August for business returns from AY 2026-27). **s.234F only where filing
+   was compulsory** (chip `myreturn.must_file`: income over the basic exemption, or a 7th-proviso condition of s.139(1) - Rs 1 crore in
+   current accounts, Rs 50 lakh in savings (read from the statement), foreign travel over Rs 2 lakh, electricity over Rs 1 lakh, TDS/TCS
+   Rs 25,000 (50,000 senior), turnover over Rs 60 lakh / receipts over Rs 10 lakh; the person confirms the three the statement cannot show). Otherwise the
+   screen says filing is not compulsory but recommended, and a belated return is still allowed (s.139(4)).
 4. **GST** - `bank.gst_gap`: services Rs 20 lakh (Rs 10 lakh Manipur, Mizoram, Nagaland, Tripura), goods Rs 40 lakh (Rs 20 lakh); a
    warning on the Classify step, never a registration.
 5. **JSON** - ITR-4 (`schemas/itr/ITR-4_2026_Main_V1.1.json`), checked before download; the steps of uploading it on the income-tax

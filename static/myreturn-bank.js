@@ -133,3 +133,21 @@ export function wireClassify(host, S, put, url, draw) {
     put({ business: { kind: biz.kind || '44AD', code: code.value, name: biz.name || label } });
   };
 }
+
+/** s.139(1): whether the person must file at all (chip myreturn.must_file). Not required: plainly "not compulsory, but recommended" with the
+ *  three things that would make it so (data-q, saved as answers); required for a reason beyond income: that reason, in words. */
+export function mustFileCard(d) {
+  const m = d.must_file; const w = (key, v) => t('myreturn', key, v);
+  if (!m || !m.show) return '';
+  const date = (n) => String(n).replace(/(\d{4})(\d\d)(\d\d)/, '$3-$2-$1');
+  if (m.required) {
+    return m.why === 'income' ? '' : `<section class="card mr-mf is-required"><h3 class="rc-h">${icon('alert', 15)} ${esc(w('mf_req_h'))}</h3>
+      <p class="small">${esc(w('mf_req_p', { why: w(`mf_why_${m.why}`), due: date(d.dates.due) }))}</p></section>`;
+  }
+  const box = (q, key) => `<label class="check"><input type="checkbox" data-q="${q}" ${d.answers[q] ? 'checked' : ''}/> <span>${esc(w(key))}</span></label>`;
+  return `<section class="card mr-mf"><h3 class="rc-h">${icon('info', 15)} ${esc(w('mf_h'))}</h3>
+    <p class="small">${esc(w('mf_p', { income: money(m.income), limit: money(m.limit), belated: m.belated }))}</p>
+    ${d.bank ? `<p class="small muted">${esc(w('mf_savings', { amount: money(m.savings) }))}</p>` : ''}
+    <p class="small muted">${esc(w('mf_confirm'))}</p>
+    <div class="mr-mf-q">${box('foreign_travel', 'mf_travel')}${box('electricity', 'mf_elec')}${box('current_deposits', 'mf_current')}</div></section>`;
+}

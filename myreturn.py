@@ -474,7 +474,7 @@ def answer(user: dict, cid: str, ay: str, body: dict) -> dict:
         # its form's due date (chip myreturn.settings old_regime_kinds on close.dates): asked after the save, the save undone when it is not
         if body.get("regime") == "old" and not (w0 := work(cid, ay))["old_ok"]:
             _save(cid, ay, before)
-            _bad("old_closed", due=re.sub(r"(\d{4})(\d\d)(\d\d)", r"--", str(w0["dates"]["due"])))
+            _bad("old_closed", due=re.sub(r"(\d{4})(\d\d)(\d\d)", r"\3-\2-\1", str(w0["dates"]["due"])))
     return work(cid, ay)
 
 
@@ -1126,8 +1126,17 @@ def work(cid: str, ay: str) -> dict:
                                                "fy_end": compute.year_day(ay, "end"), "has_business": bool(r["business"]["kind"])}) is True
     challans = [{"date": x.get("date", ""), "tax": _num(x.get("amount")), "gross": _num(x.get("amount")), "minor": str(x.get("minor") or "")}
                 for x in r["paid"]]
-    for g in both.values():
-        fee = engine.run("chat.fee_234f", {"income": g["tax"]["total"]}) if late else 0
+    prof = r["business"]["kind"] in ("44ADA", "profession")
+    for rg, g in both.items():
+        # 2026-10-13: s.234F only where the person had to file (s.139(1), 7th proviso): income over the basic exemption or one of its conditions
+        mf = engine.run("myreturn.must_file", {
+            "income": g["gti"], "limit": _num((engine.run("myreturn.rates")["basic"].get(rg) or {}).get(band)),
+            "deposits_savings": r["bank"]["credits"], "current_deposits": bool(ans.get("current_deposits")),
+            "foreign_travel": bool(ans.get("foreign_travel")), "electricity": bool(ans.get("electricity")), "tds": tds + 0.0,
+            "senior": band != "below60" and res["resident"] is True, "turnover": 0 if prof else g["business"]["turnover"],
+            "receipts": g["business"]["turnover"] if prof else 0})
+        g["must_file"] = mf
+        fee = engine.run("chat.fee_234f", {"income": g["tax"]["total"]}) if late and mf["required"] else 0
         g["fee_234f"] = fee if isinstance(fee, (int, float)) else 0
         g["interest"] = compute.interest_234(cid, ay, compute.settings(), g["net_tax"] - tds, challans, exempt,
                                              filed_on=compute._ymd(filed_on or today), due=dd["due"], due_rule=dd.get("due_rule", 0),  # noqa: SLF001
@@ -1180,7 +1189,14 @@ def work(cid: str, ay: str) -> dict:
             "checklist": engine.run("myreturn.checklist"),
             "locked": clients.locked(cid, ay), "biz_codes": biz_codes() if r["business"]["kind"] else {},
             "res": res, "countries": countries(), "itru": itru_work(cid, ay, st, dob, status),
-            "itru_years": [y for y in clients.settings()["years"] if y < ay], "itru_bars": engine.run("myreturn.itru_rules")["bars"], "bank": bank}
+            "itru_years": [y for y in clients.settings()["years"] if y < ay], "itru_bars": engine.run("myreturn.itru_rules")["bars"], "bank": bank,
+            "must_file": {**g["must_file"], "income": g["gti"], "limit": _num((engine.run("myreturn.rates")["basic"].get(chosen) or {}).get(band)),
+                          "savings": r["bank"]["credits"], "belated": revise_end(dd), "show": bool(g["gti"])}}
+
+
+def revise_end(dd: dict) -> str:
+    """The last day a belated / voluntary return can be filed (s.139(4)): chip close.dates revise_free_by, as dd-mm-yyyy."""
+    return re.sub(r"(\d{4})(\d\d)(\d\d)", r"\3-\2-\1", str(dd.get("revise_free_by") or ""))
 
 
 def bank_view(st: dict, r: dict, c: dict, ans: dict, dd: dict, g: dict) -> dict | None:

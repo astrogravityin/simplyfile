@@ -8,7 +8,7 @@ head / footer on every page, members' UPI credits, own transfers, a lender's cre
      birth, mobile, e-mail and father's name; the client is made; Review opens Classify
   C  classification: customer receipts are the turnover - own money, the lender's credit, the refund and interest are not; the
      PhonePe credit is "Not sure" and left out until tapped; the taps change the turnover at once and survive a reload
-  D  the return: ITR-4, 44AD profit = 6% of the digital turnover, savings interest added, late fee s.234F (a belated return)
+  D  the return: ITR-4, 44AD profit = 6% of the digital turnover, savings interest added, no late fee while filing is voluntary (s.139(1) 7th proviso); 234F once a condition applies
   E  the ITR-4 JSON is valid against the department's schema (schemas/itr/ITR-4_2026_Main_V1.1.json) and carries the figures
   F  a statement that does not add up (one entry left out) is said so in plain words and is not used - no turnover, a red check
   G  GST: a turnover over the services limit warns, in the return and in the chip
@@ -139,9 +139,12 @@ def _():
     assert w["form"]["form"] == "ITR-4" and w["steps"]["done"]["classify"] is True
     assert g["business"]["income"] == round(TRUTH["receipt"] * 6 / 100), g["business"]
     assert w["return"]["other"]["savings"] == TRUTH["interest"], w["return"]["other"]
-    assert w["late"] is True and g["fee_234f"] in (1000, 5000), g["fee_234f"]
+    assert w["late"] is True and g["fee_234f"] == 0 and w["must_file"]["required"] is False, (g["fee_234f"], w["must_file"])   # income below the exemption: voluntary
+    w2 = ca.put(f"/api/myreturn/{S['cid']}/{AY}", json={"answers": {"foreign_travel": True}}).json()
+    assert w2["must_file"]["required"] is True and w2["must_file"]["why"] == "travel" and w2["regimes"][w2["regime"]]["fee_234f"] == 1000, w2["must_file"]
+    ca.put(f"/api/myreturn/{S['cid']}/{AY}", json={"answers": {"foreign_travel": False}})
     assert w["bank"]["need"] == [], w["bank"]["need"]
-    return f"profit {g['business']['income']}; total income {g['tax']['total']}; tax {g['net_tax']}; 234F {g['fee_234f']}; to pay {g['balance']}"
+    return f"profit {g['business']['income']}; total income {g['tax']['total']}; tax {g['net_tax']}; 234F {g['fee_234f']} (voluntary); to pay {g['balance']}"
 
 
 @step("E The ITR-4 JSON is valid against the department's schema and carries the figures")

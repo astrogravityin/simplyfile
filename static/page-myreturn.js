@@ -8,7 +8,7 @@ import { icon } from './icons.js';
 import { historyButton, wireHistory } from './changes.js';
 import { stepper, docArt, waterfall, regimeBars, tdsMap, askArt } from './myreturn-art.js';
 import { resCard, foreignCard, faCard, clubCard, arrearCard, itruCard, wireWave3 } from './myreturn-wave3.js';
-import { classifyCard, wireClassify } from './myreturn-bank.js';
+import { classifyCard, wireClassify, mustFileCard } from './myreturn-bank.js';
 
 const w = (k, v) => t('myreturn', k, v);
 const money = (n) => `₹${Math.round(Number(n || 0)).toLocaleString('en-IN')}`;
@@ -17,7 +17,7 @@ const BANK_STEPS = ['gather', 'classify', 'check', 'choose', 'review', 'file']; 
 const stepsOf = (d) => (d && d.bank && d.bank.classify ? BANK_STEPS : STEPS);
 
 export async function myReturnPage(host) {
-  await loadWords('myreturn', 'wizard', 'bankonly');
+  await loadWords('myreturn', 'wizard', 'bankonly', 'changes');
   const q = new URLSearchParams((location.hash.split('?')[1]) || '');
   const home = await api('/api/myreturn');
   let cid = q.get('c') || (home.self && home.clients[0] ? home.clients[0].id : '');
@@ -42,7 +42,7 @@ export async function myReturnPage(host) {
       [g.balance > 0 ? 'pay' : 'refund', w(g.balance > 0 ? 'g_pay' : 'g_refund'), money(Math.abs(g.balance))],
       ['regime', w('g_regime'), w(`r_${d.regime}`)],
     ].map(([k, l, v]) => `<div class="mr-kpi k-${k}"><span>${esc(l)}</span><b>${esc(v)}</b></div>`).join('')}</div>`;
-    host.innerHTML = head + rail + glance + `<div class="mr-panel">${({ gather, classify, check, choose, review, file })[step](d, g)}</div>`;
+    host.innerHTML = head + rail + glance + mustFileCard(d) + `<div class="mr-panel">${({ gather, classify, check, choose, review, file })[step](d, g)}</div>`;
     wire(step);
   };
 

@@ -1,0 +1,583 @@
+{
+  "chip_id": "myreturn.must_file",
+  "kind": "accessor",
+  "set": "myreturn",
+  "label": "My return: is the person required to file (s.139(1))",
+  "aliases": [
+    "my return: is the person required to file"
+  ],
+  "params": [
+    {
+      "name": "income",
+      "type": "number",
+      "default": 0,
+      "label": "total income before Chapter VI-A, 10A, 54 ... (gross total income)"
+    },
+    {
+      "name": "limit",
+      "type": "number",
+      "default": 400000,
+      "label": "the basic exemption limit (maximum amount not chargeable to tax) of the regime and age band"
+    },
+    {
+      "name": "deposits_savings",
+      "type": "number",
+      "default": 0,
+      "label": "deposits in savings account(s) in the year"
+    },
+    {
+      "name": "current_deposits",
+      "type": "boolean",
+      "default": false,
+      "label": "the person confirms: Rs 1 crore or more deposited in current account(s)"
+    },
+    {
+      "name": "foreign_travel",
+      "type": "boolean",
+      "default": false,
+      "label": "the person confirms: more than Rs 2 lakh spent on foreign travel"
+    },
+    {
+      "name": "electricity",
+      "type": "boolean",
+      "default": false,
+      "label": "the person confirms: electricity bill more than Rs 1 lakh"
+    },
+    {
+      "name": "tds",
+      "type": "number",
+      "default": 0,
+      "label": "TDS and TCS in the year"
+    },
+    {
+      "name": "senior",
+      "type": "boolean",
+      "default": false,
+      "label": "a resident senior citizen (60+)"
+    },
+    {
+      "name": "turnover",
+      "type": "number",
+      "default": 0,
+      "label": "business turnover / gross receipts"
+    },
+    {
+      "name": "receipts",
+      "type": "number",
+      "default": 0,
+      "label": "gross receipts of a profession"
+    },
+    {
+      "name": "savings_limit",
+      "type": "number",
+      "default": 5000000,
+      "label": "7th proviso: savings deposits Rs 50 lakh or more"
+    },
+    {
+      "name": "tds_limit",
+      "type": "number",
+      "default": 25000,
+      "label": "7th proviso: TDS + TCS Rs 25,000 or more"
+    },
+    {
+      "name": "tds_limit_senior",
+      "type": "number",
+      "default": 50000,
+      "label": "7th proviso: Rs 50,000 for a resident senior citizen"
+    },
+    {
+      "name": "turnover_limit",
+      "type": "number",
+      "default": 6000000,
+      "label": "7th proviso: business turnover more than Rs 60 lakh"
+    },
+    {
+      "name": "receipts_limit",
+      "type": "number",
+      "default": 1000000,
+      "label": "7th proviso: professional receipts more than Rs 10 lakh"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "required": {
+        "op": "any",
+        "items": [
+          {
+            "op": "gt",
+            "left": "$income",
+            "right": "$limit"
+          },
+          {
+            "op": "eq",
+            "left": "$current_deposits",
+            "right": true
+          },
+          {
+            "op": "ge",
+            "left": "$deposits_savings",
+            "right": "$savings_limit"
+          },
+          {
+            "op": "eq",
+            "left": "$foreign_travel",
+            "right": true
+          },
+          {
+            "op": "eq",
+            "left": "$electricity",
+            "right": true
+          },
+          {
+            "op": "any",
+            "items": [
+              {
+                "op": "all",
+                "items": [
+                  {
+                    "op": "not",
+                    "item": "$senior"
+                  },
+                  {
+                    "op": "ge",
+                    "left": "$tds",
+                    "right": "$tds_limit"
+                  }
+                ]
+              },
+              {
+                "op": "all",
+                "items": [
+                  "$senior",
+                  {
+                    "op": "ge",
+                    "left": "$tds",
+                    "right": "$tds_limit_senior"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "op": "gt",
+            "left": "$turnover",
+            "right": "$turnover_limit"
+          },
+          {
+            "op": "gt",
+            "left": "$receipts",
+            "right": "$receipts_limit"
+          }
+        ]
+      },
+      "why": {
+        "vop": "choose",
+        "cases": [
+          {
+            "when": {
+              "op": "gt",
+              "left": "$income",
+              "right": "$limit"
+            },
+            "then": "income"
+          },
+          {
+            "when": {
+              "op": "eq",
+              "left": "$current_deposits",
+              "right": true
+            },
+            "then": "current"
+          },
+          {
+            "when": {
+              "op": "ge",
+              "left": "$deposits_savings",
+              "right": "$savings_limit"
+            },
+            "then": "savings"
+          },
+          {
+            "when": {
+              "op": "eq",
+              "left": "$foreign_travel",
+              "right": true
+            },
+            "then": "travel"
+          },
+          {
+            "when": {
+              "op": "eq",
+              "left": "$electricity",
+              "right": true
+            },
+            "then": "electricity"
+          },
+          {
+            "when": {
+              "op": "any",
+              "items": [
+                {
+                  "op": "all",
+                  "items": [
+                    {
+                      "op": "not",
+                      "item": "$senior"
+                    },
+                    {
+                      "op": "ge",
+                      "left": "$tds",
+                      "right": "$tds_limit"
+                    }
+                  ]
+                },
+                {
+                  "op": "all",
+                  "items": [
+                    "$senior",
+                    {
+                      "op": "ge",
+                      "left": "$tds",
+                      "right": "$tds_limit_senior"
+                    }
+                  ]
+                }
+              ]
+            },
+            "then": "tds"
+          },
+          {
+            "when": {
+              "op": "gt",
+              "left": "$turnover",
+              "right": "$turnover_limit"
+            },
+            "then": "turnover"
+          },
+          {
+            "when": {
+              "op": "gt",
+              "left": "$receipts",
+              "right": "$receipts_limit"
+            },
+            "then": "receipts"
+          }
+        ],
+        "else": ""
+      }
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-13: A return is compulsory when total income before Chapter VI-A exceeds the basic exemption limit, or - 7th proviso to s.139(1), Rule 12AB - Rs 1 crore deposited in current accounts, Rs 50 lakh in savings, more than Rs 2 lakh spent on foreign travel or Rs 1 lakh on electricity, TDS + TCS of Rs 25,000 (Rs 50,000 senior), business turnover over Rs 60 lakh or professional receipts over Rs 10 lakh. Otherwise filing is voluntary: no late fee under s.234F (chip chat.fee_234f is asked only when this says required), and a belated return is still allowed (s.139(4)). why = the first reason that applies.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "required": false,
+        "why": ""
+      }
+    },
+    {
+      "args": {
+        "income": 72290,
+        "limit": 400000,
+        "deposits_savings": 0,
+        "current_deposits": false,
+        "foreign_travel": false,
+        "electricity": false,
+        "tds": 0,
+        "senior": false,
+        "turnover": 0,
+        "receipts": 0,
+        "savings_limit": 5000000,
+        "tds_limit": 25000,
+        "tds_limit_senior": 50000,
+        "turnover_limit": 6000000,
+        "receipts_limit": 1000000
+      },
+      "expect_value": {
+        "required": false,
+        "why": ""
+      }
+    },
+    {
+      "args": {
+        "income": 400001,
+        "limit": 400000,
+        "deposits_savings": 0,
+        "current_deposits": false,
+        "foreign_travel": false,
+        "electricity": false,
+        "tds": 0,
+        "senior": false,
+        "turnover": 0,
+        "receipts": 0,
+        "savings_limit": 5000000,
+        "tds_limit": 25000,
+        "tds_limit_senior": 50000,
+        "turnover_limit": 6000000,
+        "receipts_limit": 1000000
+      },
+      "expect_value": {
+        "required": true,
+        "why": "income"
+      }
+    },
+    {
+      "args": {
+        "income": 72290,
+        "limit": 400000,
+        "deposits_savings": 0,
+        "current_deposits": true,
+        "foreign_travel": false,
+        "electricity": false,
+        "tds": 0,
+        "senior": false,
+        "turnover": 0,
+        "receipts": 0,
+        "savings_limit": 5000000,
+        "tds_limit": 25000,
+        "tds_limit_senior": 50000,
+        "turnover_limit": 6000000,
+        "receipts_limit": 1000000
+      },
+      "expect_value": {
+        "required": true,
+        "why": "current"
+      }
+    },
+    {
+      "args": {
+        "income": 72290,
+        "limit": 400000,
+        "deposits_savings": 5000000,
+        "current_deposits": false,
+        "foreign_travel": false,
+        "electricity": false,
+        "tds": 0,
+        "senior": false,
+        "turnover": 0,
+        "receipts": 0,
+        "savings_limit": 5000000,
+        "tds_limit": 25000,
+        "tds_limit_senior": 50000,
+        "turnover_limit": 6000000,
+        "receipts_limit": 1000000
+      },
+      "expect_value": {
+        "required": true,
+        "why": "savings"
+      }
+    },
+    {
+      "args": {
+        "income": 72290,
+        "limit": 400000,
+        "deposits_savings": 4999999,
+        "current_deposits": false,
+        "foreign_travel": false,
+        "electricity": false,
+        "tds": 0,
+        "senior": false,
+        "turnover": 0,
+        "receipts": 0,
+        "savings_limit": 5000000,
+        "tds_limit": 25000,
+        "tds_limit_senior": 50000,
+        "turnover_limit": 6000000,
+        "receipts_limit": 1000000
+      },
+      "expect_value": {
+        "required": false,
+        "why": ""
+      }
+    },
+    {
+      "args": {
+        "income": 72290,
+        "limit": 400000,
+        "deposits_savings": 0,
+        "current_deposits": false,
+        "foreign_travel": true,
+        "electricity": false,
+        "tds": 0,
+        "senior": false,
+        "turnover": 0,
+        "receipts": 0,
+        "savings_limit": 5000000,
+        "tds_limit": 25000,
+        "tds_limit_senior": 50000,
+        "turnover_limit": 6000000,
+        "receipts_limit": 1000000
+      },
+      "expect_value": {
+        "required": true,
+        "why": "travel"
+      }
+    },
+    {
+      "args": {
+        "income": 72290,
+        "limit": 400000,
+        "deposits_savings": 0,
+        "current_deposits": false,
+        "foreign_travel": false,
+        "electricity": true,
+        "tds": 0,
+        "senior": false,
+        "turnover": 0,
+        "receipts": 0,
+        "savings_limit": 5000000,
+        "tds_limit": 25000,
+        "tds_limit_senior": 50000,
+        "turnover_limit": 6000000,
+        "receipts_limit": 1000000
+      },
+      "expect_value": {
+        "required": true,
+        "why": "electricity"
+      }
+    },
+    {
+      "args": {
+        "income": 72290,
+        "limit": 400000,
+        "deposits_savings": 0,
+        "current_deposits": false,
+        "foreign_travel": false,
+        "electricity": false,
+        "tds": 25000,
+        "senior": false,
+        "turnover": 0,
+        "receipts": 0,
+        "savings_limit": 5000000,
+        "tds_limit": 25000,
+        "tds_limit_senior": 50000,
+        "turnover_limit": 6000000,
+        "receipts_limit": 1000000
+      },
+      "expect_value": {
+        "required": true,
+        "why": "tds"
+      }
+    },
+    {
+      "args": {
+        "income": 72290,
+        "limit": 400000,
+        "deposits_savings": 0,
+        "current_deposits": false,
+        "foreign_travel": false,
+        "electricity": false,
+        "tds": 30000,
+        "senior": true,
+        "turnover": 0,
+        "receipts": 0,
+        "savings_limit": 5000000,
+        "tds_limit": 25000,
+        "tds_limit_senior": 50000,
+        "turnover_limit": 6000000,
+        "receipts_limit": 1000000
+      },
+      "expect_value": {
+        "required": false,
+        "why": ""
+      }
+    },
+    {
+      "args": {
+        "income": 72290,
+        "limit": 400000,
+        "deposits_savings": 0,
+        "current_deposits": false,
+        "foreign_travel": false,
+        "electricity": false,
+        "tds": 50000,
+        "senior": true,
+        "turnover": 0,
+        "receipts": 0,
+        "savings_limit": 5000000,
+        "tds_limit": 25000,
+        "tds_limit_senior": 50000,
+        "turnover_limit": 6000000,
+        "receipts_limit": 1000000
+      },
+      "expect_value": {
+        "required": true,
+        "why": "tds"
+      }
+    },
+    {
+      "args": {
+        "income": 72290,
+        "limit": 400000,
+        "deposits_savings": 0,
+        "current_deposits": false,
+        "foreign_travel": false,
+        "electricity": false,
+        "tds": 0,
+        "senior": false,
+        "turnover": 6000001,
+        "receipts": 0,
+        "savings_limit": 5000000,
+        "tds_limit": 25000,
+        "tds_limit_senior": 50000,
+        "turnover_limit": 6000000,
+        "receipts_limit": 1000000
+      },
+      "expect_value": {
+        "required": true,
+        "why": "turnover"
+      }
+    },
+    {
+      "args": {
+        "income": 72290,
+        "limit": 400000,
+        "deposits_savings": 0,
+        "current_deposits": false,
+        "foreign_travel": false,
+        "electricity": false,
+        "tds": 0,
+        "senior": false,
+        "turnover": 6000000,
+        "receipts": 0,
+        "savings_limit": 5000000,
+        "tds_limit": 25000,
+        "tds_limit_senior": 50000,
+        "turnover_limit": 6000000,
+        "receipts_limit": 1000000
+      },
+      "expect_value": {
+        "required": false,
+        "why": ""
+      }
+    },
+    {
+      "args": {
+        "income": 72290,
+        "limit": 400000,
+        "deposits_savings": 0,
+        "current_deposits": false,
+        "foreign_travel": false,
+        "electricity": false,
+        "tds": 0,
+        "senior": false,
+        "turnover": 0,
+        "receipts": 1000001,
+        "savings_limit": 5000000,
+        "tds_limit": 25000,
+        "tds_limit_senior": 50000,
+        "turnover_limit": 6000000,
+        "receipts_limit": 1000000
+      },
+      "expect_value": {
+        "required": true,
+        "why": "receipts"
+      }
+    }
+  ]
+}

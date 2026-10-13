@@ -37,8 +37,8 @@ GUIDE_MYRETURN = [
                                     "Loan or Not income - the turnover and the profit change at once. Own money, loans, refunds and interest never count."),
                             "target": ".bk-list|.mr-rail-card", "open": ".mr-node[data-step='classify']"}),
     ("Classify the money", {"title": "Turnover, profit and the GST limit",
-                            "say": ("Customer receipts at 6% (cash at 8%) are the presumptive profit under 44AD - with the late fee if the return is "
-                                    "after the due date. A turnover over the GST limit is flagged here too."),
+                            "say": ("Customer receipts at 6% (cash at 8%) are the presumptive profit under 44AD. The late fee under 234F applies only "
+                                    "where filing was compulsory. A turnover over the GST limit is flagged here too."),
                             "target": ".bk-summary|.mr-rail-card", "open": ".mr-node[data-step='classify']"}),
 ]
 CASE = {"id": "bank_only", "who": "individual", "ay": "2026-27", "title": "Small business - only a bank statement (ITR-4)",
@@ -64,9 +64,9 @@ CASE = {"id": "bank_only", "who": "individual", "ay": "2026-27", "title": "Small
              "say": ("Customer receipts only are the turnover. At 6% they give the presumptive profit under 44AD; cash would be 8%. Below the GST "
                      "limit, nothing to register."),
              "do": [{"highlight_target": "#bk-summary", "optional": True, "timeout": 5}, {"wait": 3}]},
-            {"chapter": "Tax, with the late fee",
-             "say": ("The new regime against the old, the tax, and the late fee under 234F because the due date has passed. The cheaper regime is "
-                     "chosen for you."),
+            {"chapter": "Tax, and is filing compulsory?",
+             "say": ("The new regime against the old, and the tax. At this income filing is not compulsory, so there is no late fee under 234F - "
+                     "but it is recommended, as proof of income for a loan or a visa."),
              "do": [{"click": "[data-next='check']"}, {"wait": 2}, {"click": "[data-next='choose']"}, {"wait_for": ".mr-regs", "timeout": 15}, {"wait": 1},
                     {"highlight_target": ".mr-regs", "optional": True, "timeout": 5}, {"wait": 2}]},
             {"chapter": "The ITR-4 JSON and how to upload it",
