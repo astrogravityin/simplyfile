@@ -551,6 +551,36 @@ def ai_check() -> None:
     print(f"  ai: {len(feats)} AI feature(s) - key screens {'for the portal admin only' if feats else 'hidden everywhere'} OK")
 
 
+SITE_FILE = "valuestream.site.json"   # ValueStream CC finds each portal by this file (CC chips cc.site_manifests, cc.site_schema)
+
+
+def site_manifest_check() -> None:
+    """2026-10-15 owner: "wherever we create a new Fy domain, one file which ValueStream picks up". Every domain keeps
+    valuestream.site.json (format valuestream-site/1) at its root - CC lists it on Apps, Server & sites, VPS Console and
+    Demo visitors from it, and no CC chip is edited. Its full schema is CC's chip cc.site_schema; here: it is there, it
+    is this portal's own (not SimplyFile's copy left unedited), and it agrees with start.cmd."""
+    f = HERE / SITE_FILE
+    assert f.is_file(), f"{SITE_FILE} is missing - write it (skill domain-portal: format valuestream-site/1), or CC never sees this portal"
+    m = json.loads(f.read_text(encoding="utf-8"))
+    need = ["format", "id", "label", "host", "repo", "prod.dir", "prod.service", "prod.port", "prod.health_path",
+            "local.dir", "local.port", "local.data", "local.health_path"]
+    def get(path: str):
+        cur = m
+        for k in path.split("."):
+            cur = cur.get(k) if isinstance(cur, dict) else None
+        return cur
+
+    missing = [k for k in need if get(k) in (None, "")]
+    assert not missing and m["format"] == "valuestream-site/1", f"{SITE_FILE}: format valuestream-site/1 with {missing or need}"
+    assert isinstance(m["prod"]["port"], int) and isinstance(m["local"]["port"], int), f"{SITE_FILE}: ports are numbers"
+    for part in ("demo", "backup"):
+        assert m.get(part) is None or isinstance(m[part], dict), f"{SITE_FILE}: {part} is an object or null"
+    assert m["label"] == product(), f"{SITE_FILE} label {m['label']!r} is not this portal's name {product()!r} - a copied file?"
+    port = re.search(r"set TV_PORT=(\d+)", (HERE / "start.cmd").read_text(encoding="utf-8")) if (HERE / "start.cmd").is_file() else None
+    assert not port or int(port.group(1)) == m["local"]["port"], f"{SITE_FILE} local.port {m['local']['port']} but start.cmd serves {port.group(1)}"
+    print(f"  site file: {SITE_FILE} ({m['id']}, {m['host']}) for ValueStream CC OK")
+
+
 if __name__ == "__main__":
     print("SimplyFy - self-check")
     module_checks()
@@ -560,5 +590,6 @@ if __name__ == "__main__":
     name_once_check()
     verbs_check()
     ai_check()
+    site_manifest_check()
     api_check()
     print("All checks passed.")
