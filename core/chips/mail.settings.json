@@ -38,6 +38,39 @@
       "name": "log_shown",
       "type": "number",
       "default": 50
+    },
+    {
+      "name": "tries",
+      "type": "number",
+      "default": 2,
+      "label": "How many times one mail is tried before it counts as failed (2 = one automatic retry)"
+    },
+    {
+      "name": "retry_kinds",
+      "type": "json",
+      "default": [
+        "timeout",
+        "unreachable"
+      ],
+      "label": "Which failures are tried again (a refused password never is - it would only lock the account)"
+    },
+    {
+      "name": "retry_wait_seconds",
+      "type": "number",
+      "default": 2,
+      "label": "Pause before the retry"
+    },
+    {
+      "name": "site_file",
+      "type": "text",
+      "default": "valuestream.site.json",
+      "label": "The portal's own site file (ValueStream CC reads it too)"
+    },
+    {
+      "name": "site_block",
+      "type": "text",
+      "default": "mail",
+      "label": "Its block that sets the sender: from_email and from_name (display name); no from_name = the site file's label"
     }
   ],
   "expr": {
@@ -48,13 +81,18 @@
       "timeout_seconds": "$timeout_seconds",
       "ssl_port": "$ssl_port",
       "starttls_port": "$starttls_port",
-      "log_shown": "$log_shown"
+      "log_shown": "$log_shown",
+      "tries": "$tries",
+      "retry_kinds": "$retry_kinds",
+      "retry_wait_seconds": "$retry_wait_seconds",
+      "site_file": "$site_file",
+      "site_block": "$site_block"
     }
   },
   "returns": "record",
-  "version": 2,
+  "version": 3,
   "status": "published",
-  "description_nl": "default_port / default_security: what a new SMTP setup starts with. timeout_seconds: how long one connection may wait. ssl_port / starttls_port: the port used when none is set, by security.",
+  "description_nl": "default_port / default_security: what a new SMTP setup starts with. timeout_seconds: how long one connection may wait. ssl_port / starttls_port: the port used when none is set, by security. 2026-10-16 owner (mail from CodyFy said 'Justify'): every new site copied smtp.json from the first site found, so all showed that site's name. The sender (display name, address) now comes from the portal's valuestream.site.json block site_block when the file is there - one file per site, set and shown in ValueStream CC (VPS Console -> Mail); smtp.json keeps only the server, login and password. tries / retry_kinds / retry_wait_seconds: a passing timeout (CodyFy invite 2026-10-15, 'The read operation timed out') is tried once more before the mail counts as failed.",
   "test_cases": [
     {
       "args": {},
@@ -64,7 +102,15 @@
         "timeout_seconds": 20,
         "ssl_port": 465,
         "starttls_port": 587,
-        "log_shown": 50
+        "log_shown": 50,
+        "tries": 2,
+        "retry_kinds": [
+          "timeout",
+          "unreachable"
+        ],
+        "retry_wait_seconds": 2,
+        "site_file": "valuestream.site.json",
+        "site_block": "mail"
       }
     }
   ],

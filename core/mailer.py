@@ -8,13 +8,18 @@ owner can act on; it is never swallowed into a log nobody reads.
 """
 from __future__ import annotations
 
+import json
 import smtplib
 import socket
 import ssl
+import time
 from email.message import EmailMessage
 from email.utils import formataddr
+from pathlib import Path
 
 from core import engine, ops, store
+
+ROOT = Path(__file__).resolve().parent.parent
 
 
 def settings() -> dict:
@@ -32,8 +37,25 @@ def defaults() -> dict:
     return {f: "" for f in smtp_fields()} | {"port": str(s["default_port"]), "security": s["default_security"]}
 
 
+def site_sender(root: Path | None = None) -> dict:
+    """The sender the portal's own site file sets (2026-10-16 owner: display names did not match the app - every new site
+    had copied smtp.json, sender name and all, from the first site found). File and block: chip mail.settings. The block's
+    from_email / from_name; no from_name = the file's label. No file, or nothing in it = {} (smtp.json alone, as before)."""
+    k = settings()
+    try:
+        doc = json.loads(((root or ROOT) / str(k["site_file"])).read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {}
+    if not isinstance(doc, dict):
+        return {}
+    blk = doc.get(str(k["site_block"])) if isinstance(doc.get(str(k["site_block"])), dict) else {}
+    got = {"from_email": str(blk.get("from_email") or "").strip(), "from_name": str(blk.get("from_name") or doc.get("label") or "").strip()}
+    return {f: v for f, v in got.items() if v}
+
+
 def config() -> dict:
-    return defaults() | store.read("smtp", {})
+    """smtp.json (server, login, password) with the site file's sender over it - what Setup shows and what is sent."""
+    return defaults() | store.read("smtp", {}) | site_sender()
 
 
 def save(patch: dict) -> None:
@@ -101,21 +123,31 @@ def send(to: str, subject: str, text: str) -> None:
     k = settings()
     port = int(c["port"] or (k["ssl_port"] if c["security"] == "ssl" else k["starttls_port"]))
     timeout = float(k["timeout_seconds"])
-    try:
-        if c["security"] == "ssl":
-            server = smtplib.SMTP_SSL(c["host"], port, timeout=timeout, context=ssl.create_default_context())
-        else:
-            server = smtplib.SMTP(c["host"], port, timeout=timeout)
-        with server:
+    tries = max(1, int(k.get("tries") or 1))
+    for n in range(1, tries + 1):
+        try:
+            _deliver(c, port, timeout, msg)
+            return
+        except Exception as e:  # noqa: BLE001 - every failure becomes one sentence the owner can act on
+            if n < tries and error_kind(e) in (k.get("retry_kinds") or []):
+                time.sleep(float(k.get("retry_wait_seconds") or 0))   # a passing timeout: once more (chip mail.settings)
+                continue
+            raise RuntimeError(_friendly(e, c)) from e
+
+
+def _deliver(c: dict, port: int, timeout: float, msg: EmailMessage) -> None:
+    if c["security"] == "ssl":
+        server = smtplib.SMTP_SSL(c["host"], port, timeout=timeout, context=ssl.create_default_context())
+    else:
+        server = smtplib.SMTP(c["host"], port, timeout=timeout)
+    with server:
+        server.ehlo()
+        if c["security"] == "starttls":
+            server.starttls(context=ssl.create_default_context())
             server.ehlo()
-            if c["security"] == "starttls":
-                server.starttls(context=ssl.create_default_context())
-                server.ehlo()
-            if c["username"]:
-                server.login(c["username"], c["password"])
-            server.send_message(msg)
-    except Exception as e:  # noqa: BLE001 - every failure becomes one sentence the owner can act on
-        raise RuntimeError(_friendly(e, c)) from e
+        if c["username"]:
+            server.login(c["username"], c["password"])
+        server.send_message(msg)
 
 
 # --- the messages this portal sends: their words are the chip mail.texts ------------------------------
@@ -144,4 +176,32 @@ if __name__ == "__main__":  # ponytail: one runnable self-check
     assert smtp_fields()["password"]["secret"] is True and defaults()["security"] == settings()["default_security"]
     subject, body = compose("code_reset", product="My Portal", code="123456", minutes=60)
     assert "123456" in body and "60 minutes" in body and "My Portal" in subject and "123456" in subject
+    import tempfile                              # the site file sets the sender; none = smtp.json alone
+    t = Path(tempfile.mkdtemp())
+    assert site_sender(t) == {}
+    (t / settings()["site_file"]).write_text(json.dumps({"label": "ExampleFy"}), encoding="utf-8")
+    assert site_sender(t) == {"from_name": "ExampleFy"}, "no mail block: the label is the display name"
+    (t / settings()["site_file"]).write_text(json.dumps({"label": "ExampleFy", settings()["site_block"]: {"from_email": "a@x.example", "from_name": "Ex"}}), encoding="utf-8")
+    assert site_sender(t) == {"from_email": "a@x.example", "from_name": "Ex"}
+    calls = []                                   # one automatic retry on a passing timeout, never on a refused password
+
+    def flaky(c, port, timeout, msg):
+        calls.append(1)
+        if len(calls) == 1:
+            raise smtplib.SMTPServerDisconnected("Connection unexpectedly closed: The read operation timed out")
+    real, real_cfg, real_ok = _deliver, config, configured
+    globals().update(_deliver=flaky, config=lambda: gm | {"security": "starttls", "username": "", "password": "", "from_name": "X"},
+                     configured=lambda: True)
+    try:
+        send("to@x.example", "s", "t")
+        assert len(calls) == settings()["tries"] == 2, calls
+        calls.clear()
+        globals()["_deliver"] = lambda *a: (_ for _ in ()).throw(smtplib.SMTPAuthenticationError(535, b"bad"))
+        try:
+            send("to@x.example", "s", "t")
+            raise AssertionError("a refused login passed")
+        except RuntimeError as e:
+            assert "App Password" in str(e)
+    finally:
+        globals().update(_deliver=real, config=real_cfg, configured=real_ok)
     print("core.mailer self-check OK")
