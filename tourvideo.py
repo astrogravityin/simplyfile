@@ -114,4 +114,12 @@ if __name__ == "__main__":  # ponytail: the list reads every tour; a bad key and
             raise SystemExit("a bad key or file was accepted")
         except HTTPException as e:
             assert e.status_code == 404
-    print("tourvideo self-check OK", len(rs), "tours")
+    import importlib.util  # noqa: PLC0415 - 2026-10-16: the recorder's email mask works before paint, in a real browser
+    _spec = importlib.util.spec_from_file_location("make_tour", Path(__file__).resolve().parent / "tools" / "tour_video" / "make_tour.py")
+    _mt = importlib.util.module_from_spec(_spec)
+    _spec.loader.exec_module(_mt)
+    _bad = _mt.mask_probe()
+    _no_browser = any(x.startswith("playwright is not installed") for x in _bad)   # a server that never records: said, not failed
+    assert _no_browser or not _bad, "the Tour Video email mask lets a real address be painted: " + "; ".join(_bad)
+    print("tourvideo self-check OK", len(rs), "tours,", "email mask NOT checked here (no Playwright - nothing can record here either)"
+          if _no_browser else "email mask before paint")

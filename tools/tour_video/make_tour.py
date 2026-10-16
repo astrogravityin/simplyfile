@@ -173,27 +173,73 @@ def mask_js(cfg: dict) -> str:
 """ % json.dumps(cfg)
 
 
-MASK_JS = """
+MASK_JS = r"""
 (() => { if (window.__tourMask) return; window.__tourMask = 1;
-  const RE = /[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g;
+  // 2026-10-16 (CodyFy demo): polled every 400 ms only, so a real address showed for 3 frames after Refresh. Now a
+  // MutationObserver fixes every change before the next paint (its callback is a microtask, run before rendering) and the
+  // interval stays as a back-stop (an input's value changes without a mutation). A value is written only when it changes -
+  // SAFE maps to itself - so the observer never feeds itself. A fresh /g regex per string (no lastIndex carried over).
+  const EMAIL = '[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}';   // '\\.' in this JS string = a literal dot
   const SAFE = 'name@example.com';
+  const fix = (t) => t.replace(new RegExp(EMAIL, 'g'), SAFE);
   const walk = () => {
     if (!document.body) return;
     const it = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
     for (let n = it.nextNode(); n; n = it.nextNode()) {
-      if (n.nodeValue && RE.test(n.nodeValue)) n.nodeValue = n.nodeValue.replace(RE, SAFE);
+      if (n.nodeValue) { const v = fix(n.nodeValue); if (v !== n.nodeValue) n.nodeValue = v; }
     }
     for (const el of document.querySelectorAll('input,textarea')) {
       if (window.__tourKeepInputs) break;   // a tour that types made-up emails (type_emails) must save what it typed
-      if (el.value && RE.test(el.value)) el.value = el.value.replace(RE, SAFE);
+      if (el.value) { const v = fix(el.value); if (v !== el.value) el.value = v; }
       const ph = el.getAttribute('placeholder');
-      if (ph && RE.test(ph) && !/example\.com$/.test(ph)) el.setAttribute('placeholder', SAFE);
+      if (ph && !/example\.com$/.test(ph)) { const v = fix(ph); if (v !== ph) el.setAttribute('placeholder', v); }
     }
   };
+  new MutationObserver(walk).observe(document, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ['placeholder', 'value'] });
   const start = () => { walk(); setInterval(walk, 400); };
   document.readyState === 'loading' ? addEventListener('DOMContentLoaded', start) : start();
 })();
 """
+
+
+MASK_PROBE = r"""async () => {
+  const el = document.createElement('p'); el.id = 'probe';
+  document.body.append(el);
+  el.textContent = 'machine account real.person@gmail.com';     // inserted the way a Refresh draws a row
+  const seenInFrame = await new Promise((ok) => requestAnimationFrame(() => ok(document.getElementById('probe').textContent)));
+  el.firstChild.nodeValue = 'changed to other.one@company.in';  // a text node changed in place
+  await Promise.resolve();
+  const seenAfterChange = el.textContent;
+  return { seenInFrame, seenAfterChange };
+}"""
+
+
+def mask_probe() -> list[str]:
+    """2026-10-16 guard (CodyFy demo: a real address showed for 3 frames after Refresh - MASK_JS only polled every 400 ms): in
+    a real browser an email inserted or changed by the page is masked in the SAME frame (before the next paint). [] = OK; a
+    missing Playwright / Chromium is said, never passed silently."""
+    try:
+        from playwright.sync_api import sync_playwright  # noqa: PLC0415
+    except ImportError:
+        return ["playwright is not installed - pip install -r tools/tour_video/requirements.txt"]
+    bad: list[str] = []
+    with sync_playwright() as pw:
+        b = pw.chromium.launch()
+        try:
+            page = b.new_page()
+            page.add_init_script(MASK_JS)
+            page.route("http://mask-probe.test/", lambda r: r.fulfill(content_type="text/html", body="<html><body><main>start</main></body></html>"))
+            page.goto("http://mask-probe.test/")          # a real navigation: init scripts run as in a recording
+            got = page.evaluate(MASK_PROBE)
+            for k, v in got.items():
+                if "@gmail.com" in v or "@company.in" in v:
+                    bad.append(f"{k}: a real email painted: {v}")
+            page.wait_for_timeout(300)                    # the observer must not feed itself (a page that hangs fails here)
+            if page.evaluate("() => 1") != 1:
+                bad.append("the page hung")
+        finally:
+            b.close()
+    return bad
 
 
 def video_settings() -> dict:
