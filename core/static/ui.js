@@ -565,14 +565,14 @@ let wwCount = 0;
 function workHtml(s, canStop) {
   const gid = `ww-g-${s.id}`;
   const running = s.status === 'running';
-  const el = ((s.ended || Date.now()) - s.started) / 1000;
+  const el = Math.max(0, ((s.ended || Date.now()) - s.started) / 1000);   // 2026-10-16: a start stamped by a server ahead of this clock read -1%
   const pct = s.pct === null || s.pct === undefined ? null : Math.max(0, Math.min(100, Number(s.pct)));
   let total = s.total_s ? Number(s.total_s) : null;
   if (running && pct > 1 && pct < 100 && (!total || pct >= wk('pace_after_pct'))) total = (el * 100) / pct;
   if (!running) total = el;
   if (total !== null && total < el) total = el + 1;                   // late against the estimate: never a negative
   const left = total === null ? null : Math.max(0, total - el);
-  const tPct = total ? Math.round((100 * el) / total) : null;
+  const tPct = total ? Math.max(0, Math.min(100, Math.round((100 * el) / total))) : null;
   const ring = s.status === 'finished' ? 100 : pct !== null ? pct : tPct !== null ? Math.min(99, tPct) : null;
   const tone = { finished: 'ok', failed: 'bad', stopped: 'warn' }[s.status] || 'run';
   const mid = s.status === 'finished' ? icon('check', 26) : s.status === 'failed' ? icon('alert', 26)
@@ -614,7 +614,8 @@ function workHtml(s, canStop) {
       ${running && canStop ? `<button type="button" class="small" data-ww-stop>${icon('pause', 13)} ${esc(sw('ww_stop'))}</button>` : ''}</div>`;
 }
 
-/** Open the work window. `set(patch)` with any of {activity, sub, pct, total_s, started_ms, cost:{spent,total,models,free},
+/** Open the work window. `set(patch)` with any of {activity, sub, pct, total_s, started_ms (with now_ms = the server's clock when
+ *  started_ms is the server's: elapsed is then counted on the server's clock, never this browser's), cost:{spent,total,models,free},
  *  steps:[{label,note,state}], basis, note, art (a drawing above the ring - trusted HTML/SVG from the page, 2026-10-08)}; `end(status, sub)` with finished|failed|stopped; `close()`. Closing it by
  *  hand never stops the work - Stop (when `onStop` is given) does. */
 export function workWindow(title, { activity = '', onStop = null, note = '' } = {}) {
@@ -633,8 +634,8 @@ export function workWindow(title, { activity = '', onStop = null, note = '' } = 
   paint();
   return {
     set(patch) {
-      const { started_ms: t0, ...rest } = patch || {};
-      if (t0) s.started = Number(t0);
+      const { started_ms: t0, now_ms: srv, ...rest } = patch || {};
+      if (t0) s.started = srv ? Date.now() - Math.max(0, Number(srv) - Number(t0)) : Number(t0);
       Object.assign(s, rest);
       paint();
     },

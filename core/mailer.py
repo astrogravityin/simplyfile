@@ -8,7 +8,9 @@ owner can act on; it is never swallowed into a log nobody reads.
 """
 from __future__ import annotations
 
+import html
 import json
+import re
 import smtplib
 import socket
 import ssl
@@ -37,20 +39,81 @@ def defaults() -> dict:
     return {f: "" for f in smtp_fields()} | {"port": str(s["default_port"]), "security": s["default_security"]}
 
 
-def site_sender(root: Path | None = None) -> dict:
-    """The sender the portal's own site file sets (2026-10-16 owner: display names did not match the app - every new site
-    had copied smtp.json, sender name and all, from the first site found). File and block: chip mail.settings. The block's
-    from_email / from_name; no from_name = the file's label. No file, or nothing in it = {} (smtp.json alone, as before)."""
+def _site_doc(root: Path | None = None) -> tuple[dict, dict]:
+    """(the portal's site file, its mail block) - file and block named by chip mail.settings; unreadable = ({}, {})."""
     k = settings()
     try:
         doc = json.loads(((root or ROOT) / str(k["site_file"])).read_text(encoding="utf-8"))
     except (OSError, ValueError):
-        return {}
+        return {}, {}
     if not isinstance(doc, dict):
+        return {}, {}
+    return doc, (doc.get(str(k["site_block"])) if isinstance(doc.get(str(k["site_block"])), dict) else {})
+
+
+def site_sender(root: Path | None = None) -> dict:
+    """The sender the portal's own site file sets (2026-10-16 owner: display names did not match the app - every new site
+    had copied smtp.json, sender name and all, from the first site found). File and block: chip mail.settings. The block's
+    from_email / from_name; no from_name = the file's label. No file, or nothing in it = {} (smtp.json alone, as before)."""
+    doc, blk = _site_doc(root)
+    if not doc:
         return {}
-    blk = doc.get(str(k["site_block"])) if isinstance(doc.get(str(k["site_block"])), dict) else {}
     got = {"from_email": str(blk.get("from_email") or "").strip(), "from_name": str(blk.get("from_name") or doc.get("label") or "").strip()}
     return {f: v for f, v in got.items() if v}
+
+
+def layout() -> dict:
+    """The branded page around every mail: chip mail.layout (words, sizes, colours, the email-safe page)."""
+    return engine.run("mail.layout")
+
+
+def site_brand(root: Path | None = None, name: str = "") -> dict:
+    """What the branded HTML part shows (2026-10-16 owner: one shared Gmail sender, so the inbox picture is the same for
+    every site - each site's look goes INSIDE the mail). {name, host, accent, mark: PNG bytes or None}. The mark is the PNG
+    the site file's mail block names (key: chip mail.layout mark_block_key) inside the portal folder and under
+    mark_max_bytes; else None = the monogram. A bad or missing accent = the chip's default."""
+    lay, base = layout(), (root or ROOT).resolve()
+    doc, blk = _site_doc(root)
+    accent = str(blk.get(str(lay["accent_block_key"])) or "").strip()
+    mark, rel = None, str(blk.get(str(lay["mark_block_key"])) or "").strip()
+    if rel:
+        p = (base / rel).resolve()
+        try:
+            if p.is_relative_to(base) and p.suffix.lower() == ".png" and p.stat().st_size <= int(lay["mark_max_bytes"]):
+                mark = p.read_bytes()
+        except OSError:
+            mark = None
+    return {"name": str(blk.get("from_name") or doc.get("label") or name or "").strip(), "host": str(doc.get("host") or "").strip(),
+            "accent": accent if re.fullmatch(str(lay["accent_pattern"]), accent) else str(lay["accent"]), "mark": mark}
+
+
+def html_body(text: str, brand: dict) -> str:
+    """The mail text as the site's branded page: escaped, a blank line = a new paragraph, a line break kept, web addresses
+    clickable; the page, paragraph, link, mark and footer are chip mail.layout's words."""
+    lay, esc = layout(), html.escape
+    name, accent = brand.get("name") or "", brand.get("accent") or lay["accent"]
+    url_re = re.compile(str(lay["url_pattern"]))
+
+    def linked(chunk: str) -> str:
+        out, at = [], 0
+        for m in url_re.finditer(chunk):
+            out += [esc(chunk[at:m.start()]), ops.template(lay["link"], {"url": esc(m.group(0)), "text": esc(m.group(0)), "accent": accent})]
+            at = m.end()
+        return "".join(out + [esc(chunk[at:])])
+    paras = [p.strip("\n") for p in re.split(r"\n[ \t]*\n", (text or "").replace("\r\n", "\n")) if p.strip()]
+    body = "".join(ops.template(lay["para"], {"text": "<br>".join(linked(ln) for ln in p.split("\n"))}) for p in paras)
+    px = int(lay["mark_px"])
+    if brand.get("mark"):
+        mark = ops.template(lay["mark_img"], {"cid": lay["mark_cid"], "px": px, "site": esc(name)})
+    else:
+        caps = "".join(ch for ch in name if ch.isupper()) or name[:1].upper()
+        mark = ops.template(lay["mark_monogram"], {"px": px, "accent": accent, "initials": esc(caps[: int(lay["initials_max"])])})
+    host = brand.get("host") or ""
+    footer = ops.template(lay["footer"], {"site": esc(name), "host_link": ops.template(lay["host_link"], {"host": esc(host)}) if host else ""})
+    first = next((ln.strip() for ln in (text or "").splitlines() if ln.strip()), "")
+    return ops.template(lay["page"], {"subject": esc(brand.get("subject") or name), "preheader": esc(first[: int(lay["preheader_chars"])]),
+                                      "mark": mark, "site": esc(name), "body": body, "footer": footer, "accent": accent,
+                                      "width": lay["width"], "band": lay["band"], "font_px": lay["font_px"], "outer_pad": lay["outer_pad"]})
 
 
 def config() -> dict:
@@ -108,17 +171,30 @@ def _friendly(error: Exception, c: dict) -> str:
                       timeout=settings()["timeout_seconds"], error=error, kind=type(error).__name__)
 
 
-def send(to: str, subject: str, text: str) -> None:
-    """One plain-text message. Plain text on purpose: it lands in the inbox, not the promotions tab,
-    and there is nothing in these mails that wants formatting."""
-    c = config()
-    if not configured():
-        raise RuntimeError(engine.say("mail.errors", "not_configured"))
+def build(to: str, subject: str, text: str, c: dict | None = None, root: Path | None = None) -> EmailMessage:
+    """One message: the plain text exactly as it always was, plus (2026-10-16) the site's branded HTML beside it
+    (multipart/alternative; the mark PNG rides inside as an inline cid image - multipart/related; Gmail strips SVG and
+    nothing remote is ever loaded). `c` = the sender (from_name, from_email); default = config()."""
+    c = config() if c is None else c
     msg = EmailMessage()
-    msg["From"] = formataddr((c["from_name"] or "", c["from_email"]))
+    msg["From"] = formataddr((c.get("from_name") or "", c.get("from_email") or ""))
     msg["To"] = to
     msg["Subject"] = subject
     msg.set_content(text)
+    brand = site_brand(root, name=c.get("from_name") or "") | {"subject": subject}
+    msg.add_alternative(html_body(text, brand), subtype="html")
+    if brand["mark"]:
+        cid = str(layout()["mark_cid"])
+        msg.get_payload()[1].add_related(brand["mark"], "image", "png", cid=f"<{cid}>", disposition="inline", filename=f"{cid}.png")
+    return msg
+
+
+def send(to: str, subject: str, text: str) -> None:
+    """One message: plain text (unchanged) + the site's branded HTML (build())."""
+    c = config()
+    if not configured():
+        raise RuntimeError(engine.say("mail.errors", "not_configured"))
+    msg = build(to, subject, text, c)
 
     k = settings()
     port = int(c["port"] or (k["ssl_port"] if c["security"] == "ssl" else k["starttls_port"]))
@@ -183,6 +259,32 @@ if __name__ == "__main__":  # ponytail: one runnable self-check
     assert site_sender(t) == {"from_name": "ExampleFy"}, "no mail block: the label is the display name"
     (t / settings()["site_file"]).write_text(json.dumps({"label": "ExampleFy", settings()["site_block"]: {"from_email": "a@x.example", "from_name": "Ex"}}), encoding="utf-8")
     assert site_sender(t) == {"from_email": "a@x.example", "from_name": "Ex"}
+    # 2026-10-16 branded mail (one shared Gmail sender, each site's look inside): the plain-text part is byte-for-byte what
+    # it always was, the HTML part names the site and carries ITS mark as a cid image, and nothing remote is ever loaded
+    lay, who = layout(), {"from_name": "X", "from_email": "a@x.example"}
+    nasty = body + "\nSee https://example.test/a?b=1&c=2.\n\n<script>alert(1)</script>"
+    old = EmailMessage()
+    old.set_content(nasty)
+    m = build("to@x.example", subject, nasty, who)
+    parts = {p.get_content_type(): p for p in m.walk()}
+    assert m.get_content_type() == "multipart/alternative" and {"text/plain", "text/html"} <= set(parts), list(parts)
+    tp = parts["text/plain"]
+    assert tp.get_payload() == old.get_payload() and all(tp[h] == old[h] for h in ("Content-Type", "Content-Transfer-Encoding")), "plain text changed"
+    page = parts["text/html"].get_content()
+    _, blk = _site_doc()
+    brand = site_brand()
+    assert brand["name"] and html.escape(brand["name"]) in page, "the HTML part does not name the site"
+    assert "<script>" not in page and "&lt;script&gt;" in page and 'href="https://example.test/a?b=1&amp;c=2"' in page
+    assert not re.findall(r"<img[^>]*src=\"(?!cid:)", page) and "url(" not in page and "@import" not in page, "a remote image or font"
+    if blk.get(str(lay["mark_block_key"])):         # the site file names a mark: it must load and ride inside as a cid image
+        assert brand["mark"] and brand["mark"][:8] == b"\x89PNG\r\n\x1a\n", f"mark {blk.get(lay['mark_block_key'])} missing, too big or not a PNG"
+        assert "image/png" in parts and parts["image/png"]["Content-ID"] == f"<{lay['mark_cid']}>" and f"cid:{lay['mark_cid']}" in page
+        assert m.get_payload()[1].get_content_type() == "multipart/related", "the mark must sit with the HTML (multipart/related)"
+    assert re.fullmatch(str(lay["accent_pattern"]), brand["accent"]) and brand["accent"] in page
+    (t / settings()["site_file"]).write_text(json.dumps({"label": "ExampleFy", "host": "xy.example.test"}), encoding="utf-8")
+    mono = build("to@x.example", "s", "t", who, root=t)             # no mark in the site file = the label's monogram, no image
+    mono_page = next(p for p in mono.walk() if p.get_content_type() == "text/html").get_content()
+    assert "cid:" not in mono_page and ">EF<" in mono_page and not any(p.get_content_type() == "image/png" for p in mono.walk())
     calls = []                                   # one automatic retry on a passing timeout, never on a refused password
 
     def flaky(c, port, timeout, msg):

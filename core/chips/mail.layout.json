@@ -1,0 +1,200 @@
+{
+  "chip_id": "mail.layout",
+  "kind": "accessor",
+  "set": "mail",
+  "audience": "admin",
+  "label": "How every mail looks: the branded page around the text",
+  "aliases": [
+    "mail design",
+    "email layout",
+    "branded mail",
+    "mail mark"
+  ],
+  "params": [
+    {
+      "name": "page",
+      "type": "text",
+      "default": "<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><meta name=\"color-scheme\" content=\"light dark\"><meta name=\"supported-color-schemes\" content=\"light dark\"><title>{subject}</title><style>@media (prefers-color-scheme: dark) { .vs-bg { background:#0f1115 !important; } .vs-card { background:#171a21 !important; border-color:#2a2f3a !important; } .vs-ink { color:#e8eaef !important; } .vs-muted { color:#9aa1ad !important; } .vs-rule { background:#2a2f3a !important; } .vs-link { color:#dfe3ea !important; } } @media only screen and (max-width:620px) { .vs-card, .vs-full { width:100% !important; } .vs-pad { padding-left:22px !important; padding-right:22px !important; } }</style></head><body class=\"vs-bg\" style=\"margin:0;padding:0;background:#f3f4f7;-webkit-text-size-adjust:100%;\"><div style=\"display:none;max-height:0;overflow:hidden;opacity:0;mso-hide:all;\">{preheader}</div><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" bgcolor=\"#f3f4f7\" class=\"vs-bg\" style=\"background:#f3f4f7;\"><tr><td align=\"center\" style=\"padding:{outer_pad}px 12px;\"><table role=\"presentation\" width=\"{width}\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" bgcolor=\"#ffffff\" class=\"vs-card\" style=\"width:{width}px;max-width:100%;background:#ffffff;border:1px solid #e4e6eb;border-radius:14px;border-collapse:separate;overflow:hidden;\"><tr><td height=\"{band}\" bgcolor=\"{accent}\" style=\"height:{band}px;line-height:{band}px;font-size:0;background:{accent};\">&nbsp;</td></tr><tr><td class=\"vs-pad\" style=\"padding:26px 40px 20px 40px;\"><table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr><td valign=\"middle\" style=\"padding-right:14px;\">{mark}</td><td valign=\"middle\" class=\"vs-ink\" style=\"font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:21px;line-height:26px;font-weight:700;letter-spacing:-0.2px;color:#15171c;\">{site}</td></tr></table></td></tr><tr><td class=\"vs-pad\" style=\"padding:0 40px;\"><div class=\"vs-rule\" style=\"height:1px;line-height:1px;font-size:0;background:#eceef2;\">&nbsp;</div></td></tr><tr><td class=\"vs-pad vs-ink\" style=\"padding:26px 40px 14px 40px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:{font_px}px;line-height:1.65;color:#262a31;\">{body}</td></tr></table><table role=\"presentation\" width=\"{width}\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"vs-full\" style=\"width:{width}px;max-width:100%;\"><tr><td align=\"center\" class=\"vs-muted\" style=\"padding:18px 16px 4px 16px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:12px;line-height:18px;color:#8b919c;\">{footer}</td></tr></table></td></tr></table></body></html>",
+      "label": "The whole mail page: email-safe tables, inline styles. Slots: {subject} {preheader} {mark} {site} {body} {footer} {accent} {width} {band} {font_px} {outer_pad}. Keep a space after every { in the CSS, or it reads as a slot"
+    },
+    {
+      "name": "para",
+      "type": "text",
+      "default": "<p style=\"margin:0 0 16px 0;\">{text}</p>",
+      "label": "One paragraph of the mail text (a blank line in the text starts the next)"
+    },
+    {
+      "name": "link",
+      "type": "text",
+      "default": "<a href=\"{url}\" class=\"vs-link\" style=\"color:{accent};text-decoration:underline;word-break:break-all;\">{text}</a>",
+      "label": "A web address in the text, made clickable"
+    },
+    {
+      "name": "mark_img",
+      "type": "text",
+      "default": "<img src=\"cid:{cid}\" width=\"{px}\" height=\"{px}\" alt=\"{site}\" style=\"display:block;width:{px}px;height:{px}px;border:0;outline:none;text-decoration:none;\">",
+      "label": "The site's mark: its PNG, carried inside the mail (cid) - Gmail strips SVG and no remote image is ever loaded"
+    },
+    {
+      "name": "mark_monogram",
+      "type": "text",
+      "default": "<table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr><td width=\"{px}\" height=\"{px}\" align=\"center\" valign=\"middle\" bgcolor=\"{accent}\" style=\"width:{px}px;height:{px}px;border-radius:11px;background:{accent};color:#ffffff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:17px;font-weight:700;letter-spacing:0.5px;\">{initials}</td></tr></table>",
+      "label": "The mark when the site file names no PNG (or it cannot be read): the label's capitals on the accent colour"
+    },
+    {
+      "name": "footer",
+      "type": "text",
+      "default": "{site} · a ValueStream portal · {host_link}",
+      "label": "The quiet line under the card"
+    },
+    {
+      "name": "host_link",
+      "type": "text",
+      "default": "<a href=\"https://{host}\" style=\"color:#8b919c;text-decoration:none;\">{host}</a>",
+      "label": "The site's address in the footer"
+    },
+    {
+      "name": "accent",
+      "type": "text",
+      "default": "#5b5bd6",
+      "label": "Accent colour when the site file's mail block sets none"
+    },
+    {
+      "name": "accent_pattern",
+      "type": "text",
+      "default": "#[0-9a-fA-F]{6}",
+      "label": "What a site's accent must look like (else the default above)"
+    },
+    {
+      "name": "width",
+      "type": "number",
+      "default": 600,
+      "label": "Card width in pixels (email-safe: 600 or less)"
+    },
+    {
+      "name": "band",
+      "type": "number",
+      "default": 4,
+      "label": "Height of the accent band on top of the card"
+    },
+    {
+      "name": "font_px",
+      "type": "number",
+      "default": 15,
+      "label": "Body text size"
+    },
+    {
+      "name": "outer_pad",
+      "type": "number",
+      "default": 32,
+      "label": "Space above and below the card"
+    },
+    {
+      "name": "mark_px",
+      "type": "number",
+      "default": 44,
+      "label": "Mark size shown in the mail (the PNG is about twice this for sharp phones)"
+    },
+    {
+      "name": "mark_cid",
+      "type": "text",
+      "default": "site-mark",
+      "label": "Content-ID of the mark inside the mail"
+    },
+    {
+      "name": "mark_max_bytes",
+      "type": "number",
+      "default": 60000,
+      "label": "A mark PNG larger than this is not attached (the monogram is used)"
+    },
+    {
+      "name": "mark_block_key",
+      "type": "text",
+      "default": "mark",
+      "label": "Site file mail block key: the PNG path, relative to the portal folder"
+    },
+    {
+      "name": "accent_block_key",
+      "type": "text",
+      "default": "accent",
+      "label": "Site file mail block key: the accent colour"
+    },
+    {
+      "name": "initials_max",
+      "type": "number",
+      "default": 2,
+      "label": "How many capitals the monogram shows"
+    },
+    {
+      "name": "preheader_chars",
+      "type": "number",
+      "default": 110,
+      "label": "How much of the first line shows as the inbox preview"
+    },
+    {
+      "name": "url_pattern",
+      "type": "text",
+      "default": "https?://[^\\s<>\"']+[^\\s<>\"'.,;:!?)\\]]",
+      "label": "What counts as a web address in the text"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "page": "$page",
+      "para": "$para",
+      "link": "$link",
+      "mark_img": "$mark_img",
+      "mark_monogram": "$mark_monogram",
+      "footer": "$footer",
+      "host_link": "$host_link",
+      "accent": "$accent",
+      "accent_pattern": "$accent_pattern",
+      "width": "$width",
+      "band": "$band",
+      "font_px": "$font_px",
+      "outer_pad": "$outer_pad",
+      "mark_px": "$mark_px",
+      "mark_cid": "$mark_cid",
+      "mark_max_bytes": "$mark_max_bytes",
+      "mark_block_key": "$mark_block_key",
+      "accent_block_key": "$accent_block_key",
+      "initials_max": "$initials_max",
+      "preheader_chars": "$preheader_chars",
+      "url_pattern": "$url_pattern"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-16 owner: every ValueStream portal mails from ONE Gmail sender (in.valuestream@gmail.com), so the inbox picture is the same for all; each site's mail now carries its own look inside. core/mailer.py build() keeps the plain-text part exactly as before and adds an HTML part (multipart/alternative) laid out by these words: a band in the site's accent, the site's mark and name, the text (escaped; blank line = paragraph, web addresses clickable), and the footer line. The mark is the PNG the site file's mail block names (valuestream.site.json mail.mark, carried as an inline cid image - Gmail strips SVG; the SVG source sits beside it); none = a monogram of the label. mail.accent sets the colour (CC chip cc.site_schema checks both).",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "page": "<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><meta name=\"color-scheme\" content=\"light dark\"><meta name=\"supported-color-schemes\" content=\"light dark\"><title>{subject}</title><style>@media (prefers-color-scheme: dark) { .vs-bg { background:#0f1115 !important; } .vs-card { background:#171a21 !important; border-color:#2a2f3a !important; } .vs-ink { color:#e8eaef !important; } .vs-muted { color:#9aa1ad !important; } .vs-rule { background:#2a2f3a !important; } .vs-link { color:#dfe3ea !important; } } @media only screen and (max-width:620px) { .vs-card, .vs-full { width:100% !important; } .vs-pad { padding-left:22px !important; padding-right:22px !important; } }</style></head><body class=\"vs-bg\" style=\"margin:0;padding:0;background:#f3f4f7;-webkit-text-size-adjust:100%;\"><div style=\"display:none;max-height:0;overflow:hidden;opacity:0;mso-hide:all;\">{preheader}</div><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" bgcolor=\"#f3f4f7\" class=\"vs-bg\" style=\"background:#f3f4f7;\"><tr><td align=\"center\" style=\"padding:{outer_pad}px 12px;\"><table role=\"presentation\" width=\"{width}\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" bgcolor=\"#ffffff\" class=\"vs-card\" style=\"width:{width}px;max-width:100%;background:#ffffff;border:1px solid #e4e6eb;border-radius:14px;border-collapse:separate;overflow:hidden;\"><tr><td height=\"{band}\" bgcolor=\"{accent}\" style=\"height:{band}px;line-height:{band}px;font-size:0;background:{accent};\">&nbsp;</td></tr><tr><td class=\"vs-pad\" style=\"padding:26px 40px 20px 40px;\"><table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr><td valign=\"middle\" style=\"padding-right:14px;\">{mark}</td><td valign=\"middle\" class=\"vs-ink\" style=\"font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:21px;line-height:26px;font-weight:700;letter-spacing:-0.2px;color:#15171c;\">{site}</td></tr></table></td></tr><tr><td class=\"vs-pad\" style=\"padding:0 40px;\"><div class=\"vs-rule\" style=\"height:1px;line-height:1px;font-size:0;background:#eceef2;\">&nbsp;</div></td></tr><tr><td class=\"vs-pad vs-ink\" style=\"padding:26px 40px 14px 40px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:{font_px}px;line-height:1.65;color:#262a31;\">{body}</td></tr></table><table role=\"presentation\" width=\"{width}\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"vs-full\" style=\"width:{width}px;max-width:100%;\"><tr><td align=\"center\" class=\"vs-muted\" style=\"padding:18px 16px 4px 16px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:12px;line-height:18px;color:#8b919c;\">{footer}</td></tr></table></td></tr></table></body></html>",
+        "para": "<p style=\"margin:0 0 16px 0;\">{text}</p>",
+        "link": "<a href=\"{url}\" class=\"vs-link\" style=\"color:{accent};text-decoration:underline;word-break:break-all;\">{text}</a>",
+        "mark_img": "<img src=\"cid:{cid}\" width=\"{px}\" height=\"{px}\" alt=\"{site}\" style=\"display:block;width:{px}px;height:{px}px;border:0;outline:none;text-decoration:none;\">",
+        "mark_monogram": "<table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr><td width=\"{px}\" height=\"{px}\" align=\"center\" valign=\"middle\" bgcolor=\"{accent}\" style=\"width:{px}px;height:{px}px;border-radius:11px;background:{accent};color:#ffffff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:17px;font-weight:700;letter-spacing:0.5px;\">{initials}</td></tr></table>",
+        "footer": "{site} · a ValueStream portal · {host_link}",
+        "host_link": "<a href=\"https://{host}\" style=\"color:#8b919c;text-decoration:none;\">{host}</a>",
+        "accent": "#5b5bd6",
+        "accent_pattern": "#[0-9a-fA-F]{6}",
+        "width": 600,
+        "band": 4,
+        "font_px": 15,
+        "outer_pad": 32,
+        "mark_px": 44,
+        "mark_cid": "site-mark",
+        "mark_max_bytes": 60000,
+        "mark_block_key": "mark",
+        "accent_block_key": "accent",
+        "initials_max": 2,
+        "preheader_chars": 110,
+        "url_pattern": "https?://[^\\s<>\"']+[^\\s<>\"'.,;:!?)\\]]"
+      }
+    }
+  ],
+  "weight_basis": "Platform presentation primitive, no business content. The knobs ARE the design - edit them here, never in Python."
+}
