@@ -1660,6 +1660,11 @@ async def revalidate_static(request: Request, call_next):
     return response
 
 
+# 2026-10-16: screen code for members only (chip static.signed_out, off here) - added after revalidate_static so it runs first
+from core import private_static  # noqa: E402
+private_static.install(app)
+
+
 @app.exception_handler(404)
 def not_found(request: Request, exc):
     # The portal is one page with a hash router, so any unknown non-API address is still the portal.

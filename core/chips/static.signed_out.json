@@ -1,0 +1,69 @@
+{
+  "chip_id": "static.signed_out",
+  "kind": "accessor",
+  "set": "static",
+  "audience": "admin",
+  "label": "Screen code for members only: what a signed-out visitor may download",
+  "aliases": [
+    "hide screen code",
+    "private static",
+    "protect scripts"
+  ],
+  "params": [
+    {
+      "name": "on",
+      "type": "boolean",
+      "default": false,
+      "label": "on: a visitor who is not signed in gets only the public files (turn on only when app.js loads its screens after sign-in)"
+    },
+    {
+      "name": "roots",
+      "type": "json",
+      "default": [
+        "/static/",
+        "/core-static/"
+      ],
+      "label": "the file folders this guards"
+    },
+    {
+      "name": "extra_public",
+      "type": "json",
+      "default": [],
+      "label": "this portal's own public files, beside chip static.public_files"
+    },
+    {
+      "name": "member_cache",
+      "type": "text",
+      "default": "private, no-store",
+      "label": "Cache-Control on a guarded file (and its 404): never kept by a shared cache"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "on": "$on",
+      "roots": "$roots",
+      "extra_public": "$extra_public",
+      "member_cache": "$member_cache"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-16 (owner \"yes hide\", core/private_static.py): with on, every file under roots that is not public (chip static.public_files + extra_public) is served only to a signed-in member, marked member_cache and Vary: Cookie; a visitor gets the same 404 as a file that does not exist. Off in the framework: a portal turns it on in its own chips/static.signed_out.json once its app.js loads screens after sign-in (shell.js startPortal screens).",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "on": false,
+        "roots": [
+          "/static/",
+          "/core-static/"
+        ],
+        "extra_public": [],
+        "member_cache": "private, no-store"
+      }
+    }
+  ],
+  "weight_basis": "A security switch and cache header, no business content."
+}

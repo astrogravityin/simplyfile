@@ -6,6 +6,7 @@
 //
 //   startPortal({
 //     views: { things: thingsPage },              // id in catalog.json → (host) => render into host
+//     screens: () => import('./screens.js').then((m) => m.views),   // optional: more views, loaded on first use (members-only code)
 //     pitch: () => '<h2>…</h2>',                   // left half of the sign-in screen
 //     brandSub, logo, landing: '#/things',
 //     topbar: (route) => html, topbarEnd: (route) => html (top RIGHT), wireTopbar: (root, route) => {},
@@ -1384,7 +1385,12 @@ export function render() {
   trackView(`#/${route.id}`, route.label);
   if (!may(route.id)) { lockedView(page, route); return; }
   page.innerHTML = `<div class="empty">${spinner(22)}<p>${w('loading')}</p></div>`;
-  const view = config.views[route.id] || (CORE_VIEWS[route.id] && ((h) => CORE_VIEWS[route.id]().then((v) => v(h))));
+  // config.screens (2026-10-16): a portal whose screen code is members-only (core/private_static.py) loads it here, on first use
+  const view = config.views[route.id] || (CORE_VIEWS[route.id] && ((h) => CORE_VIEWS[route.id]().then((v) => v(h))))
+    || (config.screens && ((h) => config.screens().then((vs) => {
+      if (!vs || !vs[route.id]) throw new Error(w('no_view', { id: route.id }));
+      return vs[route.id](h);
+    })));
   if (!view) { say(page, 'bad', w('no_view', { id: esc(route.id) })); return; }
   Promise.resolve(view(page)).then(() => {
     jumpTo(page, route);

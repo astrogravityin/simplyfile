@@ -1,0 +1,78 @@
+{
+  "chip_id": "static.public_files",
+  "kind": "accessor",
+  "set": "static",
+  "audience": "admin",
+  "label": "The framework files a signed-out visitor may download",
+  "aliases": [
+    "public files",
+    "signed-out files"
+  ],
+  "params": [
+    {
+      "name": "files",
+      "type": "json",
+      "default": [
+        "/core-static/portal.css",
+        "/core-static/guide-kit.css",
+        "/core-static/shell.js",
+        "/core-static/ui.js",
+        "/core-static/icons.js",
+        "/core-static/guide.js",
+        "/core-static/guide-kit.js",
+        "/core-static/valuestream.png",
+        "/static/index.html",
+        "/static/app.js",
+        "/static/app.css",
+        "/static/icons.js",
+        "/static/showcase.html",
+        "/static/showcase.js",
+        "/static/showcase.css",
+        "/static/help-gemini-key.html",
+        "/static/brand/*",
+        "/static/tour/*",
+        "/static/showcase/*"
+      ],
+      "label": "address patterns (* = any characters) under /static and /core-static the public pages need: the sign-in shell, the landing, brand pictures, tours"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "files": "$files"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-16 (core/private_static.py): only read when chip static.signed_out is on. A file under a static.signed_out root that matches none of these patterns (nor the portal's extra_public) answers 404 to a visitor who is not signed in; a member gets every file. The sign-in shell (index.html, app.js, app.css, shell.js and what it imports), the landing (showcase.*), brand pictures (mail logos are read by mail apps, signed out) and tours stay public. Matching is case-sensitive and default-deny: a new screen file is protected without being listed.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "files": [
+          "/core-static/portal.css",
+          "/core-static/guide-kit.css",
+          "/core-static/shell.js",
+          "/core-static/ui.js",
+          "/core-static/icons.js",
+          "/core-static/guide.js",
+          "/core-static/guide-kit.js",
+          "/core-static/valuestream.png",
+          "/static/index.html",
+          "/static/app.js",
+          "/static/app.css",
+          "/static/icons.js",
+          "/static/showcase.html",
+          "/static/showcase.js",
+          "/static/showcase.css",
+          "/static/help-gemini-key.html",
+          "/static/brand/*",
+          "/static/tour/*",
+          "/static/showcase/*"
+        ]
+      }
+    }
+  ],
+  "weight_basis": "A framework file list, no business content."
+}
