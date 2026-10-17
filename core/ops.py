@@ -1330,6 +1330,111 @@ def number_series(start: Any = 0, step: Any = 1, count: Any = 1, modulo: Any = N
     return [_tidy(v % m if m else v) for v in out]
 
 
+def growth_rows(principal: Any = None, rate: Any = None, months: Any = 0, step_months: Any = 12, compound_months: Any = 12,
+                start: Any = "", digits: Any = 2, count: Any = 1, every_months: Any = 1) -> list | None:
+    """`principal` growing at `rate` % a year, one row every `step_months` up to `months` (the last month always a row):
+    interest joins the principal every `compound_months` (12 = compounded yearly) and accrues simply in between - a
+    bank's way. `count` > 1 = the same principal put in `count` times, every `every_months` from month 0, each growing
+    from its own month (a monthly investment). Rows {month, date (start moved by the months, when a start date is given),
+    invested (put in by then), value, interest}. Unknown principal / rate or a step of 0 -> None, never 0."""
+    p, r = _num(principal), _num(rate)
+    n, s, c = int(_n0(months)), int(_n0(step_months)), int(_n0(compound_months))
+    k, e = max(1, int(_n0(count) or 1)), max(1, int(_n0(every_months) or 1))
+    if p is None or r is None or s <= 0 or c <= 0 or n < 0:
+        return None
+    per = r / 100 * c / 12
+
+    def grown(m: int) -> float:
+        return p * (1 + per) ** (m // c) * (1 + r / 100 * (m % c) / 12)
+    out = []
+    for m in sorted(set(range(0, n + 1, s)) | {n}):
+        ins = [j * e for j in range(k) if j * e <= m]
+        v = sum(grown(m - d) for d in ins)
+        out.append({"month": m, "date": date_shift(start, 0, m) if start else None, "invested": round_to(p * len(ins), digits),
+                    "value": round_to(v, digits), "interest": round_to(v - p * len(ins), digits)})
+    return out
+
+
+def deposit_rows(amount: Any = None, count: Any = 1, every_months: Any = 1, rate: Any = None, compound_months: Any = 12,
+                 lock_months: Any = 12, at_months: Any = None, start: Any = "", digits: Any = 2) -> list | None:
+    """Each of `count` equal deposits (every `every_months` from month 0) on its own: it may come out `lock_months` after
+    its own date, worth `value_free` then; `value_at` = its worth at month `at_months` (blank = when it is free). Months are
+    counted from 1 (the first deposit is month 1, free in month 1 + lock). Rows {n, month, date, amount, free_month,
+    free_date, value_free, value_at}."""
+    a, k, e, lk = _num(amount), int(_n0(count)), max(1, int(_n0(every_months) or 1)), int(_n0(lock_months))
+    if a is None or k <= 0:
+        return None
+    out = []
+    for j in range(k):
+        m = j * e
+        free = growth_rows(a, rate, lk, lk or 1, compound_months, digits=digits)
+        held = growth_rows(a, rate, max(0, int(_n0(at_months)) - m), 1, compound_months, digits=digits) if at_months not in (None, "") else free
+        if free is None or held is None:
+            return None
+        out.append({"n": j + 1, "month": m + 1, "date": date_shift(start, 0, m) if start else None, "amount": round_to(a, digits),
+                    "free_month": m + 1 + lk, "free_date": date_shift(start, 0, m + lk) if start else None,
+                    "value_free": free[-1]["value"], "value_at": held[-1]["value"]})
+    return out
+
+
+def deposits_at(rows: Any = None, at: Any = "", rate: Any = None, compound_months: Any = 12, lock_months: Any = 12,
+                date_key: Any = "date", amount_key: Any = "amount", digits: Any = 2) -> list | None:
+    """Real deposits on their own dates, each worth on `at` (an ISO date): `rate` % a year compounded every `compound_months`
+    from its own date, whole months then days simply in between (365-day year). Each row gains free_date (its date +
+    `lock_months`), free (at >= free_date), value_at and interest. Rows sorted by date; a row with no readable date or
+    amount is left out; `at` before a deposit = worth what was put in. Unknown rate or `at` -> None."""
+    import calendar  # noqa: PLC0415
+    from datetime import date as _d  # noqa: PLC0415
+    r, c = _num(rate), max(1, int(_n0(compound_months) or 12))
+    try:
+        t = _d.fromisoformat(str(at)[:10])
+    except (ValueError, TypeError):
+        return None
+    if r is None or not isinstance(rows, list):
+        return None
+    per, out = r / 100 * c / 12, []
+    for row in rows:
+        if not isinstance(row, dict):
+            continue
+        a = _num(row.get(amount_key))
+        try:
+            d0 = _d.fromisoformat(str(row.get(date_key))[:10])
+        except (ValueError, TypeError):
+            continue
+        if a is None:
+            continue
+        m = max(0, (t.year - d0.year) * 12 + t.month - d0.month - (1 if t.day < d0.day else 0)) if t >= d0 else 0
+        y, mo = divmod(d0.month - 1 + m, 12)
+        base = _d(d0.year + y, mo + 1, min(d0.day, calendar.monthrange(d0.year + y, mo + 1)[1]))
+        days = max(0, (t - base).days) if t >= d0 else 0
+        v = a * (1 + per) ** (m // c) * (1 + r / 100 * ((m % c) / 12 + days / 365))
+        free = date_shift(d0.isoformat(), 0, int(_n0(lock_months)))
+        out.append(dict(row) | {"free_date": free, "free": t.isoformat() >= free, "value_at": round_to(v, digits),
+                                "interest": round_to(v - a, digits)})
+    return sorted(out, key=lambda x: str(x.get(date_key)))
+
+
+def payout_rows(amount: Any = None, rate: Any = None, months: Any = 12, interest_every: Any = 12, start: Any = "",
+                digits: Any = 2) -> list | None:
+    """`amount` paid back in `months` equal monthly parts while the part still held earns `rate` % a year, paid every
+    `interest_every` months and with the last part - the interest falls as the balance falls. Rows {month, date,
+    principal, interest, paid, balance}. Unknown amount / rate or 0 months -> None."""
+    a, r = _num(amount), _num(rate)
+    n, k = int(_n0(months)), max(1, int(_n0(interest_every)))
+    if a is None or r is None or n <= 0:
+        return None
+    bal, held, out = a, 0.0, []
+    for m in range(1, n + 1):
+        held += bal * r / 100 / 12          # this month's interest on what is still held
+        part = bal if m == n else a / n
+        bal -= part
+        due = held if m % k == 0 or m == n else 0.0
+        held -= due
+        out.append({"month": m, "date": date_shift(start, 0, m) if start else None, "principal": round_to(part, digits),
+                    "interest": round_to(due, digits), "paid": round_to(part + due, digits), "balance": round_to(bal, digits)})
+    return out
+
+
 def path_refusal(path: Any = "", keep: Any = None, under: Any = None, parts: Any = None, also: Any = None,
                  words: Any = None) -> str:
     """Why a '/'-separated path may NOT be acted on; '' = allowed. keep: paths that may be neither hit nor contained
@@ -1424,7 +1529,7 @@ OPS = {f.__name__: f for f in (
     truncate, sub_text, contains, ip_network, first_matching, epoch_date,
     pluck, slice_list, months_part, date_shift, first_index_matching, missing, count, last, compact, coalesce, json_in_text, fit_count, match_case, stable_hash, hash_hex, strings_in, total, first_named, pack_text, trim_to_sentence, after_heading, last_line, pack_words, name_value_lines, ease, filter_rows, rank_rows, rows_view, fuzzy_rows, match_rows, rows_math, group_rows, rows_aggregate,
     rows_product, rows_band, rows_index, rows_lookup, rows_check, rows_having, decision_table, doc_problems, literal, record, merge, get,
-    list_prefer, number_series, path_refusal, parts_of_whole, series_bucket, rows_delta,
+    list_prefer, number_series, growth_rows, deposit_rows, deposits_at, payout_rows, path_refusal, parts_of_whole, series_bucket, rows_delta,
 )}
 
 
@@ -1465,6 +1570,24 @@ if __name__ == "__main__":
     assert template("{n:work|works}", {"n": "1"}) == "work" and template("{n:work|works}", {}) == "works"
     # 2026-09-30 owner "Avatar Video screen taking long time to load - we can have thousands" (12 s for 7 videos):
     # an op's argument names are read once, not on every call
+    # 2026-10-17 ROI: 100 at 12 % compounded yearly - 112 after a year, 125.44 after two, simple interest inside a year
+    _g = growth_rows(100, 12, 24, 6, 12, "2026-01-15")
+    assert [x["value"] for x in _g] == [100, 106, 112, 118.72, 125.44] and _g[-1]["date"] == "2028-01-15", _g
+    assert growth_rows(100, 12, 7, 6)[-1]["month"] == 7 and growth_rows(None, 12, 12) is None and growth_rows(100, 12, 12, 0) is None
+    # 2026-10-17 owner: 10,000 a month for 6 months, each locked a year from its own date - free in months 13..18 at 11,200 each
+    _d = deposit_rows(10000, 6, 1, 12, 12, 12, None, "2026-01-01")
+    assert [x["free_month"] for x in _d] == [13, 14, 15, 16, 17, 18] and {x["value_free"] for x in _d} == {11200}, _d
+    assert _d[0]["free_date"] == "2027-01-01" and _d[-1]["date"] == "2026-06-01"
+    _m = growth_rows(10000, 12, 18, 6, 12, "", 2, 6, 1)
+    assert [x["invested"] for x in _m] == [10000, 60000, 60000, 60000] and _m[2]["value"] == 65700, _m
+    assert growth_rows(10000, 12, 12, 12, 12, "", 2, 1)[-1]["value"] == 11200
+    # real payments on their own dates: a year to the day = 12 %, 6 months = 6 % simple, not yet free before its lock ends
+    _r = deposits_at([{"date": "2026-01-10", "amount": 10000}, {"date": "2026-07-10", "amount": 10000}, {"date": "x", "amount": 5}], "2027-01-10", 12)
+    assert [(x["value_at"], x["free"], x["free_date"]) for x in _r] == [(11200, True, "2027-01-10"), (10600, False, "2027-07-10")], _r
+    assert deposits_at([{"date": "2026-01-10", "amount": 100}], "2026-01-01", 12)[0]["value_at"] == 100 and deposits_at([], "bad", 12) is None
+    _p = payout_rows(1200, 12, 12, 12)
+    assert sum(x["principal"] for x in _p) == 1200 and _p[-1]["balance"] == 0 and _p[-1]["interest"] == 78 and sum(x["interest"] for x in _p[:-1]) == 0, _p
+    assert [x["interest"] for x in payout_rows(1200, 12, 12, 6)] == [0] * 5 + [57] + [0] * 5 + [21] and payout_rows(1, 1, 0) is None
     _arg = next(iter(inspect.signature(OPS["count"]).parameters))
     _sig, _read = inspect.signature, []
     inspect.signature = lambda f: (_read.append(f), _sig(f))[1]
