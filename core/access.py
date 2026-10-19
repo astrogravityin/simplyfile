@@ -349,6 +349,19 @@ def _people_fill(user: dict, rows: list[dict], args: dict) -> list[dict]:
 lists.source("access_people", _people_rows, _people_fill)
 
 
+# 2026-10-19 owner "allow flexi search here" (Groups & rules): the screens a rule can name, searched forgivingly on the
+# server by list access_screens (op fuzzy_rows) - the page only shows the ids that come back.
+def _screen_rows(user: dict, args: dict) -> list[dict]:
+    if not may(user, "access"):
+        raise HTTPException(403, say("no_access", label=label_of("access", "")))
+    return [{"id": s["id"], "label": s["label"], "group": s.get("group") or "", "order": i,
+             "functions_text": " ".join(f["label"] for f in s.get("functions") or [])}
+            for i, s in enumerate(CATALOG) if not s.get("admin")]
+
+
+lists.source("access_screens", _screen_rows)
+
+
 @router.get("/api/core/access")
 def overview(_: dict = Depends(screen("access"))):
     """Groups (few) whole; people are list access_people, so only their COUNT is here, and only the groups' rules -
@@ -862,6 +875,12 @@ if __name__ == "__main__":  # ponytail: one runnable self-check of the resolver 
         _add_grant(d, "group:kid", "video", "", "allow", "t")
         _add_grant(d, "group:kid", "video", "", "deny", "t")
         assert len([x for x in d["grants"] if x["subject"] == "group:kid"]) == 1, "saving a rule again replaces it"
+        # 2026-10-19 owner "allow flexi search here": Groups & rules finds a screen with a typo or half a word
+        found = lists.page("access_screens", own, {"q": "sound frm"})["rows"]
+        assert found and found[0]["id"] == "sound", found
+        assert {r["id"] for r in lists.page("access_screens", own, {"q": "draf"})["rows"]} == {"video"}, "a function's name finds its screen"
+        assert not lists.page("access_screens", own, {"q": "zzqx"})["rows"] and len(lists.page("access_screens", own, {})["rows"]) == len([s for s in CATALOG if not s.get("admin")])
+        assert refused(lists.page, "access_screens", fam[0], {}) == 403, "the screen list is the owner's, like the page"
     # 2026-10-19: data() SAVES its day-one migration, so every core module's self-check that reaches access must point the
     # store at a temp folder - the studio's core/find.py once wrote its real data/access.json this way
     for p_ in sorted(Path(__file__).resolve().parent.glob("*.py")):

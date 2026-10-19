@@ -1,0 +1,98 @@
+{
+  "chip_id": "list.access_screens",
+  "kind": "accessor",
+  "set": "list",
+  "label": "People & access: the screens a rule can open or shut (Groups & rules search)",
+  "aliases": [
+    "rules screen search",
+    "find a screen"
+  ],
+  "params": [
+    {
+      "name": "search_keys",
+      "type": "list",
+      "default": [
+        "label",
+        "group",
+        "functions_text"
+      ],
+      "label": "search keys"
+    },
+    {
+      "name": "sort_key",
+      "type": "text",
+      "default": "order",
+      "label": "sort key"
+    },
+    {
+      "name": "sort_desc",
+      "type": "boolean",
+      "default": false,
+      "label": "sort desc"
+    },
+    {
+      "name": "sorts",
+      "type": "list",
+      "default": [
+        "order",
+        "label"
+      ],
+      "label": "sorts"
+    },
+    {
+      "name": "page_size",
+      "type": "number",
+      "default": 500,
+      "label": "page size (every screen fits one page)"
+    },
+    {
+      "name": "max_page_size",
+      "type": "number",
+      "default": 500,
+      "label": "max page size"
+    },
+    {
+      "name": "fuzzy_min",
+      "type": "number",
+      "default": 0.75,
+      "label": "Forgiving search: how close a typo or half word must be (0 = exact words only; op fuzzy_rows)"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "search_keys": "$search_keys",
+      "sort_key": "$sort_key",
+      "sort_desc": "$sort_desc",
+      "sorts": "$sorts",
+      "page_size": "$page_size",
+      "max_page_size": "$max_page_size",
+      "fuzzy_min": "$fuzzy_min"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-19 owner \"allow flexi search here\": the search box over Groups & rules. Rows = every screen a rule can open (owner-only screens never), with their functions' names; searched forgivingly by op fuzzy_rows (a typo or half a word still finds it), in menu order when nothing is typed.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "search_keys": [
+          "label",
+          "group",
+          "functions_text"
+        ],
+        "sort_key": "order",
+        "sort_desc": false,
+        "sorts": [
+          "order",
+          "label"
+        ],
+        "page_size": 500,
+        "max_page_size": 500,
+        "fuzzy_min": 0.75
+      }
+    }
+  ]
+}

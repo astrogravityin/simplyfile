@@ -1270,3 +1270,38 @@ select option{background:var(--panel);color:var(--ink)}
   .startcard .sc-steps .sc-go,.startcard .sc-steps li > .tag{grid-column:2;justify-self:start}
   .startcard li.done .sc-body .muted{display:none}
 }
+
+/* Flexi search over a list (2026-10-19 owner: "Any list should come with flexi search" - a typo or half a word still
+   finds it; the server searches with op fuzzy_rows, the page hides what did not come back) */
+.fx-find{display:flex;align-items:center;gap:9px;margin:6px 0 14px;padding:0 6px 0 13px;border:1px solid var(--edge);
+  border-radius:999px;background:var(--panel-2);color:var(--muted);cursor:text;
+  transition:border-color .15s,box-shadow .15s,background .15s,color .15s}
+.fx-find:hover{background:var(--panel);border-color:var(--brand-line,var(--line-2))}
+.fx-find:focus-within{background:var(--panel);border-color:var(--brand);box-shadow:var(--ring);color:var(--brand)}
+.fx-find>svg{flex:none;transition:color .15s}
+.fx-find input{flex:1;min-width:0;border:0;background:none;box-shadow:none;padding:10px 0;min-height:0;outline:none;
+  color:var(--ink);font:inherit;font-size:14px}
+.fx-find input::-webkit-search-cancel-button{display:none}
+.fx-tag,.fx-n{flex:none;display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:999px;
+  font-size:11.5px;font-weight:600;line-height:1.4;white-space:nowrap}
+.fx-tag{background:var(--brand-soft);color:var(--brand)}
+.fx-n{background:var(--panel);border:1px solid var(--line);color:var(--ink-2);font-variant-numeric:tabular-nums}
+.fx-clear{flex:none;display:grid;place-items:center;width:28px;height:28px;min-height:0;padding:0;border:0;border-radius:50%;
+  background:transparent;box-shadow:none;color:var(--muted);cursor:pointer}
+.fx-clear:hover{background:var(--bg-2);color:var(--ink)}
+.fx-clear:focus-visible{box-shadow:var(--ring);outline:none}
+.fx-find [hidden],.fx-none[hidden],table.rules[hidden],table.rules tr[hidden]{display:none}
+.fx-none{display:flex;flex-direction:column;align-items:center;gap:6px;padding:20px 12px 28px;text-align:center;
+  color:var(--muted);animation:fx-in .2s ease-out}
+.fx-none b{color:var(--ink);font-size:15px;font-weight:600}
+.fx-art{width:148px;height:auto;margin-bottom:6px}
+.fx-art .sh{fill:var(--line);opacity:.7}
+.fx-art .pg{fill:var(--panel);stroke:var(--line-2);stroke-width:1.5}
+.fx-art .ln{fill:var(--line-2)}
+.fx-art .ln2{fill:var(--line)}
+.fx-art .lens{fill:var(--brand-soft)}
+.fx-art .x{fill:none;stroke:var(--brand);stroke-width:3;stroke-linecap:round}
+.fx-art .spk{fill:none;stroke:var(--brand-2);stroke-width:2.2;stroke-linecap:round}
+.fx-art .dot{fill:var(--brand-2);opacity:.45}
+@keyframes fx-in{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.fx-none{animation:none}}

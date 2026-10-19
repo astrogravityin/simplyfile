@@ -898,6 +898,36 @@
       "name": "check_groups",
       "type": "text",
       "default": "In {groups}: they see only what these groups (and the groups they inherit from) and their own rules allow. A deny always wins."
+    },
+    {
+      "name": "find_screen",
+      "type": "text",
+      "default": "Find a screen or a function"
+    },
+    {
+      "name": "no_screen_match",
+      "type": "text",
+      "default": "Nothing matches “{q}”"
+    },
+    {
+      "name": "typo_ok",
+      "type": "text",
+      "default": "Typos OK"
+    },
+    {
+      "name": "matches_n",
+      "type": "text",
+      "default": "{n} of {total}"
+    },
+    {
+      "name": "clear_search",
+      "type": "text",
+      "default": "Clear search"
+    },
+    {
+      "name": "no_screen_hint",
+      "type": "text",
+      "default": "Try fewer letters, or another word from the screen’s name."
     }
   ],
   "expr": {
@@ -1080,7 +1110,13 @@
       "group_inherits_none": "$group_inherits_none",
       "person_in_no_group": "$person_in_no_group",
       "check_catch_all": "$check_catch_all",
-      "check_groups": "$check_groups"
+      "check_groups": "$check_groups",
+      "find_screen": "$find_screen",
+      "no_screen_match": "$no_screen_match",
+      "typo_ok": "$typo_ok",
+      "matches_n": "$matches_n",
+      "clear_search": "$clear_search",
+      "no_screen_hint": "$no_screen_hint"
     }
   },
   "returns": "record",
@@ -1268,7 +1304,13 @@
         "group_inherits_none": "Inherits nothing: its members see only what this group allows.",
         "person_in_no_group": "Catch All (in no group)",
         "check_catch_all": "In no group: Catch All decides what this person sees, with their own rules on top. A deny always wins.",
-        "check_groups": "In {groups}: they see only what these groups (and the groups they inherit from) and their own rules allow. A deny always wins."
+        "check_groups": "In {groups}: they see only what these groups (and the groups they inherit from) and their own rules allow. A deny always wins.",
+        "find_screen": "Find a screen or a function",
+        "no_screen_match": "Nothing matches “{q}”",
+        "typo_ok": "Typos OK",
+        "matches_n": "{n} of {total}",
+        "clear_search": "Clear search",
+        "no_screen_hint": "Try fewer letters, or another word from the screen’s name."
       }
     }
   ],

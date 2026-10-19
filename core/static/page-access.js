@@ -11,6 +11,20 @@ let checkUser = '';
 let checkLabel = '';
 const picked = {};                 // the person rows this page has fetched (list access_people), by id
 let d = null;                       // the last /api/core/access answer
+// the "nothing found" picture: a page of rows under a lens (colours are the portal's own, so dark mode follows)
+const FX_ART = `<svg class="fx-art" viewBox="0 0 132 96" aria-hidden="true">
+  <defs><linearGradient id="fx-grad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" style="stop-color:var(--brand)"/><stop offset="1" style="stop-color:var(--brand-2)"/></linearGradient></defs>
+  <ellipse class="sh" cx="64" cy="88" rx="44" ry="5"/>
+  <rect class="pg" x="16" y="12" width="66" height="70" rx="11"/>
+  <rect class="ln" x="27" y="25" width="34" height="6" rx="3"/><rect class="ln2" x="27" y="39" width="44" height="6" rx="3"/>
+  <rect class="ln2" x="27" y="53" width="26" height="6" rx="3"/><rect class="ln2" x="27" y="67" width="38" height="6" rx="3"/>
+  <circle class="lens" cx="86" cy="50" r="19" stroke="url(#fx-grad)" stroke-width="5"/>
+  <path d="M100 64l15 15" stroke="url(#fx-grad)" stroke-width="8" stroke-linecap="round"/>
+  <path class="x" d="M80 44l12 12M92 44L80 56"/>
+  <path class="spk" d="M110 14v9M105.5 18.5h9M22 4v6M19 7h6"/>
+  <circle class="dot" cx="118" cy="36" r="2.5"/><circle class="dot" cx="8" cy="40" r="2"/>
+</svg>`;
+let ruleQ = '';                    // what the Rules tab's screen search holds (kept while rules are clicked)
 
 // Every word on this screen is chip ui.access (core/words.py) - none is written here.
 const w = (k, v) => t('access', k, v);
@@ -333,13 +347,46 @@ async function ruleDetail(box, host) {
           ${g.members_n ? '' : `<i>${w('no_members')}</i>`}`)
       : w('person_rules', { groups: p.groups.map((x) => `<span class="tag">${esc(groupName(x))}</span>`).join(' ') || esc(w('person_in_no_group')) })}</p>
     ${g && !isCatchAll(g) && g.members_n ? '<div id="grp-members" class="small" style="margin-bottom:10px"></div>' : ''}
-    <table class="rules"><thead><tr><th>${w('col_screen')}</th><th>${w('col_rule')}</th></tr></thead><tbody>
-    ${d.catalog.filter((s) => !s.admin).map((s) => `<tr><td><b>${esc(s.label)}</b> <span class="small muted">${esc(s.group || '')}</span></td>
+    <div class="fx-find">${icon('search', 16)}
+      <input type="search" id="rule-find" placeholder="${esc(w('find_screen'))}" aria-label="${esc(w('find_screen'))}" value="${esc(ruleQ)}" autocomplete="off">
+      <span class="fx-tag" id="rule-tag">${icon('spark', 11)} ${w('typo_ok')}</span><span class="fx-n" id="rule-n" hidden></span>
+      <button type="button" class="fx-clear" id="rule-clear" hidden aria-label="${esc(w('clear_search'))}" title="${esc(w('clear_search'))}">${icon('close', 14)}</button></div>
+    <div class="fx-none" id="rule-none" hidden>${FX_ART}<b id="rule-none-q"></b><span class="small">${w('no_screen_hint')}</span></div>
+    <table class="rules" id="rule-table"><thead><tr><th>${w('col_screen')}</th><th>${w('col_rule')}</th></tr></thead><tbody>
+    ${d.catalog.filter((s) => !s.admin).map((s) => `<tr data-sid="${esc(s.id)}"><td><b>${esc(s.label)}</b> <span class="small muted">${esc(s.group || '')}</span></td>
         <td>${choice(s.id, '', w('open'))}</td></tr>
-      ${(s.functions || []).map((f) => `<tr class="fn"><td>↳ ${esc(f.label)}</td><td>${choice(s.id, f.id, w('as_screen'))}</td></tr>`).join('')}`).join('')}
+      ${(s.functions || []).map((f) => `<tr class="fn" data-sid="${esc(s.id)}"><td>↳ ${esc(f.label)}</td><td>${choice(s.id, f.id, w('as_screen'))}</td></tr>`).join('')}`).join('')}
     </tbody></table>
     <p class="small muted" style="margin-top:12px">${icon('lock', 13)} ${esc(d.catalog.filter((s) => s.admin).map((s) => s.label).join(', '))}
       ${w('owner_only_note')}</p>`;
+  // 2026-10-19 owner "allow flexi search here": the server searches (list access_screens, op fuzzy_rows) - a typo or half
+  // a word still finds the screen; the page only hides the rows that did not come back
+  const find = box.querySelector('#rule-find');
+  const showOnly = async () => {
+    const q = find.value.trim(); ruleQ = find.value;
+    let ids = null;
+    if (q) {
+      try { ids = new Set((await api(`/api/lists/access_screens?${new URLSearchParams({ q })}`)).rows.map((r) => r.id)); }
+      catch (e) { toast(e.message, 'bad'); return; }
+    }
+    if (find.value !== ruleQ) return;                  // typed on meanwhile: the newer search answers
+    box.querySelectorAll('tr[data-sid]').forEach((tr) => { tr.hidden = !!ids && !ids.has(tr.dataset.sid); });
+    const total = d.catalog.filter((s) => !s.admin).length;
+    const n = box.querySelector('#rule-n');
+    n.hidden = !ids; n.textContent = ids ? w('matches_n', { n: ids.size, total }) : '';
+    box.querySelector('#rule-tag').hidden = !!ids;
+    box.querySelector('#rule-clear').hidden = !find.value;
+    box.querySelector('#rule-none').hidden = !ids || ids.size > 0;
+    box.querySelector('#rule-table').hidden = !!ids && !ids.size;
+    box.querySelector('#rule-none-q').innerHTML = w('no_screen_match', { q: esc(q) });
+  };
+  let findTimer = 0;
+  find.oninput = () => {
+    box.querySelector('#rule-clear').hidden = !find.value;
+    clearTimeout(findTimer); findTimer = setTimeout(showOnly, 300);   // ponytail: listBox's pause
+  };
+  box.querySelector('#rule-clear').onclick = () => { find.value = ''; showOnly(); find.focus(); };
+  if (ruleQ.trim()) showOnly();
   const members = box.querySelector('#grp-members');
   if (members) listBox(members, { list: 'access_people', args: { group: g.id }, row: (m) => `<span class="tag">${esc(m.email)}</span> ` });
   box.querySelectorAll('.switch').forEach((sw) => {

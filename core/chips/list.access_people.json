@@ -67,9 +67,9 @@
     }
   },
   "returns": "record",
-  "version": 1,
+  "version": 2,
   "status": "published",
-  "description_nl": "2026-09-28. A list that grows with the number of people: searched, sorted and paged on the server by op rows_view (core/lists.py); one page reaches the screen. search_keys = the fields a search looks in; sort_key/sort_desc = the order it opens in; sorts = the other fields a viewer may sort by; page_size rows a page (max_page_size at most).",
+  "description_nl": "2026-09-28. A list that grows with the number of people: searched, sorted and paged on the server by op rows_view (core/lists.py); one page reaches the screen. search_keys = the fields a search looks in; sort_key/sort_desc = the order it opens in; sorts = the other fields a viewer may sort by; page_size rows a page (max_page_size at most). 2026-10-19: deliberately exact (no fuzzy_min) - people are found by email/user name, and a forgiving search over 5,000 look-alike emails returned 1,769 for one address (tv selfcheck access scale test).",
   "test_cases": [
     {
       "args": {},
