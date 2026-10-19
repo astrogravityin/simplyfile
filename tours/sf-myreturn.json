@@ -47,6 +47,7 @@
     "a few questions",
     "already filed?",
     "file it",
+    "why the JSON says what it says",
     "updated return"
   ],
   "steps": [
@@ -616,6 +617,24 @@
         },
         {
           "highlight_target": "#mr-json|.mr-file",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Why the JSON says what it says",
+      "say": "Under the download, every rule and assumption behind your return, with your own figures: the regime and the standard deduction, the 87A rebate, surcharge and cess, interest and the late fee, how your TDS and challans were counted, and the bank for the refund. Each line names the rule that decided it; an amber line needs you before you upload.",
+      "do": [
+        {
+          "click": ".mr-node[data-step='file']",
+          "optional": true
+        },
+        {
+          "wait": 1.2
+        },
+        {
+          "highlight_target": "#mr-rules|.mr-file",
           "optional": true,
           "timeout": 5
         }

@@ -1,0 +1,115 @@
+{
+  "chip_id": "ui.itrrules",
+  "kind": "accessor",
+  "set": "ui",
+  "label": "Words: Rules and assumptions beside the ITR JSON",
+  "aliases": [
+    "itr rules words"
+  ],
+  "params": [
+    {
+      "name": "title",
+      "type": "text",
+      "default": "Rules and assumptions in this JSON",
+      "label": "title"
+    },
+    {
+      "name": "lede",
+      "type": "text",
+      "default": "What {product} decided while making this file, with the figures it used. Each line names the rule (chip) that decided it.",
+      "label": "lede"
+    },
+    {
+      "name": "flow_1",
+      "type": "text",
+      "default": "Your figures",
+      "label": "flow_1"
+    },
+    {
+      "name": "flow_2",
+      "type": "text",
+      "default": "Rules (chips)",
+      "label": "flow_2"
+    },
+    {
+      "name": "flow_3",
+      "type": "text",
+      "default": "CBDT schema",
+      "label": "flow_3"
+    },
+    {
+      "name": "flow_4",
+      "type": "text",
+      "default": "JSON file",
+      "label": "flow_4"
+    },
+    {
+      "name": "count",
+      "type": "text",
+      "default": "Rules applied: {n}",
+      "label": "count"
+    },
+    {
+      "name": "rule",
+      "type": "text",
+      "default": "Rule",
+      "label": "rule"
+    },
+    {
+      "name": "missing",
+      "type": "text",
+      "default": "A rule could not read a figure: {names}",
+      "label": "missing"
+    },
+    {
+      "name": "wait",
+      "type": "text",
+      "default": "Reading the rules…",
+      "label": "wait"
+    },
+    {
+      "name": "attention",
+      "type": "text",
+      "default": "{n} {n:needs|need} your attention",
+      "label": "attention"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "title": "$title",
+      "lede": "$lede",
+      "flow_1": "$flow_1",
+      "flow_2": "$flow_2",
+      "flow_3": "$flow_3",
+      "flow_4": "$flow_4",
+      "count": "$count",
+      "rule": "$rule",
+      "missing": "$missing",
+      "wait": "$wait",
+      "attention": "$attention"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-19: the words of the Rules and assumptions card beside the ITR JSON download (Compute & close, My return).",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "title": "Rules and assumptions in this JSON",
+        "lede": "What {product} decided while making this file, with the figures it used. Each line names the rule (chip) that decided it.",
+        "flow_1": "Your figures",
+        "flow_2": "Rules (chips)",
+        "flow_3": "CBDT schema",
+        "flow_4": "JSON file",
+        "count": "Rules applied: {n}",
+        "rule": "Rule",
+        "missing": "A rule could not read a figure: {names}",
+        "wait": "Reading the rules…",
+        "attention": "{n} {n:needs|need} your attention"
+      }
+    }
+  ]
+}

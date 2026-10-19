@@ -8,6 +8,7 @@ import { hue, initials } from './page-clients.js';
 import { icon } from './icons.js';
 import { historyButton, wireHistory } from './changes.js';
 import { companyCard, wireCompanyCard } from './company.js';   // 2026-10-11 ITR-6: a company's section
+import { rulesCard } from './itr-rules.js';                  // 2026-10-19: the rules and assumptions beside the JSON
 
 const w = (k, v) => t('compute', k, v);
 const money = (n) => `₹${Math.round(Number(n || 0)).toLocaleString(ps('compute').money_locale)}`;
@@ -63,7 +64,7 @@ const datesRow = (d) => `<div class="cc-dates small"><span>${esc(w('due_on', { d
   <span>${esc(w('revise_by', { date: day(d.dates.revise_by) }))}</span><span>${esc(w('updated_by', { date: day(d.dates.updated_by) }))}</span></div>`;
 
 export async function computePage(host) {
-  await loadWords('compute', 'intake', 'itrimport', 'changes');   // the client picker speaks intake's words (2026-10-10: it showed [intake.pick])
+  await loadWords('compute', 'intake', 'itrimport', 'changes', 'itrrules');   // the client picker speaks intake's words (2026-10-10: it showed [intake.pick])
   const p = new URLSearchParams((location.hash.split('?')[1]) || '');
   if (!p.get('c')) return clientPicker(host, 'compute');
   const K = await api('/api/clients/settings');
@@ -129,6 +130,7 @@ export async function computePage(host) {
             <div class="cc-itr-box small"><span id="cc-itr-check" class="cc-check">${esc(w('itr_checking'))}</span></div>
             ${d.client.audit ? `<a class="cc-file" href="${BASE}${base}/3cd.json">${fileMark('3CD', '--warn')}<span><b>${esc(w('dl_3cd_json'))}</b><small>${esc(w('dl_3cd_json_hint'))}</small></span></a>
             <div class="cc-itr-box small"><span id="cc-3cd-check" class="cc-check">${esc(w('itr_checking'))}</span></div>` : ''}</div></section>
+          ${d.company ? '' : `<section class="card ir-card" id="cc-rules"><p class="small muted">${esc(t('itrrules', 'wait'))}</p></section>`}
           ${d.imported ? `<section class="card cc-asfiled"><h3 class="rc-h">${icon('folder', 15)} ${esc(t('itrimport', 'as_filed', { form: d.imported.form }))}</h3>
             <table class="cc-tbl small"><colgroup><col><col class="cc-numcol-s"></colgroup>${[['f_income', d.imported.figures.income], ['f_tax', d.imported.figures.tax_net],
               ['f_tds', d.imported.figures.tds], ['f_paid', d.imported.figures.paid], ['f_refund', d.imported.figures.refund], ['f_payable', d.imported.figures.payable]]
@@ -170,6 +172,8 @@ export async function computePage(host) {
       if (!el || gen !== drawn) return;
       el.className = `cc-check ${r.valid ? 'is-ok' : 'is-bad'}`;
       el.textContent = r.valid ? w('itr_valid', { schema: r.schema }) : w('itr_issues', { n: r.error_count });
+      const rc = host.querySelector('#cc-rules');
+      if (rc) rc.innerHTML = rulesCard(r.rules);
       const bk = r.books || {};                                   // balance sheet and P&L from mapped rows: do they tie?
       if (bk.items) {
         const tie = (ok, good, bad, v) => `<div class="cc-check ${ok ? 'is-ok' : 'is-bad'}">${esc(w(ok ? good : bad, v))}</div>`;

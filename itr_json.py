@@ -21,7 +21,7 @@ from fastapi import HTTPException
 import clients
 import compute
 import recon
-from core import engine
+from core import engine, ops
 
 HERE = Path(__file__).resolve().parent
 
@@ -147,6 +147,11 @@ def facts(cid: str, ay: str) -> dict:
                       "amount": _int(x["amount"])} for x in d["paid"]],
         "banks": banks, "has_banks": yn(banks),
         "auditor": _auditor(c) if y.get("audit") else {},
+        # 2026-10-19 owner: the rules and assumptions shown beside the JSON (chip itr.assumptions) read these
+        "why": {"ay": ay, "kind": kind, "regime": d["regime"], "reg": next((r for r in compute.settings()["regimes"] if r["id"] == d["regime"]), {}),
+                "surcharge_rate": x.get("surcharge_rate") or 0, "filing_day": _iso(d["interest_auto"]["filing_day"]),
+                "fy_end": _iso(compute.year_day(ay, "end")), "tds_n": len(tds_rows), "challans_n": len(d["paid"]),
+                "bank1": (banks[0]["bank"] or banks[0]["ifsc"]) if banks else "", "banks_more": max(len(banks) - 1, 0)},
     }
     if d.get("company"):                                  # a company (ITR-6): its schedules' facts, in our words (company.itr_facts)
         import company  # noqa: PLC0415
@@ -370,7 +375,8 @@ def build(cid: str, ay: str, kind: str = "itr") -> tuple[dict, dict]:
         m = engine.run("itr.map")["forms"].get(form) or []
     doc, filled, s, root, wrap = _fill(f, spec, m)
     bk = books(cid, ay, doc[wrap][root], s, root) if kind == "itr" else None
-    return doc, _checked(doc, s, spec, form, kind, filled) | {"books": bk}
+    rep = _checked(doc, s, spec, form, kind, filled) | {"books": bk}
+    return doc, rep | ({"rules": assumptions(f | {"schema": rep["schema"]}, "firm")} if kind == "itr" else {})
 
 
 def assemble(f: dict, form: str) -> tuple[dict, dict]:
@@ -381,7 +387,43 @@ def assemble(f: dict, form: str) -> tuple[dict, dict]:
     if not spec:
         raise HTTPException(409, say("itr_no_schema", form=form))
     doc, filled, s, _root, _wrap = _fill(f, spec, own_rows(form))
-    return doc, _checked(doc, s, spec, form, "itr", filled) | {"books": None}
+    rep = _checked(doc, s, spec, form, "itr", filled) | {"books": None}
+    return doc, rep | {"rules": assumptions(f | {"schema": rep["schema"]}, "self")}
+
+
+def _money(v, style: str):
+    """Every amount in the facts written with its digits grouped (op group_digits) - the {m.<fact>} a rule says."""
+    if isinstance(v, dict):
+        return {k: _money(x, style) for k, x in v.items()}
+    if isinstance(v, list):
+        return [_money(x, style) for x in v]
+    return ops.group_digits(v, style) if isinstance(v, (int, float)) and not isinstance(v, bool) else v
+
+
+def assumptions(f: dict, side: str) -> dict:
+    """The rules and assumptions behind this JSON, in words (2026-10-19 owner: "the detail rules / assumptions applied to
+    generate the ITR ... next to the json file"). Each row of chip itr.assumptions whose side, form and condition hold, its
+    {slots} filled from the facts; {m.<fact>} is the amount in rupees. `missing` names a slot no fact answers - never shown blank
+    unnoticed (itr_json / selfcheck assert it is empty)."""
+    k = engine.run("itr.assumptions")
+    vals = f | {"m": _money(f, k["money_style"])}
+    missing: set = set()
+    groups = []
+    for g in k["groups"]:
+        items = []
+        for row in k["rows"]:
+            if row["group"] != g["id"] or side not in row["sides"] or (row.get("forms") and f.get("form") not in row["forms"]):
+                continue
+            if row.get("when"):
+                v = ops.get(vals, row["when"])
+                hit = str(v) in [str(x) for x in row["is"]] if "is" in row else bool(v)
+                if hit == bool(row.get("not")):
+                    continue
+            missing |= {s for s in re.findall(r"\{([A-Za-z_][\w.\-]*)", row["say"]) if ops.get(vals, s) is None}
+            items.append({"say": ops.template(row["say"], vals), "rule": row.get("rule", ""), "warn": bool(row.get("warn"))})
+        if items:
+            groups.append({"id": g["id"], "label": g["label"], "items": items})
+    return {"groups": groups, "count": sum(len(x["items"]) for x in groups), "missing": sorted(missing)}
 
 
 def own_rows(form: str) -> list:
@@ -460,4 +502,13 @@ if __name__ == "__main__":  # ponytail: the schema loads, the skeleton is shaped
         assert set(s["definitions"][root]["required"]) <= set(sk), form
         jsonschema.Draft4Validator.check_schema(s)
     assert engine.run("itr.codes")["sections"]["194A"] == "94A"
+    # 2026-10-19: the rules beside the JSON - each row in a known group and side, naming a chip that exists, its condition well formed
+    ra = engine.run("itr.assumptions")
+    gids = {g["id"] for g in ra["groups"]}
+    for row in ra["rows"]:
+        assert row["group"] in gids and row["sides"] and set(row["sides"]) <= {"firm", "self"}, row
+        assert not row.get("rule") or row["rule"] in engine.chips(), f"itr.assumptions cites {row['rule']}, no such chip"
+        assert ("is" not in row and "not" not in row) or row.get("when"), row
+    for side in ("firm", "self"):
+        assert {g for r in ra["rows"] if side in r["sides"] for g in [r["group"]]} == gids, f"every group says something for {side}"
     print("itr_json self-check OK")

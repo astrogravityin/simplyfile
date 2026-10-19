@@ -18,6 +18,7 @@
     "a company's section: depreciation, losses, MAT and its credit (ITR-6)",
     "234A/B/C and 244A interest, worked out",
     "ITR-3 / ITR-5 JSON and the 3CD JSON",
+    "the rules and assumptions behind the JSON",
     "balance sheet and P&L checks",
     "original, belated, revised and updated returns"
   ],
@@ -28,6 +29,14 @@
       "do": [
         {
           "wait": 1
+        },
+        {
+          "wait": 1
+        },
+        {
+          "fill": "#in-pick .lb-q",
+          "text": "Ramesh",
+          "optional": true
         },
         {
           "wait": 1
@@ -101,6 +110,17 @@
       "do": [
         {
           "highlight_target": ".cc-dl|main",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Rules and assumptions",
+      "say": "Right under the JSON, every rule and assumption that made it, numbered and in plain words, with this client's own figures: the return type and its due date, how the name and address were read, the regime, the tax, surcharge, cess and interest, advance tax against self-assessment tax, and the bank that receives the refund. Each line names the chip that decided it, and anything you must fix before you upload shows in amber.",
+      "do": [
+        {
+          "highlight_target": "#cc-rules|.cc-side",
           "optional": true,
           "timeout": 5
         }

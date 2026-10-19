@@ -2498,3 +2498,19 @@ button.fi-pick:hover,button.fi-pick:focus-visible{border-color:var(--brand);box-
 .bk-need .grid{margin-top:8px}
 .bk-privacy-blur{filter:blur(6px)!important}
 @media (max-width:860px){.bk-grid{grid-template-columns:1fr}.bk-side{position:static;order:-1}}
+
+/* 2026-10-19 Rules and assumptions beside the ITR JSON (static/itr-rules.js) - numbered, grouped, warnings in amber */
+.ir-card{border-left:4px solid var(--brand);counter-reset:ir}
+.ir-title{display:flex;align-items:center;gap:8px;flex-wrap:wrap;color:var(--brand)}.ir-title b{color:var(--ink);font-size:15px}
+.ir-head p{margin:6px 0 4px}
+.ir-flow{display:block;width:100%;max-width:440px;height:auto;margin:4px 0 6px}
+.ir-list,.ir-list ol{list-style:none;margin:0;padding:0}
+.ir-group h4{margin:12px 0 6px;font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.ir-group li{counter-increment:ir;display:flex;gap:8px;align-items:flex-start;flex-wrap:wrap;padding:6px 8px;border-radius:8px;font-size:13px;line-height:1.45}
+.ir-group li::before{content:counter(ir);flex:0 0 22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:700;background:var(--brand-soft);color:var(--brand)}
+.ir-group li:nth-child(odd){background:var(--panel-2)}
+.ir-group li>span{flex:1 1 0;min-width:0}
+.ir-group li{flex-wrap:nowrap}
+.ir-group li.is-warn{background:var(--warn-soft);color:var(--ink)}.ir-group li.is-warn::before{background:var(--warn);color:#fff}
+.ir-group li.is-warn svg{color:var(--warn);margin-top:3px}
+.ir-rule{align-self:flex-start;margin-top:1px;font-size:10.5px;padding:1px 6px;border-radius:6px;background:var(--panel);border:1px solid var(--line);color:var(--muted);white-space:nowrap}

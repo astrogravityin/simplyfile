@@ -1,0 +1,1472 @@
+{
+  "chip_id": "itr.assumptions",
+  "kind": "accessor",
+  "set": "itr",
+  "label": "ITR JSON: the rules and assumptions shown beside it",
+  "aliases": [
+    "itr rules and assumptions",
+    "why the json says this"
+  ],
+  "params": [
+    {
+      "name": "groups",
+      "type": "json",
+      "default": [
+        {
+          "id": "return",
+          "label": "The return and the year"
+        },
+        {
+          "id": "person",
+          "label": "Who is filing"
+        },
+        {
+          "id": "income",
+          "label": "Income and tax"
+        },
+        {
+          "id": "paid",
+          "label": "Taxes paid, refund and bank"
+        },
+        {
+          "id": "json",
+          "label": "How the JSON is filled"
+        },
+        {
+          "id": "check",
+          "label": "Check before you upload"
+        }
+      ],
+      "label": "groups (in order)"
+    },
+    {
+      "name": "rows",
+      "type": "json",
+      "default": [
+        {
+          "group": "return",
+          "sides": [
+            "firm",
+            "self"
+          ],
+          "say": "{form} for assessment year {why.ay} (the income of the year ending {why.fy_end}), on the CBDT's own schema {schema} (incometax.gov.in > Downloads).",
+          "rule": "itr.settings"
+        },
+        {
+          "group": "return",
+          "sides": [
+            "firm",
+            "self"
+          ],
+          "say": "An original return under section 139(1) - return code {filing.section}, due by {filing.due}.",
+          "rule": "close.dates",
+          "when": "why.kind",
+          "is": [
+            "original"
+          ]
+        },
+        {
+          "group": "return",
+          "sides": [
+            "firm",
+            "self"
+          ],
+          "say": "A belated return under section 139(4) - return code {filing.section}; the due date {filing.due} has passed, so a late fee and interest apply.",
+          "rule": "close.dates",
+          "when": "why.kind",
+          "is": [
+            "belated"
+          ]
+        },
+        {
+          "group": "return",
+          "sides": [
+            "firm"
+          ],
+          "say": "A revised return under section 139(5) - return code {filing.section}, quoting the original acknowledgement {filing.orig_ack} filed on {filing.orig_date}.",
+          "rule": "close.dates",
+          "when": "why.kind",
+          "is": [
+            "revised"
+          ]
+        },
+        {
+          "group": "return",
+          "sides": [
+            "self"
+          ],
+          "say": "A revised return under section 139(5) - return code {filing.section}.",
+          "rule": "close.dates",
+          "when": "why.kind",
+          "is": [
+            "revised"
+          ]
+        },
+        {
+          "group": "return",
+          "sides": [
+            "firm",
+            "self"
+          ],
+          "say": "An updated return (ITR-U) under section 139(8A) - return code {filing.section}; additional tax is due on the extra income.",
+          "rule": "close.itr_u",
+          "when": "why.kind",
+          "is": [
+            "updated"
+          ]
+        },
+        {
+          "group": "return",
+          "sides": [
+            "firm"
+          ],
+          "say": "Tax audit under section 44AB applies: the auditor is {auditor.name} (PAN {auditor.pan}), the CA firm this client belongs to.",
+          "rule": "audit.applicable",
+          "when": "filing.audit",
+          "is": [
+            "Y"
+          ]
+        },
+        {
+          "group": "person",
+          "sides": [
+            "firm"
+          ],
+          "say": "Status code {client.status} (as the schema writes it), resident in India.",
+          "rule": "itr.codes",
+          "when": "client.residential",
+          "is": [
+            "RES"
+          ]
+        },
+        {
+          "group": "person",
+          "sides": [
+            "firm"
+          ],
+          "say": "Status code {client.status} (as the schema writes it), non-resident.",
+          "rule": "itr.codes",
+          "when": "client.residential",
+          "is": [
+            "NRI"
+          ]
+        },
+        {
+          "group": "person",
+          "sides": [
+            "self"
+          ],
+          "say": "Filing as an individual (status code I).",
+          "rule": "myreturn.json",
+          "when": "client.status_code",
+          "is": [
+            "I"
+          ]
+        },
+        {
+          "group": "person",
+          "sides": [
+            "self"
+          ],
+          "say": "Filing as a Hindu undivided family (status code H), signed by the karta.",
+          "rule": "myreturn.json",
+          "when": "client.status_code",
+          "is": [
+            "H"
+          ]
+        },
+        {
+          "group": "person",
+          "sides": [
+            "self"
+          ],
+          "say": "Resident (RES) - income from anywhere in the world counts (section 6).",
+          "rule": "myreturn.json",
+          "when": "filing.residential",
+          "is": [
+            "RES"
+          ]
+        },
+        {
+          "group": "person",
+          "sides": [
+            "self"
+          ],
+          "say": "Resident but not ordinarily resident (NOR) - foreign income counts only if earned or controlled from India (section 6(6)).",
+          "rule": "myreturn.json",
+          "when": "filing.residential",
+          "is": [
+            "NOR"
+          ]
+        },
+        {
+          "group": "person",
+          "sides": [
+            "self"
+          ],
+          "say": "Non-resident (NRI) - only income earned or received in India counts (section 6); no rebate under section 87A.",
+          "rule": "myreturn.json",
+          "when": "filing.residential",
+          "is": [
+            "NRI"
+          ]
+        },
+        {
+          "group": "person",
+          "sides": [
+            "firm"
+          ],
+          "say": "Name as the schema wants it: first name \"{client.first}\", surname \"{client.surname}\" (the last word of the name).",
+          "rule": "itr.codes",
+          "when": "client.first"
+        },
+        {
+          "group": "person",
+          "sides": [
+            "firm"
+          ],
+          "say": "The full name \"{client.surname}\" goes in as the organisation's name.",
+          "rule": "itr.codes",
+          "when": "client.first",
+          "not": true
+        },
+        {
+          "group": "person",
+          "sides": [
+            "self"
+          ],
+          "say": "Name as the schema wants it: first \"{client.first}\", middle \"{client.middle}\", surname \"{client.surname}\" - as the documents give them.",
+          "rule": "myreturn.json",
+          "when": "client.middle"
+        },
+        {
+          "group": "person",
+          "sides": [
+            "self"
+          ],
+          "say": "Name as the schema wants it: first \"{client.first}\", surname \"{client.surname}\" - as the documents give them, else the last word of the name is the surname.",
+          "rule": "myreturn.json",
+          "when": "client.middle",
+          "not": true
+        },
+        {
+          "group": "person",
+          "sides": [
+            "firm"
+          ],
+          "say": "Address read from the client's address, split at its commas: \"{client.flat}\" (flat / door), \"{client.area}\" (area), \"{client.city}\" (city).",
+          "rule": "itr.map",
+          "when": "client.flat"
+        },
+        {
+          "group": "person",
+          "sides": [
+            "firm"
+          ],
+          "say": "No address on the client - add it in Clients & years; the schema needs the flat, city, state and PIN.",
+          "rule": "itr.map",
+          "when": "client.flat",
+          "warn": true,
+          "not": true
+        },
+        {
+          "group": "person",
+          "sides": [
+            "firm"
+          ],
+          "say": "PIN {client.pin}, the last six-digit number in the address.",
+          "rule": "itr.map",
+          "when": "client.pin"
+        },
+        {
+          "group": "person",
+          "sides": [
+            "firm"
+          ],
+          "say": "No PIN in the client's address - add the six-digit PIN in Clients & years.",
+          "rule": "itr.map",
+          "when": "client.pin",
+          "warn": true,
+          "not": true
+        },
+        {
+          "group": "person",
+          "sides": [
+            "self"
+          ],
+          "say": "Address: what was typed on Review, else the pre-filled JSON or AIS, else the client's address - \"{client.flat}\", \"{client.area}\", \"{client.city}\".",
+          "rule": "myreturn.json",
+          "when": "client.flat"
+        },
+        {
+          "group": "person",
+          "sides": [
+            "self"
+          ],
+          "say": "No address found - type it on Review; the schema needs the flat, city, state and PIN.",
+          "rule": "myreturn.json",
+          "when": "client.flat",
+          "warn": true,
+          "not": true
+        },
+        {
+          "group": "person",
+          "sides": [
+            "self"
+          ],
+          "say": "State code {client.state}, PIN {client.pin}.",
+          "rule": "myreturn.json",
+          "when": "client.pin"
+        },
+        {
+          "group": "person",
+          "sides": [
+            "self"
+          ],
+          "say": "No PIN found - type the six-digit PIN and the state on Review.",
+          "rule": "myreturn.json",
+          "when": "client.pin",
+          "warn": true,
+          "not": true
+        },
+        {
+          "group": "person",
+          "sides": [
+            "firm"
+          ],
+          "say": "State code {client.state}, the first two digits of the client's GSTIN.",
+          "rule": "itr.map",
+          "when": "client.state"
+        },
+        {
+          "group": "person",
+          "sides": [
+            "firm"
+          ],
+          "say": "State is left blank - the client has no GSTIN to read it from. Pick the state in the utility.",
+          "rule": "itr.map",
+          "when": "client.state",
+          "warn": true,
+          "not": true
+        },
+        {
+          "group": "person",
+          "sides": [
+            "firm"
+          ],
+          "say": "Verified by {client.verifier} (PAN {client.verifier_pan}), capacity code {client.capacity}.",
+          "rule": "itr.codes"
+        },
+        {
+          "group": "person",
+          "sides": [
+            "self"
+          ],
+          "say": "Verified by {client.signer_name} (PAN {client.signer_pan}), capacity code {client.capacity}.",
+          "rule": "myreturn.json"
+        },
+        {
+          "group": "person",
+          "sides": [
+            "self"
+          ],
+          "say": "Age band: below 60 years - the basic slab applies (from the date of birth on the year's last day).",
+          "rule": "myreturn.age_band",
+          "when": "why.band",
+          "is": [
+            "below60"
+          ]
+        },
+        {
+          "group": "person",
+          "sides": [
+            "self"
+          ],
+          "say": "Age band: senior citizen, 60 to 79 - the higher exemption limit of the old regime applies.",
+          "rule": "myreturn.age_band",
+          "when": "why.band",
+          "is": [
+            "60to80"
+          ]
+        },
+        {
+          "group": "person",
+          "sides": [
+            "self"
+          ],
+          "say": "Age band: super senior citizen, 80 or above - the highest exemption limit of the old regime applies.",
+          "rule": "myreturn.age_band",
+          "when": "why.band",
+          "is": [
+            "80plus"
+          ]
+        },
+        {
+          "group": "income",
+          "sides": [
+            "firm"
+          ],
+          "say": "Heads from the mapped books and statements: house property {m.income.hp}, business or profession {m.income.bp}, capital gains {m.income.cg}, other sources {m.income.os}.",
+          "rule": "compute.settings"
+        },
+        {
+          "group": "income",
+          "sides": [
+            "firm"
+          ],
+          "say": "Gross total income {m.income.gti}, less Chapter VI-A deductions {m.income.deductions} (never more than the gross total income) = total income {m.income.total}, rounded to the nearest 10 rupees (section 288A).",
+          "rule": "compute.total_income"
+        },
+        {
+          "group": "income",
+          "sides": [
+            "firm"
+          ],
+          "say": "New tax regime (section 115BAC), the default: its slab rates; Chapter VI-A deductions other than 80CCD(2) are not allowed; rebate under section 87A up to {m.why.reg.rebate_most} while total income is up to {m.why.reg.rebate_upto}.",
+          "rule": "compute.regime",
+          "when": "why.regime",
+          "is": [
+            "new"
+          ]
+        },
+        {
+          "group": "income",
+          "sides": [
+            "firm"
+          ],
+          "say": "Old tax regime - opted out of section 115BAC (Form 10-IEA when there is business income): old slab rates, Chapter VI-A deductions allowed; rebate under section 87A up to {m.why.reg.rebate_most} while total income is up to {m.why.reg.rebate_upto}.",
+          "rule": "compute.regime",
+          "when": "why.regime",
+          "is": [
+            "old"
+          ]
+        },
+        {
+          "group": "income",
+          "sides": [
+            "firm"
+          ],
+          "say": "A firm / LLP is taxed at a flat {why.reg.slabs.0.rate}% on its total income - no slabs and no rebate under section 87A.",
+          "rule": "compute.regime",
+          "when": "why.regime",
+          "is": [
+            "firm"
+          ]
+        },
+        {
+          "group": "income",
+          "sides": [
+            "firm"
+          ],
+          "say": "Tax on income {m.tax.normal}, less rebate {m.tax.rebate}, plus surcharge {m.tax.surcharge} (rate {why.surcharge_rate}%), plus health and education cess {m.tax.cess} = tax payable {m.tax.gross}.",
+          "rule": "compute.tax"
+        },
+        {
+          "group": "income",
+          "sides": [
+            "firm"
+          ],
+          "say": "Interest worked out to {why.filing_day}, the day taken as the filing day: section 234A {m.tax.i234a}, 234B {m.tax.i234b}, 234C {m.tax.i234c} - {m.tax.interest} charged.",
+          "rule": "compute.interest"
+        },
+        {
+          "group": "income",
+          "sides": [
+            "self"
+          ],
+          "say": "New tax regime (section 115BAC(1A)), the default: standard deduction {m.why.std}, only 80CCD(2) among the Chapter VI-A deductions, rebate under section 87A up to {m.why.rebate_most} while total income is up to {m.why.rebate_upto}.",
+          "rule": "myreturn.rates",
+          "when": "regime_opt_out",
+          "is": [
+            "N"
+          ]
+        },
+        {
+          "group": "income",
+          "sides": [
+            "self"
+          ],
+          "say": "Old tax regime (opted out of section 115BAC): standard deduction {m.why.std}, Chapter VI-A deductions within their limits, rebate under section 87A up to {m.why.rebate_most} while total income is up to {m.why.rebate_upto}.",
+          "rule": "myreturn.rates",
+          "when": "regime_opt_out",
+          "is": [
+            "Y"
+          ]
+        },
+        {
+          "group": "income",
+          "sides": [
+            "self"
+          ],
+          "say": "Salary {m.salary.gross} (Form 16): exempt allowances {m.salary.exempt} - only those the chosen regime allows - standard deduction {m.salary.std}, professional tax {m.salary.prof_tax}; income from salary {m.salary.income}.",
+          "rule": "myreturn.salary",
+          "when": "salary.gross"
+        },
+        {
+          "group": "income",
+          "sides": [
+            "self"
+          ],
+          "say": "House property: {m.hp.net} after the {why.rates.hp_std_pct}% standard deduction on the annual value and home-loan interest within its cap.",
+          "rule": "myreturn.house",
+          "when": "hp_rows"
+        },
+        {
+          "group": "income",
+          "sides": [
+            "self"
+          ],
+          "say": "Capital gains {m.cg.total}: listed shares and equity funds at {why.rates.rate_111a}% short term (section 111A) and {why.rates.rate_112a}% long term (section 112A) after the first {m.why.rates.exempt_112a} exempt; losses set off as the Act allows.",
+          "rule": "myreturn.cg_rules",
+          "when": "cg.total"
+        },
+        {
+          "group": "income",
+          "sides": [
+            "self"
+          ],
+          "say": "Other sources {m.os.total}: interest, dividends, family pension and the rest.",
+          "rule": "myreturn.json",
+          "when": "os.total"
+        },
+        {
+          "group": "income",
+          "sides": [
+            "self"
+          ],
+          "say": "Special-rate income {m.si.income} taxed at its own rate, outside the slabs - {m.si.tax} tax.",
+          "rule": "myreturn.tax",
+          "when": "si.income"
+        },
+        {
+          "group": "income",
+          "sides": [
+            "self"
+          ],
+          "say": "Chapter VI-A deductions {m.via.total}, each within its limit.",
+          "rule": "myreturn.deductions",
+          "when": "via.total"
+        },
+        {
+          "group": "income",
+          "sides": [
+            "self"
+          ],
+          "say": "Total income {m.total_gross}, rounded to the nearest {why.rates.round_to} rupees (section 288A).",
+          "rule": "compute.total_income"
+        },
+        {
+          "group": "income",
+          "sides": [
+            "self"
+          ],
+          "say": "Tax {m.tax2.slab}, less rebate {m.tax2.rebate_all}, plus surcharge {m.tax2.surcharge}, plus health and education cess at {why.rates.cess_pct}% {m.tax2.cess} = {m.tax2.gross}; relief under sections 89 / 90 / 91 {m.tax2.relief}.",
+          "rule": "myreturn.tax"
+        },
+        {
+          "group": "income",
+          "sides": [
+            "self"
+          ],
+          "say": "Interest and fee {m.tax2.interest_fee}: section 234A {m.tax2.i234a}, 234B {m.tax2.i234b}, 234C {m.tax2.i234c}, late fee under section 234F {m.tax2.fee_234f}.",
+          "rule": "compute.interest"
+        },
+        {
+          "group": "paid",
+          "sides": [
+            "firm"
+          ],
+          "say": "TDS {m.tax.tds} from {why.tds_n} {why.tds_n:entry|entries} in 26AS; each TDS section is written in the schema's code (194A as 94A) and placed under the head its section belongs to.",
+          "rule": "itr.codes"
+        },
+        {
+          "group": "paid",
+          "sides": [
+            "self"
+          ],
+          "say": "TDS {m.tax2.tds} from {why.tds_n} {why.tds_n:entry|entries} (Form 16, 16A, 26AS / AIS); each section is written in the schema's code.",
+          "rule": "itr.codes"
+        },
+        {
+          "group": "paid",
+          "sides": [
+            "firm"
+          ],
+          "say": "{why.challans_n} {why.challans_n:challan|challans}: paid on or before {why.fy_end} counts as advance tax ({m.tax.advance}); paid after it, as self-assessment tax ({m.tax.sat}).",
+          "rule": "compute.paid_kind",
+          "when": "why.challans_n"
+        },
+        {
+          "group": "paid",
+          "sides": [
+            "self"
+          ],
+          "say": "{why.challans_n} {why.challans_n:challan|challans}: paid on or before {why.fy_end} counts as advance tax ({m.tax2.advance}); paid after it, as self-assessment tax ({m.tax2.sat}).",
+          "rule": "compute.paid_kind",
+          "when": "why.challans_n"
+        },
+        {
+          "group": "paid",
+          "sides": [
+            "firm"
+          ],
+          "say": "Refund due {m.tax.refund}.",
+          "rule": "compute.balance",
+          "when": "tax.refund"
+        },
+        {
+          "group": "paid",
+          "sides": [
+            "firm"
+          ],
+          "say": "Tax still payable {m.tax.payable} - pay it by challan and add the challan before filing.",
+          "rule": "compute.balance",
+          "when": "tax.payable",
+          "warn": true
+        },
+        {
+          "group": "paid",
+          "sides": [
+            "self"
+          ],
+          "say": "Refund due {m.tax2.refund}.",
+          "rule": "compute.balance",
+          "when": "tax2.refund"
+        },
+        {
+          "group": "paid",
+          "sides": [
+            "self"
+          ],
+          "say": "Tax still payable {m.tax2.payable} - pay it by challan and add the challan before filing.",
+          "rule": "compute.balance",
+          "when": "tax2.payable",
+          "warn": true
+        },
+        {
+          "group": "paid",
+          "sides": [
+            "firm",
+            "self"
+          ],
+          "say": "The refund goes to the first bank account listed ({why.bank1}); {why.banks_more} other {why.banks_more:account is|accounts are} listed but not for refund.",
+          "rule": "itr.codes",
+          "when": "why.bank1"
+        },
+        {
+          "group": "paid",
+          "sides": [
+            "firm",
+            "self"
+          ],
+          "say": "No bank account is on record - add one; the department pays a refund only into a listed account.",
+          "rule": "itr.codes",
+          "when": "why.bank1",
+          "warn": true,
+          "not": true
+        },
+        {
+          "group": "json",
+          "sides": [
+            "firm",
+            "self"
+          ],
+          "say": "Every figure goes to its place in the schema by the rows of chip itr.map; status, sections, account types and the return code by chip itr.codes.",
+          "rule": "itr.map"
+        },
+        {
+          "group": "json",
+          "sides": [
+            "firm"
+          ],
+          "say": "The balance sheet, trading account and profit and loss come from the statement rows whose SF Ref names a balance-sheet or P&L item.",
+          "rule": "itr.books"
+        },
+        {
+          "group": "json",
+          "sides": [
+            "firm",
+            "self"
+          ],
+          "say": "Every part the schema requires that {product} does not hold gets its quietest valid value: 0 for an amount, \"N\" for a yes / no question, blank text, the first choice of a list.",
+          "rule": "itr.settings"
+        },
+        {
+          "group": "json",
+          "sides": [
+            "firm",
+            "self"
+          ],
+          "say": "Software id {sw_id}, version {sw_version}; made on {today}.",
+          "rule": "itr.settings"
+        },
+        {
+          "group": "json",
+          "sides": [
+            "firm",
+            "self"
+          ],
+          "say": "The file is checked against the official schema before you download it - the result shows beside the download.",
+          "rule": "itr.settings"
+        },
+        {
+          "group": "check",
+          "sides": [
+            "firm",
+            "self"
+          ],
+          "say": "Open the JSON in the department's offline utility (or upload it at e-File > Income Tax Returns) and complete any schedule {product} does not fill.",
+          "rule": "itr.settings"
+        },
+        {
+          "group": "check",
+          "sides": [
+            "firm",
+            "self"
+          ],
+          "say": "Read every schedule in the utility before you submit - {product} prepares the return; you file it.",
+          "rule": "itr.settings"
+        }
+      ],
+      "label": "rows: group, sides (firm = Compute ITR-3 / ITR-5, self = My return), say ({fact}; {m.fact} = rupees), rule (chip), when (fact) + is / not"
+    },
+    {
+      "name": "money_style",
+      "type": "text",
+      "default": "indian",
+      "label": "how amounts are grouped (indian / international)"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "groups": "$groups",
+      "rows": "$rows",
+      "money_style": "$money_style"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-19 owner: \"the detail rules / assumption applied to generate the ITR 2, 3 and 5 ... next to the json file, very clearly visible\". Every rule and assumption behind the department's JSON, in words, filled with the figures it used and naming the chip that decided it. itr_json.assumptions shows a row when its side (firm: Compute & close ITR-3 / ITR-5; self: My return ITR-1 to ITR-4) and its when / is / not hold.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "groups": [
+          {
+            "id": "return",
+            "label": "The return and the year"
+          },
+          {
+            "id": "person",
+            "label": "Who is filing"
+          },
+          {
+            "id": "income",
+            "label": "Income and tax"
+          },
+          {
+            "id": "paid",
+            "label": "Taxes paid, refund and bank"
+          },
+          {
+            "id": "json",
+            "label": "How the JSON is filled"
+          },
+          {
+            "id": "check",
+            "label": "Check before you upload"
+          }
+        ],
+        "rows": [
+          {
+            "group": "return",
+            "sides": [
+              "firm",
+              "self"
+            ],
+            "say": "{form} for assessment year {why.ay} (the income of the year ending {why.fy_end}), on the CBDT's own schema {schema} (incometax.gov.in > Downloads).",
+            "rule": "itr.settings"
+          },
+          {
+            "group": "return",
+            "sides": [
+              "firm",
+              "self"
+            ],
+            "say": "An original return under section 139(1) - return code {filing.section}, due by {filing.due}.",
+            "rule": "close.dates",
+            "when": "why.kind",
+            "is": [
+              "original"
+            ]
+          },
+          {
+            "group": "return",
+            "sides": [
+              "firm",
+              "self"
+            ],
+            "say": "A belated return under section 139(4) - return code {filing.section}; the due date {filing.due} has passed, so a late fee and interest apply.",
+            "rule": "close.dates",
+            "when": "why.kind",
+            "is": [
+              "belated"
+            ]
+          },
+          {
+            "group": "return",
+            "sides": [
+              "firm"
+            ],
+            "say": "A revised return under section 139(5) - return code {filing.section}, quoting the original acknowledgement {filing.orig_ack} filed on {filing.orig_date}.",
+            "rule": "close.dates",
+            "when": "why.kind",
+            "is": [
+              "revised"
+            ]
+          },
+          {
+            "group": "return",
+            "sides": [
+              "self"
+            ],
+            "say": "A revised return under section 139(5) - return code {filing.section}.",
+            "rule": "close.dates",
+            "when": "why.kind",
+            "is": [
+              "revised"
+            ]
+          },
+          {
+            "group": "return",
+            "sides": [
+              "firm",
+              "self"
+            ],
+            "say": "An updated return (ITR-U) under section 139(8A) - return code {filing.section}; additional tax is due on the extra income.",
+            "rule": "close.itr_u",
+            "when": "why.kind",
+            "is": [
+              "updated"
+            ]
+          },
+          {
+            "group": "return",
+            "sides": [
+              "firm"
+            ],
+            "say": "Tax audit under section 44AB applies: the auditor is {auditor.name} (PAN {auditor.pan}), the CA firm this client belongs to.",
+            "rule": "audit.applicable",
+            "when": "filing.audit",
+            "is": [
+              "Y"
+            ]
+          },
+          {
+            "group": "person",
+            "sides": [
+              "firm"
+            ],
+            "say": "Status code {client.status} (as the schema writes it), resident in India.",
+            "rule": "itr.codes",
+            "when": "client.residential",
+            "is": [
+              "RES"
+            ]
+          },
+          {
+            "group": "person",
+            "sides": [
+              "firm"
+            ],
+            "say": "Status code {client.status} (as the schema writes it), non-resident.",
+            "rule": "itr.codes",
+            "when": "client.residential",
+            "is": [
+              "NRI"
+            ]
+          },
+          {
+            "group": "person",
+            "sides": [
+              "self"
+            ],
+            "say": "Filing as an individual (status code I).",
+            "rule": "myreturn.json",
+            "when": "client.status_code",
+            "is": [
+              "I"
+            ]
+          },
+          {
+            "group": "person",
+            "sides": [
+              "self"
+            ],
+            "say": "Filing as a Hindu undivided family (status code H), signed by the karta.",
+            "rule": "myreturn.json",
+            "when": "client.status_code",
+            "is": [
+              "H"
+            ]
+          },
+          {
+            "group": "person",
+            "sides": [
+              "self"
+            ],
+            "say": "Resident (RES) - income from anywhere in the world counts (section 6).",
+            "rule": "myreturn.json",
+            "when": "filing.residential",
+            "is": [
+              "RES"
+            ]
+          },
+          {
+            "group": "person",
+            "sides": [
+              "self"
+            ],
+            "say": "Resident but not ordinarily resident (NOR) - foreign income counts only if earned or controlled from India (section 6(6)).",
+            "rule": "myreturn.json",
+            "when": "filing.residential",
+            "is": [
+              "NOR"
+            ]
+          },
+          {
+            "group": "person",
+            "sides": [
+              "self"
+            ],
+            "say": "Non-resident (NRI) - only income earned or received in India counts (section 6); no rebate under section 87A.",
+            "rule": "myreturn.json",
+            "when": "filing.residential",
+            "is": [
+              "NRI"
+            ]
+          },
+          {
+            "group": "person",
+            "sides": [
+              "firm"
+            ],
+            "say": "Name as the schema wants it: first name \"{client.first}\", surname \"{client.surname}\" (the last word of the name).",
+            "rule": "itr.codes",
+            "when": "client.first"
+          },
+          {
+            "group": "person",
+            "sides": [
+              "firm"
+            ],
+            "say": "The full name \"{client.surname}\" goes in as the organisation's name.",
+            "rule": "itr.codes",
+            "when": "client.first",
+            "not": true
+          },
+          {
+            "group": "person",
+            "sides": [
+              "self"
+            ],
+            "say": "Name as the schema wants it: first \"{client.first}\", middle \"{client.middle}\", surname \"{client.surname}\" - as the documents give them.",
+            "rule": "myreturn.json",
+            "when": "client.middle"
+          },
+          {
+            "group": "person",
+            "sides": [
+              "self"
+            ],
+            "say": "Name as the schema wants it: first \"{client.first}\", surname \"{client.surname}\" - as the documents give them, else the last word of the name is the surname.",
+            "rule": "myreturn.json",
+            "when": "client.middle",
+            "not": true
+          },
+          {
+            "group": "person",
+            "sides": [
+              "firm"
+            ],
+            "say": "Address read from the client's address, split at its commas: \"{client.flat}\" (flat / door), \"{client.area}\" (area), \"{client.city}\" (city).",
+            "rule": "itr.map",
+            "when": "client.flat"
+          },
+          {
+            "group": "person",
+            "sides": [
+              "firm"
+            ],
+            "say": "No address on the client - add it in Clients & years; the schema needs the flat, city, state and PIN.",
+            "rule": "itr.map",
+            "when": "client.flat",
+            "warn": true,
+            "not": true
+          },
+          {
+            "group": "person",
+            "sides": [
+              "firm"
+            ],
+            "say": "PIN {client.pin}, the last six-digit number in the address.",
+            "rule": "itr.map",
+            "when": "client.pin"
+          },
+          {
+            "group": "person",
+            "sides": [
+              "firm"
+            ],
+            "say": "No PIN in the client's address - add the six-digit PIN in Clients & years.",
+            "rule": "itr.map",
+            "when": "client.pin",
+            "warn": true,
+            "not": true
+          },
+          {
+            "group": "person",
+            "sides": [
+              "self"
+            ],
+            "say": "Address: what was typed on Review, else the pre-filled JSON or AIS, else the client's address - \"{client.flat}\", \"{client.area}\", \"{client.city}\".",
+            "rule": "myreturn.json",
+            "when": "client.flat"
+          },
+          {
+            "group": "person",
+            "sides": [
+              "self"
+            ],
+            "say": "No address found - type it on Review; the schema needs the flat, city, state and PIN.",
+            "rule": "myreturn.json",
+            "when": "client.flat",
+            "warn": true,
+            "not": true
+          },
+          {
+            "group": "person",
+            "sides": [
+              "self"
+            ],
+            "say": "State code {client.state}, PIN {client.pin}.",
+            "rule": "myreturn.json",
+            "when": "client.pin"
+          },
+          {
+            "group": "person",
+            "sides": [
+              "self"
+            ],
+            "say": "No PIN found - type the six-digit PIN and the state on Review.",
+            "rule": "myreturn.json",
+            "when": "client.pin",
+            "warn": true,
+            "not": true
+          },
+          {
+            "group": "person",
+            "sides": [
+              "firm"
+            ],
+            "say": "State code {client.state}, the first two digits of the client's GSTIN.",
+            "rule": "itr.map",
+            "when": "client.state"
+          },
+          {
+            "group": "person",
+            "sides": [
+              "firm"
+            ],
+            "say": "State is left blank - the client has no GSTIN to read it from. Pick the state in the utility.",
+            "rule": "itr.map",
+            "when": "client.state",
+            "warn": true,
+            "not": true
+          },
+          {
+            "group": "person",
+            "sides": [
+              "firm"
+            ],
+            "say": "Verified by {client.verifier} (PAN {client.verifier_pan}), capacity code {client.capacity}.",
+            "rule": "itr.codes"
+          },
+          {
+            "group": "person",
+            "sides": [
+              "self"
+            ],
+            "say": "Verified by {client.signer_name} (PAN {client.signer_pan}), capacity code {client.capacity}.",
+            "rule": "myreturn.json"
+          },
+          {
+            "group": "person",
+            "sides": [
+              "self"
+            ],
+            "say": "Age band: below 60 years - the basic slab applies (from the date of birth on the year's last day).",
+            "rule": "myreturn.age_band",
+            "when": "why.band",
+            "is": [
+              "below60"
+            ]
+          },
+          {
+            "group": "person",
+            "sides": [
+              "self"
+            ],
+            "say": "Age band: senior citizen, 60 to 79 - the higher exemption limit of the old regime applies.",
+            "rule": "myreturn.age_band",
+            "when": "why.band",
+            "is": [
+              "60to80"
+            ]
+          },
+          {
+            "group": "person",
+            "sides": [
+              "self"
+            ],
+            "say": "Age band: super senior citizen, 80 or above - the highest exemption limit of the old regime applies.",
+            "rule": "myreturn.age_band",
+            "when": "why.band",
+            "is": [
+              "80plus"
+            ]
+          },
+          {
+            "group": "income",
+            "sides": [
+              "firm"
+            ],
+            "say": "Heads from the mapped books and statements: house property {m.income.hp}, business or profession {m.income.bp}, capital gains {m.income.cg}, other sources {m.income.os}.",
+            "rule": "compute.settings"
+          },
+          {
+            "group": "income",
+            "sides": [
+              "firm"
+            ],
+            "say": "Gross total income {m.income.gti}, less Chapter VI-A deductions {m.income.deductions} (never more than the gross total income) = total income {m.income.total}, rounded to the nearest 10 rupees (section 288A).",
+            "rule": "compute.total_income"
+          },
+          {
+            "group": "income",
+            "sides": [
+              "firm"
+            ],
+            "say": "New tax regime (section 115BAC), the default: its slab rates; Chapter VI-A deductions other than 80CCD(2) are not allowed; rebate under section 87A up to {m.why.reg.rebate_most} while total income is up to {m.why.reg.rebate_upto}.",
+            "rule": "compute.regime",
+            "when": "why.regime",
+            "is": [
+              "new"
+            ]
+          },
+          {
+            "group": "income",
+            "sides": [
+              "firm"
+            ],
+            "say": "Old tax regime - opted out of section 115BAC (Form 10-IEA when there is business income): old slab rates, Chapter VI-A deductions allowed; rebate under section 87A up to {m.why.reg.rebate_most} while total income is up to {m.why.reg.rebate_upto}.",
+            "rule": "compute.regime",
+            "when": "why.regime",
+            "is": [
+              "old"
+            ]
+          },
+          {
+            "group": "income",
+            "sides": [
+              "firm"
+            ],
+            "say": "A firm / LLP is taxed at a flat {why.reg.slabs.0.rate}% on its total income - no slabs and no rebate under section 87A.",
+            "rule": "compute.regime",
+            "when": "why.regime",
+            "is": [
+              "firm"
+            ]
+          },
+          {
+            "group": "income",
+            "sides": [
+              "firm"
+            ],
+            "say": "Tax on income {m.tax.normal}, less rebate {m.tax.rebate}, plus surcharge {m.tax.surcharge} (rate {why.surcharge_rate}%), plus health and education cess {m.tax.cess} = tax payable {m.tax.gross}.",
+            "rule": "compute.tax"
+          },
+          {
+            "group": "income",
+            "sides": [
+              "firm"
+            ],
+            "say": "Interest worked out to {why.filing_day}, the day taken as the filing day: section 234A {m.tax.i234a}, 234B {m.tax.i234b}, 234C {m.tax.i234c} - {m.tax.interest} charged.",
+            "rule": "compute.interest"
+          },
+          {
+            "group": "income",
+            "sides": [
+              "self"
+            ],
+            "say": "New tax regime (section 115BAC(1A)), the default: standard deduction {m.why.std}, only 80CCD(2) among the Chapter VI-A deductions, rebate under section 87A up to {m.why.rebate_most} while total income is up to {m.why.rebate_upto}.",
+            "rule": "myreturn.rates",
+            "when": "regime_opt_out",
+            "is": [
+              "N"
+            ]
+          },
+          {
+            "group": "income",
+            "sides": [
+              "self"
+            ],
+            "say": "Old tax regime (opted out of section 115BAC): standard deduction {m.why.std}, Chapter VI-A deductions within their limits, rebate under section 87A up to {m.why.rebate_most} while total income is up to {m.why.rebate_upto}.",
+            "rule": "myreturn.rates",
+            "when": "regime_opt_out",
+            "is": [
+              "Y"
+            ]
+          },
+          {
+            "group": "income",
+            "sides": [
+              "self"
+            ],
+            "say": "Salary {m.salary.gross} (Form 16): exempt allowances {m.salary.exempt} - only those the chosen regime allows - standard deduction {m.salary.std}, professional tax {m.salary.prof_tax}; income from salary {m.salary.income}.",
+            "rule": "myreturn.salary",
+            "when": "salary.gross"
+          },
+          {
+            "group": "income",
+            "sides": [
+              "self"
+            ],
+            "say": "House property: {m.hp.net} after the {why.rates.hp_std_pct}% standard deduction on the annual value and home-loan interest within its cap.",
+            "rule": "myreturn.house",
+            "when": "hp_rows"
+          },
+          {
+            "group": "income",
+            "sides": [
+              "self"
+            ],
+            "say": "Capital gains {m.cg.total}: listed shares and equity funds at {why.rates.rate_111a}% short term (section 111A) and {why.rates.rate_112a}% long term (section 112A) after the first {m.why.rates.exempt_112a} exempt; losses set off as the Act allows.",
+            "rule": "myreturn.cg_rules",
+            "when": "cg.total"
+          },
+          {
+            "group": "income",
+            "sides": [
+              "self"
+            ],
+            "say": "Other sources {m.os.total}: interest, dividends, family pension and the rest.",
+            "rule": "myreturn.json",
+            "when": "os.total"
+          },
+          {
+            "group": "income",
+            "sides": [
+              "self"
+            ],
+            "say": "Special-rate income {m.si.income} taxed at its own rate, outside the slabs - {m.si.tax} tax.",
+            "rule": "myreturn.tax",
+            "when": "si.income"
+          },
+          {
+            "group": "income",
+            "sides": [
+              "self"
+            ],
+            "say": "Chapter VI-A deductions {m.via.total}, each within its limit.",
+            "rule": "myreturn.deductions",
+            "when": "via.total"
+          },
+          {
+            "group": "income",
+            "sides": [
+              "self"
+            ],
+            "say": "Total income {m.total_gross}, rounded to the nearest {why.rates.round_to} rupees (section 288A).",
+            "rule": "compute.total_income"
+          },
+          {
+            "group": "income",
+            "sides": [
+              "self"
+            ],
+            "say": "Tax {m.tax2.slab}, less rebate {m.tax2.rebate_all}, plus surcharge {m.tax2.surcharge}, plus health and education cess at {why.rates.cess_pct}% {m.tax2.cess} = {m.tax2.gross}; relief under sections 89 / 90 / 91 {m.tax2.relief}.",
+            "rule": "myreturn.tax"
+          },
+          {
+            "group": "income",
+            "sides": [
+              "self"
+            ],
+            "say": "Interest and fee {m.tax2.interest_fee}: section 234A {m.tax2.i234a}, 234B {m.tax2.i234b}, 234C {m.tax2.i234c}, late fee under section 234F {m.tax2.fee_234f}.",
+            "rule": "compute.interest"
+          },
+          {
+            "group": "paid",
+            "sides": [
+              "firm"
+            ],
+            "say": "TDS {m.tax.tds} from {why.tds_n} {why.tds_n:entry|entries} in 26AS; each TDS section is written in the schema's code (194A as 94A) and placed under the head its section belongs to.",
+            "rule": "itr.codes"
+          },
+          {
+            "group": "paid",
+            "sides": [
+              "self"
+            ],
+            "say": "TDS {m.tax2.tds} from {why.tds_n} {why.tds_n:entry|entries} (Form 16, 16A, 26AS / AIS); each section is written in the schema's code.",
+            "rule": "itr.codes"
+          },
+          {
+            "group": "paid",
+            "sides": [
+              "firm"
+            ],
+            "say": "{why.challans_n} {why.challans_n:challan|challans}: paid on or before {why.fy_end} counts as advance tax ({m.tax.advance}); paid after it, as self-assessment tax ({m.tax.sat}).",
+            "rule": "compute.paid_kind",
+            "when": "why.challans_n"
+          },
+          {
+            "group": "paid",
+            "sides": [
+              "self"
+            ],
+            "say": "{why.challans_n} {why.challans_n:challan|challans}: paid on or before {why.fy_end} counts as advance tax ({m.tax2.advance}); paid after it, as self-assessment tax ({m.tax2.sat}).",
+            "rule": "compute.paid_kind",
+            "when": "why.challans_n"
+          },
+          {
+            "group": "paid",
+            "sides": [
+              "firm"
+            ],
+            "say": "Refund due {m.tax.refund}.",
+            "rule": "compute.balance",
+            "when": "tax.refund"
+          },
+          {
+            "group": "paid",
+            "sides": [
+              "firm"
+            ],
+            "say": "Tax still payable {m.tax.payable} - pay it by challan and add the challan before filing.",
+            "rule": "compute.balance",
+            "when": "tax.payable",
+            "warn": true
+          },
+          {
+            "group": "paid",
+            "sides": [
+              "self"
+            ],
+            "say": "Refund due {m.tax2.refund}.",
+            "rule": "compute.balance",
+            "when": "tax2.refund"
+          },
+          {
+            "group": "paid",
+            "sides": [
+              "self"
+            ],
+            "say": "Tax still payable {m.tax2.payable} - pay it by challan and add the challan before filing.",
+            "rule": "compute.balance",
+            "when": "tax2.payable",
+            "warn": true
+          },
+          {
+            "group": "paid",
+            "sides": [
+              "firm",
+              "self"
+            ],
+            "say": "The refund goes to the first bank account listed ({why.bank1}); {why.banks_more} other {why.banks_more:account is|accounts are} listed but not for refund.",
+            "rule": "itr.codes",
+            "when": "why.bank1"
+          },
+          {
+            "group": "paid",
+            "sides": [
+              "firm",
+              "self"
+            ],
+            "say": "No bank account is on record - add one; the department pays a refund only into a listed account.",
+            "rule": "itr.codes",
+            "when": "why.bank1",
+            "warn": true,
+            "not": true
+          },
+          {
+            "group": "json",
+            "sides": [
+              "firm",
+              "self"
+            ],
+            "say": "Every figure goes to its place in the schema by the rows of chip itr.map; status, sections, account types and the return code by chip itr.codes.",
+            "rule": "itr.map"
+          },
+          {
+            "group": "json",
+            "sides": [
+              "firm"
+            ],
+            "say": "The balance sheet, trading account and profit and loss come from the statement rows whose SF Ref names a balance-sheet or P&L item.",
+            "rule": "itr.books"
+          },
+          {
+            "group": "json",
+            "sides": [
+              "firm",
+              "self"
+            ],
+            "say": "Every part the schema requires that {product} does not hold gets its quietest valid value: 0 for an amount, \"N\" for a yes / no question, blank text, the first choice of a list.",
+            "rule": "itr.settings"
+          },
+          {
+            "group": "json",
+            "sides": [
+              "firm",
+              "self"
+            ],
+            "say": "Software id {sw_id}, version {sw_version}; made on {today}.",
+            "rule": "itr.settings"
+          },
+          {
+            "group": "json",
+            "sides": [
+              "firm",
+              "self"
+            ],
+            "say": "The file is checked against the official schema before you download it - the result shows beside the download.",
+            "rule": "itr.settings"
+          },
+          {
+            "group": "check",
+            "sides": [
+              "firm",
+              "self"
+            ],
+            "say": "Open the JSON in the department's offline utility (or upload it at e-File > Income Tax Returns) and complete any schedule {product} does not fill.",
+            "rule": "itr.settings"
+          },
+          {
+            "group": "check",
+            "sides": [
+              "firm",
+              "self"
+            ],
+            "say": "Read every schedule in the utility before you submit - {product} prepares the return; you file it.",
+            "rule": "itr.settings"
+          }
+        ],
+        "money_style": "indian"
+      }
+    }
+  ]
+}

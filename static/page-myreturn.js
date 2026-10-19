@@ -9,6 +9,7 @@ import { historyButton, wireHistory } from './changes.js';
 import { stepper, docArt, waterfall, regimeBars, tdsMap, askArt } from './myreturn-art.js';
 import { resCard, foreignCard, faCard, clubCard, arrearCard, itruCard, wireWave3 } from './myreturn-wave3.js';
 import { classifyCard, wireClassify, mustFileCard } from './myreturn-bank.js';
+import { rulesCard } from './itr-rules.js';                  // 2026-10-19: the rules and assumptions beside the JSON
 
 const w = (k, v) => t('myreturn', k, v);
 const money = (n) => `₹${Math.round(Number(n || 0)).toLocaleString('en-IN')}`;
@@ -17,7 +18,7 @@ const BANK_STEPS = ['gather', 'classify', 'check', 'choose', 'review', 'file']; 
 const stepsOf = (d) => (d && d.bank && d.bank.classify ? BANK_STEPS : STEPS);
 
 export async function myReturnPage(host) {
-  await loadWords('myreturn', 'wizard', 'bankonly', 'changes');
+  await loadWords('myreturn', 'wizard', 'bankonly', 'changes', 'itrrules');
   const q = new URLSearchParams((location.hash.split('?')[1]) || '');
   const home = await api('/api/myreturn');
   let cid = q.get('c') || (home.self && home.clients[0] ? home.clients[0].id : '');
@@ -197,7 +198,7 @@ export async function myReturnPage(host) {
         ${d.ca_needed ? caNote(d.ca_needed) : `<div id="mr-schema" class="small muted">${esc(w('schema_wait'))}</div>`}</div></div>
       ${d.ca_needed ? '' : `<div class="row tight mr-acts"><button type="button" class="primary" id="mr-json">${icon('download', 14)} ${esc(w('download', { form: d.form.form }))}</button></div>`}
       <h4>${esc(d.bank ? t('bankonly', 'upload_h') : w('upload_h'))}</h4>${d.bank ? `<p class="small muted">${esc(t('bankonly', 'upload_p'))}</p>` : ''}<ol class="mr-up">${(d.bank ? d.bank.upload.steps : w('upload_steps').split('|')).map((s) => `<li>${esc(s)}</li>`).join('')}</ol>
-      <p class="small muted">${esc(w('file_note'))}</p></section>${itruCard(d)}<div class="row tight mr-next">${back('file')}<span></span></div>`;
+      <p class="small muted">${esc(w('file_note'))}</p></section>${d.ca_needed ? '' : `<section class="card ir-card" id="mr-rules"><p class="small muted">${esc(t('itrrules', 'wait'))}</p></section>`}${itruCard(d)}<div class="row tight mr-next">${back('file')}<span></span></div>`;
 
   const back = (at) => { const order = stepsOf(S.d); const prev = order[order.indexOf(at) - 1]; return prev ? `<button type="button" class="mr-back" data-back="${prev}">${icon('left', 14)} ${esc(w('back_to', { step: w(`s_${prev}`) }))}</button>` : '<span></span>'; };
   const next = (to, flags) => `<div class="row tight mr-next">${back(stepsOf(S.d)[stepsOf(S.d).indexOf(to) - 1])}<button type="button" class="primary" data-next="${to}" data-flags='${flags ? esc(JSON.stringify(flags)) : ''}'>${esc(w(`go_${to}`))} ${icon('right', 14)}</button></div>`;
@@ -308,6 +309,7 @@ export async function myReturnPage(host) {
       }).catch((e) => toast(e.message, 'bad', 8));
       if (!S.d.ca_needed) api(url('/itr-check')).then((r) => {
         const el = $('#mr-schema'); if (!el) return;
+        if ($('#mr-rules')) $('#mr-rules').innerHTML = rulesCard(r.rules);   // 2026-10-19: the rules and assumptions beside the JSON
         el.className = `small ${r.valid ? 'mr-ok' : 'mr-warn'}`;
         el.innerHTML = r.valid ? `${icon('check', 12)} ${esc(w('schema_ok', { schema: r.schema }))}`
           : `${icon('alert', 12)} ${esc(w('schema_bad', { n: r.error_count }))}<ul>${r.errors.slice(0, 8).map((x) => `<li>${esc(x.field || x.path)}: ${esc(x.what)}</li>`).join('')}</ul>`;

@@ -66,6 +66,11 @@
           "target": ".cc-dl|main"
         },
         {
+          "title": "Rules and assumptions",
+          "say": "Right under the JSON, every rule and assumption that made it, numbered and in plain words, with this client's own figures: the return type and its due date, how the name and address were read, the regime, the tax, surcharge, cess and interest, advance tax against self-assessment tax, and the bank that receives the refund. Each line names the chip that decided it, and anything you must fix before you upload shows in amber.",
+          "target": "#cc-rules|.cc-side"
+        },
+        {
           "title": "Sign off and file",
           "say": "A reviewer signs off; then the acknowledgement number and date filed. The return type - original, belated, revised or ITR-U - follows from the dates.",
           "target": ".cc-close|main"
@@ -95,9 +100,9 @@
     }
   },
   "returns": "record",
-  "version": 3,
+  "version": 4,
   "status": "published",
-  "description_nl": "2026-10-04: the Compute & close walk, up to date with the screen; tours/sf-compute.json is made from it. 2026-10-11: a company's section (ITR-6).",
+  "description_nl": "2026-10-04: the Compute & close walk, up to date with the screen; tours/sf-compute.json is made from it. 2026-10-11: a company's section (ITR-6). 2026-10-19: step 'Rules and assumptions' - the rules and assumptions beside the ITR JSON.",
   "test_cases": [
     {
       "args": {},
@@ -136,6 +141,11 @@
             "title": "Files in the department's format",
             "say": "The ITR JSON and, for an audit, the Form 3CB-3CD JSON - each checked against the CBDT schema before you download, with what is still missing listed. The balance sheet tallies and the P&L profit matches business income.",
             "target": ".cc-dl|main"
+          },
+          {
+            "title": "Rules and assumptions",
+            "say": "Right under the JSON, every rule and assumption that made it, numbered and in plain words, with this client's own figures: the return type and its due date, how the name and address were read, the regime, the tax, surcharge, cess and interest, advance tax against self-assessment tax, and the bank that receives the refund. Each line names the chip that decided it, and anything you must fix before you upload shows in amber.",
+            "target": "#cc-rules|.cc-side"
           },
           {
             "title": "Sign off and file",

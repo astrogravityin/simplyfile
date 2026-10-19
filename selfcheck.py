@@ -249,7 +249,10 @@ if (ok.some((x) => !x)) { console.log(JSON.stringify(ok)); process.exit(1); }"""
         # Compute & close: the computation, the three files, sign-off, filed = closed, every write refused
         cd = c.get(cb).json()
         assert cd["income"] > 0 and cd["tax"]["total"] > 0 and cd["tds_total"] > 0 and cd["balance"]["kind"] in ("payable", "refund", "nil"), cd
-        assert "valid" in c.get(f"{cb}/itr-check").json() and c.get(f"{cb}/itr.json").json()["ITR"], "the ITR JSON is made and checked"
+        ic = c.get(f"{cb}/itr-check").json()
+        assert "valid" in ic and c.get(f"{cb}/itr.json").json()["ITR"], "the ITR JSON is made and checked"
+        # 2026-10-19 owner: the rules and assumptions beside the JSON - said, and every one reads a real fact (chip itr.assumptions)
+        assert ic["rules"]["count"] >= 10 and not ic["rules"]["missing"], ("rules beside the ITR JSON", ic["rules"]["missing"])
         assert "valid" in c.get(f"{cb}/3cd-check").json() and c.get(f"{cb}/3cd.json").json()["FORM3CB"], "the 3CD JSON is made and checked"
         # 2026-10-05 owner (3CD from a party master): a loans statement as CAs write it - name, then address and PAN on the
         # lines below - gives 31(a) / 31(c) and 23 their address and PAN; the client's party master fills what a statement leaves out

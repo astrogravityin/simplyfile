@@ -33,6 +33,20 @@ def ok(cond, what):
         fails.append(what)
 
 
+# 2026-10-19 owner (rules and assumptions beside the JSON): every return built here also says its rules, and none reads a fact
+# that is not there (a blank in the sentence) - chip itr.assumptions, itr_json.assumptions
+_assemble = itr_json.assemble
+
+
+def _assemble_with_rules(f, form):
+    d_, r_ = _assemble(f, form)
+    ok(r_["rules"]["count"] > 0 and not r_["rules"]["missing"], f"{form}: the rules beside the JSON read real facts (missing {r_['rules']['missing']})")
+    return d_, r_
+
+
+itr_json.assemble = _assemble_with_rules
+
+
 for f in sorted(DOCS.iterdir()):
     d = myreturn.add_doc(u, cid, ay, f.name, f.read_bytes())
     a = d["added"]

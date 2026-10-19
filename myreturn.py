@@ -1523,7 +1523,11 @@ def facts(cid: str, ay: str) -> dict:
         "tds_salary": tds_sal, "tds_other": tds_oth,
         "paid_rows": [{"bsr": x.get("bsr", ""), "date": _iso(x.get("date")), "serial": int(re.sub(r"\D", "", str(x.get("challan") or "")) or 0),
                        "amount": i(x.get("amount"))} for x in r["paid"]],
-        "bank_rows": banks}
+        "bank_rows": banks,
+        # 2026-10-19 owner: the rules and assumptions shown beside the JSON (chip itr.assumptions) read these
+        "why": {"ay": ay, "kind": kind, "regime": w["regime"], "band": w["band"], "fy_end": _iso(compute.year_day(ay, "end")),
+                "rates": rates, "std": rates["std_deduction"][w["regime"]], "rebate_upto": rates["rebate_upto"][w["regime"]], "rebate_most": rates["rebate_most"][w["regime"]], "tds_n": len(tds_sal) + len(tds_oth), "challans_n": len(r["paid"]),
+                "bank1": (banks[0]["bank"] or banks[0]["ifsc"]) if banks else "", "banks_more": max(len(banks) - 1, 0)}}
 
 
 def _spread(total: int, weights: dict, names: list, default: str) -> dict:

@@ -229,6 +229,12 @@
           "open": ".mr-node[data-step='file']"
         },
         {
+          "title": "Why the JSON says what it says",
+          "say": "Under the download, every rule and assumption behind your return, with your own figures: the regime and the standard deduction, the 87A rebate, surcharge and cess, interest and the late fee, how your TDS and challans were counted, and the bank for the refund. Each line names the rule that decided it; an amber line needs you before you upload.",
+          "target": "#mr-rules|.mr-file",
+          "open": ".mr-node[data-step='file']"
+        },
+        {
           "title": "Updated return",
           "say": "Missed something in an earlier year? The updated return, ITR-U: the extra tax, interest and the additional tax worked out at that year's rates - capital gains, surcharge and interest for each instalment - and whether you can file one at all.",
           "target": "section.card:has([data-iurow])",
@@ -249,9 +255,9 @@
     }
   },
   "returns": "record",
-  "version": 9,
+  "version": 10,
   "status": "published",
-  "description_nl": "2026-10-06: the My return walk - the five steps, the documents, the checks, the two regimes, the review and the file; tours/sf-myreturn.json says the same. 2026-10-07: rewritten for what shipped on 6-7 October (tools/make_guides_wave4.py). 2026-10-10: Foreign assets step names table B (an interest in a foreign company or firm). 2026-10-11: a step pointing to New filing (the wizard). 2026-10-13: the Classify step and the GST limit.",
+  "description_nl": "2026-10-06: the My return walk - the five steps, the documents, the checks, the two regimes, the review and the file; tours/sf-myreturn.json says the same. 2026-10-07: rewritten for what shipped on 6-7 October (tools/make_guides_wave4.py). 2026-10-10: Foreign assets step names table B (an interest in a foreign company or firm). 2026-10-11: a step pointing to New filing (the wizard). 2026-10-13: the Classify step and the GST limit. 2026-10-19: step 'Why the JSON says what it says' - the rules and assumptions beside the ITR JSON.",
   "test_cases": [
     {
       "args": {},
@@ -444,7 +450,7 @@
           },
           {
             "title": "Already filed?",
-            "say": "Once filed, note the date and acknowledgement - and compare what was filed with what SimplyFy worked out.",
+            "say": "Once filed, note the date and acknowledgement - and compare what was filed with what {product} worked out.",
             "target": "section.card:has(#mr-filed-on)",
             "open": ".mr-node[data-step='file']"
           },
@@ -452,6 +458,12 @@
             "title": "File it",
             "say": "Download the department's JSON for ITR-1, 2, 3 or 4, checked against its schema, and upload it on the e-filing portal.",
             "target": "#mr-json|.mr-file",
+            "open": ".mr-node[data-step='file']"
+          },
+          {
+            "title": "Why the JSON says what it says",
+            "say": "Under the download, every rule and assumption behind your return, with your own figures: the regime and the standard deduction, the 87A rebate, surcharge and cess, interest and the late fee, how your TDS and challans were counted, and the bank for the refund. Each line names the rule that decided it; an amber line needs you before you upload.",
+            "target": "#mr-rules|.mr-file",
             "open": ".mr-node[data-step='file']"
           },
           {
