@@ -198,3 +198,34 @@ def statement_xlsx(cid: str, ay: str, which: str = "filed") -> tuple[str, bytes]
     wb.save(buf)
     label = "as filed" if which == "filed" else "to fill"
     return f"{c['name']} - Statement {label} AY {target}.xlsx", buf.getvalue()
+
+
+if __name__ == "__main__":  # ponytail: one runnable self-check - every form My return reads, the import reads too
+    import store as _portal_store  # noqa: F401 - registers this portal's chips, as the app does
+    import myreturn_read
+
+    def _put(doc: dict, path: str, v) -> None:
+        *head, last = path.split(".")
+        for p in head:
+            doc = doc.setdefault(p, {})
+        doc[last] = v
+
+    forms = settings()["forms"]
+    kept = clients.settings()["forms"]
+    code_of = engine.run("itr.statement")["form_code"]
+    # 2026-10-19: My return read an ITR-2 that Import old returns refused ("Only ITR-3 and ITR-5 ...")
+    assert set(myreturn_read.settings()["filed_roots"]) <= set(forms), "a form My return reads must import too"
+    for code, spec in forms.items():
+        assert spec["form"] in kept and spec["form"] in code_of, f"{spec['form']}: clients.settings forms / itr.statement form_code"
+        doc: dict = {}
+        for name, v in {"pan": "ABCPE1234F", "ay_code": "2025", "section": "11", "income": 1234500, "tds": 4500, "refund": 0}.items():
+            _put(doc, spec["facts"][name][0], v)
+        f = read(json.dumps({"ITR": doc}).encode())
+        assert (f["form"], f["pan"], f["ay"], f["kind"], f["income"]) == (spec["form"], "ABCPE1234F", "2025-26", "original", 1234500.0), code
+        assert f["tds"] == 4500.0, f"{code}: a list named like a money fact overwrites it (2026-10-19: TDS rows hid the TDS total)"
+    try:
+        read(json.dumps({"ITR": {"ITR6": {}}}).encode())
+        raise AssertionError("ITR-6 is not imported")
+    except HTTPException as e:
+        assert e.status_code == 400
+    print("itr_import self-check OK")

@@ -6,7 +6,8 @@
   "label": "May this person open this screen (or use this function) — and why",
   "aliases": [
     "access resolver",
-    "deny wins"
+    "deny wins",
+    "catch all"
   ],
   "params": [
     {
@@ -48,6 +49,24 @@
       "label": "yes = the owner lent this admin screen to this person today (delegation)"
     },
     {
+      "name": "in_group",
+      "type": "boolean",
+      "default": false,
+      "label": "The person is in at least one group other than Catch All"
+    },
+    {
+      "name": "has_personal",
+      "type": "boolean",
+      "default": false,
+      "label": "The person has at least one rule of their own"
+    },
+    {
+      "name": "personal_rule_manages",
+      "type": "boolean",
+      "default": false,
+      "label": "Knob: a personal rule alone makes a person managed (off: an account in no group keeps Catch All, its own rules on top)"
+    },
+    {
       "name": "screen",
       "type": "text",
       "default": ""
@@ -60,7 +79,8 @@
     {
       "name": "deny_by",
       "type": "text",
-      "default": ""
+      "default": "",
+      "label": "A deny from the person, their groups or a group those inherit from"
     },
     {
       "name": "deny_on",
@@ -70,10 +90,33 @@
     {
       "name": "allow_by",
       "type": "text",
-      "default": ""
+      "default": "",
+      "label": "An allow from the person, their groups or a group those inherit from"
     },
     {
       "name": "allow_on",
+      "type": "text",
+      "default": ""
+    },
+    {
+      "name": "ca_deny_by",
+      "type": "text",
+      "default": "",
+      "label": "A deny on Catch All itself"
+    },
+    {
+      "name": "ca_deny_on",
+      "type": "text",
+      "default": ""
+    },
+    {
+      "name": "ca_allow_by",
+      "type": "text",
+      "default": "",
+      "label": "An allow on Catch All itself"
+    },
+    {
+      "name": "ca_allow_on",
       "type": "text",
       "default": ""
     },
@@ -103,6 +146,17 @@
       "default": "A {role} cannot use {label}. Ask the portal owner to make you an author or an editor."
     },
     {
+      "name": "msg_unavailable",
+      "type": "text",
+      "default": "{label} is not open yet - there is nothing on it for you."
+    },
+    {
+      "name": "msg_lent",
+      "type": "text",
+      "default": "The portal owner lent you {label}.",
+      "label": "msg lent"
+    },
+    {
       "name": "msg_denied",
       "type": "text",
       "default": "Denied for {deny_by} on {deny_on}."
@@ -113,21 +167,24 @@
       "default": "Allowed for {allow_by} on {allow_on}."
     },
     {
-      "name": "msg_open",
+      "name": "msg_not_granted",
       "type": "text",
-      "default": "Open to every account; no rule says otherwise."
+      "default": "Nothing allows {label}: none of this person's groups (or the groups they inherit from) or own rules does."
     },
     {
-      "name": "msg_unavailable",
+      "name": "msg_ca_denied",
       "type": "text",
-      "default": "{label} is not open yet - there is nothing on it for you.",
-      "label": "msg_unavailable"
+      "default": "In no group, so Catch All decides: denied for {ca_deny_by} on {ca_deny_on}."
     },
     {
-      "name": "msg_lent",
+      "name": "msg_ca_allowed",
       "type": "text",
-      "default": "The portal owner lent you {label}.",
-      "label": "msg lent"
+      "default": "In no group, so Catch All decides: allowed for {ca_allow_by} on {ca_allow_on}."
+    },
+    {
+      "name": "msg_not_in_catch_all",
+      "type": "text",
+      "default": "In no group, so Catch All decides, and it does not allow {label}."
     }
   ],
   "expr": {
@@ -153,7 +210,11 @@
                 "deny_by": "$deny_by",
                 "deny_on": "$deny_on",
                 "allow_by": "$allow_by",
-                "allow_on": "$allow_on"
+                "allow_on": "$allow_on",
+                "ca_deny_by": "$ca_deny_by",
+                "ca_deny_on": "$ca_deny_on",
+                "ca_allow_by": "$ca_allow_by",
+                "ca_allow_on": "$ca_allow_on"
               }
             }
           }
@@ -179,7 +240,11 @@
                 "deny_by": "$deny_by",
                 "deny_on": "$deny_on",
                 "allow_by": "$allow_by",
-                "allow_on": "$allow_on"
+                "allow_on": "$allow_on",
+                "ca_deny_by": "$ca_deny_by",
+                "ca_deny_on": "$ca_deny_on",
+                "ca_allow_by": "$ca_allow_by",
+                "ca_allow_on": "$ca_allow_on"
               }
             }
           }
@@ -205,7 +270,11 @@
                 "deny_by": "$deny_by",
                 "deny_on": "$deny_on",
                 "allow_by": "$allow_by",
-                "allow_on": "$allow_on"
+                "allow_on": "$allow_on",
+                "ca_deny_by": "$ca_deny_by",
+                "ca_deny_on": "$ca_deny_on",
+                "ca_allow_by": "$ca_allow_by",
+                "ca_allow_on": "$ca_allow_on"
               }
             }
           }
@@ -231,7 +300,11 @@
                 "deny_by": "$deny_by",
                 "deny_on": "$deny_on",
                 "allow_by": "$allow_by",
-                "allow_on": "$allow_on"
+                "allow_on": "$allow_on",
+                "ca_deny_by": "$ca_deny_by",
+                "ca_deny_on": "$ca_deny_on",
+                "ca_allow_by": "$ca_allow_by",
+                "ca_allow_on": "$ca_allow_on"
               }
             }
           }
@@ -267,7 +340,11 @@
                 "deny_by": "$deny_by",
                 "deny_on": "$deny_on",
                 "allow_by": "$allow_by",
-                "allow_on": "$allow_on"
+                "allow_on": "$allow_on",
+                "ca_deny_by": "$ca_deny_by",
+                "ca_deny_on": "$ca_deny_on",
+                "ca_allow_by": "$ca_allow_by",
+                "ca_allow_on": "$ca_allow_on"
               }
             }
           }
@@ -293,7 +370,11 @@
                 "deny_by": "$deny_by",
                 "deny_on": "$deny_on",
                 "allow_by": "$allow_by",
-                "allow_on": "$allow_on"
+                "allow_on": "$allow_on",
+                "ca_deny_by": "$ca_deny_by",
+                "ca_deny_on": "$ca_deny_on",
+                "ca_allow_by": "$ca_allow_by",
+                "ca_allow_on": "$ca_allow_on"
               }
             }
           }
@@ -319,7 +400,11 @@
                 "deny_by": "$deny_by",
                 "deny_on": "$deny_on",
                 "allow_by": "$allow_by",
-                "allow_on": "$allow_on"
+                "allow_on": "$allow_on",
+                "ca_deny_by": "$ca_deny_by",
+                "ca_deny_on": "$ca_deny_on",
+                "ca_allow_by": "$ca_allow_by",
+                "ca_allow_on": "$ca_allow_on"
               }
             }
           }
@@ -345,7 +430,151 @@
                 "deny_by": "$deny_by",
                 "deny_on": "$deny_on",
                 "allow_by": "$allow_by",
-                "allow_on": "$allow_on"
+                "allow_on": "$allow_on",
+                "ca_deny_by": "$ca_deny_by",
+                "ca_deny_on": "$ca_deny_on",
+                "ca_allow_by": "$ca_allow_by",
+                "ca_allow_on": "$ca_allow_on"
+              }
+            }
+          }
+        }
+      },
+      {
+        "when": {
+          "op": "all",
+          "items": [
+            {
+              "op": "any",
+              "items": [
+                {
+                  "op": "eq",
+                  "left": "$in_group",
+                  "right": true
+                },
+                {
+                  "op": "all",
+                  "items": [
+                    {
+                      "op": "eq",
+                      "left": "$personal_rule_manages",
+                      "right": true
+                    },
+                    {
+                      "op": "eq",
+                      "left": "$has_personal",
+                      "right": true
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "op": "ne",
+              "left": "$allow_by",
+              "right": ""
+            }
+          ]
+        },
+        "then": {
+          "vop": "record",
+          "fields": {
+            "allowed": true,
+            "why": {
+              "vop": "template",
+              "text": "$msg_allowed",
+              "values": {
+                "screen": "$screen",
+                "label": "$label",
+                "role": "$role",
+                "deny_by": "$deny_by",
+                "deny_on": "$deny_on",
+                "allow_by": "$allow_by",
+                "allow_on": "$allow_on",
+                "ca_deny_by": "$ca_deny_by",
+                "ca_deny_on": "$ca_deny_on",
+                "ca_allow_by": "$ca_allow_by",
+                "ca_allow_on": "$ca_allow_on"
+              }
+            }
+          }
+        }
+      },
+      {
+        "when": {
+          "op": "any",
+          "items": [
+            {
+              "op": "eq",
+              "left": "$in_group",
+              "right": true
+            },
+            {
+              "op": "all",
+              "items": [
+                {
+                  "op": "eq",
+                  "left": "$personal_rule_manages",
+                  "right": true
+                },
+                {
+                  "op": "eq",
+                  "left": "$has_personal",
+                  "right": true
+                }
+              ]
+            }
+          ]
+        },
+        "then": {
+          "vop": "record",
+          "fields": {
+            "allowed": false,
+            "why": {
+              "vop": "template",
+              "text": "$msg_not_granted",
+              "values": {
+                "screen": "$screen",
+                "label": "$label",
+                "role": "$role",
+                "deny_by": "$deny_by",
+                "deny_on": "$deny_on",
+                "allow_by": "$allow_by",
+                "allow_on": "$allow_on",
+                "ca_deny_by": "$ca_deny_by",
+                "ca_deny_on": "$ca_deny_on",
+                "ca_allow_by": "$ca_allow_by",
+                "ca_allow_on": "$ca_allow_on"
+              }
+            }
+          }
+        }
+      },
+      {
+        "when": {
+          "op": "ne",
+          "left": "$ca_deny_by",
+          "right": ""
+        },
+        "then": {
+          "vop": "record",
+          "fields": {
+            "allowed": false,
+            "why": {
+              "vop": "template",
+              "text": "$msg_ca_denied",
+              "values": {
+                "screen": "$screen",
+                "label": "$label",
+                "role": "$role",
+                "deny_by": "$deny_by",
+                "deny_on": "$deny_on",
+                "allow_by": "$allow_by",
+                "allow_on": "$allow_on",
+                "ca_deny_by": "$ca_deny_by",
+                "ca_deny_on": "$ca_deny_on",
+                "ca_allow_by": "$ca_allow_by",
+                "ca_allow_on": "$ca_allow_on"
               }
             }
           }
@@ -371,7 +600,41 @@
                 "deny_by": "$deny_by",
                 "deny_on": "$deny_on",
                 "allow_by": "$allow_by",
-                "allow_on": "$allow_on"
+                "allow_on": "$allow_on",
+                "ca_deny_by": "$ca_deny_by",
+                "ca_deny_on": "$ca_deny_on",
+                "ca_allow_by": "$ca_allow_by",
+                "ca_allow_on": "$ca_allow_on"
+              }
+            }
+          }
+        }
+      },
+      {
+        "when": {
+          "op": "ne",
+          "left": "$ca_allow_by",
+          "right": ""
+        },
+        "then": {
+          "vop": "record",
+          "fields": {
+            "allowed": true,
+            "why": {
+              "vop": "template",
+              "text": "$msg_ca_allowed",
+              "values": {
+                "screen": "$screen",
+                "label": "$label",
+                "role": "$role",
+                "deny_by": "$deny_by",
+                "deny_on": "$deny_on",
+                "allow_by": "$allow_by",
+                "allow_on": "$allow_on",
+                "ca_deny_by": "$ca_deny_by",
+                "ca_deny_on": "$ca_deny_on",
+                "ca_allow_by": "$ca_allow_by",
+                "ca_allow_on": "$ca_allow_on"
               }
             }
           }
@@ -381,10 +644,10 @@
     "else": {
       "vop": "record",
       "fields": {
-        "allowed": true,
+        "allowed": false,
         "why": {
           "vop": "template",
-          "text": "$msg_open",
+          "text": "$msg_not_in_catch_all",
           "values": {
             "screen": "$screen",
             "label": "$label",
@@ -392,7 +655,11 @@
             "deny_by": "$deny_by",
             "deny_on": "$deny_on",
             "allow_by": "$allow_by",
-            "allow_on": "$allow_on"
+            "allow_on": "$allow_on",
+            "ca_deny_by": "$ca_deny_by",
+            "ca_deny_on": "$ca_deny_on",
+            "ca_allow_by": "$ca_allow_by",
+            "ca_allow_on": "$ca_allow_on"
           }
         }
       }
@@ -401,7 +668,7 @@
   "returns": "record",
   "version": 3,
   "status": "published",
-  "description_nl": "The one resolver behind the menu, every API guard and 'Check a person'. Order: signed out → no; owner → always (the way back in can never be locked); unknown screen → no; admin screen → owner only; a role gate chip says no → no; ANY deny for the person or a group they are in → no (deny wins); any allow → yes; nothing said → open. A screen this portal does not have is closed to everyone, the owner included (2026-09-18: the tv edition served the studio's YouTube API to its owner). available: a screen the host portal registered a test for (access.register_available) answers 'no' when this person has nothing on it at all - it is refused before every other rule, the owner included, and a catalog entry marked hide_when_denied then leaves the menu altogether. 2026-10-04 owner: an Admin screen the owner LENT to this person today (delegation, fact `lent`) opens for them.",
+  "description_nl": "The one resolver behind the menu, every API guard and 'Check a person' (model 2026-10-19, the studio's model, as SteadyMove's core). Order: signed out -> no; unknown screen -> no (the owner too); a screen with nothing on it for this person (available no) -> no; owner -> always (the way back in can never be locked); admin screen -> owner only; a role gate chip says no -> no. Then DENY WINS: any deny for the person, a group they are in, or a group those inherit from -> no. MANAGED = in a group other than Catch All (or, with knob personal_rule_manages on, holding a rule of their own): they see ONLY what their groups, the groups those INHERIT from (one parent each, read live) and their own rules allow - anything else -> no. UNASSIGNED = in no group: Catch All decides - its deny -> no, their own allow -> yes, Catch All's allow -> yes, anything else -> no. Catch All is the built-in, non-deletable, renamable group (id catch_all) for every account in no group, new sign-ups included. The old built-in group Everyone is retired: on day one its denies became Catch All denies, its allows became the Catch All allow list, every existing group was set to inherit Catch All, and an 'Only allowed' screen was simply left out of Catch All - so every menu stayed the same. personal_rule_manages is off so that approving a request (a personal allow) never empties an unassigned person's menu. A screen nobody allowed is closed; access.settings new_screens_to_catch_all adds a newly catalogued screen to Catch All once. A function check honours rules on the whole screen and on that function; a screen check ignores function-only rules. register_available screens answer 'no' before everything else, and hide_when_denied leaves them out of the menu. 2026-10-04 owner: an Admin screen the owner LENT to this person today (delegation, fact lent) opens for them - checked after owner, before admin; register_available(functions=True) answers per button (a tenant's role).",
   "test_cases": [
     {
       "args": {
@@ -440,7 +707,7 @@
     {
       "args": {
         "signed_in": true,
-        "role": "editor",
+        "in_group": true,
         "deny_by": "group \"Interns\"",
         "deny_on": "Videos",
         "allow_by": "ravi@x.io",
@@ -454,7 +721,69 @@
     {
       "args": {
         "signed_in": true,
-        "role": "member",
+        "in_group": true,
+        "allow_by": "group \"My Family\"",
+        "allow_on": "Videos"
+      },
+      "expect_value": {
+        "allowed": true,
+        "why": "Allowed for group \"My Family\" on Videos."
+      }
+    },
+    {
+      "args": {
+        "signed_in": true,
+        "in_group": true,
+        "label": "Videos",
+        "ca_allow_by": "group \"Catch All\"",
+        "ca_allow_on": "Videos"
+      },
+      "expect_value": {
+        "allowed": false,
+        "why": "Nothing allows Videos: none of this person's groups (or the groups they inherit from) or own rules does."
+      }
+    },
+    {
+      "args": {
+        "signed_in": true,
+        "label": "Videos",
+        "ca_allow_by": "group \"Catch All\"",
+        "ca_allow_on": "Videos"
+      },
+      "expect_value": {
+        "allowed": true,
+        "why": "In no group, so Catch All decides: allowed for group \"Catch All\" on Videos."
+      }
+    },
+    {
+      "args": {
+        "signed_in": true,
+        "label": "Videos"
+      },
+      "expect_value": {
+        "allowed": false,
+        "why": "In no group, so Catch All decides, and it does not allow Videos."
+      }
+    },
+    {
+      "args": {
+        "signed_in": true,
+        "has_personal": true,
+        "label": "Videos",
+        "allow_by": "ravi@x.io",
+        "allow_on": "Videos",
+        "ca_deny_by": "group \"Catch All\"",
+        "ca_deny_on": "Videos"
+      },
+      "expect_value": {
+        "allowed": false,
+        "why": "In no group, so Catch All decides: denied for group \"Catch All\" on Videos."
+      }
+    },
+    {
+      "args": {
+        "signed_in": true,
+        "has_personal": true,
         "allow_by": "ravi@x.io",
         "allow_on": "Videos"
       },
@@ -466,11 +795,15 @@
     {
       "args": {
         "signed_in": true,
-        "role": "member"
+        "has_personal": true,
+        "personal_rule_manages": true,
+        "label": "Videos",
+        "ca_allow_by": "group \"Catch All\"",
+        "ca_allow_on": "Videos"
       },
       "expect_value": {
-        "allowed": true,
-        "why": "Open to every account; no rule says otherwise."
+        "allowed": false,
+        "why": "Nothing allows Videos: none of this person's groups (or the groups they inherit from) or own rules does."
       }
     },
     {
@@ -496,7 +829,6 @@
     {
       "args": {
         "signed_in": true,
-        "known": true,
         "role": "owner",
         "available": "no",
         "label": "Buy a key"
@@ -504,6 +836,18 @@
       "expect_value": {
         "allowed": false,
         "why": "Buy a key is not open yet - there is nothing on it for you."
+      }
+    },
+    {
+      "args": {
+        "signed_in": true,
+        "role": "owner",
+        "deny_by": "group \"Catch All\"",
+        "deny_on": "Videos"
+      },
+      "expect_value": {
+        "allowed": true,
+        "why": "Owners can open everything."
       }
     },
     {

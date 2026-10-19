@@ -42,6 +42,17 @@
       "type": "text",
       "default": "",
       "label": "e.g. 2025"
+    },
+    {
+      "name": "person_forms",
+      "type": "json",
+      "default": [
+        "ITR-1",
+        "ITR-2",
+        "ITR-3",
+        "ITR-4"
+      ],
+      "label": "forms an individual or HUF files (status H = HUF)"
     }
   ],
   "expr": {
@@ -93,9 +104,9 @@
               "op": "all",
               "items": [
                 {
-                  "op": "eq",
-                  "left": "$form",
-                  "right": "ITR-3"
+                  "op": "in_set",
+                  "value": "$form",
+                  "set": "$person_forms"
                 },
                 {
                   "op": "eq",
@@ -108,9 +119,9 @@
           },
           {
             "when": {
-              "op": "eq",
-              "left": "$form",
-              "right": "ITR-3"
+              "op": "in_set",
+              "value": "$form",
+              "set": "$person_forms"
             },
             "then": "individual"
           },
@@ -185,7 +196,7 @@
   "returns": "record",
   "version": 1,
   "status": "published",
-  "description_nl": "2026-10-04: return section, status and residence codes of an ITR JSON -> return kind, client status, non-resident, assessment year.",
+  "description_nl": "2026-10-04: return section, status and residence codes of an ITR JSON -> return kind, client status, non-resident, assessment year. 2026-10-19 owner (My return read an ITR-2 the import refused): ITR-1, ITR-2 and ITR-4 import too.",
   "test_cases": [
     {
       "args": {
@@ -249,6 +260,54 @@
         "status": "individual",
         "nri": true,
         "ay": "2025-26"
+      }
+    },
+    {
+      "args": {
+        "form": "ITR-2",
+        "status": "I",
+        "substatus": "",
+        "section": "11",
+        "residential": "NRI",
+        "ay_code": "2026"
+      },
+      "expect_value": {
+        "kind": "original",
+        "status": "individual",
+        "nri": true,
+        "ay": "2026-27"
+      }
+    },
+    {
+      "args": {
+        "form": "ITR-4",
+        "status": "H",
+        "substatus": "",
+        "section": "11",
+        "residential": "",
+        "ay_code": "2025"
+      },
+      "expect_value": {
+        "kind": "original",
+        "status": "huf",
+        "nri": false,
+        "ay": "2025-26"
+      }
+    },
+    {
+      "args": {
+        "form": "ITR-1",
+        "status": "",
+        "substatus": "",
+        "section": "12",
+        "residential": "",
+        "ay_code": "2024"
+      },
+      "expect_value": {
+        "kind": "belated",
+        "status": "individual",
+        "nri": false,
+        "ay": "2024-25"
       }
     }
   ]

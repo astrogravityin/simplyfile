@@ -32,6 +32,18 @@
       "name": "requests_shown",
       "type": "number",
       "default": 300
+    },
+    {
+      "name": "new_screens_to_catch_all",
+      "type": "boolean",
+      "default": true,
+      "label": "A newly catalogued non-admin screen is added to Catch All once (nobody loses a new screen)"
+    },
+    {
+      "name": "new_group_inherits_catch_all",
+      "type": "boolean",
+      "default": true,
+      "label": "A new group inherits Catch All unless the owner picks otherwise"
     }
   ],
   "expr": {
@@ -41,13 +53,15 @@
       "group_description_max": "$group_description_max",
       "request_reason_max": "$request_reason_max",
       "requests_kept": "$requests_kept",
-      "requests_shown": "$requests_shown"
+      "requests_shown": "$requests_shown",
+      "new_screens_to_catch_all": "$new_screens_to_catch_all",
+      "new_group_inherits_catch_all": "$new_group_inherits_catch_all"
     }
   },
   "returns": "record",
   "version": 1,
   "status": "published",
-  "description_nl": "group_name_max / group_description_max / request_reason_max: characters kept. requests_kept: access requests remembered (oldest drop off). requests_shown: requests the People & access page lists.",
+  "description_nl": "group_name_max / group_description_max / request_reason_max: characters kept. requests_kept: access requests remembered (oldest drop off). requests_shown: requests the People & access page lists. new_screens_to_catch_all (2026-10-19): when the portal gains a non-admin screen, add an Allow for it to Catch All once - the screen is remembered in the access file's seen_screens, so removing it from Catch All later sticks; off = a new screen is closed until the owner allows it somewhere. new_group_inherits_catch_all: the parent a new group starts with (on = Catch All, off = none).",
   "test_cases": [
     {
       "args": {},
@@ -56,7 +70,9 @@
         "group_description_max": 200,
         "request_reason_max": 500,
         "requests_kept": 1000,
-        "requests_shown": 300
+        "requests_shown": 300,
+        "new_screens_to_catch_all": true,
+        "new_group_inherits_catch_all": true
       }
     }
   ],

@@ -17,6 +17,316 @@
       "name": "forms",
       "type": "json",
       "default": {
+        "ITR1": {
+          "form": "ITR-1",
+          "facts": {
+            "pan": [
+              "ITR1.PersonalInfo.PAN"
+            ],
+            "first": [
+              "ITR1.PersonalInfo.AssesseeName.FirstName"
+            ],
+            "middle": [
+              "ITR1.PersonalInfo.AssesseeName.MiddleName"
+            ],
+            "surname": [
+              "ITR1.PersonalInfo.AssesseeName.SurNameOrOrgName"
+            ],
+            "dob": [
+              "ITR1.PersonalInfo.DOB"
+            ],
+            "flat": [
+              "ITR1.PersonalInfo.Address.ResidenceNo"
+            ],
+            "building": [
+              "ITR1.PersonalInfo.Address.ResidenceName"
+            ],
+            "road": [
+              "ITR1.PersonalInfo.Address.RoadOrStreet"
+            ],
+            "area": [
+              "ITR1.PersonalInfo.Address.LocalityOrArea"
+            ],
+            "city": [
+              "ITR1.PersonalInfo.Address.CityOrTownOrDistrict"
+            ],
+            "pin": [
+              "ITR1.PersonalInfo.Address.PinCode"
+            ],
+            "mobile": [
+              "ITR1.PersonalInfo.Address.MobileNo"
+            ],
+            "email": [
+              "ITR1.PersonalInfo.Address.EmailAddress"
+            ],
+            "ay_code": [
+              "ITR1.Form_ITR1.AssessmentYear"
+            ],
+            "section": [
+              "ITR1.FilingStatus.ReturnFileSec"
+            ],
+            "receipt": [
+              "ITR1.FilingStatus.ReceiptNo"
+            ],
+            "orig_date": [
+              "ITR1.FilingStatus.OrigRetFiledDate"
+            ],
+            "father": [
+              "ITR1.Verification.Declaration.FatherName"
+            ],
+            "signer": [
+              "ITR1.Verification.Declaration.AssesseeVerName"
+            ],
+            "signer_pan": [
+              "ITR1.Verification.Declaration.AssesseeVerPAN"
+            ],
+            "sal": [
+              "ITR1.ITR1_IncomeDeductions.IncomeFromSal"
+            ],
+            "hp": [
+              "ITR1.ITR1_IncomeDeductions.TotalIncomeChargeableUnHP"
+            ],
+            "cg": [
+              "ITR1.LTCG112A.LongCap112A"
+            ],
+            "os": [
+              "ITR1.ITR1_IncomeDeductions.IncomeOthSrc"
+            ],
+            "gti": [
+              "ITR1.ITR1_IncomeDeductions.GrossTotIncomeIncLTCG112A",
+              "ITR1.ITR1_IncomeDeductions.GrossTotIncome"
+            ],
+            "deductions": [
+              "ITR1.ITR1_IncomeDeductions.DeductUndChapVIA.TotalChapVIADeductions"
+            ],
+            "income": [
+              "ITR1.ITR1_IncomeDeductions.TotalIncome"
+            ],
+            "tax_gross": [
+              "ITR1.ITR1_TaxComputation.GrossTaxLiability"
+            ],
+            "tax_net": [
+              "ITR1.ITR1_TaxComputation.NetTaxLiability"
+            ],
+            "rebate": [
+              "ITR1.ITR1_TaxComputation.Rebate87A"
+            ],
+            "cess": [
+              "ITR1.ITR1_TaxComputation.EducationCess"
+            ],
+            "i234a": [
+              "ITR1.ITR1_TaxComputation.IntrstPay.IntrstPayUs234A"
+            ],
+            "i234b": [
+              "ITR1.ITR1_TaxComputation.IntrstPay.IntrstPayUs234B"
+            ],
+            "i234c": [
+              "ITR1.ITR1_TaxComputation.IntrstPay.IntrstPayUs234C"
+            ],
+            "advance": [
+              "ITR1.TaxPaid.TaxesPaid.AdvanceTax"
+            ],
+            "tds": [
+              "ITR1.TaxPaid.TaxesPaid.TDS"
+            ],
+            "sat": [
+              "ITR1.TaxPaid.TaxesPaid.SelfAssessmentTax"
+            ],
+            "paid": [
+              "ITR1.TaxPaid.TaxesPaid.TotalTaxesPaid"
+            ],
+            "payable": [
+              "ITR1.TaxPaid.BalTaxPayable"
+            ],
+            "refund": [
+              "ITR1.Refund.RefundDue"
+            ],
+            "interest": [
+              "ITR1.ITR1_TaxComputation.TotalIntrstPay"
+            ]
+          },
+          "lists": {
+            "banks": {
+              "path": "ITR1.Refund.BankAccountDtls.AddtnlBankDetails",
+              "item": {
+                "bank": "BankName",
+                "account": "BankAccountNo",
+                "ifsc": "IFSCCode",
+                "type": "AccountType"
+              }
+            },
+            "tds_rows": {
+              "path": "ITR1.TDSonOthThanSals.TDSonOthThanSal",
+              "item": {
+                "tan": "EmployerOrDeductorOrCollectDetl.TAN",
+                "section": "TDSSection",
+                "gross": "AmtForTaxDeduct",
+                "tax": "ClaimOutOfTotTDSOnAmtPaid"
+              }
+            }
+          }
+        },
+        "ITR2": {
+          "form": "ITR-2",
+          "facts": {
+            "pan": [
+              "ITR2.PartA_GEN1.PersonalInfo.PAN"
+            ],
+            "first": [
+              "ITR2.PartA_GEN1.PersonalInfo.AssesseeName.FirstName"
+            ],
+            "middle": [
+              "ITR2.PartA_GEN1.PersonalInfo.AssesseeName.MiddleName"
+            ],
+            "surname": [
+              "ITR2.PartA_GEN1.PersonalInfo.AssesseeName.SurNameOrOrgName"
+            ],
+            "dob": [
+              "ITR2.PartA_GEN1.PersonalInfo.DOB",
+              "ITR2.PartA_GEN1.PersonalInfo.DateOFFormOrIncorp"
+            ],
+            "status": [
+              "ITR2.PartA_GEN1.PersonalInfo.Status",
+              "ITR2.PartA_GEN1.PersonalInfo.StatusOrCompanyType"
+            ],
+            "flat": [
+              "ITR2.PartA_GEN1.PersonalInfo.Address.ResidenceNo"
+            ],
+            "building": [
+              "ITR2.PartA_GEN1.PersonalInfo.Address.ResidenceName"
+            ],
+            "road": [
+              "ITR2.PartA_GEN1.PersonalInfo.Address.RoadOrStreet"
+            ],
+            "area": [
+              "ITR2.PartA_GEN1.PersonalInfo.Address.LocalityOrArea"
+            ],
+            "city": [
+              "ITR2.PartA_GEN1.PersonalInfo.Address.CityOrTownOrDistrict"
+            ],
+            "pin": [
+              "ITR2.PartA_GEN1.PersonalInfo.Address.PinCode"
+            ],
+            "mobile": [
+              "ITR2.PartA_GEN1.PersonalInfo.Address.MobileNo"
+            ],
+            "email": [
+              "ITR2.PartA_GEN1.PersonalInfo.Address.EmailAddress"
+            ],
+            "ay_code": [
+              "ITR2.Form_ITR2.AssessmentYear"
+            ],
+            "section": [
+              "ITR2.PartA_GEN1.FilingStatus.ReturnFileSec.IncomeTaxSec",
+              "ITR2.PartA_GEN1.FilingStatus.ReturnFileSec"
+            ],
+            "residential": [
+              "ITR2.PartA_GEN1.FilingStatus.ResidentialStatus"
+            ],
+            "receipt": [
+              "ITR2.PartA_GEN1.FilingStatus.ReceiptNo"
+            ],
+            "orig_date": [
+              "ITR2.PartA_GEN1.FilingStatus.OrigRetFiledDate"
+            ],
+            "father": [
+              "ITR2.Verification.Declaration.FatherName"
+            ],
+            "signer": [
+              "ITR2.Verification.Declaration.AssesseeVerName"
+            ],
+            "signer_pan": [
+              "ITR2.Verification.Declaration.AssesseeVerPAN"
+            ],
+            "sal": [
+              "ITR2.PartB-TI.Salaries"
+            ],
+            "hp": [
+              "ITR2.PartB-TI.IncomeFromHP"
+            ],
+            "cg": [
+              "ITR2.PartB-TI.CapGain.TotalCapGains"
+            ],
+            "os": [
+              "ITR2.PartB-TI.IncFromOS.TotIncFromOS"
+            ],
+            "gti": [
+              "ITR2.PartB-TI.GrossTotalIncome"
+            ],
+            "deductions": [
+              "ITR2.PartB-TI.DeductionsUnderScheduleVIA"
+            ],
+            "income": [
+              "ITR2.PartB-TI.TotalIncome"
+            ],
+            "tax_gross": [
+              "ITR2.PartB_TTI.ComputationOfTaxLiability.GrossTaxPayable",
+              "ITR2.PartB_TTI.ComputationOfTaxLiability.TaxPayableOnTI.GrossTaxLiability"
+            ],
+            "tax_net": [
+              "ITR2.PartB_TTI.ComputationOfTaxLiability.NetTaxLiability"
+            ],
+            "rebate": [
+              "ITR2.PartB_TTI.ComputationOfTaxLiability.Rebate87A"
+            ],
+            "surcharge": [
+              "ITR2.PartB_TTI.ComputationOfTaxLiability.TotalSurcharge"
+            ],
+            "cess": [
+              "ITR2.PartB_TTI.ComputationOfTaxLiability.EducationCess"
+            ],
+            "i234a": [
+              "ITR2.PartB_TTI.ComputationOfTaxLiability.IntrstPay.IntrstPayUs234A"
+            ],
+            "i234b": [
+              "ITR2.PartB_TTI.ComputationOfTaxLiability.IntrstPay.IntrstPayUs234B"
+            ],
+            "i234c": [
+              "ITR2.PartB_TTI.ComputationOfTaxLiability.IntrstPay.IntrstPayUs234C"
+            ],
+            "interest": [
+              "ITR2.PartB_TTI.ComputationOfTaxLiability.IntrstPay.TotalIntrstPay"
+            ],
+            "advance": [
+              "ITR2.PartB_TTI.TaxPaid.TaxesPaid.AdvanceTax"
+            ],
+            "tds": [
+              "ITR2.PartB_TTI.TaxPaid.TaxesPaid.TDS"
+            ],
+            "sat": [
+              "ITR2.PartB_TTI.TaxPaid.TaxesPaid.SelfAssessmentTax"
+            ],
+            "paid": [
+              "ITR2.PartB_TTI.TaxPaid.TaxesPaid.TotalTaxesPaid"
+            ],
+            "payable": [
+              "ITR2.PartB_TTI.TaxPaid.BalTaxPayable"
+            ],
+            "refund": [
+              "ITR2.PartB_TTI.Refund.RefundDue"
+            ]
+          },
+          "lists": {
+            "banks": {
+              "path": "ITR2.PartB_TTI.Refund.BankAccountDtls.AddtnlBankDetails",
+              "item": {
+                "bank": "BankName",
+                "account": "BankAccountNo",
+                "ifsc": "IFSCCode",
+                "type": "AccountType"
+              }
+            },
+            "tds_rows": {
+              "path": "ITR2.ScheduleTDS2.TDSOthThanSalaryDtls",
+              "item": {
+                "tan": "TANOfDeductor",
+                "section": "TDSSection",
+                "gross": "GrossAmount",
+                "tax": "TaxDeductCreditDtls.TaxClaimedOwnHands"
+              }
+            }
+          }
+        },
         "ITR3": {
           "form": "ITR-3",
           "facts": {
@@ -174,13 +484,165 @@
                 "type": "AccountType"
               }
             },
-            "tds": {
+            "tds_rows": {
               "path": "ITR3.ScheduleTDS2.TDSOthThanSalaryDtls",
               "item": {
                 "tan": "TANOfDeductor",
                 "section": "TDSSection",
                 "gross": "GrossAmount",
                 "tax": "TaxDeductCreditDtls.TaxClaimedOwnHands"
+              }
+            }
+          }
+        },
+        "ITR4": {
+          "form": "ITR-4",
+          "facts": {
+            "pan": [
+              "ITR4.PersonalInfo.PAN"
+            ],
+            "first": [
+              "ITR4.PersonalInfo.AssesseeName.FirstName"
+            ],
+            "middle": [
+              "ITR4.PersonalInfo.AssesseeName.MiddleName"
+            ],
+            "surname": [
+              "ITR4.PersonalInfo.AssesseeName.SurNameOrOrgName"
+            ],
+            "dob": [
+              "ITR4.PersonalInfo.DOB"
+            ],
+            "flat": [
+              "ITR4.PersonalInfo.Address.ResidenceNo"
+            ],
+            "building": [
+              "ITR4.PersonalInfo.Address.ResidenceName"
+            ],
+            "road": [
+              "ITR4.PersonalInfo.Address.RoadOrStreet"
+            ],
+            "area": [
+              "ITR4.PersonalInfo.Address.LocalityOrArea"
+            ],
+            "city": [
+              "ITR4.PersonalInfo.Address.CityOrTownOrDistrict"
+            ],
+            "pin": [
+              "ITR4.PersonalInfo.Address.PinCode"
+            ],
+            "mobile": [
+              "ITR4.PersonalInfo.Address.MobileNo"
+            ],
+            "email": [
+              "ITR4.PersonalInfo.Address.EmailAddress"
+            ],
+            "ay_code": [
+              "ITR4.Form_ITR4.AssessmentYear"
+            ],
+            "section": [
+              "ITR4.FilingStatus.ReturnFileSec"
+            ],
+            "receipt": [
+              "ITR4.FilingStatus.ReceiptNo"
+            ],
+            "orig_date": [
+              "ITR4.FilingStatus.OrigRetFiledDate"
+            ],
+            "father": [
+              "ITR4.Verification.Declaration.FatherName"
+            ],
+            "signer": [
+              "ITR4.Verification.Declaration.AssesseeVerName"
+            ],
+            "signer_pan": [
+              "ITR4.Verification.Declaration.AssesseeVerPAN"
+            ],
+            "sal": [
+              "ITR4.IncomeDeductions.IncomeFromSal"
+            ],
+            "hp": [
+              "ITR4.IncomeDeductions.TotalIncomeChargeableUnHP"
+            ],
+            "cg": [
+              "ITR4.LTCG112A.LongCap112A"
+            ],
+            "os": [
+              "ITR4.IncomeDeductions.IncomeOthSrc"
+            ],
+            "gti": [
+              "ITR4.IncomeDeductions.GrossTotIncomeIncLTCG112A",
+              "ITR4.IncomeDeductions.GrossTotIncome"
+            ],
+            "deductions": [
+              "ITR4.IncomeDeductions.DeductUndChapVIA.TotalChapVIADeductions"
+            ],
+            "income": [
+              "ITR4.IncomeDeductions.TotalIncome"
+            ],
+            "tax_gross": [
+              "ITR4.TaxComputation.GrossTaxLiability"
+            ],
+            "tax_net": [
+              "ITR4.TaxComputation.NetTaxLiability"
+            ],
+            "rebate": [
+              "ITR4.TaxComputation.Rebate87A"
+            ],
+            "cess": [
+              "ITR4.TaxComputation.EducationCess"
+            ],
+            "i234a": [
+              "ITR4.TaxComputation.IntrstPay.IntrstPayUs234A"
+            ],
+            "i234b": [
+              "ITR4.TaxComputation.IntrstPay.IntrstPayUs234B"
+            ],
+            "i234c": [
+              "ITR4.TaxComputation.IntrstPay.IntrstPayUs234C"
+            ],
+            "advance": [
+              "ITR4.TaxPaid.TaxesPaid.AdvanceTax"
+            ],
+            "tds": [
+              "ITR4.TaxPaid.TaxesPaid.TDS"
+            ],
+            "sat": [
+              "ITR4.TaxPaid.TaxesPaid.SelfAssessmentTax"
+            ],
+            "paid": [
+              "ITR4.TaxPaid.TaxesPaid.TotalTaxesPaid"
+            ],
+            "payable": [
+              "ITR4.TaxPaid.BalTaxPayable"
+            ],
+            "refund": [
+              "ITR4.Refund.RefundDue"
+            ],
+            "status": [
+              "ITR4.PersonalInfo.Status"
+            ],
+            "bp": [
+              "ITR4.IncomeDeductions.IncomeFromBusinessProf"
+            ]
+          },
+          "lists": {
+            "banks": {
+              "path": "ITR4.Refund.BankAccountDtls.AddtnlBankDetails",
+              "item": {
+                "bank": "BankName",
+                "account": "BankAccountNo",
+                "ifsc": "IFSCCode",
+                "type": "AccountType"
+              }
+            },
+            "tds_rows": {
+              "path": "ITR4.TDSonOthThanSals.TDSonOthThanSalDtls",
+              "item": {
+                "tan": "TANOfDeductor",
+                "section": "TDSSection",
+                "gross": "GrossAmount",
+                "tax": "TDSClaimed"
               }
             }
           }
@@ -342,7 +804,7 @@
                 "type": "AccountType"
               }
             },
-            "tds": {
+            "tds_rows": {
               "path": "ITR5.ScheduleTDS2.TDSOthThanSalaryDtls",
               "item": {
                 "tan": "TANOfDeductor",
@@ -405,13 +867,323 @@
   "returns": "record",
   "version": 1,
   "status": "published",
-  "description_nl": "2026-10-04: an ITR-3 / ITR-5 JSON as filed (CBDT schema) - the paths of the facts the import reads.",
+  "description_nl": "2026-10-04: an ITR-3 / ITR-5 JSON as filed (CBDT schema) - the paths of the facts the import reads. 2026-10-19 owner (My return read an ITR-2 the import refused): ITR-1, ITR-2 and ITR-4 import too. ITR-2 has ITR-3's layout without business; ITR-1 / ITR-4 (sugam) keep PersonalInfo at the top, residents only. 2026-10-19: list tds -> tds_rows (it overwrote the TDS total).",
   "test_cases": [
     {
       "args": {},
       "expect_value": {
         "wrap": "ITR",
         "forms": {
+          "ITR1": {
+            "form": "ITR-1",
+            "facts": {
+              "pan": [
+                "ITR1.PersonalInfo.PAN"
+              ],
+              "first": [
+                "ITR1.PersonalInfo.AssesseeName.FirstName"
+              ],
+              "middle": [
+                "ITR1.PersonalInfo.AssesseeName.MiddleName"
+              ],
+              "surname": [
+                "ITR1.PersonalInfo.AssesseeName.SurNameOrOrgName"
+              ],
+              "dob": [
+                "ITR1.PersonalInfo.DOB"
+              ],
+              "flat": [
+                "ITR1.PersonalInfo.Address.ResidenceNo"
+              ],
+              "building": [
+                "ITR1.PersonalInfo.Address.ResidenceName"
+              ],
+              "road": [
+                "ITR1.PersonalInfo.Address.RoadOrStreet"
+              ],
+              "area": [
+                "ITR1.PersonalInfo.Address.LocalityOrArea"
+              ],
+              "city": [
+                "ITR1.PersonalInfo.Address.CityOrTownOrDistrict"
+              ],
+              "pin": [
+                "ITR1.PersonalInfo.Address.PinCode"
+              ],
+              "mobile": [
+                "ITR1.PersonalInfo.Address.MobileNo"
+              ],
+              "email": [
+                "ITR1.PersonalInfo.Address.EmailAddress"
+              ],
+              "ay_code": [
+                "ITR1.Form_ITR1.AssessmentYear"
+              ],
+              "section": [
+                "ITR1.FilingStatus.ReturnFileSec"
+              ],
+              "receipt": [
+                "ITR1.FilingStatus.ReceiptNo"
+              ],
+              "orig_date": [
+                "ITR1.FilingStatus.OrigRetFiledDate"
+              ],
+              "father": [
+                "ITR1.Verification.Declaration.FatherName"
+              ],
+              "signer": [
+                "ITR1.Verification.Declaration.AssesseeVerName"
+              ],
+              "signer_pan": [
+                "ITR1.Verification.Declaration.AssesseeVerPAN"
+              ],
+              "sal": [
+                "ITR1.ITR1_IncomeDeductions.IncomeFromSal"
+              ],
+              "hp": [
+                "ITR1.ITR1_IncomeDeductions.TotalIncomeChargeableUnHP"
+              ],
+              "cg": [
+                "ITR1.LTCG112A.LongCap112A"
+              ],
+              "os": [
+                "ITR1.ITR1_IncomeDeductions.IncomeOthSrc"
+              ],
+              "gti": [
+                "ITR1.ITR1_IncomeDeductions.GrossTotIncomeIncLTCG112A",
+                "ITR1.ITR1_IncomeDeductions.GrossTotIncome"
+              ],
+              "deductions": [
+                "ITR1.ITR1_IncomeDeductions.DeductUndChapVIA.TotalChapVIADeductions"
+              ],
+              "income": [
+                "ITR1.ITR1_IncomeDeductions.TotalIncome"
+              ],
+              "tax_gross": [
+                "ITR1.ITR1_TaxComputation.GrossTaxLiability"
+              ],
+              "tax_net": [
+                "ITR1.ITR1_TaxComputation.NetTaxLiability"
+              ],
+              "rebate": [
+                "ITR1.ITR1_TaxComputation.Rebate87A"
+              ],
+              "cess": [
+                "ITR1.ITR1_TaxComputation.EducationCess"
+              ],
+              "i234a": [
+                "ITR1.ITR1_TaxComputation.IntrstPay.IntrstPayUs234A"
+              ],
+              "i234b": [
+                "ITR1.ITR1_TaxComputation.IntrstPay.IntrstPayUs234B"
+              ],
+              "i234c": [
+                "ITR1.ITR1_TaxComputation.IntrstPay.IntrstPayUs234C"
+              ],
+              "advance": [
+                "ITR1.TaxPaid.TaxesPaid.AdvanceTax"
+              ],
+              "tds": [
+                "ITR1.TaxPaid.TaxesPaid.TDS"
+              ],
+              "sat": [
+                "ITR1.TaxPaid.TaxesPaid.SelfAssessmentTax"
+              ],
+              "paid": [
+                "ITR1.TaxPaid.TaxesPaid.TotalTaxesPaid"
+              ],
+              "payable": [
+                "ITR1.TaxPaid.BalTaxPayable"
+              ],
+              "refund": [
+                "ITR1.Refund.RefundDue"
+              ],
+              "interest": [
+                "ITR1.ITR1_TaxComputation.TotalIntrstPay"
+              ]
+            },
+            "lists": {
+              "banks": {
+                "path": "ITR1.Refund.BankAccountDtls.AddtnlBankDetails",
+                "item": {
+                  "bank": "BankName",
+                  "account": "BankAccountNo",
+                  "ifsc": "IFSCCode",
+                  "type": "AccountType"
+                }
+              },
+              "tds_rows": {
+                "path": "ITR1.TDSonOthThanSals.TDSonOthThanSal",
+                "item": {
+                  "tan": "EmployerOrDeductorOrCollectDetl.TAN",
+                  "section": "TDSSection",
+                  "gross": "AmtForTaxDeduct",
+                  "tax": "ClaimOutOfTotTDSOnAmtPaid"
+                }
+              }
+            }
+          },
+          "ITR2": {
+            "form": "ITR-2",
+            "facts": {
+              "pan": [
+                "ITR2.PartA_GEN1.PersonalInfo.PAN"
+              ],
+              "first": [
+                "ITR2.PartA_GEN1.PersonalInfo.AssesseeName.FirstName"
+              ],
+              "middle": [
+                "ITR2.PartA_GEN1.PersonalInfo.AssesseeName.MiddleName"
+              ],
+              "surname": [
+                "ITR2.PartA_GEN1.PersonalInfo.AssesseeName.SurNameOrOrgName"
+              ],
+              "dob": [
+                "ITR2.PartA_GEN1.PersonalInfo.DOB",
+                "ITR2.PartA_GEN1.PersonalInfo.DateOFFormOrIncorp"
+              ],
+              "status": [
+                "ITR2.PartA_GEN1.PersonalInfo.Status",
+                "ITR2.PartA_GEN1.PersonalInfo.StatusOrCompanyType"
+              ],
+              "flat": [
+                "ITR2.PartA_GEN1.PersonalInfo.Address.ResidenceNo"
+              ],
+              "building": [
+                "ITR2.PartA_GEN1.PersonalInfo.Address.ResidenceName"
+              ],
+              "road": [
+                "ITR2.PartA_GEN1.PersonalInfo.Address.RoadOrStreet"
+              ],
+              "area": [
+                "ITR2.PartA_GEN1.PersonalInfo.Address.LocalityOrArea"
+              ],
+              "city": [
+                "ITR2.PartA_GEN1.PersonalInfo.Address.CityOrTownOrDistrict"
+              ],
+              "pin": [
+                "ITR2.PartA_GEN1.PersonalInfo.Address.PinCode"
+              ],
+              "mobile": [
+                "ITR2.PartA_GEN1.PersonalInfo.Address.MobileNo"
+              ],
+              "email": [
+                "ITR2.PartA_GEN1.PersonalInfo.Address.EmailAddress"
+              ],
+              "ay_code": [
+                "ITR2.Form_ITR2.AssessmentYear"
+              ],
+              "section": [
+                "ITR2.PartA_GEN1.FilingStatus.ReturnFileSec.IncomeTaxSec",
+                "ITR2.PartA_GEN1.FilingStatus.ReturnFileSec"
+              ],
+              "residential": [
+                "ITR2.PartA_GEN1.FilingStatus.ResidentialStatus"
+              ],
+              "receipt": [
+                "ITR2.PartA_GEN1.FilingStatus.ReceiptNo"
+              ],
+              "orig_date": [
+                "ITR2.PartA_GEN1.FilingStatus.OrigRetFiledDate"
+              ],
+              "father": [
+                "ITR2.Verification.Declaration.FatherName"
+              ],
+              "signer": [
+                "ITR2.Verification.Declaration.AssesseeVerName"
+              ],
+              "signer_pan": [
+                "ITR2.Verification.Declaration.AssesseeVerPAN"
+              ],
+              "sal": [
+                "ITR2.PartB-TI.Salaries"
+              ],
+              "hp": [
+                "ITR2.PartB-TI.IncomeFromHP"
+              ],
+              "cg": [
+                "ITR2.PartB-TI.CapGain.TotalCapGains"
+              ],
+              "os": [
+                "ITR2.PartB-TI.IncFromOS.TotIncFromOS"
+              ],
+              "gti": [
+                "ITR2.PartB-TI.GrossTotalIncome"
+              ],
+              "deductions": [
+                "ITR2.PartB-TI.DeductionsUnderScheduleVIA"
+              ],
+              "income": [
+                "ITR2.PartB-TI.TotalIncome"
+              ],
+              "tax_gross": [
+                "ITR2.PartB_TTI.ComputationOfTaxLiability.GrossTaxPayable",
+                "ITR2.PartB_TTI.ComputationOfTaxLiability.TaxPayableOnTI.GrossTaxLiability"
+              ],
+              "tax_net": [
+                "ITR2.PartB_TTI.ComputationOfTaxLiability.NetTaxLiability"
+              ],
+              "rebate": [
+                "ITR2.PartB_TTI.ComputationOfTaxLiability.Rebate87A"
+              ],
+              "surcharge": [
+                "ITR2.PartB_TTI.ComputationOfTaxLiability.TotalSurcharge"
+              ],
+              "cess": [
+                "ITR2.PartB_TTI.ComputationOfTaxLiability.EducationCess"
+              ],
+              "i234a": [
+                "ITR2.PartB_TTI.ComputationOfTaxLiability.IntrstPay.IntrstPayUs234A"
+              ],
+              "i234b": [
+                "ITR2.PartB_TTI.ComputationOfTaxLiability.IntrstPay.IntrstPayUs234B"
+              ],
+              "i234c": [
+                "ITR2.PartB_TTI.ComputationOfTaxLiability.IntrstPay.IntrstPayUs234C"
+              ],
+              "interest": [
+                "ITR2.PartB_TTI.ComputationOfTaxLiability.IntrstPay.TotalIntrstPay"
+              ],
+              "advance": [
+                "ITR2.PartB_TTI.TaxPaid.TaxesPaid.AdvanceTax"
+              ],
+              "tds": [
+                "ITR2.PartB_TTI.TaxPaid.TaxesPaid.TDS"
+              ],
+              "sat": [
+                "ITR2.PartB_TTI.TaxPaid.TaxesPaid.SelfAssessmentTax"
+              ],
+              "paid": [
+                "ITR2.PartB_TTI.TaxPaid.TaxesPaid.TotalTaxesPaid"
+              ],
+              "payable": [
+                "ITR2.PartB_TTI.TaxPaid.BalTaxPayable"
+              ],
+              "refund": [
+                "ITR2.PartB_TTI.Refund.RefundDue"
+              ]
+            },
+            "lists": {
+              "banks": {
+                "path": "ITR2.PartB_TTI.Refund.BankAccountDtls.AddtnlBankDetails",
+                "item": {
+                  "bank": "BankName",
+                  "account": "BankAccountNo",
+                  "ifsc": "IFSCCode",
+                  "type": "AccountType"
+                }
+              },
+              "tds_rows": {
+                "path": "ITR2.ScheduleTDS2.TDSOthThanSalaryDtls",
+                "item": {
+                  "tan": "TANOfDeductor",
+                  "section": "TDSSection",
+                  "gross": "GrossAmount",
+                  "tax": "TaxDeductCreditDtls.TaxClaimedOwnHands"
+                }
+              }
+            }
+          },
           "ITR3": {
             "form": "ITR-3",
             "facts": {
@@ -569,13 +1341,165 @@
                   "type": "AccountType"
                 }
               },
-              "tds": {
+              "tds_rows": {
                 "path": "ITR3.ScheduleTDS2.TDSOthThanSalaryDtls",
                 "item": {
                   "tan": "TANOfDeductor",
                   "section": "TDSSection",
                   "gross": "GrossAmount",
                   "tax": "TaxDeductCreditDtls.TaxClaimedOwnHands"
+                }
+              }
+            }
+          },
+          "ITR4": {
+            "form": "ITR-4",
+            "facts": {
+              "pan": [
+                "ITR4.PersonalInfo.PAN"
+              ],
+              "first": [
+                "ITR4.PersonalInfo.AssesseeName.FirstName"
+              ],
+              "middle": [
+                "ITR4.PersonalInfo.AssesseeName.MiddleName"
+              ],
+              "surname": [
+                "ITR4.PersonalInfo.AssesseeName.SurNameOrOrgName"
+              ],
+              "dob": [
+                "ITR4.PersonalInfo.DOB"
+              ],
+              "flat": [
+                "ITR4.PersonalInfo.Address.ResidenceNo"
+              ],
+              "building": [
+                "ITR4.PersonalInfo.Address.ResidenceName"
+              ],
+              "road": [
+                "ITR4.PersonalInfo.Address.RoadOrStreet"
+              ],
+              "area": [
+                "ITR4.PersonalInfo.Address.LocalityOrArea"
+              ],
+              "city": [
+                "ITR4.PersonalInfo.Address.CityOrTownOrDistrict"
+              ],
+              "pin": [
+                "ITR4.PersonalInfo.Address.PinCode"
+              ],
+              "mobile": [
+                "ITR4.PersonalInfo.Address.MobileNo"
+              ],
+              "email": [
+                "ITR4.PersonalInfo.Address.EmailAddress"
+              ],
+              "ay_code": [
+                "ITR4.Form_ITR4.AssessmentYear"
+              ],
+              "section": [
+                "ITR4.FilingStatus.ReturnFileSec"
+              ],
+              "receipt": [
+                "ITR4.FilingStatus.ReceiptNo"
+              ],
+              "orig_date": [
+                "ITR4.FilingStatus.OrigRetFiledDate"
+              ],
+              "father": [
+                "ITR4.Verification.Declaration.FatherName"
+              ],
+              "signer": [
+                "ITR4.Verification.Declaration.AssesseeVerName"
+              ],
+              "signer_pan": [
+                "ITR4.Verification.Declaration.AssesseeVerPAN"
+              ],
+              "sal": [
+                "ITR4.IncomeDeductions.IncomeFromSal"
+              ],
+              "hp": [
+                "ITR4.IncomeDeductions.TotalIncomeChargeableUnHP"
+              ],
+              "cg": [
+                "ITR4.LTCG112A.LongCap112A"
+              ],
+              "os": [
+                "ITR4.IncomeDeductions.IncomeOthSrc"
+              ],
+              "gti": [
+                "ITR4.IncomeDeductions.GrossTotIncomeIncLTCG112A",
+                "ITR4.IncomeDeductions.GrossTotIncome"
+              ],
+              "deductions": [
+                "ITR4.IncomeDeductions.DeductUndChapVIA.TotalChapVIADeductions"
+              ],
+              "income": [
+                "ITR4.IncomeDeductions.TotalIncome"
+              ],
+              "tax_gross": [
+                "ITR4.TaxComputation.GrossTaxLiability"
+              ],
+              "tax_net": [
+                "ITR4.TaxComputation.NetTaxLiability"
+              ],
+              "rebate": [
+                "ITR4.TaxComputation.Rebate87A"
+              ],
+              "cess": [
+                "ITR4.TaxComputation.EducationCess"
+              ],
+              "i234a": [
+                "ITR4.TaxComputation.IntrstPay.IntrstPayUs234A"
+              ],
+              "i234b": [
+                "ITR4.TaxComputation.IntrstPay.IntrstPayUs234B"
+              ],
+              "i234c": [
+                "ITR4.TaxComputation.IntrstPay.IntrstPayUs234C"
+              ],
+              "advance": [
+                "ITR4.TaxPaid.TaxesPaid.AdvanceTax"
+              ],
+              "tds": [
+                "ITR4.TaxPaid.TaxesPaid.TDS"
+              ],
+              "sat": [
+                "ITR4.TaxPaid.TaxesPaid.SelfAssessmentTax"
+              ],
+              "paid": [
+                "ITR4.TaxPaid.TaxesPaid.TotalTaxesPaid"
+              ],
+              "payable": [
+                "ITR4.TaxPaid.BalTaxPayable"
+              ],
+              "refund": [
+                "ITR4.Refund.RefundDue"
+              ],
+              "status": [
+                "ITR4.PersonalInfo.Status"
+              ],
+              "bp": [
+                "ITR4.IncomeDeductions.IncomeFromBusinessProf"
+              ]
+            },
+            "lists": {
+              "banks": {
+                "path": "ITR4.Refund.BankAccountDtls.AddtnlBankDetails",
+                "item": {
+                  "bank": "BankName",
+                  "account": "BankAccountNo",
+                  "ifsc": "IFSCCode",
+                  "type": "AccountType"
+                }
+              },
+              "tds_rows": {
+                "path": "ITR4.TDSonOthThanSals.TDSonOthThanSalDtls",
+                "item": {
+                  "tan": "TANOfDeductor",
+                  "section": "TDSSection",
+                  "gross": "GrossAmount",
+                  "tax": "TDSClaimed"
                 }
               }
             }
@@ -737,7 +1661,7 @@
                   "type": "AccountType"
                 }
               },
-              "tds": {
+              "tds_rows": {
                 "path": "ITR5.ScheduleTDS2.TDSOthThanSalaryDtls",
                 "item": {
                   "tan": "TANOfDeductor",

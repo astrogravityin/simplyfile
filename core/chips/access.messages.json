@@ -35,16 +35,6 @@
       "default": "a deleted account"
     },
     {
-      "name": "everyone_name",
-      "type": "text",
-      "default": "Everyone"
-    },
-    {
-      "name": "everyone_description",
-      "type": "text",
-      "default": "Every account, including ones made tomorrow."
-    },
-    {
       "name": "group_needs_name",
       "type": "text",
       "default": "A group needs a name."
@@ -53,11 +43,6 @@
       "name": "group_exists",
       "type": "text",
       "default": "There is already a group called \"{name}\"."
-    },
-    {
-      "name": "everyone_builtin",
-      "type": "text",
-      "default": "Everyone is built in. Remove its rules instead."
     },
     {
       "name": "allow_or_deny",
@@ -165,6 +150,46 @@
       "type": "text",
       "default": "The last owner cannot be removed - make someone else an owner first.",
       "label": "last_owner"
+    },
+    {
+      "name": "catch_all_name",
+      "type": "text",
+      "default": "Catch All"
+    },
+    {
+      "name": "catch_all_description",
+      "type": "text",
+      "default": "What every account in no group sees - unassigned accounts and new sign-ups. Cannot be deleted; change what it allows."
+    },
+    {
+      "name": "catch_all_builtin",
+      "type": "text",
+      "default": "Catch All is built in and cannot be deleted. Change what it allows instead."
+    },
+    {
+      "name": "catch_all_no_members",
+      "type": "text",
+      "default": "Nobody is put into Catch All - it is everyone who is in no other group."
+    },
+    {
+      "name": "inherited_label",
+      "type": "text",
+      "default": "group \"{name}\" (through \"{via}\")"
+    },
+    {
+      "name": "inherit_unknown",
+      "type": "text",
+      "default": "Pick a group to inherit from, or none."
+    },
+    {
+      "name": "inherit_loop",
+      "type": "text",
+      "default": "\"{name}\" already inherits from this group, so this group cannot inherit from it."
+    },
+    {
+      "name": "migration_by",
+      "type": "text",
+      "default": "Day-one Catch All (2026-10-19)"
     }
   ],
   "expr": {
@@ -175,11 +200,8 @@
       "group_label": "$group_label",
       "deleted_group": "$deleted_group",
       "deleted_account": "$deleted_account",
-      "everyone_name": "$everyone_name",
-      "everyone_description": "$everyone_description",
       "group_needs_name": "$group_needs_name",
       "group_exists": "$group_exists",
-      "everyone_builtin": "$everyone_builtin",
       "allow_or_deny": "$allow_or_deny",
       "pick_screen": "$pick_screen",
       "owner_alone_rule": "$owner_alone_rule",
@@ -200,13 +222,21 @@
       "no_self_remove": "$no_self_remove",
       "only_owner_removes_owner": "$only_owner_removes_owner",
       "too_many_requests": "$too_many_requests",
-      "last_owner": "$last_owner"
+      "last_owner": "$last_owner",
+      "catch_all_name": "$catch_all_name",
+      "catch_all_description": "$catch_all_description",
+      "catch_all_builtin": "$catch_all_builtin",
+      "catch_all_no_members": "$catch_all_no_members",
+      "inherited_label": "$inherited_label",
+      "inherit_unknown": "$inherit_unknown",
+      "inherit_loop": "$inherit_loop",
+      "migration_by": "$migration_by"
     }
   },
   "returns": "record",
   "version": 2,
   "status": "published",
-  "description_nl": "Errors and labels of People & access, groups, rules and requests to open a screen. {label}, {screen}, {function}, {name}, {error}, {roles} fill in. everyone_name and everyone_description name the built-in group the first time the access file is made.",
+  "description_nl": "Errors and labels of People & access, groups, rules and requests to open a screen. {label}, {screen}, {function}, {name}, {via}, {error}, {roles} fill in. catch_all_name and catch_all_description name the built-in Catch All group (what every account in no group sees) the first time the access file is made or migrated; the owner can rename it afterwards. inherited_label names a rule that reached a person through a parent group. migration_by is the 'by' of the rules the day-one migration wrote.",
   "test_cases": [
     {
       "args": {},
@@ -216,11 +246,8 @@
         "group_label": "group \"{name}\"",
         "deleted_group": "a deleted group",
         "deleted_account": "a deleted account",
-        "everyone_name": "Everyone",
-        "everyone_description": "Every account, including ones made tomorrow.",
         "group_needs_name": "A group needs a name.",
         "group_exists": "There is already a group called \"{name}\".",
-        "everyone_builtin": "Everyone is built in. Remove its rules instead.",
         "allow_or_deny": "A rule either allows or denies.",
         "pick_screen": "Pick a screen (and function) from the catalog.",
         "owner_alone_rule": "{label} is the portal owner's alone. No rule can open it to anyone else.",
@@ -241,7 +268,15 @@
         "no_self_remove": "You cannot remove your own account.",
         "only_owner_removes_owner": "Only an owner can remove an owner.",
         "too_many_requests": "You have asked for access many times today. A portal admin will answer the ones you sent.",
-        "last_owner": "The last owner cannot be removed - make someone else an owner first."
+        "last_owner": "The last owner cannot be removed - make someone else an owner first.",
+        "catch_all_name": "Catch All",
+        "catch_all_description": "What every account in no group sees - unassigned accounts and new sign-ups. Cannot be deleted; change what it allows.",
+        "catch_all_builtin": "Catch All is built in and cannot be deleted. Change what it allows instead.",
+        "catch_all_no_members": "Nobody is put into Catch All - it is everyone who is in no other group.",
+        "inherited_label": "group \"{name}\" (through \"{via}\")",
+        "inherit_unknown": "Pick a group to inherit from, or none.",
+        "inherit_loop": "\"{name}\" already inherits from this group, so this group cannot inherit from it.",
+        "migration_by": "Day-one Catch All (2026-10-19)"
       }
     }
   ],

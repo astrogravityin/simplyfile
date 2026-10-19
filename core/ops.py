@@ -1414,6 +1414,25 @@ def deposits_at(rows: Any = None, at: Any = "", rate: Any = None, compound_month
     return sorted(out, key=lambda x: str(x.get(date_key)))
 
 
+def group_digits(value: Any = None, style: Any = "international", digits: Any = 0) -> str | None:
+    """A number written with its digits grouped: international 1,234,567 or indian 12,34,567 (the last three, then pairs).
+    `digits` decimals; a minus sign kept; unknown -> None, never "0"."""
+    x = _num(value)
+    if x is None:
+        return None
+    d = max(0, int(_n0(digits)))
+    whole, _, frac = f"{abs(x):.{d}f}".partition(".")
+    if str(style) == "indian" and len(whole) > 3:
+        head, tail = whole[:-3], whole[-3:]
+        pairs = []
+        while len(head) > 2:
+            head, pairs = head[:-2], [head[-2:]] + pairs
+        whole = ",".join([head] + pairs + [tail])
+    else:
+        whole = f"{int(whole):,}"
+    return ("-" if x < 0 else "") + whole + (f".{frac}" if d else "")
+
+
 def payout_rows(amount: Any = None, rate: Any = None, months: Any = 12, interest_every: Any = 12, start: Any = "",
                 digits: Any = 2) -> list | None:
     """`amount` paid back in `months` equal monthly parts while the part still held earns `rate` % a year, paid every
@@ -1529,7 +1548,7 @@ OPS = {f.__name__: f for f in (
     truncate, sub_text, contains, ip_network, first_matching, epoch_date,
     pluck, slice_list, months_part, date_shift, first_index_matching, missing, count, last, compact, coalesce, json_in_text, fit_count, match_case, stable_hash, hash_hex, strings_in, total, first_named, pack_text, trim_to_sentence, after_heading, last_line, pack_words, name_value_lines, ease, filter_rows, rank_rows, rows_view, fuzzy_rows, match_rows, rows_math, group_rows, rows_aggregate,
     rows_product, rows_band, rows_index, rows_lookup, rows_check, rows_having, decision_table, doc_problems, literal, record, merge, get,
-    list_prefer, number_series, growth_rows, deposit_rows, deposits_at, payout_rows, path_refusal, parts_of_whole, series_bucket, rows_delta,
+    list_prefer, number_series, growth_rows, deposit_rows, deposits_at, payout_rows, group_digits, path_refusal, parts_of_whole, series_bucket, rows_delta,
 )}
 
 
@@ -1585,6 +1604,9 @@ if __name__ == "__main__":
     _r = deposits_at([{"date": "2026-01-10", "amount": 10000}, {"date": "2026-07-10", "amount": 10000}, {"date": "x", "amount": 5}], "2027-01-10", 12)
     assert [(x["value_at"], x["free"], x["free_date"]) for x in _r] == [(11200, True, "2027-01-10"), (10600, False, "2027-07-10")], _r
     assert deposits_at([{"date": "2026-01-10", "amount": 100}], "2026-01-01", 12)[0]["value_at"] == 100 and deposits_at([], "bad", 12) is None
+    # 2026-10-17 owner: Indian and international commas
+    assert group_digits(100000000, "indian") == "10,00,00,000" and group_digits(100000000) == "100,000,000"
+    assert group_digits(999, "indian") == "999" and group_digits(-1234567.5, "indian", 2) == "-12,34,567.50" and group_digits("x") is None
     _p = payout_rows(1200, 12, 12, 12)
     assert sum(x["principal"] for x in _p) == 1200 and _p[-1]["balance"] == 0 and _p[-1]["interest"] == 78 and sum(x["interest"] for x in _p[:-1]) == 0, _p
     assert [x["interest"] for x in payout_rows(1200, 12, 12, 6)] == [0] * 5 + [57] + [0] * 5 + [21] and payout_rows(1, 1, 0) is None

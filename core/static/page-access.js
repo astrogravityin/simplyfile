@@ -6,7 +6,7 @@ import { state, refresh, clearFieldErrors, showFieldError, wireFieldErrors } fro
 import { icon } from './icons.js';
 
 let tab = 'people';
-let subject = 'group:everyone';     // the Rules tab's selected person or group
+let subject = '';                  // the Rules tab's selected person or group ('' = Catch All)
 let checkUser = '';
 let checkLabel = '';
 const picked = {};                 // the person rows this page has fetched (list access_people), by id
@@ -38,6 +38,9 @@ export async function accessPage(host) {
 
 const reload = (host) => accessPage(host);
 const groupName = (id) => (d.groups.find((g) => g.id === id) || {}).name || w('deleted_group');
+// Catch All (built in, id from the server) = what every account in no group sees; always listed first
+const isCatchAll = (g) => !!g && g.id === d.catch_all;
+const groupsFirst = () => [...d.groups.filter(isCatchAll), ...d.groups.filter((g) => !isCatchAll(g))];
 
 // --- people ----------------------------------------------------------------------------------------
 
@@ -276,8 +279,8 @@ function rules(body, host) {
         <button class="small" type="button" id="new-group">${icon('plus', 13)} ${w('group')}</button></div>
       <div class="scrollbody"><div class="list">
         <div class="grp">${w('groups')}</div>
-        ${d.groups.map((g) => subjectItem(`group:${g.id}`, g.name, rulesOf(`group:${g.id}`).length,
-          g.id === 'everyone' ? '' : `<span class="small muted">${g.members_n || 0}</span>`)).join('')}
+        ${groupsFirst().map((g) => subjectItem(`group:${g.id}`, g.name, rulesOf(`group:${g.id}`).length,
+          isCatchAll(g) ? `<span class="tag">${w('catch_all_tag')}</span>` : `<span class="small muted">${g.members_n || 0}</span>`)).join('')}
         <div class="grp">${w('tab_people')}</div></div>
         <div id="acc-subjects"></div></div></div>
     <div class="pane"><div class="scrollbody pad" id="rule-detail"></div></div></div>`;
@@ -307,7 +310,7 @@ async function ruleDetail(box, host) {
   const [kind, id] = subject.split(':');
   const g = kind === 'group' ? d.groups.find((x) => x.id === id) : null;
   const p = kind === 'user' ? (picked[id] || await personById(id)) : null;
-  if (!g && !p) { subject = 'group:everyone'; return ruleDetail(box, host); }
+  if (!g && !p) { subject = `group:${d.catch_all}`; return ruleDetail(box, host); }
   const mine = rulesOf(subject);
   const effectOf = (screen, fn = '') => (mine.find((r) => r.screen === screen && (r.function || '') === fn) || {}).effect || '';
   const choice = (screen, fn, fallback) => {
@@ -320,15 +323,16 @@ async function ruleDetail(box, host) {
   box.innerHTML = `
     <div class="row between" style="margin-bottom:6px">
       <h2 style="margin:0">${icon(g ? 'users' : 'user', 17)} ${esc(g ? g.name : p.email)}</h2>
-      ${g && g.id !== 'everyone' ? `<span class="row tight">
-        <button class="small" type="button" id="edit-group">${icon('edit', 13)} ${w('name_members')}</button>
-        <button class="small danger" type="button" id="del-group">${icon('trash', 13)} ${w('delete')}</button></span>` : ''}
+      ${g ? `<span class="row tight">
+        <button class="small" type="button" id="edit-group">${icon('edit', 13)} ${w(isCatchAll(g) ? 'rename' : 'name_members')}</button>
+        ${isCatchAll(g) ? '' : `<button class="small danger" type="button" id="del-group">${icon('trash', 13)} ${w('delete')}</button>`}</span>` : ''}
     </div>
-    <p class="small muted">${g ? (g.id === 'everyone'
-        ? w('everyone_note')
-        : `${esc(g.description || '')} ${g.members_n ? '' : `<i>${w('no_members')}</i>`}`)
-      : w('person_rules', { groups: p.groups.map((x) => `<span class="tag">${esc(groupName(x))}</span>`).join(' ') || w('everyone_only') })}</p>
-    ${g && g.id !== 'everyone' && g.members_n ? '<div id="grp-members" class="small" style="margin-bottom:10px"></div>' : ''}
+    <p class="small muted">${g ? (isCatchAll(g)
+        ? w('catch_all_note')
+        : `${esc(g.description || '')} ${g.inherits ? w('group_inherits', { name: esc(groupName(g.inherits)) }) : w('group_inherits_none')}
+          ${g.members_n ? '' : `<i>${w('no_members')}</i>`}`)
+      : w('person_rules', { groups: p.groups.map((x) => `<span class="tag">${esc(groupName(x))}</span>`).join(' ') || esc(w('person_in_no_group')) })}</p>
+    ${g && !isCatchAll(g) && g.members_n ? '<div id="grp-members" class="small" style="margin-bottom:10px"></div>' : ''}
     <table class="rules"><thead><tr><th>${w('col_screen')}</th><th>${w('col_rule')}</th></tr></thead><tbody>
     ${d.catalog.filter((s) => !s.admin).map((s) => `<tr><td><b>${esc(s.label)}</b> <span class="small muted">${esc(s.group || '')}</span></td>
         <td>${choice(s.id, '', w('open'))}</td></tr>
@@ -360,7 +364,7 @@ async function ruleDetail(box, host) {
   if (edit) edit.onclick = () => groupDialog(g, host);
   const del = box.querySelector('#del-group');
   if (del) del.onclick = () => confirmDialog(w('delete_group_title', { name: g.name }), w('delete_group_body'), async () => {
-    try { await api(`/api/core/access/groups/${g.id}`, { method: 'DELETE' }); subject = 'group:everyone'; toast(w('group_deleted'), 'ok'); reload(host); }
+    try { await api(`/api/core/access/groups/${g.id}`, { method: 'DELETE' }); subject = ''; toast(w('group_deleted'), 'ok'); reload(host); }
     catch (e) { toast(e.message, 'bad'); }
   }, w('delete'), { tone: 'danger' });
 }
@@ -370,16 +374,25 @@ function groupDialog(g, host) {
   const add = new Set();
   const remove = new Set();
   const inGroup = (p) => (add.has(p.id) || (g && p.groups.includes(g.id))) && !remove.has(p.id);
+  const ca = isCatchAll(g);
+  // INHERIT: one parent or none; a group cannot pick itself (the server refuses a loop and says why)
+  const parent = g ? (g.inherits || '') : (d.new_group_inherits || '');
+  const parents = groupsFirst().filter((x) => !g || x.id !== g.id);
   modal(g ? w('edit_group', { name: g.name }) : w('new_group'), `
     <div id="g-msg"></div>
     <div class="field"><label for="g-name">${w('col_name')}</label><input id="g-name" value="${esc(g ? g.name : '')}" placeholder="${esc(w('group_name_placeholder'))}"/></div>
     <div class="field" style="margin-top:12px"><label for="g-desc">${w('group_for')}</label>
       <input id="g-desc" value="${esc(g ? g.description || '' : '')}" placeholder="${esc(w('group_for_placeholder'))}"/></div>
-    <div class="field" style="margin-top:12px"><label>${w('members')}</label><div id="g-people"></div></div>`, {
+    ${ca ? `<p class="small muted" style="margin-top:12px">${w('catch_all_note')}</p>` : `
+    <div class="field" style="margin-top:12px"><label for="g-parent">${w('inherits_label')}</label>
+      <select id="g-parent"><option value="">${esc(w('inherits_none'))}</option>
+        ${parents.map((x) => `<option value="${esc(x.id)}" ${x.id === parent ? 'selected' : ''}>${esc(x.name)}</option>`).join('')}</select>
+      <span class="small muted">${w('inherits_note')}</span></div>
+    <div class="field" style="margin-top:12px"><label>${w('members')}</label><div id="g-people"></div></div>`}`, {
     footer: `<button type="button" data-cancel>${w('cancel')}</button><button type="button" class="primary" id="g-save">${w('save_group')}</button>`,
     onOpen: (b2, close) => {
       const card = b2.closest('.modal');
-      listBox(b2.querySelector('#g-people'), { list: 'access_people', args: { not_owner: 1 }, empty: w('no_editors_group'),
+      if (!ca) listBox(b2.querySelector('#g-people'), { list: 'access_people', args: { not_owner: 1 }, empty: w('no_editors_group'),
         row: (p) => `<label class="check"><input type="checkbox" value="${esc(p.id)}" data-in="${g && p.groups.includes(g.id) ? 1 : 0}" ${inGroup(p) ? 'checked' : ''}/>
           ${esc(p.name)} <span class="muted">${esc(p.email)}</span></label>`,
         wrap: (html) => `<div class="checks">${html}</div>`,
@@ -396,7 +409,7 @@ function groupDialog(g, host) {
         try {
           const r = await api('/api/core/access/groups', { method: 'POST', body: {
             id: g ? g.id : undefined, name: b2.querySelector('#g-name').value, description: b2.querySelector('#g-desc').value,
-            add: [...add], remove: [...remove] } });
+            ...(ca ? {} : { inherits: b2.querySelector('#g-parent').value, add: [...add], remove: [...remove] }) } });
           close();
           subject = `group:${r.group.id}`;
           toast(w('group_saved'), 'ok');
@@ -421,8 +434,11 @@ async function check(body) {
     }) });
   if (!checkUser) return;
   const r = await api(`/api/core/access/check/${checkUser}`);
+  const why = r.chains.length
+    ? w('check_groups', { groups: r.chains.map((c) => `<span class="tag">${c.map(esc).join(' ← ')}</span>`).join(' ') })
+    : w('check_catch_all');
   const yes = (v) => (v.allowed ? `<span class="tag ok">${icon('check', 11)} ${w('opens')}</span>` : `<span class="tag bad">${icon('ban', 11)} ${w('shut')}</span>`);
-  body.querySelector('#chk-out').innerHTML = `<div class="scroll" style="max-height:none"><table class="rules">
+  body.querySelector('#chk-out').innerHTML = `<p class="small muted">${icon('info', 13)} ${why}</p><div class="scroll" style="max-height:none"><table class="rules">
     <thead><tr><th>${w('col_screen')}</th><th>${w('col_result')}</th><th>${w('col_why')}</th></tr></thead><tbody>
     ${r.screens.map((s) => `<tr><td><b>${esc(s.label)}</b></td><td>${yes(s)}</td><td class="small">${esc(s.why)}</td></tr>
       ${s.functions.map((f) => `<tr class="fn"><td>↳ ${esc(f.label)}</td><td>${yes(f)}</td><td class="small">${esc(f.why)}</td></tr>`).join('')}`).join('')}

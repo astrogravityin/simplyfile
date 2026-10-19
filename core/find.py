@@ -118,6 +118,10 @@ def api_find(request: Request, q: str = "", u: dict = Depends(auth.signed_in)):
 
 
 if __name__ == "__main__":  # ponytail: one runnable self-check of the search itself
+    import tempfile                                          # noqa: PLC0415
+    from pathlib import Path                                 # noqa: PLC0415
+    _tmp = tempfile.TemporaryDirectory()                     # 2026-10-19: access.data() now saves its day-one migration -
+    access.store.DATA = Path(_tmp.name)                      # a self-check reads and writes a temp folder, never data/
     globals()["tasks"] = lambda: []                          # the search itself first; the real task rows grow every week
     access.CATALOG[:] = [
         {"id": "video", "label": "Videos", "group": "Work", "icon": "film",
