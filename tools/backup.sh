@@ -10,7 +10,10 @@ umask 077
 mkdir -p "$D"
 H=$(date +%H)
 f="$D/hour-$H.tar.gz"
-tar czf "$f.tmp" --exclude=data/geo -C "$APP" data
+rm -f "$D"/*.tmp                 # a copy cut short earlier never lingers
+# 2026-10-20 restore drill: tar says 1 ("file changed as we read it") when the portal writes during the copy; the copy is
+# still whole (every store write is a rename), but set -e stopped before the mv and that hour was lost. 1 is fine, 2+ is not.
+tar czf "$f.tmp" --warning=no-file-changed --exclude=data/geo -C "$APP" data || [ $? -eq 1 ]
 mv "$f.tmp" "$f"
 [ "$H" = 02 ] || exit 0
 day="$D/day-$(date +%a).tar.gz"
