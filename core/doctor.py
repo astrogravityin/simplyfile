@@ -33,6 +33,7 @@ LOCK = threading.Lock()
 FIXES: dict[str, Callable[[dict], bool]] = {}      # op name (chip rules `op`) -> fixes it; True = fixed
 TO_CLAUDE: list[Callable[[dict, dict], str]] = []  # a portal that builds its own fixes: fn(row, rule) -> its request ref ('' = not filed)
 ROOT = Path(__file__).resolve().parent.parent
+SENDER = "doctor"      # 2026-10-21: the Doctor's notes are its own (the owner ANSWERS them; nobody may answer a note they sent)
 
 
 def K() -> dict:
@@ -68,8 +69,10 @@ def our_line(exc: BaseException) -> str:
     return f"{name}:{f.lineno}"
 
 
-def record(source: str, kind: str, message: str, where: str, line: str) -> dict:
-    """One error seen: counted under its fingerprint; a NEW one is treated (in the background, never slowing the page)."""
+def record(source: str, kind: str, message: str, where: str, line: str, extra: str = "") -> dict:
+    """One error seen: counted under its fingerprint; a NEW one is treated (in the background, never slowing the page). `extra` (a
+    picture's path) is kept with a new row but is NOT part of the fingerprint - 2026-10-21: a walk picture named by its run made the
+    same finding new every night (REQ-0027 and REQ-0028 for one fault)."""
     k = K()
     msg = mask(message)[: int(k["text_chars"])]
     fp = hashlib.sha1(f"{source}|{kind}|{where}|{line}|{re.sub(r'<[a-z]+>', '', msg)[:120]}".encode()).hexdigest()[:12]
@@ -80,7 +83,7 @@ def record(source: str, kind: str, message: str, where: str, line: str) -> dict:
         if new:
             if len(rows) >= int(k["max_rows"]):             # the oldest goes - the ledger never grows without end
                 rows.pop(min(rows, key=lambda x: rows[x]["last_at"]))
-            r = {"fp": fp, "source": source, "kind": kind[:80], "message": msg, "where": where[:200], "line": line[:200],
+            r = {"fp": fp, "source": source, "kind": kind[:80], "message": (msg + (" " + extra[:200] if extra else "")).strip(), "where": where[:200], "line": line[:200],
                  "count": 0, "first_at": store.now(), "status": "new", "rule": "", "ref": ""}
         r["count"] += 1
         r["last_at"] = store.now()
@@ -148,13 +151,27 @@ def _tell(r: dict, rule: dict) -> None:
     s = issues.settings("issue")
     with store._LOCK:   # noqa: SLF001 - the framework's own write lock, as issues.file uses it
         rows = issues._rows("issue", "")   # noqa: SLF001
-        note = dict(s["new_row"]) | {"id": store.new_id(), "by": o["id"], "name": say("who"), "email": "", "title": limits.clip(title, 200),
+        note = dict(s["new_row"]) | {"id": store.new_id(), "by": SENDER, "name": say("who"), "email": "", "title": limits.clip(title, 200),
                                      "text": limits.clip(text, int(s["text_max"])), "place": {}, "surface": "doctor", "context": r["fp"],
                                      "about": "", "link": "", "at": store.now(), "updated": store.now(), "answered_by": ""}
         if r["status"] == "fixed":
             note["status"] = K()["fixed_status"]
         store.write(issues._name("issue", ""), [*rows, note])   # noqa: SLF001
     bell.push(o["id"], say(f"bell_{r['status']}", title=title), K()["bell_link"])
+
+
+def heal_notes() -> int:
+    """Notes filed before 2026-10-21 carry the owner as their sender, and nobody may answer their own note - so no Error Doctor note
+    could ever be resolved. Once, at start (inside the portal, under its lock): those notes are the Doctor's. Returns how many."""
+    from core import issues  # noqa: PLC0415
+    with store._LOCK:   # noqa: SLF001
+        rows = issues._rows("issue", "")   # noqa: SLF001
+        bad = [r for r in rows if r.get("surface") == "doctor" and r.get("by") != SENDER]
+        for r in bad:
+            r["by"] = SENDER
+        if bad:
+            store.write(issues._name("issue", ""), rows)   # noqa: SLF001
+    return len(bad)
 
 
 def jobs_recover(_r: dict) -> bool:

@@ -143,4 +143,5 @@ def install(app, *, catalog, chips=None, rules_dir=None, scenarios=None) -> None
         app.include_router(module.router)
     app.mount("/core-static", StaticFiles(directory=str(HERE / "static")), name="core-static")
     memwatch.start()
+    doctor.heal_notes()       # 2026-10-21: older Doctor notes sent as the owner could never be resolved
     geo.start(on_loaded=ledger.backfill_places)
