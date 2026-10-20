@@ -191,6 +191,8 @@ def remove_import(scr: str, u: dict) -> dict:
 
 @router.get("/api/core/guide-admin/{scr}")
 def api_admin_view(scr: str, _: dict = Depends(screen_guard("howto-config"))):
+    if scr not in _page_ids():          # 2026-10-21 walk: a page with no guide (sign-in) is an answer, not a 404 in the console
+        return {"screen": scr, "guidable": False}
     return admin_view(scr)
 
 

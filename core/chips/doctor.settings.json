@@ -18,6 +18,18 @@
           "say": "The browser lost its connection or closed a page part-way - nothing to fix."
         },
         {
+          "id": "walk_code",
+          "pattern": "^Walk: (error|edge|sticky|try_listing|try_hidden|bench_stale|bench_examples):",
+          "who": "claude",
+          "say": "Found while USING the portal (the real-use walk after a deploy / at night) - a code fault, sent to Claude as a fix request."
+        },
+        {
+          "id": "walk_owner",
+          "pattern": "^Walk: (try_failed|bench_machine_off|bench_not_finished):",
+          "who": "owner",
+          "say": "Found while USING the portal (the real-use walk): usually a build machine that is off or a request's own Try it line - the note says which."
+        },
+        {
           "id": "stuck_job",
           "pattern": "(?i)job .*(running|stuck)|JobStuck",
           "who": "auto",
@@ -121,6 +133,18 @@
             "pattern": "(?i)failed to fetch|networkerror|load failed|aborterror|the user aborted|resizeobserver loop",
             "who": "ignore",
             "say": "The browser lost its connection or closed a page part-way - nothing to fix."
+          },
+          {
+            "id": "walk_code",
+            "pattern": "^Walk: (error|edge|sticky|try_listing|try_hidden|bench_stale|bench_examples):",
+            "who": "claude",
+            "say": "Found while USING the portal (the real-use walk after a deploy / at night) - a code fault, sent to Claude as a fix request."
+          },
+          {
+            "id": "walk_owner",
+            "pattern": "^Walk: (try_failed|bench_machine_off|bench_not_finished):",
+            "who": "owner",
+            "say": "Found while USING the portal (the real-use walk): usually a build machine that is off or a request's own Try it line - the note says which."
           },
           {
             "id": "stuck_job",

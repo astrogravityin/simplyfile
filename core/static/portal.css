@@ -174,7 +174,7 @@ pre code{background:none;border:0;padding:0}
 .card > h2{display:flex;align-items:center;gap:9px;margin-bottom:3px}
 .card > h2 .ico{color:var(--faint)}
 .card > h2 + p{margin-bottom:16px;max-width:76ch}
-.card.flush{padding:0;overflow:hidden}
+.card.flush{padding:0;overflow:clip}   /* 2026-10-21 walk: hidden made the sticky table headers inside scroll away; clip keeps the corners */
 
 .head{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;
   margin-bottom:14px}
@@ -1201,7 +1201,7 @@ body.waiting,body.waiting *{cursor:progress!important}
 [data-off][aria-disabled="true"]{opacity:.62;cursor:help}
 select.fit{width:auto}
 /* ── rich-text editor (core ui.js richEditor; Articles, book parts) ───────── */
-.rt{border:1px solid var(--line);border-radius:var(--radius);background:var(--panel);overflow:hidden}
+.rt{border:1px solid var(--line);border-radius:var(--radius);background:var(--panel);overflow:clip}   /* 2026-10-20 owner "not seeing floating bar": hidden broke the sticky toolbar; clip keeps the corners */
 .rt-bar{display:flex;flex-wrap:wrap;gap:4px;align-items:center;padding:6px 8px;border-bottom:1px solid var(--line);background:var(--bg-2);position:sticky;top:0;z-index:2}
 .rt-b{min-width:2rem;padding:4px 8px;font-size:13px;font-weight:600;background:transparent;border:1px solid transparent;border-radius:6px;color:var(--ink)}
 .rt-bar > select{align-self:stretch;height:auto}   /* 2026-10-03 sweep: the editor's style picker was 26px beside 36px B / I / H2 buttons - same height as the buttons */

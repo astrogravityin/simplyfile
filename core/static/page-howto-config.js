@@ -111,7 +111,8 @@ function detail(host) {
 // --- Guide me for the selected page ----------------------------------------------------------------------------
 async function guideSection(sec, page) {
   let view;
-  try { view = await api(`/api/core/guide-admin/${encodeURIComponent(page.id)}`); } catch { sec.hidden = true; return; }  // e.g. the sign-in page
+  try { view = await api(`/api/core/guide-admin/${encodeURIComponent(page.id)}`); } catch { sec.hidden = true; return; }
+  if (view.guidable === false) { sec.hidden = true; return; }      // e.g. the sign-in page: no guide, no error
   const vc = { ...(view.settings || {}), ...(view.voice || {}) };
   const names = () => voices().map((v) => v.name);
   const draw = (problems = []) => {
