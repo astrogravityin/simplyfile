@@ -31,6 +31,7 @@ and in the browser, `startPortal({...})` from core/static/shell.js. See core/REA
 """
 from __future__ import annotations
 
+import os
 import sys
 from pathlib import Path
 
@@ -108,6 +109,11 @@ async def _stamp_build(request, call_next):
 def install(app, *, catalog, chips=None, rules_dir=None, scenarios=None) -> None:
     """`chips`, `rules_dir`, `scenarios` = the portal's own folders (its business), beside core's."""
     global BUILD
+    # 2026-10-20 critical review: locks, sign-in throttles, previews and jobs live in this one process. Several web workers would
+    # split them silently - refused at start, with the reason, until they move to shared storage.
+    if int(os.getenv("WEB_CONCURRENCY", "1") or 1) > 1 or any(a.startswith("--workers") for a in sys.argv):
+        raise RuntimeError("this portal runs as ONE web worker (shared locks, sign-in throttles, previews and jobs are in-process); "
+                           "remove --workers / WEB_CONCURRENCY")
     BUILD = build_of(HERE / "static", *([Path(chips).resolve().parent / "static"] if chips else []))
     if chips:
         engine.register_dir(chips)

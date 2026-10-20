@@ -36,7 +36,9 @@ $sshArgs = @('-o', 'StrictHostKeyChecking=accept-new')
 if ($Key -and (Test-Path $Key)) { $sshArgs += @('-i', $Key) }
 Write-Host "Deploying SimplyFy on $Server ($Dir)..." -ForegroundColor Cyan
 # exit 3 = the site was never set up on the VPS (no deploy.sh there): updates need a first setup by New site
-ssh @sshArgs $Server "test -f $Dir/deploy.sh || exit 3; bash $Dir/deploy.sh"
+# 2026-10-20: deploy.sh runs under nohup on the VPS - a closed window or a dropped connection no longer stops it between the
+# pull and the restart (it did, twice); its lines are followed live and its exit code comes back here. Log: $Dir/deploy.log
+ssh @sshArgs $Server "test -f $Dir/deploy.sh || exit 3; cd $Dir; nohup bash deploy.sh > deploy.log 2>&1 < /dev/null & pid=`$!; tail -n +1 -f --pid=`$pid deploy.log; wait `$pid"
 if ($LASTEXITCODE -eq 3) {
     throw "$Dir on the VPS has no deploy.sh - the site was never set up there. First setup: VPS Console -> New site -> App (Create), then use Deploy-To-VPS.cmd for every update."
 }

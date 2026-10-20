@@ -224,14 +224,19 @@ def who(u: dict) -> str:
     return u.get("email", "")
 
 
+def _secure() -> bool:
+    """2026-10-20 critical review: Secure rode on PORTAL_HTTPS alone - a portal whose own address is https always sets it."""
+    return HTTPS or str(settings().get("portal_url") or "").startswith("https://")
+
+
 def _sign_in(response: Response, u: dict) -> dict:
     ttl = int(limits()["session_days"]) * 86400
     response.set_cookie(COOKIE, store.start_session(u, ttl), httponly=True, samesite="lax",
-                        max_age=ttl, path=BASE or "/", secure=HTTPS)
+                        max_age=ttl, path=BASE or "/", secure=_secure())
     # 2026-10-05 owner: a returning visitor skips the landing page. Only "this browser has signed in here" - no one's
     # identity; sign-out leaves it, so the next visit opens on sign-in.
     response.set_cookie(KNOWN, "1", httponly=True, samesite="lax", max_age=int(limits()["known_days"]) * 86400,
-                        path=BASE or "/", secure=HTTPS)
+                        path=BASE or "/", secure=_secure())
     return {"user": store.public_user(u)}
 
 
