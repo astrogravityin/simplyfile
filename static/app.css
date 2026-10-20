@@ -2500,7 +2500,8 @@ button.fi-pick:hover,button.fi-pick:focus-visible{border-color:var(--brand);box-
 @media (max-width:860px){.bk-grid{grid-template-columns:1fr}.bk-side{position:static;order:-1}}
 
 /* 2026-10-19 Rules and assumptions beside the ITR JSON (static/itr-rules.js) - numbered, grouped, warnings in amber */
-.ir-card{border-left:4px solid var(--brand);counter-reset:ir}
+.ir-card{border-left:4px solid var(--brand)}
+.ir-list{counter-reset:ir}
 .ir-title{display:flex;align-items:center;gap:8px;flex-wrap:wrap;color:var(--brand)}.ir-title b{color:var(--ink);font-size:15px}
 .ir-head p{margin:6px 0 4px}
 .ir-flow{display:block;width:100%;max-width:440px;height:auto;margin:4px 0 6px}
@@ -2514,3 +2515,6 @@ button.fi-pick:hover,button.fi-pick:focus-visible{border-color:var(--brand);box-
 .ir-group li.is-warn{background:var(--warn-soft);color:var(--ink)}.ir-group li.is-warn::before{background:var(--warn);color:#fff}
 .ir-group li.is-warn svg{color:var(--warn);margin-top:3px}
 .ir-rule{align-self:flex-start;margin-top:1px;font-size:10.5px;padding:1px 6px;border-radius:6px;background:var(--panel);border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+/* the card folds on its own width (side column, phone): the chip tag goes under its sentence, in line with the text */
+.ir-card{container-type:inline-size}
+@container (max-width:480px){.ir-group li{flex-wrap:wrap}.ir-group li>span{flex-basis:calc(100% - 40px)}.ir-rule{margin-left:30px}.ir-group li.is-warn>svg{display:none}}

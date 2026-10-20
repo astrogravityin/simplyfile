@@ -14,7 +14,7 @@ const flow = () => {
     <rect x="20" y="20" width="360" height="4" rx="2" fill="url(#ir-g)" opacity=".35"/>
     ${steps.map((k, i) => { const x = 20 + i * 120; return `<g><circle cx="${x}" cy="22" r="11" fill="var(--panel)" stroke="url(#ir-g)" stroke-width="2.5"/>
       <text x="${x}" y="26.5" text-anchor="middle" font-size="11" font-weight="700" fill="var(--brand)">${i + 1}</text>
-      <text x="${x}" y="52" text-anchor="${i === 0 ? 'start' : i === 3 ? 'end' : 'middle'}" dx="${i === 0 ? -10 : i === 3 ? 10 : 0}" font-size="11" fill="var(--muted)">${esc(w(k))}</text></g>`; }).join('')}
+      <text x="${x}" y="52" text-anchor="${i === 0 ? 'start' : i === 3 ? 'end' : 'middle'}" dx="${i === 0 ? -10 : i === 3 ? 10 : 0}" font-size="13" fill="var(--muted)">${esc(w(k))}</text></g>`; }).join('')}
   </svg>`;
 };
 
