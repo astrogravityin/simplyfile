@@ -154,3 +154,6 @@
   .rcb .rcb-pane > .scrollbody.pad{--sb-pad:0px;padding:16px}   /* the PAGE scrolls here: the head sticks at its top */
   .rcb-head{margin:-16px -16px 14px;padding:12px 16px 10px;border-radius:var(--radius-lg) var(--radius-lg) 0 0}
 }
+/* 2026-10-21 real-use walk: on a phone a one-column grid takes its widest content as the column (the outcomes and the
+   test cases ran past the screen edge). Every one-column grid here shrinks to the space it has. */
+.rcb-top,.rcb-head,.rcb-about,.rcb-values,.rcb-value,.rcb-outs,.rcb-out,.rcb-dry,.rcb-previews,.rcb-prev,.rcb-ro,.rcb-ro-block{grid-template-columns:minmax(0,1fr)}
