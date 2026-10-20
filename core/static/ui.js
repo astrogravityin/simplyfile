@@ -7,6 +7,22 @@ import { icon, spinner } from './icons.js';
 // site root, at /tv, or anywhere else, with nothing to configure.
 export const BASE = new URL('..', import.meta.url).href.replace(/\/$/, '');
 
+// 2026-10-20 Error Doctor (core/doctor.py): every screen error is reported - its type, message, file, line and the screen's route,
+// never what was typed - at most a few per page; the server decides what happens (chip doctor.settings rules).
+if (typeof window !== 'undefined' && !window.__doctor) {
+  window.__doctor = { n: 0 };
+  const tell = (kind, message, source, line) => {
+    if (window.__doctor.n >= 5) return;
+    window.__doctor.n += 1;
+    try {
+      navigator.sendBeacon(`${BASE}/api/core/doctor/report`, new Blob([JSON.stringify({ kind, message: String(message || '').slice(0, 400),
+        source: String(source || ''), line: Number(line) || 0, screen: location.hash.split('?')[0] })], { type: 'application/json' }));
+    } catch { /* never an error about an error */ }
+  };
+  window.addEventListener('error', (e) => tell((e.error && e.error.name) || 'Error', e.message, e.filename, e.lineno));
+  window.addEventListener('unhandledrejection', (e) => tell('UnhandledRejection', (e.reason && (e.reason.message || e.reason)) || '', '', 0));
+}
+
 /** Filled in by the shell: what to do when the server says the session is gone. */
 export const hooks = {
   unauthorized: () => {},

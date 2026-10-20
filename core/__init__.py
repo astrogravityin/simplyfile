@@ -36,7 +36,7 @@ from pathlib import Path
 
 from fastapi.staticfiles import StaticFiles
 
-from core import access, auth, bell, builder, demo, engine, find, geo, guide, howto, issues, jobs, ledger, lists, memwatch, rules, storage, store, words
+from core import access, auth, bell, builder, demo, doctor, engine, find, geo, guide, howto, issues, jobs, ledger, lists, memwatch, rules, storage, store, words
 
 screen = access.screen
 signed_in, owner, current_user = auth.signed_in, auth.owner, auth.current_user
@@ -132,7 +132,8 @@ def install(app, *, catalog, chips=None, rules_dir=None, scenarios=None) -> None
     app.middleware("http")(ledger.track)
     app.middleware("http")(_no_nul)
     app.middleware("http")(_json_cap)
-    for module in (auth, access, ledger, memwatch, howto, guide, storage, builder, find, jobs, words, lists, issues, bell, demo):
+    app.middleware("http")(doctor.catch)     # added last = runs first: every unexpected error, from any layer (Error Doctor)
+    for module in (auth, access, ledger, memwatch, howto, guide, storage, builder, find, jobs, words, lists, issues, bell, demo, doctor):
         app.include_router(module.router)
     app.mount("/core-static", StaticFiles(directory=str(HERE / "static")), name="core-static")
     memwatch.start()

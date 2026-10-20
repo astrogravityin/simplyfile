@@ -1,0 +1,147 @@
+{
+  "chip_id": "doctor.messages",
+  "kind": "accessor",
+  "set": "doctor",
+  "label": "Error Doctor: every word it says",
+  "aliases": [
+    "doctor messages"
+  ],
+  "params": [
+    {
+      "name": "who",
+      "type": "text",
+      "default": "Error Doctor",
+      "label": "who"
+    },
+    {
+      "name": "title",
+      "type": "text",
+      "default": "{kind} at {where}",
+      "label": "title"
+    },
+    {
+      "name": "unknown",
+      "type": "text",
+      "default": "An error no rule names yet.",
+      "label": "unknown"
+    },
+    {
+      "name": "status_fixed",
+      "type": "text",
+      "default": "Fixed by itself: {what}",
+      "label": "status fixed"
+    },
+    {
+      "name": "status_claude",
+      "type": "text",
+      "default": "{what} It was sent to Claude as {ref} - you approve the fix as usual.",
+      "label": "status claude"
+    },
+    {
+      "name": "status_owner",
+      "type": "text",
+      "default": "Needs you: {what}",
+      "label": "status owner"
+    },
+    {
+      "name": "status_new",
+      "type": "text",
+      "default": "Being looked at: {what}",
+      "label": "status new"
+    },
+    {
+      "name": "facts",
+      "type": "text",
+      "default": "Where it came from: {source} · {kind} · {where} · {line}\nWhat it said (personal details hidden): {message}\nFirst seen: {first}",
+      "label": "facts"
+    },
+    {
+      "name": "bell_fixed",
+      "type": "text",
+      "default": "Error Doctor fixed: {title}",
+      "label": "bell fixed"
+    },
+    {
+      "name": "bell_claude",
+      "type": "text",
+      "default": "Error Doctor sent a fix to Claude: {title}",
+      "label": "bell claude"
+    },
+    {
+      "name": "bell_owner",
+      "type": "text",
+      "default": "Error Doctor needs you: {title}",
+      "label": "bell owner"
+    },
+    {
+      "name": "bell_new",
+      "type": "text",
+      "default": "Error Doctor: {title}",
+      "label": "bell new"
+    },
+    {
+      "name": "server_error",
+      "type": "text",
+      "default": "Something went wrong on our side. It has been recorded (ref {fp}) and is being fixed - please try again in a minute.",
+      "label": "server error"
+    },
+    {
+      "name": "fix_title",
+      "type": "text",
+      "default": "Error Doctor: {kind} at {where}",
+      "label": "fix title"
+    },
+    {
+      "name": "fix_body",
+      "type": "text",
+      "default": "The portal recorded this error {count} time(s). Find the cause and fix it so it cannot happen again, and add a test that fails if it comes back. Change nothing else.\n\nType: {kind}\nWhere: {where}\nCode line: {line}\nMessage (personal details hidden): {message}",
+      "label": "fix body"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "who": "$who",
+      "title": "$title",
+      "unknown": "$unknown",
+      "status_fixed": "$status_fixed",
+      "status_claude": "$status_claude",
+      "status_owner": "$status_owner",
+      "status_new": "$status_new",
+      "facts": "$facts",
+      "bell_fixed": "$bell_fixed",
+      "bell_claude": "$bell_claude",
+      "bell_owner": "$bell_owner",
+      "bell_new": "$bell_new",
+      "server_error": "$server_error",
+      "fix_title": "$fix_title",
+      "fix_body": "$fix_body"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-20 owner: one Error module for every portal - errors caught, fixed where a generic op can, sent to Claude when it is code, told to the owner only when a person must act.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "who": "Error Doctor",
+        "title": "{kind} at {where}",
+        "unknown": "An error no rule names yet.",
+        "status_fixed": "Fixed by itself: {what}",
+        "status_claude": "{what} It was sent to Claude as {ref} - you approve the fix as usual.",
+        "status_owner": "Needs you: {what}",
+        "status_new": "Being looked at: {what}",
+        "facts": "Where it came from: {source} · {kind} · {where} · {line}\nWhat it said (personal details hidden): {message}\nFirst seen: {first}",
+        "bell_fixed": "Error Doctor fixed: {title}",
+        "bell_claude": "Error Doctor sent a fix to Claude: {title}",
+        "bell_owner": "Error Doctor needs you: {title}",
+        "bell_new": "Error Doctor: {title}",
+        "server_error": "Something went wrong on our side. It has been recorded (ref {fp}) and is being fixed - please try again in a minute.",
+        "fix_title": "Error Doctor: {kind} at {where}",
+        "fix_body": "The portal recorded this error {count} time(s). Find the cause and fix it so it cannot happen again, and add a test that fails if it comes back. Change nothing else.\n\nType: {kind}\nWhere: {where}\nCode line: {line}\nMessage (personal details hidden): {message}"
+      }
+    }
+  ]
+}

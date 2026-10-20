@@ -1,0 +1,167 @@
+{
+  "chip_id": "doctor.settings",
+  "kind": "accessor",
+  "set": "doctor",
+  "label": "Error Doctor: what happens to each error, and its limits",
+  "aliases": [
+    "doctor settings"
+  ],
+  "params": [
+    {
+      "name": "rules",
+      "type": "rows",
+      "default": [
+        {
+          "id": "offline",
+          "pattern": "(?i)failed to fetch|networkerror|load failed|aborterror|the user aborted|resizeobserver loop",
+          "who": "ignore",
+          "say": "The browser lost its connection or closed a page part-way - nothing to fix."
+        },
+        {
+          "id": "stuck_job",
+          "pattern": "(?i)job .*(running|stuck)|JobStuck",
+          "who": "auto",
+          "op": "jobs_recover",
+          "say": "A background job was left half-way by a restart; it was stopped cleanly so it can run again."
+        },
+        {
+          "id": "key",
+          "pattern": "(?i)invalid (x-)?api[ -]?key|\\b401\\b|unauthori[sz]ed|insufficient credit|credit balance|quota",
+          "who": "owner",
+          "say": "A paid service refused the key or ran out of credit. Open Key Management, check the key and top up, then try again."
+        },
+        {
+          "id": "mail",
+          "pattern": "(?i)smtp|mail server",
+          "who": "owner",
+          "say": "The mail server refused to send. Open Projects & portal > Mail, check the sender and its password."
+        },
+        {
+          "id": "disk",
+          "pattern": "(?i)no space left on device|disk (is )?full",
+          "who": "owner",
+          "say": "The server's disk is full. Ask your hosting to add space, or remove old backups and videos."
+        },
+        {
+          "id": "code",
+          "pattern": ".",
+          "who": "claude",
+          "say": "A fault in the code itself."
+        }
+      ],
+      "label": "What happens to an error: the first row whose pattern (a regular expression over 'type: message @ where line') matches decides - who = auto (op fixes it here), claude (a Fix request to Claude), owner (only a person can: say tells what to do), ignore (counted only)"
+    },
+    {
+      "name": "max_rows",
+      "type": "number",
+      "default": 500,
+      "label": "Most different errors kept (the oldest goes)"
+    },
+    {
+      "name": "text_chars",
+      "type": "number",
+      "default": 400,
+      "label": "Longest message kept (masked)"
+    },
+    {
+      "name": "report_rate",
+      "type": "text",
+      "default": "doctor_report",
+      "label": "The rate (chip limits.rates) a browser may report screen errors at"
+    },
+    {
+      "name": "fixed_status",
+      "type": "text",
+      "default": "resolved",
+      "label": "The Reported issues status a fixed error is filed with"
+    },
+    {
+      "name": "bell_link",
+      "type": "text",
+      "default": "#/issues",
+      "label": "Where the owner's bell opens"
+    },
+    {
+      "name": "fix_project",
+      "type": "text",
+      "default": "",
+      "label": "The project a Fix request goes to (blank = the portal's own project of that name, else none)"
+    },
+    {
+      "name": "fix_part",
+      "type": "text",
+      "default": "Error Doctor",
+      "label": "The module a Fix request is filed under"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "rules": "$rules",
+      "max_rows": "$max_rows",
+      "text_chars": "$text_chars",
+      "report_rate": "$report_rate",
+      "fixed_status": "$fixed_status",
+      "bell_link": "$bell_link",
+      "fix_project": "$fix_project",
+      "fix_part": "$fix_part"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-20 owner: one Error module for every portal - errors caught, fixed where a generic op can, sent to Claude when it is code, told to the owner only when a person must act.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "rules": [
+          {
+            "id": "offline",
+            "pattern": "(?i)failed to fetch|networkerror|load failed|aborterror|the user aborted|resizeobserver loop",
+            "who": "ignore",
+            "say": "The browser lost its connection or closed a page part-way - nothing to fix."
+          },
+          {
+            "id": "stuck_job",
+            "pattern": "(?i)job .*(running|stuck)|JobStuck",
+            "who": "auto",
+            "op": "jobs_recover",
+            "say": "A background job was left half-way by a restart; it was stopped cleanly so it can run again."
+          },
+          {
+            "id": "key",
+            "pattern": "(?i)invalid (x-)?api[ -]?key|\\b401\\b|unauthori[sz]ed|insufficient credit|credit balance|quota",
+            "who": "owner",
+            "say": "A paid service refused the key or ran out of credit. Open Key Management, check the key and top up, then try again."
+          },
+          {
+            "id": "mail",
+            "pattern": "(?i)smtp|mail server",
+            "who": "owner",
+            "say": "The mail server refused to send. Open Projects & portal > Mail, check the sender and its password."
+          },
+          {
+            "id": "disk",
+            "pattern": "(?i)no space left on device|disk (is )?full",
+            "who": "owner",
+            "say": "The server's disk is full. Ask your hosting to add space, or remove old backups and videos."
+          },
+          {
+            "id": "code",
+            "pattern": ".",
+            "who": "claude",
+            "say": "A fault in the code itself."
+          }
+        ],
+        "max_rows": 500,
+        "text_chars": 400,
+        "report_rate": "doctor_report",
+        "fixed_status": "resolved",
+        "bell_link": "#/issues",
+        "fix_project": "",
+        "fix_part": "Error Doctor"
+      }
+    }
+  ]
+}
