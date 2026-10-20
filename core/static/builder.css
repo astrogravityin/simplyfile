@@ -46,7 +46,8 @@ textarea.vb-text{font-family:inherit;resize:vertical}
 @container (max-width:560px){.xb-pair{grid-template-columns:minmax(0,1fr)}.xb-arg{grid-template-columns:minmax(0,1fr)}}
 
 /* knobs and tests */
-.pe,.te{display:grid;gap:10px}
+.pe,.te{display:grid;gap:10px;grid-template-columns:minmax(0,1fr)}   /* 2026-10-21 walk: on a phone the test cases grew past the screen (an auto column takes its widest content) */
+.pe-row > *,.te-case > *{min-width:0}
 .pe-row,.te-case{border:1px solid var(--line);border-radius:var(--radius);padding:10px;display:grid;gap:8px;background:var(--panel)}
 .pe-top{display:grid;grid-template-columns:150px 110px minmax(0,1fr) auto;gap:6px;align-items:center}
 .pe-name{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12.5px}
