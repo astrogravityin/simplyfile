@@ -389,11 +389,35 @@ def public_user(u: dict) -> dict:
     return {k: u[k] for k in _chip("people.public_fields")["fields"] if k in u}
 
 
+def _th(token: str) -> str:
+    """What is KEPT of a session token: its sha256 (2026-10-21 reviews - a copied data folder must not be signed-in accounts)."""
+    return hashlib.sha256(str(token or "").encode()).hexdigest()
+
+
+def _is(row: dict, token: str) -> bool:
+    if row.get("th"):
+        return secrets.compare_digest(str(row["th"]), _th(token))
+    return bool(row.get("token")) and secrets.compare_digest(str(row["token"]), str(token or ""))     # a row from before the change
+
+
+def heal_sessions() -> int:
+    """Once, at start (inside the portal, under its lock): every session kept the old way becomes its fingerprint. Nobody is signed
+    out - the browser's token still matches. Returns how many rows changed."""
+    with _LOCK:
+        rows = read("sessions", [])
+        old = [r for r in rows if r.get("token") and not r.get("th")]
+        for r in old:
+            r["th"] = _th(r.pop("token"))
+        if old:
+            write("sessions", rows)
+    return len(old)
+
+
 def start_session(user: dict, ttl_seconds: int | None = None) -> str:
     token = secrets.token_urlsafe(32)
     with _LOCK:
         rows = [s for s in read("sessions", []) if s["expires"] > int(_epoch())]
-        rows.append({"token": token, "user_id": user["id"], "expires": int(_epoch()) + int(ttl_seconds or _limit("session_days") * 86400)})
+        rows.append({"th": _th(token), "user_id": user["id"], "expires": int(_epoch()) + int(ttl_seconds or _limit("session_days") * 86400)})
         # 2026-10-01: a fixed 500 signed out everyone older once 500 people were signed in - chip auth.limits sessions_kept
         write("sessions", rows[-_limit("sessions_kept"):])
     return token
@@ -402,13 +426,12 @@ def start_session(user: dict, ttl_seconds: int | None = None) -> str:
 def end_sessions_for(user_id: str, keep_token: str = "") -> None:
     """Signs a person out everywhere (a reset, a changed password) — except, optionally, this browser."""
     with _LOCK:
-        write("sessions", [s for s in read("sessions", []) if s["user_id"] != user_id or
-                           (keep_token and secrets.compare_digest(s["token"], keep_token))])
+        write("sessions", [s for s in read("sessions", []) if s["user_id"] != user_id or (keep_token and _is(s, keep_token))])
 
 
 def end_session(token: str) -> None:
     with _LOCK:
-        write("sessions", [s for s in read("sessions", []) if s["token"] != token])
+        write("sessions", [s for s in read("sessions", []) if not _is(s, token)])
 
 
 # Which sitting a person is in right now. A background job runs in its own thread long after the
@@ -431,8 +454,8 @@ def session_user(token: str) -> dict | None:
     if not token:
         return None
     # 2026-10-01: every request parsed sessions + users and scanned both (2-3 times a request) - now one shared index each
-    row = index("sessions", "token").get(token)
-    if not row or not secrets.compare_digest(str(row.get("token") or ""), token) or row["expires"] <= int(_epoch()):
+    row = index("sessions", "th").get(_th(token)) or index("sessions", "token").get(token)
+    if not row or not _is(row, token) or row["expires"] <= int(_epoch()):
         return None
     return user_by_id(row["user_id"])
 
@@ -635,6 +658,13 @@ if __name__ == "__main__":  # ponytail: one runnable self-check
         assert session_user(tok)["email"] == "a@x.io" and session_user(tok + "x") is None and session_user("") is None
         session_user(tok)["email"] = "changed"
         assert session_user(tok)["email"] == "a@x.io", "a caller's change to its user never reaches the shared index"
+        assert all("token" not in s and s.get("th") for s in read("sessions", [])), "a session token is kept as it is"
+        rows_ = read("sessions", [])
+        rows_.append({"token": "old-style-token", "user_id": "u1", "expires": int(_epoch()) + 600})
+        write("sessions", rows_)
+        assert session_user("old-style-token")["email"] == "a@x.io", "a session from before the change signed its person out"
+        assert heal_sessions() == 1 and session_user("old-style-token") and all("token" not in s for s in read("sessions", [])), \
+            "an old session was not turned into a fingerprint"
         end_sessions_for("u1")
         assert session_user(tok) is None, "signed out everywhere is seen at once"
         t = make_token("reset", "A@Example.com", 60)

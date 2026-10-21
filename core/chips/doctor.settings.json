@@ -18,6 +18,18 @@
           "say": "The browser lost its connection or closed a page part-way - nothing to fix."
         },
         {
+          "id": "csp_extension",
+          "pattern": "(?i)^CSP .*: blocked (chrome|moz|safari|edge)-extension",
+          "who": "ignore",
+          "say": "A browser add-on's own script - nothing in the portal to fix."
+        },
+        {
+          "id": "csp",
+          "pattern": "^CSP ",
+          "who": "claude",
+          "say": "A page uses something the coming script policy (report-only today) would block - fixed before the policy is enforced."
+        },
+        {
           "id": "walk_code",
           "pattern": "^Walk: (error|edge|sticky|try_listing|try_hidden|bench_stale|bench_examples):",
           "who": "claude",
@@ -133,6 +145,18 @@
             "pattern": "(?i)failed to fetch|networkerror|load failed|aborterror|the user aborted|resizeobserver loop",
             "who": "ignore",
             "say": "The browser lost its connection or closed a page part-way - nothing to fix."
+          },
+          {
+            "id": "csp_extension",
+            "pattern": "(?i)^CSP .*: blocked (chrome|moz|safari|edge)-extension",
+            "who": "ignore",
+            "say": "A browser add-on's own script - nothing in the portal to fix."
+          },
+          {
+            "id": "csp",
+            "pattern": "^CSP ",
+            "who": "claude",
+            "say": "A page uses something the coming script policy (report-only today) would block - fixed before the policy is enforced."
           },
           {
             "id": "walk_code",

@@ -16,6 +16,12 @@
       "label": "Largest JSON request, MB (a manual with pictures inside is the biggest save)"
     },
     {
+      "name": "multipart_most_mb",
+      "type": "number",
+      "default": 60,
+      "label": "Biggest upload (all files of one request together, MB) - refused before it is read (2026-10-21)"
+    },
+    {
       "name": "too_big",
       "type": "long",
       "default": "That is more than {mb} MB in one go, so it was not taken. Save in smaller parts, or upload the file instead.",
@@ -26,7 +32,8 @@
     "vop": "record",
     "fields": {
       "json_most_mb": "$json_most_mb",
-      "too_big": "$too_big"
+      "too_big": "$too_big",
+      "multipart_most_mb": "$multipart_most_mb"
     }
   },
   "returns": "record",
@@ -38,7 +45,8 @@
       "args": {},
       "expect_value": {
         "json_most_mb": 32,
-        "too_big": "That is more than {mb} MB in one go, so it was not taken. Save in smaller parts, or upload the file instead."
+        "too_big": "That is more than {mb} MB in one go, so it was not taken. Save in smaller parts, or upload the file instead.",
+        "multipart_most_mb": 60
       }
     }
   ],

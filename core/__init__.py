@@ -71,6 +71,43 @@ async def _no_nul(request, call_next):
     return await call_next(request)
 
 
+async def _multipart_cap(request, call_next):
+    """2026-10-21 reviews: a multipart upload had no overall cap (each file route capped its own part, nginx allowed 50 MB). A form
+    upload bigger than chip limits.request multipart_most_mb - or with no length given - is refused before anything is read."""
+    if "multipart" in request.headers.get("content-type", ""):
+        k, mb = engine.run("limits.request"), int(request.headers.get("content-length") or 0) / (1024 * 1024)
+        if "chunked" in request.headers.get("transfer-encoding", "").lower():
+            mb = float("inf")
+        if engine.run("limits.request_too_big", {"request_mb": mb, "json_most_mb": k["multipart_most_mb"]}) is True:
+            from fastapi.responses import JSONResponse  # noqa: PLC0415
+            return JSONResponse({"detail": engine.say("limits.request", "too_big", mb=k["multipart_most_mb"])}, status_code=413)
+    return await call_next(request)
+
+
+_ONE_COPY: list = []
+
+
+def _one_copy_only() -> None:
+    """2026-10-21 reviews: a second copy of the portal on the same data folder (a second service, a replica) would split the
+    in-process locks, throttles and jobs silently. An OS lock on data/.portal.lock: a second copy refuses to start, saying why.
+    The lock goes with the process, so a crash never leaves it held."""
+    if _ONE_COPY:
+        return                                            # this process holds it already (an app built twice in one test run)
+    store.DATA.mkdir(parents=True, exist_ok=True)
+    f = open(store.DATA / ".portal.lock", "a+")
+    try:
+        if os.name == "nt":
+            import msvcrt  # noqa: PLC0415
+            msvcrt.locking(f.fileno(), msvcrt.LK_NBLCK, 1)
+        else:
+            import fcntl  # noqa: PLC0415
+            fcntl.flock(f.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except OSError:
+        f.close()
+        raise RuntimeError(f"another copy of this portal is already running on {store.DATA} - stop it first (one copy per data folder)")
+    _ONE_COPY.append(f)
+
+
 async def _json_cap(request, call_next):
     """2026-10-02 security test: any JSON body was read whole (nginx passes 1200 MB for uploads). A JSON request bigger
     than chip limits.request json_most_mb is refused before it is read; file uploads keep their own limits."""
@@ -114,6 +151,7 @@ def install(app, *, catalog, chips=None, rules_dir=None, scenarios=None) -> None
     if int(os.getenv("WEB_CONCURRENCY", "1") or 1) > 1 or any(a.startswith("--workers") for a in sys.argv):
         raise RuntimeError("this portal runs as ONE web worker (shared locks, sign-in throttles, previews and jobs are in-process); "
                            "remove --workers / WEB_CONCURRENCY")
+    _one_copy_only()
     BUILD = build_of(HERE / "static", *([Path(chips).resolve().parent / "static"] if chips else []))
     if chips:
         engine.register_dir(chips)
@@ -138,10 +176,12 @@ def install(app, *, catalog, chips=None, rules_dir=None, scenarios=None) -> None
     app.middleware("http")(ledger.track)
     app.middleware("http")(_no_nul)
     app.middleware("http")(_json_cap)
+    app.middleware("http")(_multipart_cap)
     app.middleware("http")(doctor.catch)     # added last = runs first: every unexpected error, from any layer (Error Doctor)
     for module in (auth, access, ledger, memwatch, howto, guide, storage, builder, find, jobs, words, lists, issues, bell, demo, doctor):
         app.include_router(module.router)
     app.mount("/core-static", StaticFiles(directory=str(HERE / "static")), name="core-static")
     memwatch.start()
     doctor.heal_notes()       # 2026-10-21: older Doctor notes sent as the owner could never be resolved
+    store.heal_sessions()     # 2026-10-21: sessions kept as they were become fingerprints (nobody is signed out)
     geo.start(on_loaded=ledger.backfill_places)

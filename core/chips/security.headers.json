@@ -16,7 +16,8 @@
         "X-Content-Type-Options": "nosniff",
         "Referrer-Policy": "strict-origin-when-cross-origin",
         "Content-Security-Policy": "frame-ancestors 'self' https://*.valuestream.in https://astrostage.in https://*.astrostage.in",
-        "X-Frame-Options": "SAMEORIGIN"
+        "X-Frame-Options": "SAMEORIGIN",
+        "Content-Security-Policy-Report-Only": "default-src 'self'; script-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'self' https://*.valuestream.in https://astrostage.in https://*.astrostage.in; report-uri /api/core/doctor/csp"
       },
       "label": "Header -> value, added to every answer that does not set its own (a file's own Content-Security-Policy wins)"
     },
@@ -47,7 +48,7 @@
   "returns": "record",
   "version": 2,
   "status": "published",
-  "description_nl": "2026-10-01 portal assessment: the sibling portals sent no Content-Security-Policy, X-Frame-Options, nosniff or Referrer-Policy, and one had no HSTS (nginx config not in the repo). Every answer now carries these from core (core/__init__ _stamp_build), so all three sites get them from one list; change a value here, never in code. frame-ancestors lets the studio and the valuestream sites frame each other; CSP stays frame-ancestors only (inline styles everywhere - a full script/style policy is a later step).",
+  "description_nl": "2026-10-01 portal assessment: the sibling portals sent no Content-Security-Policy, X-Frame-Options, nosniff or Referrer-Policy, and one had no HSTS (nginx config not in the repo). Every answer now carries these from core (core/__init__ _stamp_build), so all three sites get them from one list; change a value here, never in code. frame-ancestors lets the studio and the valuestream sites frame each other; CSP stays frame-ancestors only (inline styles everywhere - a full script/style policy is a later step). 2026-10-21 reviews: a full script policy runs in report-only mode first - each violation is filed once by the Error Doctor (/api/core/doctor/csp); once quiet, it becomes the enforced policy.",
   "test_cases": [
     {
       "args": {},
@@ -56,7 +57,8 @@
           "X-Content-Type-Options": "nosniff",
           "Referrer-Policy": "strict-origin-when-cross-origin",
           "Content-Security-Policy": "frame-ancestors 'self' https://*.valuestream.in https://astrostage.in https://*.astrostage.in",
-          "X-Frame-Options": "SAMEORIGIN"
+          "X-Frame-Options": "SAMEORIGIN",
+          "Content-Security-Policy-Report-Only": "default-src 'self'; script-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'self' https://*.valuestream.in https://astrostage.in https://*.astrostage.in; report-uri /api/core/doctor/csp"
         },
         "hsts": "max-age=31536000",
         "frame_ok_paths": [

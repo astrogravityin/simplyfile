@@ -193,6 +193,25 @@ async def catch(request: Request, call_next):
         return JSONResponse({"detail": say("server_error", fp=r["fp"])}, status_code=500)
 
 
+@router.post("/api/core/doctor/csp")
+async def api_csp(request: Request):
+    """2026-10-21: the report-only script policy's violations (chip security.headers) - one row per directive + blocked source,
+    counted, rate-limited like a screen error. Read as raw JSON: browsers send application/csp-report."""
+    who = request.client.host if request.client else ""
+    if not limits.allow(K()["report_rate"], f"doctor:{who}"):
+        return {"ok": False}
+    try:
+        import json as _json  # noqa: PLC0415
+        rep = (_json.loads((await request.body())[:8000] or b"{}") or {}).get("csp-report") or {}
+    except ValueError:
+        return {"ok": False}
+    where = re.sub(r"^https?://[^/]+", "", str(rep.get("document-uri") or ""))[:200]
+    blocked = re.sub(r"^(https?://[^/]+).*", r"\1", str(rep.get("blocked-uri") or ""))[:120]
+    record("csp", f"CSP {str(rep.get('violated-directive') or rep.get('effective-directive') or '')[:60]}", f"blocked {blocked}",
+           route_of(where), str(rep.get("source-file") or "")[:120] + f":{int(rep.get('line-number') or 0)}")
+    return {"ok": True}
+
+
 @router.post("/api/core/doctor/report")
 def api_report(request: Request, body: dict = Body(default={})):
     """A screen error (core/static/ui.js) - anyone's browser may report; a few per minute per address, the rest dropped."""
