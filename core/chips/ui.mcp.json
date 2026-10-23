@@ -1,0 +1,508 @@
+{
+  "chip_id": "ui.mcp",
+  "kind": "accessor",
+  "set": "ui",
+  "audience": "admin",
+  "label": "Agent & MCP: every word",
+  "aliases": [
+    "agent & mcp: every word"
+  ],
+  "params": [
+    {
+      "name": "title",
+      "type": "text",
+      "default": "Agent & MCP",
+      "label": "title"
+    },
+    {
+      "name": "lede",
+      "type": "text",
+      "default": "Let Claude Code on your laptop drive {product} for tests and demos: the same buttons you press, with your owner key. Sign-ins and payments stay with people.",
+      "label": "lede"
+    },
+    {
+      "name": "art_you",
+      "type": "text",
+      "default": "Claude Code",
+      "label": "art you"
+    },
+    {
+      "name": "art_you_sub",
+      "type": "text",
+      "default": "on your laptop",
+      "label": "art you sub"
+    },
+    {
+      "name": "art_key",
+      "type": "text",
+      "default": "Owner key",
+      "label": "art key"
+    },
+    {
+      "name": "art_door",
+      "type": "text",
+      "default": "{product}",
+      "label": "art door"
+    },
+    {
+      "name": "art_door_sub",
+      "type": "text",
+      "default": "checks the key on every call",
+      "label": "art door sub"
+    },
+    {
+      "name": "art_screens",
+      "type": "text",
+      "default": "Your screens",
+      "label": "art screens"
+    },
+    {
+      "name": "art_human",
+      "type": "text",
+      "default": "A person does these",
+      "label": "art human"
+    },
+    {
+      "name": "art_human_sub",
+      "type": "text",
+      "default": "Signing in, accepting permissions and payments - the tool says which step is next",
+      "label": "art human sub"
+    },
+    {
+      "name": "art_key_sub",
+      "type": "text",
+      "default": "sent with every call",
+      "label": "art key sub"
+    },
+    {
+      "name": "art_screens_sub",
+      "type": "text",
+      "default": "The same buttons you press",
+      "label": "art screens sub"
+    },
+    {
+      "name": "key_title",
+      "type": "text",
+      "default": "Your owner key",
+      "label": "key title"
+    },
+    {
+      "name": "key_none",
+      "type": "text",
+      "default": "No key yet. Make one, then paste one line on your laptop.",
+      "label": "key none"
+    },
+    {
+      "name": "key_has",
+      "type": "text",
+      "default": "Key ending {hint}, made {made}",
+      "label": "key has"
+    },
+    {
+      "name": "key_used",
+      "type": "text",
+      "default": "Last used {when} - {n} calls",
+      "label": "key used"
+    },
+    {
+      "name": "key_unused",
+      "type": "text",
+      "default": "Not used yet",
+      "label": "key unused"
+    },
+    {
+      "name": "make",
+      "type": "text",
+      "default": "Make my key",
+      "label": "make"
+    },
+    {
+      "name": "remake",
+      "type": "text",
+      "default": "Make a new key",
+      "label": "remake"
+    },
+    {
+      "name": "delete",
+      "type": "text",
+      "default": "Delete key",
+      "label": "delete"
+    },
+    {
+      "name": "del_title",
+      "type": "text",
+      "default": "Delete your owner key?",
+      "label": "del title"
+    },
+    {
+      "name": "del_msg",
+      "type": "text",
+      "default": "Claude Code on your laptop stops reaching {product} at once. You can make a new key any time.",
+      "label": "del msg"
+    },
+    {
+      "name": "deleted",
+      "type": "text",
+      "default": "Key deleted.",
+      "label": "deleted"
+    },
+    {
+      "name": "remake_title",
+      "type": "text",
+      "default": "Make a new key?",
+      "label": "remake title"
+    },
+    {
+      "name": "remake_msg",
+      "type": "text",
+      "default": "The key you have now stops working at once. You paste the new line on your laptop.",
+      "label": "remake msg"
+    },
+    {
+      "name": "remake_yes",
+      "type": "text",
+      "default": "Make a new key",
+      "label": "remake yes"
+    },
+    {
+      "name": "made_title",
+      "type": "text",
+      "default": "Your new key - shown once",
+      "label": "made title"
+    },
+    {
+      "name": "made_lede",
+      "type": "text",
+      "default": "Copy this line and paste it in a terminal on your laptop. It adds {product} to Claude Code with your key. The key is not shown again: {product} keeps only its fingerprint.",
+      "label": "made lede"
+    },
+    {
+      "name": "made_warn",
+      "type": "text",
+      "default": "Never paste this line in a chat, an email or a shared file. Anyone with it can press your buttons.",
+      "label": "made warn"
+    },
+    {
+      "name": "made_done",
+      "type": "text",
+      "default": "I copied it",
+      "label": "made done"
+    },
+    {
+      "name": "copy",
+      "type": "text",
+      "default": "Copy",
+      "label": "copy"
+    },
+    {
+      "name": "steps_title",
+      "type": "text",
+      "default": "Add it to Claude Code",
+      "label": "steps title"
+    },
+    {
+      "name": "step1",
+      "type": "text",
+      "default": "Make your key here. It is shown once.",
+      "label": "step1"
+    },
+    {
+      "name": "step2",
+      "type": "text",
+      "default": "Paste the line in a terminal on your laptop, where Claude Code is installed.",
+      "label": "step2"
+    },
+    {
+      "name": "step3",
+      "type": "text",
+      "default": "Ask Claude Code: check {product} status.",
+      "label": "step3"
+    },
+    {
+      "name": "cmd_label",
+      "type": "text",
+      "default": "The line - your key goes where it says {key_here}",
+      "label": "cmd label"
+    },
+    {
+      "name": "key_here",
+      "type": "text",
+      "default": "YOUR-KEY",
+      "label": "key here"
+    },
+    {
+      "name": "folder_here",
+      "type": "text",
+      "default": "the {product} folder",
+      "label": "folder here"
+    },
+    {
+      "name": "tools_title",
+      "type": "text",
+      "default": "What Claude may do",
+      "label": "tools title"
+    },
+    {
+      "name": "tools_lede",
+      "type": "text",
+      "default": "Each tool is one of {product}'s own buttons, checked as you. Search finds a word even when misspelt.",
+      "label": "tools lede"
+    },
+    {
+      "name": "kind_read",
+      "type": "text",
+      "default": "Reads",
+      "label": "kind read"
+    },
+    {
+      "name": "kind_change",
+      "type": "text",
+      "default": "Changes",
+      "label": "kind change"
+    },
+    {
+      "name": "kind_human",
+      "type": "text",
+      "default": "A person does this",
+      "label": "kind human"
+    },
+    {
+      "name": "tools_count",
+      "type": "text",
+      "default": "{read} read, {change} change, {human} stay with people",
+      "label": "tools count"
+    },
+    {
+      "name": "loading",
+      "type": "text",
+      "default": "Loading...",
+      "label": "loading"
+    },
+    {
+      "name": "e_key",
+      "type": "text",
+      "default": "This owner key does not work. Make a new one on Admin > Agent & MCP.",
+      "label": "e key"
+    },
+    {
+      "name": "e_not_tool",
+      "type": "text",
+      "default": "Claude may use only the tools on Admin > Agent & MCP, and this is not one of them.",
+      "label": "e not tool"
+    },
+    {
+      "name": "e_human",
+      "type": "text",
+      "default": "{title}: a person does this, never Claude. {say}",
+      "label": "e human"
+    },
+    {
+      "name": "e_rate",
+      "type": "text",
+      "default": "Too many calls in one minute. Wait a moment, then try again.",
+      "label": "e rate"
+    },
+    {
+      "name": "c_instructions",
+      "type": "text",
+      "default": "Drives {product} for tests and demos with the portal owner's key, through {product}'s own buttons. Signing in, passwords, accepting permissions and payments are never done by a tool: the tool for that step says what the person does.",
+      "label": "c instructions"
+    },
+    {
+      "name": "c_no_url",
+      "type": "text",
+      "default": "{product} has no address here. Add -e {env_url}=https://your-portal to the claude mcp add line.",
+      "label": "c no url"
+    },
+    {
+      "name": "c_bad_url",
+      "type": "text",
+      "default": "{url} is not a safe address for your key. Use https - plain http only for this computer.",
+      "label": "c bad url"
+    },
+    {
+      "name": "c_no_key",
+      "type": "text",
+      "default": "There is no owner key here. Make one on Admin > Agent & MCP and add it with -e {env_key}=...",
+      "label": "c no key"
+    },
+    {
+      "name": "c_unreachable",
+      "type": "text",
+      "default": "{product} did not answer ({why}). Check the address and that the portal is running.",
+      "label": "c unreachable"
+    },
+    {
+      "name": "c_unknown",
+      "type": "text",
+      "default": "There is no tool called {name}.",
+      "label": "c unknown"
+    },
+    {
+      "name": "c_need",
+      "type": "text",
+      "default": "{name} needs {what}.",
+      "label": "c need"
+    },
+    {
+      "name": "c_human",
+      "type": "text",
+      "default": "A person does this, not Claude - {title}. {say}",
+      "label": "c human"
+    },
+    {
+      "name": "c_cut",
+      "type": "text",
+      "default": "... (cut here: the answer was longer than {n} characters)",
+      "label": "c cut"
+    },
+    {
+      "name": "c_failed",
+      "type": "text",
+      "default": "{product} said ({status}): {detail}",
+      "label": "c failed"
+    },
+    {
+      "name": "c_link",
+      "type": "text",
+      "default": "Open in your browser: {link}",
+      "label": "c link"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "title": "$title",
+      "lede": "$lede",
+      "art_you": "$art_you",
+      "art_you_sub": "$art_you_sub",
+      "art_key": "$art_key",
+      "art_door": "$art_door",
+      "art_door_sub": "$art_door_sub",
+      "art_screens": "$art_screens",
+      "art_human": "$art_human",
+      "art_human_sub": "$art_human_sub",
+      "art_key_sub": "$art_key_sub",
+      "art_screens_sub": "$art_screens_sub",
+      "key_title": "$key_title",
+      "key_none": "$key_none",
+      "key_has": "$key_has",
+      "key_used": "$key_used",
+      "key_unused": "$key_unused",
+      "make": "$make",
+      "remake": "$remake",
+      "delete": "$delete",
+      "del_title": "$del_title",
+      "del_msg": "$del_msg",
+      "deleted": "$deleted",
+      "remake_title": "$remake_title",
+      "remake_msg": "$remake_msg",
+      "remake_yes": "$remake_yes",
+      "made_title": "$made_title",
+      "made_lede": "$made_lede",
+      "made_warn": "$made_warn",
+      "made_done": "$made_done",
+      "copy": "$copy",
+      "steps_title": "$steps_title",
+      "step1": "$step1",
+      "step2": "$step2",
+      "step3": "$step3",
+      "cmd_label": "$cmd_label",
+      "key_here": "$key_here",
+      "folder_here": "$folder_here",
+      "tools_title": "$tools_title",
+      "tools_lede": "$tools_lede",
+      "kind_read": "$kind_read",
+      "kind_change": "$kind_change",
+      "kind_human": "$kind_human",
+      "tools_count": "$tools_count",
+      "loading": "$loading",
+      "e_key": "$e_key",
+      "e_not_tool": "$e_not_tool",
+      "e_human": "$e_human",
+      "e_rate": "$e_rate",
+      "c_instructions": "$c_instructions",
+      "c_no_url": "$c_no_url",
+      "c_bad_url": "$c_bad_url",
+      "c_no_key": "$c_no_key",
+      "c_unreachable": "$c_unreachable",
+      "c_unknown": "$c_unknown",
+      "c_need": "$c_need",
+      "c_human": "$c_human",
+      "c_cut": "$c_cut",
+      "c_failed": "$c_failed",
+      "c_link": "$c_link"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-23: the words of Admin > Agent & MCP (static/page-mcp.js), of the door's refusals (core/mcp_door.py) and of the laptop's MCP client (tools/mcp/server.py, c_*).",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "title": "Agent & MCP",
+        "lede": "Let Claude Code on your laptop drive {product} for tests and demos: the same buttons you press, with your owner key. Sign-ins and payments stay with people.",
+        "art_you": "Claude Code",
+        "art_you_sub": "on your laptop",
+        "art_key": "Owner key",
+        "art_door": "{product}",
+        "art_door_sub": "checks the key on every call",
+        "art_screens": "Your screens",
+        "art_human": "A person does these",
+        "art_human_sub": "Signing in, accepting permissions and payments - the tool says which step is next",
+        "art_key_sub": "sent with every call",
+        "art_screens_sub": "The same buttons you press",
+        "key_title": "Your owner key",
+        "key_none": "No key yet. Make one, then paste one line on your laptop.",
+        "key_has": "Key ending {hint}, made {made}",
+        "key_used": "Last used {when} - {n} calls",
+        "key_unused": "Not used yet",
+        "make": "Make my key",
+        "remake": "Make a new key",
+        "delete": "Delete key",
+        "del_title": "Delete your owner key?",
+        "del_msg": "Claude Code on your laptop stops reaching {product} at once. You can make a new key any time.",
+        "deleted": "Key deleted.",
+        "remake_title": "Make a new key?",
+        "remake_msg": "The key you have now stops working at once. You paste the new line on your laptop.",
+        "remake_yes": "Make a new key",
+        "made_title": "Your new key - shown once",
+        "made_lede": "Copy this line and paste it in a terminal on your laptop. It adds {product} to Claude Code with your key. The key is not shown again: {product} keeps only its fingerprint.",
+        "made_warn": "Never paste this line in a chat, an email or a shared file. Anyone with it can press your buttons.",
+        "made_done": "I copied it",
+        "copy": "Copy",
+        "steps_title": "Add it to Claude Code",
+        "step1": "Make your key here. It is shown once.",
+        "step2": "Paste the line in a terminal on your laptop, where Claude Code is installed.",
+        "step3": "Ask Claude Code: check {product} status.",
+        "cmd_label": "The line - your key goes where it says {key_here}",
+        "key_here": "YOUR-KEY",
+        "folder_here": "the {product} folder",
+        "tools_title": "What Claude may do",
+        "tools_lede": "Each tool is one of {product}'s own buttons, checked as you. Search finds a word even when misspelt.",
+        "kind_read": "Reads",
+        "kind_change": "Changes",
+        "kind_human": "A person does this",
+        "tools_count": "{read} read, {change} change, {human} stay with people",
+        "loading": "Loading...",
+        "e_key": "This owner key does not work. Make a new one on Admin > Agent & MCP.",
+        "e_not_tool": "Claude may use only the tools on Admin > Agent & MCP, and this is not one of them.",
+        "e_human": "{title}: a person does this, never Claude. {say}",
+        "e_rate": "Too many calls in one minute. Wait a moment, then try again.",
+        "c_instructions": "Drives {product} for tests and demos with the portal owner's key, through {product}'s own buttons. Signing in, passwords, accepting permissions and payments are never done by a tool: the tool for that step says what the person does.",
+        "c_no_url": "{product} has no address here. Add -e {env_url}=https://your-portal to the claude mcp add line.",
+        "c_bad_url": "{url} is not a safe address for your key. Use https - plain http only for this computer.",
+        "c_no_key": "There is no owner key here. Make one on Admin > Agent & MCP and add it with -e {env_key}=...",
+        "c_unreachable": "{product} did not answer ({why}). Check the address and that the portal is running.",
+        "c_unknown": "There is no tool called {name}.",
+        "c_need": "{name} needs {what}.",
+        "c_human": "A person does this, not Claude - {title}. {say}",
+        "c_cut": "... (cut here: the answer was longer than {n} characters)",
+        "c_failed": "{product} said ({status}): {detail}",
+        "c_link": "Open in your browser: {link}"
+      }
+    }
+  ]
+}

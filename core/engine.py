@@ -80,8 +80,17 @@ def chips() -> dict[str, dict]:
     with _lock:
         if time.time() - _cache["at"] < RELOAD_S and _cache["chips"]:
             return _cache["chips"]
-        files = [(layer, f) for layer, d in _layers() if d.is_dir() for f in sorted(d.glob("*.json"))]
-        sig = tuple((str(f), f.stat().st_mtime_ns) for _, f in files)
+        # 2026-10-23 a file can vanish between the listing and its stat (a deploy swapping files, the self-test's
+        # half-written chip in another process): it is skipped, never a crash
+        stamped = []
+        for layer, d in _layers():
+            for f in sorted(d.glob("*.json")) if d.is_dir() else []:
+                try:
+                    stamped.append((layer, f, f.stat().st_mtime_ns))
+                except FileNotFoundError:
+                    continue
+        files = [(layer, f) for layer, f, _ in stamped]
+        sig = tuple((str(f), m) for _, f, m in stamped)
         if sig != _cache["sig"]:
             loaded: dict[str, dict] = {}
             seen: dict[tuple, str] = {}
@@ -492,6 +501,14 @@ if __name__ == "__main__":
         refresh()
         assert _cid in chips(), "one unreadable chip file took the whole library down"
         assert any("x.half_written_.json" in p for p in certify()), "an unreadable chip file is not named"
+        # 2026-10-23 the commit check crashed: a file listed, then gone before its stat - skipped, never raised
+        _stat = type(_half).stat
+        type(_half).stat = lambda p, *a, **k: (_ for _ in ()).throw(FileNotFoundError(p)) if p.name == _half.name else _stat(p, *a, **k)
+        try:
+            refresh()
+            assert _cid in chips(), "a chip file that vanished mid-read took the whole library down"
+        finally:
+            type(_half).stat = _stat
     finally:
         _half.unlink()
         refresh()

@@ -1,0 +1,1056 @@
+{
+  "chip_id": "mcp.tools",
+  "kind": "accessor",
+  "set": "mcp",
+  "audience": "admin",
+  "label": "Agent & MCP: the tools",
+  "aliases": [
+    "agent & mcp: the tools"
+  ],
+  "params": [
+    {
+      "name": "tools",
+      "type": "json",
+      "default": [
+        {
+          "name": "status",
+          "kind": "read",
+          "title": "Portal status",
+          "say": "Is {product} up, which build is running, and the {clients} at each stage of the year.",
+          "input": {
+            "type": "object",
+            "properties": {}
+          },
+          "calls": [
+            {
+              "method": "GET",
+              "path": "/health"
+            },
+            {
+              "method": "GET",
+              "path": "/api/mcp/about"
+            },
+            {
+              "method": "GET",
+              "path": "/api/clients/summary"
+            }
+          ]
+        },
+        {
+          "name": "year_and_stages",
+          "kind": "read",
+          "title": "Years and stages",
+          "say": "The assessment year being worked, the years open and the stages a filing moves through.",
+          "input": {
+            "type": "object",
+            "properties": {}
+          },
+          "calls": [
+            {
+              "method": "GET",
+              "path": "/api/clients/settings",
+              "keep": [
+                "current_ay",
+                "years",
+                "stages",
+                "statuses"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "clients",
+          "kind": "read",
+          "title": "Find {clients}",
+          "say": "The {clients} list with its forgiving search: name, PAN, stage. Gives each one's id (cid) for the other tools.",
+          "input": {
+            "type": "object",
+            "properties": {
+              "q": {
+                "type": "string",
+                "description": "Words to search for (typos are fine)"
+              },
+              "ay": {
+                "type": "string",
+                "description": "Assessment year, e.g. 2026-27 (blank = the current one)"
+              },
+              "view": {
+                "type": "string",
+                "description": "Blank = active, archived = the Archived tab"
+              }
+            }
+          },
+          "calls": [
+            {
+              "method": "GET",
+              "path": "/api/lists/clients",
+              "query": {
+                "q": "{q}",
+                "ay": "{ay}",
+                "view": "{view}"
+              }
+            }
+          ]
+        },
+        {
+          "name": "client",
+          "kind": "read",
+          "title": "One {client_one}",
+          "say": "One {client_one} by id: details, the years and where each stands.",
+          "input": {
+            "type": "object",
+            "required": [
+              "cid"
+            ],
+            "properties": {
+              "cid": {
+                "type": "string",
+                "description": "The id from clients"
+              }
+            }
+          },
+          "calls": [
+            {
+              "method": "GET",
+              "path": "/api/clients/{cid}"
+            }
+          ]
+        },
+        {
+          "name": "intake",
+          "kind": "read",
+          "title": "Intake & map",
+          "say": "The statements uploaded for one year and how far each is mapped.",
+          "input": {
+            "type": "object",
+            "required": [
+              "cid",
+              "ay"
+            ],
+            "properties": {
+              "cid": {
+                "type": "string",
+                "description": "The id from clients"
+              },
+              "ay": {
+                "type": "string",
+                "description": "Assessment year, e.g. 2026-27"
+              }
+            }
+          },
+          "calls": [
+            {
+              "method": "GET",
+              "path": "/api/intake/{cid}/{ay}"
+            }
+          ]
+        },
+        {
+          "name": "reconcile",
+          "kind": "read",
+          "title": "Reconcile",
+          "say": "The 26AS match for one year: each finding, red or explained.",
+          "input": {
+            "type": "object",
+            "required": [
+              "cid",
+              "ay"
+            ],
+            "properties": {
+              "cid": {
+                "type": "string",
+                "description": "The id from clients"
+              },
+              "ay": {
+                "type": "string",
+                "description": "Assessment year, e.g. 2026-27"
+              }
+            }
+          },
+          "calls": [
+            {
+              "method": "GET",
+              "path": "/api/recon/{cid}/{ay}"
+            }
+          ]
+        },
+        {
+          "name": "reconcile_note",
+          "kind": "change",
+          "title": "Explain a finding",
+          "say": "Writes the note that explains one Reconcile finding (its id from reconcile). An explained red finding lets the year move on.",
+          "input": {
+            "type": "object",
+            "required": [
+              "cid",
+              "ay",
+              "fid",
+              "note"
+            ],
+            "properties": {
+              "cid": {
+                "type": "string",
+                "description": "The id from clients"
+              },
+              "ay": {
+                "type": "string",
+                "description": "Assessment year"
+              },
+              "fid": {
+                "type": "string",
+                "description": "The finding id from reconcile"
+              },
+              "note": {
+                "type": "string",
+                "description": "The explanation, in plain words"
+              }
+            }
+          },
+          "calls": [
+            {
+              "method": "PUT",
+              "path": "/api/recon/{cid}/{ay}/notes/{fid}",
+              "body": {
+                "note": "{note}"
+              }
+            }
+          ]
+        },
+        {
+          "name": "compute",
+          "kind": "read",
+          "title": "Compute & close",
+          "say": "The computation for one year: income, tax, TDS, the balance, and whether it is signed off or filed.",
+          "input": {
+            "type": "object",
+            "required": [
+              "cid",
+              "ay"
+            ],
+            "properties": {
+              "cid": {
+                "type": "string",
+                "description": "The id from clients"
+              },
+              "ay": {
+                "type": "string",
+                "description": "Assessment year, e.g. 2026-27"
+              }
+            }
+          },
+          "calls": [
+            {
+              "method": "GET",
+              "path": "/api/compute/{cid}/{ay}"
+            }
+          ]
+        },
+        {
+          "name": "itr_check",
+          "kind": "read",
+          "title": "Check the ITR JSON",
+          "say": "Makes the ITR JSON for one year and checks it: errors, and the rules and assumptions that made it.",
+          "input": {
+            "type": "object",
+            "required": [
+              "cid",
+              "ay"
+            ],
+            "properties": {
+              "cid": {
+                "type": "string",
+                "description": "The id from clients"
+              },
+              "ay": {
+                "type": "string",
+                "description": "Assessment year, e.g. 2026-27"
+              }
+            }
+          },
+          "calls": [
+            {
+              "method": "GET",
+              "path": "/api/compute/{cid}/{ay}/itr-check"
+            }
+          ]
+        },
+        {
+          "name": "sign_off",
+          "kind": "change",
+          "title": "Sign off the year",
+          "say": "Presses Sign off on Compute & close (refused while a red finding is open).",
+          "input": {
+            "type": "object",
+            "required": [
+              "cid",
+              "ay"
+            ],
+            "properties": {
+              "cid": {
+                "type": "string",
+                "description": "The id from clients"
+              },
+              "ay": {
+                "type": "string",
+                "description": "Assessment year"
+              }
+            }
+          },
+          "calls": [
+            {
+              "method": "POST",
+              "path": "/api/compute/{cid}/{ay}/signoff",
+              "body": {
+                "on": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "tax_audit",
+          "kind": "read",
+          "title": "Tax audit",
+          "say": "The tax audit for one year: whether it applies, the checklist and the points raised.",
+          "input": {
+            "type": "object",
+            "required": [
+              "cid",
+              "ay"
+            ],
+            "properties": {
+              "cid": {
+                "type": "string",
+                "description": "The id from clients"
+              },
+              "ay": {
+                "type": "string",
+                "description": "Assessment year, e.g. 2026-27"
+              }
+            }
+          },
+          "calls": [
+            {
+              "method": "GET",
+              "path": "/api/audit/{cid}/{ay}"
+            }
+          ]
+        },
+        {
+          "name": "client_add",
+          "kind": "change",
+          "title": "Add a {client_one}",
+          "say": "Adds a {client_one} on Clients & years (use made-up test details for a demo).",
+          "input": {
+            "type": "object",
+            "required": [
+              "name",
+              "status",
+              "pan"
+            ],
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Name"
+              },
+              "status": {
+                "type": "string",
+                "description": "individual, huf, firm, llp, aop, boi, company ..."
+              },
+              "pan": {
+                "type": "string",
+                "description": "PAN (10 characters)"
+              }
+            }
+          },
+          "calls": [
+            {
+              "method": "POST",
+              "path": "/api/clients",
+              "body": {
+                "name": "{name}",
+                "status": "{status}",
+                "pan": "{pan}"
+              },
+              "keep": [
+                "id",
+                "name",
+                "status"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "year_open",
+          "kind": "change",
+          "title": "Open a year",
+          "say": "Opens an assessment year for one {client_one}, so its work can start.",
+          "input": {
+            "type": "object",
+            "required": [
+              "cid",
+              "ay"
+            ],
+            "properties": {
+              "cid": {
+                "type": "string",
+                "description": "The id from clients"
+              },
+              "ay": {
+                "type": "string",
+                "description": "Assessment year, e.g. 2026-27"
+              }
+            }
+          },
+          "calls": [
+            {
+              "method": "PUT",
+              "path": "/api/clients/{cid}/years/{ay}",
+              "body": {}
+            }
+          ]
+        },
+        {
+          "name": "firms",
+          "kind": "read",
+          "title": "{Tenant} approvals",
+          "say": "The {tenants} that signed up and where each stands (waiting, approved, sent back).",
+          "input": {
+            "type": "object",
+            "properties": {}
+          },
+          "calls": [
+            {
+              "method": "GET",
+              "path": "/api/approvals"
+            }
+          ]
+        },
+        {
+          "name": "portal_analytics",
+          "kind": "read",
+          "title": "Portal analytics",
+          "say": "The portal's numbers across every {tenant}: work done, stages, activity.",
+          "input": {
+            "type": "object",
+            "properties": {}
+          },
+          "calls": [
+            {
+              "method": "GET",
+              "path": "/api/portalstats"
+            }
+          ]
+        },
+        {
+          "name": "tax_rules_watch",
+          "kind": "read",
+          "title": "Tax rules watch",
+          "say": "The tax rules being watched for the year and which changed.",
+          "input": {
+            "type": "object",
+            "properties": {}
+          },
+          "calls": [
+            {
+              "method": "GET",
+              "path": "/api/taxwatch"
+            }
+          ]
+        },
+        {
+          "name": "upload_documents",
+          "kind": "human",
+          "title": "Upload the {client_one}'s documents",
+          "say": "A person uploads statements, 26AS and Form 16 on Intake & map or Reconcile - real papers are never sent by a tool.",
+          "input": {
+            "type": "object",
+            "properties": {}
+          },
+          "paths": []
+        },
+        {
+          "name": "file_on_income_tax_site",
+          "kind": "human",
+          "title": "File on the income-tax site",
+          "say": "The CA uploads the ITR JSON on the income-tax e-filing site, then types the acknowledgement number on Compute & close.",
+          "input": {
+            "type": "object",
+            "properties": {}
+          },
+          "paths": [
+            "^/api/compute/[^/]+/[^/]+/file$"
+          ]
+        },
+        {
+          "name": "firm_decision",
+          "kind": "human",
+          "title": "Approve or send back a {tenant}",
+          "say": "The portal admin reads the {tenant}'s papers on {Tenant} approvals and decides.",
+          "input": {
+            "type": "object",
+            "properties": {}
+          },
+          "paths": [
+            "^/api/firm/[^/]+/move$"
+          ]
+        },
+        {
+          "name": "payments",
+          "kind": "human",
+          "title": "Payments and keys",
+          "say": "Paying, buying or adding a key is always a person, on its own screen.",
+          "input": {
+            "type": "object",
+            "properties": {}
+          },
+          "paths": [
+            "^/api/(wallet|buykey|keysales|keys|funds|providers)(/|$)"
+          ]
+        },
+        {
+          "name": "accounts",
+          "kind": "human",
+          "title": "Sign-in, passwords and people",
+          "say": "Signing in, passwords and adding people are a person's, on the portal's own pages.",
+          "input": {
+            "type": "object",
+            "properties": {}
+          },
+          "paths": [
+            "^/api/auth/",
+            "^/api/users"
+          ]
+        }
+      ],
+      "label": "tools"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "tools": "$tools"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-23 owner: what Claude Code may do in {product} through the MCP door (core/mcp_door.py) - each row ONE of the portal's own routes (calls: method, path with {slot}s from the input or an earlier call's save, body, query, keep = the keys answered back), never new business logic. kind read / change / human. A human row is never called: its paths are refused at the door and its say tells Claude which person step is next (sign-ins, permissions, filing on another site, payments).",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "tools": [
+          {
+            "name": "status",
+            "kind": "read",
+            "title": "Portal status",
+            "say": "Is {product} up, which build is running, and the {clients} at each stage of the year.",
+            "input": {
+              "type": "object",
+              "properties": {}
+            },
+            "calls": [
+              {
+                "method": "GET",
+                "path": "/health"
+              },
+              {
+                "method": "GET",
+                "path": "/api/mcp/about"
+              },
+              {
+                "method": "GET",
+                "path": "/api/clients/summary"
+              }
+            ]
+          },
+          {
+            "name": "year_and_stages",
+            "kind": "read",
+            "title": "Years and stages",
+            "say": "The assessment year being worked, the years open and the stages a filing moves through.",
+            "input": {
+              "type": "object",
+              "properties": {}
+            },
+            "calls": [
+              {
+                "method": "GET",
+                "path": "/api/clients/settings",
+                "keep": [
+                  "current_ay",
+                  "years",
+                  "stages",
+                  "statuses"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "clients",
+            "kind": "read",
+            "title": "Find {clients}",
+            "say": "The {clients} list with its forgiving search: name, PAN, stage. Gives each one's id (cid) for the other tools.",
+            "input": {
+              "type": "object",
+              "properties": {
+                "q": {
+                  "type": "string",
+                  "description": "Words to search for (typos are fine)"
+                },
+                "ay": {
+                  "type": "string",
+                  "description": "Assessment year, e.g. 2026-27 (blank = the current one)"
+                },
+                "view": {
+                  "type": "string",
+                  "description": "Blank = active, archived = the Archived tab"
+                }
+              }
+            },
+            "calls": [
+              {
+                "method": "GET",
+                "path": "/api/lists/clients",
+                "query": {
+                  "q": "{q}",
+                  "ay": "{ay}",
+                  "view": "{view}"
+                }
+              }
+            ]
+          },
+          {
+            "name": "client",
+            "kind": "read",
+            "title": "One {client_one}",
+            "say": "One {client_one} by id: details, the years and where each stands.",
+            "input": {
+              "type": "object",
+              "required": [
+                "cid"
+              ],
+              "properties": {
+                "cid": {
+                  "type": "string",
+                  "description": "The id from clients"
+                }
+              }
+            },
+            "calls": [
+              {
+                "method": "GET",
+                "path": "/api/clients/{cid}"
+              }
+            ]
+          },
+          {
+            "name": "intake",
+            "kind": "read",
+            "title": "Intake & map",
+            "say": "The statements uploaded for one year and how far each is mapped.",
+            "input": {
+              "type": "object",
+              "required": [
+                "cid",
+                "ay"
+              ],
+              "properties": {
+                "cid": {
+                  "type": "string",
+                  "description": "The id from clients"
+                },
+                "ay": {
+                  "type": "string",
+                  "description": "Assessment year, e.g. 2026-27"
+                }
+              }
+            },
+            "calls": [
+              {
+                "method": "GET",
+                "path": "/api/intake/{cid}/{ay}"
+              }
+            ]
+          },
+          {
+            "name": "reconcile",
+            "kind": "read",
+            "title": "Reconcile",
+            "say": "The 26AS match for one year: each finding, red or explained.",
+            "input": {
+              "type": "object",
+              "required": [
+                "cid",
+                "ay"
+              ],
+              "properties": {
+                "cid": {
+                  "type": "string",
+                  "description": "The id from clients"
+                },
+                "ay": {
+                  "type": "string",
+                  "description": "Assessment year, e.g. 2026-27"
+                }
+              }
+            },
+            "calls": [
+              {
+                "method": "GET",
+                "path": "/api/recon/{cid}/{ay}"
+              }
+            ]
+          },
+          {
+            "name": "reconcile_note",
+            "kind": "change",
+            "title": "Explain a finding",
+            "say": "Writes the note that explains one Reconcile finding (its id from reconcile). An explained red finding lets the year move on.",
+            "input": {
+              "type": "object",
+              "required": [
+                "cid",
+                "ay",
+                "fid",
+                "note"
+              ],
+              "properties": {
+                "cid": {
+                  "type": "string",
+                  "description": "The id from clients"
+                },
+                "ay": {
+                  "type": "string",
+                  "description": "Assessment year"
+                },
+                "fid": {
+                  "type": "string",
+                  "description": "The finding id from reconcile"
+                },
+                "note": {
+                  "type": "string",
+                  "description": "The explanation, in plain words"
+                }
+              }
+            },
+            "calls": [
+              {
+                "method": "PUT",
+                "path": "/api/recon/{cid}/{ay}/notes/{fid}",
+                "body": {
+                  "note": "{note}"
+                }
+              }
+            ]
+          },
+          {
+            "name": "compute",
+            "kind": "read",
+            "title": "Compute & close",
+            "say": "The computation for one year: income, tax, TDS, the balance, and whether it is signed off or filed.",
+            "input": {
+              "type": "object",
+              "required": [
+                "cid",
+                "ay"
+              ],
+              "properties": {
+                "cid": {
+                  "type": "string",
+                  "description": "The id from clients"
+                },
+                "ay": {
+                  "type": "string",
+                  "description": "Assessment year, e.g. 2026-27"
+                }
+              }
+            },
+            "calls": [
+              {
+                "method": "GET",
+                "path": "/api/compute/{cid}/{ay}"
+              }
+            ]
+          },
+          {
+            "name": "itr_check",
+            "kind": "read",
+            "title": "Check the ITR JSON",
+            "say": "Makes the ITR JSON for one year and checks it: errors, and the rules and assumptions that made it.",
+            "input": {
+              "type": "object",
+              "required": [
+                "cid",
+                "ay"
+              ],
+              "properties": {
+                "cid": {
+                  "type": "string",
+                  "description": "The id from clients"
+                },
+                "ay": {
+                  "type": "string",
+                  "description": "Assessment year, e.g. 2026-27"
+                }
+              }
+            },
+            "calls": [
+              {
+                "method": "GET",
+                "path": "/api/compute/{cid}/{ay}/itr-check"
+              }
+            ]
+          },
+          {
+            "name": "sign_off",
+            "kind": "change",
+            "title": "Sign off the year",
+            "say": "Presses Sign off on Compute & close (refused while a red finding is open).",
+            "input": {
+              "type": "object",
+              "required": [
+                "cid",
+                "ay"
+              ],
+              "properties": {
+                "cid": {
+                  "type": "string",
+                  "description": "The id from clients"
+                },
+                "ay": {
+                  "type": "string",
+                  "description": "Assessment year"
+                }
+              }
+            },
+            "calls": [
+              {
+                "method": "POST",
+                "path": "/api/compute/{cid}/{ay}/signoff",
+                "body": {
+                  "on": true
+                }
+              }
+            ]
+          },
+          {
+            "name": "tax_audit",
+            "kind": "read",
+            "title": "Tax audit",
+            "say": "The tax audit for one year: whether it applies, the checklist and the points raised.",
+            "input": {
+              "type": "object",
+              "required": [
+                "cid",
+                "ay"
+              ],
+              "properties": {
+                "cid": {
+                  "type": "string",
+                  "description": "The id from clients"
+                },
+                "ay": {
+                  "type": "string",
+                  "description": "Assessment year, e.g. 2026-27"
+                }
+              }
+            },
+            "calls": [
+              {
+                "method": "GET",
+                "path": "/api/audit/{cid}/{ay}"
+              }
+            ]
+          },
+          {
+            "name": "client_add",
+            "kind": "change",
+            "title": "Add a {client_one}",
+            "say": "Adds a {client_one} on Clients & years (use made-up test details for a demo).",
+            "input": {
+              "type": "object",
+              "required": [
+                "name",
+                "status",
+                "pan"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Name"
+                },
+                "status": {
+                  "type": "string",
+                  "description": "individual, huf, firm, llp, aop, boi, company ..."
+                },
+                "pan": {
+                  "type": "string",
+                  "description": "PAN (10 characters)"
+                }
+              }
+            },
+            "calls": [
+              {
+                "method": "POST",
+                "path": "/api/clients",
+                "body": {
+                  "name": "{name}",
+                  "status": "{status}",
+                  "pan": "{pan}"
+                },
+                "keep": [
+                  "id",
+                  "name",
+                  "status"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "year_open",
+            "kind": "change",
+            "title": "Open a year",
+            "say": "Opens an assessment year for one {client_one}, so its work can start.",
+            "input": {
+              "type": "object",
+              "required": [
+                "cid",
+                "ay"
+              ],
+              "properties": {
+                "cid": {
+                  "type": "string",
+                  "description": "The id from clients"
+                },
+                "ay": {
+                  "type": "string",
+                  "description": "Assessment year, e.g. 2026-27"
+                }
+              }
+            },
+            "calls": [
+              {
+                "method": "PUT",
+                "path": "/api/clients/{cid}/years/{ay}",
+                "body": {}
+              }
+            ]
+          },
+          {
+            "name": "firms",
+            "kind": "read",
+            "title": "{Tenant} approvals",
+            "say": "The {tenants} that signed up and where each stands (waiting, approved, sent back).",
+            "input": {
+              "type": "object",
+              "properties": {}
+            },
+            "calls": [
+              {
+                "method": "GET",
+                "path": "/api/approvals"
+              }
+            ]
+          },
+          {
+            "name": "portal_analytics",
+            "kind": "read",
+            "title": "Portal analytics",
+            "say": "The portal's numbers across every {tenant}: work done, stages, activity.",
+            "input": {
+              "type": "object",
+              "properties": {}
+            },
+            "calls": [
+              {
+                "method": "GET",
+                "path": "/api/portalstats"
+              }
+            ]
+          },
+          {
+            "name": "tax_rules_watch",
+            "kind": "read",
+            "title": "Tax rules watch",
+            "say": "The tax rules being watched for the year and which changed.",
+            "input": {
+              "type": "object",
+              "properties": {}
+            },
+            "calls": [
+              {
+                "method": "GET",
+                "path": "/api/taxwatch"
+              }
+            ]
+          },
+          {
+            "name": "upload_documents",
+            "kind": "human",
+            "title": "Upload the {client_one}'s documents",
+            "say": "A person uploads statements, 26AS and Form 16 on Intake & map or Reconcile - real papers are never sent by a tool.",
+            "input": {
+              "type": "object",
+              "properties": {}
+            },
+            "paths": []
+          },
+          {
+            "name": "file_on_income_tax_site",
+            "kind": "human",
+            "title": "File on the income-tax site",
+            "say": "The CA uploads the ITR JSON on the income-tax e-filing site, then types the acknowledgement number on Compute & close.",
+            "input": {
+              "type": "object",
+              "properties": {}
+            },
+            "paths": [
+              "^/api/compute/[^/]+/[^/]+/file$"
+            ]
+          },
+          {
+            "name": "firm_decision",
+            "kind": "human",
+            "title": "Approve or send back a {tenant}",
+            "say": "The portal admin reads the {tenant}'s papers on {Tenant} approvals and decides.",
+            "input": {
+              "type": "object",
+              "properties": {}
+            },
+            "paths": [
+              "^/api/firm/[^/]+/move$"
+            ]
+          },
+          {
+            "name": "payments",
+            "kind": "human",
+            "title": "Payments and keys",
+            "say": "Paying, buying or adding a key is always a person, on its own screen.",
+            "input": {
+              "type": "object",
+              "properties": {}
+            },
+            "paths": [
+              "^/api/(wallet|buykey|keysales|keys|funds|providers)(/|$)"
+            ]
+          },
+          {
+            "name": "accounts",
+            "kind": "human",
+            "title": "Sign-in, passwords and people",
+            "say": "Signing in, passwords and adding people are a person's, on the portal's own pages.",
+            "input": {
+              "type": "object",
+              "properties": {}
+            },
+            "paths": [
+              "^/api/auth/",
+              "^/api/users"
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

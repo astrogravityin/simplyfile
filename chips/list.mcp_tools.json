@@ -1,0 +1,99 @@
+{
+  "chip_id": "list.mcp_tools",
+  "kind": "accessor",
+  "set": "list",
+  "label": "Agent & MCP tools list",
+  "aliases": [
+    "agent & mcp tools list"
+  ],
+  "params": [
+    {
+      "name": "search_keys",
+      "type": "list",
+      "default": [
+        "name",
+        "title",
+        "say",
+        "kind_word"
+      ],
+      "label": "search keys"
+    },
+    {
+      "name": "sort_key",
+      "type": "text",
+      "default": "n",
+      "label": "sort key"
+    },
+    {
+      "name": "sort_desc",
+      "type": "boolean",
+      "default": false,
+      "label": "sort desc"
+    },
+    {
+      "name": "sorts",
+      "type": "list",
+      "default": [
+        "n",
+        "name"
+      ],
+      "label": "sorts"
+    },
+    {
+      "name": "page_size",
+      "type": "number",
+      "default": 25,
+      "label": "page size"
+    },
+    {
+      "name": "max_page_size",
+      "type": "number",
+      "default": 100,
+      "label": "max page size"
+    },
+    {
+      "name": "fuzzy_min",
+      "type": "number",
+      "default": 0.75,
+      "label": "fuzzy min"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "search_keys": "$search_keys",
+      "sort_key": "$sort_key",
+      "sort_desc": "$sort_desc",
+      "sorts": "$sorts",
+      "page_size": "$page_size",
+      "max_page_size": "$max_page_size",
+      "fuzzy_min": "$fuzzy_min"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-23: the tools on Admin > Agent & MCP - forgiving search over name, title and what it does, in chip order.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "search_keys": [
+          "name",
+          "title",
+          "say",
+          "kind_word"
+        ],
+        "sort_key": "n",
+        "sort_desc": false,
+        "sorts": [
+          "n",
+          "name"
+        ],
+        "page_size": 25,
+        "max_page_size": 100,
+        "fuzzy_min": 0.75
+      }
+    }
+  ]
+}

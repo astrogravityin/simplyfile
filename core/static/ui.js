@@ -2,6 +2,7 @@
 // the theme switch. No framework and no build step — every portal on core/ shares these, so no two
 // screens invent their own popup.
 import { icon, spinner } from './icons.js';
+import { copyText as copyRaw } from './copy.js';
 
 // Where the portal lives, taken from this module's own URL (…/core-static/ui.js) — so it works at the
 // site root, at /tv, or anywhere else, with nothing to configure.
@@ -93,6 +94,10 @@ export function t(screen, key, values = {}) {
 // The kit's own words (dialog buttons, the key box, the file box) are chip ui.shell, which the shell loads
 // before anything is drawn. `t` is a local name in confirmDialog, so they go by `sw`.
 const sw = (k, v) => t('shell', k, v);
+
+/** THE copy of every screen (core/static/copy.js) with this portal's toast and words (chip ui.shell rd_copied, copy_failed);
+ *  `o.copied` names what was copied, `o.html` adds rich text (bullets survive a paste into the request editor). */
+export const copyText = (text, o = {}) => copyRaw(text, { say: (m, tone) => toast(m, tone), copied: sw('rd_copied'), failed: sw('copy_failed'), ...o });
 
 export function esc(v) {
   return String(v ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -872,7 +877,7 @@ export function bridgeBox(title, prompt, note, onPaste, { upload = null, refs = 
     footer: onPaste ? `<button type="button" class="primary" data-take>${icon('check', 13)} ${esc(sw('rd_take'))}</button>`
       : upload ? `<button type="button" class="primary" data-up>${icon('upload', 13)} ${esc(words.upload || sw('rd_paste_picture'))}</button>` : '',
     onOpen: (m, close) => {
-      m.querySelector('#rb-copy').onclick = () => navigator.clipboard.writeText(prompt).then(() => toast(sw('rd_copied'), 'ok'));
+      m.querySelector('#rb-copy').onclick = () => copyText(prompt);
       const upb = m.closest('.modal').querySelector('[data-up]');
       if (upb) upb.onclick = () => { close(true); upload(); };
       const bt = m.closest('.modal').querySelector('[data-take]');
@@ -989,7 +994,7 @@ async function showPrompt(kind, a, b) {
     wide: true,
     onOpen: (m, close) => {
       const cp = m.querySelector('#pr-copy');
-      if (cp) cp.onclick = () => navigator.clipboard.writeText(d.prompt).then(() => toast(sw('rd_copied'), 'ok'));
+      if (cp) cp.onclick = () => copyText(d.prompt);
       m.querySelectorAll('[data-vr]').forEach((btn) => {
         btn.onclick = () => confirmDialog(sw('vr_ask_title'), sw('vr_ask_body'), async () => {
           try {
