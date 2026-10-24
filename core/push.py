@@ -124,6 +124,7 @@ def _vals(t: dict, row: dict, body: dict) -> dict:
          "context": row.get("context", ""), "name": row.get("name", ""), "company": t.get("company", ""), "base": str(t["base"]).rstrip("/")}
     v["project"] = fill(t.get("project", ""), v)
     v["type"] = body.get("type") if body.get("type") in t["types"] else t["type"]
+    v["part"] = str(body.get("part") or row.get("context") or v["product"]).strip()   # CodyFy needs the module: the page it came from
     v["text"] = fill(t["text"], v | {"text": str(body.get("text") or row.get("text") or "").strip()})
     return v
 
@@ -190,7 +191,7 @@ if __name__ == "__main__":  # ponytail: one runnable self-check - a stand-in MCP
                 return
             a = (msg.get("params") or {}).get("arguments") or {}
             out = {"steps": [{"answer": {"id": "r9", "code": "c0de"}}]} if (msg.get("params") or {}).get("name") == "request_send" \
-                else {"answer": {"ref": "REQ-0009", "stage_label": "With Claude"}}
+                else {"steps": [{"answer": {"id": "r9"}}, {"answer": {"ref": "REQ-0009", "stage_label": "With Claude"}}]}
             res = {"tools": []} if msg["method"] == "tools/list" else {"structuredContent": out | {"company": a.get("company")}}
             body = json.dumps({"jsonrpc": "2.0", "id": 1, "result": res}).encode()
             self.send_response(200)
@@ -221,6 +222,7 @@ if __name__ == "__main__":  # ponytail: one runnable self-check - a stand-in MCP
     assert me.K()["key_store"] in store.SECRET_FILES, "the key file is not owner-only"
     got = issues.push_issue({"id": "o1", "role": "owner"}, "i1", {"target": t0["id"], "type": "fix"})
     sent = next(m for _a, m in seen if (m.get("params") or {}).get("name") == "request_send")["params"]["arguments"]
+    assert sent["part"], "CodyFy refuses a request with no module (2026-10-24)"
     assert sent["company"] == t0["company"] and sent["new_project"] == engine.product_name() and sent["type"] == "fix", sent
     assert "Please add Excel." in sent["text"] and got["pushed"]["ref"] == "REQ-0009" and got["pushed"]["link"].endswith("r=c0de")
     row = store.read("issues", [])[0]
