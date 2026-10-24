@@ -95,6 +95,162 @@
       "name": "kind_issue",
       "type": "text",
       "default": "Reported issue"
+    },
+    {
+      "name": "push",
+      "type": "text",
+      "default": "Push to",
+      "label": "push"
+    },
+    {
+      "name": "push_title",
+      "type": "text",
+      "default": "Push this issue to",
+      "label": "push title"
+    },
+    {
+      "name": "push_lede",
+      "type": "text",
+      "default": "It becomes a request there; this row then follows its stage.",
+      "label": "push lede"
+    },
+    {
+      "name": "push_to",
+      "type": "text",
+      "default": "Send to",
+      "label": "push to"
+    },
+    {
+      "name": "push_company",
+      "type": "text",
+      "default": "Company {company}, project {project}",
+      "label": "push company"
+    },
+    {
+      "name": "push_type",
+      "type": "text",
+      "default": "Kind of request",
+      "label": "push type"
+    },
+    {
+      "name": "type_enhancement",
+      "type": "text",
+      "default": "Enhancement",
+      "label": "type enhancement"
+    },
+    {
+      "name": "type_fix",
+      "type": "text",
+      "default": "Fix",
+      "label": "type fix"
+    },
+    {
+      "name": "type_new_module",
+      "type": "text",
+      "default": "New module",
+      "label": "type new module"
+    },
+    {
+      "name": "push_req_title",
+      "type": "text",
+      "default": "Request title",
+      "label": "push req title"
+    },
+    {
+      "name": "push_text",
+      "type": "text",
+      "default": "What to build",
+      "label": "push text"
+    },
+    {
+      "name": "push_send",
+      "type": "text",
+      "default": "Push",
+      "label": "push send"
+    },
+    {
+      "name": "push_cancel",
+      "type": "text",
+      "default": "Cancel",
+      "label": "push cancel"
+    },
+    {
+      "name": "push_key",
+      "type": "text",
+      "default": "{target} key",
+      "label": "push key"
+    },
+    {
+      "name": "push_key_hint",
+      "type": "text",
+      "default": "In {target}: Admin > Connect your AI > Make a key, then paste it here once. Kept on this server, owner-only.",
+      "label": "push key hint"
+    },
+    {
+      "name": "push_key_save",
+      "type": "text",
+      "default": "Check and keep",
+      "label": "push key save"
+    },
+    {
+      "name": "push_key_ok",
+      "type": "text",
+      "default": "{target} key works - kept.",
+      "label": "push key ok"
+    },
+    {
+      "name": "push_key_bad",
+      "type": "text",
+      "default": "{target} did not take this key: {why}",
+      "label": "push key bad"
+    },
+    {
+      "name": "push_no_key",
+      "type": "text",
+      "default": "No {target} key yet - paste it below.",
+      "label": "push no key"
+    },
+    {
+      "name": "push_done",
+      "type": "text",
+      "default": "Pushed to {target} as {ref}.",
+      "label": "push done"
+    },
+    {
+      "name": "push_failed",
+      "type": "text",
+      "default": "{target} said: {why}",
+      "label": "push failed"
+    },
+    {
+      "name": "push_again",
+      "type": "text",
+      "default": "Already pushed to {target} as {ref} on {at}. Pushing again makes a second request.",
+      "label": "push again"
+    },
+    {
+      "name": "pushed",
+      "type": "text",
+      "default": "{target} {ref}",
+      "label": "pushed"
+    },
+    {
+      "name": "pushed_stage",
+      "type": "text",
+      "default": "{ref}: {stage}",
+      "label": "pushed stage"
+    },
+    {
+      "name": "push_open",
+      "type": "text",
+      "default": "Open in {target}",
+      "label": "push open"
+    },
+    {
+      "name": "push_unknown",
+      "type": "text",
+      "default": "No such place to push to.",
+      "label": "push unknown"
     }
   ],
   "expr": {
@@ -114,7 +270,33 @@
       "shot": "$shot",
       "none": "$none",
       "answered": "$answered",
-      "kind_issue": "$kind_issue"
+      "kind_issue": "$kind_issue",
+      "push": "$push",
+      "push_title": "$push_title",
+      "push_lede": "$push_lede",
+      "push_to": "$push_to",
+      "push_company": "$push_company",
+      "push_type": "$push_type",
+      "type_enhancement": "$type_enhancement",
+      "type_fix": "$type_fix",
+      "type_new_module": "$type_new_module",
+      "push_req_title": "$push_req_title",
+      "push_text": "$push_text",
+      "push_send": "$push_send",
+      "push_cancel": "$push_cancel",
+      "push_key": "$push_key",
+      "push_key_hint": "$push_key_hint",
+      "push_key_save": "$push_key_save",
+      "push_key_ok": "$push_key_ok",
+      "push_key_bad": "$push_key_bad",
+      "push_no_key": "$push_no_key",
+      "push_done": "$push_done",
+      "push_failed": "$push_failed",
+      "push_again": "$push_again",
+      "pushed": "$pushed",
+      "pushed_stage": "$pushed_stage",
+      "push_open": "$push_open",
+      "push_unknown": "$push_unknown"
     }
   },
   "returns": "record",
@@ -139,7 +321,33 @@
         "shot": "Screenshot",
         "none": "No reports here.",
         "answered": "Answered by {by} on {at}: {reply}",
-        "kind_issue": "Reported issue"
+        "kind_issue": "Reported issue",
+        "push": "Push to",
+        "push_title": "Push this issue to",
+        "push_lede": "It becomes a request there; this row then follows its stage.",
+        "push_to": "Send to",
+        "push_company": "Company {company}, project {project}",
+        "push_type": "Kind of request",
+        "type_enhancement": "Enhancement",
+        "type_fix": "Fix",
+        "type_new_module": "New module",
+        "push_req_title": "Request title",
+        "push_text": "What to build",
+        "push_send": "Push",
+        "push_cancel": "Cancel",
+        "push_key": "{target} key",
+        "push_key_hint": "In {target}: Admin > Connect your AI > Make a key, then paste it here once. Kept on this server, owner-only.",
+        "push_key_save": "Check and keep",
+        "push_key_ok": "{target} key works - kept.",
+        "push_key_bad": "{target} did not take this key: {why}",
+        "push_no_key": "No {target} key yet - paste it below.",
+        "push_done": "Pushed to {target} as {ref}.",
+        "push_failed": "{target} said: {why}",
+        "push_again": "Already pushed to {target} as {ref} on {at}. Pushing again makes a second request.",
+        "pushed": "{target} {ref}",
+        "pushed_stage": "{ref}: {stage}",
+        "push_open": "Open in {target}",
+        "push_unknown": "No such place to push to."
       }
     }
   ]

@@ -2590,6 +2590,24 @@
       "type": "text",
       "default": "Could not copy - select the text and press Ctrl+C.",
       "label": "copy failed"
+    },
+    {
+      "name": "health_title",
+      "type": "text",
+      "default": "{n} {n:thing needs|things need} you",
+      "label": "health_title"
+    },
+    {
+      "name": "health_checked",
+      "type": "text",
+      "default": "Checked {when}",
+      "label": "health_checked"
+    },
+    {
+      "name": "health_open",
+      "type": "text",
+      "default": "Open Agents",
+      "label": "health_open"
     }
   ],
   "expr": {
@@ -3089,7 +3107,10 @@
       "powered_by": "$powered_by",
       "powered_name": "$powered_name",
       "powered_href": "$powered_href",
-      "copy_failed": "$copy_failed"
+      "copy_failed": "$copy_failed",
+      "health_title": "$health_title",
+      "health_checked": "$health_checked",
+      "health_open": "$health_open"
     }
   },
   "returns": "record",
@@ -3594,7 +3615,10 @@
         "powered_by": "Powered by",
         "powered_name": "ValueStream",
         "powered_href": "https://valuestream.in",
-        "copy_failed": "Could not copy - select the text and press Ctrl+C."
+        "copy_failed": "Could not copy - select the text and press Ctrl+C.",
+        "health_title": "{n} {n:thing needs|things need} you",
+        "health_checked": "Checked {when}",
+        "health_open": "Open Agents"
       }
     }
   ],

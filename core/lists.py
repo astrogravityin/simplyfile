@@ -95,4 +95,21 @@ if __name__ == "__main__":  # ponytail: one runnable self-check - 20,000 rows, o
         raise AssertionError("a list id was taken by a second module")
     except ValueError:
         pass
+    # 2026-10-24 owner "every list = flexi search": the browser's own pick lists (core/static/ui.js flexiHit, pickMany) forgive a typo,
+    # two swapped letters and missing letters - checked in node when node really runs here (else said and skipped, never failed)
+    import json
+    import shutil
+    import subprocess
+    from pathlib import Path
+    node = shutil.which("node")
+    if node and subprocess.run([node, "-e", "process.exit(0)"], capture_output=True).returncode == 0:
+        src = (Path(__file__).resolve().parent / "static" / "ui.js").read_text(encoding="utf-8")
+        assert "flexiHit(String(x.name" in src, "pickMany's search is exact again - it must use flexiHit"
+        body = src[src.index("export function flexiHit"):src.index("export function pickMany")].replace("export function flexiHit", "return function flexiHit")
+        out = subprocess.run([node, "-e", f"const f=new Function({json.dumps(body)})();console.log(JSON.stringify(["
+                              "f('Phone app (Expo)','phnoe'),f('React screen + Python API','rctpy'),f('Python API only','pythn'),"
+                              "f('Plain web page','zzz')]))"], capture_output=True, text=True).stdout.strip()
+        assert out == "[true,true,true,false]", f"the pick lists' search is not forgiving: {out}"
+    else:
+        print("lists: node does not run on this computer - the pick lists' flexi search check is skipped")
     print("lists self-check OK")

@@ -26,7 +26,7 @@ DATA = Path(os.getenv("PORTAL_DATA", ROOT / "data"))
 _LOCK = threading.RLock()
 
 #: Files that hold secrets, written owner-only. A host portal adds its own (e.g. API keys).
-SECRET_FILES = {"users", "sessions", "smtp", "tokens", "codes", "secret"}
+SECRET_FILES = {"users", "sessions", "smtp", "tokens", "codes", "secret", "push_keys"}   # push_keys: Issue > Push to (core/push.py)
 
 
 def keep_aside(path, copy: bool = False) -> Path | None:

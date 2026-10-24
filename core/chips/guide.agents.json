@@ -1,0 +1,163 @@
+{
+  "chip_id": "guide.agents",
+  "kind": "accessor",
+  "set": "guide",
+  "label": "Guide me: Agents",
+  "aliases": [
+    "agents"
+  ],
+  "params": [
+    {
+      "name": "title",
+      "type": "text",
+      "default": "Agents",
+      "label": "The tour's name (its cover card)"
+    },
+    {
+      "name": "lede",
+      "type": "long",
+      "default": "Helpers in {product} that do routine work for you - shown first, done when you say so.",
+      "label": "The cover's opening line; {product} = this edition's name"
+    },
+    {
+      "name": "icon",
+      "type": "text",
+      "default": "agent",
+      "label": "The emblem on the cover (an icon name)"
+    },
+    {
+      "name": "minutes",
+      "type": "number",
+      "default": 2,
+      "label": "How long the tour takes"
+    },
+    {
+      "name": "steps",
+      "type": "rows",
+      "default": [
+        {
+          "title": "Helpers that work for you",
+          "say": "Agents do routine work in {product} - such as checking that everything the portal needs is working. Each card is one agent.",
+          "target": "header.pagehead",
+          "art": {
+            "kind": "hero",
+            "icon": "agent"
+          }
+        },
+        {
+          "title": "What it does, step by step",
+          "say": "Under each agent you see its steps in order. A grey tag only looks; an amber tag changes something; a green Trusted tag means that step may run without asking when the agent works on its own.",
+          "target": ".ag-flow",
+          "art": {
+            "kind": "flow",
+            "items": [
+              "Look",
+              "Decide",
+              "Change"
+            ],
+            "at": 1
+          }
+        },
+        {
+          "title": "Dry run first",
+          "say": "Press Dry run to see exactly what the agent would do. Nothing is changed - its findings appear on the card, and anything it would change is marked Would do.",
+          "target": "[data-dry]",
+          "art": {
+            "kind": "flow",
+            "items": [
+              "Dry run",
+              "Read",
+              "Approve"
+            ],
+            "at": 0
+          }
+        },
+        {
+          "title": "Approve",
+          "say": "When a dry run would change something, Approve appears. Press it and the agent does what the dry run showed, for real.",
+          "target": "[data-approve]|[data-dry]",
+          "art": {
+            "kind": "flow",
+            "items": [
+              "Dry run",
+              "Read",
+              "Approve"
+            ],
+            "at": 2
+          }
+        },
+        {
+          "title": "Runs by itself",
+          "say": "Tick Runs by itself to let an agent work on its schedule, or when its event happens. The Daily health check looks at what {product} needs - disk space first - every morning, and keeps one warning bar up to date for the owner: a fixed problem clears it, nothing piles up.",
+          "target": ".ag-trig",
+          "art": {
+            "kind": "flow",
+            "items": [
+              "Schedule",
+              "Check",
+              "Warning bar"
+            ],
+            "at": 2
+          }
+        },
+        {
+          "title": "History",
+          "say": "History lists every run - when, whether you or the agent started it, and what each step found.",
+          "target": "[data-history]",
+          "art": {
+            "kind": "flow",
+            "items": [
+              "When",
+              "Who",
+              "What it found"
+            ],
+            "at": 2
+          }
+        }
+      ],
+      "label": "The steps in order: title, say (the narration), target (where the spotlight goes; alternatives split by |, the first on screen wins), art (the picture: hero/flow/roads/meter/stack/check), place (below/above/right/left/center, optional), open (optional: what the guide presses first when the part is not on screen - open the first item, go back Home; alternatives split by |)"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "title": "$title",
+      "lede": "$lede",
+      "icon": "$icon",
+      "minutes": "$minutes",
+      "steps": "$steps"
+    }
+  },
+  "returns": "record",
+  "version": 3,
+  "status": "published",
+  "description_nl": "2026-10-24 (SimplyFile, boilerplate): Admin > Agents (core/static/page-agents.js) - SteadyMove's walk, its own agents' steps left out.",
+  "test_cases": [
+    {
+      "args": {
+        "title": "T",
+        "lede": "L",
+        "icon": "spark",
+        "minutes": 1,
+        "steps": [
+          {
+            "title": "a",
+            "say": "b"
+          }
+        ]
+      },
+      "expect_value": {
+        "title": "T",
+        "lede": "L",
+        "icon": "spark",
+        "minutes": 1,
+        "steps": [
+          {
+            "title": "a",
+            "say": "b"
+          }
+        ]
+      }
+    }
+  ]
+}

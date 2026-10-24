@@ -12,6 +12,7 @@ from __future__ import annotations
 import json
 import re
 import sys
+import time
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
@@ -132,6 +133,40 @@ def door_walk(app, c, co, other) -> None:  # noqa: ARG001 - the shared walk sign
     owner_email = c.get("/api/bootstrap").json()["user"]["email"]
     act = c.get("/api/core/activity", params={"q": last}).json()
     assert any(x.get("email") == owner_email and x.get("path") == last for x in act.get("rows") or []), (f"a tool's call ({last}) is not in Portal Activity as the owner", act.get("rows", [])[:3])
+    # 2026-10-24 the cookie swap: a tool's calls run on a short sign-in of the KEY's maker - never on the cookie of whoever sent the
+    # call - and that sign-in ends with the call (no owner session is left behind for anyone to reuse)
+    probe = next(x for x in rows if any(c_["path"] == last for c_ in x.get("calls") or []))
+    owner_id = c.get("/api/bootstrap").json()["user"]["id"]
+    member = co["me"].get("/api/bootstrap").json()["user"]
+    live = lambda: sum(1 for s in store.read("sessions", []) if s["user_id"] == owner_id and s["expires"] > time.time())  # noqa: E731
+    before = live()
+    # rows already there (the caller may have opened this page itself earlier - CodyFy's walk uses a real company owner)
+    seen = {x.get("id") for x in c.get("/api/core/activity", params={"q": last}).json().get("rows") or []}
+    browser = TestClient(app.app)
+    browser.headers["X-Real-IP"] = "10.9.8.6"
+    browser.cookies = co["me"].cookies          # a browser signed in as someone else sends the owner's key
+    # who each request on the tool's path really ran as (Portal Activity skips a repeat GET, so it alone cannot tell)
+    from core import auth  # noqa: PLC0415
+    real_cu, ran_as = auth.current_user, []
+
+    def spy(request):
+        u = real_cu(request)
+        if request.url.path.endswith(last):
+            ran_as.append((u or {}).get("id"))
+        return u
+    auth.current_user = spy
+    try:
+        got = _rpc(browser, key, "tools/call", {"name": probe["name"], "arguments": {}}).json()["result"]
+    finally:
+        auth.current_user = real_cu
+    assert not got["isError"] or "Internal Server Error" not in got["content"][0]["text"], got
+    assert ran_as and member["id"] not in ran_as and set(ran_as) <= {owner_id}, \
+        (f"a tool's call ran on the cookie of whoever sent it, not as the key's maker (ran as {ran_as})")
+    act = c.get("/api/core/activity", params={"q": last}).json()
+    assert not any(x.get("email") == member["email"] and x.get("path") == last and x.get("id") not in seen for x in act.get("rows") or []), \
+        "a tool's call ran on the cookie of whoever sent it, not as the key's maker"
+    assert live() == before, f"a tool call left the owner's short sign-in alive ({live()} live, {before} before)"
+    assert co["me"].get("/api/bootstrap").json()["user"]["id"] == member["id"], "the caller's own sign-in was changed by a tool call"
     # a person's step: said in its own words, never run
     for r_ in [x for x in rows if x.get("kind") == "human"]:
         got = _rpc(bare, key, "tools/call", {"name": r_["name"], "arguments": {}}).json()["result"]

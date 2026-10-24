@@ -35,6 +35,7 @@ export const state = {
   issuesOpen: 0,        // reported issues waiting (only for whoever may answer them): the menu's balloon
   issueReplies: [],     // answers to THIS person's reports: a banner until they close it
   banners: [],         // banners a rule put up for this person (core/rules.py): shown until dismissed or expired
+  health: null,        // owners only: the Daily health check's answer (core/health.py) - replaced each check, never piled up
   find: null,          // chip find.messages: every word the top search says
 };
 
@@ -58,6 +59,7 @@ const CORE_VIEWS = {
   storage: () => import('./page-storage.js').then((m) => m.storagePage),
   issues: () => import('./page-issues.js').then((m) => m.issuesPage),
   memory: () => import('./page-memory.js').then((m) => m.memoryPage),
+  agents: () => import('./page-agents.js').then((m) => m.agentsPage),   // 2026-10-24 core/agents.py
   'connect-ai': () => import('./page-connect-ai.js').then((m) => m.connectAiPage),   // 2026-10-24 core/mcp.py
   'howto-config': () => import('./page-howto-config.js').then((m) => m.howtoConfigPage),
   ocb: () => import('./page-ocb.js').then((m) => m.ocbPage),
@@ -878,6 +880,7 @@ function shellView(route) {
         </div>
       </div>
       ${storageBanner()}
+      ${healthBanner()}
       ${replyBanners()}
       ${ruleBanners()}
       ${backBar(route)}
@@ -1062,6 +1065,16 @@ function replyBanners() {
 
 /** The owner asked this person to clean up. Shown on every page until the owner closes it, because
  *  an email can go to spam and a portal with no mail server has no other way to reach them. */
+/** 2026-10-23 owner ("a warning in the portal that replaces the message, not add to the list"): what the Daily health
+ *  check found, for owners, on every page. The next check replaces it; a fixed problem leaves by itself. */
+function healthBanner() {
+  const h = state.health;
+  if (!h || !h.problems.length) return '';
+  return `<div class="note warn healthbar">${icon('alert')}<div><b>${w('health_title', { n: h.problems.length })}</b>
+    <ul class="small">${h.problems.map((p) => `<li><b>${esc(p.name)}</b> - ${esc(p.say)}</li>`).join('')}</ul>
+    <span class="small muted">${w('health_checked', { when: esc(clockAt(h.at)) })}</span> <a href="#/agents">${w('health_open')}</a></div></div>`;
+}
+
 function storageBanner() {
   const r = state.storageRequest;
   if (!r) return '';
@@ -1281,6 +1294,7 @@ function take(d) {
   state.issuesOpen = d.issues_open || 0;
   state.issueReplies = d.issue_replies || [];
   state.banners = d.banners || [];
+  state.health = d.health || null;
   state.find = d.find || state.find;
 }
 

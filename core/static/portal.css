@@ -1319,6 +1319,7 @@ select option{background:var(--panel);color:var(--ink)}
 .ca-steps li{display:flex;flex-direction:column;gap:2px}
 .ca-copy{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .ca-copy code{flex:1 1 220px;min-width:0;overflow-wrap:anywhere;padding:8px 10px;border:1px solid var(--line);border-radius:var(--radius-sm);background:var(--bg);font-size:.85rem}
+@media (max-width:640px){.ca-copy code{flex-basis:100%}}   /* 2026-10-24 phone: Copy sits under the line, never a narrow column beside it */
 .ca-make{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 12px}
 .ca-make input{flex:1 1 240px;min-width:0}
 .ca-keys{display:flex;flex-direction:column;gap:8px}
@@ -1338,3 +1339,29 @@ select option{background:var(--panel);color:var(--ink)}
 .ca-tool{padding:12px;border:1px solid var(--line);border-radius:var(--radius);background:var(--bg);display:flex;flex-direction:column;gap:4px}
 .ca-tool p{margin:0}
 .ca-status > .small{grid-column:2}
+/* 2026-10-24 Admin > Agents (core/static/page-agents.js) and the owners' health bar (core/health.py) - the SteadyMove screen */
+.ag-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(460px,100%),1fr));gap:16px;align-items:start}
+.ag-card{display:flex;flex-direction:column;gap:12px}
+.ag-head{display:flex;gap:14px;align-items:flex-start}
+.ag-art{position:relative;flex:0 0 64px;width:64px;height:64px}
+.ag-art svg{width:64px;height:64px;display:block}
+.ag-ico{position:absolute;inset:0;display:grid;place-items:center;color:var(--brand)}
+.ag-pulse{animation:ag-pulse 2.4s var(--ease) infinite;transform-origin:53px 13px}
+.ag-txt h2{margin:2px 0 4px;font-size:1.05rem}
+.ag-txt p{margin:0;line-height:1.45}
+.ag-flow{list-style:none;margin:0;display:flex;flex-direction:column;gap:8px;padding:10px 12px;border:1px solid var(--line);border-radius:var(--radius);background:var(--bg);position:relative}
+.ag-step{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;font-size:.86rem;position:relative}
+.ag-n{flex:0 0 22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:.74rem;font-weight:700;color:var(--brand);background:var(--panel);border:1.5px solid var(--brand)}
+.ag-step + .ag-step::before{content:"";position:absolute;left:10.5px;top:-9px;height:9px;border-left:1px dashed var(--brand-line)}
+.ag-trig{display:flex;flex-direction:column;gap:6px}
+.ag-foot{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;border-top:1px solid var(--line);padding-top:10px}
+.ag-last{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.ag-acts{display:flex;flex-wrap:wrap;gap:8px;margin-left:auto}
+.ag-run{display:flex;flex-direction:column;gap:10px}
+.ag-runstep{padding:10px 12px;border:1px solid var(--line);border-radius:var(--radius);background:var(--bg)}
+.ag-hist{border:1px solid var(--line);border-radius:var(--radius);padding:8px 12px;margin-bottom:8px}
+.ag-hist summary{cursor:pointer;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.ag-hist[open] summary{margin-bottom:10px}
+.healthbar{display:flex;gap:10px;align-items:flex-start}
+.healthbar ul{margin:4px 0 0;padding-left:18px}
+@media (max-width:560px){.ag-acts{margin-left:0;width:100%}.ag-acts button{flex:1 1 auto}}

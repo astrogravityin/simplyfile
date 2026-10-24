@@ -15,7 +15,8 @@ DEFAULTS = {"prod_base": "https://sf.valuestream.in", "voice": "en-IN-NeerjaNeur
 
 
 def build(screen: str) -> dict:
-    g = json.loads((ROOT / "chips" / f"guide.{screen.replace('-', '_')}.json").read_text(encoding="utf-8"))   # connect-ai -> guide.connect_ai
+    gp = ROOT / "chips" / f"guide.{screen.replace('-', '_')}.json"   # connect-ai -> guide.connect_ai
+    g = json.loads((gp if gp.exists() else ROOT / "core" / "chips" / gp.name).read_text(encoding="utf-8"))   # a core walk (Agents)
     d = {p["name"]: p["default"] for p in g["params"]}
     sub = lambda s: str(s or "")  # noqa: E731 - {product} stays: make_tour fills it from chip edition.settings
     out = ROOT / "tours" / f"sf-{screen}.json"

@@ -1,0 +1,123 @@
+{
+  "chip_id": "health.messages",
+  "kind": "accessor",
+  "set": "health",
+  "label": "Health check: every sentence",
+  "aliases": [
+    "messages"
+  ],
+  "params": [
+    {
+      "name": "probe_disk",
+      "type": "text",
+      "default": "Disk space",
+      "label": "probe disk"
+    },
+    {
+      "name": "probe_certificate",
+      "type": "text",
+      "default": "Site certificate",
+      "label": "probe certificate"
+    },
+    {
+      "name": "probe_free_voice",
+      "type": "text",
+      "default": "Free voice",
+      "label": "probe free voice"
+    },
+    {
+      "name": "probe_ai_keys",
+      "type": "text",
+      "default": "AI keys",
+      "label": "probe ai keys"
+    },
+    {
+      "name": "probe_youtube",
+      "type": "text",
+      "default": "YouTube downloads",
+      "label": "probe youtube"
+    },
+    {
+      "name": "disk_ok",
+      "type": "text",
+      "default": "{gb} GB free",
+      "label": "disk ok"
+    },
+    {
+      "name": "disk_low",
+      "type": "text",
+      "default": "Only {gb} GB left on the data disk - clear old videos (Storage) before work stops",
+      "label": "disk low"
+    },
+    {
+      "name": "cert_ok",
+      "type": "text",
+      "default": "Certificate fine on {n} {n:site|sites}",
+      "label": "cert ok"
+    },
+    {
+      "name": "cert_host",
+      "type": "text",
+      "default": "{host} ends in {days} days",
+      "label": "cert host"
+    },
+    {
+      "name": "cert_low",
+      "type": "text",
+      "default": "Certificate ending soon: {hosts} - renew it (certbot) before visitors see a warning",
+      "label": "cert low"
+    },
+    {
+      "name": "probe_failed",
+      "type": "text",
+      "default": "Could not check: {why}",
+      "label": "probe failed"
+    },
+    {
+      "name": "bell_new",
+      "type": "text",
+      "default": "{n} new {n:thing needs|things need} you: {names} - see the warning bar",
+      "label": "bell new"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "probe_disk": "$probe_disk",
+      "probe_certificate": "$probe_certificate",
+      "probe_free_voice": "$probe_free_voice",
+      "probe_ai_keys": "$probe_ai_keys",
+      "probe_youtube": "$probe_youtube",
+      "disk_ok": "$disk_ok",
+      "disk_low": "$disk_low",
+      "cert_ok": "$cert_ok",
+      "cert_host": "$cert_host",
+      "cert_low": "$cert_low",
+      "probe_failed": "$probe_failed",
+      "bell_new": "$bell_new"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-23: words of core/health.py; each probe's name is probe_<id>.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "probe_disk": "Disk space",
+        "probe_certificate": "Site certificate",
+        "probe_free_voice": "Free voice",
+        "probe_ai_keys": "AI keys",
+        "probe_youtube": "YouTube downloads",
+        "disk_ok": "{gb} GB free",
+        "disk_low": "Only {gb} GB left on the data disk - clear old videos (Storage) before work stops",
+        "cert_ok": "Certificate fine on {n} {n:site|sites}",
+        "cert_host": "{host} ends in {days} days",
+        "cert_low": "Certificate ending soon: {hosts} - renew it (certbot) before visitors see a warning",
+        "probe_failed": "Could not check: {why}",
+        "bell_new": "{n} new {n:thing needs|things need} you: {names} - see the warning bar"
+      }
+    }
+  ]
+}

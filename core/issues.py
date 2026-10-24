@@ -444,6 +444,46 @@ def api_seen(iid: str, u: dict = Depends(auth.signed_in)):
     return seen(u, iid)
 
 
+# --- Push to (2026-10-24 owner): a reported issue becomes a request in another portal (core/push.py); Portal Admin only ----
+
+@router.get("/api/core/issues/push")
+def api_push_menu(u: dict = Depends(auth.owner)):
+    from core import push  # noqa: PLC0415
+    return push.menu()
+
+
+@router.post("/api/core/issues/push/key")
+def api_push_key(body: dict = Body(...), u: dict = Depends(auth.owner)):
+    from core import push  # noqa: PLC0415
+    return push.keep_key(str(body.get("target") or ""), str(body.get("key") or ""))
+
+
+def push_issue(user: dict, iid: str, body: dict) -> dict:
+    """Send the queue's issue; the row keeps what was pushed (target, ref, code, link, when) and says it in the reply line."""
+    from core import push  # noqa: PLC0415
+    q = frame()["queue_kind"]
+    r = _find(_rows(q, ""), iid, q)
+    p = push.send(str(body.get("target") or ""), r, body)
+    with store._LOCK:                                    # noqa: SLF001
+        rows = _rows(q, "")
+        _find(rows, iid, q)["pushed"] = [*(_find(rows, iid, q).get("pushed") or []), p]
+        store.write(_name(q, ""), rows)
+    return {"pushed": p, "message": push._w("push_done", target=p["label"], ref=p["ref"])}  # noqa: SLF001
+
+
+@router.post("/api/core/issues/{iid}/push")
+def api_push(iid: str, body: dict = Body(...), u: dict = Depends(auth.owner)):
+    return push_issue(u, iid, body or {})
+
+
+@router.get("/api/core/issues/{iid}/push")
+def api_push_follow(iid: str, u: dict = Depends(auth.owner)):
+    """Each pushed request's stage now, read from where it lives."""
+    from core import push  # noqa: PLC0415
+    q = frame()["queue_kind"]
+    return {"pushed": [p | push.follow(p) for p in _find(_rows(q, ""), iid, q).get("pushed") or []]}
+
+
 if __name__ == "__main__":  # ponytail: one runnable self-check on throwaway data
     import tempfile
     from pathlib import Path

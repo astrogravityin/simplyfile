@@ -1,0 +1,150 @@
+{
+  "chip_id": "issues.push",
+  "kind": "accessor",
+  "set": "issues",
+  "label": "Issue > Push to: where a reported issue can be sent as a request, and how",
+  "aliases": [
+    "push to",
+    "issue push"
+  ],
+  "params": [
+    {
+      "name": "targets",
+      "type": "list",
+      "default": [
+        {
+          "id": "codyfy",
+          "on": true,
+          "label": "CodyFy",
+          "hint": "A request in CodyFy - its build machine writes the change and opens a pull request.",
+          "base": "https://cf.valuestream.in",
+          "mcp_path": "/mcp",
+          "key_format": "Bearer {key}",
+          "company": "ValueStream",
+          "project": "{product}",
+          "types": [
+            "enhancement",
+            "fix",
+            "new_module"
+          ],
+          "type": "enhancement",
+          "check": {
+            "method": "tools/list"
+          },
+          "send": [
+            {
+              "tool": "request_send",
+              "arguments": {
+                "title": "{title}",
+                "text": "{text}",
+                "type": "{type}",
+                "new_project": "{project}",
+                "company": "{company}"
+              },
+              "save": {
+                "code": "steps.0.answer.code"
+              }
+            }
+          ],
+          "status": {
+            "tool": "request_status",
+            "arguments": {
+              "code": "{code}",
+              "company": "{company}"
+            },
+            "pick": {
+              "ref": "answer.ref",
+              "stage": "answer.stage_label"
+            }
+          },
+          "link": "{base}/#/requests?r={code}",
+          "text": "{text}\n\nFrom {product} issue \"{title}\" ({context}), reported by {name}."
+        }
+      ],
+      "label": "one row per place: label, address, key form, company, project, the MCP tools that send and follow it, the link"
+    },
+    {
+      "name": "key_store",
+      "type": "text",
+      "default": "push_keys",
+      "label": "where each target's key is kept (owner-only file)"
+    },
+    {
+      "name": "timeout_s",
+      "type": "number",
+      "default": 30,
+      "label": "seconds one call may take"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "targets": "$targets",
+      "key_store": "$key_store",
+      "timeout_s": "$timeout_s"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-24 owner: every FY portal pushes an Issue to CodyFy, into company ValueStream (AstroStage: AstroGravity); the button is Portal Admin only. Generic runner core/push.py; nothing here is in code.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "targets": [
+          {
+            "id": "codyfy",
+            "on": true,
+            "label": "CodyFy",
+            "hint": "A request in CodyFy - its build machine writes the change and opens a pull request.",
+            "base": "https://cf.valuestream.in",
+            "mcp_path": "/mcp",
+            "key_format": "Bearer {key}",
+            "company": "ValueStream",
+            "project": "{product}",
+            "types": [
+              "enhancement",
+              "fix",
+              "new_module"
+            ],
+            "type": "enhancement",
+            "check": {
+              "method": "tools/list"
+            },
+            "send": [
+              {
+                "tool": "request_send",
+                "arguments": {
+                  "title": "{title}",
+                  "text": "{text}",
+                  "type": "{type}",
+                  "new_project": "{project}",
+                  "company": "{company}"
+                },
+                "save": {
+                  "code": "steps.0.answer.code"
+                }
+              }
+            ],
+            "status": {
+              "tool": "request_status",
+              "arguments": {
+                "code": "{code}",
+                "company": "{company}"
+              },
+              "pick": {
+                "ref": "answer.ref",
+                "stage": "answer.stage_label"
+              }
+            },
+            "link": "{base}/#/requests?r={code}",
+            "text": "{text}\n\nFrom {product} issue \"{title}\" ({context}), reported by {name}."
+          }
+        ],
+        "key_store": "push_keys",
+        "timeout_s": 30
+      }
+    }
+  ]
+}

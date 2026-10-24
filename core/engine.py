@@ -495,7 +495,13 @@ if __name__ == "__main__":
     assert any("calls itself" in p for p in problems(lib["x.loop_a"], lib)), "a loop between chips is caught"
     assert problems({"chip_id": "Bad Id"}, lib), "a malformed chip is refused"
     # 2026-09-30 sm + tv 500 on every request: a half-written chip file is named and skipped, never raised
-    _half = DIRS[0] / "x.half_written_.json"
+    # 2026-10-24 written in its own temporary chip folder, never the repo's: a second check running at the same time
+    # (another session, the commit script) certified the live folder while this broken file sat in it and went red
+    import tempfile
+    _tmp_dir = Path(tempfile.mkdtemp(prefix="chips-selftest-"))
+    DIRS.append(_tmp_dir)
+    _half = _tmp_dir / "x.half_written_.json"
+    assert _half.parent not in DIRS[:-1] and _half.parent != data_dir(), "the self-test would write a broken chip into a real chip folder"
     _half.write_text('{"chip_id": "x.half_written_", "expr": {', encoding="utf-8")
     try:
         refresh()
@@ -511,7 +517,10 @@ if __name__ == "__main__":
             type(_half).stat = _stat
     finally:
         _half.unlink()
+        DIRS.remove(_tmp_dir)
+        _tmp_dir.rmdir()
         refresh()
+    assert not [f for d in DIRS for f in d.glob("x.half_written_*")], "the self-test left a broken chip in a real chip folder"
     assert chips() and not _cache["unreadable"], "the unreadable list clears once the file is mended or gone"
     if bad:
         raise SystemExit("chip certification FAILED:\n  " + "\n  ".join(bad))

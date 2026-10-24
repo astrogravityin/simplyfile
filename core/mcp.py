@@ -121,7 +121,8 @@ def run_calls(row: dict, args: dict, ctx: dict) -> dict:
         for call in row["calls"]:
             q = {k: v for k, v in _fill(call.get("query") or {}, slots).items() if v not in ("", None)}
             r = c.request(call["method"], auth.BASE + _fill(call["path"], slots, path=True), params=q or None,
-                          json=_fill(call["body"], slots) if "body" in call else None, headers={"X-Real-IP": ctx.get("ip") or ""})
+                          json=_fill(call["body"], slots) if "body" in call else None,
+                          headers={"X-Real-IP": ctx.get("ip") or ""} | {k: str(v) for k, v in _fill(call.get("headers") or {}, slots).items() if v})
             try:
                 got = r.json()
             except ValueError:

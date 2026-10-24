@@ -1,0 +1,123 @@
+{
+  "chip_id": "agents.messages",
+  "kind": "accessor",
+  "set": "agents",
+  "label": "Agents: every sentence the runtime says",
+  "aliases": [
+    "messages"
+  ],
+  "params": [
+    {
+      "name": "no_agent",
+      "type": "text",
+      "default": "There is no agent by that name.",
+      "label": "no agent"
+    },
+    {
+      "name": "no_action",
+      "type": "text",
+      "default": "This agent needs a step this portal does not have yet ({action}).",
+      "label": "no action"
+    },
+    {
+      "name": "no_trigger",
+      "type": "text",
+      "default": "That agent has no such trigger.",
+      "label": "no trigger"
+    },
+    {
+      "name": "trigger_on",
+      "type": "text",
+      "default": "Switched on - it runs by itself from now.",
+      "label": "trigger on"
+    },
+    {
+      "name": "trigger_off",
+      "type": "text",
+      "default": "Switched off - it runs only when you press Dry run.",
+      "label": "trigger off"
+    },
+    {
+      "name": "nothing_waits",
+      "type": "text",
+      "default": "There is no dry run waiting for approval - press Dry run first.",
+      "label": "nothing waits"
+    },
+    {
+      "name": "approved_by",
+      "type": "text",
+      "default": "Approved by {name}",
+      "label": "approved by"
+    },
+    {
+      "name": "dry_ran",
+      "type": "text",
+      "default": "Dry run finished - nothing was changed. Read what it would do, then Approve.",
+      "label": "dry ran"
+    },
+    {
+      "name": "ran",
+      "type": "text",
+      "default": "Done - the agent made its changes.",
+      "label": "ran"
+    },
+    {
+      "name": "bell_review",
+      "type": "text",
+      "default": "{name} has something for you to approve.",
+      "label": "bell review"
+    },
+    {
+      "name": "bell_failed",
+      "type": "text",
+      "default": "{name} could not finish: {why}",
+      "label": "bell failed"
+    },
+    {
+      "name": "cannot_run",
+      "type": "text",
+      "default": "It cannot run yet: {why}",
+      "label": "cannot run"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "no_agent": "$no_agent",
+      "no_action": "$no_action",
+      "no_trigger": "$no_trigger",
+      "trigger_on": "$trigger_on",
+      "trigger_off": "$trigger_off",
+      "nothing_waits": "$nothing_waits",
+      "approved_by": "$approved_by",
+      "dry_ran": "$dry_ran",
+      "ran": "$ran",
+      "bell_review": "$bell_review",
+      "bell_failed": "$bell_failed",
+      "cannot_run": "$cannot_run"
+    }
+  },
+  "returns": "record",
+  "version": 2,
+  "status": "published",
+  "description_nl": "2026-10-23: words of core/agents.py.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "no_agent": "There is no agent by that name.",
+        "no_action": "This agent needs a step this portal does not have yet ({action}).",
+        "no_trigger": "That agent has no such trigger.",
+        "trigger_on": "Switched on - it runs by itself from now.",
+        "trigger_off": "Switched off - it runs only when you press Dry run.",
+        "nothing_waits": "There is no dry run waiting for approval - press Dry run first.",
+        "approved_by": "Approved by {name}",
+        "dry_ran": "Dry run finished - nothing was changed. Read what it would do, then Approve.",
+        "ran": "Done - the agent made its changes.",
+        "bell_review": "{name} has something for you to approve.",
+        "bell_failed": "{name} could not finish: {why}",
+        "cannot_run": "It cannot run yet: {why}"
+      }
+    }
+  ]
+}

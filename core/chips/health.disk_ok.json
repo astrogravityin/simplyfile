@@ -1,0 +1,50 @@
+{
+  "chip_id": "health.disk_ok",
+  "kind": "predicate",
+  "set": "health",
+  "label": "Is there enough free disk",
+  "aliases": [
+    "disk_ok"
+  ],
+  "params": [
+    {
+      "name": "free_gb",
+      "type": "number",
+      "default": 0,
+      "label": "Free GB now"
+    },
+    {
+      "name": "min_free_gb",
+      "type": "number",
+      "default": 5,
+      "label": "Least that is fine"
+    }
+  ],
+  "expr": {
+    "op": "ge",
+    "left": "$free_gb",
+    "right": "$min_free_gb"
+  },
+  "returns": "boolean",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-23 health check.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": false
+    },
+    {
+      "args": {
+        "free_gb": 12
+      },
+      "expect_value": true
+    },
+    {
+      "args": {
+        "free_gb": 4.9
+      },
+      "expect_value": false
+    }
+  ]
+}

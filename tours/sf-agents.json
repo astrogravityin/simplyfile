@@ -1,0 +1,104 @@
+{
+  "prod_base": "https://sf.valuestream.in",
+  "voice": "en-IN-NeerjaNeural",
+  "rate": "+0%",
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "blur": [
+    "#whoami",
+    "#userpop .head"
+  ],
+  "page_key": "sf-agents",
+  "title": "Agents",
+  "start_url": "/#/agents",
+  "covers": [
+    "helpers that work for you",
+    "what it does, step by step",
+    "dry run first",
+    "approve",
+    "runs by itself",
+    "history"
+  ],
+  "steps": [
+    {
+      "chapter": "Agents",
+      "say": "Helpers in {product} that do routine work for you - shown first, done when you say so.",
+      "do": [
+        {
+          "wait_for": "header.pagehead"
+        },
+        {
+          "wait": 1
+        }
+      ]
+    },
+    {
+      "chapter": "Helpers that work for you",
+      "say": "Agents do routine work in {product} - such as checking that everything the portal needs is working. Each card is one agent.",
+      "do": [
+        {
+          "highlight_target": "header.pagehead",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "What it does, step by step",
+      "say": "Under each agent you see its steps in order. A grey tag only looks; an amber tag changes something; a green Trusted tag means that step may run without asking when the agent works on its own.",
+      "do": [
+        {
+          "highlight_target": ".ag-flow",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Dry run first",
+      "say": "Press Dry run to see exactly what the agent would do. Nothing is changed - its findings appear on the card, and anything it would change is marked Would do.",
+      "do": [
+        {
+          "highlight_target": "[data-dry]",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Approve",
+      "say": "When a dry run would change something, Approve appears. Press it and the agent does what the dry run showed, for real.",
+      "do": [
+        {
+          "highlight_target": "[data-approve]|[data-dry]",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Runs by itself",
+      "say": "Tick Runs by itself to let an agent work on its schedule, or when its event happens. The Daily health check looks at what {product} needs - disk space first - every morning, and keeps one warning bar up to date for the owner: a fixed problem clears it, nothing piles up.",
+      "do": [
+        {
+          "highlight_target": ".ag-trig",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "History",
+      "say": "History lists every run - when, whether you or the agent started it, and what each step found.",
+      "do": [
+        {
+          "highlight_target": "[data-history]",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    }
+  ]
+}

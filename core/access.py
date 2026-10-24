@@ -88,6 +88,7 @@ CORE_SCREENS = [
     {"id": "storage", "label": "Storage", "group": "Admin", "icon": "folder", "admin": True},
     {"id": "issues", "label": "Reported issues", "group": "Admin", "icon": "alert", "admin": True},
     {"id": "memory", "label": "Memory watch", "group": "Admin", "icon": "spark", "admin": True},
+    {"id": "agents", "label": "Agents", "group": "Admin", "icon": "agent", "admin": True},          # 2026-10-24 core/agents.py
     {"id": "connect-ai", "label": "Connect your AI", "group": "Admin", "icon": "plug", "admin": True},    # 2026-10-24 core/mcp.py
     {"id": "howto-config", "label": "How to Use pages", "group": "Admin", "icon": "help", "admin": True},
     # 2026-09-17 owner: the builders change what the whole portal does, so they are the owner's alone -

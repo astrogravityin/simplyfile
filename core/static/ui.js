@@ -1301,6 +1301,31 @@ export function pickList(host, { list, args = {}, url = '', name = (r) => r.name
  *  space"): one box shows the chosen as removable tags; typing or focusing opens a dropdown of tick rows (a heading per
  *  `group`), filtered as you type; Esc / a click away closes it. items = [{id, name, group?}] already on the page;
  *  `groups` = {key: label}; `value` = ids chosen at start; `id` = the input's id, for the field's <label for>. Returns { values() } - the chosen ids, in pick order. */
+/** A forgiving match for a typed search (owner 2026-10-19: every list = flexi search): the words appear, or the letters appear in
+ *  order ("rctpy" finds "React + Python"), or a word is one letter off ("templte"). */
+export function flexiHit(name, q) {
+  const n = name.toLowerCase();
+  const s = q.toLowerCase().trim();
+  if (!s || n.includes(s)) return true;
+  let i = 0;
+  for (const ch of n) if (ch === s[i]) i += 1;
+  if (i === s.length && s.length >= 3) return true;
+  const off1 = (a, b) => {
+    if (Math.abs(a.length - b.length) > 1) return false;
+    const k = [...a].findIndex((c, j) => c !== b[j]);       // two letters swapped ("phnoe") is one slip too
+    if (a.length === b.length && k >= 0 && a[k] === b[k + 1] && a[k + 1] === b[k] && a.slice(k + 2) === b.slice(k + 2)) return true;
+    let x = 0; let y = 0; let d = 0;
+    while (x < a.length && y < b.length) {
+      if (a[x] === b[y]) { x += 1; y += 1; continue; }
+      d += 1;
+      if (d > 1) return false;
+      if (a.length > b.length) x += 1; else if (b.length > a.length) y += 1; else { x += 1; y += 1; }
+    }
+    return d + (a.length - x) + (b.length - y) <= 1;
+  };
+  return s.length >= 4 && n.split(/[^a-z0-9]+/).some((wd) => off1(wd, s) || (wd.length > s.length && off1(wd.slice(0, s.length), s)));
+}
+
 export function pickMany(host, { items, groups = {}, value = [], placeholder = '', id = '', onChange = () => {} }) {
   const st = { on: new Set(value), order: [...value] };
   const byId = new Map(items.map((x) => [String(x.id), x]));
@@ -1319,7 +1344,7 @@ export function pickMany(host, { items, groups = {}, value = [], placeholder = '
   };
   const draw = () => {
     const s = q.value.trim().toLowerCase();
-    const all = items.filter((x) => !s || String(x.name || '').toLowerCase().includes(s));
+    const all = items.filter((x) => !s || flexiHit(String(x.name || ''), s));
     const most = (ps('shell').pick_many || {}).rows || all.length;   // never every row at once: a page, then type to narrow
     const hit = all.slice(0, most);
     const keys = [...new Set(hit.map((x) => x.group || ''))];

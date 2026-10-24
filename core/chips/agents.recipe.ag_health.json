@@ -1,0 +1,103 @@
+{
+  "chip_id": "agents.recipe.ag_health",
+  "kind": "accessor",
+  "set": "agents",
+  "label": "Agent: daily health check",
+  "aliases": [
+    "recipe.ag_health"
+  ],
+  "params": [
+    {
+      "name": "recipe",
+      "type": "record",
+      "default": {
+        "id": "ag_health",
+        "icon": "shield",
+        "inputs": [],
+        "steps": [
+          {
+            "id": "found",
+            "action": "health.check",
+            "args": {}
+          },
+          {
+            "id": "bar",
+            "action": "health.warn",
+            "args": {
+              "found": "@steps.found"
+            },
+            "trusted": true
+          }
+        ],
+        "diagram": [
+          "schedule",
+          "health.check",
+          "health.warn"
+        ],
+        "triggers": [
+          {
+            "key": "daily",
+            "kind": "schedule",
+            "every": "day",
+            "at": "00:30",
+            "on": true
+          }
+        ],
+        "order": 1
+      },
+      "label": "The recipe: inputs, steps, triggers"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "recipe": "$recipe"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-23 owner (\"one utility which should prompt us every day\"): every morning (06:00 IST) every probe once, then the owners' warning bar is replaced by the answer; trusted, so it runs by itself.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "recipe": {
+          "id": "ag_health",
+          "icon": "shield",
+          "inputs": [],
+          "steps": [
+            {
+              "id": "found",
+              "action": "health.check",
+              "args": {}
+            },
+            {
+              "id": "bar",
+              "action": "health.warn",
+              "args": {
+                "found": "@steps.found"
+              },
+              "trusted": true
+            }
+          ],
+          "diagram": [
+            "schedule",
+            "health.check",
+            "health.warn"
+          ],
+          "triggers": [
+            {
+              "key": "daily",
+              "kind": "schedule",
+              "every": "day",
+              "at": "00:30",
+              "on": true
+            }
+          ],
+          "order": 1
+        }
+      }
+    }
+  ]
+}

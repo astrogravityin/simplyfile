@@ -1,0 +1,122 @@
+{
+  "chip_id": "agents.trigger_gate",
+  "kind": "accessor",
+  "set": "agents",
+  "label": "What happens after a scheduled or event dry run",
+  "aliases": [
+    "trigger gate",
+    "scheduled run review",
+    "auto approve trusted"
+  ],
+  "params": [
+    {
+      "name": "facts",
+      "type": "any",
+      "default": {}
+    },
+    {
+      "name": "rules",
+      "type": "any",
+      "default": [
+        {
+          "when": {
+            "failed": true
+          },
+          "set": "tell_error"
+        },
+        {
+          "when": {
+            "blocked": true
+          },
+          "set": "review"
+        },
+        {
+          "when": {
+            "has_writes": false
+          },
+          "set": "tell"
+        },
+        {
+          "when": {
+            "all_writes_trusted": true
+          },
+          "set": "approve"
+        }
+      ]
+    },
+    {
+      "name": "default",
+      "type": "string",
+      "default": "review"
+    }
+  ],
+  "expr": {
+    "vop": "decision_table",
+    "facts": "$facts",
+    "rules": "$rules",
+    "current": "$default"
+  },
+  "returns": "any",
+  "version": 1,
+  "status": "published",
+  "description_nl": "A schedule or an event only ever starts a dry run. Then: a failed dry run tells the owner once (tell_error); one over a cap waits for review; one with nothing to write just tells the owner what it found (tell - the Weekly digest); one whose every write step the owner ticked trusted is approved on its own (approve); anything else waits in the bell for Review and approve. (2026-10-23: copied unchanged from AstroStage so both portals gate agent steps by the same rules.)",
+  "test_cases": [
+    {
+      "chart": "profile_1_hyd",
+      "args": {
+        "facts": {
+          "failed": false,
+          "blocked": false,
+          "has_writes": true,
+          "all_writes_trusted": false
+        }
+      },
+      "expect_value": "review"
+    },
+    {
+      "chart": "profile_2_delhi",
+      "args": {
+        "facts": {
+          "failed": false,
+          "blocked": false,
+          "has_writes": true,
+          "all_writes_trusted": true
+        }
+      },
+      "expect_value": "approve"
+    },
+    {
+      "chart": "profile_1_hyd",
+      "args": {
+        "facts": {
+          "failed": false,
+          "blocked": false,
+          "has_writes": false,
+          "all_writes_trusted": true
+        }
+      },
+      "expect_value": "tell"
+    },
+    {
+      "chart": "profile_2_delhi",
+      "args": {
+        "facts": {
+          "failed": false,
+          "blocked": true,
+          "has_writes": true,
+          "all_writes_trusted": true
+        }
+      },
+      "expect_value": "review"
+    },
+    {
+      "chart": "profile_1_hyd",
+      "args": {
+        "facts": {
+          "failed": true
+        }
+      },
+      "expect_value": "tell_error"
+    }
+  ]
+}

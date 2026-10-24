@@ -1,0 +1,411 @@
+{
+  "chip_id": "ui.agents",
+  "kind": "accessor",
+  "set": "ui",
+  "label": "Agents screen: every word",
+  "aliases": [
+    "agents words"
+  ],
+  "params": [
+    {
+      "name": "title",
+      "type": "text",
+      "default": "Agents",
+      "label": "title"
+    },
+    {
+      "name": "lede",
+      "type": "text",
+      "default": "Helpers that do routine work for you. Each one shows what it would do first (a dry run); you approve, or let a trusted one run by itself on its schedule.",
+      "label": "lede"
+    },
+    {
+      "name": "dry_run",
+      "type": "text",
+      "default": "Dry run",
+      "label": "dry_run"
+    },
+    {
+      "name": "dry_tip",
+      "type": "text",
+      "default": "See what it would do - nothing is changed",
+      "label": "dry_tip"
+    },
+    {
+      "name": "approve",
+      "type": "text",
+      "default": "Approve",
+      "label": "approve"
+    },
+    {
+      "name": "approve_tip",
+      "type": "text",
+      "default": "Do what the dry run showed, for real",
+      "label": "approve_tip"
+    },
+    {
+      "name": "history",
+      "type": "text",
+      "default": "History",
+      "label": "history"
+    },
+    {
+      "name": "no_runs",
+      "type": "text",
+      "default": "Not run yet.",
+      "label": "no_runs"
+    },
+    {
+      "name": "auto",
+      "type": "text",
+      "default": "Runs by itself",
+      "label": "auto"
+    },
+    {
+      "name": "auto_tip",
+      "type": "text",
+      "default": "Switch on to let it run on its own schedule or when its event happens",
+      "label": "auto_tip"
+    },
+    {
+      "name": "every_hour",
+      "type": "text",
+      "default": "Every hour",
+      "label": "every_hour"
+    },
+    {
+      "name": "every_day",
+      "type": "text",
+      "default": "Every day at {at}",
+      "label": "every_day"
+    },
+    {
+      "name": "every_week",
+      "type": "text",
+      "default": "Every week on {day} at {at}",
+      "label": "every_week"
+    },
+    {
+      "name": "on_event",
+      "type": "text",
+      "default": "When {event}",
+      "label": "on_event"
+    },
+    {
+      "name": "last_run",
+      "type": "text",
+      "default": "Last run {when}",
+      "label": "last_run"
+    },
+    {
+      "name": "by_itself",
+      "type": "text",
+      "default": "by itself",
+      "label": "by_itself"
+    },
+    {
+      "name": "by_you",
+      "type": "text",
+      "default": "by you",
+      "label": "by_you"
+    },
+    {
+      "name": "state_done",
+      "type": "text",
+      "default": "Finished",
+      "label": "state_done"
+    },
+    {
+      "name": "state_failed",
+      "type": "text",
+      "default": "Could not finish",
+      "label": "state_failed"
+    },
+    {
+      "name": "state_running",
+      "type": "text",
+      "default": "Running",
+      "label": "state_running"
+    },
+    {
+      "name": "state_waiting",
+      "type": "text",
+      "default": "Waits for your approval",
+      "label": "state_waiting"
+    },
+    {
+      "name": "state_approved",
+      "type": "text",
+      "default": "Approved",
+      "label": "state_approved"
+    },
+    {
+      "name": "gate_run",
+      "type": "text",
+      "default": "Done",
+      "label": "gate_run"
+    },
+    {
+      "name": "gate_preview",
+      "type": "text",
+      "default": "Would do",
+      "label": "gate_preview"
+    },
+    {
+      "name": "gate_skip",
+      "type": "text",
+      "default": "Skipped",
+      "label": "gate_skip"
+    },
+    {
+      "name": "side_read",
+      "type": "text",
+      "default": "Looks only",
+      "label": "side_read"
+    },
+    {
+      "name": "side_write",
+      "type": "text",
+      "default": "Changes something",
+      "label": "side_write"
+    },
+    {
+      "name": "side_external",
+      "type": "text",
+      "default": "Talks to another service",
+      "label": "side_external"
+    },
+    {
+      "name": "side_paid",
+      "type": "text",
+      "default": "Costs money",
+      "label": "side_paid"
+    },
+    {
+      "name": "trusted",
+      "type": "text",
+      "default": "Trusted",
+      "label": "trusted"
+    },
+    {
+      "name": "trusted_tip",
+      "type": "text",
+      "default": "Runs by itself without asking, when the agent runs on its own",
+      "label": "trusted_tip"
+    },
+    {
+      "name": "steps",
+      "type": "text",
+      "default": "Steps",
+      "label": "steps"
+    },
+    {
+      "name": "result",
+      "type": "text",
+      "default": "What it found",
+      "label": "result"
+    },
+    {
+      "name": "needs",
+      "type": "text",
+      "default": "Needs a step this portal does not have yet",
+      "label": "needs"
+    },
+    {
+      "name": "empty_title",
+      "type": "text",
+      "default": "No agents yet",
+      "label": "empty_title"
+    },
+    {
+      "name": "empty_body",
+      "type": "text",
+      "default": "Agents arrive with the portal's modules.",
+      "label": "empty_body"
+    },
+    {
+      "name": "days",
+      "type": "text",
+      "default": "Mon,Tue,Wed,Thu,Fri,Sat,Sun",
+      "label": "days"
+    },
+    {
+      "name": "name_ag_health",
+      "type": "text",
+      "default": "Daily health check",
+      "label": "name_ag_health"
+    },
+    {
+      "name": "about_ag_health",
+      "type": "text",
+      "default": "Every morning it looks at what {product} needs - disk space, and any other check this portal adds - and keeps one warning bar up to date for you. A fixed problem clears the bar; nothing piles up.",
+      "label": "about_ag_health"
+    },
+    {
+      "name": "act_health_check",
+      "type": "text",
+      "default": "Look at every service",
+      "label": "act_health_check"
+    },
+    {
+      "name": "act_health_warn",
+      "type": "text",
+      "default": "Update the warning bar",
+      "label": "act_health_warn"
+    },
+    {
+      "name": "yes",
+      "type": "text",
+      "default": "Yes",
+      "label": "yes"
+    },
+    {
+      "name": "no",
+      "type": "text",
+      "default": "No",
+      "label": "no"
+    },
+    {
+      "name": "out_checked",
+      "type": "text",
+      "default": "Services checked",
+      "label": "out_checked"
+    },
+    {
+      "name": "out_shown",
+      "type": "text",
+      "default": "Problems on the bar",
+      "label": "out_shown"
+    },
+    {
+      "name": "out_would_show",
+      "type": "text",
+      "default": "Problems it would show",
+      "label": "out_would_show"
+    },
+    {
+      "name": "every_month",
+      "type": "text",
+      "default": "Every month on day {day} at {at}",
+      "label": "w"
+    },
+    {
+      "name": "every_tick",
+      "type": "text",
+      "default": "Every {min} minutes",
+      "label": "every tick"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "title": "$title",
+      "lede": "$lede",
+      "dry_run": "$dry_run",
+      "dry_tip": "$dry_tip",
+      "approve": "$approve",
+      "approve_tip": "$approve_tip",
+      "history": "$history",
+      "no_runs": "$no_runs",
+      "auto": "$auto",
+      "auto_tip": "$auto_tip",
+      "every_hour": "$every_hour",
+      "every_day": "$every_day",
+      "every_week": "$every_week",
+      "on_event": "$on_event",
+      "last_run": "$last_run",
+      "by_itself": "$by_itself",
+      "by_you": "$by_you",
+      "state_done": "$state_done",
+      "state_failed": "$state_failed",
+      "state_running": "$state_running",
+      "state_waiting": "$state_waiting",
+      "state_approved": "$state_approved",
+      "gate_run": "$gate_run",
+      "gate_preview": "$gate_preview",
+      "gate_skip": "$gate_skip",
+      "side_read": "$side_read",
+      "side_write": "$side_write",
+      "side_external": "$side_external",
+      "side_paid": "$side_paid",
+      "trusted": "$trusted",
+      "trusted_tip": "$trusted_tip",
+      "steps": "$steps",
+      "result": "$result",
+      "needs": "$needs",
+      "empty_title": "$empty_title",
+      "empty_body": "$empty_body",
+      "days": "$days",
+      "name_ag_health": "$name_ag_health",
+      "about_ag_health": "$about_ag_health",
+      "act_health_check": "$act_health_check",
+      "act_health_warn": "$act_health_warn",
+      "yes": "$yes",
+      "no": "$no",
+      "out_checked": "$out_checked",
+      "out_shown": "$out_shown",
+      "out_would_show": "$out_would_show",
+      "every_month": "$every_month",
+      "every_tick": "$every_tick"
+    }
+  },
+  "returns": "record",
+  "version": 7,
+  "status": "published",
+  "description_nl": "2026-10-24 (SimplyFile core): every word of Admin > Agents that every portal shares, and the Daily health check's. A portal with its own agents writes chips/ui.agents.json with these AND its agents' words.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "title": "Agents",
+        "lede": "Helpers that do routine work for you. Each one shows what it would do first (a dry run); you approve, or let a trusted one run by itself on its schedule.",
+        "dry_run": "Dry run",
+        "dry_tip": "See what it would do - nothing is changed",
+        "approve": "Approve",
+        "approve_tip": "Do what the dry run showed, for real",
+        "history": "History",
+        "no_runs": "Not run yet.",
+        "auto": "Runs by itself",
+        "auto_tip": "Switch on to let it run on its own schedule or when its event happens",
+        "every_hour": "Every hour",
+        "every_day": "Every day at {at}",
+        "every_week": "Every week on {day} at {at}",
+        "on_event": "When {event}",
+        "last_run": "Last run {when}",
+        "by_itself": "by itself",
+        "by_you": "by you",
+        "state_done": "Finished",
+        "state_failed": "Could not finish",
+        "state_running": "Running",
+        "state_waiting": "Waits for your approval",
+        "state_approved": "Approved",
+        "gate_run": "Done",
+        "gate_preview": "Would do",
+        "gate_skip": "Skipped",
+        "side_read": "Looks only",
+        "side_write": "Changes something",
+        "side_external": "Talks to another service",
+        "side_paid": "Costs money",
+        "trusted": "Trusted",
+        "trusted_tip": "Runs by itself without asking, when the agent runs on its own",
+        "steps": "Steps",
+        "result": "What it found",
+        "needs": "Needs a step this portal does not have yet",
+        "empty_title": "No agents yet",
+        "empty_body": "Agents arrive with the portal's modules.",
+        "days": "Mon,Tue,Wed,Thu,Fri,Sat,Sun",
+        "name_ag_health": "Daily health check",
+        "about_ag_health": "Every morning it looks at what {product} needs - disk space, and any other check this portal adds - and keeps one warning bar up to date for you. A fixed problem clears the bar; nothing piles up.",
+        "act_health_check": "Look at every service",
+        "act_health_warn": "Update the warning bar",
+        "yes": "Yes",
+        "no": "No",
+        "out_checked": "Services checked",
+        "out_shown": "Problems on the bar",
+        "out_would_show": "Problems it would show",
+        "every_month": "Every month on day {day} at {at}",
+        "every_tick": "Every {min} minutes"
+      }
+    }
+  ]
+}

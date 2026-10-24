@@ -1,0 +1,276 @@
+{
+  "chip_id": "agents.schedule_due",
+  "kind": "predicate",
+  "set": "agents",
+  "label": "Is a schedule trigger due now",
+  "aliases": [
+    "schedule due"
+  ],
+  "params": [
+    {
+      "name": "every",
+      "type": "text",
+      "default": "day",
+      "label": "hour, day or week"
+    },
+    {
+      "name": "since_last_s",
+      "type": "number",
+      "default": 1000000000000,
+      "label": "Seconds since it last ran (very big = never)"
+    },
+    {
+      "name": "hour_seconds",
+      "type": "number",
+      "default": 3600,
+      "label": "An hourly trigger waits this long"
+    },
+    {
+      "name": "minute_of_day",
+      "type": "number",
+      "default": 0,
+      "label": "Now, minutes after midnight UTC"
+    },
+    {
+      "name": "at_minute",
+      "type": "number",
+      "default": 360,
+      "label": "Its clock time, minutes after midnight UTC"
+    },
+    {
+      "name": "weekday",
+      "type": "number",
+      "default": 0,
+      "label": "Today (0 = Monday)"
+    },
+    {
+      "name": "want_weekday",
+      "type": "number",
+      "default": 0,
+      "label": "Its day of the week (week only)"
+    },
+    {
+      "name": "same_day",
+      "type": "boolean",
+      "default": false,
+      "label": "It already ran today (UTC)"
+    },
+    {
+      "name": "day_of_month",
+      "type": "number",
+      "default": 1,
+      "label": "Today's day of the month"
+    },
+    {
+      "name": "want_day",
+      "type": "number",
+      "default": 1,
+      "label": "Its day of the month (month only)"
+    },
+    {
+      "name": "tick_seconds",
+      "type": "number",
+      "default": 0,
+      "label": "tick seconds"
+    }
+  ],
+  "expr": {
+    "op": "any",
+    "items": [
+      {
+        "op": "all",
+        "items": [
+          {
+            "op": "eq",
+            "left": "$every",
+            "right": "tick"
+          },
+          {
+            "op": "gt",
+            "left": "$tick_seconds",
+            "right": 0
+          },
+          {
+            "op": "ge",
+            "left": "$since_last_s",
+            "right": "$tick_seconds"
+          }
+        ]
+      },
+      {
+        "op": "all",
+        "items": [
+          {
+            "op": "eq",
+            "left": "$every",
+            "right": "hour"
+          },
+          {
+            "op": "ge",
+            "left": "$since_last_s",
+            "right": "$hour_seconds"
+          }
+        ]
+      },
+      {
+        "op": "all",
+        "items": [
+          {
+            "op": "eq",
+            "left": "$every",
+            "right": "day"
+          },
+          {
+            "op": "eq",
+            "left": "$same_day",
+            "right": false
+          },
+          {
+            "op": "ge",
+            "left": "$minute_of_day",
+            "right": "$at_minute"
+          }
+        ]
+      },
+      {
+        "op": "all",
+        "items": [
+          {
+            "op": "eq",
+            "left": "$every",
+            "right": "week"
+          },
+          {
+            "op": "eq",
+            "left": "$weekday",
+            "right": "$want_weekday"
+          },
+          {
+            "op": "eq",
+            "left": "$same_day",
+            "right": false
+          },
+          {
+            "op": "ge",
+            "left": "$minute_of_day",
+            "right": "$at_minute"
+          }
+        ]
+      },
+      {
+        "op": "all",
+        "items": [
+          {
+            "op": "eq",
+            "left": "$every",
+            "right": "month"
+          },
+          {
+            "op": "eq",
+            "left": "$day_of_month",
+            "right": "$want_day"
+          },
+          {
+            "op": "eq",
+            "left": "$same_day",
+            "right": false
+          },
+          {
+            "op": "ge",
+            "left": "$minute_of_day",
+            "right": "$at_minute"
+          }
+        ]
+      }
+    ]
+  },
+  "returns": "boolean",
+  "version": 2,
+  "status": "published",
+  "description_nl": "2026-10-23: when an agent's schedule fires - hourly after hour_seconds; daily once a day after its clock time; weekly on its day after its clock time (UTC).",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": false
+    },
+    {
+      "args": {
+        "minute_of_day": 420
+      },
+      "expect_value": true
+    },
+    {
+      "args": {
+        "minute_of_day": 420,
+        "same_day": true
+      },
+      "expect_value": false
+    },
+    {
+      "args": {
+        "every": "hour",
+        "since_last_s": 100
+      },
+      "expect_value": false
+    },
+    {
+      "args": {
+        "every": "hour",
+        "since_last_s": 4000
+      },
+      "expect_value": true
+    },
+    {
+      "args": {
+        "every": "week",
+        "minute_of_day": 420,
+        "weekday": 2,
+        "want_weekday": 0
+      },
+      "expect_value": false
+    },
+    {
+      "args": {
+        "every": "week",
+        "minute_of_day": 420,
+        "weekday": 0,
+        "want_weekday": 0
+      },
+      "expect_value": true
+    },
+    {
+      "args": {
+        "every": "month",
+        "minute_of_day": 420,
+        "day_of_month": 1,
+        "want_day": 1
+      },
+      "expect_value": true
+    },
+    {
+      "args": {
+        "every": "month",
+        "minute_of_day": 420,
+        "day_of_month": 2,
+        "want_day": 1
+      },
+      "expect_value": false
+    },
+    {
+      "args": {
+        "every": "tick",
+        "tick_seconds": 120,
+        "since_last_s": 130
+      },
+      "expect_value": true
+    },
+    {
+      "args": {
+        "every": "tick",
+        "tick_seconds": 120,
+        "since_last_s": 60
+      },
+      "expect_value": false
+    }
+  ]
+}

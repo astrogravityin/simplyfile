@@ -1,0 +1,50 @@
+{
+  "chip_id": "health.recent_enough",
+  "kind": "predicate",
+  "set": "health",
+  "label": "Is it recent enough",
+  "aliases": [
+    "recent enough"
+  ],
+  "params": [
+    {
+      "name": "age_days",
+      "type": "number",
+      "default": 0,
+      "label": "How old it is, in days"
+    },
+    {
+      "name": "max_days",
+      "type": "number",
+      "default": 75,
+      "label": "Oldest that is fine"
+    }
+  ],
+  "expr": {
+    "op": "le",
+    "left": "$age_days",
+    "right": "$max_days"
+  },
+  "returns": "boolean",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-23 health check: a tool's age (yt-dlp) against the most it may be.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": true
+    },
+    {
+      "args": {
+        "age_days": 200
+      },
+      "expect_value": false
+    },
+    {
+      "args": {
+        "age_days": 75
+      },
+      "expect_value": true
+    }
+  ]
+}

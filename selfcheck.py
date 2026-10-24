@@ -321,7 +321,12 @@ if (ok.some((x) => !x)) { console.log(JSON.stringify(ok)); process.exit(1); }"""
         # person's step said never run, the portal's own routes as the owner (selfcheck_mcp.py, boilerplate)
         import selfcheck_mcp  # noqa: PLC0415
         selfcheck_mcp.static_check(app)
-        selfcheck_mcp.door_walk(app, c, selfcheck_mcp.member(app, c), None)
+        mem = selfcheck_mcp.member(app, c)
+        selfcheck_mcp.door_walk(app, c, mem, None)
+        # 2026-10-24 Agents (the SteadyMove / AstroStage runtime, core/agents.py): recipes complete, the Daily health check, the owners' bar
+        import selfcheck_agents  # noqa: PLC0415
+        selfcheck_agents.static_check(app)
+        selfcheck_agents.walk(app, c, mem)
     print(f"  api: owner, menu, {sum(1 for r in app.app.routes if '/api/' in getattr(r, 'path', ''))} routes, clients -> intake -> reconcile -> compute -> filed -> revised -> withdrawn OK")
 
 
@@ -486,7 +491,7 @@ def chips_first_check() -> None:
 
 
 GUIDED = ["firm", "analytics", "delegate", "wizard", "clients", "myreturn", "itrimport", "intake", "recon", "compute", "audit", "approvals", "portalstats", "server", "taxwatch",
-          "keys", "connect-ai"]   # 2026-10-10: Account & key - its tour rebuilt from its Guide me (the old hand-made one said "draws stills")
+          "keys", "connect-ai", "agents"]   # 2026-10-10: Account & key - its tour rebuilt from its Guide me (the old hand-made one said "draws stills")
 
 
 def guides_tours_check() -> None:
@@ -494,7 +499,8 @@ def guides_tours_check() -> None:
     and the video says what the walk says - the tour is made from the guide, so a new step in one shows up in the other."""
     import json  # noqa: PLC0415
     for sc in GUIDED:
-        g = json.loads((HERE / "chips" / f"guide.{sc.replace('-', '_')}.json").read_text(encoding="utf-8"))   # core screen connect-ai -> guide.connect_ai
+        gp = HERE / "chips" / f"guide.{sc.replace('-', '_')}.json"   # core screen connect-ai -> guide.connect_ai
+        g = json.loads((gp if gp.exists() else HERE / "core" / "chips" / gp.name).read_text(encoding="utf-8"))   # a core walk (Agents) when the portal has none
         d = {p["name"]: p["default"] for p in g["params"]}
         t = json.loads((HERE / "tours" / f"sf-{sc}.json").read_text(encoding="utf-8"))
         says = [x["say"].replace("{product}", product()) for x in t["steps"]]

@@ -1,0 +1,50 @@
+{
+  "chip_id": "health.cert_ok",
+  "kind": "predicate",
+  "set": "health",
+  "label": "Does the certificate last long enough",
+  "aliases": [
+    "cert_ok"
+  ],
+  "params": [
+    {
+      "name": "days_left",
+      "type": "number",
+      "default": 0,
+      "label": "Days until it ends"
+    },
+    {
+      "name": "min_days",
+      "type": "number",
+      "default": 14,
+      "label": "Least that is fine"
+    }
+  ],
+  "expr": {
+    "op": "ge",
+    "left": "$days_left",
+    "right": "$min_days"
+  },
+  "returns": "boolean",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-23 health check.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": false
+    },
+    {
+      "args": {
+        "days_left": 60
+      },
+      "expect_value": true
+    },
+    {
+      "args": {
+        "days_left": 3
+      },
+      "expect_value": false
+    }
+  ]
+}

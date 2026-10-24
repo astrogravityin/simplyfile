@@ -1,0 +1,51 @@
+{
+  "chip_id": "health.settings",
+  "kind": "accessor",
+  "set": "health",
+  "label": "Health check: how much is enough",
+  "aliases": [
+    "settings"
+  ],
+  "params": [
+    {
+      "name": "min_free_gb",
+      "type": "number",
+      "default": 5,
+      "label": "Warn when the data disk has less free space than this (GB)"
+    },
+    {
+      "name": "cert_min_days",
+      "type": "number",
+      "default": 14,
+      "label": "Warn when the site's certificate ends in fewer days than this"
+    },
+    {
+      "name": "timeout_s",
+      "type": "number",
+      "default": 10,
+      "label": "Give each outside check this many seconds"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "min_free_gb": "$min_free_gb",
+      "cert_min_days": "$cert_min_days",
+      "timeout_s": "$timeout_s"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-23: the numbers of core/health.py (Daily health check agent).",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "min_free_gb": 5,
+        "cert_min_days": 14,
+        "timeout_s": 10
+      }
+    }
+  ]
+}

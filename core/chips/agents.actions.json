@@ -1,0 +1,57 @@
+{
+  "chip_id": "agents.actions",
+  "kind": "accessor",
+  "set": "agents",
+  "label": "Every step an agent can take, and what it touches",
+  "aliases": [
+    "actions"
+  ],
+  "params": [
+    {
+      "name": "actions",
+      "type": "list",
+      "default": [
+        {
+          "id": "health.check",
+          "side_effect": "read",
+          "label": "Look at every service the portal needs"
+        },
+        {
+          "id": "health.warn",
+          "side_effect": "write",
+          "label": "Put the answer on the owner's warning bar (it replaces the last one)"
+        }
+      ],
+      "label": "One row per action: id, side effect (read, write, external, paid), what it does"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "actions": "$actions"
+    }
+  },
+  "returns": "record",
+  "version": 4,
+  "status": "published",
+  "description_nl": "2026-10-24 (SimplyFile core): the actions every portal has - the Daily health check. A portal that adds its own agents writes chips/agents.actions.json with these rows AND its own (a portal chip wins over core's).",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "actions": [
+          {
+            "id": "health.check",
+            "side_effect": "read",
+            "label": "Look at every service the portal needs"
+          },
+          {
+            "id": "health.warn",
+            "side_effect": "write",
+            "label": "Put the answer on the owner's warning bar (it replaces the last one)"
+          }
+        ]
+      }
+    }
+  ]
+}

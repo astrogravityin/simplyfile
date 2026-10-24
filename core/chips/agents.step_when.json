@@ -1,0 +1,74 @@
+{
+  "chip_id": "agents.step_when",
+  "kind": "accessor",
+  "set": "agents",
+  "label": "Does a recipe step's when-condition hold for these inputs",
+  "aliases": [
+    "agent step condition",
+    "step when",
+    "recipe branch"
+  ],
+  "params": [
+    {
+      "name": "facts",
+      "type": "any",
+      "default": {}
+    },
+    {
+      "name": "when",
+      "type": "any",
+      "default": {}
+    }
+  ],
+  "expr": {
+    "vop": "decision_table",
+    "facts": "$facts",
+    "rules": [
+      {
+        "when": "$when",
+        "set": true
+      }
+    ],
+    "current": false
+  },
+  "returns": "boolean",
+  "version": 1,
+  "status": "published",
+  "description_nl": "TRUE when every key of the step's `when` equals the run's input of the same name (an empty `when` always holds). The recipe's branches - keyword or discover - are data in the recipe; this chip only reads them. (2026-10-23: copied unchanged from AstroStage so both portals gate agent steps by the same rules.)",
+  "test_cases": [
+    {
+      "chart": "profile_1_hyd",
+      "args": {
+        "facts": {
+          "mode": "keyword"
+        },
+        "when": {
+          "mode": "keyword"
+        }
+      },
+      "expect_value": true
+    },
+    {
+      "chart": "profile_2_delhi",
+      "args": {
+        "facts": {
+          "mode": "discover"
+        },
+        "when": {
+          "mode": "keyword"
+        }
+      },
+      "expect_value": false
+    },
+    {
+      "chart": "profile_1_hyd",
+      "args": {
+        "facts": {
+          "mode": "discover"
+        },
+        "when": {}
+      },
+      "expect_value": true
+    }
+  ]
+}

@@ -37,7 +37,8 @@ from pathlib import Path
 
 from fastapi.staticfiles import StaticFiles
 
-from core import access, auth, bell, builder, demo, doctor, engine, find, geo, guide, howto, issues, jobs, ledger, lists, mcp, mcp_oauth, memwatch, rules, storage, store, words
+from core import access, auth, bell, builder, demo, doctor, engine, find, geo, guide, health, howto, issues, jobs, ledger, lists, mcp, mcp_oauth, memwatch, rules, storage, store, words
+from core import agents  # noqa: E402 - 2026-10-24 Agents (the SteadyMove / AstroStage runtime)
 
 screen = access.screen
 signed_in, owner, current_user = auth.signed_in, auth.owner, auth.current_user
@@ -168,7 +169,7 @@ def install(app, *, catalog, chips=None, rules_dir=None, scenarios=None) -> None
     access.load(catalog)
     auth.BOOTSTRAP_EXTRAS.extend([access.bootstrap_extra, storage.bootstrap_extra, rules.bootstrap_extra,
                                   find.bootstrap_extra, guide.bootstrap_extra, issues.bootstrap_extra, bell.bootstrap_extra,
-                                  demo.bootstrap_extra])
+                                  demo.bootstrap_extra, health.bootstrap_extra])
     # Added last = runs first: the ledger times everything, including a request the limiter refuses.
     app.middleware("http")(_stamp_build)
     app.middleware("http")(auth.limit_auth)
@@ -178,10 +179,11 @@ def install(app, *, catalog, chips=None, rules_dir=None, scenarios=None) -> None
     app.middleware("http")(_json_cap)
     app.middleware("http")(_multipart_cap)
     app.middleware("http")(doctor.catch)     # added last = runs first: every unexpected error, from any layer (Error Doctor)
-    for module in (auth, access, ledger, memwatch, howto, guide, storage, builder, find, jobs, words, lists, issues, bell, demo, doctor, mcp, mcp_oauth):
+    for module in (auth, access, ledger, memwatch, howto, guide, storage, builder, find, jobs, words, lists, issues, bell, demo, doctor, mcp, mcp_oauth, agents):
         app.include_router(module.router)
     app.mount("/core-static", StaticFiles(directory=str(HERE / "static")), name="core-static")
     memwatch.start()
+    agents.start()                       # 2026-10-24: Agents - schedule triggers (core/agents.py)
     doctor.heal_notes()       # 2026-10-21: older Doctor notes sent as the owner could never be resolved
     store.heal_sessions()     # 2026-10-21: sessions kept as they were become fingerprints (nobody is signed out)
     geo.start(on_loaded=ledger.backfill_places)

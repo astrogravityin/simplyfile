@@ -1,0 +1,103 @@
+{
+  "chip_id": "agents.settings",
+  "kind": "accessor",
+  "set": "agents",
+  "label": "Agents: database, clock, what a run keeps",
+  "aliases": [
+    "settings"
+  ],
+  "params": [
+    {
+      "name": "db",
+      "type": "text",
+      "default": "agents.sqlite3",
+      "label": "The agents' database file in the data folder"
+    },
+    {
+      "name": "tick_seconds",
+      "type": "number",
+      "default": 60,
+      "label": "How often the server's clock looks for a schedule that is due"
+    },
+    {
+      "name": "default_at",
+      "type": "text",
+      "default": "06:00",
+      "label": "A schedule with no clock time runs at this UTC time"
+    },
+    {
+      "name": "hour_seconds",
+      "type": "number",
+      "default": 3600,
+      "label": "An hourly agent runs again after this many seconds"
+    },
+    {
+      "name": "keep_chars",
+      "type": "number",
+      "default": 400,
+      "label": "A run keeps at most this many letters of any one answer"
+    },
+    {
+      "name": "keep_rows",
+      "type": "number",
+      "default": 20,
+      "label": "A run keeps at most this many rows of any one list"
+    },
+    {
+      "name": "history_rows",
+      "type": "number",
+      "default": 30,
+      "label": "Runs shown per agent"
+    },
+    {
+      "name": "cadences",
+      "type": "list",
+      "default": [
+        "tick",
+        "hour",
+        "day",
+        "week",
+        "month"
+      ],
+      "label": "How often a schedule can run"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "db": "$db",
+      "tick_seconds": "$tick_seconds",
+      "default_at": "$default_at",
+      "hour_seconds": "$hour_seconds",
+      "keep_chars": "$keep_chars",
+      "keep_rows": "$keep_rows",
+      "history_rows": "$history_rows",
+      "cadences": "$cadences"
+    }
+  },
+  "returns": "record",
+  "version": 2,
+  "status": "published",
+  "description_nl": "2026-10-23 (SteadyMove agents, the AstroStage way): the numbers of the one agent runtime core/agents.py.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "db": "agents.sqlite3",
+        "tick_seconds": 60,
+        "default_at": "06:00",
+        "hour_seconds": 3600,
+        "keep_chars": 400,
+        "keep_rows": 20,
+        "history_rows": 30,
+        "cadences": [
+          "tick",
+          "hour",
+          "day",
+          "week",
+          "month"
+        ]
+      }
+    }
+  ]
+}

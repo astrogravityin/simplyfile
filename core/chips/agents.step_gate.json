@@ -1,0 +1,135 @@
+{
+  "chip_id": "agents.step_gate",
+  "kind": "accessor",
+  "set": "agents",
+  "label": "What the runtime does with a recipe step: run, preview, or skip",
+  "aliases": [
+    "agent step gate",
+    "dry run or run",
+    "does a step write now"
+  ],
+  "params": [
+    {
+      "name": "facts",
+      "type": "any",
+      "default": {}
+    },
+    {
+      "name": "rules",
+      "type": "any",
+      "default": [
+        {
+          "when": {
+            "when_ok": false
+          },
+          "set": "skip"
+        },
+        {
+          "when": {
+            "side_effect": "paid",
+            "explicit": false
+          },
+          "set": "skip"
+        },
+        {
+          "when": {
+            "phase": "preview",
+            "side_effect": "write"
+          },
+          "set": "preview"
+        },
+        {
+          "when": {
+            "phase": "preview",
+            "side_effect": "external"
+          },
+          "set": "preview"
+        },
+        {
+          "when": {
+            "phase": "run",
+            "side_effect": "paid"
+          },
+          "set": "skip"
+        }
+      ]
+    },
+    {
+      "name": "default",
+      "type": "string",
+      "default": "run"
+    }
+  ],
+  "expr": {
+    "vop": "decision_table",
+    "facts": "$facts",
+    "rules": "$rules",
+    "current": "$default"
+  },
+  "returns": "name",
+  "version": 1,
+  "status": "published",
+  "description_nl": "The safety table of every agent run (owner 2026-10-16). A dry run (phase preview) reads for real but only PREVIEWS writes and external calls; a paid step runs only when the runner asked for it explicitly (and never during an approved run); a step whose `when` does not match is skipped. Edit the table, not the runtime. (2026-10-23: copied unchanged from AstroStage so both portals gate agent steps by the same rules.)",
+  "test_cases": [
+    {
+      "chart": "profile_1_hyd",
+      "args": {
+        "facts": {
+          "phase": "preview",
+          "side_effect": "write",
+          "when_ok": true,
+          "explicit": false
+        }
+      },
+      "expect_value": "preview"
+    },
+    {
+      "chart": "profile_2_delhi",
+      "args": {
+        "facts": {
+          "phase": "run",
+          "side_effect": "write",
+          "when_ok": true,
+          "explicit": false
+        }
+      },
+      "expect_value": "run"
+    },
+    {
+      "chart": "profile_1_hyd",
+      "args": {
+        "facts": {
+          "phase": "preview",
+          "side_effect": "paid",
+          "when_ok": true,
+          "explicit": false
+        }
+      },
+      "expect_value": "skip"
+    },
+    {
+      "chart": "profile_2_delhi",
+      "args": {
+        "facts": {
+          "phase": "preview",
+          "side_effect": "paid",
+          "when_ok": true,
+          "explicit": true
+        }
+      },
+      "expect_value": "run"
+    },
+    {
+      "chart": "profile_1_hyd",
+      "args": {
+        "facts": {
+          "phase": "preview",
+          "side_effect": "read",
+          "when_ok": false,
+          "explicit": false
+        }
+      },
+      "expect_value": "skip"
+    }
+  ]
+}
