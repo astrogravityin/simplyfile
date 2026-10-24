@@ -24,7 +24,6 @@ import { approvalsPage } from './page-approvals.js';
 import { analyticsPage } from './page-analytics.js';
 import { portalstatsPage } from './page-portalstats.js';
 import { serverPage } from './page-server.js';
-import { mcpPage } from './page-mcp.js';         // 2026-10-23 Agent & MCP (core/mcp_door.py)
 import { delegatePage } from './page-delegate.js';
 import { syncDock } from './dock.js';
 import { itrImportPage } from './page-itrimport.js';
@@ -169,7 +168,7 @@ const NEEDS_PROJECT = new Set(['manuals', 'howto']);
 const keyScreen = () => ps('shell').key_screen;          // the Account & key screen (chip page.shell key_screen)
 
 startPortal({
-  views: { firm: firmPage, analytics: analyticsPage, portalstats: portalstatsPage, server: serverPage, delegate: delegatePage, itrimport: itrImportPage, myreturn: myReturnPage, wizard: wizardPage, taxwatch: taxwatchPage, approvals: approvalsPage, clients: clientsPage, intake: intakePage, recon: reconPage, compute: computePage, audit: auditPage, manuals: manualPage, howto: howtoPage, guideme: guidemePage, setup: setupPage, keys: keysPage, buykey: buyKeyPage, keysales: keySalesPage, tourvideo: tourVideoPage, mcp: mcpPage },
+  views: { firm: firmPage, analytics: analyticsPage, portalstats: portalstatsPage, server: serverPage, delegate: delegatePage, itrimport: itrImportPage, myreturn: myReturnPage, wizard: wizardPage, taxwatch: taxwatchPage, approvals: approvalsPage, clients: clientsPage, intake: intakePage, recon: reconPage, compute: computePage, audit: auditPage, manuals: manualPage, howto: howtoPage, guideme: guidemePage, setup: setupPage, keys: keysPage, buykey: buyKeyPage, keysales: keySalesPage, tourvideo: tourVideoPage },
   // The edition (chip edition.settings) names the line under the logo.
   pitch, logo, brandSub: () => (state.edition && state.edition.brand_sub) || '',
   landing: () => (state.selfFiler ? '#/myreturn' : '') || (state.edition && state.edition.landing) || '#/video',   // a self-filer opens on My return; a door (chip edition.settings doors) has its own first screen

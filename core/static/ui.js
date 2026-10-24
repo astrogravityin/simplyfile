@@ -97,7 +97,7 @@ const sw = (k, v) => t('shell', k, v);
 
 /** THE copy of every screen (core/static/copy.js) with this portal's toast and words (chip ui.shell rd_copied, copy_failed);
  *  `o.copied` names what was copied, `o.html` adds rich text (bullets survive a paste into the request editor). */
-export const copyText = (text, o = {}) => copyRaw(text, { say: (m, tone) => toast(m, tone), copied: sw('rd_copied'), failed: sw('copy_failed'), ...o });
+export const copyText = (text, o = {}) => (typeof o === 'string' ? (o = { copied: o }) : 0, copyRaw(text, { say: (m, tone) => toast(m, tone), copied: sw('rd_copied'), failed: sw('copy_failed'), ...o }));
 
 export function esc(v) {
   return String(v ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));

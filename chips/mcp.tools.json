@@ -3,7 +3,7 @@
   "kind": "accessor",
   "set": "mcp",
   "audience": "admin",
-  "label": "Agent & MCP: the tools",
+  "label": "Connect your AI: the tools this portal offers",
   "aliases": [
     "agent & mcp: the tools"
   ],
@@ -14,10 +14,12 @@
       "default": [
         {
           "name": "status",
-          "kind": "read",
           "title": "Portal status",
-          "say": "Is {product} up, which build is running, and the {clients} at each stage of the year.",
-          "input": {
+          "on": true,
+          "kind": "read",
+          "function": "tool_status",
+          "description": "Is {product} up, which build is running, and the {clients} at each stage of the year.",
+          "input_schema": {
             "type": "object",
             "properties": {}
           },
@@ -28,20 +30,18 @@
             },
             {
               "method": "GET",
-              "path": "/api/mcp/about"
-            },
-            {
-              "method": "GET",
               "path": "/api/clients/summary"
             }
           ]
         },
         {
           "name": "year_and_stages",
-          "kind": "read",
           "title": "Years and stages",
-          "say": "The assessment year being worked, the years open and the stages a filing moves through.",
-          "input": {
+          "on": true,
+          "kind": "read",
+          "function": "tool_year_and_stages",
+          "description": "The assessment year being worked, the years open and the stages a filing moves through.",
+          "input_schema": {
             "type": "object",
             "properties": {}
           },
@@ -60,10 +60,12 @@
         },
         {
           "name": "clients",
-          "kind": "read",
           "title": "Find {clients}",
-          "say": "The {clients} list with its forgiving search: name, PAN, stage. Gives each one's id (cid) for the other tools.",
-          "input": {
+          "on": true,
+          "kind": "read",
+          "function": "tool_clients",
+          "description": "The {clients} list with its forgiving search: name, PAN, stage. Gives each one's id (cid) for the other tools.",
+          "input_schema": {
             "type": "object",
             "properties": {
               "q": {
@@ -94,10 +96,12 @@
         },
         {
           "name": "client",
-          "kind": "read",
           "title": "One {client_one}",
-          "say": "One {client_one} by id: details, the years and where each stands.",
-          "input": {
+          "on": true,
+          "kind": "read",
+          "function": "tool_client",
+          "description": "One {client_one} by id: details, the years and where each stands.",
+          "input_schema": {
             "type": "object",
             "required": [
               "cid"
@@ -118,10 +122,12 @@
         },
         {
           "name": "intake",
-          "kind": "read",
           "title": "Intake & map",
-          "say": "The statements uploaded for one year and how far each is mapped.",
-          "input": {
+          "on": true,
+          "kind": "read",
+          "function": "tool_intake",
+          "description": "The statements uploaded for one year and how far each is mapped.",
+          "input_schema": {
             "type": "object",
             "required": [
               "cid",
@@ -147,10 +153,12 @@
         },
         {
           "name": "reconcile",
-          "kind": "read",
           "title": "Reconcile",
-          "say": "The 26AS match for one year: each finding, red or explained.",
-          "input": {
+          "on": true,
+          "kind": "read",
+          "function": "tool_reconcile",
+          "description": "The 26AS match for one year: each finding, red or explained.",
+          "input_schema": {
             "type": "object",
             "required": [
               "cid",
@@ -176,10 +184,12 @@
         },
         {
           "name": "reconcile_note",
-          "kind": "change",
           "title": "Explain a finding",
-          "say": "Writes the note that explains one Reconcile finding (its id from reconcile). An explained red finding lets the year move on.",
-          "input": {
+          "on": true,
+          "kind": "change",
+          "function": "tool_reconcile_note",
+          "description": "Writes the note that explains one Reconcile finding (its id from reconcile). An explained red finding lets the year move on.",
+          "input_schema": {
             "type": "object",
             "required": [
               "cid",
@@ -218,10 +228,12 @@
         },
         {
           "name": "compute",
-          "kind": "read",
           "title": "Compute & close",
-          "say": "The computation for one year: income, tax, TDS, the balance, and whether it is signed off or filed.",
-          "input": {
+          "on": true,
+          "kind": "read",
+          "function": "tool_compute",
+          "description": "The computation for one year: income, tax, TDS, the balance, and whether it is signed off or filed.",
+          "input_schema": {
             "type": "object",
             "required": [
               "cid",
@@ -247,10 +259,12 @@
         },
         {
           "name": "itr_check",
-          "kind": "read",
           "title": "Check the ITR JSON",
-          "say": "Makes the ITR JSON for one year and checks it: errors, and the rules and assumptions that made it.",
-          "input": {
+          "on": true,
+          "kind": "read",
+          "function": "tool_itr_check",
+          "description": "Makes the ITR JSON for one year and checks it: errors, and the rules and assumptions that made it.",
+          "input_schema": {
             "type": "object",
             "required": [
               "cid",
@@ -276,10 +290,12 @@
         },
         {
           "name": "sign_off",
-          "kind": "change",
           "title": "Sign off the year",
-          "say": "Presses Sign off on Compute & close (refused while a red finding is open).",
-          "input": {
+          "on": true,
+          "kind": "change",
+          "function": "tool_sign_off",
+          "description": "Presses Sign off on Compute & close (refused while a red finding is open).",
+          "input_schema": {
             "type": "object",
             "required": [
               "cid",
@@ -308,10 +324,12 @@
         },
         {
           "name": "tax_audit",
-          "kind": "read",
           "title": "Tax audit",
-          "say": "The tax audit for one year: whether it applies, the checklist and the points raised.",
-          "input": {
+          "on": true,
+          "kind": "read",
+          "function": "tool_tax_audit",
+          "description": "The tax audit for one year: whether it applies, the checklist and the points raised.",
+          "input_schema": {
             "type": "object",
             "required": [
               "cid",
@@ -337,10 +355,12 @@
         },
         {
           "name": "client_add",
-          "kind": "change",
           "title": "Add a {client_one}",
-          "say": "Adds a {client_one} on Clients & years (use made-up test details for a demo).",
-          "input": {
+          "on": true,
+          "kind": "change",
+          "function": "tool_client_add",
+          "description": "Adds a {client_one} on Clients & years (use made-up test details for a demo).",
+          "input_schema": {
             "type": "object",
             "required": [
               "name",
@@ -381,10 +401,12 @@
         },
         {
           "name": "year_open",
-          "kind": "change",
           "title": "Open a year",
-          "say": "Opens an assessment year for one {client_one}, so its work can start.",
-          "input": {
+          "on": true,
+          "kind": "change",
+          "function": "tool_year_open",
+          "description": "Opens an assessment year for one {client_one}, so its work can start.",
+          "input_schema": {
             "type": "object",
             "required": [
               "cid",
@@ -411,10 +433,12 @@
         },
         {
           "name": "firms",
-          "kind": "read",
           "title": "{Tenant} approvals",
-          "say": "The {tenants} that signed up and where each stands (waiting, approved, sent back).",
-          "input": {
+          "on": true,
+          "kind": "read",
+          "function": "tool_firms",
+          "description": "The {tenants} that signed up and where each stands (waiting, approved, sent back).",
+          "input_schema": {
             "type": "object",
             "properties": {}
           },
@@ -427,10 +451,12 @@
         },
         {
           "name": "portal_analytics",
-          "kind": "read",
           "title": "Portal analytics",
-          "say": "The portal's numbers across every {tenant}: work done, stages, activity.",
-          "input": {
+          "on": true,
+          "kind": "read",
+          "function": "tool_portal_analytics",
+          "description": "The portal's numbers across every {tenant}: work done, stages, activity.",
+          "input_schema": {
             "type": "object",
             "properties": {}
           },
@@ -443,10 +469,12 @@
         },
         {
           "name": "tax_rules_watch",
-          "kind": "read",
           "title": "Tax rules watch",
-          "say": "The tax rules being watched for the year and which changed.",
-          "input": {
+          "on": true,
+          "kind": "read",
+          "function": "tool_tax_rules_watch",
+          "description": "The tax rules being watched for the year and which changed.",
+          "input_schema": {
             "type": "object",
             "properties": {}
           },
@@ -459,67 +487,63 @@
         },
         {
           "name": "upload_documents",
-          "kind": "human",
           "title": "Upload the {client_one}'s documents",
-          "say": "A person uploads statements, 26AS and Form 16 on Intake & map or Reconcile - real papers are never sent by a tool.",
-          "input": {
+          "on": true,
+          "kind": "human",
+          "function": "tool_upload_documents",
+          "description": "A person uploads statements, 26AS and Form 16 on Intake & map or Reconcile - real papers are never sent by a tool.",
+          "input_schema": {
             "type": "object",
             "properties": {}
-          },
-          "paths": []
+          }
         },
         {
           "name": "file_on_income_tax_site",
-          "kind": "human",
           "title": "File on the income-tax site",
-          "say": "The CA uploads the ITR JSON on the income-tax e-filing site, then types the acknowledgement number on Compute & close.",
-          "input": {
+          "on": true,
+          "kind": "human",
+          "function": "tool_file_on_income_tax_site",
+          "description": "The CA uploads the ITR JSON on the income-tax e-filing site, then types the acknowledgement number on Compute & close.",
+          "input_schema": {
             "type": "object",
             "properties": {}
-          },
-          "paths": [
-            "^/api/compute/[^/]+/[^/]+/file$"
-          ]
+          }
         },
         {
           "name": "firm_decision",
-          "kind": "human",
           "title": "Approve or send back a {tenant}",
-          "say": "The portal admin reads the {tenant}'s papers on {Tenant} approvals and decides.",
-          "input": {
+          "on": true,
+          "kind": "human",
+          "function": "tool_firm_decision",
+          "description": "The portal admin reads the {tenant}'s papers on {Tenant} approvals and decides.",
+          "input_schema": {
             "type": "object",
             "properties": {}
-          },
-          "paths": [
-            "^/api/firm/[^/]+/move$"
-          ]
+          }
         },
         {
           "name": "payments",
-          "kind": "human",
           "title": "Payments and keys",
-          "say": "Paying, buying or adding a key is always a person, on its own screen.",
-          "input": {
+          "on": true,
+          "kind": "human",
+          "function": "tool_payments",
+          "description": "Paying, buying or adding a key is always a person, on its own screen.",
+          "input_schema": {
             "type": "object",
             "properties": {}
-          },
-          "paths": [
-            "^/api/(wallet|buykey|keysales|keys|funds|providers)(/|$)"
-          ]
+          }
         },
         {
           "name": "accounts",
-          "kind": "human",
           "title": "Sign-in, passwords and people",
-          "say": "Signing in, passwords and adding people are a person's, on the portal's own pages.",
-          "input": {
+          "on": true,
+          "kind": "human",
+          "function": "tool_accounts",
+          "description": "Signing in, passwords and adding people are a person's, on the portal's own pages.",
+          "input_schema": {
             "type": "object",
             "properties": {}
-          },
-          "paths": [
-            "^/api/auth/",
-            "^/api/users"
-          ]
+          }
         }
       ],
       "label": "tools"
@@ -532,9 +556,9 @@
     }
   },
   "returns": "record",
-  "version": 1,
+  "version": 2,
   "status": "published",
-  "description_nl": "2026-10-23 owner: what Claude Code may do in {product} through the MCP door (core/mcp_door.py) - each row ONE of the portal's own routes (calls: method, path with {slot}s from the input or an earlier call's save, body, query, keep = the keys answered back), never new business logic. kind read / change / human. A human row is never called: its paths are refused at the door and its say tells Claude which person step is next (sign-ins, permissions, filing on another site, payments).",
+  "description_nl": "2026-10-24 (Connect your AI, core/mcp.py): what an AI app may do in {product}. Each row: name, title, description, input_schema, function (gated in People & access under Connect your AI), kind read / change / human, and calls = the portal's OWN routes it presses (in-process, as the key's maker); a human row is a person's step, never run - its description says what the person does.",
   "test_cases": [
     {
       "args": {},
@@ -542,10 +566,12 @@
         "tools": [
           {
             "name": "status",
-            "kind": "read",
             "title": "Portal status",
-            "say": "Is {product} up, which build is running, and the {clients} at each stage of the year.",
-            "input": {
+            "on": true,
+            "kind": "read",
+            "function": "tool_status",
+            "description": "Is {product} up, which build is running, and the {clients} at each stage of the year.",
+            "input_schema": {
               "type": "object",
               "properties": {}
             },
@@ -556,20 +582,18 @@
               },
               {
                 "method": "GET",
-                "path": "/api/mcp/about"
-              },
-              {
-                "method": "GET",
                 "path": "/api/clients/summary"
               }
             ]
           },
           {
             "name": "year_and_stages",
-            "kind": "read",
             "title": "Years and stages",
-            "say": "The assessment year being worked, the years open and the stages a filing moves through.",
-            "input": {
+            "on": true,
+            "kind": "read",
+            "function": "tool_year_and_stages",
+            "description": "The assessment year being worked, the years open and the stages a filing moves through.",
+            "input_schema": {
               "type": "object",
               "properties": {}
             },
@@ -588,10 +612,12 @@
           },
           {
             "name": "clients",
-            "kind": "read",
             "title": "Find {clients}",
-            "say": "The {clients} list with its forgiving search: name, PAN, stage. Gives each one's id (cid) for the other tools.",
-            "input": {
+            "on": true,
+            "kind": "read",
+            "function": "tool_clients",
+            "description": "The {clients} list with its forgiving search: name, PAN, stage. Gives each one's id (cid) for the other tools.",
+            "input_schema": {
               "type": "object",
               "properties": {
                 "q": {
@@ -622,10 +648,12 @@
           },
           {
             "name": "client",
-            "kind": "read",
             "title": "One {client_one}",
-            "say": "One {client_one} by id: details, the years and where each stands.",
-            "input": {
+            "on": true,
+            "kind": "read",
+            "function": "tool_client",
+            "description": "One {client_one} by id: details, the years and where each stands.",
+            "input_schema": {
               "type": "object",
               "required": [
                 "cid"
@@ -646,10 +674,12 @@
           },
           {
             "name": "intake",
-            "kind": "read",
             "title": "Intake & map",
-            "say": "The statements uploaded for one year and how far each is mapped.",
-            "input": {
+            "on": true,
+            "kind": "read",
+            "function": "tool_intake",
+            "description": "The statements uploaded for one year and how far each is mapped.",
+            "input_schema": {
               "type": "object",
               "required": [
                 "cid",
@@ -675,10 +705,12 @@
           },
           {
             "name": "reconcile",
-            "kind": "read",
             "title": "Reconcile",
-            "say": "The 26AS match for one year: each finding, red or explained.",
-            "input": {
+            "on": true,
+            "kind": "read",
+            "function": "tool_reconcile",
+            "description": "The 26AS match for one year: each finding, red or explained.",
+            "input_schema": {
               "type": "object",
               "required": [
                 "cid",
@@ -704,10 +736,12 @@
           },
           {
             "name": "reconcile_note",
-            "kind": "change",
             "title": "Explain a finding",
-            "say": "Writes the note that explains one Reconcile finding (its id from reconcile). An explained red finding lets the year move on.",
-            "input": {
+            "on": true,
+            "kind": "change",
+            "function": "tool_reconcile_note",
+            "description": "Writes the note that explains one Reconcile finding (its id from reconcile). An explained red finding lets the year move on.",
+            "input_schema": {
               "type": "object",
               "required": [
                 "cid",
@@ -746,10 +780,12 @@
           },
           {
             "name": "compute",
-            "kind": "read",
             "title": "Compute & close",
-            "say": "The computation for one year: income, tax, TDS, the balance, and whether it is signed off or filed.",
-            "input": {
+            "on": true,
+            "kind": "read",
+            "function": "tool_compute",
+            "description": "The computation for one year: income, tax, TDS, the balance, and whether it is signed off or filed.",
+            "input_schema": {
               "type": "object",
               "required": [
                 "cid",
@@ -775,10 +811,12 @@
           },
           {
             "name": "itr_check",
-            "kind": "read",
             "title": "Check the ITR JSON",
-            "say": "Makes the ITR JSON for one year and checks it: errors, and the rules and assumptions that made it.",
-            "input": {
+            "on": true,
+            "kind": "read",
+            "function": "tool_itr_check",
+            "description": "Makes the ITR JSON for one year and checks it: errors, and the rules and assumptions that made it.",
+            "input_schema": {
               "type": "object",
               "required": [
                 "cid",
@@ -804,10 +842,12 @@
           },
           {
             "name": "sign_off",
-            "kind": "change",
             "title": "Sign off the year",
-            "say": "Presses Sign off on Compute & close (refused while a red finding is open).",
-            "input": {
+            "on": true,
+            "kind": "change",
+            "function": "tool_sign_off",
+            "description": "Presses Sign off on Compute & close (refused while a red finding is open).",
+            "input_schema": {
               "type": "object",
               "required": [
                 "cid",
@@ -836,10 +876,12 @@
           },
           {
             "name": "tax_audit",
-            "kind": "read",
             "title": "Tax audit",
-            "say": "The tax audit for one year: whether it applies, the checklist and the points raised.",
-            "input": {
+            "on": true,
+            "kind": "read",
+            "function": "tool_tax_audit",
+            "description": "The tax audit for one year: whether it applies, the checklist and the points raised.",
+            "input_schema": {
               "type": "object",
               "required": [
                 "cid",
@@ -865,10 +907,12 @@
           },
           {
             "name": "client_add",
-            "kind": "change",
             "title": "Add a {client_one}",
-            "say": "Adds a {client_one} on Clients & years (use made-up test details for a demo).",
-            "input": {
+            "on": true,
+            "kind": "change",
+            "function": "tool_client_add",
+            "description": "Adds a {client_one} on Clients & years (use made-up test details for a demo).",
+            "input_schema": {
               "type": "object",
               "required": [
                 "name",
@@ -909,10 +953,12 @@
           },
           {
             "name": "year_open",
-            "kind": "change",
             "title": "Open a year",
-            "say": "Opens an assessment year for one {client_one}, so its work can start.",
-            "input": {
+            "on": true,
+            "kind": "change",
+            "function": "tool_year_open",
+            "description": "Opens an assessment year for one {client_one}, so its work can start.",
+            "input_schema": {
               "type": "object",
               "required": [
                 "cid",
@@ -939,10 +985,12 @@
           },
           {
             "name": "firms",
-            "kind": "read",
             "title": "{Tenant} approvals",
-            "say": "The {tenants} that signed up and where each stands (waiting, approved, sent back).",
-            "input": {
+            "on": true,
+            "kind": "read",
+            "function": "tool_firms",
+            "description": "The {tenants} that signed up and where each stands (waiting, approved, sent back).",
+            "input_schema": {
               "type": "object",
               "properties": {}
             },
@@ -955,10 +1003,12 @@
           },
           {
             "name": "portal_analytics",
-            "kind": "read",
             "title": "Portal analytics",
-            "say": "The portal's numbers across every {tenant}: work done, stages, activity.",
-            "input": {
+            "on": true,
+            "kind": "read",
+            "function": "tool_portal_analytics",
+            "description": "The portal's numbers across every {tenant}: work done, stages, activity.",
+            "input_schema": {
               "type": "object",
               "properties": {}
             },
@@ -971,10 +1021,12 @@
           },
           {
             "name": "tax_rules_watch",
-            "kind": "read",
             "title": "Tax rules watch",
-            "say": "The tax rules being watched for the year and which changed.",
-            "input": {
+            "on": true,
+            "kind": "read",
+            "function": "tool_tax_rules_watch",
+            "description": "The tax rules being watched for the year and which changed.",
+            "input_schema": {
               "type": "object",
               "properties": {}
             },
@@ -987,67 +1039,63 @@
           },
           {
             "name": "upload_documents",
-            "kind": "human",
             "title": "Upload the {client_one}'s documents",
-            "say": "A person uploads statements, 26AS and Form 16 on Intake & map or Reconcile - real papers are never sent by a tool.",
-            "input": {
+            "on": true,
+            "kind": "human",
+            "function": "tool_upload_documents",
+            "description": "A person uploads statements, 26AS and Form 16 on Intake & map or Reconcile - real papers are never sent by a tool.",
+            "input_schema": {
               "type": "object",
               "properties": {}
-            },
-            "paths": []
+            }
           },
           {
             "name": "file_on_income_tax_site",
-            "kind": "human",
             "title": "File on the income-tax site",
-            "say": "The CA uploads the ITR JSON on the income-tax e-filing site, then types the acknowledgement number on Compute & close.",
-            "input": {
+            "on": true,
+            "kind": "human",
+            "function": "tool_file_on_income_tax_site",
+            "description": "The CA uploads the ITR JSON on the income-tax e-filing site, then types the acknowledgement number on Compute & close.",
+            "input_schema": {
               "type": "object",
               "properties": {}
-            },
-            "paths": [
-              "^/api/compute/[^/]+/[^/]+/file$"
-            ]
+            }
           },
           {
             "name": "firm_decision",
-            "kind": "human",
             "title": "Approve or send back a {tenant}",
-            "say": "The portal admin reads the {tenant}'s papers on {Tenant} approvals and decides.",
-            "input": {
+            "on": true,
+            "kind": "human",
+            "function": "tool_firm_decision",
+            "description": "The portal admin reads the {tenant}'s papers on {Tenant} approvals and decides.",
+            "input_schema": {
               "type": "object",
               "properties": {}
-            },
-            "paths": [
-              "^/api/firm/[^/]+/move$"
-            ]
+            }
           },
           {
             "name": "payments",
-            "kind": "human",
             "title": "Payments and keys",
-            "say": "Paying, buying or adding a key is always a person, on its own screen.",
-            "input": {
+            "on": true,
+            "kind": "human",
+            "function": "tool_payments",
+            "description": "Paying, buying or adding a key is always a person, on its own screen.",
+            "input_schema": {
               "type": "object",
               "properties": {}
-            },
-            "paths": [
-              "^/api/(wallet|buykey|keysales|keys|funds|providers)(/|$)"
-            ]
+            }
           },
           {
             "name": "accounts",
-            "kind": "human",
             "title": "Sign-in, passwords and people",
-            "say": "Signing in, passwords and adding people are a person's, on the portal's own pages.",
-            "input": {
+            "on": true,
+            "kind": "human",
+            "function": "tool_accounts",
+            "description": "Signing in, passwords and adding people are a person's, on the portal's own pages.",
+            "input_schema": {
               "type": "object",
               "properties": {}
-            },
-            "paths": [
-              "^/api/auth/",
-              "^/api/users"
-            ]
+            }
           }
         ]
       }

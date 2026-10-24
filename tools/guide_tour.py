@@ -15,7 +15,7 @@ DEFAULTS = {"prod_base": "https://sf.valuestream.in", "voice": "en-IN-NeerjaNeur
 
 
 def build(screen: str) -> dict:
-    g = json.loads((ROOT / "chips" / f"guide.{screen}.json").read_text(encoding="utf-8"))
+    g = json.loads((ROOT / "chips" / f"guide.{screen.replace('-', '_')}.json").read_text(encoding="utf-8"))   # connect-ai -> guide.connect_ai
     d = {p["name"]: p["default"] for p in g["params"]}
     sub = lambda s: str(s or "")  # noqa: E731 - {product} stays: make_tour fills it from chip edition.settings
     out = ROOT / "tours" / f"sf-{screen}.json"

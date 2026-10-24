@@ -2,9 +2,9 @@
   "chip_id": "list.mcp_tools",
   "kind": "accessor",
   "set": "list",
-  "label": "Agent & MCP tools list",
+  "label": "Connect your AI tools list",
   "aliases": [
-    "agent & mcp tools list"
+    "connect your ai tools list"
   ],
   "params": [
     {
@@ -13,7 +13,7 @@
       "default": [
         "name",
         "title",
-        "say",
+        "description",
         "kind_word"
       ],
       "label": "search keys"
@@ -73,7 +73,7 @@
   "returns": "record",
   "version": 1,
   "status": "published",
-  "description_nl": "2026-10-23: the tools on Admin > Agent & MCP - forgiving search over name, title and what it does, in chip order.",
+  "description_nl": "2026-10-24: the tools on Admin > Connect your AI - forgiving search over name, title, what it does and its kind, in chip order.",
   "test_cases": [
     {
       "args": {},
@@ -81,7 +81,7 @@
         "search_keys": [
           "name",
           "title",
-          "say",
+          "description",
           "kind_word"
         ],
         "sort_key": "n",

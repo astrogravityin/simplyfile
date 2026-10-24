@@ -1,0 +1,177 @@
+{
+  "chip_id": "guide.connect_ai",
+  "kind": "accessor",
+  "set": "guide",
+  "label": "Guide me: Connect your AI",
+  "aliases": [
+    "connect your ai"
+  ],
+  "params": [
+    {
+      "name": "title",
+      "type": "text",
+      "default": "Connect your AI",
+      "label": "The tour's name (its cover card)"
+    },
+    {
+      "name": "lede",
+      "type": "long",
+      "default": "Let the AI app you already use work in {product} for you - the same buttons you press, as you.",
+      "label": "The cover's opening line; {product} = this edition's name"
+    },
+    {
+      "name": "icon",
+      "type": "text",
+      "default": "plug",
+      "label": "The emblem on the cover (an icon name)"
+    },
+    {
+      "name": "minutes",
+      "type": "number",
+      "default": 2,
+      "label": "How long the tour takes"
+    },
+    {
+      "name": "steps",
+      "type": "rows",
+      "default": [
+        {
+          "title": "Your AI, connected",
+          "say": "Connect your AI lets an app such as Claude or ChatGPT work in {product} for you, for tests and demos: look things up and press the same buttons you would, as you. Signing in, payments and other people's steps stay with people.",
+          "target": "header.pagehead",
+          "art": {
+            "kind": "hero",
+            "icon": "plug"
+          }
+        },
+        {
+          "title": "Three steps, no typing",
+          "say": "In your AI app, open its connectors and add a custom one. Paste this portal's address - the Copy button puts it on your clipboard. Press Connect: a window opens on this site, you sign in with your normal account and press Allow. No key, no terminal.",
+          "target": ".ca-how",
+          "art": {
+            "kind": "flow",
+            "items": [
+              "Add connector",
+              "Paste address",
+              "Allow"
+            ],
+            "at": 1
+          }
+        },
+        {
+          "title": "Live status",
+          "say": "The status line turns green the moment your AI app first asks something, and names the app and when it last asked.",
+          "target": "#ca-status",
+          "art": {
+            "kind": "flow",
+            "items": [
+              "Waiting",
+              "Connected",
+              "Last used"
+            ],
+            "at": 1
+          }
+        },
+        {
+          "title": "Check",
+          "say": "Check runs a real question through the server - it answers, it lists its tools, a tool replies - and says in plain words which step fails, if any.",
+          "target": "#ca-check",
+          "art": {
+            "kind": "flow",
+            "items": [
+              "Answers",
+              "Lists tools",
+              "Tool replies"
+            ],
+            "at": 2
+          }
+        },
+        {
+          "title": "Connected apps",
+          "say": "Every connected app is listed with how many questions it asked. Disconnect stops it at once, and asks first.",
+          "target": "#ca-apps",
+          "art": {
+            "kind": "flow",
+            "items": [
+              "App",
+              "Questions",
+              "Disconnect"
+            ],
+            "at": 2
+          }
+        },
+        {
+          "title": "What it can do",
+          "target": ".ca-tools",
+          "say": "These are the tools an AI app may use: reads look things up, changes press one of {product}'s own buttons, and the steps marked for a person are never done by a tool. Each can be switched off in People and access under Connect your AI.",
+          "art": {
+            "kind": "flow",
+            "items": [
+              "Reads",
+              "Changes",
+              "A person"
+            ],
+            "at": 0
+          }
+        },
+        {
+          "title": "For developers",
+          "say": "An app that cannot sign in - a script, or Claude Code - can use a key instead. Keys are made under For developers, shown once, and revoked there.",
+          "target": ".ca-dev",
+          "art": {
+            "kind": "flow",
+            "items": [
+              "Make a key",
+              "Copy once",
+              "Revoke"
+            ],
+            "at": 0
+          }
+        }
+      ],
+      "label": "The steps in order: title, say (the narration), target (where the spotlight goes; alternatives split by |, the first on screen wins), art (the picture: hero/flow/roads/meter/stack/check), place (below/above/right/left/center, optional), open (optional: what the guide presses first when the part is not on screen - open the first item, go back Home; alternatives split by |)"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "title": "$title",
+      "lede": "$lede",
+      "icon": "$icon",
+      "minutes": "$minutes",
+      "steps": "$steps"
+    }
+  },
+  "returns": "record",
+  "version": 2,
+  "status": "published",
+  "description_nl": "2026-10-24: Connect your AI screen (core/static/page-connect-ai.js), the SteadyMove / AstroStage walk with the Fy tools.",
+  "test_cases": [
+    {
+      "args": {
+        "title": "T",
+        "lede": "L",
+        "icon": "spark",
+        "minutes": 1,
+        "steps": [
+          {
+            "title": "a",
+            "say": "b"
+          }
+        ]
+      },
+      "expect_value": {
+        "title": "T",
+        "lede": "L",
+        "icon": "spark",
+        "minutes": 1,
+        "steps": [
+          {
+            "title": "a",
+            "say": "b"
+          }
+        ]
+      }
+    }
+  ]
+}

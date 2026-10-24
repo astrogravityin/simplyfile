@@ -1663,10 +1663,6 @@ async def revalidate_static(request: Request, call_next):
 # 2026-10-16: screen code for members only (chip static.signed_out, off here) - added after revalidate_static so it runs first
 from core import private_static  # noqa: E402
 private_static.install(app)
-# 2026-10-23 owner: Agent & MCP - the owner's Claude Code drives the portal's own routes with an owner key (core/mcp_door.py, chips
-# mcp.settings / mcp.tools). Added LAST = runs first: the key becomes the owner's sign-in before the ledger and every guard.
-from core import mcp_door  # noqa: E402
-mcp_door.install(app, ROOT, about=lambda: {"commit": _BOOT["commit"][:7], "started_at": _BOOT["started_at"]})
 
 
 @app.exception_handler(404)

@@ -1,0 +1,475 @@
+{
+  "chip_id": "ui.connect_ai",
+  "kind": "accessor",
+  "set": "ui",
+  "label": "Connect your AI screen: every word",
+  "aliases": [
+    "connect ai words"
+  ],
+  "params": [
+    {
+      "name": "title",
+      "type": "text",
+      "default": "Connect your AI",
+      "label": "title"
+    },
+    {
+      "name": "lede",
+      "type": "text",
+      "default": "Let an AI app you use - Claude, ChatGPT - work in {product} for you, for tests and demos: look things up and press the same buttons you would, as you. Signing in, payments and other people's steps stay with people.",
+      "label": "lede"
+    },
+    {
+      "name": "step1",
+      "type": "text",
+      "default": "Open your AI app's connectors",
+      "label": "step1"
+    },
+    {
+      "name": "step1_note",
+      "type": "text",
+      "default": "Claude: Settings, Connectors, Add custom connector. ChatGPT: Settings, Connectors, Create.",
+      "label": "step1_note"
+    },
+    {
+      "name": "step2",
+      "type": "text",
+      "default": "Paste this address",
+      "label": "step2"
+    },
+    {
+      "name": "step2_note",
+      "type": "text",
+      "default": "Use the Copy button below; give it any name you like.",
+      "label": "step2_note"
+    },
+    {
+      "name": "step3",
+      "type": "text",
+      "default": "Press Connect, then Allow",
+      "label": "step3"
+    },
+    {
+      "name": "step3_note",
+      "type": "text",
+      "default": "A window opens on this site - sign in with your normal account and press Allow. Nothing to type, no key to copy.",
+      "label": "step3_note"
+    },
+    {
+      "name": "address",
+      "type": "text",
+      "default": "Server address",
+      "label": "address"
+    },
+    {
+      "name": "copy",
+      "type": "text",
+      "default": "Copy",
+      "label": "copy"
+    },
+    {
+      "name": "copied",
+      "type": "text",
+      "default": "Copied",
+      "label": "copied"
+    },
+    {
+      "name": "keys",
+      "type": "text",
+      "default": "Keys",
+      "label": "keys"
+    },
+    {
+      "name": "keys_count",
+      "type": "text",
+      "default": "{n} of {max} live",
+      "label": "keys_count"
+    },
+    {
+      "name": "label",
+      "type": "text",
+      "default": "Key name",
+      "label": "label"
+    },
+    {
+      "name": "label_ph",
+      "type": "text",
+      "default": "Name it after the app, such as Claude on my laptop",
+      "label": "label_ph"
+    },
+    {
+      "name": "make_key",
+      "type": "text",
+      "default": "Make a key",
+      "label": "make_key"
+    },
+    {
+      "name": "no_keys",
+      "type": "text",
+      "default": "No keys yet. Make one to connect an AI app.",
+      "label": "no_keys"
+    },
+    {
+      "name": "key_line",
+      "type": "text",
+      "default": "Ends in …{hint} · made {when}",
+      "label": "key_line"
+    },
+    {
+      "name": "revoke",
+      "type": "text",
+      "default": "Revoke",
+      "label": "revoke"
+    },
+    {
+      "name": "revoke_title",
+      "type": "text",
+      "default": "Revoke \"{label}\"?",
+      "label": "revoke_title"
+    },
+    {
+      "name": "revoke_body",
+      "type": "text",
+      "default": "An AI app using this key stops working at once. You can make a new key any time.",
+      "label": "revoke_body"
+    },
+    {
+      "name": "key_made_title",
+      "type": "text",
+      "default": "Your new key",
+      "label": "key_made_title"
+    },
+    {
+      "name": "your_key",
+      "type": "text",
+      "default": "your key",
+      "label": "your_key"
+    },
+    {
+      "name": "command_label",
+      "type": "text",
+      "default": "For Claude Code - run this once",
+      "label": "command_label"
+    },
+    {
+      "name": "command",
+      "type": "text",
+      "default": "claude mcp add --transport http {name} {url} --header \"Authorization: Bearer {key}\"",
+      "label": "command"
+    },
+    {
+      "name": "command_note",
+      "type": "text",
+      "default": "Other apps: add a remote MCP server with the address above and the header Authorization: Bearer and your key.",
+      "label": "command_note"
+    },
+    {
+      "name": "tools",
+      "type": "text",
+      "default": "What an AI app can do",
+      "label": "tools"
+    },
+    {
+      "name": "tools_note",
+      "type": "text",
+      "default": "Each tool is one of {product}'s own buttons. Reads look things up; changes press a button; a person does the rest. Each tool is gated by People & access under Connect your AI.",
+      "label": "tools_note"
+    },
+    {
+      "name": "tool_on",
+      "type": "text",
+      "default": "On",
+      "label": "tool_on"
+    },
+    {
+      "name": "tool_off",
+      "type": "text",
+      "default": "Off",
+      "label": "tool_off"
+    },
+    {
+      "name": "read_only",
+      "type": "text",
+      "default": "Read only",
+      "label": "read_only"
+    },
+    {
+      "name": "how_title",
+      "type": "text",
+      "default": "Connect in your AI app",
+      "label": "how_title"
+    },
+    {
+      "name": "status_none",
+      "type": "text",
+      "default": "Not connected yet",
+      "label": "status_none"
+    },
+    {
+      "name": "status_on",
+      "type": "text",
+      "default": "Connected - {who} used it {when}",
+      "label": "status_on"
+    },
+    {
+      "name": "status_wait",
+      "type": "text",
+      "default": "Waiting for your AI app...",
+      "label": "status_wait"
+    },
+    {
+      "name": "status_conn",
+      "type": "text",
+      "default": "{n} {n:app|apps} connected",
+      "label": "status_conn"
+    },
+    {
+      "name": "check",
+      "type": "text",
+      "default": "Check",
+      "label": "check"
+    },
+    {
+      "name": "check_tip",
+      "type": "text",
+      "default": "Runs a real question through the server and says which step fails, if any",
+      "label": "check_tip"
+    },
+    {
+      "name": "checking",
+      "type": "text",
+      "default": "Checking...",
+      "label": "checking"
+    },
+    {
+      "name": "apps",
+      "type": "text",
+      "default": "Connected apps",
+      "label": "apps"
+    },
+    {
+      "name": "no_apps",
+      "type": "text",
+      "default": "No AI app connected yet.",
+      "label": "no_apps"
+    },
+    {
+      "name": "app_line",
+      "type": "text",
+      "default": "Connected {when} · {n} {n:question|questions}",
+      "label": "app_line"
+    },
+    {
+      "name": "last_used",
+      "type": "text",
+      "default": "last used {when}",
+      "label": "last_used"
+    },
+    {
+      "name": "disconnect",
+      "type": "text",
+      "default": "Disconnect",
+      "label": "disconnect"
+    },
+    {
+      "name": "disconnect_title",
+      "type": "text",
+      "default": "Disconnect {app}?",
+      "label": "disconnect_title"
+    },
+    {
+      "name": "disconnect_body",
+      "type": "text",
+      "default": "That AI app stops at once. You can connect it again any time.",
+      "label": "disconnect_body"
+    },
+    {
+      "name": "dev",
+      "type": "text",
+      "default": "For developers",
+      "label": "dev"
+    },
+    {
+      "name": "dev_note",
+      "type": "text",
+      "default": "Prefer a key? Make one here for an app that cannot sign in (Claude Code, a script). It is shown once.",
+      "label": "dev_note"
+    },
+    {
+      "name": "allow_title",
+      "type": "text",
+      "default": "Allow {app} to work in {product} as you?",
+      "label": "allow_title"
+    },
+    {
+      "name": "allow_body",
+      "type": "text",
+      "default": "{app} will be able to use the tools on Connect your AI - look things up and press the same buttons you would - as you. Signing in, payments and other people's steps stay with people. You can disconnect it any time on this screen.",
+      "label": "allow_body"
+    },
+    {
+      "name": "allow",
+      "type": "text",
+      "default": "Allow",
+      "label": "allow"
+    },
+    {
+      "name": "deny",
+      "type": "text",
+      "default": "Don't allow",
+      "label": "deny"
+    },
+    {
+      "name": "allow_sending",
+      "type": "text",
+      "default": "Taking you back to {app}...",
+      "label": "allow_sending"
+    },
+    {
+      "name": "kind_read",
+      "type": "text",
+      "default": "Reads",
+      "label": "kind read"
+    },
+    {
+      "name": "kind_change",
+      "type": "text",
+      "default": "Changes",
+      "label": "kind change"
+    },
+    {
+      "name": "kind_human",
+      "type": "text",
+      "default": "A person does this",
+      "label": "kind human"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "title": "$title",
+      "lede": "$lede",
+      "step1": "$step1",
+      "step1_note": "$step1_note",
+      "step2": "$step2",
+      "step2_note": "$step2_note",
+      "step3": "$step3",
+      "step3_note": "$step3_note",
+      "address": "$address",
+      "copy": "$copy",
+      "copied": "$copied",
+      "keys": "$keys",
+      "keys_count": "$keys_count",
+      "label": "$label",
+      "label_ph": "$label_ph",
+      "make_key": "$make_key",
+      "no_keys": "$no_keys",
+      "key_line": "$key_line",
+      "revoke": "$revoke",
+      "revoke_title": "$revoke_title",
+      "revoke_body": "$revoke_body",
+      "key_made_title": "$key_made_title",
+      "your_key": "$your_key",
+      "command_label": "$command_label",
+      "command": "$command",
+      "command_note": "$command_note",
+      "tools": "$tools",
+      "tools_note": "$tools_note",
+      "tool_on": "$tool_on",
+      "tool_off": "$tool_off",
+      "read_only": "$read_only",
+      "how_title": "$how_title",
+      "status_none": "$status_none",
+      "status_on": "$status_on",
+      "status_wait": "$status_wait",
+      "status_conn": "$status_conn",
+      "check": "$check",
+      "check_tip": "$check_tip",
+      "checking": "$checking",
+      "apps": "$apps",
+      "no_apps": "$no_apps",
+      "app_line": "$app_line",
+      "last_used": "$last_used",
+      "disconnect": "$disconnect",
+      "disconnect_title": "$disconnect_title",
+      "disconnect_body": "$disconnect_body",
+      "dev": "$dev",
+      "dev_note": "$dev_note",
+      "allow_title": "$allow_title",
+      "allow_body": "$allow_body",
+      "allow": "$allow",
+      "deny": "$deny",
+      "allow_sending": "$allow_sending",
+      "kind_read": "$kind_read",
+      "kind_change": "$kind_change",
+      "kind_human": "$kind_human"
+    }
+  },
+  "returns": "record",
+  "version": 2,
+  "status": "published",
+  "description_nl": "2026-10-23: core/static/page-connect-ai.js.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "title": "Connect your AI",
+        "lede": "Let an AI app you use - Claude, ChatGPT - work in {product} for you, for tests and demos: look things up and press the same buttons you would, as you. Signing in, payments and other people's steps stay with people.",
+        "step1": "Open your AI app's connectors",
+        "step1_note": "Claude: Settings, Connectors, Add custom connector. ChatGPT: Settings, Connectors, Create.",
+        "step2": "Paste this address",
+        "step2_note": "Use the Copy button below; give it any name you like.",
+        "step3": "Press Connect, then Allow",
+        "step3_note": "A window opens on this site - sign in with your normal account and press Allow. Nothing to type, no key to copy.",
+        "address": "Server address",
+        "copy": "Copy",
+        "copied": "Copied",
+        "keys": "Keys",
+        "keys_count": "{n} of {max} live",
+        "label": "Key name",
+        "label_ph": "Name it after the app, such as Claude on my laptop",
+        "make_key": "Make a key",
+        "no_keys": "No keys yet. Make one to connect an AI app.",
+        "key_line": "Ends in …{hint} · made {when}",
+        "revoke": "Revoke",
+        "revoke_title": "Revoke \"{label}\"?",
+        "revoke_body": "An AI app using this key stops working at once. You can make a new key any time.",
+        "key_made_title": "Your new key",
+        "your_key": "your key",
+        "command_label": "For Claude Code - run this once",
+        "command": "claude mcp add --transport http {name} {url} --header \"Authorization: Bearer {key}\"",
+        "command_note": "Other apps: add a remote MCP server with the address above and the header Authorization: Bearer and your key.",
+        "tools": "What an AI app can do",
+        "tools_note": "Each tool is one of {product}'s own buttons. Reads look things up; changes press a button; a person does the rest. Each tool is gated by People & access under Connect your AI.",
+        "tool_on": "On",
+        "tool_off": "Off",
+        "read_only": "Read only",
+        "how_title": "Connect in your AI app",
+        "status_none": "Not connected yet",
+        "status_on": "Connected - {who} used it {when}",
+        "status_wait": "Waiting for your AI app...",
+        "status_conn": "{n} {n:app|apps} connected",
+        "check": "Check",
+        "check_tip": "Runs a real question through the server and says which step fails, if any",
+        "checking": "Checking...",
+        "apps": "Connected apps",
+        "no_apps": "No AI app connected yet.",
+        "app_line": "Connected {when} · {n} {n:question|questions}",
+        "last_used": "last used {when}",
+        "disconnect": "Disconnect",
+        "disconnect_title": "Disconnect {app}?",
+        "disconnect_body": "That AI app stops at once. You can connect it again any time.",
+        "dev": "For developers",
+        "dev_note": "Prefer a key? Make one here for an app that cannot sign in (Claude Code, a script). It is shown once.",
+        "allow_title": "Allow {app} to work in {product} as you?",
+        "allow_body": "{app} will be able to use the tools on Connect your AI - look things up and press the same buttons you would - as you. Signing in, payments and other people's steps stay with people. You can disconnect it any time on this screen.",
+        "allow": "Allow",
+        "deny": "Don't allow",
+        "allow_sending": "Taking you back to {app}...",
+        "kind_read": "Reads",
+        "kind_change": "Changes",
+        "kind_human": "A person does this"
+      }
+    }
+  ]
+}

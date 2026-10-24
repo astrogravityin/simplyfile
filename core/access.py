@@ -88,6 +88,7 @@ CORE_SCREENS = [
     {"id": "storage", "label": "Storage", "group": "Admin", "icon": "folder", "admin": True},
     {"id": "issues", "label": "Reported issues", "group": "Admin", "icon": "alert", "admin": True},
     {"id": "memory", "label": "Memory watch", "group": "Admin", "icon": "spark", "admin": True},
+    {"id": "connect-ai", "label": "Connect your AI", "group": "Admin", "icon": "plug", "admin": True},    # 2026-10-24 core/mcp.py
     {"id": "howto-config", "label": "How to Use pages", "group": "Admin", "icon": "help", "admin": True},
     # 2026-09-17 owner: the builders change what the whole portal does, so they are the owner's alone -
     # hidden from everyone else and closed to grants, like every Admin screen.
@@ -106,6 +107,14 @@ def load(catalog: list[dict] | str | Path) -> None:
     CATALOG[:] = [s for s in catalog if s["id"] not in {c["id"] for c in CORE_SCREENS}] + CORE_SCREENS
     _BY_ID.clear()
     _BY_ID.update({s["id"]: s for s in CATALOG})
+    # 2026-10-24 Connect your AI: one function per tool of the portal's chip mcp.tools (gated per tool, deny wins)
+    try:
+        tools = engine.run("mcp.tools")["tools"]
+    except Exception:  # noqa: BLE001 - a portal with no tools chip yet: the screen has no tool functions
+        tools = []
+    _BY_ID["connect-ai"] = _BY_ID["connect-ai"] | {"functions": [{"id": r["function"], "label": r.get("title") or r["name"]}
+                                                                for r in tools if r.get("function")]}
+    CATALOG[:] = [_BY_ID.get(s["id"], s) for s in CATALOG]
 
 
 def label_of(screen_id: str, function_id: str = "") -> str:

@@ -58,6 +58,7 @@ const CORE_VIEWS = {
   storage: () => import('./page-storage.js').then((m) => m.storagePage),
   issues: () => import('./page-issues.js').then((m) => m.issuesPage),
   memory: () => import('./page-memory.js').then((m) => m.memoryPage),
+  'connect-ai': () => import('./page-connect-ai.js').then((m) => m.connectAiPage),   // 2026-10-24 core/mcp.py
   'howto-config': () => import('./page-howto-config.js').then((m) => m.howtoConfigPage),
   ocb: () => import('./page-ocb.js').then((m) => m.ocbPage),
   rcb: () => import('./page-rcb.js').then((m) => m.rcbPage),

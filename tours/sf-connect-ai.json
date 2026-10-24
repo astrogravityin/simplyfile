@@ -1,0 +1,116 @@
+{
+  "prod_base": "https://sf.valuestream.in",
+  "voice": "en-IN-NeerjaNeural",
+  "rate": "+0%",
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "blur": [
+    "#whoami",
+    "#userpop .head"
+  ],
+  "page_key": "sf-connect-ai",
+  "title": "Connect your AI",
+  "start_url": "/#/connect-ai",
+  "covers": [
+    "your AI, connected",
+    "three steps, no typing",
+    "live status",
+    "check",
+    "connected apps",
+    "what it can do",
+    "for developers"
+  ],
+  "steps": [
+    {
+      "chapter": "Connect your AI",
+      "say": "Let the AI app you already use work in {product} for you - the same buttons you press, as you.",
+      "do": [
+        {
+          "wait_for": "header.pagehead"
+        },
+        {
+          "wait": 1
+        }
+      ]
+    },
+    {
+      "chapter": "Your AI, connected",
+      "say": "Connect your AI lets an app such as Claude or ChatGPT work in {product} for you, for tests and demos: look things up and press the same buttons you would, as you. Signing in, payments and other people's steps stay with people.",
+      "do": [
+        {
+          "highlight_target": "header.pagehead",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Three steps, no typing",
+      "say": "In your AI app, open its connectors and add a custom one. Paste this portal's address - the Copy button puts it on your clipboard. Press Connect: a window opens on this site, you sign in with your normal account and press Allow. No key, no terminal.",
+      "do": [
+        {
+          "highlight_target": ".ca-how",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Live status",
+      "say": "The status line turns green the moment your AI app first asks something, and names the app and when it last asked.",
+      "do": [
+        {
+          "highlight_target": "#ca-status",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Check",
+      "say": "Check runs a real question through the server - it answers, it lists its tools, a tool replies - and says in plain words which step fails, if any.",
+      "do": [
+        {
+          "highlight_target": "#ca-check",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Connected apps",
+      "say": "Every connected app is listed with how many questions it asked. Disconnect stops it at once, and asks first.",
+      "do": [
+        {
+          "highlight_target": "#ca-apps",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "What it can do",
+      "say": "These are the tools an AI app may use: reads look things up, changes press one of {product}'s own buttons, and the steps marked for a person are never done by a tool. Each can be switched off in People and access under Connect your AI.",
+      "do": [
+        {
+          "highlight_target": ".ca-tools",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "For developers",
+      "say": "An app that cannot sign in - a script, or Claude Code - can use a key instead. Keys are made under For developers, shown once, and revoked there.",
+      "do": [
+        {
+          "highlight_target": ".ca-dev",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    }
+  ]
+}

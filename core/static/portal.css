@@ -1305,43 +1305,36 @@ select option{background:var(--panel);color:var(--ink)}
 .fx-art .dot{fill:var(--brand-2);opacity:.45}
 @keyframes fx-in{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){.fx-none{animation:none}}
-
-/* 2026-10-23 Admin > Agent & MCP (static/page-mcp.js): the road picture, the key, the line to paste, the tools - theme tokens only */
-.mcp-art{padding:18px 20px}
-.mcp-road{display:flex;align-items:flex-start;gap:6px}
-.mcp-node{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;text-align:center;gap:2px}
-.mcp-glyph{display:grid;place-items:center;width:64px;height:64px;border-radius:18px;background:var(--bg-2);border:1px solid var(--line)}
-.mcp-glyph svg{width:46px;height:46px}
-.mcp-nt{display:flex;flex-direction:column;align-items:center;gap:2px;min-width:0;margin-top:6px}
-.mcp-door .mcp-glyph{background:var(--brand-soft);border-color:var(--brand-line)}
-.mcp-keynode .mcp-glyph{background:var(--warn-soft)}
-.mcp-flow{flex:0 1 70px;min-width:24px;height:12px;margin-top:26px}
-.mcp-human{display:flex;gap:12px;align-items:center;margin-top:14px;padding:10px 14px;border:1.5px dashed var(--line-2);border-radius:12px;background:var(--bg-2)}
-.mcp-human svg{flex:none;width:38px;height:38px}
-.mcp-human p{margin:2px 0 0}
-.mcp-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.6fr);gap:16px;margin-top:16px}
-.mcp-key h3,.mcp-steps h3,.mcp-tools h3{display:flex;align-items:center;gap:8px;margin:0 0 8px}
-.mcp-hint{font-weight:600;margin:4px 0}
-.mcp-ol{margin:0 0 8px;padding-left:20px}
-.mcp-ol li{margin:3px 0}
-.mcp-cmd{display:flex;gap:8px;align-items:flex-start;background:var(--bg-2);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
-.mcp-cmd code{flex:1;min-width:0;font-size:12.5px;line-height:1.5;white-space:pre-wrap;word-break:break-all;color:var(--ink)}
-.mcp-once{border-color:var(--warn);background:var(--warn-soft)}
-.mcp-tools{margin-top:16px}
-.mcp-tool{display:flex;gap:12px;padding:10px 4px;border-top:1px solid var(--line)}
-.mcp-tool:first-child{border-top:0}
-.mcp-ti{flex:none;display:grid;place-items:center;width:30px;height:30px;border-radius:9px;background:var(--ok-soft);color:var(--ok)}
-.mcp-tool.k-change .mcp-ti{background:var(--brand-soft);color:var(--brand)}
-.mcp-tool.k-human .mcp-ti{background:var(--warn-soft);color:var(--warn)}
-.mcp-tn{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
-.mcp-tn code{display:inline-block;width:auto;font-size:12.5px;color:var(--brand);background:var(--brand-soft);padding:1px 7px;border-radius:6px}
-.mcp-tool p{margin:3px 0 0}
-.mcp-calls code{display:inline-block;max-width:100%;font-size:11.5px;margin:0 6px 4px 0;overflow-wrap:anywhere}
-@media (max-width:900px){.mcp-grid{grid-template-columns:minmax(0,1fr)}}
-@media (max-width:640px){.mcp-road{flex-direction:column;align-items:stretch;gap:0}
-  .mcp-node{flex-direction:row;text-align:left;gap:12px;align-items:center}
-  .mcp-flow{flex:none;width:22px;height:22px;margin:0 0 0 15px;transform:rotate(90deg)}
-  .mcp-nt{align-items:flex-start;margin-top:0}
-  .mcp-glyph{flex:none;width:52px;height:52px}.mcp-glyph svg{width:38px;height:38px}
-  .mcp-cmd{flex-direction:column;align-items:stretch}.mcp-cmd button{align-self:flex-end}}
-@media (prefers-reduced-motion:reduce){.mcp-flow animate{display:none}}
+/* 2026-10-24 Admin > Connect your AI (core/static/page-connect-ai.js, the SteadyMove / AstroStage screen) - theme tokens only */
+.ag-list{list-style:none;margin:8px 0 0;padding:0;display:flex;flex-direction:column;gap:6px;font-size:.86rem}
+.ag-list li{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+.ag-list li.bad .ico{color:var(--bad)}
+.ag-list li.ok .ico{color:var(--ok)}
+.ca-howrow{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.ca-art{width:220px;max-width:100%;height:auto;flex:0 0 auto}
+.ca-wire{animation:ca-flow 1.6s linear infinite}
+@keyframes ca-flow{to{stroke-dashoffset:-22}}
+@media (prefers-reduced-motion:reduce){.ca-wire{animation:none}}
+.ca-steps{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:8px;flex:1 1 260px}
+.ca-steps li{display:flex;flex-direction:column;gap:2px}
+.ca-copy{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.ca-copy code{flex:1 1 220px;min-width:0;overflow-wrap:anywhere;padding:8px 10px;border:1px solid var(--line);border-radius:var(--radius-sm);background:var(--bg);font-size:.85rem}
+.ca-make{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 12px}
+.ca-make input{flex:1 1 240px;min-width:0}
+.ca-keys{display:flex;flex-direction:column;gap:8px}
+.ca-key{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:var(--radius);flex-wrap:wrap}
+.ca-dot{width:9px;height:9px;border-radius:50%;background:var(--faint);flex:0 0 auto;display:inline-block}
+.ca-dot.on{background:var(--ok);box-shadow:0 0 0 3px var(--ok-soft)}
+.ca-status{display:grid;grid-template-columns:auto 1fr;align-items:center;column-gap:10px;row-gap:2px;padding:10px 12px;border:1px solid var(--line);border-radius:var(--radius);background:var(--bg);margin:6px 0 10px}
+.ca-allow{max-width:560px;margin:40px auto;text-align:center;display:flex;flex-direction:column;align-items:center;gap:10px}
+.ca-allow h1{font-size:1.3rem;margin:6px 0 0}
+.ca-allow p{margin:0;line-height:1.5}
+.ca-allow-acts{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:8px}
+.ca-dev summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px}
+.ca-dev summary::-webkit-details-marker{display:none}
+.ca-dev[open] summary{margin-bottom:8px}
+.ca-kt{display:flex;flex-direction:column;flex:1 1 200px;min-width:0}
+.ca-tools{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(380px,100%),1fr));gap:12px}
+.ca-tool{padding:12px;border:1px solid var(--line);border-radius:var(--radius);background:var(--bg);display:flex;flex-direction:column;gap:4px}
+.ca-tool p{margin:0}
+.ca-status > .small{grid-column:2}

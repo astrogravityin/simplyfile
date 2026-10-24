@@ -1,0 +1,449 @@
+{
+  "chip_id": "mcp.server",
+  "kind": "accessor",
+  "set": "mcp",
+  "label": "Connect your AI: the MCP door's keys, name, limits and words",
+  "aliases": [
+    "server"
+  ],
+  "params": [
+    {
+      "name": "key",
+      "type": "record",
+      "default": {
+        "prefix": "vsmcp_",
+        "bytes": 32,
+        "max_active": 5,
+        "label_chars": 60
+      },
+      "label": "MCP keys: how they look, how many may be live"
+    },
+    {
+      "name": "server",
+      "type": "record",
+      "default": {
+        "name": "",
+        "title": "",
+        "version": "1.0",
+        "protocol_versions": [
+          "2025-06-18",
+          "2025-03-26",
+          "2024-11-05"
+        ],
+        "instructions": "This server works in a ValueStream portal as its owner, for tests and demos: each tool is one of the portal's own buttons - reads look things up, changes press a button. Start with the status tool. A tool marked as a person's step is never done by a tool: its answer says what the person does (signing in, payments, filing elsewhere)."
+      },
+      "label": "The server's name and what it tells the AI app"
+    },
+    {
+      "name": "limits",
+      "type": "record",
+      "default": {
+        "calls_per_minute": 60,
+        "results_max": 20,
+        "session_seconds": 300
+      },
+      "label": "Calls per minute per key; most rows in one answer"
+    },
+    {
+      "name": "parse",
+      "type": "text",
+      "default": "The request is not valid JSON-RPC.",
+      "label": "parse"
+    },
+    {
+      "name": "bad_key",
+      "type": "text",
+      "default": "This MCP key is unknown or revoked. Make a new one on the Connect your AI screen.",
+      "label": "bad key"
+    },
+    {
+      "name": "unknown_method",
+      "type": "text",
+      "default": "This server does not offer the method {method}.",
+      "label": "unknown method"
+    },
+    {
+      "name": "unknown_tool",
+      "type": "text",
+      "default": "There is no tool named {tool}. Ask tools/list for the tools on offer.",
+      "label": "unknown tool"
+    },
+    {
+      "name": "tool_off",
+      "type": "text",
+      "default": "The tool {tool} is switched off on this server.",
+      "label": "tool off"
+    },
+    {
+      "name": "not_allowed",
+      "type": "text",
+      "default": "Your account may not use the tool {tool}.",
+      "label": "not allowed"
+    },
+    {
+      "name": "rate",
+      "type": "text",
+      "default": "Too many calls in a minute. Wait a moment and try again.",
+      "label": "rate"
+    },
+    {
+      "name": "bad_input",
+      "type": "text",
+      "default": "The tool {tool} needs: {need}.",
+      "label": "bad input"
+    },
+    {
+      "name": "failed",
+      "type": "text",
+      "default": "It could not finish: {why}",
+      "label": "failed"
+    },
+    {
+      "name": "nothing_found",
+      "type": "text",
+      "default": "Nothing matched \"{query}\". Try fewer or different words.",
+      "label": "nothing found"
+    },
+    {
+      "name": "key_limit",
+      "type": "text",
+      "default": "There are already {max} live MCP keys. Revoke one first.",
+      "label": "key limit"
+    },
+    {
+      "name": "key_missing",
+      "type": "text",
+      "default": "That MCP key does not exist.",
+      "label": "key missing"
+    },
+    {
+      "name": "key_made",
+      "type": "text",
+      "default": "Key made - copy it now; it is shown only this once.",
+      "label": "key made"
+    },
+    {
+      "name": "key_revoked",
+      "type": "text",
+      "default": "Key revoked - an AI app using it can no longer connect.",
+      "label": "key revoked"
+    },
+    {
+      "name": "key_default_label",
+      "type": "text",
+      "default": "My AI app",
+      "label": "key default label"
+    },
+    {
+      "name": "oauth",
+      "type": "record",
+      "default": {
+        "db": "mcp.sqlite3",
+        "scope": "mcp",
+        "code_prefix": "vsmcc_",
+        "access_prefix": "vsmca_",
+        "refresh_prefix": "vsmcr_",
+        "bytes": 32,
+        "code_minutes": 10,
+        "access_minutes": 60,
+        "refresh_days": 30,
+        "max_redirect_uris": 5,
+        "name_chars": 80
+      },
+      "label": "Sign in from the AI app: token shapes and lifetimes"
+    },
+    {
+      "name": "local_hosts",
+      "type": "list",
+      "default": [
+        "localhost",
+        "127.0.0.1",
+        "[::1]"
+      ],
+      "label": "This computer: http allowed only here (an AI app's loopback return address)"
+    },
+    {
+      "name": "check",
+      "type": "record",
+      "default": {
+        "tool": "status",
+        "arguments": {},
+        "connected_days": 30
+      },
+      "label": "What Check asks through the door; how recent a call counts as connected"
+    },
+    {
+      "name": "poll_seconds",
+      "type": "number",
+      "default": 8,
+      "label": "The screen re-reads the connection status this often while it is open"
+    },
+    {
+      "name": "sign_in_needed",
+      "type": "text",
+      "default": "Sign in first: add this server in your AI app and press Connect.",
+      "label": "sign in needed"
+    },
+    {
+      "name": "token_bad",
+      "type": "text",
+      "default": "This sign-in has ended or was disconnected. Connect again in your AI app.",
+      "label": "token bad"
+    },
+    {
+      "name": "oauth_app_default",
+      "type": "text",
+      "default": "AI app",
+      "label": "oauth app default"
+    },
+    {
+      "name": "oauth_redirect_rule",
+      "type": "text",
+      "default": "Return addresses must be https, or http on your own computer.",
+      "label": "oauth redirect rule"
+    },
+    {
+      "name": "oauth_client_unknown",
+      "type": "text",
+      "default": "This AI app is not registered here - add the server again in the app.",
+      "label": "oauth client unknown"
+    },
+    {
+      "name": "oauth_redirect_bad",
+      "type": "text",
+      "default": "That return address was not registered by this AI app.",
+      "label": "oauth redirect bad"
+    },
+    {
+      "name": "oauth_response_type",
+      "type": "text",
+      "default": "Only the code flow is offered.",
+      "label": "oauth response type"
+    },
+    {
+      "name": "oauth_pkce",
+      "type": "text",
+      "default": "The AI app must use PKCE (S256).",
+      "label": "oauth pkce"
+    },
+    {
+      "name": "oauth_not_allowed",
+      "type": "text",
+      "default": "Your account may not connect AI apps here.",
+      "label": "oauth not allowed"
+    },
+    {
+      "name": "oauth_code_bad",
+      "type": "text",
+      "default": "That sign-in code is unknown, used or expired - connect again.",
+      "label": "oauth code bad"
+    },
+    {
+      "name": "oauth_verifier_bad",
+      "type": "text",
+      "default": "The sign-in proof did not match - connect again.",
+      "label": "oauth verifier bad"
+    },
+    {
+      "name": "oauth_refresh_bad",
+      "type": "text",
+      "default": "This connection has ended - connect again in your AI app.",
+      "label": "oauth refresh bad"
+    },
+    {
+      "name": "oauth_grant_type",
+      "type": "text",
+      "default": "Unknown grant type.",
+      "label": "oauth grant type"
+    },
+    {
+      "name": "connection_missing",
+      "type": "text",
+      "default": "That connection does not exist.",
+      "label": "connection missing"
+    },
+    {
+      "name": "disconnected",
+      "type": "text",
+      "default": "Disconnected - that AI app can no longer look anything up.",
+      "label": "disconnected"
+    },
+    {
+      "name": "check_init",
+      "type": "text",
+      "default": "The server answers",
+      "label": "check init"
+    },
+    {
+      "name": "check_list",
+      "type": "text",
+      "default": "It lists {n} {n:tool|tools}",
+      "label": "check list"
+    },
+    {
+      "name": "check_call",
+      "type": "text",
+      "default": "A tool answers ({tool})",
+      "label": "check call"
+    },
+    {
+      "name": "check_failed",
+      "type": "text",
+      "default": "Stopped here: {why}",
+      "label": "check failed"
+    },
+    {
+      "name": "check_ok",
+      "type": "text",
+      "default": "Everything works - an AI app that connects will get answers.",
+      "label": "check ok"
+    },
+    {
+      "name": "human_step",
+      "type": "text",
+      "default": "{title}: a person does this, never a tool. {say}",
+      "label": "human step"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "key": "$key",
+      "server": "$server",
+      "limits": "$limits",
+      "parse": "$parse",
+      "bad_key": "$bad_key",
+      "unknown_method": "$unknown_method",
+      "unknown_tool": "$unknown_tool",
+      "tool_off": "$tool_off",
+      "not_allowed": "$not_allowed",
+      "rate": "$rate",
+      "bad_input": "$bad_input",
+      "failed": "$failed",
+      "nothing_found": "$nothing_found",
+      "key_limit": "$key_limit",
+      "key_missing": "$key_missing",
+      "key_made": "$key_made",
+      "key_revoked": "$key_revoked",
+      "key_default_label": "$key_default_label",
+      "oauth": "$oauth",
+      "local_hosts": "$local_hosts",
+      "check": "$check",
+      "poll_seconds": "$poll_seconds",
+      "sign_in_needed": "$sign_in_needed",
+      "token_bad": "$token_bad",
+      "oauth_app_default": "$oauth_app_default",
+      "oauth_redirect_rule": "$oauth_redirect_rule",
+      "oauth_client_unknown": "$oauth_client_unknown",
+      "oauth_redirect_bad": "$oauth_redirect_bad",
+      "oauth_response_type": "$oauth_response_type",
+      "oauth_pkce": "$oauth_pkce",
+      "oauth_not_allowed": "$oauth_not_allowed",
+      "oauth_code_bad": "$oauth_code_bad",
+      "oauth_verifier_bad": "$oauth_verifier_bad",
+      "oauth_refresh_bad": "$oauth_refresh_bad",
+      "oauth_grant_type": "$oauth_grant_type",
+      "connection_missing": "$connection_missing",
+      "disconnected": "$disconnected",
+      "check_init": "$check_init",
+      "check_list": "$check_list",
+      "check_call": "$check_call",
+      "check_failed": "$check_failed",
+      "check_ok": "$check_ok",
+      "human_step": "$human_step"
+    }
+  },
+  "returns": "record",
+  "version": 2,
+  "status": "published",
+  "description_nl": "2026-10-23: core/mcp.py (the AstroStage chip mcp.server shape).",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "key": {
+          "prefix": "vsmcp_",
+          "bytes": 32,
+          "max_active": 5,
+          "label_chars": 60
+        },
+        "server": {
+          "name": "",
+          "title": "",
+          "version": "1.0",
+          "protocol_versions": [
+            "2025-06-18",
+            "2025-03-26",
+            "2024-11-05"
+          ],
+          "instructions": "This server works in a ValueStream portal as its owner, for tests and demos: each tool is one of the portal's own buttons - reads look things up, changes press a button. Start with the status tool. A tool marked as a person's step is never done by a tool: its answer says what the person does (signing in, payments, filing elsewhere)."
+        },
+        "limits": {
+          "calls_per_minute": 60,
+          "results_max": 20,
+          "session_seconds": 300
+        },
+        "parse": "The request is not valid JSON-RPC.",
+        "bad_key": "This MCP key is unknown or revoked. Make a new one on the Connect your AI screen.",
+        "unknown_method": "This server does not offer the method {method}.",
+        "unknown_tool": "There is no tool named {tool}. Ask tools/list for the tools on offer.",
+        "tool_off": "The tool {tool} is switched off on this server.",
+        "not_allowed": "Your account may not use the tool {tool}.",
+        "rate": "Too many calls in a minute. Wait a moment and try again.",
+        "bad_input": "The tool {tool} needs: {need}.",
+        "failed": "It could not finish: {why}",
+        "nothing_found": "Nothing matched \"{query}\". Try fewer or different words.",
+        "key_limit": "There are already {max} live MCP keys. Revoke one first.",
+        "key_missing": "That MCP key does not exist.",
+        "key_made": "Key made - copy it now; it is shown only this once.",
+        "key_revoked": "Key revoked - an AI app using it can no longer connect.",
+        "key_default_label": "My AI app",
+        "oauth": {
+          "db": "mcp.sqlite3",
+          "scope": "mcp",
+          "code_prefix": "vsmcc_",
+          "access_prefix": "vsmca_",
+          "refresh_prefix": "vsmcr_",
+          "bytes": 32,
+          "code_minutes": 10,
+          "access_minutes": 60,
+          "refresh_days": 30,
+          "max_redirect_uris": 5,
+          "name_chars": 80
+        },
+        "local_hosts": [
+          "localhost",
+          "127.0.0.1",
+          "[::1]"
+        ],
+        "check": {
+          "tool": "status",
+          "arguments": {},
+          "connected_days": 30
+        },
+        "poll_seconds": 8,
+        "sign_in_needed": "Sign in first: add this server in your AI app and press Connect.",
+        "token_bad": "This sign-in has ended or was disconnected. Connect again in your AI app.",
+        "oauth_app_default": "AI app",
+        "oauth_redirect_rule": "Return addresses must be https, or http on your own computer.",
+        "oauth_client_unknown": "This AI app is not registered here - add the server again in the app.",
+        "oauth_redirect_bad": "That return address was not registered by this AI app.",
+        "oauth_response_type": "Only the code flow is offered.",
+        "oauth_pkce": "The AI app must use PKCE (S256).",
+        "oauth_not_allowed": "Your account may not connect AI apps here.",
+        "oauth_code_bad": "That sign-in code is unknown, used or expired - connect again.",
+        "oauth_verifier_bad": "The sign-in proof did not match - connect again.",
+        "oauth_refresh_bad": "This connection has ended - connect again in your AI app.",
+        "oauth_grant_type": "Unknown grant type.",
+        "connection_missing": "That connection does not exist.",
+        "disconnected": "Disconnected - that AI app can no longer look anything up.",
+        "check_init": "The server answers",
+        "check_list": "It lists {n} {n:tool|tools}",
+        "check_call": "A tool answers ({tool})",
+        "check_failed": "Stopped here: {why}",
+        "check_ok": "Everything works - an AI app that connects will get answers.",
+        "human_step": "{title}: a person does this, never a tool. {say}"
+      }
+    }
+  ]
+}
