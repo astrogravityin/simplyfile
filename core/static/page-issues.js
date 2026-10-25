@@ -18,7 +18,7 @@ export async function issuesPage(host) {
   listBox(host.querySelector('#is-list'), { list: 'issues', args: { status }, empty: w('none'),
     row: (r) => `<div class="lent-row" style="display:block;padding:8px 0">
         <div class="row tight small"><span class="tag ${r.status === 'open' ? 'warn' : 'ok'}">${esc(r.status === 'open' ? w('open') : w('resolved'))}</span>
-          <b>${esc(r.title)}</b><span class="muted">${esc(w('from', { name: r.name, email: r.email }))}</span>
+          <b class="is-title">${esc(r.title)}</b><span class="muted">${esc(w('from', { name: r.name, email: r.email }))}</span>
           <span class="spacer"></span><span class="small muted">${esc(w('filed', { at: when(r.at) }))}</span>
           ${admin() && r.status === 'open' ? `<button type="button" class="small" data-push-open="${esc(r.id)}">${icon('share', 12)} ${esc(w('push'))}</button>` : ''}
           <button type="button" class="small" data-open="${esc(r.id)}">${icon('right', 12)} ${esc(r.status === 'open' ? w('resolve') : w('reopen'))}</button></div>
@@ -55,46 +55,107 @@ async function follow(rows, iid) {
   } catch { /* the stored stage stays shown */ }
 }
 
+// The road an issue takes, drawn: this issue (lit) -> request -> build machine -> pull request. Lucide-style glyphs, theme colours.
+const FLOW = [
+  ['push_flow_issue', '<circle cx="12" cy="12" r="9"/><path d="M12 7.5v5"/><path d="M12 16.2h.01"/>'],
+  ['push_flow_request', '<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h4"/>'],
+  ['push_flow_build', '<rect x="5" y="5" width="14" height="14" rx="2"/><rect x="9.5" y="9.5" width="5" height="5" rx="1"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3"/>'],
+  ['push_flow_pr', '<circle cx="6" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="M6 8.5V21"/><path d="M13 6h3a2 2 0 0 1 2 2v7.5"/><path d="m15.5 3.5-2.5 2.5 2.5 2.5"/>'],
+];
+
+function flow(target) {
+  const x = (i) => 50 + i * 100;
+  return `<figure class="push-flow" role="img" aria-label="${esc(w('push_flow_label', { target }))}">
+    <svg viewBox="0 0 400 56" aria-hidden="true">
+      ${FLOW.slice(1).map((_f, i) => `<path class="wire" d="M${x(i) + 26} 28H${x(i + 1) - 29}"/><path class="tip" d="m${x(i + 1) - 33} 24 4 4-4 4"/>`).join('')}
+      ${FLOW.map(([_k, g], i) => `<g class="node${i ? '' : ' here'}">${i ? '' : `<circle class="halo" cx="${x(i)}" cy="28" r="25"/>`}
+        <circle class="dot" cx="${x(i)}" cy="28" r="20"/><g class="glyph" transform="translate(${x(i) - 10.8} 17.2) scale(.9)">${g}</g></g>`).join('')}
+    </svg>
+    <figcaption>${FLOW.map(([k], i) => `<span class="${i ? '' : 'here'}">${esc(w(k))}</span>`).join('')}</figcaption></figure>`;
+}
+
 async function pushTo(r, done, tid = '') {
   const m = await api('/api/core/issues/push');
   const pick = m.targets.find((x) => x.id === tid) || m.targets[0];
-  const again = (tid) => (r.pushed || []).filter((p) => p.target === tid).slice(-1)[0];
-  const before = again(pick.id);
-  modal(w('push_title'), `<p class="small muted">${esc(w('push_lede'))}</p>
-    <div class="field"><label>${esc(w('push_to'))}</label><div class="row tight" role="radiogroup">${m.targets.map((x) =>
-      `<button type="button" role="radio" aria-checked="${x.id === pick.id}" data-push-target="${esc(x.id)}" class="${x.id === pick.id ? 'primary' : ''}">${esc(x.label)}</button>`).join('')}</div>
-      <span class="small muted">${esc(pick.hint)} ${esc(w('push_company', { company: pick.company, project: pick.project }))}</span></div>
-    ${pick.ready ? '' : `<p class="small" data-push-why>${esc(w('push_no_key', { target: pick.label }))}</p>
-      ${secretField('push-key', w('push_key', { target: pick.label }), { hint: esc(w('push_key_hint', { target: pick.label })) })}
-      <div class="row tight" style="margin:0 0 14px"><button type="button" id="push-key-save">${esc(w('push_key_save'))}</button></div>`}
-    ${before ? `<p class="small" data-push-again>${esc(w('push_again', { target: before.label, ref: before.ref, at: when(before.at) }))}</p>` : ''}
-    <div class="field"><label for="push-type">${esc(w('push_type'))}</label><select id="push-type" data-push-type>${pick.types.map((v) =>
-      `<option value="${esc(v)}" ${v === pick.type ? 'selected' : ''}>${esc(w(`type_${v}`))}</option>`).join('')}</select></div>
+  const before = (r.pushed || []).filter((p) => p.target === pick.id).slice(-1)[0];
+  const T = { target: pick.label };
+  const pill = (ready) => `<span class="tag ${ready ? 'ok' : 'warn'}" data-push-state>${icon(ready ? 'check' : 'plug', 11)} ${esc(w(ready ? 'push_ready' : 'push_not_ready'))}</span>`;
+  const paste = `${secretField('push-key', w('push_key', T), { hint: esc(w('push_key_hint', T)) })}
+      <button type="button" id="push-key-save">${icon('key', 13)} ${esc(w('push_key_save'))}</button>`;
+  modal(w('push_title', T), `<p class="push-lede">${esc(w('push_lede', T))}</p>
+    ${flow(pick.label)}
+    <div class="push-dests" role="radiogroup" aria-label="${esc(w('push_to'))}">${m.targets.map((x) => `
+      <button type="button" role="radio" class="push-dest${x.id === pick.id ? ' on' : ''}" aria-checked="${x.id === pick.id}" data-push-target="${esc(x.id)}">
+        <span class="mark" aria-hidden="true">${esc(x.label.slice(0, 1))}</span>
+        <span class="who"><b>${esc(x.label)}</b><span>${esc(w('push_company', { company: x.company, project: x.project }))}</span></span>
+        ${x.id === pick.id ? pill(x.ready) : ''}</button>`).join('')}</div>
+    ${pick.ready ? '' : `<section class="push-connect" data-push-connect>
+      ${pick.connect ? `<div class="push-connect-row"><span class="ico">${icon('plug', 18)}</span><p>${esc(w('push_connect_lede', T))}</p>
+        <button type="button" class="primary" id="push-connect" data-push-connect-go>${esc(w('push_connect', T))}</button></div>
+        <details><summary>${esc(w('push_paste_instead'))}</summary>${paste}</details>` : paste}
+      <div id="push-connect-msg"></div></section>`}
+    ${before ? `<div id="push-again" data-push-again></div>` : ''}
+    <div class="field"><label>${esc(w('push_type'))}</label><div class="tabs push-kinds" role="radiogroup" aria-label="${esc(w('push_type'))}">${pick.types.map((v) =>
+      `<button type="button" role="radio" aria-checked="${v === pick.type}" class="${v === pick.type ? 'on' : ''}" data-push-type="${esc(v)}">${esc(w(`type_${v}`))}</button>`).join('')}</div></div>
     <div class="field"><label for="push-title">${esc(w('push_req_title'))}</label><input id="push-title" data-push-title value="${esc(r.title)}"/></div>
-    <div class="field"><label for="push-text">${esc(w('push_text'))}</label><textarea id="push-text" rows="5" data-push-text>${esc(r.text)}</textarea></div>
+    <div class="field"><label for="push-text">${esc(w('push_text'))}</label><textarea id="push-text" rows="4" data-push-text>${esc(r.text)}</textarea></div>
     <div id="push-msg"></div>`, {
-    wide: true,
-    footer: `<button type="button" data-cancel>${esc(w('push_cancel'))}</button>
-      <button type="button" class="primary" id="push-go" data-push-send>${icon('share', 13)} ${esc(w('push_send'))}</button>`,
+    cls: 'push-modal', stay: true,
+    footer: `<button type="button" class="ghost" data-cancel>${esc(w('push_cancel'))}</button>
+      <button type="button" class="primary" id="push-go" data-push-send>${icon('send', 14)} ${esc(w('push_send'))}</button>`,
     onOpen: (host, close) => {
       const card = host.closest('.modal');
+      let kind = pick.type;
+      const tell = (el, kind2, text) => { say(el, kind2, text); el.scrollIntoView({ block: 'nearest' }); };   // never below the fold
       card.querySelector('[data-cancel]').onclick = close;
-      wireSecrets(host);   // another target, or a key just kept: the dialog opens again on it (no page HTML rewritten)
-      host.querySelectorAll('[data-push-target]').forEach((b) => { b.onclick = () => { close(); pushTo(r, done, b.dataset.pushTarget); }; });
+      wireSecrets(host);
+      if (before) say(host.querySelector('#push-again'), 'warn', esc(w('push_again', { target: before.label, ref: before.ref, at: when(before.at) })));
+      host.querySelectorAll('[data-push-target]').forEach((b) => { if (b.dataset.pushTarget !== pick.id) b.onclick = () => { close(); pushTo(r, done, b.dataset.pushTarget); }; });
+      host.querySelectorAll('[data-push-type]').forEach((b) => { b.onclick = () => {
+        kind = b.dataset.pushType;
+        host.querySelectorAll('[data-push-type]').forEach((o) => { o.classList.toggle('on', o === b); o.setAttribute('aria-checked', String(o === b)); });
+      }; });
+      const ready = (message) => {   // a key kept or Connect allowed: the step folds away, the rest of the form stays as typed
+        pick.ready = true;
+        host.querySelector('[data-push-connect]')?.remove();
+        host.querySelector('[data-push-state]').outerHTML = pill(true);
+        say(host.querySelector('#push-msg'), '', '');
+        toast(message, 'ok', 6);
+      };
+      const go = host.querySelector('#push-connect');
+      if (go) go.onclick = async () => {
+        const win = window.open('about:blank', 'push-connect', 'width=520,height=720');
+        const msg = host.querySelector('#push-connect-msg');
+        if (!win) { tell(msg, 'bad', esc(w('push_popup_blocked'))); return; }
+        try {
+          const x = await api('/api/core/issues/push/connect', { method: 'POST', body: { target: pick.id } });
+          win.location = x.url;
+          tell(msg, 'info', esc(w('push_connect_wait', T)));
+          const ch = new BroadcastChannel('push-connect');   // the window's last page is on this site: it says how it went
+          ch.onmessage = (e) => { ch.close(); if (e.data.push_connect) ready(w('push_connect_done', T)); else tell(msg, 'bad', esc(e.data.message)); };
+        } catch (err) { win.close(); tell(msg, 'bad', esc(err.message)); }
+      };
       const keep = host.querySelector('#push-key-save');
       if (keep) keep.onclick = (e) => busy(e.currentTarget, async () => {
         try {
           const x = await api('/api/core/issues/push/key', { method: 'POST', body: { target: pick.id, key: host.querySelector('#push-key').value } });
-          toast(x.message, 'ok', 6); close(); pushTo(r, done, pick.id);
-        } catch (err) { say(host.querySelector('#push-msg'), 'bad', esc(err.message)); }
+          ready(x.message);
+        } catch (err) { tell(host.querySelector('#push-connect-msg'), 'bad', esc(err.message)); }
       });
-      card.querySelector('#push-go').onclick = (e) => busy(e.currentTarget, async () => {
-        try {
-          const x = await api(`/api/core/issues/${encodeURIComponent(r.id)}/push`, { method: 'POST', body: {
-            target: pick.id, type: host.querySelector('#push-type').value, title: host.querySelector('#push-title').value, text: host.querySelector('#push-text').value } });
-          close(); toast(x.message, 'ok', 8); done();
-        } catch (err) { say(host.querySelector('#push-msg'), 'bad', esc(err.message)); }
-      });
+      card.querySelector('#push-go').onclick = (e) => {
+        if (!pick.ready) {   // never greyed: a press before Connect says what to do and points at it
+          tell(host.querySelector('#push-connect-msg'), 'bad', esc(w('push_no_key', T)));   // said inside the step it points at
+          (go || host.querySelector('#push-key'))?.focus();
+          return;
+        }
+        busy(e.currentTarget, async () => {
+          try {
+            const x = await api(`/api/core/issues/${encodeURIComponent(r.id)}/push`, { method: 'POST', body: {
+              target: pick.id, type: kind, title: host.querySelector('#push-title').value, text: host.querySelector('#push-text').value } });
+            close(); toast(x.message, 'ok', 8); done();
+          } catch (err) { tell(host.querySelector('#push-msg'), 'bad', esc(err.message)); }
+        });
+      };
     } });
 }
 

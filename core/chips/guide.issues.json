@@ -1,0 +1,150 @@
+{
+  "chip_id": "guide.issues",
+  "kind": "accessor",
+  "set": "guide",
+  "label": "Guide me: Reported issues",
+  "aliases": [
+    "issues",
+    "push to"
+  ],
+  "params": [
+    {
+      "name": "title",
+      "type": "text",
+      "default": "Reported issues",
+      "label": "title"
+    },
+    {
+      "name": "lede",
+      "type": "text",
+      "default": "Answer what people report in {product}, or push an issue to CodyFy to be built.",
+      "label": "lede"
+    },
+    {
+      "name": "icon",
+      "type": "text",
+      "default": "flag",
+      "label": "icon"
+    },
+    {
+      "name": "minutes",
+      "type": "number",
+      "default": 2,
+      "label": "minutes"
+    },
+    {
+      "name": "steps",
+      "type": "list",
+      "default": [
+        {
+          "title": "Reported issues",
+          "say": "Everything people report from any screen in {product} lands here: who sent it, from which screen, and what is wrong.",
+          "target": "header.pagehead",
+          "art": {
+            "kind": "hero",
+            "icon": "flag"
+          }
+        },
+        {
+          "title": "The queue",
+          "say": "Open, Resolved and All sort the queue. Each row shows the report, where it came from, and any answer already given.",
+          "target": "#is-list"
+        },
+        {
+          "title": "Push to",
+          "say": "When an issue needs a code change, the portal admin presses Push to on its row.",
+          "target": "[data-push-open]"
+        },
+        {
+          "title": "The road it takes",
+          "say": "The picture shows the road: this issue becomes a CodyFy request, its build machine writes the change, and a pull request comes back for your review.",
+          "target": ".push-flow",
+          "open": "[data-push-open]"
+        },
+        {
+          "title": "Where it goes",
+          "say": "The card names the company and project it lands in. The first time, press Connect CodyFy, sign in there and press Allow; nothing to copy. After that the card simply says Connected.",
+          "target": ".push-dests"
+        },
+        {
+          "title": "Kind, title and details",
+          "say": "Pick the kind of request. The title and details come from the issue; change them if you like.",
+          "target": ".push-kinds"
+        },
+        {
+          "title": "Push",
+          "say": "Press Push. The row then shows the request and its stage, with a link to open it in CodyFy.",
+          "target": "#push-go"
+        }
+      ],
+      "label": "steps: title, say, target (what to light up), open (what to press first)"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "title": "$title",
+      "lede": "$lede",
+      "icon": "$icon",
+      "minutes": "$minutes",
+      "steps": "$steps"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-25 (SimplyFile, boilerplate): Admin > Reported issues and its Push to dialog (core/static/page-issues.js) - every Fy portal.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "title": "Reported issues",
+        "lede": "Answer what people report in {product}, or push an issue to CodyFy to be built.",
+        "icon": "flag",
+        "minutes": 2,
+        "steps": [
+          {
+            "title": "Reported issues",
+            "say": "Everything people report from any screen in {product} lands here: who sent it, from which screen, and what is wrong.",
+            "target": "header.pagehead",
+            "art": {
+              "kind": "hero",
+              "icon": "flag"
+            }
+          },
+          {
+            "title": "The queue",
+            "say": "Open, Resolved and All sort the queue. Each row shows the report, where it came from, and any answer already given.",
+            "target": "#is-list"
+          },
+          {
+            "title": "Push to",
+            "say": "When an issue needs a code change, the portal admin presses Push to on its row.",
+            "target": "[data-push-open]"
+          },
+          {
+            "title": "The road it takes",
+            "say": "The picture shows the road: this issue becomes a CodyFy request, its build machine writes the change, and a pull request comes back for your review.",
+            "target": ".push-flow",
+            "open": "[data-push-open]"
+          },
+          {
+            "title": "Where it goes",
+            "say": "The card names the company and project it lands in. The first time, press Connect CodyFy, sign in there and press Allow; nothing to copy. After that the card simply says Connected.",
+            "target": ".push-dests"
+          },
+          {
+            "title": "Kind, title and details",
+            "say": "Pick the kind of request. The title and details come from the issue; change them if you like.",
+            "target": ".push-kinds"
+          },
+          {
+            "title": "Push",
+            "say": "Press Push. The row then shows the request and its stage, with a link to open it in CodyFy.",
+            "target": "#push-go"
+          }
+        ]
+      }
+    }
+  ]
+}

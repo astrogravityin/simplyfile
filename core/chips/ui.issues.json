@@ -105,31 +105,31 @@
     {
       "name": "push_title",
       "type": "text",
-      "default": "Push this issue to",
+      "default": "Push to {target}",
       "label": "push title"
     },
     {
       "name": "push_lede",
       "type": "text",
-      "default": "It becomes a request there; this row then follows its stage.",
+      "default": "{target} turns this issue into a request; its build machine writes the change and opens a pull request for your review.",
       "label": "push lede"
     },
     {
       "name": "push_to",
       "type": "text",
-      "default": "Send to",
+      "default": "Destination",
       "label": "push to"
     },
     {
       "name": "push_company",
       "type": "text",
-      "default": "Company {company}, project {project}",
+      "default": "{company} · {project}",
       "label": "push company"
     },
     {
       "name": "push_type",
       "type": "text",
-      "default": "Kind of request",
+      "default": "Kind",
       "label": "push type"
     },
     {
@@ -153,13 +153,13 @@
     {
       "name": "push_req_title",
       "type": "text",
-      "default": "Request title",
+      "default": "Title",
       "label": "push req title"
     },
     {
       "name": "push_text",
       "type": "text",
-      "default": "What to build",
+      "default": "Details",
       "label": "push text"
     },
     {
@@ -183,7 +183,7 @@
     {
       "name": "push_key_hint",
       "type": "text",
-      "default": "In {target}: Admin > Connect your AI > Make a key, then paste it here once. Kept on this server, owner-only.",
+      "default": "In {target}: Admin > Connect your AI > Make a key.",
       "label": "push key hint"
     },
     {
@@ -207,7 +207,7 @@
     {
       "name": "push_no_key",
       "type": "text",
-      "default": "No {target} key yet - paste it below.",
+      "default": "Connect {target} first - one click, here.",
       "label": "push no key"
     },
     {
@@ -251,6 +251,102 @@
       "type": "text",
       "default": "No such place to push to.",
       "label": "push unknown"
+    },
+    {
+      "name": "push_paste_instead",
+      "type": "text",
+      "default": "Have a key? Paste it instead",
+      "label": "push paste instead"
+    },
+    {
+      "name": "push_popup_blocked",
+      "type": "text",
+      "default": "The browser blocked the window - allow pop-ups for this site, then press Connect again.",
+      "label": "push popup blocked"
+    },
+    {
+      "name": "push_connected",
+      "type": "text",
+      "default": "Connected to {target}. You can close this window.",
+      "label": "push connected"
+    },
+    {
+      "name": "push_connect_done",
+      "type": "text",
+      "default": "Connected to {target} - ready to push.",
+      "label": "push connect done"
+    },
+    {
+      "name": "push_connect_no",
+      "type": "text",
+      "default": "{target} was not connected - Allow was not pressed.",
+      "label": "push connect no"
+    },
+    {
+      "name": "push_connect_stale",
+      "type": "text",
+      "default": "This Connect link has run out - press Connect again.",
+      "label": "push connect stale"
+    },
+    {
+      "name": "push_connect_wait",
+      "type": "text",
+      "default": "Waiting for {target} - finish in the window that opened.",
+      "label": "push connect wait"
+    },
+    {
+      "name": "push_connect_lede",
+      "type": "text",
+      "default": "One time only: sign in to {target} and press Allow. Nothing to copy.",
+      "label": "push connect lede"
+    },
+    {
+      "name": "push_connect",
+      "type": "text",
+      "default": "Connect {target}",
+      "label": "push connect"
+    },
+    {
+      "name": "push_not_ready",
+      "type": "text",
+      "default": "Not connected",
+      "label": "push not ready"
+    },
+    {
+      "name": "push_ready",
+      "type": "text",
+      "default": "Connected",
+      "label": "push ready"
+    },
+    {
+      "name": "push_flow_label",
+      "type": "text",
+      "default": "This issue becomes a {target} request, its build machine writes the change, and a pull request comes back for review.",
+      "label": "push flow label"
+    },
+    {
+      "name": "push_flow_pr",
+      "type": "text",
+      "default": "Pull request",
+      "label": "push flow pr"
+    },
+    {
+      "name": "push_flow_build",
+      "type": "text",
+      "default": "Build machine",
+      "label": "push flow build"
+    },
+    {
+      "name": "push_flow_request",
+      "type": "text",
+      "default": "Request",
+      "label": "push flow request"
+    },
+    {
+      "name": "push_flow_issue",
+      "type": "text",
+      "default": "This issue",
+      "label": "push flow issue"
     }
   ],
   "expr": {
@@ -296,7 +392,23 @@
       "pushed": "$pushed",
       "pushed_stage": "$pushed_stage",
       "push_open": "$push_open",
-      "push_unknown": "$push_unknown"
+      "push_unknown": "$push_unknown",
+      "push_flow_issue": "$push_flow_issue",
+      "push_flow_request": "$push_flow_request",
+      "push_flow_build": "$push_flow_build",
+      "push_flow_pr": "$push_flow_pr",
+      "push_flow_label": "$push_flow_label",
+      "push_ready": "$push_ready",
+      "push_not_ready": "$push_not_ready",
+      "push_connect": "$push_connect",
+      "push_connect_lede": "$push_connect_lede",
+      "push_connect_wait": "$push_connect_wait",
+      "push_connect_stale": "$push_connect_stale",
+      "push_connect_no": "$push_connect_no",
+      "push_connected": "$push_connected",
+      "push_popup_blocked": "$push_popup_blocked",
+      "push_paste_instead": "$push_paste_instead",
+      "push_connect_done": "$push_connect_done"
     }
   },
   "returns": "record",
@@ -323,31 +435,47 @@
         "answered": "Answered by {by} on {at}: {reply}",
         "kind_issue": "Reported issue",
         "push": "Push to",
-        "push_title": "Push this issue to",
-        "push_lede": "It becomes a request there; this row then follows its stage.",
-        "push_to": "Send to",
-        "push_company": "Company {company}, project {project}",
-        "push_type": "Kind of request",
+        "push_title": "Push to {target}",
+        "push_lede": "{target} turns this issue into a request; its build machine writes the change and opens a pull request for your review.",
+        "push_to": "Destination",
+        "push_company": "{company} · {project}",
+        "push_type": "Kind",
         "type_enhancement": "Enhancement",
         "type_fix": "Fix",
         "type_new_module": "New module",
-        "push_req_title": "Request title",
-        "push_text": "What to build",
+        "push_req_title": "Title",
+        "push_text": "Details",
         "push_send": "Push",
         "push_cancel": "Cancel",
         "push_key": "{target} key",
-        "push_key_hint": "In {target}: Admin > Connect your AI > Make a key, then paste it here once. Kept on this server, owner-only.",
+        "push_key_hint": "In {target}: Admin > Connect your AI > Make a key.",
         "push_key_save": "Check and keep",
         "push_key_ok": "{target} key works - kept.",
         "push_key_bad": "{target} did not take this key: {why}",
-        "push_no_key": "No {target} key yet - paste it below.",
+        "push_no_key": "Connect {target} first - one click, here.",
         "push_done": "Pushed to {target} as {ref}.",
         "push_failed": "{target} said: {why}",
         "push_again": "Already pushed to {target} as {ref} on {at}. Pushing again makes a second request.",
         "pushed": "{target} {ref}",
         "pushed_stage": "{ref}: {stage}",
         "push_open": "Open in {target}",
-        "push_unknown": "No such place to push to."
+        "push_unknown": "No such place to push to.",
+        "push_flow_issue": "This issue",
+        "push_flow_request": "Request",
+        "push_flow_build": "Build machine",
+        "push_flow_pr": "Pull request",
+        "push_flow_label": "This issue becomes a {target} request, its build machine writes the change, and a pull request comes back for review.",
+        "push_ready": "Connected",
+        "push_not_ready": "Not connected",
+        "push_connect": "Connect {target}",
+        "push_connect_lede": "One time only: sign in to {target} and press Allow. Nothing to copy.",
+        "push_connect_wait": "Waiting for {target} - finish in the window that opened.",
+        "push_connect_stale": "This Connect link has run out - press Connect again.",
+        "push_connect_no": "{target} was not connected - Allow was not pressed.",
+        "push_connected": "Connected to {target}. You can close this window.",
+        "push_popup_blocked": "The browser blocked the window - allow pop-ups for this site, then press Connect again.",
+        "push_paste_instead": "Have a key? Paste it instead",
+        "push_connect_done": "Connected to {target} - ready to push."
       }
     }
   ]

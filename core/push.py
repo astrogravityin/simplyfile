@@ -7,12 +7,17 @@ The key is pasted once by the Portal Admin, checked by a round trip, and kept in
 """
 from __future__ import annotations
 
+import base64
+import hashlib
 import html
 import json
 import re
+import secrets
+import time
 import urllib.error
 import urllib.request
 from typing import Any
+from urllib.parse import urlencode
 
 from fastapi import HTTPException
 
@@ -67,8 +72,97 @@ def dig(got: Any, path: str) -> Any:
     return "" if got is None else got
 
 
+def _keys() -> dict:
+    return store.read(K()["key_store"], {}) or {}
+
+
+def _keep(**kv: Any) -> None:
+    with store._LOCK:                                    # noqa: SLF001
+        store.write(K()["key_store"], _keys() | kv)
+
+
 def key_of(tid: str) -> str:
-    return str((store.read(K()["key_store"], {}) or {}).get(tid, ""))
+    """A pasted key as kept, or a Connect grant's access token - refreshed shortly before it runs out. A refused refresh
+    = '' (not connected), so the dialog offers Connect again instead of failing a push later."""
+    k = _keys().get(tid, "")
+    if not isinstance(k, dict):
+        return str(k)
+    c = target(tid)["connect"]
+    if float(k.get("exp", 0)) - time.time() > float(c["refresh_early_s"]):
+        return str(k["access"])
+    try:
+        got = _form(target(tid), c["token"], {"grant_type": "refresh_token", "refresh_token": k["refresh"], "client_id": k["client_id"]})
+    except PushFailed:
+        return ""
+    _keep(**{tid: _grant(k["client_id"], got)})
+    return str(got["access_token"])
+
+
+def _grant(client_id: str, got: dict) -> dict:
+    return {"access": got["access_token"], "refresh": got.get("refresh_token", ""), "client_id": client_id,
+            "exp": time.time() + float(got.get("expires_in") or 0)}
+
+
+def _http(t: dict, path: str, data: bytes, ctype: str) -> dict:
+    req = urllib.request.Request(str(t["base"]).rstrip("/") + path, data=data, method="POST", headers={"Content-Type": ctype, "Accept": "application/json"})
+    try:
+        with urllib.request.urlopen(req, timeout=float(K()["timeout_s"])) as r:   # noqa: S310 - the address is the chip's
+            return json.loads(r.read().decode("utf-8") or "{}")
+    except urllib.error.HTTPError as e:
+        raise PushFailed(f"{e.code} {e.read().decode('utf-8', 'replace')[:200]}") from e
+    except (urllib.error.URLError, OSError, ValueError) as e:
+        raise PushFailed(f"{type(e).__name__}: {e}") from e
+
+
+def _form(t: dict, path: str, form: dict) -> dict:
+    return _http(t, path, urlencode(form).encode(), "application/x-www-form-urlencoded")
+
+
+# --- Connect (2026-10-25 owner: no key to copy): the target's own OAuth door - sign in there, press Allow, done ----------
+
+def _s256(verifier: str) -> str:
+    return base64.urlsafe_b64encode(hashlib.sha256(verifier.encode("ascii")).digest()).rstrip(b"=").decode("ascii")
+
+
+def connect_start(tid: str, back: str) -> dict:
+    """Where the Connect window goes: the target's Allow page for this portal (registered once per return address)."""
+    t = target(tid)
+    c, keys = t["connect"], _keys()
+    clients = keys.get("_clients") or {}
+    cid = clients.get(f"{tid} {back}")
+    try:
+        if not cid:
+            cid = _http(t, c["register"], json.dumps({"client_name": fill(c["client_name"], {"product": engine.product_name()}),
+                                                     "redirect_uris": [back]}).encode(), "application/json")["client_id"]
+    except (PushFailed, KeyError) as e:
+        raise HTTPException(502, _w("push_failed", target=t["label"], why=str(e))) from e
+    verifier, state, now = secrets.token_urlsafe(48), secrets.token_urlsafe(24), time.time()
+    pending = {s: p for s, p in (keys.get("_pending") or {}).items() if p["exp"] > now}
+    pending[state] = {"target": tid, "verifier": verifier, "back": back, "client_id": cid, "exp": now + float(c["minutes"]) * 60}
+    _keep(_clients=clients | {f"{tid} {back}": cid}, _pending=pending)
+    return {"url": str(t["base"]).rstrip("/") + c["authorize"] + "?" + urlencode({
+        "response_type": "code", "client_id": cid, "redirect_uri": back, "code_challenge": _s256(verifier),
+        "code_challenge_method": "S256", "state": state, "scope": c["scope"]})}
+
+
+def connect_back(state: str, code: str, error: str) -> tuple[bool, str]:
+    """The Allow page's answer: the one-time state (unguessable, minutes-long) is the proof; code -> tokens, checked, kept."""
+    pending = _keys().get("_pending") or {}
+    p = pending.pop(str(state or ""), None)
+    _keep(_pending=pending)
+    if not p or p["exp"] < time.time():
+        return False, _w("push_connect_stale")
+    t = target(p["target"])
+    if error or not code:
+        return False, _w("push_connect_no", target=t["label"])
+    try:
+        got = _form(t, t["connect"]["token"], {"grant_type": "authorization_code", "code": code, "client_id": p["client_id"],
+                                               "redirect_uri": p["back"], "code_verifier": p["verifier"]})
+        _rpc(t, got["access_token"], t["check"]["method"])
+    except (PushFailed, KeyError) as e:
+        return False, _w("push_key_bad", target=t["label"], why=str(e))
+    _keep(**{p["target"]: _grant(p["client_id"], got)})
+    return True, _w("push_connected", target=t["label"])
 
 
 def _rpc(t: dict, key: str, method: str, params: dict | None = None) -> dict:
@@ -105,9 +199,7 @@ def keep_key(tid: str, key: str) -> dict:
         _rpc(t, key, t["check"]["method"])
     except PushFailed as e:
         raise HTTPException(400, _w("push_key_bad", target=t["label"], why=str(e))) from e
-    with store._LOCK:                                    # noqa: SLF001
-        keys = store.read(K()["key_store"], {}) or {}
-        store.write(K()["key_store"], keys | {tid: key})
+    _keep(**{tid: key})
     return {"message": _w("push_key_ok", target=t["label"])}
 
 
@@ -116,7 +208,7 @@ def menu() -> dict:
     names = {"product": engine.product_name()}
     return {"targets": [{"id": t["id"], "label": t["label"], "hint": t["hint"], "company": t.get("company", ""),
                          "project": fill(t.get("project", ""), names), "types": t["types"], "type": t["type"],
-                         "ready": bool(key_of(t["id"]))} for t in targets()]}
+                         "ready": bool(key_of(t["id"])), "connect": bool(t.get("connect"))} for t in targets()]}
 
 
 def _vals(t: dict, row: dict, body: dict) -> dict:
@@ -182,9 +274,13 @@ if __name__ == "__main__":  # ponytail: one runnable self-check - a stand-in MCP
             pass
 
         def do_POST(self):
-            msg = json.loads(self.rfile.read(int(self.headers["Content-Length"])))
+            raw = self.rfile.read(int(self.headers["Content-Length"])).decode()
+            if self.path.startswith("/oauth/"):              # the target's OAuth door (Connect)
+                self._oauth(raw)
+                return
+            msg = json.loads(raw)
             seen.append((self.headers["Authorization"], msg))
-            if self.headers["Authorization"] != "Bearer good":
+            if self.headers["Authorization"] not in {"Bearer good", "Bearer acc1", "Bearer acc2"}:
                 self.send_response(401)
                 self.end_headers()
                 self.wfile.write(b'{"error":"bad key"}')
@@ -199,6 +295,27 @@ if __name__ == "__main__":  # ponytail: one runnable self-check - a stand-in MCP
             self.end_headers()
             self.wfile.write(body)
 
+        def _oauth(self, raw):
+            from urllib.parse import parse_qs
+            f = {k: v[0] for k, v in parse_qs(raw).items()}
+            if self.path == "/oauth/register":
+                out = {"client_id": "cl1"} if json.loads(raw)["redirect_uris"] else {}
+            elif f.get("grant_type") == "authorization_code" and f.get("code") == "code1" and _s256(f.get("code_verifier", "")) == grants["challenge"]:
+                out = {"access_token": "acc1", "refresh_token": "ref1", "expires_in": 3600}
+            elif f.get("grant_type") == "refresh_token" and f.get("refresh_token") == "ref1":
+                out = {"access_token": "acc2", "refresh_token": "ref2", "expires_in": 3600}
+            else:
+                self.send_response(400)
+                self.end_headers()
+                self.wfile.write(b'{"error":"invalid_grant"}')
+                return
+            body = json.dumps(out).encode()
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.end_headers()
+            self.wfile.write(body)
+
+    grants: dict = {}
     srv = ThreadingHTTPServer(("127.0.0.1", 0), Door)
     threading.Thread(target=srv.serve_forever, daemon=True).start()
     store.DATA = Path(tempfile.mkdtemp())
@@ -230,8 +347,31 @@ if __name__ == "__main__":  # ponytail: one runnable self-check - a stand-in MCP
     assert me.follow(row["pushed"][0])["stage"] == "With Claude"
     owner_only = {r.path for r in issues.router.routes if "push" in r.path
                   and any(d.call is __import__("core.auth", fromlist=["owner"]).owner for d in r.dependant.dependencies)}
-    assert owner_only == {"/api/core/issues/push", "/api/core/issues/push/key", "/api/core/issues/{iid}/push"}, owner_only
+    assert owner_only == {"/api/core/issues/push", "/api/core/issues/push/key", "/api/core/issues/push/connect", "/api/core/issues/{iid}/push"}, owner_only
+    # Connect (2026-10-25 owner: no key to copy): Allow on the target -> tokens kept; refreshed before they run out; one-time state
+    from urllib.parse import parse_qs, urlparse
+    back = "http://127.0.0.1/api/core/issues/push/back"
+    q = {k: v[0] for k, v in parse_qs(urlparse(me.connect_start(t0["id"], back)["url"]).query).items()}
+    assert q["client_id"] == "cl1" and q["redirect_uri"] == back and q["code_challenge_method"] == "S256", q
+    grants["challenge"] = q["code_challenge"]
+    assert me.connect_back(q["state"], "", "access_denied")[0] is False, "Deny must not connect"
+    assert me.connect_back(q["state"], "code1", "")[0] is False, "a state is one use only"
+    q = {k: v[0] for k, v in parse_qs(urlparse(me.connect_start(t0["id"], back)["url"]).query).items()}
+    grants["challenge"] = q["code_challenge"]
+    ok, said = me.connect_back(q["state"], "code1", "")
+    assert ok and said and me.key_of(t0["id"]) == "acc1" and me.menu()["targets"][0]["ready"] is True, said
+    me._keep(**{t0["id"]: me._keys()[t0["id"]] | {"exp": 0}})            # ran out -> refreshed on the next use
+    assert me.key_of(t0["id"]) == "acc2" and me._keys()[t0["id"]]["refresh"] == "ref2"
+    me._keep(**{t0["id"]: me._keys()[t0["id"]] | {"exp": 0}})            # refresh refused -> not connected, Connect offered again
+    assert me.key_of(t0["id"]) == "" and me.menu()["targets"][0]["ready"] is False
+    fake = type("R", (), {"scope": {"root_path": ""}})()
+    page = issues.api_push_back(fake, state="nope").body.decode()
+    assert 'data-ok="0"' in page and "<script>" not in page and "style=" not in page,         "the Connect back page must carry no inline script/style (script policy) and a stale state must not say ok"
+    assert "window.close" in (Path(__file__).parent / "static" / "push-back.js").read_text(encoding="utf-8")
     js = (Path(__file__).parent / "static" / "page-issues.js").read_text(encoding="utf-8")
     assert "admin() && r.status === 'open'" in js and "data-push-open" in js, "the Push to button is not Portal Admin only"
+    pushjs = js.split("// The road an issue takes")[1].split("function answer")[0]
+    assert "data-push-connect-go" in pushjs and "BroadcastChannel" in pushjs and not any(t in pushjs for t in ("<select", "style=")), \
+        "the Push dialog lost its Connect step, went back to a plain select, or took an inline style (script policy)"
     srv.shutdown()
     print("push self-check OK")

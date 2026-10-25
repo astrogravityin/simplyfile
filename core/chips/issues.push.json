@@ -59,7 +59,16 @@
             }
           },
           "link": "{base}/#/requests?r={code}",
-          "text": "{text}\n\nFrom {product} issue \"{title}\" ({context}), reported by {name}."
+          "text": "{text}\n\nFrom {product} issue \"{title}\" ({context}), reported by {name}.",
+          "connect": {
+            "register": "/oauth/register",
+            "authorize": "/oauth/authorize",
+            "token": "/oauth/token",
+            "scope": "mcp",
+            "client_name": "{product} Issues",
+            "minutes": 10,
+            "refresh_early_s": 60
+          }
         }
       ],
       "label": "one row per place: label, address, key form, company, project, the MCP tools that send and follow it, the link"
@@ -75,6 +84,12 @@
       "type": "number",
       "default": 30,
       "label": "seconds one call may take"
+    },
+    {
+      "name": "connect_back",
+      "type": "text",
+      "default": "/api/core/issues/push/back",
+      "label": "where the target's Allow page sends the Connect window back (this portal's path)"
     }
   ],
   "expr": {
@@ -82,7 +97,8 @@
     "fields": {
       "targets": "$targets",
       "key_store": "$key_store",
-      "timeout_s": "$timeout_s"
+      "timeout_s": "$timeout_s",
+      "connect_back": "$connect_back"
     }
   },
   "returns": "record",
@@ -141,11 +157,21 @@
               }
             },
             "link": "{base}/#/requests?r={code}",
-            "text": "{text}\n\nFrom {product} issue \"{title}\" ({context}), reported by {name}."
+            "text": "{text}\n\nFrom {product} issue \"{title}\" ({context}), reported by {name}.",
+            "connect": {
+              "register": "/oauth/register",
+              "authorize": "/oauth/authorize",
+              "token": "/oauth/token",
+              "scope": "mcp",
+              "client_name": "{product} Issues",
+              "minutes": 10,
+              "refresh_early_s": 60
+            }
           }
         ],
         "key_store": "push_keys",
-        "timeout_s": 30
+        "timeout_s": 30,
+        "connect_back": "/api/core/issues/push/back"
       }
     }
   ]

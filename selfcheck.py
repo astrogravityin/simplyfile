@@ -491,7 +491,7 @@ def chips_first_check() -> None:
 
 
 GUIDED = ["firm", "analytics", "delegate", "wizard", "clients", "myreturn", "itrimport", "intake", "recon", "compute", "audit", "approvals", "portalstats", "server", "taxwatch",
-          "keys", "connect-ai", "agents"]   # 2026-10-10: Account & key - its tour rebuilt from its Guide me (the old hand-made one said "draws stills")
+          "keys", "connect-ai", "agents", "issues"]   # 2026-10-10: Account & key - its tour rebuilt from its Guide me (the old hand-made one said "draws stills"); 2026-10-25 Reported issues + Push to
 
 
 def guides_tours_check() -> None:

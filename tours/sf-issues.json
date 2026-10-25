@@ -11,79 +11,24 @@
     "#userpop .head"
   ],
   "page_key": "sf-issues",
-  "title": "Report an issue",
+  "title": "Reported issues",
   "start_url": "/#/issues",
   "covers": [
-    "Report an issue from any screen",
-    "header, what is wrong, screenshot",
-    "Reported issues queue",
-    "resolve with a reply",
-    "Push to CodyFy (Portal Admin)",
-    "the reply as a banner",
-    "My reports and feedback"
+    "reported issues",
+    "the queue",
+    "push to",
+    "the road it takes",
+    "where it goes",
+    "kind, title and details",
+    "push"
   ],
   "steps": [
     {
-      "chapter": "Report an issue",
-      "say": "When something is wrong in {product}, anyone signed in - a partner, a manager, an article - reports it from any screen. No email: the report and its answer stay inside the portal. This is Reported issues, where they are answered.",
+      "chapter": "Reported issues",
+      "say": "Answer what people report in {product}, or push an issue to CodyFy to be built.",
       "do": [
         {
-          "wait_for": "#is-list",
-          "timeout": 90
-        },
-        {
-          "highlight": "#is-list",
-          "timeout": 90,
-          "optional": true
-        }
-      ]
-    },
-    {
-      "say": "Open the account menu and pick Report an issue. It works the same on every screen.",
-      "do": [
-        {
-          "goto": "/#/approvals"
-        },
-        {
-          "click": "#whoami",
-          "timeout": 90
-        },
-        {
-          "highlight": "#report-issue",
-          "timeout": 90
-        },
-        {
-          "click": "#report-issue",
-          "timeout": 90
-        }
-      ]
-    },
-    {
-      "say": "A short header, what went wrong, and a screenshot if it helps - browse, drop or paste. The screen it came from is attached on its own.",
-      "do": [
-        {
-          "fill": "#ri-title",
-          "text": "Reconcile does not open for one client",
-          "timeout": 90
-        },
-        {
-          "fill": "#ri-body",
-          "text": "On Reconcile, Ramesh Iyer's 26AS shows the spinner and never loads.",
-          "timeout": 90
-        },
-        {
-          "highlight": "#ri-shot",
-          "timeout": 90,
-          "optional": true
-        }
-      ]
-    },
-    {
-      "say": "Send report, and it lands in Reported issues with a count in the menu for whoever answers. Here one is already waiting - sent by someone in a firm.",
-      "do": [
-        {
-          "click": "[data-cancel]",
-          "timeout": 90
+          "wait_for": "header.pagehead"
         },
         {
           "wait": 1
@@ -91,86 +36,86 @@
       ]
     },
     {
-      "chapter": "Answer it",
-      "say": "In Reported issues it sits at the top - who sent it, from where, and what is wrong.",
+      "chapter": "Reported issues",
+      "say": "Everything people report from any screen in {product} lands here: who sent it, from which screen, and what is wrong.",
       "do": [
         {
-          "goto": "/#/issues"
-        },
-        {
-          "wait_for": "#is-list [data-open]",
-          "timeout": 90
-        },
-        {
-          "highlight": "#is-list [data-open]",
-          "timeout": 90
+          "highlight_target": "header.pagehead",
+          "optional": true,
+          "timeout": 5
         }
       ]
     },
     {
-      "say": "For the portal admin, an open issue that needs code has Push to. It goes to CodyFy as a request in the ValueStream company, its build machine starts on it, and this row then shows the request and its stage, with a link to open it there.",
+      "chapter": "The queue",
+      "say": "Open, Resolved and All sort the queue. Each row shows the report, where it came from, and any answer already given.",
       "do": [
         {
-          "highlight": "[data-push-open]",
-          "timeout": 30,
-          "optional": true
+          "highlight_target": "#is-list",
+          "optional": true,
+          "timeout": 5
         }
       ]
     },
     {
-      "say": "Open it, read it with its screenshot, write a reply the sender will see, and resolve it.",
+      "chapter": "Push to",
+      "say": "When an issue needs a code change, the portal admin presses Push to on its row.",
       "do": [
         {
-          "click": "#is-list [data-open]",
-          "timeout": 90
-        },
-        {
-          "fill": "#is-reply",
-          "text": "Thank you - his 26AS file was cut short. Upload it again and it opens.",
-          "timeout": 90
-        },
-        {
-          "click": "#is-go",
-          "timeout": 90
-        },
-        {
-          "wait": 1.5
+          "highlight_target": "[data-push-open]",
+          "optional": true,
+          "timeout": 5
         }
       ]
     },
     {
-      "chapter": "The reply",
-      "say": "The next time the sender opens the portal, the answer waits as a banner at the top - and every report, with its status and answer, stays in the account menu under My reports and feedback.",
+      "chapter": "The road it takes",
+      "say": "The picture shows the road: this issue becomes a CodyFy request, its build machine writes the change, and a pull request comes back for your review.",
       "do": [
         {
-          "goto": "/#/approvals"
-        },
-        {
-          "wait": 1.5
-        },
-        {
-          "highlight": ".note.ok",
-          "timeout": 8,
+          "click": "[data-push-open]",
           "optional": true
         },
         {
-          "click": "#whoami",
-          "timeout": 90
+          "wait": 1.2
         },
         {
-          "click": "#my-reports",
-          "timeout": 90
-        },
-        {
-          "wait": 2
+          "highlight_target": ".push-flow",
+          "optional": true,
+          "timeout": 5
         }
       ]
     },
     {
-      "say": "Every limit, every status and who may answer live in chips the owner can change.",
+      "chapter": "Where it goes",
+      "say": "The card names the company and project it lands in. The first time, press Connect CodyFy, sign in there and press Allow; nothing to copy. After that the card simply says Connected.",
       "do": [
         {
-          "press": "Escape"
+          "highlight_target": ".push-dests",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Kind, title and details",
+      "say": "Pick the kind of request. The title and details come from the issue; change them if you like.",
+      "do": [
+        {
+          "highlight_target": ".push-kinds",
+          "optional": true,
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "chapter": "Push",
+      "say": "Press Push. The row then shows the request and its stage, with a link to open it in CodyFy.",
+      "do": [
+        {
+          "highlight_target": "#push-go",
+          "optional": true,
+          "timeout": 5
         }
       ]
     }

@@ -16,12 +16,14 @@ only; every yes / no is the kind's chip.
 from __future__ import annotations
 
 import base64
+import html
 import io
+import json
 import re
 from collections.abc import Callable
 
 from fastapi import APIRouter, Body, Depends, HTTPException, Request
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, HTMLResponse
 
 from core import access, auth, bell, engine, limits, lists, store
 
@@ -456,6 +458,27 @@ def api_push_menu(u: dict = Depends(auth.owner)):
 def api_push_key(body: dict = Body(...), u: dict = Depends(auth.owner)):
     from core import push  # noqa: PLC0415
     return push.keep_key(str(body.get("target") or ""), str(body.get("key") or ""))
+
+
+@router.post("/api/core/issues/push/connect")
+def api_push_connect(request: Request, body: dict = Body(...), u: dict = Depends(auth.owner)):
+    """Connect (no key to copy): the address of the target's Allow page; it answers on /push/back below."""
+    from core import mcp_oauth, push  # noqa: PLC0415
+    back = mcp_oauth.api_base(request) + request.scope.get("root_path", "") + push.K()["connect_back"]
+    return push.connect_start(str(body.get("target") or ""), back)
+
+
+@router.get("/api/core/issues/push/back")
+def api_push_back(request: Request, state: str = "", code: str = "", error: str = ""):
+    """The Allow page sends the Connect window here. Not signed in on purpose: the one-time state is the proof (OAuth).
+    No inline script or style (the portal's script policy): words ride in data-*, core-static/push-back.js tells the
+    Issues tab (same site, BroadcastChannel) and closes the window."""
+    from core import push  # noqa: PLC0415
+    ok, said = push.connect_back(state, code, error)
+    root, say_ = request.scope.get("root_path", ""), html.escape(said)
+    return HTMLResponse(f"""<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="referrer" content="no-referrer"><title>{say_}</title><link rel="stylesheet" href="{root}/core-static/portal.css">
+<body class="push-back" data-ok="{int(ok)}" data-message="{say_}"><p>{say_}</p><script src="{root}/core-static/push-back.js"></script></body></html>""")
 
 
 def push_issue(user: dict, iid: str, body: dict) -> dict:
