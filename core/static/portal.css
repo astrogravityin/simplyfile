@@ -1413,20 +1413,36 @@ select option{background:var(--panel);color:var(--ink)}
 .push-back{display:grid;place-items:center;min-height:90vh;margin:0;padding:16px;text-align:center;font-size:15px}
 .is-title{overflow-wrap:anywhere;min-width:0}   /* a report title can be one long address (a CSP report): it wraps, never widens a phone page */
 
-/* Menu builder (page-menus.js): folder rows with their screens indented under them; the icon is picked by its picture */
-.menus-table td{vertical-align:middle;padding-top:9px;padding-bottom:9px}
-.menus-table input,.menus-table select{width:100%}
-.menus-table tr.mb-group td{background:var(--panel-2);border-top:1px solid var(--line-2)}
-.mb-gname{display:flex;gap:10px;align-items:center;color:var(--brand)}
-.mb-gname input{font-weight:650;max-width:340px}
-.mb-screen td:first-child{padding-left:42px}
-.mb-sname{font-weight:600;color:var(--ink)}
+/* Menu builder (page-menus.js): compact folder + screen rows, a grip on each, the icon picked by its picture */
+.mb-card{overflow:hidden}
+.mb-bar{display:flex;gap:14px;align-items:center;padding:8px 12px;border-bottom:1px solid var(--line)}
+.mb-bar .finder input{height:30px;font-size:13px}
+.mb-note{font-size:12px;color:var(--muted);display:inline-flex;gap:5px;align-items:center}
+.mb-note.warn{color:var(--warn)}
+.menus-table{font-size:13px}
+.menus-table th{padding:7px 8px;font-size:10.5px}
+.menus-table td{padding:3px 8px;height:36px;vertical-align:middle;border-top:1px solid var(--line)}
+.menus-table input,.menus-table select{width:100%;height:28px;padding:2px 9px;font-size:13px;border-radius:7px}
+.menus-table tr.mb-group td{background:var(--panel-2);height:38px}
+.menus-table button{min-height:0}
+.menus-table tr.dragging{opacity:.45}
+.mb-grip{display:inline-grid;place-items:center;width:20px;height:24px;color:var(--faint);cursor:grab;border-radius:5px}
+.mb-grip:hover{color:var(--brand);background:var(--brand-soft)}
+.mb-grip.off{cursor:not-allowed;opacity:.35}
+.mb-gname{display:flex;gap:9px;align-items:center;color:var(--brand)}
+.mb-gname input{font-weight:650;max-width:260px}
+.mb-count{font-size:11.5px;color:var(--faint);white-space:nowrap}
+.mb-screen td:nth-child(2){padding-left:30px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mb-sname{font-weight:580;color:var(--ink)}
+.mb-screen code{font-size:10.5px;color:var(--faint);background:none;padding:0}
+.mb-screen.draft .mb-sname{color:var(--warn)}
+.mb-ico{width:30px;height:28px;padding:0;display:inline-grid;place-items:center;color:var(--brand);border:1px solid var(--line-2);border-radius:7px}
+.mb-state{height:24px;padding:0 10px;font-size:11.5px;font-weight:650;border-radius:999px;min-width:64px}
+.mb-state.live{color:var(--ok);border-color:var(--ok);background:var(--ok-soft)}
+.mb-state.draft{color:var(--warn);border-color:var(--warn);background:var(--warn-soft)}
 .mb-acts{white-space:nowrap;text-align:right}
-.mb-order{display:inline-flex;gap:2px}
-.mb-state{min-width:120px;justify-content:center}
-.mb-state.live{color:var(--ok);border-color:var(--ok)}
-.mb-state.draft{color:var(--warn);border-color:var(--warn)}
-.iconpick{width:38px;height:38px;padding:0;display:inline-grid;place-items:center;border-radius:10px;color:var(--brand)}
+.mb-acts button{height:26px;padding:0 6px;font-size:12px}
+.mb-off tr.mb-screen td{color:var(--muted)}
 .icongrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(46px,1fr));gap:6px}
 .icongrid button{height:46px;display:grid;place-items:center;border-radius:10px;color:var(--ink-2)}
 .icongrid button.on{background:var(--brand-soft);color:var(--brand);border-color:var(--brand)}

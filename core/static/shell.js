@@ -825,7 +825,7 @@ function currentScreen() {
 }
 
 function shellView(route) {
-  const list = screens();
+  const list = screens().filter((s) => !s.hidden);   // Menu builder took it off the menu: the page still opens by its link
   const groups = [...new Set(list.map((s) => s.group || ''))];
   const folded = sideCollapsed();
   const nav = groups.map((g) => `${g ? `<div class="sep">${esc(g)}</div>` : ''}` + list.filter((s) => (s.group || '') === g)

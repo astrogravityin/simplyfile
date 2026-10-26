@@ -13,7 +13,7 @@
     {
       "name": "lede",
       "type": "text",
-      "default": "The menu {product} shows its members, arranged as folders and screens. A folder is a heading with no page of its own: rename it, move it, or start a new one. Each screen sits under a folder with its own label and icon. A new screen arrives as a <b>Draft</b> that only you can see; put it <b>Live</b> and Access Control decides who sees it."
+      "default": "The menu {product} shows its members, as folders and screens. Drag a row by its grip to move it; a screen dropped under a folder joins it. Removing a screen takes it off the menu only - its page stays. A new screen arrives as a <b>Draft</b> only you see until you make it <b>Live</b>."
     },
     {
       "name": "find_placeholder",
@@ -53,7 +53,7 @@
     {
       "name": "draft",
       "type": "text",
-      "default": "Draft - only you"
+      "default": "Draft"
     },
     {
       "name": "owner_only",
@@ -199,6 +199,41 @@
       "name": "group_empty",
       "type": "text",
       "default": "Empty - kept once a screen is under it"
+    },
+    {
+      "name": "hide",
+      "type": "text",
+      "default": "Remove from the menu (the page stays)"
+    },
+    {
+      "name": "hide_q",
+      "type": "text",
+      "default": "Remove from the menu?"
+    },
+    {
+      "name": "hide_body",
+      "type": "text",
+      "default": "\"{label}\" leaves the menu. Its page is not deleted: it still opens by its link, Access Control still decides who may open it, and you can put it back from Not in the menu."
+    },
+    {
+      "name": "hide_yes",
+      "type": "text",
+      "default": "Remove from menu"
+    },
+    {
+      "name": "off_menu_title",
+      "type": "text",
+      "default": "Not in the menu"
+    },
+    {
+      "name": "off_menu_note",
+      "type": "text",
+      "default": "Pages kept, no menu entry"
+    },
+    {
+      "name": "put_back",
+      "type": "text",
+      "default": "Put back"
     }
   ],
   "expr": {
@@ -242,7 +277,14 @@
       "group_not_empty": "$group_not_empty",
       "delete_group_q": "$delete_group_q",
       "delete_group_body": "$delete_group_body",
-      "group_empty": "$group_empty"
+      "group_empty": "$group_empty",
+      "hide": "$hide",
+      "hide_q": "$hide_q",
+      "hide_body": "$hide_body",
+      "hide_yes": "$hide_yes",
+      "off_menu_title": "$off_menu_title",
+      "off_menu_note": "$off_menu_note",
+      "put_back": "$put_back"
     }
   },
   "returns": "record",
@@ -254,7 +296,7 @@
       "args": {},
       "expect_value": {
         "title": "Menu builder",
-        "lede": "The menu {product} shows its members, arranged as folders and screens. A folder is a heading with no page of its own: rename it, move it, or start a new one. Each screen sits under a folder with its own label and icon. A new screen arrives as a <b>Draft</b> that only you can see; put it <b>Live</b> and Access Control decides who sees it.",
+        "lede": "The menu {product} shows its members, as folders and screens. Drag a row by its grip to move it; a screen dropped under a folder joins it. Removing a screen takes it off the menu only - its page stays. A new screen arrives as a <b>Draft</b> only you see until you make it <b>Live</b>.",
         "find_placeholder": "Find a screen",
         "no_match": "No screen matches.",
         "col_name": "Name",
@@ -262,7 +304,7 @@
         "col_icon": "Icon",
         "col_state": "Shown to",
         "live": "Live",
-        "draft": "Draft - only you",
+        "draft": "Draft",
         "owner_only": "Owner only",
         "drafts_waiting": "{n} new {n:screen|screens} waiting to go live.",
         "reset": "Back to the original",
@@ -291,7 +333,14 @@
         "group_not_empty": "Move its screens to another folder first",
         "delete_group_q": "Delete this folder?",
         "delete_group_body": "\"{name}\" has no screens. It leaves the menu when you save.",
-        "group_empty": "Empty - kept once a screen is under it"
+        "group_empty": "Empty - kept once a screen is under it",
+        "hide": "Remove from the menu (the page stays)",
+        "hide_q": "Remove from the menu?",
+        "hide_body": "\"{label}\" leaves the menu. Its page is not deleted: it still opens by its link, Access Control still decides who may open it, and you can put it back from Not in the menu.",
+        "hide_yes": "Remove from menu",
+        "off_menu_title": "Not in the menu",
+        "off_menu_note": "Pages kept, no menu entry",
+        "put_back": "Put back"
       }
     }
   ],

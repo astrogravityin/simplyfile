@@ -14,7 +14,7 @@ from core import access, engine, store
 from core.access import screen
 
 router = APIRouter()
-FIELDS = ("label", "group", "icon", "order", "draft")
+FIELDS = ("label", "group", "icon", "order", "draft", "hidden")   # hidden = off the menu; the page stays
 
 
 def say(key: str, **values) -> str:
@@ -48,6 +48,7 @@ def clean(row: dict, known: dict) -> dict:
            "icon": str(row.get("icon") or "").strip()[:int(k["icon_max"])]}
     if not known[sid].get("admin"):
         out["draft"] = row.get("draft") is True
+        out["hidden"] = row.get("hidden") is True         # 2026-10-26 owner: removing a menu entry never deletes its page
     return out
 
 
@@ -97,4 +98,7 @@ if __name__ == "__main__":  # ponytail: one runnable self-check of the merge, on
     rows = apply(base)
     assert rows[0]["id"] == "new" and rows[0]["label"] == "Fresh" and not rows[0]["admin"], "live, renamed and first"
     assert next(r for r in rows if r["id"] == "access")["admin"], "a framework admin screen cannot be opened here"
+    store.write("menus", {"a": {"hidden": True}})
+    a = next(r for r in apply(base) if r["id"] == "a")
+    assert a["hidden"] and not a["admin"], "off the menu, still a page Access Control decides"
     print("core.menus self-check OK")

@@ -1,8 +1,10 @@
-// Menu builder - the menu the portal shows its members, as folders and screens (core/menus.py). A group is a folder
-// row with no link: rename it, move it, add one, delete it once empty. Each screen sits under a group ("Under"), with
-// its menu label, icon, Live/Draft and place. Save sends the whole menu in its new order; the menu, Access Control
-// and the API guard all read the same answer. The framework's own admin screens are not listed: they never move.
-import { api, esc, toast, pageHead, confirmDialog, t, loadWords, flexiHit, modal } from './ui.js';
+// Menu builder - the menu the portal shows its members, as folders and screens (core/menus.py). A folder is a row
+// with no link: rename it, drag it, add one, delete it once empty. Each screen sits under a folder with its menu
+// label, icon and Live/Draft; drag it by its grip to move it, into another folder too. Removing a screen takes it off
+// the MENU only - the page stays and still opens by its link; "Not in the menu" puts it back. Save sends the whole
+// menu in its new order; the menu, Access Control and the API guard all read the same answer. The framework's own
+// admin screens are not listed: they never move.
+import { api, esc, toast, pageHead, confirmDialog, t, loadWords, flexiHit, dragRows, modal } from './ui.js';
 import { refresh } from './shell.js';
 import { icon } from './icons.js';
 
@@ -27,58 +29,70 @@ export async function menusPage(host) {
 function take(all) {
   rows = all.filter((r) => !r.core);
   fixed = all.filter((r) => r.core);
-  groups = [...new Set(rows.map((r) => r.group || ''))];
+  groups = [...new Set(rows.filter((r) => !r.hidden).map((r) => r.group || ''))];
 }
 
-/** The screens of one folder, in their order. */
-const inGroup = (g) => rows.filter((r) => (r.group || '') === g);
-/** Rows follow the folders' order, so the saved order is folder by folder. */
-const settle = () => { rows = groups.flatMap(inGroup); };
+/** The menu screens of one folder, in their order. */
+const inGroup = (g) => rows.filter((r) => !r.hidden && (r.group || '') === g);
+/** Rows follow the folders' order; a screen whose folder is gone (off the menu) keeps its place at the end. */
+const settle = () => {
+  rows = [...groups.flatMap((g) => rows.filter((r) => (r.group || '') === g)), ...rows.filter((r) => !groups.includes(r.group || ''))];
+};
 
 function draw(host, term) {
-  const drafts = rows.filter((r) => r.draft).length;
+  const drafts = rows.filter((r) => r.draft && !r.hidden).length;
+  const off = rows.filter((r) => r.hidden);
   const shown = (r) => flexiHit(`${r.label} ${r.base?.label || ''} ${r.group} ${r.id}`, term);
+  const grip = term ? `<span class="mb-grip off" title="${esc(w('drag_off'))}">${icon('grip', 14)}</span>`
+    : `<span class="mb-grip" data-grip tabindex="0" title="${esc(w('drag'))}" aria-label="${esc(w('drag'))}">${icon('grip', 14)}</span>`;
   const under = (r) => `<select data-under aria-label="${esc(w('col_under'))}">${groups.map((g) => `<option value="${esc(g)}" ${g === (r.group || '') ? 'selected' : ''}>${esc(g || w('no_group'))}</option>`).join('')}</select>`;
-  const order = (attr, i, n) => `<span class="mb-order">
-      <button type="button" class="small ghost" ${attr}="-1" ${i === 0 ? 'disabled' : ''} title="${esc(w('move_up'))}" aria-label="${esc(w('move_up'))}">${icon('up', 14)}</button>
-      <button type="button" class="small ghost" ${attr}="1" ${i === n - 1 ? 'disabled' : ''} title="${esc(w('move_down'))}" aria-label="${esc(w('move_down'))}">${icon('down', 14)}</button></span>`;
+  const screenRow = (r) => `<tr class="mb-screen${r.draft ? ' draft' : ''}" data-id="${esc(r.id)}">
+      <td>${grip}</td>
+      <td><span class="mb-sname">${esc(r.base?.label || r.label)}</span> <code>${esc(r.id)}</code></td>
+      <td>${under(r)}</td>
+      <td><input data-label value="${esc(r.label)}" placeholder="${esc(r.base?.label || '')}" aria-label="${esc(w('col_label'))}"/></td>
+      <td><button type="button" class="ghost mb-ico" data-icon title="${esc(w('pick_icon'))}" aria-label="${esc(w('pick_icon'))}: ${esc(r.icon || 'menu')}">${icon(r.icon || 'menu', 16)}</button></td>
+      <td><button type="button" class="mb-state ${r.draft ? 'draft' : 'live'}" data-live title="${esc(w(r.draft ? 'make_live' : 'make_draft'))}">${esc(w(r.draft ? 'draft' : 'live'))}</button></td>
+      <td class="mb-acts"><button type="button" class="ghost" data-reset title="${esc(w('reset'))}" aria-label="${esc(w('reset'))}">${icon('rotccw', 14)}</button>
+        <button type="button" class="ghost" data-hide title="${esc(w('hide'))}" aria-label="${esc(w('hide'))}">${icon('trash', 14)}</button></td></tr>`;
 
   const body = groups.map((g, gi) => {
     const kids = inGroup(g);
     const kidsShown = kids.filter(shown);
     if (term && !kidsShown.length && !flexiHit(g, term)) return '';
-    return `<tr class="mb-group" data-g="${gi}">
-        <td colspan="2"><span class="mb-gname">${icon('folder', 16)}<input data-gname value="${esc(g)}" placeholder="${esc(w('no_group'))}" aria-label="${esc(w('group_name'))}"/></span></td>
-        <td class="small muted">${esc(kids.length ? w('group_count', { n: kids.length }) : w('group_empty'))}</td><td></td><td></td>
-        <td class="mb-acts">${order('data-gmove', gi, groups.length)}
-          <button type="button" class="small ghost" data-gdel ${kids.length ? `disabled title="${esc(w('group_not_empty'))}"` : `title="${esc(w('delete_group'))}"`} aria-label="${esc(w('delete_group'))}">${icon('trash', 14)}</button></td></tr>`
-      + kidsShown.map((r) => `<tr class="mb-screen ${r.draft ? 'warn' : ''}" data-id="${esc(r.id)}">
-        <td><div class="mb-sname">${esc(r.base?.label || r.label)}</div><code class="small muted">${esc(r.id)}</code></td>
-        <td>${under(r)}</td>
-        <td><input data-label value="${esc(r.label)}" placeholder="${esc(r.base?.label || '')}" aria-label="${esc(w('col_label'))}"/></td>
-        <td><button type="button" class="iconpick" data-icon title="${esc(w('pick_icon'))}" aria-label="${esc(w('pick_icon'))}: ${esc(r.icon || 'menu')}">${icon(r.icon || 'menu', 18)}</button></td>
-        <td><button type="button" class="small mb-state ${r.draft ? 'draft' : 'live'}" data-live title="${esc(w(r.draft ? 'make_live' : 'make_draft'))}">${icon(r.draft ? 'lock' : 'check', 13)} ${esc(w(r.draft ? 'draft' : 'live'))}</button></td>
-        <td class="mb-acts">${term ? '' : order('data-move', kids.indexOf(r), kids.length)}
-          <button type="button" class="small ghost" data-reset title="${esc(w('reset'))}" aria-label="${esc(w('reset'))}">${icon('rotccw', 14)}</button></td></tr>`).join('');
+    return `<tr class="mb-group" data-id="g:${gi}">
+        <td>${grip}</td>
+        <td colspan="2"><span class="mb-gname">${icon('folder', 15)}<input data-gname value="${esc(g)}" placeholder="${esc(w('no_group'))}" aria-label="${esc(w('group_name'))}"/>
+          <span class="mb-count">${esc(kids.length ? w('group_count', { n: kids.length }) : w('group_empty'))}</span></span></td>
+        <td colspan="3"></td>
+        <td class="mb-acts"><button type="button" class="ghost" data-gdel ${kids.length ? `disabled title="${esc(w('group_not_empty'))}"` : `title="${esc(w('delete_group'))}"`} aria-label="${esc(w('delete_group'))}">${icon('trash', 14)}</button></td></tr>`
+      + kidsShown.map(screenRow).join('');
   }).join('');
 
   host.innerHTML = `${pageHead(w('title'), w('lede'), `<button type="button" id="mb-new">${icon('plus', 15)} ${w('new_group')}</button>
       <button type="button" class="primary" id="mb-save">${icon('save', 15)} ${w('save')}</button>`)}
-    ${drafts ? `<p class="small" style="color:var(--warn)">${icon('alert', 14)} ${esc(w('drafts_waiting', { n: drafts }))}</p>` : ''}
-    <div class="card flush">
-      <div class="row between" style="padding:12px 14px"><span class="finder">${icon('search', 15)}<input id="mb-find" value="${esc(term)}" placeholder="${esc(w('find_placeholder'))}"/></span>
-        <span class="small muted" id="mb-dirty" ${dirty ? '' : 'hidden'}>${esc(w('unsaved'))}</span></div>
-      <div class="scroll" style="max-height:none"><table class="fixed menus-table"><thead><tr>
-        <th style="width:24%">${w('col_screen')}</th><th style="width:21%">${w('col_under')}</th><th>${w('col_label')}</th>
-        <th style="width:64px">${w('col_icon')}</th><th style="width:150px">${w('col_state')}</th><th style="width:118px">${w('col_order')}</th></tr></thead>
-        <tbody id="mb-rows">${body || `<tr><td colspan="6" class="muted">${esc(w('no_match'))}</td></tr>`}</tbody></table></div>
+    <div class="card flush mb-card">
+      <div class="mb-bar"><span class="finder">${icon('search', 14)}<input id="mb-find" value="${esc(term)}" placeholder="${esc(w('find_placeholder'))}"/></span>
+        ${drafts ? `<span class="mb-note warn">${icon('alert', 13)} ${esc(w('drafts_waiting', { n: drafts }))}</span>` : ''}
+        <span class="mb-note" id="mb-dirty" ${dirty ? '' : 'hidden'}>${esc(w('unsaved'))}</span></div>
+      <table class="fixed menus-table"><thead><tr><th style="width:30px"></th>
+        <th style="width:25%">${w('col_screen')}</th><th style="width:19%">${w('col_under')}</th><th>${w('col_label')}</th>
+        <th style="width:48px">${w('col_icon')}</th><th style="width:96px">${w('col_state')}</th><th style="width:70px"></th></tr></thead>
+        <tbody id="mb-rows">${body || `<tr><td colspan="7" class="muted">${esc(w('no_match'))}</td></tr>`}</tbody>
+        ${off.length ? `<tbody class="mb-off"><tr class="mb-group"><td></td><td colspan="6"><span class="mb-gname">${icon('eye', 15)}<b>${esc(w('off_menu_title'))}</b>
+            <span class="mb-count">${esc(w('off_menu_note'))}</span></span></td></tr>
+          ${off.filter(shown).map((r) => `<tr class="mb-screen" data-id="${esc(r.id)}"><td></td>
+            <td><span class="mb-sname">${esc(r.label)}</span> <code>${esc(r.id)}</code></td>
+            <td colspan="3" class="mb-count">${esc(r.group || w('no_group'))}</td>
+            <td class="mb-acts" colspan="2"><button type="button" class="ghost" data-unhide title="${esc(w('put_back'))}">${icon('plus', 14)} ${esc(w('put_back'))}</button></td></tr>`).join('')}</tbody>` : ''}
+      </table>
     </div>`;
 
   const tb = host.querySelector('#mb-rows');
   const mark = () => { dirty = true; host.querySelector('#mb-dirty').hidden = false; };
   const redraw = () => { dirty = true; draw(host, term); };
   const rowOf = (el) => rows.find((r) => r.id === el.closest('tr').dataset.id);
-  const gOf = (el) => Number(el.closest('tr').dataset.g);
+  const gOf = (el) => Number(el.closest('tr').dataset.id.slice(2));
 
   tb.querySelectorAll('[data-gname]').forEach((inp) => {
     inp.oninput = () => {                              // renames the folder for every screen in it
@@ -89,9 +103,6 @@ function draw(host, term) {
     };
     inp.onchange = () => { groups = [...new Set(groups)]; settle(); redraw(); };   // a name already in use joins that folder
   });
-  tb.querySelectorAll('[data-gmove]').forEach((b) => {
-    b.onclick = () => { const i = gOf(b), j = i + Number(b.dataset.gmove); [groups[i], groups[j]] = [groups[j], groups[i]]; settle(); redraw(); };
-  });
   tb.querySelectorAll('[data-gdel]').forEach((b) => {
     b.onclick = () => {
       const i = gOf(b);
@@ -100,14 +111,6 @@ function draw(host, term) {
   });
   tb.querySelectorAll('[data-under]').forEach((s) => {
     s.onchange = () => { const r = rowOf(s); rows = rows.filter((x) => x !== r); r.group = s.value; rows.push(r); settle(); redraw(); };
-  });
-  tb.querySelectorAll('[data-move]').forEach((b) => {
-    b.onclick = () => {
-      const r = rowOf(b), kids = inGroup(r.group || ''), other = kids[kids.indexOf(r) + Number(b.dataset.move)];
-      const i = rows.indexOf(r), j = rows.indexOf(other);
-      [rows[i], rows[j]] = [rows[j], rows[i]];
-      redraw();
-    };
   });
   tb.querySelectorAll('[data-label]').forEach((inp) => { inp.oninput = () => { rowOf(inp).label = inp.value; mark(); }; });
   tb.querySelectorAll('[data-live]').forEach((b) => { b.onclick = () => { const r = rowOf(b); r.draft = !r.draft; redraw(); }; });
@@ -133,6 +136,31 @@ function draw(host, term) {
       });
     };
   });
+  // 2026-10-26 owner: deleting a menu row takes the screen off the MENU - the page itself is never deleted
+  tb.querySelectorAll('[data-hide]').forEach((b) => {
+    b.onclick = () => {
+      const r = rowOf(b);
+      confirmDialog(w('hide_q'), w('hide_body', { label: r.label }), () => { r.hidden = true; redraw(); }, w('hide_yes'));
+    };
+  });
+  host.querySelectorAll('[data-unhide]').forEach((b) => {
+    b.onclick = () => { const r = rowOf(b); r.hidden = false; if (!groups.includes(r.group || '')) groups.push(r.group || ''); settle(); redraw(); };
+  });
+  // Drag by the grip (Alt + arrow keys too): a folder carries its screens; a screen joins the folder it lands under.
+  if (!term) {
+    dragRows(tb, (ids) => {
+      const folders = ids.filter((i) => i.startsWith('g:')).map((i) => groups[Number(i.slice(2))]);
+      if (folders.join('\u0001') !== groups.join('\u0001')) groups = folders;
+      else {
+        let g = groups[0];
+        const moved = [];
+        ids.forEach((i) => { if (i.startsWith('g:')) g = groups[Number(i.slice(2))]; else { const r = rows.find((x) => x.id === i); r.group = g; moved.push(r); } });
+        rows = [...moved, ...rows.filter((r) => !moved.includes(r))];
+      }
+      settle();
+      redraw();
+    });
+  }
 
   host.querySelector('#mb-new').onclick = () => {
     let name = w('new_group_name'), n = 2;
@@ -147,7 +175,7 @@ function draw(host, term) {
   find.oninput = () => { draw(host, find.value); const f = host.querySelector('#mb-find'); f.focus(); f.setSelectionRange(f.value.length, f.value.length); };
   host.querySelector('#mb-save').onclick = async () => {
     settle();
-    const send = [...rows, ...fixed].map(({ id, label, group, icon: ic, draft, base }) => ({ id, label: (label || '').trim() || base?.label, group, icon: ic, draft }));
+    const send = [...rows, ...fixed].map(({ id, label, group, icon: ic, draft, hidden, base }) => ({ id, label: (label || '').trim() || base?.label, group, icon: ic, draft, hidden }));
     take((await api('/api/core/menus', { method: 'PUT', body: { rows: send } })).rows);
     dirty = false;
     toast(w('saved'));
