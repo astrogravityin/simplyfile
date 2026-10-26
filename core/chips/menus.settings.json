@@ -1,0 +1,48 @@
+{
+  "chip_id": "menus.settings",
+  "kind": "accessor",
+  "set": "menus",
+  "audience": "admin",
+  "label": "How long a Menu builder name may be",
+  "aliases": [],
+  "params": [
+    {
+      "name": "label_max",
+      "type": "number",
+      "default": 60
+    },
+    {
+      "name": "group_max",
+      "type": "number",
+      "default": 40
+    },
+    {
+      "name": "icon_max",
+      "type": "number",
+      "default": 24
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "label_max": "$label_max",
+      "group_max": "$group_max",
+      "icon_max": "$icon_max"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "How long a Menu builder name may be",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "label_max": 60,
+        "group_max": 40,
+        "icon_max": 24
+      }
+    }
+  ],
+  "weight_basis": "Platform operations primitive, no business content. The knobs ARE the policy - edit them here, never in code."
+}

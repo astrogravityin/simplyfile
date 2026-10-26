@@ -1,0 +1,41 @@
+{
+  "chip_id": "menus.messages",
+  "kind": "accessor",
+  "set": "menus",
+  "audience": "admin",
+  "label": "Every sentence the Menu builder says",
+  "aliases": [],
+  "params": [
+    {
+      "name": "no_screen",
+      "type": "text",
+      "default": "\"{screen}\" is not a screen in this portal."
+    },
+    {
+      "name": "needs_label",
+      "type": "text",
+      "default": "Every screen needs a name."
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "no_screen": "$no_screen",
+      "needs_label": "$needs_label"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "Errors when saving the menu. {screen} fills in.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "no_screen": "\"{screen}\" is not a screen in this portal.",
+        "needs_label": "Every screen needs a name."
+      }
+    }
+  ],
+  "weight_basis": "Platform operations primitive, no business content. The knobs ARE the policy - edit them here, never in code."
+}

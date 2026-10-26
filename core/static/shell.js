@@ -62,6 +62,7 @@ const CORE_VIEWS = {
   agents: () => import('./page-agents.js').then((m) => m.agentsPage),   // 2026-10-24 core/agents.py
   'connect-ai': () => import('./page-connect-ai.js').then((m) => m.connectAiPage),   // 2026-10-24 core/mcp.py
   'howto-config': () => import('./page-howto-config.js').then((m) => m.howtoConfigPage),
+  menus: () => import('./page-menus.js').then((m) => m.menusPage),   // 2026-10-26 core/menus.py
   ocb: () => import('./page-ocb.js').then((m) => m.ocbPage),
   rcb: () => import('./page-rcb.js').then((m) => m.rcbPage),
 };

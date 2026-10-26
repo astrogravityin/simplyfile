@@ -1,0 +1,180 @@
+{
+  "chip_id": "ui.menus",
+  "kind": "accessor",
+  "set": "ui",
+  "label": "Every word on the Menu builder screen",
+  "aliases": [],
+  "params": [
+    {
+      "name": "title",
+      "type": "text",
+      "default": "Menu builder"
+    },
+    {
+      "name": "lede",
+      "type": "text",
+      "default": "Name, group, icon and order of every screen in the menu. A new screen arrives as a <b>Draft</b> that only you can see; press it to put it <b>Live</b>, and Access Control decides who sees it."
+    },
+    {
+      "name": "find_placeholder",
+      "type": "text",
+      "default": "Find a screen"
+    },
+    {
+      "name": "no_match",
+      "type": "text",
+      "default": "No screen matches."
+    },
+    {
+      "name": "col_name",
+      "type": "text",
+      "default": "Name"
+    },
+    {
+      "name": "col_group",
+      "type": "text",
+      "default": "Group"
+    },
+    {
+      "name": "col_icon",
+      "type": "text",
+      "default": "Icon"
+    },
+    {
+      "name": "col_state",
+      "type": "text",
+      "default": "Shown to"
+    },
+    {
+      "name": "live",
+      "type": "text",
+      "default": "Live"
+    },
+    {
+      "name": "draft",
+      "type": "text",
+      "default": "Draft - only you"
+    },
+    {
+      "name": "owner_only",
+      "type": "text",
+      "default": "Owner only"
+    },
+    {
+      "name": "drafts_waiting",
+      "type": "text",
+      "default": "{n} new {n:screen|screens} waiting to go live."
+    },
+    {
+      "name": "reset",
+      "type": "text",
+      "default": "Back to the original"
+    },
+    {
+      "name": "reset_q",
+      "type": "text",
+      "default": "Put this screen back?"
+    },
+    {
+      "name": "reset_body",
+      "type": "text",
+      "default": "\"{label}\" goes back to the name, group and icon the portal gave it."
+    },
+    {
+      "name": "drag",
+      "type": "text",
+      "default": "Drag to move (Alt + arrow keys too)"
+    },
+    {
+      "name": "drag_off",
+      "type": "text",
+      "default": "Clear the search to reorder."
+    },
+    {
+      "name": "save",
+      "type": "text",
+      "default": "Save the menu"
+    },
+    {
+      "name": "saved",
+      "type": "text",
+      "default": "Menu saved."
+    },
+    {
+      "name": "unsaved",
+      "type": "text",
+      "default": "Changes not saved yet."
+    },
+    {
+      "name": "make_live",
+      "type": "text",
+      "default": "Click to put it live: Access Control then decides who sees it"
+    },
+    {
+      "name": "make_draft",
+      "type": "text",
+      "default": "Click to make it a draft again: only you see it"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "title": "$title",
+      "lede": "$lede",
+      "find_placeholder": "$find_placeholder",
+      "no_match": "$no_match",
+      "col_name": "$col_name",
+      "col_group": "$col_group",
+      "col_icon": "$col_icon",
+      "col_state": "$col_state",
+      "live": "$live",
+      "draft": "$draft",
+      "owner_only": "$owner_only",
+      "drafts_waiting": "$drafts_waiting",
+      "reset": "$reset",
+      "reset_q": "$reset_q",
+      "reset_body": "$reset_body",
+      "drag": "$drag",
+      "drag_off": "$drag_off",
+      "save": "$save",
+      "saved": "$saved",
+      "unsaved": "$unsaved",
+      "make_live": "$make_live",
+      "make_draft": "$make_draft"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "Every word on the Menu builder screen",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "title": "Menu builder",
+        "lede": "Name, group, icon and order of every screen in the menu. A new screen arrives as a <b>Draft</b> that only you can see; press it to put it <b>Live</b>, and Access Control decides who sees it.",
+        "find_placeholder": "Find a screen",
+        "no_match": "No screen matches.",
+        "col_name": "Name",
+        "col_group": "Group",
+        "col_icon": "Icon",
+        "col_state": "Shown to",
+        "live": "Live",
+        "draft": "Draft - only you",
+        "owner_only": "Owner only",
+        "drafts_waiting": "{n} new {n:screen|screens} waiting to go live.",
+        "reset": "Back to the original",
+        "reset_q": "Put this screen back?",
+        "reset_body": "\"{label}\" goes back to the name, group and icon the portal gave it.",
+        "drag": "Drag to move (Alt + arrow keys too)",
+        "drag_off": "Clear the search to reorder.",
+        "save": "Save the menu",
+        "saved": "Menu saved.",
+        "unsaved": "Changes not saved yet.",
+        "make_live": "Click to put it live: Access Control then decides who sees it",
+        "make_draft": "Click to make it a draft again: only you see it"
+      }
+    }
+  ],
+  "weight_basis": "Platform operations primitive, no business content. The knobs ARE the policy - edit them here, never in code."
+}

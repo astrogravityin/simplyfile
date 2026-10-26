@@ -91,12 +91,14 @@ CORE_SCREENS = [
     {"id": "agents", "label": "Agents", "group": "Admin", "icon": "agent", "admin": True},          # 2026-10-24 core/agents.py
     {"id": "connect-ai", "label": "Connect your AI", "group": "Admin", "icon": "plug", "admin": True},    # 2026-10-24 core/mcp.py
     {"id": "howto-config", "label": "How to Use pages", "group": "Admin", "icon": "help", "admin": True},
+    {"id": "menus", "label": "Menu builder", "group": "Admin", "icon": "menu", "admin": True},           # 2026-10-26 core/menus.py
     # 2026-09-17 owner: the builders change what the whole portal does, so they are the owner's alone -
     # hidden from everyone else and closed to grants, like every Admin screen.
     {"id": "ocb", "label": "Ops & chips", "group": "Build", "icon": "chip", "admin": True},
     {"id": "rcb", "label": "Rules", "group": "Build", "icon": "spark", "admin": True},
 ]
 CATALOG: list[dict] = []
+BASE: list[dict] = []            # the catalog as the host gave it; CATALOG = BASE with the owner's Menu builder edits on top
 _BY_ID: dict[str, dict] = {}
 
 router = APIRouter()
@@ -105,7 +107,14 @@ router = APIRouter()
 def load(catalog: list[dict] | str | Path) -> None:
     if not isinstance(catalog, list):
         catalog = json.loads(Path(catalog).read_text(encoding="utf-8"))
-    CATALOG[:] = [s for s in catalog if s["id"] not in {c["id"] for c in CORE_SCREENS}] + CORE_SCREENS
+    BASE[:] = [s for s in catalog if s["id"] not in {c["id"] for c in CORE_SCREENS}] + CORE_SCREENS
+    reapply()
+
+
+def reapply() -> None:
+    """Rebuild CATALOG from BASE and the Menu builder's edits (core/menus.py) - at start and after every save."""
+    from core import menus  # noqa: PLC0415 - menus reads the store; access is imported first
+    CATALOG[:] = menus.apply(BASE)
     _BY_ID.clear()
     _BY_ID.update({s["id"]: s for s in CATALOG})
     # 2026-10-24 Connect your AI: one function per tool of the portal's chip mcp.tools (gated per tool, deny wins)

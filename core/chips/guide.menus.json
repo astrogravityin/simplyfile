@@ -1,0 +1,148 @@
+{
+  "chip_id": "guide.menus",
+  "kind": "accessor",
+  "set": "guide",
+  "label": "Guide me: Menu builder",
+  "aliases": [
+    "menu builder",
+    "menus"
+  ],
+  "params": [
+    {
+      "name": "title",
+      "type": "text",
+      "default": "Menu builder",
+      "label": "title"
+    },
+    {
+      "name": "lede",
+      "type": "text",
+      "default": "Name, group, order and icon of every screen in {product}, and Live for a new one.",
+      "label": "lede"
+    },
+    {
+      "name": "icon",
+      "type": "text",
+      "default": "menu",
+      "label": "icon"
+    },
+    {
+      "name": "minutes",
+      "type": "number",
+      "default": 1,
+      "label": "minutes"
+    },
+    {
+      "name": "steps",
+      "type": "list",
+      "default": [
+        {
+          "title": "Menu builder",
+          "say": "Every screen of {product} in one table: its name, its group, its icon and its place in the menu.",
+          "target": "header.pagehead",
+          "art": {
+            "kind": "hero",
+            "icon": "menu"
+          }
+        },
+        {
+          "title": "Find a screen",
+          "say": "Type part of a name or group; typos still find it.",
+          "target": "#mb-find"
+        },
+        {
+          "title": "Move a screen",
+          "say": "Drag the grip at the start of a row to move it up or down. Alt and the arrow keys move it too.",
+          "target": "#mb-rows [data-grip]"
+        },
+        {
+          "title": "Name, group and icon",
+          "say": "Type over a name or a group. A new group name starts a new group in the menu. Pick an icon from the list.",
+          "target": "#mb-rows input[data-f=label]"
+        },
+        {
+          "title": "Draft or Live",
+          "say": "A screen added later arrives as a Draft that only you see. Press it to put it Live; from then on Access Control decides who sees it.",
+          "target": "#mb-rows [data-live]"
+        },
+        {
+          "title": "Back to the original",
+          "say": "The round arrow puts one screen back to the name, group and icon the portal gave it.",
+          "target": "#mb-rows [data-reset]"
+        },
+        {
+          "title": "Save",
+          "say": "Save the menu. The menu on the left and every person's menu follow at once.",
+          "target": "#mb-save"
+        }
+      ],
+      "label": "steps: title, say, target (what to light up), open (what to press first)"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "title": "$title",
+      "lede": "$lede",
+      "icon": "$icon",
+      "minutes": "$minutes",
+      "steps": "$steps"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-26 (core, every portal): Admin > Menu builder (core/static/page-menus.js).",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "title": "Menu builder",
+        "lede": "Name, group, order and icon of every screen in {product}, and Live for a new one.",
+        "icon": "menu",
+        "minutes": 1,
+        "steps": [
+          {
+            "title": "Menu builder",
+            "say": "Every screen of {product} in one table: its name, its group, its icon and its place in the menu.",
+            "target": "header.pagehead",
+            "art": {
+              "kind": "hero",
+              "icon": "menu"
+            }
+          },
+          {
+            "title": "Find a screen",
+            "say": "Type part of a name or group; typos still find it.",
+            "target": "#mb-find"
+          },
+          {
+            "title": "Move a screen",
+            "say": "Drag the grip at the start of a row to move it up or down. Alt and the arrow keys move it too.",
+            "target": "#mb-rows [data-grip]"
+          },
+          {
+            "title": "Name, group and icon",
+            "say": "Type over a name or a group. A new group name starts a new group in the menu. Pick an icon from the list.",
+            "target": "#mb-rows input[data-f=label]"
+          },
+          {
+            "title": "Draft or Live",
+            "say": "A screen added later arrives as a Draft that only you see. Press it to put it Live; from then on Access Control decides who sees it.",
+            "target": "#mb-rows [data-live]"
+          },
+          {
+            "title": "Back to the original",
+            "say": "The round arrow puts one screen back to the name, group and icon the portal gave it.",
+            "target": "#mb-rows [data-reset]"
+          },
+          {
+            "title": "Save",
+            "say": "Save the menu. The menu on the left and every person's menu follow at once.",
+            "target": "#mb-save"
+          }
+        ]
+      }
+    }
+  ]
+}
