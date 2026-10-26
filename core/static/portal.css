@@ -1413,10 +1413,19 @@ select option{background:var(--panel);color:var(--ink)}
 .push-back{display:grid;place-items:center;min-height:90vh;margin:0;padding:16px;text-align:center;font-size:15px}
 .is-title{overflow-wrap:anywhere;min-width:0}   /* a report title can be one long address (a CSP report): it wraps, never widens a phone page */
 
-/* Menu builder (page-menus.js): names and groups read as text until hovered or edited; the icon is picked by its picture */
-.menus-table input{border-color:transparent;background:transparent;box-shadow:none;font-weight:560}
-.menus-table input:hover{border-color:var(--line-2);background:var(--panel)}
-.menus-table input:focus{background:var(--panel)}
+/* Menu builder (page-menus.js): folder rows with their screens indented under them; the icon is picked by its picture */
+.menus-table td{vertical-align:middle;padding-top:9px;padding-bottom:9px}
+.menus-table input,.menus-table select{width:100%}
+.menus-table tr.mb-group td{background:var(--panel-2);border-top:1px solid var(--line-2)}
+.mb-gname{display:flex;gap:10px;align-items:center;color:var(--brand)}
+.mb-gname input{font-weight:650;max-width:340px}
+.mb-screen td:first-child{padding-left:42px}
+.mb-sname{font-weight:600;color:var(--ink)}
+.mb-acts{white-space:nowrap;text-align:right}
+.mb-order{display:inline-flex;gap:2px}
+.mb-state{min-width:120px;justify-content:center}
+.mb-state.live{color:var(--ok);border-color:var(--ok)}
+.mb-state.draft{color:var(--warn);border-color:var(--warn)}
 .iconpick{width:38px;height:38px;padding:0;display:inline-grid;place-items:center;border-radius:10px;color:var(--brand)}
 .icongrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(46px,1fr));gap:6px}
 .icongrid button{height:46px;display:grid;place-items:center;border-radius:10px;color:var(--ink-2)}

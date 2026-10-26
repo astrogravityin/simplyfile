@@ -13,7 +13,7 @@
     {
       "name": "lede",
       "type": "text",
-      "default": "Name, group, icon and order of every screen in the menu. A new screen arrives as a <b>Draft</b> that only you can see; press it to put it <b>Live</b>, and Access Control decides who sees it."
+      "default": "The menu {product} shows its members, arranged as folders and screens. A folder is a heading with no page of its own: rename it, move it, or start a new one. Each screen sits under a folder with its own label and icon. A new screen arrives as a <b>Draft</b> that only you can see; put it <b>Live</b> and Access Control decides who sees it."
     },
     {
       "name": "find_placeholder",
@@ -119,6 +119,86 @@
       "name": "pick_icon",
       "type": "text",
       "default": "Pick an icon"
+    },
+    {
+      "name": "col_screen",
+      "type": "text",
+      "default": "Screen"
+    },
+    {
+      "name": "col_under",
+      "type": "text",
+      "default": "Under"
+    },
+    {
+      "name": "col_label",
+      "type": "text",
+      "default": "Menu label"
+    },
+    {
+      "name": "col_order",
+      "type": "text",
+      "default": "Order"
+    },
+    {
+      "name": "new_group",
+      "type": "text",
+      "default": "New folder"
+    },
+    {
+      "name": "new_group_name",
+      "type": "text",
+      "default": "New folder"
+    },
+    {
+      "name": "no_group",
+      "type": "text",
+      "default": "— No folder —"
+    },
+    {
+      "name": "group_name",
+      "type": "text",
+      "default": "Folder name"
+    },
+    {
+      "name": "group_count",
+      "type": "text",
+      "default": "{n} {n:screen|screens}"
+    },
+    {
+      "name": "move_up",
+      "type": "text",
+      "default": "Move up"
+    },
+    {
+      "name": "move_down",
+      "type": "text",
+      "default": "Move down"
+    },
+    {
+      "name": "delete_group",
+      "type": "text",
+      "default": "Delete this folder"
+    },
+    {
+      "name": "group_not_empty",
+      "type": "text",
+      "default": "Move its screens to another folder first"
+    },
+    {
+      "name": "delete_group_q",
+      "type": "text",
+      "default": "Delete this folder?"
+    },
+    {
+      "name": "delete_group_body",
+      "type": "text",
+      "default": "\"{name}\" has no screens. It leaves the menu when you save."
+    },
+    {
+      "name": "group_empty",
+      "type": "text",
+      "default": "Empty - kept once a screen is under it"
     }
   ],
   "expr": {
@@ -146,7 +226,23 @@
       "unsaved": "$unsaved",
       "make_live": "$make_live",
       "make_draft": "$make_draft",
-      "pick_icon": "$pick_icon"
+      "pick_icon": "$pick_icon",
+      "col_screen": "$col_screen",
+      "col_under": "$col_under",
+      "col_label": "$col_label",
+      "col_order": "$col_order",
+      "new_group": "$new_group",
+      "new_group_name": "$new_group_name",
+      "no_group": "$no_group",
+      "group_name": "$group_name",
+      "group_count": "$group_count",
+      "move_up": "$move_up",
+      "move_down": "$move_down",
+      "delete_group": "$delete_group",
+      "group_not_empty": "$group_not_empty",
+      "delete_group_q": "$delete_group_q",
+      "delete_group_body": "$delete_group_body",
+      "group_empty": "$group_empty"
     }
   },
   "returns": "record",
@@ -158,7 +254,7 @@
       "args": {},
       "expect_value": {
         "title": "Menu builder",
-        "lede": "Name, group, icon and order of every screen in the menu. A new screen arrives as a <b>Draft</b> that only you can see; press it to put it <b>Live</b>, and Access Control decides who sees it.",
+        "lede": "The menu {product} shows its members, arranged as folders and screens. A folder is a heading with no page of its own: rename it, move it, or start a new one. Each screen sits under a folder with its own label and icon. A new screen arrives as a <b>Draft</b> that only you can see; put it <b>Live</b> and Access Control decides who sees it.",
         "find_placeholder": "Find a screen",
         "no_match": "No screen matches.",
         "col_name": "Name",
@@ -179,7 +275,23 @@
         "unsaved": "Changes not saved yet.",
         "make_live": "Click to put it live: Access Control then decides who sees it",
         "make_draft": "Click to make it a draft again: only you see it",
-        "pick_icon": "Pick an icon"
+        "pick_icon": "Pick an icon",
+        "col_screen": "Screen",
+        "col_under": "Under",
+        "col_label": "Menu label",
+        "col_order": "Order",
+        "new_group": "New folder",
+        "new_group_name": "New folder",
+        "no_group": "— No folder —",
+        "group_name": "Folder name",
+        "group_count": "{n} {n:screen|screens}",
+        "move_up": "Move up",
+        "move_down": "Move down",
+        "delete_group": "Delete this folder",
+        "group_not_empty": "Move its screens to another folder first",
+        "delete_group_q": "Delete this folder?",
+        "delete_group_body": "\"{name}\" has no screens. It leaves the menu when you save.",
+        "group_empty": "Empty - kept once a screen is under it"
       }
     }
   ],
