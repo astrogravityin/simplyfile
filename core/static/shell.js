@@ -466,12 +466,13 @@ async function landed(user) {
 
 /** No screen asked for (or one this person may not open): the landing (a door's first screen, e.g. #/read; a self-filer's
  *  My return) when granted, else the first screen this person may open. On sign-in, and on a page opened already signed in. */
+let leaving = false;   // 2026-10-26: going to the host's own page - draw nothing on the way (a 'No view' flashed)
 function toLanding() {
   const asked = (location.hash || '').replace(/^#\//, '').split('?')[0];
   if (!asked || !([...screens(), ...askable()].some((s) => s.id === asked) || ((state.elsewhere || {}).screens || []).includes(asked))) {
     const land = (typeof config.landing === 'function' ? config.landing() : config.landing) || '';
-    if (land.startsWith('/')) { location.replace(land); return; }   // a page of the host's own (AstroFy: its home page)
-    const first = screens()[0];
+    if (land.startsWith('/')) { leaving = true; location.replace(land); return; }   // a page of the host's own (AstroFy: its home page)
+    const first = screens().find((s) => !s.hidden && !s.no_menu);
     const to = may(land.replace(/^#\//, '')) || !first ? land : `#/${first.id}`;
     if (to) history.replaceState(null, '', to);
   }
@@ -823,7 +824,8 @@ function askable() {
 function currentScreen() {
   const id = (location.hash || '').replace(/^#\//, '').split('?')[0];
   const list = screens();
-  return list.find((s) => s.id === id) || askable().find((s) => s.id === id) || list[0] || null;
+  return list.find((s) => s.id === id) || askable().find((s) => s.id === id)
+    || list.find((s) => !s.hidden && !s.no_menu) || null;   // no screen named: the first MENU screen, never a no_menu subject (the bottom bar)
 }
 
 function shellView(route) {
@@ -1345,6 +1347,7 @@ function wireMenuScroll(root, scrolled) {
 }
 
 export function render() {
+  if (leaving) return;
   const root = document.getElementById('root');
   shownHash = location.hash;
   hooks.isDirty = null;
