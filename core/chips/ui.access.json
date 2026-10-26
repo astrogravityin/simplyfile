@@ -400,7 +400,7 @@
     {
       "name": "as_screen",
       "type": "text",
-      "default": "As screen"
+      "default": "Same as screen"
     },
     {
       "name": "owner_only_note",
@@ -928,6 +928,16 @@
       "name": "no_screen_hint",
       "type": "text",
       "default": "Try fewer letters, or another word from the screen’s name."
+    },
+    {
+      "name": "as_screen_tip",
+      "type": "text",
+      "default": "No rule of its own: this button is open exactly when its screen above is open"
+    },
+    {
+      "name": "no_group",
+      "type": "text",
+      "default": "No folder"
     }
   ],
   "expr": {
@@ -1116,7 +1126,9 @@
       "typo_ok": "$typo_ok",
       "matches_n": "$matches_n",
       "clear_search": "$clear_search",
-      "no_screen_hint": "$no_screen_hint"
+      "no_screen_hint": "$no_screen_hint",
+      "as_screen_tip": "$as_screen_tip",
+      "no_group": "$no_group"
     }
   },
   "returns": "record",
@@ -1205,7 +1217,7 @@
         "col_screen": "Screen",
         "col_rule": "Rule",
         "open": "No rule",
-        "as_screen": "As screen",
+        "as_screen": "Same as screen",
         "owner_only_note": "and email (SMTP) are yours alone as the portal owner. No rule can open them to anyone else.",
         "delete_group_title": "Delete \"{name}\"?",
         "delete_group_body": "Its rules go with it. Its members keep their accounts; a group that inherited from it inherits from its parent instead.",
@@ -1310,7 +1322,9 @@
         "typo_ok": "Typos OK",
         "matches_n": "{n} of {total}",
         "clear_search": "Clear search",
-        "no_screen_hint": "Try fewer letters, or another word from the screen’s name."
+        "no_screen_hint": "Try fewer letters, or another word from the screen’s name.",
+        "as_screen_tip": "No rule of its own: this button is open exactly when its screen above is open",
+        "no_group": "No folder"
       }
     }
   ],

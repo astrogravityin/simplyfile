@@ -107,7 +107,11 @@ router = APIRouter()
 def load(catalog: list[dict] | str | Path) -> None:
     if not isinstance(catalog, list):
         catalog = json.loads(Path(catalog).read_text(encoding="utf-8"))
-    BASE[:] = [s for s in catalog if s["id"] not in {c["id"] for c in CORE_SCREENS}] + CORE_SCREENS
+    core_ids = {c["id"] for c in CORE_SCREENS}
+    # 2026-10-26 a portal may take a framework screen off its menu ({"id": "ocb", "hidden": true} in its catalog) -
+    # still the owner's alone and still opens by its link; nothing else about it can be changed from the host.
+    off = {s["id"] for s in catalog if s["id"] in core_ids and s.get("hidden")}
+    BASE[:] = [s for s in catalog if s["id"] not in core_ids] + [c | ({"hidden": True} if c["id"] in off else {}) for c in CORE_SCREENS]
     reapply()
 
 

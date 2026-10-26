@@ -327,10 +327,10 @@ async function ruleDetail(box, host) {
   if (!g && !p) { subject = `group:${d.catch_all}`; return ruleDetail(box, host); }
   const mine = rulesOf(subject);
   const effectOf = (screen, fn = '') => (mine.find((r) => r.screen === screen && (r.function || '') === fn) || {}).effect || '';
-  const choice = (screen, fn, fallback) => {
+  const choice = (screen, fn, fallback, tip = w('no_rule_tip')) => {
     const e = effectOf(screen, fn);
     return `<div class="switch" data-screen="${esc(screen)}" data-fn="${esc(fn)}">
-      <button type="button" data-eff="" class="${e ? '' : 'on'}" title="${esc(w('no_rule_tip'))}">${esc(fallback)}</button>
+      <button type="button" data-eff="" class="${e ? '' : 'on'}" title="${esc(tip)}">${esc(fallback)}</button>
       <button type="button" data-eff="allow" class="${e === 'allow' ? 'on ok' : ''}">${icon('check', 13)} ${w('allow')}</button>
       <button type="button" data-eff="deny" class="${e === 'deny' ? 'on bad' : ''}">${icon('ban', 13)} ${w('deny')}</button></div>`;
   };
@@ -353,9 +353,9 @@ async function ruleDetail(box, host) {
       <button type="button" class="fx-clear" id="rule-clear" hidden aria-label="${esc(w('clear_search'))}" title="${esc(w('clear_search'))}">${icon('close', 14)}</button></div>
     <div class="fx-none" id="rule-none" hidden>${FX_ART}<b id="rule-none-q"></b><span class="small">${w('no_screen_hint')}</span></div>
     <table class="rules" id="rule-table"><thead><tr><th>${w('col_screen')}</th><th>${w('col_rule')}</th></tr></thead><tbody>
-    ${d.catalog.filter((s) => !s.admin).map((s) => `<tr data-sid="${esc(s.id)}"><td><b>${esc(s.label)}</b> <span class="small muted">${esc(s.group || '')}</span></td>
-        <td>${choice(s.id, '', w('open'))}</td></tr>
-      ${(s.functions || []).map((f) => `<tr class="fn" data-sid="${esc(s.id)}"><td>↳ ${esc(f.label)}</td><td>${choice(s.id, f.id, w('as_screen'))}</td></tr>`).join('')}`).join('')}
+    ${d.catalog.filter((s) => !s.admin).map((s, i, all) => `${i && all[i - 1].group === s.group ? '' : `<tr class="rg" data-rg="${esc(s.group || '')}"><td colspan="2">${icon('folder', 13)} ${esc(s.group || w('no_group'))}</td></tr>`}
+      <tr data-sid="${esc(s.id)}" data-g="${esc(s.group || '')}"><td><b>${esc(s.label)}</b></td><td>${choice(s.id, '', w('open'))}</td></tr>
+      ${(s.functions || []).map((f) => `<tr class="fn" data-sid="${esc(s.id)}" data-g="${esc(s.group || '')}"><td>↳ ${esc(f.label)}</td><td>${choice(s.id, f.id, w('as_screen'), w('as_screen_tip'))}</td></tr>`).join('')}`).join('')}
     </tbody></table>
     <p class="small muted" style="margin-top:12px">${icon('lock', 13)} ${esc(d.catalog.filter((s) => s.admin).map((s) => s.label).join(', '))}
       ${w('owner_only_note')}</p>`;
@@ -371,6 +371,9 @@ async function ruleDetail(box, host) {
     }
     if (find.value !== ruleQ) return;                  // typed on meanwhile: the newer search answers
     box.querySelectorAll('tr[data-sid]').forEach((tr) => { tr.hidden = !!ids && !ids.has(tr.dataset.sid); });
+    box.querySelectorAll('tr[data-rg]').forEach((tr) => {   // a folder heading shows while any of its screens does
+      tr.hidden = !!ids && ![...box.querySelectorAll('tr[data-sid]')].some((x) => x.dataset.g === tr.dataset.rg && !x.hidden);
+    });
     const total = d.catalog.filter((s) => !s.admin).length;
     const n = box.querySelector('#rule-n');
     n.hidden = !ids; n.textContent = ids ? w('matches_n', { n: ids.size, total }) : '';

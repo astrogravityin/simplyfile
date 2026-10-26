@@ -27,8 +27,8 @@ export async function menusPage(host) {
 }
 
 function take(all) {
-  rows = all.filter((r) => !r.core);
-  fixed = all.filter((r) => r.core);
+  rows = all.filter((r) => !r.core && !r.no_menu);            // no_menu: an Access Control subject, not a menu item (the bottom bar)
+  fixed = all.filter((r) => r.core || r.no_menu);
   groups = [...new Set(rows.filter((r) => !r.hidden).map((r) => r.group || ''))];
 }
 

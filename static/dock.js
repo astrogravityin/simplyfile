@@ -10,7 +10,7 @@
 //                      words spoken before a box is chosen go into the next box clicked.
 //   Notes / Issues   - notes-modal.js, issues-modal.js. Issues' badge = own issues answered and not opened yet.
 // Settings: chip page.dock (the studio's ui.dock_tools). Words: chip ui.dock (the studio's ui.dock_words, word for word).
-import { api, esc, toast, t, ps, loadWords, modal, confirmDialog, keep, kept } from './app.js';
+import { api, esc, toast, t, ps, loadWords, modal, confirmDialog, keep, kept, BASE } from './app.js';
 import { icon, chipChatGlyph } from './icons.js';
 
 export const w = (k, v) => t('dock', k.replace(/[.-]/g, '_'), v);
@@ -80,7 +80,7 @@ function download(blob, name) {
 }
 
 // --- the bar's state, kept for the page's life: a running recording and the microphone outlive a fold of the bar --------
-const S = { recorder: null, stopListening: null, target: null, waiting: '', hearing: '', aimed: false, unseen: 0, user: null };
+const S = { recorder: null, stopListening: null, target: null, waiting: '', hearing: '', aimed: false, unseen: 0, unread: 0, user: null };
 const liveBox = (el) => (el && el.isConnected && isEditable(el) ? el : null);
 
 function caption() {
@@ -248,9 +248,40 @@ export async function countUnseen() {
   draw();
 }
 
+// --- ValueConnect (2026-10-25 CodyFy, 2026-10-26 AstroFy): its own stylesheet after the portal's, the session cookie rides
+// every call (no token). The kit is copied from AstroStage (connect_plus/; files in static/connect-plus/).
+let cp = null;
+function connectPlus() {
+  if (!cp) {
+    const sheet = document.createElement('link');
+    sheet.rel = 'stylesheet';
+    sheet.href = `${BASE}/static/connect-plus/connect-plus.css`;
+    document.head.appendChild(sheet);
+    cp = import(`${BASE}/static/connect-plus/connect-plus.js`).then(async (m) => {
+      await m.default.mount({ apiBase: `${BASE}/api`, token: () => null });
+      const k = await api('/api/connect/knobs');
+      if (k.list_poll_ms) setInterval(() => S.user && countConnect(), Number(k.list_poll_ms));   // the badge: the kit's own list poll
+      return m.default;
+    });
+    cp.catch(() => { cp = null; });
+  }
+  return cp;
+}
+const connectOn = () => (K().tools || []).includes('connect') && allowed('connect');
+async function openConnect() {
+  try { (await connectPlus()).open(); } catch { toast(w('connect_failed'), 'bad'); }
+}
+async function countConnect() {
+  if (!connectOn()) return;                                       // not on this portal's bar, or not for this person
+  try { S.unread = (await (await connectPlus()).unread()) || 0; } catch { S.unread = 0; }
+  draw();
+}
+
 // --- the bar -----------------------------------------------------------------------------------------------------------
 const canScreen = () => !!(navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia);
 const TOOLS = {
+  connect: () => `<button type="button" class="pd-b pd-sky" data-dock-tool="connect" title="${esc(w(S.unread ? 'tool.connect.title_badge' : 'tool.connect.title', { n: S.unread }))}"
+      aria-label="${esc(w(S.unread ? 'tool.connect.label_badge' : 'tool.connect.label', { n: S.unread }))}">${icon('chat', 20)}${S.unread ? `<span class="pd-badge" data-connect-badge>${S.unread}</span>` : ''}</button>`,
   capture: () => canScreen() && `<button type="button" class="pd-b pd-sky" data-dock-tool="capture" title="${esc(w('tool.capture.title'))}" aria-label="${esc(w('tool.capture.label'))}">${icon('crop', 20)}</button>`,
   record: () => canScreen() && `<button type="button" class="pd-b ${S.recorder ? 'pd-on' : 'pd-violet'}" data-dock-tool="record" aria-pressed="${!!S.recorder}"
       title="${esc(w(S.recorder ? 'tool.record.title_on' : 'tool.record.title'))}" aria-label="${esc(w(S.recorder ? 'tool.record.label_on' : 'tool.record.label'))}">${icon('video', 20)}</button>`,
@@ -260,7 +291,11 @@ const TOOLS = {
   issue: () => `<button type="button" class="pd-b pd-rose" data-dock-tool="issue" title="${esc(w(S.unseen ? 'tool.issue.title_badge' : 'tool.issue.title', { n: S.unseen }))}"
       aria-label="${esc(w(S.unseen ? 'tool.issue.label_badge' : 'tool.issue.label', { n: S.unseen }))}">${icon('flag', 20)}${S.unseen ? `<span class="pd-badge" data-issue-badge>${S.unseen}</span>` : ''}</button>`,
 };
-const chatBtn = () => `<button type="button" class="pd-b" data-dock-chip-chat title="${esc(w('bar.chat_tip'))}" aria-label="${esc(w('bar.chat_label'))}">${chipChatGlyph(24)}</button>`;
+// 2026-10-26: a portal may gate each tool per group (Access Control): syncDock(user, may) with may(toolId) -> bool.
+// No checker = every tool the settings list. Chip Chat shows unless the settings say chat: false.
+const allowed = (id) => !S.may || S.may(id);
+const chatOn = () => K().chat !== false && allowed('chat');
+const chatBtn = () => !chatOn() ? '' : `<button type="button" class="pd-b" data-dock-chip-chat title="${esc(w('bar.chat_tip'))}" aria-label="${esc(w('bar.chat_label'))}">${chipChatGlyph(24)}</button>`;
 
 function draw() {
   const el = document.getElementById('sf-dock');
@@ -272,12 +307,14 @@ function draw() {
     ? `<button type="button" class="pd-arrow" data-open="row" title="${esc(w('bar.open_row'))}" aria-label="${esc(w('bar.open_row_label'))}">${icon('left', 16)}</button>
        <div class="pd-stack"><button type="button" class="pd-arrow pd-up" data-open="col" title="${esc(w('bar.open_col'))}" aria-label="${esc(w('bar.open_col_label'))}">${icon('up', 16)}</button>${chatBtn()}</div>`
     : `<button type="button" class="pd-arrow ${col ? 'pd-up' : ''}" data-hide title="${esc(w('bar.hide'))}" aria-label="${esc(w('bar.hide_label'))}">${icon(col ? 'down' : 'right', 16)}</button>
-       ${chatBtn()}${(K().tools || Object.keys(TOOLS)).map((id) => (TOOLS[id] ? TOOLS[id]() || '' : '')).join('')}`;
+       ${chatBtn()}${(K().tools || Object.keys(TOOLS)).filter(allowed).map((id) => (TOOLS[id] ? TOOLS[id]() || '' : '')).join('')}`;
   el.querySelectorAll('[data-open]').forEach((b) => { b.onclick = () => { keep('sf.dock.open', '1'); keep('sf.dock.dir', b.dataset.open); draw(); }; });
   const hide = el.querySelector('[data-hide]');
   if (hide) hide.onclick = () => { keep('sf.dock.open', '0'); draw(); };
-  el.querySelector('[data-dock-chip-chat]').onclick = () => import('./chipchat.js').then((m) => m.openChipChat());
+  const chat = el.querySelector('[data-dock-chip-chat]');
+  if (chat) chat.onclick = () => import('./chipchat.js').then((m) => m.openChipChat());
   const on = (sel, fn) => { const b = el.querySelector(sel); if (b) b.onclick = fn; };
+  on('[data-dock-tool=connect]', openConnect);
   on('[data-dock-tool=capture]', capture);
   on('[data-dock-tool=record]', record);
   on('[data-dock-tool=notes]', () => openNotes());
@@ -287,9 +324,10 @@ function draw() {
 }
 
 let wired = false;
-export async function syncDock(user) {
+export async function syncDock(user, may = null) {
   let el = document.getElementById('sf-dock');
   S.user = user;
+  S.may = may;
   if (!user) { if (el) el.remove(); return; }
   if (!wired) {
     wired = true;
@@ -302,7 +340,7 @@ export async function syncDock(user) {
       }
       caption();
     });
-    window.addEventListener('focus', () => S.user && countUnseen());
+    window.addEventListener('focus', () => S.user && (countUnseen(), countConnect()));
     // signed out = the shell draws the sign-in page and never calls wireTopbar again: take the bar away
     new MutationObserver(() => { if (document.querySelector('aside.pitch')) { const d = document.getElementById('sf-dock'); if (d) d.remove(); } })
       .observe(document.body, { childList: true });
@@ -315,4 +353,5 @@ export async function syncDock(user) {
   document.body.appendChild(el);
   draw();
   countUnseen();
+  countConnect();
 }
