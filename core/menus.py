@@ -3,8 +3,8 @@
 The edits are data (store "menus": {screen_id: {label, group, icon, order, draft}}), never git, so a code push
 never undoes the owner's menu. A catalog row may arrive with "draft": true (a screen the host found by itself,
 e.g. a module written in another session): it stays the owner's alone - an admin screen in all but name - until
-the owner ticks Live here. Going live it is a new screen like any other and joins Catch All once
-(access.settings new_screens_to_catch_all); from then on Access Control decides who sees it.
+the owner ticks Live here. Going live opens it to nobody new: access remembered the draft as it arrived
+(2026-10-26 owner), so Access Control alone decides who sees it - allow it in Catch All for everyone.
 """
 from __future__ import annotations
 

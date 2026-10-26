@@ -169,7 +169,7 @@ def _migrate(d: dict) -> None:
         g.setdefault("inherits", CATCH_ALL)             # My Family keeps everything it saw, plus its own allows
     d["groups"] = [{"id": CATCH_ALL, "name": say("catch_all_name"), "description": say("catch_all_description"),
                     "members": []}] + groups
-    d["seen_screens"] = _open_screens()
+    d["seen_screens"] = [s["id"] for s in CATALOG]
     d["catch_all_since"] = at
 
 
@@ -177,16 +177,17 @@ def _add_new_screens(d: dict) -> bool:
     """A non-admin screen the portal has gained since the last look joins Catch All once (chip knob
     access.settings new_screens_to_catch_all); either way it is remembered, so a later removal sticks."""
     seen = set(d.get("seen_screens") or [])
-    new = [sid for sid in _open_screens() if sid not in seen]
-    if not new:
+    every = [s["id"] for s in CATALOG]                   # 2026-10-26 owner: a draft is remembered too, so putting it
+    if set(every) <= seen:                               # live never opens it to everyone - Access Control decides
         return False
+    new = [sid for sid in _open_screens() if sid not in seen]
     if engine.setting("access.settings", "new_screens_to_catch_all"):
         by, at = say("migration_by"), store.now()
         d["grants"] += [{"id": store.new_id(), "subject": f"group:{CATCH_ALL}", "screen": sid, "function": "",
                          "effect": "allow", "by": by, "at": at} for sid in new
                         if not any(g["subject"] == f"group:{CATCH_ALL}" and g["screen"] == sid and not g.get("function")
                                    for g in d["grants"])]
-    d["seen_screens"] = sorted(seen | set(new))
+    d["seen_screens"] = sorted(seen | set(every))
     return True
 
 
@@ -196,7 +197,7 @@ def data() -> dict:
     d = _raw()
     if not CATALOG:
         return d
-    if not any(g["id"] == CATCH_ALL for g in d["groups"]) or not set(_open_screens()) <= set(d.get("seen_screens") or []):
+    if not any(g["id"] == CATCH_ALL for g in d["groups"]) or not {s["id"] for s in CATALOG} <= set(d.get("seen_screens") or []):
         with store._LOCK:                                 # noqa: SLF001
             d = _raw()
             changed = not any(g["id"] == CATCH_ALL for g in d["groups"])
@@ -891,6 +892,10 @@ if __name__ == "__main__":  # ponytail: one runnable self-check of the resolver 
         d["grants"] = [g for g in d["grants"] if not (g["subject"] == f"group:{CATCH_ALL}" and g["screen"] == "fresh")]
         save(d)
         assert not may(lone, "fresh"), "removed from Catch All stays removed"
+        load(SCREENS + [{"id": "fresh", "label": "Fresh"}, {"id": "wip", "label": "Wip", "admin": True}])
+        data()                                           # a draft (admin until live) is seen as it arrives
+        load(SCREENS + [{"id": "fresh", "label": "Fresh"}, {"id": "wip", "label": "Wip"}])
+        assert not may(lone, "wip") and not may(fam[1], "wip"), "a draft put live opens to nobody until allowed"
         # deleting a parent hands its children the grandparent
         delete_group("solo", {})
         assert next(g for g in data()["groups"] if g["id"] == "kid")["inherits"] == ""
