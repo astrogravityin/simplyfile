@@ -8,7 +8,8 @@
 //     views: { things: thingsPage },              // id in catalog.json → (host) => render into host
 //     screens: () => import('./screens.js').then((m) => m.views),   // optional: more views, loaded on first use (members-only code)
 //     pitch: () => '<h2>…</h2>',                   // left half of the sign-in screen
-//     brandSub, logo, landing: '#/things',
+//     brandSub, logo, landing: '#/things' (or a path of the host's own, e.g. '/'),
+//     home: '/',                                   // optional: the logo + name link to the host's own home page
 //     topbar: (route) => html, topbarEnd: (route) => html (top RIGHT), wireTopbar: (root, route) => {},
 //     navFoot: html | () => html, userMenu: html | () => html,
 //     onBoot: async (bootstrap) => {},             // copy the host's own bootstrap fields into state
@@ -469,6 +470,7 @@ function toLanding() {
   const asked = (location.hash || '').replace(/^#\//, '').split('?')[0];
   if (!asked || !([...screens(), ...askable()].some((s) => s.id === asked) || ((state.elsewhere || {}).screens || []).includes(asked))) {
     const land = (typeof config.landing === 'function' ? config.landing() : config.landing) || '';
+    if (land.startsWith('/')) { location.replace(land); return; }   // a page of the host's own (AstroFy: its home page)
     const first = screens()[0];
     const to = may(land.replace(/^#\//, '')) || !first ? land : `#/${first.id}`;
     if (to) history.replaceState(null, '', to);
@@ -839,8 +841,8 @@ function shellView(route) {
 
   return `<div class="shell ${folded ? 'collapsed' : ''}">
     <nav class="side" id="side">
-      <div class="brand">${config.logo(30)}
-        <div class="name">${esc(state.productName)}${brandSub() ? `<span>${esc(brandSub())}</span>` : ''}</div>
+      <div class="brand">${config.home ? `<a class="brand-home" href="${esc(config.home)}" aria-label="${esc(state.productName)}">` : ''}${config.logo(30)}
+        <div class="name">${esc(state.productName)}${brandSub() ? `<span>${esc(brandSub())}</span>` : ''}</div>${config.home ? '</a>' : ''}
         <button type="button" class="ghost icon fold" id="fold" data-tip="${esc(w(folded ? 'expand_menu' : 'collapse_menu'))}"
           aria-label="${esc(w(folded ? 'expand_menu' : 'collapse_menu'))}" aria-expanded="${folded ? 'false' : 'true'}">${icon(folded ? 'dright' : 'dleft', 17)}</button></div>
       <div class="nav">${nav}</div>
