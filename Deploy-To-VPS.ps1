@@ -1,7 +1,7 @@
 param(
     # The VPS and the ssh key on THIS machine. Defaults = the Hostinger VPS; override per run or with
     # environment variables SF_VPS / SF_VPS_KEY.
-    [string]$Server = $(if ($env:SF_VPS) { $env:SF_VPS } else { 'root@72.61.174.232' }),
+    [string]$Server = $(if ($env:SF_VPS) { $env:SF_VPS } else { 'root@201.18.203.15' }),
     [string]$Key = $(if ($env:SF_VPS_KEY) { $env:SF_VPS_KEY } else { "$env:USERPROFILE\.ssh\explore_whattag" }),
     [string]$Dir = '/opt/simplyfile'
 )
