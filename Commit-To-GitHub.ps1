@@ -92,7 +92,10 @@ if (-not $NoVerify) {
     # The same check deploy.sh runs on the VPS before a restart: failing here costs a minute, failing there is a
     # deploy that stops half-way.
     Write-Host 'Running selfcheck.py before commit...' -ForegroundColor Cyan
-    & $Python selfcheck.py
+    & $Python tools\commit_scope.py --check | Out-Null
+    Assert-Ok 'commit_scope.py'
+    $scope = @(("$(& $Python tools\commit_scope.py)").Trim() -split ' ' | Where-Object { $_ })
+    & $Python selfcheck.py @scope
     Assert-Ok 'selfcheck.py (nothing was staged or committed)'
 }
 

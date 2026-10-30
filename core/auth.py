@@ -470,6 +470,37 @@ def signup(response: Response, body: dict = Body(...)):
     return _sign_in(response, u) | {"signed_in": True}
 
 
+# --- another ValueStream portal's Connect Store -----------------------------------------------------
+
+def _site_key(request: Request) -> None:
+    """Machines only: the key both portals hold in env CONNECT_STORE_KEY. No key set here = the door is shut."""
+    key = os.environ.get("CONNECT_STORE_KEY", "")
+    if not key or not secrets.compare_digest(key, request.headers.get("X-Site-Key", "")):
+        raise HTTPException(403)
+
+
+@router.post("/api/auth/site-account")
+def site_account(body: dict = Body(...), _: None = Depends(_site_key)):
+    """Connect Store on another portal has proved this email with its own code. With only an email: is there an account?
+    With a user name and password: make one (2026-10-30, framework for every connector that lives on a portal)."""
+    email, username = _norm(body.get("email")), _norm(body.get("username"))
+    check_fields(email=email)
+    if "password" not in body:
+        return {"exists": bool(store.find_user(email))}
+    name = str(body.get("name") or username).strip()
+    check_fields(name=name, username=username, email=email, password=body.get("password", ""), confirm=body.get("confirm"))
+    if store.find_user(email):
+        raise fail(409, "taken_email", field="email")
+    if username and store.username_taken(username):
+        raise fail(409, "taken_username", field="username")
+    said = rules.fire("signup.submit", {"email": email, "domain": email.partition("@")[2], "username": username,
+                                        "name": name, "accounts": len(store.users())})
+    if rules.refusal(said):
+        raise HTTPException(403, rules.refusal(said))
+    store.add_user(email, body.get("password", ""), name, engine.run("people.new_account_role"), verified=True, username=username)
+    return {"created": True}
+
+
 # --- forgot, reset, change ---------------------------------------------------------------------------
 
 @router.post("/api/auth/reset")

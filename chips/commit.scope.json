@@ -1,0 +1,62 @@
+{
+  "chip_id": "commit.scope",
+  "kind": "accessor",
+  "set": "commit",
+  "returns": "any",
+  "label": "What a commit checks: one area's change runs the fast groups, the shared core runs everything",
+  "aliases": [
+    "commit check scope",
+    "commit speed"
+  ],
+  "params": [
+    {
+      "name": "fast_groups",
+      "type": "any",
+      "label": "selfcheck groups a commit runs when no shared file changed (the slow walks wait for the deploy, which runs them all on the server)",
+      "default": [
+        "modules",
+        "statics",
+        "chips",
+        "guides",
+        "name",
+        "verbs",
+        "ai",
+        "site"
+      ]
+    },
+    {
+      "name": "full_when",
+      "type": "string",
+      "label": "A changed path matching this runs the whole selfcheck",
+      "default": "^(core/|app\\.py|server\\.py|store\\.py|selfcheck|requirements|constraints|deploy|Deploy-To-VPS|Commit-To-GitHub|tools/commit_scope)"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "fast_groups": "$fast_groups",
+      "full_when": "$full_when"
+    }
+  },
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-30 owner: a commit of 6 files took 20 minutes re-checking files nobody changed. tools/commit_scope.py reads this; deploy.sh still runs the full selfcheck on the server before a restart.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "fast_groups": [
+          "modules",
+          "statics",
+          "chips",
+          "guides",
+          "name",
+          "verbs",
+          "ai",
+          "site"
+        ],
+        "full_when": "^(core/|app\\.py|server\\.py|store\\.py|selfcheck|requirements|constraints|deploy|Deploy-To-VPS|Commit-To-GitHub|tools/commit_scope)"
+      }
+    }
+  ]
+}

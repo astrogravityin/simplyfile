@@ -597,13 +597,8 @@ def site_manifest_check() -> None:
 
 if __name__ == "__main__":
     print("SimplyFy - self-check")
-    module_checks()
-    static_checks()
-    chips_first_check()
-    guides_tours_check()
-    name_once_check()
-    verbs_check()
-    ai_check()
-    site_manifest_check()
-    api_check()
-    print("All checks passed.")
+    only = sys.argv[1:]
+    for name, fn in {"modules": module_checks, "statics": static_checks, "chips": chips_first_check, "guides": guides_tours_check, "name": name_once_check, "verbs": verbs_check, "ai": ai_check, "site": site_manifest_check, "api": api_check}.items():
+        if not only or name in only:
+            fn()
+    print("All checks passed." if not only else f"Checked: {', '.join(only)}.")
