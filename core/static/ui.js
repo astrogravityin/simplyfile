@@ -1364,8 +1364,12 @@ export function pickMany(host, { items, groups = {}, value = [], placeholder = '
   };
   q.onfocus = draw;
   q.oninput = draw;
-  q.onkeydown = (e) => {
+  const pmEsc = (e) => {   // a tick redraws the rows and the focus drops to the page, so Esc is heard there while the list is open
+    if (!host.isConnected) { document.removeEventListener('keydown', pmEsc, true); return; }
     if (e.key === 'Escape' && !box.hidden) { e.stopPropagation(); shut(); }
+  };
+  document.addEventListener('keydown', pmEsc, true);
+  q.onkeydown = (e) => {
     if (e.key === 'Backspace' && !q.value && st.order.length) flip(st.order[st.order.length - 1]);
   };
   host.addEventListener('focusout', () => setTimeout(() => { if (!host.contains(document.activeElement)) shut(); }, 150));
