@@ -1,0 +1,119 @@
+{
+  "chip_id": "share.card",
+  "kind": "accessor",
+  "set": "share",
+  "audience": "admin",
+  "label": "The tab icon and the card a shared link shows",
+  "aliases": [
+    "link preview",
+    "og tags",
+    "favicon"
+  ],
+  "params": [
+    {
+      "name": "title",
+      "type": "text",
+      "default": "{product} - Books in. Return out. Every figure traced.",
+      "label": "Title on the share card"
+    },
+    {
+      "name": "description",
+      "type": "text",
+      "default": "Tax filing and tax audit for CA firms, and My return for individuals and HUFs.",
+      "label": "Line under the title on the share card"
+    },
+    {
+      "name": "tagline",
+      "type": "text",
+      "default": "Books in. Return out. Every figure traced.",
+      "label": "Line on the card's picture"
+    },
+    {
+      "name": "site_name",
+      "type": "text",
+      "default": "{product}",
+      "label": "Portal name"
+    },
+    {
+      "name": "url",
+      "type": "text",
+      "default": "https://sf.valuestream.in",
+      "label": "The site's public address"
+    },
+    {
+      "name": "theme",
+      "type": "text",
+      "default": "#059669",
+      "label": "Browser theme colour"
+    },
+    {
+      "name": "icon",
+      "type": "text",
+      "default": "static/brand/mail-mark.svg",
+      "label": "The mark: tab icon and every logo"
+    },
+    {
+      "name": "touch_icon",
+      "type": "text",
+      "default": "static/brand/icon-192.png",
+      "label": "Phone icon (192 px picture)"
+    },
+    {
+      "name": "image",
+      "type": "text",
+      "default": "static/brand/card.png",
+      "label": "Share card picture (1200 x 630)"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "title": "$title",
+      "description": "$description",
+      "tagline": "$tagline",
+      "site_name": "$site_name",
+      "url": "$url",
+      "theme": "$theme",
+      "icon": "$icon",
+      "touch_icon": "$touch_icon",
+      "image": "$image"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-10-31 owner: every portal shows its own logo in the tab and a proper card when its link is pasted in WhatsApp. core/linkcard.py writes these into every page's head.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "title": "SimplyFy - Books in. Return out. Every figure traced.",
+        "description": "Tax filing and tax audit for CA firms, and My return for individuals and HUFs.",
+        "tagline": "Books in. Return out. Every figure traced.",
+        "site_name": "SimplyFy",
+        "url": "https://sf.valuestream.in",
+        "theme": "#059669",
+        "icon": "static/brand/mail-mark.svg",
+        "touch_icon": "static/brand/icon-192.png",
+        "image": "static/brand/card.png"
+      }
+    },
+    {
+      "args": {
+        "title": "Other"
+      },
+      "expect_value": {
+        "title": "Other",
+        "description": "Tax filing and tax audit for CA firms, and My return for individuals and HUFs.",
+        "tagline": "Books in. Return out. Every figure traced.",
+        "site_name": "SimplyFy",
+        "url": "https://sf.valuestream.in",
+        "theme": "#059669",
+        "icon": "static/brand/mail-mark.svg",
+        "touch_icon": "static/brand/icon-192.png",
+        "image": "static/brand/card.png"
+      }
+    }
+  ],
+  "weight_basis": "Words and file names only. Edit them here, never in the page."
+}

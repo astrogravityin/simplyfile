@@ -16,16 +16,9 @@ const store = {                                           // per-viewer convenie
 
 // ------------------------------------------------------------------------------------------------- the pictures (SVG)
 
-const LOGO = `<svg viewBox="0 0 32 32" aria-hidden="true"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8f84ff"/><stop offset="1" stop-color="#6d5efc"/></linearGradient></defs>
-  <rect width="32" height="32" rx="9" fill="url(#lg)"/><path d="M12 9.5v13l11-6.5z" fill="#fff"/></svg>`;
 // a page with a tick on it (chip nav.logo "ledger" - SimplyFile)
-const LEDGER_LOGO = `<svg viewBox="0 0 32 32" aria-hidden="true"><defs><linearGradient id="llg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#34d399"/><stop offset="1" stop-color="#059669"/></linearGradient></defs>
-  <rect width="32" height="32" rx="8" fill="url(#llg)"/><path d="M10 7h9l4 4v14H10z" fill="#fff"/><path d="M13.5 18l2.6 2.6 5-5.2" fill="none" stroke="#059669" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M13 11.5h5M13 14.5h7" stroke="#a7f3d0" stroke-width="1.8" stroke-linecap="round"/></svg>`;
 // the scales of justice (chip nav.logo "scales" - Justify)
-const SCALES_LOGO = `<svg viewBox="0 0 32 32" aria-hidden="true"><defs><linearGradient id="slg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3b5bdb"/><stop offset="1" stop-color="#1e2a78"/></linearGradient></defs>
-  <rect width="32" height="32" rx="8" fill="url(#slg)"/><path d="M16 7v17M11 25h10" stroke="#fff" stroke-width="2" stroke-linecap="round"/><path d="M8 11h16" stroke="#f6c453" stroke-width="2.2" stroke-linecap="round"/>
-  <path d="M10 11l-3 6h6zM22 11l-3 6h6z" fill="none" stroke="#f6c453" stroke-width="1.6" stroke-linejoin="round"/><path d="M7 17a3 2 0 0 0 6 0M19 17a3 2 0 0 0 6 0" fill="#f6c453"/></svg>`;
-const LOGOS = { play: LOGO, ledger: LEDGER_LOGO, scales: SCALES_LOGO };
+const MARK = () => `<img src="${document.querySelector('link[rel=icon]').href}" alt=""/>`;   // the one mark: chip share.card
 
 const HERO_ART = `<svg viewBox="0 0 560 500" role="img" aria-label="A kite in the wind, carrying a book, a comic, a film and a sound wave">
   <defs>
@@ -180,7 +173,7 @@ function draw(d) {
   const firstOf = (mod) => chs.findIndex((c) => c.module === mod);
   root.innerHTML = `
   <header class="top" id="top"><div class="wrap">
-    <a class="brand" href="#">${LOGOS[d.nav.logo] || LOGO}<span>${esc(d.nav.brand)}${d.nav.tag ? `<small>${esc(d.nav.tag)}</small>` : ''}</span></a>
+    <a class="brand" href="#">${MARK()}<span>${esc(d.nav.brand)}${d.nav.tag ? `<small>${esc(d.nav.tag)}</small>` : ''}</span></a>
     <button type="button" class="menu-btn" id="sc-menu" aria-expanded="false" aria-controls="sc-nav" aria-label="${esc(d.nav.menu || '')}">${icon('menu', 22)}</button>
     <nav id="sc-nav" aria-label="${esc(d.nav.menu || '')}">${d.nav.links.map(([id, label]) => `<a href="#${esc(id)}">${esc(label)}</a>`).join('')}</nav>
     <a class="btn primary" href="${esc(d.hero.start_href)}">${esc(d.nav.start)}</a>
@@ -261,7 +254,7 @@ ${d.play ? `  <section class="play" id="play"><div class="wrap">
         <figure class="sandbox" aria-label="${esc(d.play.window.address)}">
           <div class="bar3"><i></i><i></i><i></i><span>${icon('lock', 12)} ${esc(d.play.window.address)}</span></div>
           <div class="sbody">
-            <div class="who">${LOGOS[d.nav.logo] || LOGO}<span><b>${esc(d.play.window.firm)}</b><small>${esc(d.play.window.role)}</small></span></div>
+            <div class="who">${MARK()}<span><b>${esc(d.play.window.firm)}</b><small>${esc(d.play.window.role)}</small></span></div>
             <div class="tiles">${d.play.window.rows.map(([k, v], i) => `<div class="tile t${i % 4}"><b>${esc(v)}</b><span>${esc(k)}</span></div>`).join('')}</div>
             <p class="reset">${icon('refresh', 14)} ${esc(d.play.window.reset)}</p>
           </div>

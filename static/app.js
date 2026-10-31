@@ -34,11 +34,7 @@ import { api, BASE, esc, t, ps, loadWords, keep, kept, uploadBox, confirmDialog,
 import { icon } from './icons.js';
 
 /** SimplyFile's mark (2026-10-05, the showcase's too): a page with a tick on it, emerald - not the framework's play mark. */
-const logo = (size = 28) => `<svg width="${size}" height="${size}" viewBox="0 0 32 32" aria-hidden="true">
-  <defs><linearGradient id="sfl${size}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#34d399"/><stop offset="1" stop-color="#059669"/></linearGradient></defs>
-  <rect width="32" height="32" rx="8" fill="url(#sfl${size})"/><path d="M10 7h9l4 4v14H10z" fill="#fff"/>
-  <path d="M13.5 18l2.6 2.6 5-5.2" fill="none" stroke="#059669" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M13 11.5h5M13 14.5h7" stroke="#a7f3d0" stroke-width="1.8" stroke-linecap="round"/></svg>`;
+const logo = (size = 28) => `<img src="${document.querySelector('link[rel=icon]').href}" width="${size}" height="${size}" alt=""/>`;   // the one mark: chip share.card
 
 // Every word here is chip ui.app (core/words.py) - none is written here. Fetched before anything is
 // drawn: the pitch is shown before sign-in (the words endpoint needs none), and the menu foot and user

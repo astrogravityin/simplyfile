@@ -56,6 +56,7 @@ import narrator
 import edition
 import guideme
 import landing
+from core import linkcard
 import clients
 import firms
 import intake
@@ -1620,6 +1621,7 @@ def page(host: str = "") -> str:
 
 def _ui_sizes(html_: str) -> str:
     """2026-10-03 owner "move spacing into a ui chip": chip ui.spacing -> :root CSS variables, before portal.css loads."""
+    html_ = linkcard.head(html_)   # the tab icon and the share card: chip share.card
     vars_ = engine.css_vars("ui.spacing")
     return html_.replace("</head>", f'<style id="ui-spacing">{vars_}</style></head>', 1) if vars_ else html_
 
