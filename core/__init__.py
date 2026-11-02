@@ -145,6 +145,22 @@ async def _stamp_build(request, call_next):
     return response
 
 
+async def _head_as_get(request, call_next):
+    """2026-11-02 link cards: WhatsApp (and most link checkers) ask HEAD before reading a page. Every page route is GET only, so
+    HEAD answered 405 and a pasted link showed no card at all. HEAD = the GET's status and headers, never its body."""
+    if request.method != "HEAD":
+        return await call_next(request)
+    request.scope["method"] = "GET"
+    try:
+        got = await call_next(request)
+    finally:
+        request.scope["method"] = "HEAD"     # the server below still knows it is a HEAD (no body is sent)
+    from starlette.responses import Response  # noqa: PLC0415
+    out = Response(status_code=got.status_code)
+    out.raw_headers = got.raw_headers
+    return out
+
+
 def install(app, *, catalog, chips=None, rules_dir=None, scenarios=None) -> None:
     """`chips`, `rules_dir`, `scenarios` = the portal's own folders (its business), beside core's."""
     global BUILD
@@ -179,6 +195,7 @@ def install(app, *, catalog, chips=None, rules_dir=None, scenarios=None) -> None
     app.middleware("http")(_no_nul)
     app.middleware("http")(_json_cap)
     app.middleware("http")(_multipart_cap)
+    app.middleware("http")(_head_as_get)
     app.middleware("http")(doctor.catch)     # added last = runs first: every unexpected error, from any layer (Error Doctor)
     for module in (auth, access, ledger, memwatch, howto, menus, guide, storage, builder, find, jobs, words, lists, issues, bell, demo, doctor, mcp, mcp_oauth, agents):
         app.include_router(module.router)

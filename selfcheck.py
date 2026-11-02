@@ -93,6 +93,9 @@ def api_check() -> None:
         import app  # noqa: PLC0415 - after TV_DATA
         import recon  # noqa: PLC0415
         c = TestClient(app.app)
+        # 2026-11-02 link card: WhatsApp asks HEAD first - 405 there meant a pasted link showed no card
+        hd = TestClient(app.app).head("/")
+        assert hd.status_code == 200 and not hd.content and "text/html" in hd.headers.get("content-type", ""), ("HEAD /", hd.status_code)
         boot = c.get("/api/bootstrap").json()
         assert boot["needs_first_account"] is True
         assert f"<title>{product()}" in c.get("/").text
