@@ -190,6 +190,12 @@
       "name": "migration_by",
       "type": "text",
       "default": "Day-one Catch All (2026-10-19)"
+    },
+    {
+      "name": "no_self_block",
+      "type": "text",
+      "default": "You cannot block your own account.",
+      "label": "no self block"
     }
   ],
   "expr": {
@@ -230,7 +236,8 @@
       "inherited_label": "$inherited_label",
       "inherit_unknown": "$inherit_unknown",
       "inherit_loop": "$inherit_loop",
-      "migration_by": "$migration_by"
+      "migration_by": "$migration_by",
+      "no_self_block": "$no_self_block"
     }
   },
   "returns": "record",
@@ -276,7 +283,8 @@
         "inherited_label": "group \"{name}\" (through \"{via}\")",
         "inherit_unknown": "Pick a group to inherit from, or none.",
         "inherit_loop": "\"{name}\" already inherits from this group, so this group cannot inherit from it.",
-        "migration_by": "Day-one Catch All (2026-10-19)"
+        "migration_by": "Day-one Catch All (2026-10-19)",
+        "no_self_block": "You cannot block your own account."
       }
     }
   ],

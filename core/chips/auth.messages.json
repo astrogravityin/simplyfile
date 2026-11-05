@@ -148,6 +148,12 @@
       "name": "unknown_link",
       "type": "text",
       "default": "Unknown link"
+    },
+    {
+      "name": "blocked",
+      "type": "text",
+      "default": "This account is blocked. Ask the portal owner.",
+      "label": "blocked"
     }
   ],
   "expr": {
@@ -180,7 +186,8 @@
       "sign_in_first": "$sign_in_first",
       "owner_only": "$owner_only",
       "bad_purpose": "$bad_purpose",
-      "unknown_link": "$unknown_link"
+      "unknown_link": "$unknown_link",
+      "blocked": "$blocked"
     }
   },
   "returns": "record",
@@ -218,7 +225,8 @@
         "sign_in_first": "Sign in to continue.",
         "owner_only": "Only an owner can do that.",
         "bad_purpose": "purpose is signup or reset",
-        "unknown_link": "Unknown link"
+        "unknown_link": "Unknown link",
+        "blocked": "This account is blocked. Ask the portal owner."
       }
     }
   ],

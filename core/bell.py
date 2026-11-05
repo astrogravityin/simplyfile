@@ -65,6 +65,18 @@ def api_bell_seen(u: dict = Depends(auth.signed_in)):
     return seen(u["id"])
 
 
+def drop(uid: str, nid: str) -> dict:
+    """2026-11-05 (ValueStream CC Clean-up purges old notes): one note off a person's bell."""
+    with store._LOCK:                                    # noqa: SLF001
+        store.write(_name(uid), [r for r in mine(uid) if r.get("id") != nid])
+    return {"ok": True}
+
+
+@router.delete("/api/core/bell/{nid}")
+def api_bell_drop(nid: str, u: dict = Depends(auth.signed_in)):
+    return drop(u["id"], nid)
+
+
 if __name__ == "__main__":  # ponytail: one runnable self-check - per person, capped, newest first, seen clears the count
     import tempfile
     from pathlib import Path
@@ -79,4 +91,7 @@ if __name__ == "__main__":  # ponytail: one runnable self-check - per person, ca
     push("", "x")
     push("a", "")
     assert len(mine("a")) == keep_n, "no one / no words: nothing pushed"
+    nid = mine("a")[0]["id"]
+    drop("a", nid)
+    assert len(mine("a")) == keep_n - 1 and nid not in {r["id"] for r in mine("a")}, "drop takes one note off"
     print("bell self-check OK")

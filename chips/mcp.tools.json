@@ -544,6 +544,143 @@
             "type": "object",
             "properties": {}
           }
+        },
+        {
+          "name": "artifacts_scan",
+          "title": "Artifacts for clean-up",
+          "on": true,
+          "kind": "read",
+          "function": "tool_artifacts_scan",
+          "description": "Every person (no passwords) and every artifact {product} holds, as facts for ValueStream CC's Clean-up: author, made, last touched, views, who else is on it, a parent or part gone, a copy, a standard missed. Portal Admin only.",
+          "input_schema": {
+            "type": "object",
+            "properties": {
+              "people_only": {
+                "type": "boolean"
+              },
+              "user_email": {
+                "type": "string",
+                "maxLength": 200
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        {
+          "name": "artifacts_delete",
+          "title": "Delete artifacts",
+          "on": true,
+          "kind": "change",
+          "function": "tool_artifacts_delete",
+          "description": "Deletes the listed artifacts through {product}'s own delete routes, each as its author (an item whose author is gone is kept aside, restorable). Portal Admin only.",
+          "input_schema": {
+            "type": "object",
+            "properties": {
+              "items": {
+                "type": "array"
+              }
+            },
+            "required": [
+              "items"
+            ],
+            "additionalProperties": false
+          }
+        },
+        {
+          "name": "person_role",
+          "title": "Change a person's role",
+          "on": true,
+          "kind": "change",
+          "function": "tool_person_role",
+          "description": "Sets one person's role in {product} (People & access).",
+          "input_schema": {
+            "type": "object",
+            "properties": {
+              "user_id": {
+                "type": "string",
+                "maxLength": 40
+              },
+              "role": {
+                "type": "string",
+                "maxLength": 40
+              }
+            },
+            "required": [
+              "user_id",
+              "role"
+            ],
+            "additionalProperties": false
+          },
+          "calls": [
+            {
+              "method": "PUT",
+              "path": "/api/core/access/people/{user_id}/role",
+              "body": {
+                "role": "{role}"
+              }
+            }
+          ]
+        },
+        {
+          "name": "person_block",
+          "title": "Block or unblock a person",
+          "on": true,
+          "kind": "change",
+          "function": "tool_person_block",
+          "description": "Blocks one person in {product} (no sign-in, every sign-in ends) or lets them in again.",
+          "input_schema": {
+            "type": "object",
+            "properties": {
+              "user_id": {
+                "type": "string",
+                "maxLength": 40
+              },
+              "blocked": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "user_id",
+              "blocked"
+            ],
+            "additionalProperties": false
+          },
+          "calls": [
+            {
+              "method": "PUT",
+              "path": "/api/core/access/people/{user_id}/block",
+              "body": {
+                "blocked": "{blocked}"
+              }
+            }
+          ]
+        },
+        {
+          "name": "person_remove",
+          "title": "Remove a person",
+          "on": true,
+          "kind": "change",
+          "function": "tool_person_remove",
+          "description": "Removes one person's account from {product} (People & access).",
+          "input_schema": {
+            "type": "object",
+            "properties": {
+              "user_id": {
+                "type": "string",
+                "maxLength": 40
+              }
+            },
+            "required": [
+              "user_id"
+            ],
+            "additionalProperties": false
+          },
+          "calls": [
+            {
+              "method": "DELETE",
+              "path": "/api/users/{user_id}"
+            }
+          ]
         }
       ],
       "label": "tools"
@@ -556,7 +693,7 @@
     }
   },
   "returns": "record",
-  "version": 2,
+  "version": 3,
   "status": "published",
   "description_nl": "2026-10-24 (Connect your AI, core/mcp.py): what an AI app may do in {product}. Each row: name, title, description, input_schema, function (gated in People & access under Connect your AI), kind read / change / human, and calls = the portal's OWN routes it presses (in-process, as the key's maker); a human row is a person's step, never run - its description says what the person does.",
   "test_cases": [
@@ -1096,6 +1233,143 @@
               "type": "object",
               "properties": {}
             }
+          },
+          {
+            "name": "artifacts_scan",
+            "title": "Artifacts for clean-up",
+            "on": true,
+            "kind": "read",
+            "function": "tool_artifacts_scan",
+            "description": "Every person (no passwords) and every artifact {product} holds, as facts for ValueStream CC's Clean-up: author, made, last touched, views, who else is on it, a parent or part gone, a copy, a standard missed. Portal Admin only.",
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "people_only": {
+                  "type": "boolean"
+                },
+                "user_email": {
+                  "type": "string",
+                  "maxLength": 200
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          {
+            "name": "artifacts_delete",
+            "title": "Delete artifacts",
+            "on": true,
+            "kind": "change",
+            "function": "tool_artifacts_delete",
+            "description": "Deletes the listed artifacts through {product}'s own delete routes, each as its author (an item whose author is gone is kept aside, restorable). Portal Admin only.",
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "items": {
+                  "type": "array"
+                }
+              },
+              "required": [
+                "items"
+              ],
+              "additionalProperties": false
+            }
+          },
+          {
+            "name": "person_role",
+            "title": "Change a person's role",
+            "on": true,
+            "kind": "change",
+            "function": "tool_person_role",
+            "description": "Sets one person's role in {product} (People & access).",
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "user_id": {
+                  "type": "string",
+                  "maxLength": 40
+                },
+                "role": {
+                  "type": "string",
+                  "maxLength": 40
+                }
+              },
+              "required": [
+                "user_id",
+                "role"
+              ],
+              "additionalProperties": false
+            },
+            "calls": [
+              {
+                "method": "PUT",
+                "path": "/api/core/access/people/{user_id}/role",
+                "body": {
+                  "role": "{role}"
+                }
+              }
+            ]
+          },
+          {
+            "name": "person_block",
+            "title": "Block or unblock a person",
+            "on": true,
+            "kind": "change",
+            "function": "tool_person_block",
+            "description": "Blocks one person in {product} (no sign-in, every sign-in ends) or lets them in again.",
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "user_id": {
+                  "type": "string",
+                  "maxLength": 40
+                },
+                "blocked": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "user_id",
+                "blocked"
+              ],
+              "additionalProperties": false
+            },
+            "calls": [
+              {
+                "method": "PUT",
+                "path": "/api/core/access/people/{user_id}/block",
+                "body": {
+                  "blocked": "{blocked}"
+                }
+              }
+            ]
+          },
+          {
+            "name": "person_remove",
+            "title": "Remove a person",
+            "on": true,
+            "kind": "change",
+            "function": "tool_person_remove",
+            "description": "Removes one person's account from {product} (People & access).",
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "user_id": {
+                  "type": "string",
+                  "maxLength": 40
+                }
+              },
+              "required": [
+                "user_id"
+              ],
+              "additionalProperties": false
+            },
+            "calls": [
+              {
+                "method": "DELETE",
+                "path": "/api/users/{user_id}"
+              }
+            ]
           }
         ]
       }

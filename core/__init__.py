@@ -39,6 +39,7 @@ from pathlib import Path
 from fastapi.staticfiles import StaticFiles
 
 from core import access, auth, bell, builder, demo, doctor, engine, find, geo, guide, health, howto, issues, jobs, ledger, lists, mcp, mcp_oauth, memwatch, menus, rules, storage, store, words
+from core import artifacts  # noqa: E402,F401 - 2026-11-05 ValueStream CC Clean-up: artifacts_scan / artifacts_delete on the MCP door
 from core import agents  # noqa: E402 - 2026-10-24 Agents (the SteadyMove / AstroStage runtime)
 
 screen = access.screen
@@ -205,3 +206,38 @@ def install(app, *, catalog, chips=None, rules_dir=None, scenarios=None) -> None
     doctor.heal_notes()       # 2026-10-21: older Doctor notes sent as the owner could never be resolved
     store.heal_sessions()     # 2026-10-21: sessions kept as they were become fingerprints (nobody is signed out)
     geo.start(on_loaded=ledger.backfill_places)
+    _fold_http(app)          # 2026-11-05: the http middlewares above (and the portal's own) run as ONE layer
+
+
+def _fold_http(app) -> None:
+    """Every run of `@app.middleware("http")` functions becomes ONE BaseHTTPMiddleware layer that calls them in the same
+    order (2026-11-05 portal-builder 6a: 14 layers cost ~25 ms of server time on EVERY request, a static file too, so the
+    first page's ~39 scripts queued for ~1.1 s; their own work was ~2 ms in all). Done when the stack is first built, so
+    the portal's own middlewares (added after install) are folded too; any other middleware keeps its place."""
+    from starlette.middleware import Middleware  # noqa: PLC0415
+    from starlette.middleware.base import BaseHTTPMiddleware  # noqa: PLC0415
+    build = app.build_middleware_stack
+
+    def chain(fns):
+        async def dispatch(request, call_next):
+            async def at(i, req):
+                return await (call_next(req) if i == len(fns) else fns[i](req, lambda r: at(i + 1, r)))
+            return await at(0, request)
+        dispatch.folded = fns
+        return dispatch
+
+    def folded():
+        out, run = [], []
+        for m in [*app.user_middleware, None]:
+            if m is not None and m.cls is BaseHTTPMiddleware and "dispatch" in m.kwargs:
+                d = m.kwargs["dispatch"]
+                run += getattr(d, "folded", [d])
+                continue
+            if run:
+                out.append(Middleware(BaseHTTPMiddleware, dispatch=chain(run)))
+                run = []
+            if m is not None:
+                out.append(m)
+        app.user_middleware[:] = out
+        return build()
+    app.build_middleware_stack = folded

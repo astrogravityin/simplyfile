@@ -199,6 +199,9 @@ async def force_password_change(request: Request, call_next):
 def current_user(request: Request) -> dict | None:
     token = request.cookies.get(COOKIE) or ""
     u = store.session_user(token)
+    if u and u.get("blocked"):                         # 2026-11-05 blocked (People & access / CC Clean-up): no way in
+        from core import artifacts  # noqa: PLC0415 - except this process's own clean-up call (core/artifacts.py)
+        u = u if artifacts.lets_blocked_in(request) else None
     if u:
         # Which sitting this person is in, so work paid for on somebody else's key can be reported
         # per sitting. Only a digest of the token is kept, never the token.
@@ -230,6 +233,8 @@ def _secure() -> bool:
 
 
 def _sign_in(response: Response, u: dict) -> dict:
+    if u.get("blocked"):                               # every road in (password, code, one sign-in) comes through here
+        raise fail(403, "blocked")
     ttl = int(limits()["session_days"]) * 86400
     response.set_cookie(COOKIE, store.start_session(u, ttl), httponly=True, samesite="lax",
                         max_age=ttl, path=BASE or "/", secure=_secure())

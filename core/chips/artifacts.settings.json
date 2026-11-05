@@ -1,0 +1,137 @@
+{
+  "chip_id": "artifacts.settings",
+  "kind": "accessor",
+  "set": "artifacts",
+  "label": "Artifacts: limits and words",
+  "aliases": [
+    "artifacts: limits and words"
+  ],
+  "params": [
+    {
+      "name": "title_chars",
+      "type": "json",
+      "default": 80,
+      "label": "title chars"
+    },
+    {
+      "name": "max_rows",
+      "type": "json",
+      "default": 5000,
+      "label": "max rows"
+    },
+    {
+      "name": "delete_max",
+      "type": "json",
+      "default": 200,
+      "label": "delete max"
+    },
+    {
+      "name": "chip_needs",
+      "type": "json",
+      "default": [
+        "params",
+        "expr",
+        "test_cases"
+      ],
+      "label": "chip needs"
+    },
+    {
+      "name": "orphan_delete",
+      "type": "text",
+      "default": "keep_aside",
+      "label": "orphan delete"
+    },
+    {
+      "name": "system_authors",
+      "type": "json",
+      "default": [
+        "doctor",
+        "agent",
+        "system"
+      ],
+      "label": "system authors"
+    },
+    {
+      "name": "kind_words",
+      "type": "json",
+      "default": {
+        "chip_edit": "Saved chip edit",
+        "screen": "Screen"
+      },
+      "label": "kind words"
+    },
+    {
+      "name": "owner_only",
+      "type": "text",
+      "default": "Only the Portal Admin may read or clean up artifacts.",
+      "label": "owner only"
+    },
+    {
+      "name": "not_found",
+      "type": "text",
+      "default": "That item is no longer there.",
+      "label": "not found"
+    },
+    {
+      "name": "no_route",
+      "type": "text",
+      "default": "This kind is kept: it has no delete route here.",
+      "label": "no route"
+    },
+    {
+      "name": "author_gone",
+      "type": "text",
+      "default": "Its author is gone, and nothing may keep it aside.",
+      "label": "author gone"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "title_chars": "$title_chars",
+      "max_rows": "$max_rows",
+      "delete_max": "$delete_max",
+      "chip_needs": "$chip_needs",
+      "orphan_delete": "$orphan_delete",
+      "system_authors": "$system_authors",
+      "kind_words": "$kind_words",
+      "owner_only": "$owner_only",
+      "not_found": "$not_found",
+      "no_route": "$no_route",
+      "author_gone": "$author_gone"
+    }
+  },
+  "returns": "record",
+  "version": 2,
+  "status": "published",
+  "description_nl": "2026-11-05: what core/artifacts.py reports to ValueStream CC's Clean-up: how long a title may be, at most how many rows one scan sends and one delete takes, which keys a saved chip edit needs so RCB can show it, what a delete does when the author is gone (keep_aside = moved to replaced/, restorable), which authors are the portal itself (the Error Doctor, an agent) and never a removed person, the words for the two kinds every portal has, and its refusals.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "title_chars": 80,
+        "max_rows": 5000,
+        "delete_max": 200,
+        "chip_needs": [
+          "params",
+          "expr",
+          "test_cases"
+        ],
+        "orphan_delete": "keep_aside",
+        "system_authors": [
+          "doctor",
+          "agent",
+          "system"
+        ],
+        "kind_words": {
+          "chip_edit": "Saved chip edit",
+          "screen": "Screen"
+        },
+        "owner_only": "Only the Portal Admin may read or clean up artifacts.",
+        "not_found": "That item is no longer there.",
+        "no_route": "This kind is kept: it has no delete route here.",
+        "author_gone": "Its author is gone, and nothing may keep it aside."
+      }
+    }
+  ]
+}

@@ -1,0 +1,215 @@
+{
+  "chip_id": "artifacts.types",
+  "kind": "accessor",
+  "set": "artifacts",
+  "label": "Artifacts: the kinds this portal holds",
+  "aliases": [
+    "artifacts: the kinds this portal holds"
+  ],
+  "params": [
+    {
+      "name": "types",
+      "type": "json",
+      "default": [
+        {
+          "type": "note",
+          "label": "Note",
+          "store": "sf_notes",
+          "shape": "list",
+          "id": "id",
+          "author": "user_id",
+          "title": "name",
+          "created": "created_at",
+          "touched": "updated_at",
+          "delete": {
+            "method": "DELETE",
+            "path": "/api/notes/{id}",
+            "as": "author"
+          }
+        },
+        {
+          "type": "project",
+          "label": "Project",
+          "store": "projects",
+          "shape": "list",
+          "id": "id",
+          "author": "owner_id",
+          "title": "name",
+          "created": "created_at",
+          "touched": "updated_at",
+          "delete": {
+            "method": "DELETE",
+            "path": "/api/projects/{id}",
+            "as": "owner"
+          }
+        },
+        {
+          "type": "manual",
+          "label": "User manual",
+          "store": "manuals",
+          "shape": "list",
+          "id": "id",
+          "author": "owner_id",
+          "title": "title",
+          "touched": "updated_at",
+          "refs": [
+            {
+              "field": "project_id",
+              "type": "project",
+              "means": "orphan"
+            }
+          ],
+          "delete": {
+            "method": "DELETE",
+            "path": "/api/manuals/{id}",
+            "as": "owner"
+          }
+        },
+        {
+          "type": "notification",
+          "label": "Notification",
+          "store": "bell/*",
+          "shape": "list",
+          "id": "id",
+          "author_from": "file",
+          "title": "text",
+          "created": "at",
+          "opened": "seen",
+          "purge": true,
+          "delete": {
+            "method": "DELETE",
+            "path": "/api/core/bell/{id}",
+            "as": "author"
+          }
+        },
+        {
+          "type": "issue",
+          "label": "Error or report",
+          "store": "issues",
+          "shape": "list",
+          "id": "id",
+          "author": "by",
+          "author_name": "name",
+          "title": "title",
+          "created": "at",
+          "touched": "updated",
+          "purge": true,
+          "delete": {
+            "method": "DELETE",
+            "path": "/api/core/issues/{id}",
+            "as": "owner"
+          }
+        }
+      ],
+      "label": "types"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "types": "$types"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-11-05: every kind of artifact this portal holds, for ValueStream CC's Clean-up (core/artifacts.py): where it is stored (a store name, * = one file per person or per code), list or one doc per file, which field is its id, author, title, made, last touched, views, who else is on it (shared), the references that must still be there (refs: a parent - orphan - or a part it needs to open - broken), fields it must have (require), purge (errors and notifications: always listed so they can be cleared), and its OWN delete route, pressed as its author or as the Portal Admin (no delete = kept).",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "types": [
+          {
+            "type": "note",
+            "label": "Note",
+            "store": "sf_notes",
+            "shape": "list",
+            "id": "id",
+            "author": "user_id",
+            "title": "name",
+            "created": "created_at",
+            "touched": "updated_at",
+            "delete": {
+              "method": "DELETE",
+              "path": "/api/notes/{id}",
+              "as": "author"
+            }
+          },
+          {
+            "type": "project",
+            "label": "Project",
+            "store": "projects",
+            "shape": "list",
+            "id": "id",
+            "author": "owner_id",
+            "title": "name",
+            "created": "created_at",
+            "touched": "updated_at",
+            "delete": {
+              "method": "DELETE",
+              "path": "/api/projects/{id}",
+              "as": "owner"
+            }
+          },
+          {
+            "type": "manual",
+            "label": "User manual",
+            "store": "manuals",
+            "shape": "list",
+            "id": "id",
+            "author": "owner_id",
+            "title": "title",
+            "touched": "updated_at",
+            "refs": [
+              {
+                "field": "project_id",
+                "type": "project",
+                "means": "orphan"
+              }
+            ],
+            "delete": {
+              "method": "DELETE",
+              "path": "/api/manuals/{id}",
+              "as": "owner"
+            }
+          },
+          {
+            "type": "notification",
+            "label": "Notification",
+            "store": "bell/*",
+            "shape": "list",
+            "id": "id",
+            "author_from": "file",
+            "title": "text",
+            "created": "at",
+            "opened": "seen",
+            "purge": true,
+            "delete": {
+              "method": "DELETE",
+              "path": "/api/core/bell/{id}",
+              "as": "author"
+            }
+          },
+          {
+            "type": "issue",
+            "label": "Error or report",
+            "store": "issues",
+            "shape": "list",
+            "id": "id",
+            "author": "by",
+            "author_name": "name",
+            "title": "title",
+            "created": "at",
+            "touched": "updated",
+            "purge": true,
+            "delete": {
+              "method": "DELETE",
+              "path": "/api/core/issues/{id}",
+              "as": "owner"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

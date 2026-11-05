@@ -628,6 +628,23 @@ def set_role(user_id: str, body: dict = Body(...), me: dict = Depends(auth.owner
     return {"user": store.public_user(u)}
 
 
+@router.put("/api/core/access/people/{user_id}/block")
+def set_blocked(user_id: str, body: dict = Body(...), me: dict = Depends(auth.owner)):
+    """2026-11-05 (ValueStream CC Clean-up): a blocked person cannot sign in, and every sign-in they hold ends now."""
+    with store._LOCK:                                 # noqa: SLF001
+        rows = store.users()
+        u = next((x for x in rows if x["id"] == user_id), None)
+        if not u:
+            raise HTTPException(404, say("no_account"))
+        if u["id"] == me["id"]:
+            raise HTTPException(400, say("no_self_block"))
+        u["blocked"] = body.get("blocked") is True
+        store.write("users", rows)
+    if u["blocked"]:
+        store.end_sessions_for(user_id)
+    return {"user": store.public_user(u) | {"blocked": u["blocked"]}}
+
+
 @router.post("/api/core/people/{user_id}/password")
 def reset_password(user_id: str, body: dict = Body(default={}), me: dict = Depends(auth.owner)):
     """User Access → Reset Password (AUTH.md §6). The owner types a password or has the SERVER make one,
