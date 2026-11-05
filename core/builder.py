@@ -19,6 +19,7 @@ can never block a `git pull`.
 from __future__ import annotations
 
 import json
+from collections import Counter
 from pathlib import Path
 
 from fastapi import APIRouter, Body, Depends, HTTPException, Request
@@ -192,8 +193,10 @@ def catalog(u: dict = Depends(guard_any)):
     chips, chip_drafts = engine.chips(), drafts("chips")
     rule_live, rule_drafts = rules.rules(), drafts("rules")
     overrides = store.read("op_overrides", {})
+    # one pass over the chips, not one per op (2026-11-04 ui_audit: 1.9 s as ops x chips re-parsed every expr; portal-builder 6a)
+    used = Counter(v for c in chips.values() for v in engine.refs(c.get("expr"))["vops"])
     op_list = [o | {"inactive": bool(overrides.get(o["op"], {}).get("inactive")), "note": overrides.get(o["op"], {}).get("note", ""),
-                    "used_by": len(engine.usages("op", o["op"], rule_live)["chips"])} for o in ops.catalog()]
+                    "used_by": used[o["op"]]} for o in ops.catalog()]
     visible = lambda c: u.get("role") == "owner" or c.get("audience") != "admin"  # noqa: E731
     return {
         "me": {"role": u.get("role"), "can": {a: can(u, a, own=True) for a in ACTIONS}, "id": u["id"]},  # own work

@@ -146,6 +146,8 @@ def on_write(name: str, old, new) -> None:
             b = {x[k]: x for x in new or [] if isinstance(x, dict) and k in x}
             entries = []
             for rid in sorted(set(a) | set(b)):
+                if a.get(rid) == b.get(rid):        # untouched record: nothing to diff (2026-11-05 seed_large: each save flattened all of them)
+                    continue
                 x, y = a.get(rid) or {}, b.get(rid) or {}
                 owner = (y or x).get(w["scope_field"]) or x.get(w["scope_field"]) or ""   # before narrowing to the watched fields
                 if w.get("only"):
