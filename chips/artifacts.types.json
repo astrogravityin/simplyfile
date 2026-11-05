@@ -99,6 +99,179 @@
             "path": "/api/core/issues/{id}",
             "as": "owner"
           }
+        },
+        {
+          "type": "firm",
+          "label": "Organisation",
+          "store": "sf_firms",
+          "shape": "list",
+          "id": "id",
+          "author": "created_by",
+          "title": "name",
+          "created": "created_at",
+          "touched": "updated_at",
+          "require": [
+            "name"
+          ],
+          "delete": {
+            "method": "POST",
+            "path": "/api/firm/discard",
+            "as": "author"
+          }
+        },
+        {
+          "type": "chat_answer",
+          "label": "Own chat answer",
+          "store": "sf_chat_custom",
+          "shape": "list",
+          "id": "id",
+          "author_name": "by",
+          "title": "q",
+          "created": "at",
+          "refs": [
+            {
+              "field": "firm_id",
+              "type": "firm",
+              "means": "orphan"
+            }
+          ],
+          "delete": {
+            "method": "DELETE",
+            "path": "/api/chat/custom/{id}",
+            "as": "owner"
+          }
+        },
+        {
+          "type": "chat_taught",
+          "label": "Taught phrase",
+          "store": "sf_chat_taught",
+          "shape": "list",
+          "id": "id",
+          "title": "phrase",
+          "created": "at",
+          "refs": [
+            {
+              "field": "firm_id",
+              "type": "firm",
+              "means": "orphan"
+            }
+          ],
+          "delete": {
+            "method": "DELETE",
+            "path": "/api/chat/taught/{id}",
+            "as": "owner"
+          }
+        },
+        {
+          "type": "guide_build",
+          "label": "Guide Me build",
+          "store": "guideme-{uid}",
+          "shape": "list",
+          "rows": "rows",
+          "id": "id",
+          "author_from": "uid",
+          "title": "title",
+          "created": "created_at",
+          "touched": "updated_at",
+          "delete": {
+            "method": "DELETE",
+            "path": "/api/guideme/{id}",
+            "as": "author"
+          }
+        },
+        {
+          "type": "recording",
+          "label": "Recording",
+          "store": "videos/{pid}/project",
+          "shape": "doc",
+          "id": "id",
+          "author": "owner_id",
+          "title": "title",
+          "created": "created_at",
+          "refs": [
+            {
+              "field": "project_id",
+              "type": "project",
+              "means": "orphan"
+            }
+          ]
+        },
+        {
+          "type": "client",
+          "label": "Client",
+          "store": "sf_clients.json",
+          "shape": "list",
+          "id": "id",
+          "author": "created_by",
+          "title": "name",
+          "created": "created_at",
+          "touched": "updated_at",
+          "gone_when": [
+            "archived_at"
+          ],
+          "refs": [
+            {
+              "field": "firm_id",
+              "type": "firm",
+              "means": "orphan"
+            }
+          ]
+        },
+        {
+          "type": "new_filing",
+          "label": "New filing",
+          "store": "sf_wizard/{firm}/{wid}",
+          "shape": "doc",
+          "id": "id",
+          "author": "by",
+          "title": "who",
+          "created": "created_at",
+          "touched": "updated_at",
+          "gone_when": [
+            "discarded_at"
+          ],
+          "refs": [
+            {
+              "field": "cid",
+              "type": "client",
+              "means": "orphan"
+            }
+          ],
+          "delete": {
+            "method": "DELETE",
+            "path": "/api/wizard/{id}",
+            "as": "author"
+          }
+        },
+        {
+          "type": "statement",
+          "label": "Uploaded statement",
+          "store": "sf_files/{cid}/{ay}/files.json",
+          "shape": "list",
+          "id": "id",
+          "author": "uploaded_by",
+          "title": "name",
+          "created": "uploaded_at",
+          "delete": {
+            "method": "DELETE",
+            "path": "/api/intake/{cid}/{ay}/{id}",
+            "as": "author"
+          }
+        },
+        {
+          "type": "portal_file",
+          "label": "26AS / AIS file",
+          "store": "sf_portal/{cid}/{ay}/files.json",
+          "shape": "list",
+          "id": "id",
+          "author": "uploaded_by",
+          "title": "name",
+          "created": "uploaded_at",
+          "delete": {
+            "method": "DELETE",
+            "path": "/api/recon/{cid}/{ay}/{id}",
+            "as": "author"
+          }
         }
       ],
       "label": "types"
@@ -111,9 +284,9 @@
     }
   },
   "returns": "record",
-  "version": 1,
+  "version": 2,
   "status": "published",
-  "description_nl": "2026-11-05: every kind of artifact this portal holds, for ValueStream CC's Clean-up (core/artifacts.py): where it is stored (a store name, * = one file per person or per code), list or one doc per file, which field is its id, author, title, made, last touched, views, who else is on it (shared), the references that must still be there (refs: a parent - orphan - or a part it needs to open - broken), fields it must have (require), purge (errors and notifications: always listed so they can be cleared), and its OWN delete route, pressed as its author or as the Portal Admin (no delete = kept).",
+  "description_nl": "2026-11-05: every kind of artifact this portal holds, for ValueStream CC's Clean-up (core/artifacts.py): where it is stored (a store name, * = one file per person or per code), list or one doc per file, which field is its id, author, title, made, last touched, views, who else is on it (shared), the references that must still be there (refs: a parent - orphan - or a part it needs to open - broken), fields it must have (require), rows no longer listed once soft-deleted (gone_when), {name} slots read off the file path, purge (errors and notifications: always listed so they can be cleared), and its OWN delete route, pressed as its author or as the Portal Admin (no delete = kept).",
   "test_cases": [
     {
       "args": {},
@@ -206,6 +379,179 @@
               "method": "DELETE",
               "path": "/api/core/issues/{id}",
               "as": "owner"
+            }
+          },
+          {
+            "type": "firm",
+            "label": "Organisation",
+            "store": "sf_firms",
+            "shape": "list",
+            "id": "id",
+            "author": "created_by",
+            "title": "name",
+            "created": "created_at",
+            "touched": "updated_at",
+            "require": [
+              "name"
+            ],
+            "delete": {
+              "method": "POST",
+              "path": "/api/firm/discard",
+              "as": "author"
+            }
+          },
+          {
+            "type": "chat_answer",
+            "label": "Own chat answer",
+            "store": "sf_chat_custom",
+            "shape": "list",
+            "id": "id",
+            "author_name": "by",
+            "title": "q",
+            "created": "at",
+            "refs": [
+              {
+                "field": "firm_id",
+                "type": "firm",
+                "means": "orphan"
+              }
+            ],
+            "delete": {
+              "method": "DELETE",
+              "path": "/api/chat/custom/{id}",
+              "as": "owner"
+            }
+          },
+          {
+            "type": "chat_taught",
+            "label": "Taught phrase",
+            "store": "sf_chat_taught",
+            "shape": "list",
+            "id": "id",
+            "title": "phrase",
+            "created": "at",
+            "refs": [
+              {
+                "field": "firm_id",
+                "type": "firm",
+                "means": "orphan"
+              }
+            ],
+            "delete": {
+              "method": "DELETE",
+              "path": "/api/chat/taught/{id}",
+              "as": "owner"
+            }
+          },
+          {
+            "type": "guide_build",
+            "label": "Guide Me build",
+            "store": "guideme-{uid}",
+            "shape": "list",
+            "rows": "rows",
+            "id": "id",
+            "author_from": "uid",
+            "title": "title",
+            "created": "created_at",
+            "touched": "updated_at",
+            "delete": {
+              "method": "DELETE",
+              "path": "/api/guideme/{id}",
+              "as": "author"
+            }
+          },
+          {
+            "type": "recording",
+            "label": "Recording",
+            "store": "videos/{pid}/project",
+            "shape": "doc",
+            "id": "id",
+            "author": "owner_id",
+            "title": "title",
+            "created": "created_at",
+            "refs": [
+              {
+                "field": "project_id",
+                "type": "project",
+                "means": "orphan"
+              }
+            ]
+          },
+          {
+            "type": "client",
+            "label": "Client",
+            "store": "sf_clients.json",
+            "shape": "list",
+            "id": "id",
+            "author": "created_by",
+            "title": "name",
+            "created": "created_at",
+            "touched": "updated_at",
+            "gone_when": [
+              "archived_at"
+            ],
+            "refs": [
+              {
+                "field": "firm_id",
+                "type": "firm",
+                "means": "orphan"
+              }
+            ]
+          },
+          {
+            "type": "new_filing",
+            "label": "New filing",
+            "store": "sf_wizard/{firm}/{wid}",
+            "shape": "doc",
+            "id": "id",
+            "author": "by",
+            "title": "who",
+            "created": "created_at",
+            "touched": "updated_at",
+            "gone_when": [
+              "discarded_at"
+            ],
+            "refs": [
+              {
+                "field": "cid",
+                "type": "client",
+                "means": "orphan"
+              }
+            ],
+            "delete": {
+              "method": "DELETE",
+              "path": "/api/wizard/{id}",
+              "as": "author"
+            }
+          },
+          {
+            "type": "statement",
+            "label": "Uploaded statement",
+            "store": "sf_files/{cid}/{ay}/files.json",
+            "shape": "list",
+            "id": "id",
+            "author": "uploaded_by",
+            "title": "name",
+            "created": "uploaded_at",
+            "delete": {
+              "method": "DELETE",
+              "path": "/api/intake/{cid}/{ay}/{id}",
+              "as": "author"
+            }
+          },
+          {
+            "type": "portal_file",
+            "label": "26AS / AIS file",
+            "store": "sf_portal/{cid}/{ay}/files.json",
+            "shape": "list",
+            "id": "id",
+            "author": "uploaded_by",
+            "title": "name",
+            "created": "uploaded_at",
+            "delete": {
+              "method": "DELETE",
+              "path": "/api/recon/{cid}/{ay}/{id}",
+              "as": "author"
             }
           }
         ]

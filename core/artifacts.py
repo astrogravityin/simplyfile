@@ -10,6 +10,9 @@ Two MCP tools on the portal's one MCP door (core/mcp.py), answered only for an O
                              all apply). An item whose author is gone has nobody to press the route as: it is kept aside
                              (store.keep_aside - restorable, never erased) when chip artifacts.settings says so.
 What a kind is (where it is stored, which field is the author, its delete route): chip artifacts.types (the portal's own).
+A store pattern may name its slots - hf_docs/{cid}/{year}/files, guideme-{uid} - read off each file's path; a delete route's
+other slots ({cid}) come from those or from the row; rows may sit under one key of a doc (rows); gone_when fields mark a
+soft-deleted row (discarded_at...) that is no longer listed; a route may carry a fixed body.
 Two kinds every portal has are read here by shape: saved chip edits (shape chip_edit: no shipped chip / RCB cannot show it /
 older than the shipped chip) and screens (shape screen: no Guide me). Limits and words: chip artifacts.settings.
 Blocking a person (People & access, route in core/access.py) ends their sign-ins; a delete pressed for a blocked author
@@ -18,6 +21,8 @@ carries this process's own header (CLEAN_HEADER) so core/auth.current_user lets 
 from __future__ import annotations
 
 import json
+import re
+from datetime import datetime, timezone
 import secrets
 from pathlib import Path
 from typing import Any
@@ -75,15 +80,31 @@ def _ids(v: Any, key: str) -> list[str]:
 def _rows_of(t: dict) -> list[tuple[Path, dict | None]]:
     """(file, row) for every artifact of a stored kind; row None = the file cannot be read (broken)."""
     out = []
-    for f in sorted(store.DATA.glob(t["store"] + ".json")):
+    for f in sorted(store.DATA.glob(re.sub(r"\{\w+\}", "*", t["store"]) + ".json")):   # a {name} folder slot reads as *
         got = _load(f)
         if got is ValueError:
             out.append((f, None))
         elif t.get("shape") == "doc":
             out.append((f, got if isinstance(got, dict) else None))
         else:
+            got = got.get(t["rows"]) if t.get("rows") and isinstance(got, dict) else got   # rows kept under one key of a doc
             out += [(f, r) for r in (got if isinstance(got, list) else []) if isinstance(r, dict)]
-    return out
+    return [(f, r) for f, r in out if not (r and any(_get(r, x) for x in t.get("gone_when", [])))]   # soft-deleted: gone
+
+
+def _when(v: Any) -> str:
+    """A time as ISO text; an epoch number (time.time()) becomes ISO too, so CC reads one form."""
+    if isinstance(v, (int, float)) and not isinstance(v, bool) and v > 0:
+        return datetime.fromtimestamp(v, timezone.utc).isoformat(timespec="seconds")
+    return str(v or "")
+
+
+def _slots(t: dict, f: Path) -> dict:
+    """The {name} slots of a store pattern, read off one file's path (hf_docs/{cid}/{year}/files -> cid, year;
+    guideme-{uid} -> uid)."""
+    rx = "/".join(re.sub(r"\\\{(\w+)\\\}", r"(?P<\1>[^/]+)", re.escape(x)) for x in t["store"].split("/"))
+    m = re.fullmatch(rx.replace(r"\*", "[^/]+"), f.relative_to(store.DATA).with_suffix("").as_posix())
+    return m.groupdict() if m else {}
 
 
 def _vals(v: Any) -> list[str]:
@@ -94,23 +115,27 @@ def _vals(v: Any) -> list[str]:
 
 def _fact(t: dict, f: Path, r: dict | None, k: dict) -> dict:
     r = r or {}
+    slots = _slots(t, f)
     gone = {"orphan": False, "broken": False}
     later = []
     for ref in t.get("refs") or []:                    # a parent or a part that must still be there
         for v in _vals(_get(r, ref["field"])):
             if ref.get("store"):
-                gone[ref.get("means", "orphan")] |= not (store.DATA / (ref["store"].replace("{value}", v) + ".json")).exists()
+                name = re.sub(r"\{(\w+)\}", lambda m: v if m.group(1) == "value" else slots.get(m.group(1), m.group(0)), ref["store"])
+                gone[ref.get("means", "orphan")] |= not (store.DATA / (name + ".json")).exists()
             else:
                 later.append({"type": ref["type"], "id": v, "means": ref.get("means", "orphan")})
     files = [x for x in _vals(_get(r, t.get("files", ""))) if t.get("files")]
     views = _get(r, t.get("views", ""))
     shared = _get(r, t.get("shared", ""))
+    need = [x for x in re.findall(r"\{(\w+)\}", (t.get("delete") or {}).get("path", "")) if x != "id"]
+    route_args = {x: str(slots.get(x) or _get(r, x) or "") for x in need}   # the route's other slots: a folder slot or a row field
     return {"type": t["type"], "id": str(_get(r, t.get("id", "id")) or (f.stem if t.get("shape") == "doc" else "")),
             "title": str(_get(r, t.get("title", "")) or "")[: int(k["title_chars"])],
-            "author": str(_get(r, t.get("author", "")) or (f.stem if t.get("author_from") == "file" else "")),
+            "author": str(_get(r, t.get("author", "")) or (f.stem if t.get("author_from") == "file" else slots.get(t.get("author_from", ""), ""))),
             "author_name": str(_get(r, t.get("author_name", "")) or ""), "purge": bool(t.get("purge")),
-            "created": str(_get(r, t.get("created", "")) or ""),
-            "touched": str(_get(r, t.get("touched", "")) or _get(r, t.get("created", "")) or ""),
+            "created": _when(_get(r, t.get("created", ""))),
+            "touched": _when(_get(r, t.get("touched", "")) or _get(r, t.get("created", ""))),
             "opened": bool(_get(r, t.get("opened", ""))) if t.get("opened") else None,
             "views": views if isinstance(views, (int, float)) else None,
             "bytes": len(json.dumps(r, ensure_ascii=False)) if r else f.stat().st_size,
@@ -118,7 +143,7 @@ def _fact(t: dict, f: Path, r: dict | None, k: dict) -> dict:
             "unreadable": not r, "parent_missing": gone["orphan"], "broken": gone["broken"], "_later": later,
             "file_missing": any(not (store.DATA / x).exists() for x in files),
             "problems": ["missing_field"] if any(_get(r, x) in (None, "", []) for x in t.get("require", [])) else [],
-            "deletable": bool(t.get("delete"))}
+            "route_args": route_args, "deletable": bool(t.get("delete")) and all(route_args.values())}
 
 
 def _chip_edits(k: dict) -> list[dict]:
@@ -232,8 +257,9 @@ def delete(args: dict, ctx: dict) -> dict:
                 how = "kept_aside"
             else:
                 as_ = store.user_by_id(item["author"]) if route.get("as") == "author" else me
-                mcp.run_calls({"calls": [{"method": route["method"], "path": route["path"], "headers": {CLEAN_HEADER: SECRET}}]},
-                              {"id": item["id"]}, {**ctx, "user": as_})
+                call = {"method": route["method"], "path": route["path"], "headers": {CLEAN_HEADER: SECRET}}
+                mcp.run_calls({"calls": [call | ({"body": route["body"]} if "body" in route else {})]},
+                              {**item.get("route_args", {}), "id": item["id"]}, {**ctx, "user": as_})
                 how = "route"
             done.append({"type": item["type"], "id": item["id"], "ok": True, "how": how})
         except mcp.ToolError as e:
@@ -268,9 +294,15 @@ if __name__ == "__main__":  # ponytail: one runnable check - facts, the route as
     store.write("things/" + b["id"], [{"id": "t3", "by": b["id"], "name": "B's"}])
     store.write("things/zz", [{"id": "t4", "by": "zz", "name": "Nobody's"}])
     store.write("parts/p1", {"id": "p1"})
+    (store.DATA / "docs" / "c9").mkdir(parents=True)
+    store.write("docs/c9/files", [{"id": "d1", "by": a["id"], "name": "Deed"}, {"id": "d2", "by": a["id"], "name": "Old", "discarded_at": "x"}])
+    store.write("guideme-" + a["id"], {"rows": [{"id": "g1", "title": "Tour"}]})
     T = [{"type": "thing", "store": "things/*", "id": "id", "author": "by", "title": "name",
           "refs": [{"field": "parts", "store": "parts/{value}", "means": "broken"}],
-          "delete": {"method": "DELETE", "path": "/api/things/{id}", "as": "author"}}]
+          "delete": {"method": "DELETE", "path": "/api/things/{id}", "as": "author"}},
+         {"type": "doc", "store": "docs/{cid}/files", "id": "id", "author": "by", "title": "name", "gone_when": ["discarded_at"],
+          "delete": {"method": "DELETE", "path": "/api/docs/{cid}/{id}", "as": "author"}},
+         {"type": "build", "store": "guideme-{uid}", "rows": "rows", "id": "id", "author_from": "uid", "title": "title"}]
     real = engine.run
     engine.run = lambda cid, args=None, *x: {"types": T} if cid == "artifacts.types" else real(cid, args, *x)
     app = FastAPI()
@@ -282,10 +314,21 @@ if __name__ == "__main__":  # ponytail: one runnable check - facts, the route as
         name = "things/" + u["id"]
         store.write(name, [x for x in store.read(name, []) if x["id"] != tid])
         return {"ok": True}
+
+    @app.delete("/api/docs/{cid}/{did}")
+    def _del_doc(cid: str, did: str, u: dict = Depends(auth.signed_in)):
+        name = f"docs/{cid}/files"
+        store.write(name, [x for x in store.read(name, []) if x["id"] != did])
+        return {"ok": True}
     ctx = {"user": o, "base": "http://testserver", "app": app}
     got = {r["id"]: r for r in scan({}, ctx)["artifacts"] if r["type"] == "thing"}
     assert got["t2"]["dup_of"] == "t1" and got["t2"]["broken"] and not got["t1"]["broken"], got
     assert got["t4"]["author_state"] == "gone" and got["t1"]["author_state"] == "ok"
+    every = {(r["type"], r["id"]): r for r in scan({}, ctx)["artifacts"]}
+    assert ("doc", "d2") not in every and every[("doc", "d1")]["route_args"] == {"cid": "c9"}, "folder slot fills the route; soft-deleted gone"
+    assert every[("build", "g1")]["author"] == a["id"], "rows under a key, author from the file-name slot"
+    assert _when(0) == "" and _when(86400).startswith("1970-01-02") and _when("2026-01-01") == "2026-01-01", "epoch reads as ISO"
+    assert delete({"items": [{"type": "doc", "id": "d1"}]}, ctx)["deleted"] == 1 and [x["id"] for x in store.read("docs/c9/files", [])] == ["d2"]
     assert "password" not in json.dumps(scan({"people_only": True}, ctx)), "no password ever leaves"
     try:
         scan({}, {**ctx, "user": a})
