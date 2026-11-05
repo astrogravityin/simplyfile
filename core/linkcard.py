@@ -6,6 +6,7 @@ portal's one mark by .agents/skills/domain-portal/make_share_assets.py. The scre
 file draws them all. `python -m core.linkcard` fails a portal whose card or icon is missing, blank or the wrong size."""
 from __future__ import annotations
 
+import functools
 import html
 import json
 import re
@@ -37,7 +38,40 @@ def head(page: str) -> str:
     tags += [f'<meta property="{k}" content="{e(v)}"/>' for k, v in props.items()]
     tags += [f'<meta name="twitter:{k}" content="{e(v)}"/>' for k, v in
              {"card": "summary_large_image", "title": c["title"], "description": c["description"], "image": props["og:image"]}.items()]
+    tags += [f'<link rel="modulepreload" href="{u}"/>' for u in modules(*ENTRY.findall(page))]
     return ICON_TAG.sub("", page).replace("</head>", "".join(tags) + "</head>", 1)
+
+
+# 2026-11-05 portal-builder 6a: the first screen waited on a chain of ~39 imports, each found only once its parent arrived
+# (Shoperative seed_large crawl: 3-9 s cold, no API call over 0.8 s). Every module app.js imports is named up front, so the
+# browser asks for them all at once; each still revalidates (no-cache), so a deploy is seen at once.
+ENTRY = re.compile(r'<script type="module" src="((?:static|core-static)/[^"]+\.js)"')
+IMPORT = re.compile(r"""^\s*(?:import|export)\b[^'"`]*?from\s*['"]([^'"]+\.js)['"]|^\s*import\s*['"]([^'"]+\.js)['"]""", re.M)
+
+
+@functools.lru_cache(maxsize=4)   # ponytail: read once per server start; a deploy restarts it
+def modules(*entries: str) -> tuple[str, ...]:
+    """Every module the entry scripts import, statically and deep, as page addresses (static/..., core-static/...)."""
+    disk = {"static/": ROOT / "static", "core-static/": ROOT / "core" / "static"}
+    seen, todo = [], list(entries)
+    while todo:
+        u = todo.pop()
+        if u in seen:
+            continue
+        top = next((k for k in disk if u.startswith(k)), None)
+        f = disk[top] / u[len(top):] if top else None
+        if not f or not f.is_file():
+            continue
+        seen.append(u)
+        for m in IMPORT.finditer(f.read_text(encoding="utf-8")):
+            rel = m.group(1) or m.group(2)
+            if rel.startswith("."):
+                parts = (u.rsplit("/", 1)[0] + "/" + rel).split("/")
+                out = []
+                for x in parts:
+                    out = out[:-1] if x == ".." else out if x == "." else out + [x]
+                todo.append("/".join(out))
+    return tuple(x for x in seen if x not in entries)
 
 
 def png_size(path: Path) -> tuple[int, int]:
