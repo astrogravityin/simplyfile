@@ -1354,3 +1354,23 @@ at most a quarter of the box's short side (a 64 px name box failed "chroma_param
 job wrote no file). `tv/privacy.py blur_filter` caps it at `min(w,h)//4 - 1`; its self-check RUNS the graph through ffmpeg
 on a small and a wide box. A personal-info pass always writes a NEW recording (`narrator.new_project`), never over the
 original, and the paid picture pass shows its price first (`askCost`, chip `privacy.estimate`).
+
+## Server tells, page never asks on a timer (HARD, owner 2026-11-08: "THIS SHALL NEVER EVER HAPPEN AGAIN")
+
+ValueConnect asked the server for news every 3 s (chat list, open chat, ring, presence): about 42 requests per 30 s per
+idle person, slow news, a busy server and a flat phone battery. That is a broken design, not a tuning knob.
+
+- **News comes by push.** A new message, a ring, presence, a board change, a job's progress, a badge count: the server
+  sends it down ONE stream per signed-in page (Server-Sent Events `GET /api/events`, or the WebSocket the page already
+  has), naming the topic. Topic names live in a chip. The page asks for data once on open, then only when the stream
+  says something changed, and once more after the stream reconnects (to catch what was missed).
+- **No `setInterval` / timer loop that fetches.** A timer may tick a clock, a countdown or an animation on the page; it
+  never calls the server. The one exception is the stream's own reconnect (backing off, from a chip).
+- **Fallback is not a design.** If the stream cannot connect (old proxy, captive Wi-Fi) the page may fall back to a slow
+  ask (>= 60 s, from a chip) and says so on screen; the fallback is measured in the screen test, never the normal path.
+- **Background jobs** (render, build, AI run) push `progress` / `stage` on the same stream; the UEW reads that, never a
+  poll of `GET /job/{id}`.
+- **Test it:** open the screen, sit idle 60 s, count requests in the network log. More than the stream itself plus one
+  heartbeat = FAIL (screen-test row "Idle requests").
+- **Guard:** AstroStage `src/services/noPolls.test.ts` - the list of files that still poll may only shrink; a new file
+  that polls fails the build. Portals: the same ratchet in `selfcheck.py`.
