@@ -1401,6 +1401,9 @@ button.sf-use:hover{border-style:solid}
 /* One KPI tile for every screen (2026-10-04 owner: "consistent through out"): icon + label in a fixed band, the value on
    one line below, the sub-line last - so values line up across a row whatever the label length. */
 .sf-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin:0 0 16px}
+/* 2026-11-09 never one tile alone (ui_audit "lone"), same rule as core .stats: the first tile leads when one is over */
+@media (max-width:1100px){.sf-kpis{grid-template-columns:repeat(3,minmax(0,1fr))}.sf-kpis > :first-child:nth-last-child(3n+1){grid-column:1/-1}}
+@media (max-width:640px){.sf-kpis > :first-child:nth-last-child(n){grid-column:auto}.sf-kpis > :first-child:nth-last-child(odd){grid-column:1/-1}}
 .sf-kpi{display:grid;grid-template-rows:auto auto 1fr;gap:8px;padding:16px;border:1px solid var(--line);border-radius:var(--radius-lg);
   background:var(--panel);box-shadow:var(--shadow-1);min-width:0;container-type:inline-size}
 .sf-kpi-top{display:grid;grid-template-rows:34px calc(2 * 1.3em);gap:8px;min-width:0;font-size:11px}

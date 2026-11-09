@@ -658,6 +658,10 @@ table.fixed td,table.fixed th{overflow-wrap:anywhere}
 .tabs.many .badge{background:var(--bad);color:#fff;min-width:18px;height:18px}
 
 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:0 0 18px}
+/* 2026-11-09 a row of tiles never leaves one alone (ui_audit "lone"): fixed columns on tablet and phone, and when the count
+   leaves one over, the FIRST tile spans the row as the lead (5 on a phone = 1 + 2 + 2). Was only in Ask-Harshal's own css. */
+@media (max-width:1100px){.stats{grid-template-columns:repeat(3,minmax(0,1fr))}.stats > :first-child:nth-last-child(3n+1){grid-column:1/-1}}
+@media (max-width:640px){.stats{grid-template-columns:1fr 1fr}.stats > :first-child:nth-last-child(n){grid-column:auto}.stats > :first-child:nth-last-child(odd){grid-column:1/-1}}
 .stat{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow-1)}
 .stat b{display:block;font-size:22px;letter-spacing:-.02em;line-height:1.2;font-variant-numeric:tabular-nums}
 .stat span{font-size:12px;color:var(--muted)}
