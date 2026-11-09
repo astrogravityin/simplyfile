@@ -1,0 +1,219 @@
+{
+  "chip_id": "ui.about",
+  "kind": "accessor",
+  "set": "ui",
+  "label": "About us: who we are and the live build",
+  "aliases": [
+    "about us words"
+  ],
+  "params": [
+    {
+      "name": "menu",
+      "type": "text",
+      "default": "About us",
+      "label": "menu"
+    },
+    {
+      "name": "title",
+      "type": "text",
+      "default": "About us",
+      "label": "title"
+    },
+    {
+      "name": "who_title",
+      "type": "text",
+      "default": "Who we are",
+      "label": "who title"
+    },
+    {
+      "name": "family",
+      "type": "text",
+      "default": "valuestream",
+      "label": "family"
+    },
+    {
+      "name": "logo",
+      "type": "text",
+      "default": "core-static/about/valuestream.png",
+      "label": "logo"
+    },
+    {
+      "name": "brand",
+      "type": "text",
+      "default": "ValueStream",
+      "label": "brand"
+    },
+    {
+      "name": "eyebrow",
+      "type": "text",
+      "default": "",
+      "label": "eyebrow"
+    },
+    {
+      "name": "headline",
+      "type": "text",
+      "default": "We transform the software your business runs on.",
+      "label": "headline"
+    },
+    {
+      "name": "tagline",
+      "type": "text",
+      "default": "",
+      "label": "tagline"
+    },
+    {
+      "name": "subline",
+      "type": "text",
+      "default": "",
+      "label": "subline"
+    },
+    {
+      "name": "body",
+      "type": "text",
+      "default": "We are ValueStreamers. We bring a steady stream of value to the software your business runs on and transform it in complete transparency: every step, every report and every decision is open to you as it happens.",
+      "label": "body"
+    },
+    {
+      "name": "build_title",
+      "type": "text",
+      "default": "Latest build",
+      "label": "build title"
+    },
+    {
+      "name": "running",
+      "type": "text",
+      "default": "This server runs",
+      "label": "running"
+    },
+    {
+      "name": "commit",
+      "type": "text",
+      "default": "Commit",
+      "label": "commit"
+    },
+    {
+      "name": "commit_date",
+      "type": "text",
+      "default": "Committed",
+      "label": "commit date"
+    },
+    {
+      "name": "deployed",
+      "type": "text",
+      "default": "Deployed",
+      "label": "deployed"
+    },
+    {
+      "name": "started",
+      "type": "text",
+      "default": "Server started",
+      "label": "started"
+    },
+    {
+      "name": "page_build",
+      "type": "text",
+      "default": "Build on this page",
+      "label": "page build"
+    },
+    {
+      "name": "server_build",
+      "type": "text",
+      "default": "Build on the server",
+      "label": "server build"
+    },
+    {
+      "name": "unknown",
+      "type": "text",
+      "default": "not known",
+      "label": "unknown"
+    },
+    {
+      "name": "latest",
+      "type": "text",
+      "default": "You are on the latest build.",
+      "label": "latest"
+    },
+    {
+      "name": "newer",
+      "type": "text",
+      "default": "A newer build is live - reload to get it.",
+      "label": "newer"
+    },
+    {
+      "name": "reload",
+      "type": "text",
+      "default": "Reload now",
+      "label": "reload"
+    },
+    {
+      "name": "failed",
+      "type": "text",
+      "default": "Could not ask the server for its build: {error}",
+      "label": "failed"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "menu": "$menu",
+      "title": "$title",
+      "who_title": "$who_title",
+      "family": "$family",
+      "logo": "$logo",
+      "brand": "$brand",
+      "eyebrow": "$eyebrow",
+      "headline": "$headline",
+      "tagline": "$tagline",
+      "subline": "$subline",
+      "body": "$body",
+      "build_title": "$build_title",
+      "running": "$running",
+      "commit": "$commit",
+      "commit_date": "$commit_date",
+      "deployed": "$deployed",
+      "started": "$started",
+      "page_build": "$page_build",
+      "server_build": "$server_build",
+      "unknown": "$unknown",
+      "latest": "$latest",
+      "newer": "$newer",
+      "reload": "$reload",
+      "failed": "$failed"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-11-09 owner: About us in the profile menu - who we are (family valuestream or astrogravity) and the live build (core/about.py, core/static/about.js). An astrology portal ships its own ui.about with the AstroGravity block.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "menu": "About us",
+        "title": "About us",
+        "who_title": "Who we are",
+        "family": "valuestream",
+        "logo": "core-static/about/valuestream.png",
+        "brand": "ValueStream",
+        "eyebrow": "",
+        "headline": "We transform the software your business runs on.",
+        "tagline": "",
+        "subline": "",
+        "body": "We are ValueStreamers. We bring a steady stream of value to the software your business runs on and transform it in complete transparency: every step, every report and every decision is open to you as it happens.",
+        "build_title": "Latest build",
+        "running": "This server runs",
+        "commit": "Commit",
+        "commit_date": "Committed",
+        "deployed": "Deployed",
+        "started": "Server started",
+        "page_build": "Build on this page",
+        "server_build": "Build on the server",
+        "unknown": "not known",
+        "latest": "You are on the latest build.",
+        "newer": "A newer build is live - reload to get it.",
+        "reload": "Reload now",
+        "failed": "Could not ask the server for its build: {error}"
+      }
+    }
+  ]
+}

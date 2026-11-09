@@ -880,6 +880,7 @@ function shellView(route) {
             <button type="button" id="report-issue">${icon('alert', 15)} ${w('report_issue')}</button>
             <button type="button" id="my-reports">${icon('chat', 15)} ${w('my_reports')}</button>
             <button type="button" id="chpass">${icon('shield', 15)} ${w('change_password')}</button>
+            <button type="button" id="about-us">${icon('info', 15)} ${t('about', 'menu')}</button>
             <button type="button" id="signout">${icon('right', 15)} ${w('sign_out')}</button>
           </div>
         </div>
@@ -1186,6 +1187,7 @@ function wireShell(root, route) {
       <div class="nav">${askable().map((s) => `<a href="#/${esc(s.id)}" data-close>${icon('lock', 17)} <span class="lbl">${esc(s.label)}</span></a>`).join('')}</div>`, {
     onOpen: (body, close) => body.querySelectorAll('[data-close]').forEach((a) => { a.onclick = close; }) });
   root.querySelector('#chpass').onclick = () => { pop.hidden = true; passwordDialog(); };
+  root.querySelector('#about-us').onclick = () => { pop.hidden = true; import('./about.js').then((m) => m.aboutDialog()).catch((e) => toast(e.message, 'bad')); };   // 2026-11-09 owner: About us + the live build (core/about.py)
   const startHere = root.querySelector('#start-here');     // Start here, brought back after Hide (core/startcard.py)
   if (startHere) startHere.onclick = () => { pop.hidden = true; import('./startcard.js').then((m) => m.reopenStartCard(root.querySelector('#startcard'), route && route.id)).catch((e) => toast(e.message, 'bad')); };
   root.querySelector('#report-issue').onclick = () => { pop.hidden = true; reportIssue({ surface: route ? route.id : '', context: location.hash }); };
@@ -1509,7 +1511,7 @@ export async function startPortal(options) {
     // The shell's words (chip ui.shell) come with the bootstrap: the sign-in card needs them before anyone
     // signs in. A words failure is not a dead portal - a missing word shows as [shell.key], never silently.
     const [d, h] = await Promise.all([api('/api/bootstrap'), api('/api/core/howto').catch(() => ({ pages: {} })),
-      loadWords('shell', 'work', 'guide', 'demo').catch(() => {})]);
+      loadWords('shell', 'about', 'work', 'guide', 'demo').catch(() => {})]);
     take(d);
     if (state.demo && !state.user && !state.needsFirstAccount) setMode('demo');
     state.howto = h.pages || {};

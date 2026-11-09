@@ -38,6 +38,7 @@ from pathlib import Path
 
 from fastapi.staticfiles import StaticFiles
 
+from core import about  # noqa: E402 - 2026-11-09 About us: who we are + the live build (GET /api/about/build)
 from core import access, auth, bell, builder, demo, doctor, engine, find, geo, guide, health, howto, issues, jobs, ledger, lists, mcp, mcp_oauth, memwatch, menus, rules, storage, store, words
 from core import artifacts  # noqa: E402,F401 - 2026-11-05 ValueStream CC Clean-up: artifacts_scan / artifacts_delete on the MCP door
 from core import agents  # noqa: E402 - 2026-10-24 Agents (the SteadyMove / AstroStage runtime)
@@ -198,7 +199,7 @@ def install(app, *, catalog, chips=None, rules_dir=None, scenarios=None) -> None
     app.middleware("http")(_multipart_cap)
     app.middleware("http")(_head_as_get)
     app.middleware("http")(doctor.catch)     # added last = runs first: every unexpected error, from any layer (Error Doctor)
-    for module in (auth, access, ledger, memwatch, howto, menus, guide, storage, builder, find, jobs, words, lists, issues, bell, demo, doctor, mcp, mcp_oauth, agents):
+    for module in (about, auth, access, ledger, memwatch, howto, menus, guide, storage, builder, find, jobs, words, lists, issues, bell, demo, doctor, mcp, mcp_oauth, agents):
         app.include_router(module.router)
     app.mount("/core-static", StaticFiles(directory=str(HERE / "static")), name="core-static")
     memwatch.start()
