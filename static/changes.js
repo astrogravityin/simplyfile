@@ -84,7 +84,7 @@ export async function openHistory({ cid = '', ay = '', name = '', firm = false }
         else log.innerHTML = `<div class="ch-state"><span class="spinner"></span></div>`;
         let r;
         try {
-          r = await api(`/api/lists/changes?${new URLSearchParams({ ...(firm ? { firm: 1 } : { cid, ay: st.ay }), kind: st.kind, q: st.q, page: st.page })}`);
+          r = await api(`/api/lists/changes?${new URLSearchParams({ ...(firm ? { firm: 1 } : { cid, ay: st.ay }), kind: st.kind, q: st.q, page: st.page, screen: (location.hash.match(/^#\/([\w-]+)/) || [])[1] || '' })}`);
           if (mine !== seq) return;
         } catch (e) {
           if (mine !== seq) return;

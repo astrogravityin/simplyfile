@@ -222,6 +222,9 @@ label:has(select, textarea, input:not([type=checkbox]):not([type=radio])){white-
 /* same day: a small button beside a bare box (Keys: Add another key, Test / Lend / Remove; Image Library: All films) was 31px next to a 40px box - it takes the box's height */
 :is(.row,[class$="-row"],[class*="-row "]):has(> :is(input:not([type=checkbox]):not([type=radio]),select,.pk-host)) > :is(button,.btn,a.btn){align-self:stretch}
 .field .small:not(button):not(a){display:block;margin-top:5px;color:var(--muted)}   /* 2026-10-03: help text only - a small button in a field (Check a person list) kept its own colour, never grey on purple */
+.char-left{display:block;margin-top:4px;text-align:right;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}   /* 2026-11-11 chars left under every limited box (ui.js charsLeft) */
+.char-left.low{color:var(--warn);font-weight:600}
+.field.has-count{position:relative}.char-left.on-label{position:absolute;top:0;right:0;margin:0;line-height:1.4}
 
 input,select,textarea{
   width:100%;max-width:100%;  /* 2026-10-02 sweep: a list sized by its longest option pushed the page sideways on a phone */

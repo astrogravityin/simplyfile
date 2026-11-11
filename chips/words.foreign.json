@@ -1,0 +1,43 @@
+{
+  "chip_id": "words.foreign",
+  "kind": "accessor",
+  "set": "words",
+  "label": "Words of another portal's domain that must never show here",
+  "aliases": [
+    "foreign words"
+  ],
+  "params": [
+    {
+      "name": "words",
+      "type": "text",
+      "default": "",
+      "label": "words (comma separated)"
+    },
+    {
+      "name": "places",
+      "type": "text",
+      "default": "chips/*.json, core/chips/*.json, static/*.js, core/static/*.js, guides/**/*.json",
+      "label": "where people read them (globs)"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "words": "$words",
+      "places": "$places"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-11-11 owner (GamyFyStudio History said '26AS, AIS and TIS'): the shared boilerplate came from the tax portal and carried its words into every portal. core/foreign_words.py fails the selfcheck when one of these shows in a place people read. A portal whose domain these ARE (SimplyFile) overrides this chip in chips/ with an empty list. This portal's own: 26AS, AIS, TIS, Form 16, ITR, assessment year, income tax - SimplyFile is the tax portal: these are its own words.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "words": "",
+        "places": "chips/*.json, core/chips/*.json, static/*.js, core/static/*.js, guides/**/*.json"
+      }
+    }
+  ]
+}

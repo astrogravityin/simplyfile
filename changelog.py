@@ -195,6 +195,13 @@ def listed(u: dict, args: dict) -> list[dict]:
     """One client's log (args cid, optionally ay and kind) - or, with firm=1, the firm's own (its profile and its team)."""
     import clients  # noqa: PLC0415
     import firms  # noqa: PLC0415
+    from core import access  # noqa: PLC0415
+    # 2026-11-11 (owner, GamyFyStudio: "History could not be loaded - No such list" on the firm page): History opens on many
+    # screens, and each portal kept a hand-made list of them in lists.source - one missed screen = a 403 dressed as "No such list".
+    # Now the screen that opened it says so (?screen=, static/changes.js) and the person must be allowed on it; rows stay their own.
+    sc = str(args.get("screen") or "")
+    if not sc or not access.may(u, sc):   # no screen = refused for everyone (an owner "opens everything", even "")
+        raise HTTPException(403, say("no_screen") if not sc else access.decide(u, sc)["why"])
     if args.get("firm"):
         if not u.get("firm_id"):
             return []
@@ -231,7 +238,7 @@ def kept_file(cid: str, ay: str, kept_in: str, fid: str, v: int):
 
 
 # 2026-10-07: a self-filer has My return, not Clients & years - their own History said "No such list" (listed() checks the client)
-lists.source("changes", listed, screen="clients|myreturn")
+lists.source("changes", listed)   # gated in listed(): the screen History was opened on (no hand-made list to miss one)
 
 
 if __name__ == "__main__":  # ponytail: a client edit and a replaced statement come out as one entry per field, named by the chip

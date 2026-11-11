@@ -98,6 +98,27 @@ export function t(screen, key, values = {}) {
 // before anything is drawn. `t` is a local name in confirmDialog, so they go by `sw`.
 const sw = (k, v) => t('shell', k, v);
 
+// 2026-11-11 owner ("very very very very irritating"): every box with a limit (maxlength) says how much is left while you type -
+// one listener for every screen of every portal, no per-form code. Words and the "nearly full" share: chip ui.shell chars_left,
+// chars_low. A box opts out with data-no-count (code boxes with data-digits already do).
+const COUNTED_TYPES = ['', 'text', 'search', 'url', 'email', 'tel'];
+function charsLeft(el) {
+  if (!el || !(el.maxLength > 0) || el.hasAttribute('data-digits') || el.hasAttribute('data-no-count')) return;
+  if (!(el.tagName === 'TEXTAREA' || (el.tagName === 'INPUT' && COUNTED_TYPES.includes(el.getAttribute('type') || '')))) return;
+  let tag = el.nextElementSibling;
+  if (!tag || !tag.classList.contains('char-left')) {
+    tag = document.createElement('span'); tag.className = 'char-left'; el.after(tag);
+    // in a .field it sits on the label's line (right), so a counter never pushes the row below or its neighbour out of line
+    const f = el.closest('.field');
+    if (f && f.querySelector('label')) { f.classList.add('has-count'); tag.classList.add('on-label'); }
+  }
+  const n = el.maxLength - el.value.length;
+  tag.textContent = sw('chars_left', { n });
+  tag.classList.toggle('low', n <= el.maxLength * Number(sw('chars_low')));
+}
+document.addEventListener('focusin', (e) => charsLeft(e.target));
+document.addEventListener('input', (e) => charsLeft(e.target));
+
 /** THE copy of every screen (core/static/copy.js) with this portal's toast and words (chip ui.shell rd_copied, copy_failed);
  *  `o.copied` names what was copied, `o.html` adds rich text (bullets survive a paste into the request editor). */
 export const copyText = (text, o = {}) => (typeof o === 'string' ? (o = { copied: o }) : 0, copyRaw(text, { say: (m, tone) => toast(m, tone), copied: sw('rd_copied'), failed: sw('copy_failed'), ...o }));

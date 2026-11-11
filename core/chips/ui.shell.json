@@ -2608,6 +2608,18 @@
       "type": "text",
       "default": "Open Agents",
       "label": "health_open"
+    },
+    {
+      "name": "chars_left",
+      "type": "text",
+      "default": "{n} characters left",
+      "label": "chars left"
+    },
+    {
+      "name": "chars_low",
+      "type": "text",
+      "default": "0.1",
+      "label": "chars low"
     }
   ],
   "expr": {
@@ -3110,7 +3122,9 @@
       "copy_failed": "$copy_failed",
       "health_title": "$health_title",
       "health_checked": "$health_checked",
-      "health_open": "$health_open"
+      "health_open": "$health_open",
+      "chars_left": "$chars_left",
+      "chars_low": "$chars_low"
     }
   },
   "returns": "record",
@@ -3618,7 +3632,9 @@
         "copy_failed": "Could not copy - select the text and press Ctrl+C.",
         "health_title": "{n} {n:thing needs|things need} you",
         "health_checked": "Checked {when}",
-        "health_open": "Open Agents"
+        "health_open": "Open Agents",
+        "chars_left": "{n} characters left",
+        "chars_low": "0.1"
       }
     }
   ],
