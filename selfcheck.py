@@ -168,7 +168,9 @@ if (ok.some((x) => !x)) { console.log(JSON.stringify(ok)); process.exit(1); }"""
         bad = []
         for route in app.app.routes:
             path, methods = getattr(route, "path", ""), getattr(route, "methods", set()) or set()
-            if "GET" in methods and "{" not in path and path.startswith("/api/"):
+            # 2026-11-12: the push stream (core/events, /api/core/events) never ends by design - a GET of it here hung the
+            # whole selfcheck; selfcheck_push walks it with a real disconnect
+            if "GET" in methods and "{" not in path and path.startswith("/api/") and path != "/api/core/events":
                 code = c.get(path).status_code
                 if code >= 500:
                     bad.append(f"{path} {code}")

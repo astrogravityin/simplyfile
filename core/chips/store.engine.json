@@ -1,0 +1,282 @@
+{
+  "chip_id": "store.engine",
+  "kind": "accessor",
+  "set": "store",
+  "audience": "admin",
+  "label": "Record store: SQLite or Postgres, and how to reach it",
+  "aliases": [
+    "database",
+    "postgres",
+    "sqlite",
+    "record store",
+    "migrations"
+  ],
+  "params": [
+    {
+      "name": "engine",
+      "type": "text",
+      "default": "sqlite",
+      "label": "Where a domain's records live: sqlite (one file per db, the default) or postgres"
+    },
+    {
+      "name": "dbs",
+      "type": "json",
+      "default": [],
+      "label": "With postgres: only these dbs move there (empty = every db) - move one db at a time"
+    },
+    {
+      "name": "url_env",
+      "type": "text",
+      "default": "PORTAL_DATABASE_URL",
+      "label": "The name of the environment variable that holds the Postgres connection string (never the string itself)"
+    },
+    {
+      "name": "schema_prefix",
+      "type": "text",
+      "default": "",
+      "label": "Each db is its own Postgres schema, named prefix + db (a prefix lets portals share one database)"
+    },
+    {
+      "name": "pool_max",
+      "type": "number",
+      "default": 10,
+      "label": "Postgres connections kept open for reuse"
+    },
+    {
+      "name": "connect_timeout_s",
+      "type": "number",
+      "default": 10,
+      "label": "Seconds to wait for a Postgres connection"
+    },
+    {
+      "name": "statement_timeout_ms",
+      "type": "number",
+      "default": 15000,
+      "label": "Longest one Postgres statement may run (milliseconds)"
+    },
+    {
+      "name": "sqlite_timeout_s",
+      "type": "number",
+      "default": 15,
+      "label": "Seconds a SQLite save waits for another writer"
+    },
+    {
+      "name": "pg_types",
+      "type": "json",
+      "default": {
+        "INTEGER": "BIGINT",
+        "REAL": "DOUBLE PRECISION",
+        "BLOB": "BYTEA"
+      },
+      "label": "Column types the same DDL means on Postgres (SQLite INTEGER is 64-bit)"
+    },
+    {
+      "name": "sqlite_only",
+      "type": "json",
+      "default": [
+        "IFNULL(",
+        "COLLATE NOCASE",
+        "INSERT OR IGNORE",
+        "INSERT OR REPLACE",
+        "REPLACE INTO",
+        "json_extract(",
+        "GROUP_CONCAT(",
+        "PRAGMA ",
+        "AUTOINCREMENT",
+        "datetime('now'",
+        "last_insert_rowid(",
+        "sqlite_master"
+      ],
+      "label": "SQL words that work on SQLite only - a domain module that uses one fails the self-check (write COALESCE, LOWER(col), ON CONFLICT DO NOTHING, sqlstore.json_text)"
+    },
+    {
+      "name": "move_batch",
+      "type": "number",
+      "default": 2000,
+      "label": "Rows copied per batch by the move tool"
+    },
+    {
+      "name": "mysql_url_env",
+      "type": "text",
+      "default": "PORTAL_MYSQL_URL",
+      "label": "The environment variable holding a MySQL / MariaDB connection string (mysql scheme: user, password, host, port, database) the move tool reads FROM - never kept in a file"
+    },
+    {
+      "name": "mysql_types",
+      "type": "record",
+      "default": {
+        "tinyint": "SMALLINT",
+        "smallint": "SMALLINT",
+        "mediumint": "INTEGER",
+        "int": "INTEGER",
+        "int unsigned": "BIGINT",
+        "bigint": "BIGINT",
+        "bigint unsigned": "NUMERIC(20,0)",
+        "decimal": "NUMERIC({p},{s})",
+        "float": "REAL",
+        "double": "DOUBLE PRECISION",
+        "bit": "BIGINT",
+        "year": "INTEGER",
+        "char": "TEXT",
+        "varchar": "TEXT",
+        "tinytext": "TEXT",
+        "text": "TEXT",
+        "mediumtext": "TEXT",
+        "longtext": "TEXT",
+        "enum": "TEXT",
+        "set": "TEXT",
+        "json": "JSONB",
+        "date": "DATE",
+        "datetime": "TIMESTAMP",
+        "timestamp": "TIMESTAMP",
+        "time": "TIME",
+        "binary": "BYTEA",
+        "varbinary": "BYTEA",
+        "tinyblob": "BYTEA",
+        "blob": "BYTEA",
+        "mediumblob": "BYTEA",
+        "longblob": "BYTEA"
+      },
+      "label": "MySQL column type -> the Postgres type the move tool creates (\"int unsigned\" before \"int\"; {p},{s} = precision, scale). A type not listed stops the move and is named"
+    },
+    {
+      "name": "words",
+      "type": "json",
+      "default": {
+        "no_url": "Set the environment variable {env} to the Postgres connection string first (it is never kept in a file).",
+        "no_driver": "Postgres needs the psycopg package: pip install \"psycopg[binary]\" (requirements.txt lists it).",
+        "no_file": "There is no {path} to move.",
+        "plan": "{db}: {tables} table(s), {rows} row(s) in SQLite -> Postgres schema {schema}.",
+        "table": "  {table}: {rows} row(s)",
+        "target_busy": "Postgres schema {schema} already holds rows ({busy}) - nothing is overwritten. Empty it or pick another schema_prefix.",
+        "dry": "Dry run - nothing written. Add --apply to copy.",
+        "checked": "  {table}: {rows} row(s), checksum {sum} - match",
+        "mismatch": "  {table}: SQLite {a_rows} row(s) {a_sum}, Postgres {b_rows} row(s) {b_sum} - DIFFERENT, nothing kept",
+        "done": "Moved and checked. Next: set chip store.engine engine = postgres (dbs = [\"{db}\"] to move only this one) and restart.",
+        "step_edited": "[sqlstore] {db}: migration step {n} was changed after it ran - steps are never edited, add a new one",
+        "step_failed": "{db}: migration step {n} failed and was rolled back - later steps not run: {why}",
+        "no_mysql_url": "Set the environment variable {env} to the MySQL connection string (mysql scheme: user, password, host, port, database) first - it is never kept in a file.",
+        "no_mysql_driver": "Reading MySQL needs the pymysql package: pip install pymysql.",
+        "mysql_plan": "{db}: {tables} table(s), {rows} row(s) in MySQL database {source} -> Postgres schema {schema}.",
+        "mysql_name": "MySQL name {name!r} is not a plain lower-case name - rename it in MySQL first (Postgres would fold its case).",
+        "mysql_type": "{table}.{column}: MySQL type {type!r} has no Postgres type in chip store.engine mysql_types - add one, then move again.",
+        "mysql_zero_date": "{table}.{column}: MySQL holds the zero date '{value}', which no Postgres date can hold - set those rows to NULL in MySQL first.",
+        "mysql_done": "Moved and checked, with keys, indexes and foreign keys. Next: point the portal at Postgres (chip store.engine engine = postgres, {env} set) and restart."
+      },
+      "label": "What the store and its move tool say"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "engine": "$engine",
+      "dbs": "$dbs",
+      "url_env": "$url_env",
+      "schema_prefix": "$schema_prefix",
+      "pool_max": "$pool_max",
+      "connect_timeout_s": "$connect_timeout_s",
+      "statement_timeout_ms": "$statement_timeout_ms",
+      "sqlite_timeout_s": "$sqlite_timeout_s",
+      "pg_types": "$pg_types",
+      "sqlite_only": "$sqlite_only",
+      "move_batch": "$move_batch",
+      "words": "$words",
+      "mysql_url_env": "$mysql_url_env",
+      "mysql_types": "$mysql_types"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "DomainTemplate 2026-11-11 owner (\"start Postgres adapter in DomainTemplate\"; AOT benchmark: Postgres + versioned migrations = the #1 gap). core/sqlstore.py reads this chip. engine: sqlite (default - one file per db, exactly as before) or postgres (each db its own schema, prefix + db). dbs: with postgres, only these dbs go there (empty = all) so a portal moves one db at a time. url_env: the NAME of the environment variable holding the connection string - the string and its password are never in a chip or a file. pool_max / connect_timeout_s / statement_timeout_ms / sqlite_timeout_s: connection knobs. pg_types: how the same DDL's column types read on Postgres. sqlite_only: SQL words a domain module may not use (selfcheck 'store'). move_batch: rows per copy batch of python -m core.sqlstore move. words: every line the store and the move tool print.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "engine": "sqlite",
+        "dbs": [],
+        "url_env": "PORTAL_DATABASE_URL",
+        "schema_prefix": "",
+        "pool_max": 10,
+        "connect_timeout_s": 10,
+        "statement_timeout_ms": 15000,
+        "sqlite_timeout_s": 15,
+        "pg_types": {
+          "INTEGER": "BIGINT",
+          "REAL": "DOUBLE PRECISION",
+          "BLOB": "BYTEA"
+        },
+        "sqlite_only": [
+          "IFNULL(",
+          "COLLATE NOCASE",
+          "INSERT OR IGNORE",
+          "INSERT OR REPLACE",
+          "REPLACE INTO",
+          "json_extract(",
+          "GROUP_CONCAT(",
+          "PRAGMA ",
+          "AUTOINCREMENT",
+          "datetime('now'",
+          "last_insert_rowid(",
+          "sqlite_master"
+        ],
+        "move_batch": 2000,
+        "mysql_url_env": "PORTAL_MYSQL_URL",
+        "mysql_types": {
+          "tinyint": "SMALLINT",
+          "smallint": "SMALLINT",
+          "mediumint": "INTEGER",
+          "int": "INTEGER",
+          "int unsigned": "BIGINT",
+          "bigint": "BIGINT",
+          "bigint unsigned": "NUMERIC(20,0)",
+          "decimal": "NUMERIC({p},{s})",
+          "float": "REAL",
+          "double": "DOUBLE PRECISION",
+          "bit": "BIGINT",
+          "year": "INTEGER",
+          "char": "TEXT",
+          "varchar": "TEXT",
+          "tinytext": "TEXT",
+          "text": "TEXT",
+          "mediumtext": "TEXT",
+          "longtext": "TEXT",
+          "enum": "TEXT",
+          "set": "TEXT",
+          "json": "JSONB",
+          "date": "DATE",
+          "datetime": "TIMESTAMP",
+          "timestamp": "TIMESTAMP",
+          "time": "TIME",
+          "binary": "BYTEA",
+          "varbinary": "BYTEA",
+          "tinyblob": "BYTEA",
+          "blob": "BYTEA",
+          "mediumblob": "BYTEA",
+          "longblob": "BYTEA"
+        },
+        "words": {
+          "no_url": "Set the environment variable {env} to the Postgres connection string first (it is never kept in a file).",
+          "no_driver": "Postgres needs the psycopg package: pip install \"psycopg[binary]\" (requirements.txt lists it).",
+          "no_file": "There is no {path} to move.",
+          "plan": "{db}: {tables} table(s), {rows} row(s) in SQLite -> Postgres schema {schema}.",
+          "table": "  {table}: {rows} row(s)",
+          "target_busy": "Postgres schema {schema} already holds rows ({busy}) - nothing is overwritten. Empty it or pick another schema_prefix.",
+          "dry": "Dry run - nothing written. Add --apply to copy.",
+          "checked": "  {table}: {rows} row(s), checksum {sum} - match",
+          "mismatch": "  {table}: SQLite {a_rows} row(s) {a_sum}, Postgres {b_rows} row(s) {b_sum} - DIFFERENT, nothing kept",
+          "done": "Moved and checked. Next: set chip store.engine engine = postgres (dbs = [\"{db}\"] to move only this one) and restart.",
+          "step_edited": "[sqlstore] {db}: migration step {n} was changed after it ran - steps are never edited, add a new one",
+          "step_failed": "{db}: migration step {n} failed and was rolled back - later steps not run: {why}",
+          "no_mysql_url": "Set the environment variable {env} to the MySQL connection string (mysql scheme: user, password, host, port, database) first - it is never kept in a file.",
+          "no_mysql_driver": "Reading MySQL needs the pymysql package: pip install pymysql.",
+          "mysql_plan": "{db}: {tables} table(s), {rows} row(s) in MySQL database {source} -> Postgres schema {schema}.",
+          "mysql_name": "MySQL name {name!r} is not a plain lower-case name - rename it in MySQL first (Postgres would fold its case).",
+          "mysql_type": "{table}.{column}: MySQL type {type!r} has no Postgres type in chip store.engine mysql_types - add one, then move again.",
+          "mysql_zero_date": "{table}.{column}: MySQL holds the zero date '{value}', which no Postgres date can hold - set those rows to NULL in MySQL first.",
+          "mysql_done": "Moved and checked, with keys, indexes and foreign keys. Next: point the portal at Postgres (chip store.engine engine = postgres, {env} set) and restart."
+        }
+      }
+    }
+  ]
+}

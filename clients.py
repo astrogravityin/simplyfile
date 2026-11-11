@@ -6,19 +6,30 @@ status, address, contacts, GST, bank accounts, partners, and per assessment year
 Statuses, the PAN shape, stages and years are chip clients.settings; every word is chip ui.clients.
 Two checks a typist misses are made here: the PAN's 4th letter must match the status (H = HUF, F = firm ...), and a
 GSTIN must carry the same PAN in characters 3-12.
+
+Kept in SQL (core/sqlstore.py, db "clients", one row per client; 2026-11-12 W1.1): the register used to be one JSON file
+rewritten whole on every save. The old file moves in once (the first read in a data folder) and stays on disk untouched.
 """
 from __future__ import annotations
 
+import copy
+import json
 import re
 import threading
 
 from fastapi import HTTPException
 
-from core import engine, limits, lists
+from core import engine, limits, lists, sqlstore
 from core import store
 
-FILE = "sf_clients.json"
-_LOCK = threading.Lock()  # ponytail: one lock for the whole register; per-client locks if many staff save at once
+FILE = "sf_clients.json"   # History's name for a client save (chip changes.watch), and the JSON file moved in once
+DB = "clients"
+sqlstore.register(DB, """CREATE TABLE IF NOT EXISTS clients (id TEXT PRIMARY KEY, firm_id TEXT NOT NULL DEFAULT '',
+    pan TEXT NOT NULL DEFAULT '', archived_at TEXT, created_at TEXT, updated_at TEXT, data TEXT NOT NULL);
+CREATE INDEX IF NOT EXISTS clients_firm ON clients (firm_id, archived_at);
+CREATE INDEX IF NOT EXISTS clients_pan ON clients (firm_id, pan);""")
+_LOCK = threading.Lock()  # ponytail: one lock per process; several workers need a row lock (W1.1 multi-worker)
+_MOVED: set = set()       # data folders whose old JSON register is already in the table
 
 
 def settings() -> dict:
@@ -33,8 +44,47 @@ def _bad(key: str, **values):
     raise HTTPException(400, say(key, **values))
 
 
+def _moved_in() -> None:
+    """The first read in a data folder moves an old JSON register into the table (a register made before 2026-11-12)."""
+    if str(store.DATA) in _MOVED:
+        return
+    _MOVED.add(str(store.DATA))
+    old = [c for c in store.read(FILE, []) or [] if isinstance(c, dict) and c.get("id")]
+    if old and not sqlstore.one(DB, "SELECT 1 AS x FROM clients LIMIT 1"):
+        with sqlstore.tx(DB) as x:
+            for c in old:
+                _put(x, c)
+
+
+def _put(x, c: dict) -> None:
+    x.execute("INSERT INTO clients (id, firm_id, pan, archived_at, created_at, updated_at, data) VALUES (?, ?, ?, ?, ?, ?, ?) "
+              "ON CONFLICT(id) DO UPDATE SET firm_id = excluded.firm_id, pan = excluded.pan, archived_at = excluded.archived_at, "
+              "updated_at = excluded.updated_at, data = excluded.data",
+              (c["id"], c.get("firm_id", "") or "", c.get("pan", "") or "", c.get("archived_at") or None, c.get("created_at", "") or "",
+               c.get("updated_at", "") or "", json.dumps(c, ensure_ascii=False)))
+
+
+def _q(where: str = "", args: tuple = ()) -> list[dict]:
+    _moved_in()
+    return [json.loads(r["data"]) for r in sqlstore.rows(DB, "SELECT data FROM clients" + where + " ORDER BY created_at, id", args)]
+
+
+def _save(c: dict, old: dict | None) -> dict:
+    """One client written (its whole row), then History told as the JSON register told it (name sf_clients.json)."""
+    with sqlstore.tx(DB) as x:
+        _put(x, c)
+    sqlstore._tell(FILE, [old] if old else [], [c])   # noqa: SLF001 - the same watchers store.write called
+    return c
+
+
 def _all() -> list[dict]:
-    return store.read(FILE, [])
+    """Every firm's clients (the portal admin's views, firms.py's "still has clients"); a firm's own screen uses _mine."""
+    return _q()
+
+
+def rows_for_scan() -> list[dict]:
+    """The clean-up scan's reader (core/artifacts, chip artifacts.types row "client" reader "clients")."""
+    return _all()
 
 
 def firm_id(user: dict | None) -> str:
@@ -43,7 +93,14 @@ def firm_id(user: dict | None) -> str:
 
 
 def _mine(user: dict | None) -> list[dict]:
-    return [c for c in _all() if c.get("firm_id", "") == firm_id(user)]
+    return _q(" WHERE firm_id = ?", (firm_id(user),))
+
+
+def _row(cid: str) -> dict:
+    got = _q(" WHERE id = ?", (cid,))
+    if not got:
+        raise HTTPException(404, say("not_found"))
+    return got[0]
 
 
 def status_of(sid: str) -> dict | None:
@@ -112,10 +169,7 @@ def clean(body: dict) -> dict:
 
 
 def get(cid: str) -> dict:
-    c = next((c for c in _all() if c["id"] == cid), None)
-    if not c:
-        raise HTTPException(404, say("not_found"))
-    return c
+    return _row(cid)
 
 
 def save(user: dict, body: dict, cid: str = "") -> dict:
@@ -123,22 +177,20 @@ def save(user: dict, body: dict, cid: str = "") -> dict:
     if "parties" not in body:                        # a save that does not carry the party master (an import, a firm's own row) keeps it
         data.pop("parties")
     with _LOCK:
-        rows = _all()
-        if any(c["pan"] == data["pan"] and c["id"] != cid and c.get("firm_id", "") == firm_id(user) for c in rows):
+        _moved_in()
+        if sqlstore.one(DB, "SELECT id FROM clients WHERE firm_id = ? AND pan = ? AND id != ?", (firm_id(user), data["pan"], cid)):
             _bad("pan_taken", pan=data["pan"])
+        old = None
         if cid:
-            c = next((c for c in rows if c["id"] == cid), None)
-            if not c:
-                raise HTTPException(404, say("not_found"))
+            c = _row(cid)
+            old = copy.deepcopy(c)
             c.update(data)
         else:
             c = data | {"id": store.new_id(), "firm_id": firm_id(user), "years": {}, "created_at": store.now(), "created_by": user["id"]}
             ay = body.get("ay") if body.get("ay") in settings()["years"] else settings()["current_ay"]
             c["years"][ay] = year_defaults(c)            # a new client starts in the year being looked at (else this year)
-            rows.append(c)
         c["updated_at"], c["updated_by"] = store.now(), user["id"]
-        store.write(FILE, rows)
-        return c
+        return _save(c, old)
 
 
 def party_key(name: str, pan: str = "") -> str:
@@ -160,10 +212,8 @@ def learn_parties(user: dict, cid: str, found: list[dict]) -> dict:
     typed is never overwritten."""
     added = filled = 0
     with _LOCK:
-        rows = _all()
-        c = next((x for x in rows if x["id"] == cid), None)
-        if not c:
-            raise HTTPException(404, say("not_found"))
+        c = _row(cid)
+        old = copy.deepcopy(c)
         c.setdefault("parties", [])
         for f in found:
             if not f.get("name"):
@@ -179,7 +229,7 @@ def learn_parties(user: dict, cid: str, found: list[dict]) -> dict:
             filled += bool(gap)
         if added or filled:
             c["updated_at"], c["updated_by"] = store.now(), user["id"]
-            store.write(FILE, rows)
+            _save(c, old)
     return {"added": added, "filled": filled, "client": c}
 
 
@@ -208,10 +258,8 @@ def set_year(user: dict, cid: str, ay: str, body: dict) -> dict:
     if ay not in k["years"]:
         _bad("bad_ay", ay=ay)
     with _LOCK:
-        rows = _all()
-        c = next((c for c in rows if c["id"] == cid), None)
-        if not c:
-            raise HTTPException(404, say("not_found"))
+        c = _row(cid)
+        old = copy.deepcopy(c)
         y = c.setdefault("years", {}).setdefault(ay, year_defaults(c))
         if "form" in body:                                # the stage moves by itself (compute.refresh); filing has its own road
             if body["form"] not in k["forms"]:
@@ -227,20 +275,17 @@ def set_year(user: dict, cid: str, ay: str, body: dict) -> dict:
             if f in body:
                 y[f] = _txt(body[f], "year_field")
         c["updated_at"], c["updated_by"] = store.now(), user["id"]
-        store.write(FILE, rows)
-        return c
+        return _save(c, old)
 
 
 def change_year(cid: str, ay: str, fn) -> dict:
     """Run fn(year) on a client's year under the lock and keep it (the stage, the filings - compute.py decides them)."""
     with _LOCK:
-        rows = _all()
-        c = next((c for c in rows if c["id"] == cid), None)
-        if not c:
-            raise HTTPException(404, say("not_found"))
+        c = _row(cid)
+        old = copy.deepcopy(c)
         y = c.setdefault("years", {}).setdefault(ay, year_defaults(c))
         if fn(y) is not False:
-            store.write(FILE, rows)
+            _save(c, old)
         return y
 
 
@@ -269,23 +314,22 @@ def _set_archived(c: dict, user: dict, on: bool) -> None:
     c["updated_at"], c["updated_by"] = now, user["id"]
 
 
-def _of_firm(rows: list[dict], user: dict, cid: str) -> dict:
+def _of_firm(user: dict, cid: str) -> dict:
     """One client of THIS person's firm (2026-10-04: archive found any firm's client by id)."""
-    c = next((c for c in rows if c["id"] == cid and c.get("firm_id", "") == firm_id(user)), None)
-    if not c:
+    got = _q(" WHERE id = ? AND firm_id = ?", (cid, firm_id(user)))
+    if not got:
         raise HTTPException(404, say("not_found"))
-    return c
+    return got[0]
 
 
 def archive(user: dict, cid: str, on: bool) -> dict:
     """Archive (or bring back) a client and its filings. Nothing is deleted: the master and every year stay, the client
     only moves to the Archived tab. Statements and reconciliations already filed keep pointing at it."""
     with _LOCK:
-        rows = _all()
-        c = _of_firm(rows, user, cid)
+        c = _of_firm(user, cid)
+        old = copy.deepcopy(c)
         _set_archived(c, user, on)
-        store.write(FILE, rows)
-        return c
+        return _save(c, old)
 
 
 def archive_many(user: dict, ids: list, on: bool) -> dict:
@@ -294,13 +338,12 @@ def archive_many(user: dict, ids: list, on: bool) -> dict:
     if not limits.within(len(ids), settings()["bulk_max"]):
         _bad("bulk_too_many", max=settings()["bulk_max"])
     with _LOCK:
-        rows = _all()
-        mine = {c["id"]: c for c in rows if c.get("firm_id", "") == firm_id(user)}
+        mine = {c["id"]: c for c in _mine(user)}
         hit = [mine[i] for i in dict.fromkeys(ids) if i in mine]
         for c in hit:
+            old = copy.deepcopy(c)
             _set_archived(c, user, on)
-        if hit:
-            store.write(FILE, rows)
+            _save(c, old)
     return {"done": len(hit), "message": say("archived_n" if on else "restored_n", n=len(hit))}
 
 
@@ -308,8 +351,8 @@ def archive_year(user: dict, cid: str, ay: str, on: bool) -> dict:
     """One year's filing alone - the client stays active. A filing never comes back under an archived client
     (chip clients.may_restore_filing)."""
     with _LOCK:
-        rows = _all()
-        c = _of_firm(rows, user, cid)
+        c = _of_firm(user, cid)
+        old = copy.deepcopy(c)
         y = (c.get("years") or {}).get(ay)
         if y is None:
             _bad("no_filing", name=c["name"], ay=ay)
@@ -321,8 +364,7 @@ def archive_year(user: dict, cid: str, ay: str, on: bool) -> dict:
             for f in ("archived_at", "archived_by", "archived_with"):
                 y.pop(f, None)
         c["updated_at"], c["updated_by"] = store.now(), user["id"]
-        store.write(FILE, rows)
-        return c
+        return _save(c, old)
 
 
 def row(c: dict, ay: str) -> dict:
@@ -383,4 +425,33 @@ if __name__ == "__main__":  # ponytail: one runnable self-check - a made-up clie
         except HTTPException as e:
             assert e.status_code == 400 and e.detail, why
     assert status_of("firm")["form"] == "ITR-5" and status_of("huf")["form"] == "ITR-3"
+    # 2026-11-12 W1.1: the register in SQL - the old JSON moves in once, every save is one row, History still told
+    import tempfile
+    from pathlib import Path
+    kept_data = store.DATA
+    with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as d:
+        store.DATA = Path(d)
+        sqlstore.configure(**({} if sqlstore.cfg()["engine"] == "sqlite" else {"engine": "postgres"}))
+        store.write(FILE, [{"id": "c1", "firm_id": "f1", "name": "Old One", "pan": "AAAHS1234K", "status": "huf", "years": {},
+                            "created_at": "2026-01-01"}])
+        assert [c["id"] for c in _all()] == ["c1"] and get("c1")["name"] == "Old One", "the old JSON register did not move in"
+        told = []
+        store.watch(r"^sf_clients\.json$", lambda n, o, w: told.append((o, w)))
+        u1, u2 = {"id": "u1", "firm_id": "f1"}, {"id": "u2", "firm_id": "f2"}
+        new = save(u1, {"name": "New Two", "status": "huf", "pan": "AAAHT1234K"})
+        assert told[-1][0] == [] and told[-1][1][0]["id"] == new["id"], "History is told of a new client"
+        try:
+            save(u1, {"name": "Copy", "status": "huf", "pan": "AAAHS1234K"})
+            raise AssertionError("a PAN already in this firm's register was taken twice")
+        except HTTPException as e:
+            assert e.status_code == 400
+        assert save(u2, {"name": "Other firm", "status": "huf", "pan": "AAAHS1234K"})["firm_id"] == "f2", "another firm may hold the PAN"
+        set_year(u1, "c1", settings()["current_ay"], {"audit": True})
+        assert told[-1][0][0]["years"] == {} and get("c1")["years"][settings()["current_ay"]]["audit"] is True, "old and new row told"
+        assert archive_many(u1, ["c1", new["id"], "nope"], True)["done"] == 2 and all(c.get("archived_at") for c in _mine(u1))
+        assert [c["firm_id"] for c in _mine(u2)] == ["f2"] and len(_all()) == 3, "the tenant wall"
+        assert "store.write(FILE" not in Path(__file__).read_text(encoding="utf-8").split("\nif __name__")[0], \
+            "the register is never written as one JSON file again"
+        sqlstore.configure()
+    store.DATA = kept_data
     print("clients self-check OK")

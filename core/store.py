@@ -237,8 +237,17 @@ def write(name: str, value) -> None:
             except (OSError, ValueError):
                 old = None
         tmp = p.with_suffix(".tmp")
-        tmp.write_text(json.dumps(value, indent=2, ensure_ascii=False), encoding="utf-8")
+        with open(tmp, "w", encoding="utf-8") as fh:   # 2026-11-11 (B8): on disk before the rename, so a power cut never leaves an empty file
+            fh.write(json.dumps(value, indent=2, ensure_ascii=False))
+            fh.flush()
+            os.fsync(fh.fileno())
         tmp.replace(p)
+        if hasattr(os, "O_DIRECTORY"):                 # the rename itself on disk too (POSIX; Windows has no directory handle)
+            fd = os.open(p.parent, os.O_RDONLY | os.O_DIRECTORY)
+            try:
+                os.fsync(fd)
+            finally:
+                os.close(fd)
         # Keys and sessions are secrets: keep them owner-only where the OS supports it.
         if name in SECRET_FILES:
             try:

@@ -77,9 +77,23 @@ def _ids(v: Any, key: str) -> list[str]:
     return out
 
 
+def _reader(name: str):
+    """A kind kept in SQL (2026-11-12 W1.1) names its reader in the chip row: "reader": "<module>.<function>" (a function of
+    no arguments returning the rows). Only a portal module's own function, never a path or a call with arguments."""
+    import importlib  # noqa: PLC0415
+    mod, _, fn = name.rpartition(".")
+    if not re.fullmatch(r"[a-z_][a-z0-9_]*(\.[a-z_][a-z0-9_]*)*", mod) or not re.fullmatch(r"[a-z_][a-z0-9_]*", fn):
+        raise ValueError(f"bad reader {name!r}")
+    return getattr(importlib.import_module(mod), fn)
+
+
 def _rows_of(t: dict) -> list[tuple[Path, dict | None]]:
     """(file, row) for every artifact of a stored kind; row None = the file cannot be read (broken)."""
-    out = []
+    out: list[tuple[Path, dict | None]] = []
+    if t.get("reader"):                                # rows kept in SQL: read through the module that owns them
+        f = store.DATA / (t["reader"] + ".sql")
+        out = [(f, r) for r in _reader(t["reader"])() if isinstance(r, dict)]
+        return [(f, r) for f, r in out if not any(_get(r, x) for x in t.get("gone_when", []))]
     for f in sorted(store.DATA.glob(re.sub(r"\{\w+\}", "*", t["store"]) + ".json")):   # a {name} folder slot reads as *
         got = _load(f)
         if got is ValueError:
@@ -102,6 +116,8 @@ def _when(v: Any) -> str:
 def _slots(t: dict, f: Path) -> dict:
     """The {name} slots of a store pattern, read off one file's path (hf_docs/{cid}/{year}/files -> cid, year;
     guideme-{uid} -> uid)."""
+    if not t.get("store"):
+        return {}
     rx = "/".join(re.sub(r"\\\{(\w+)\\\}", r"(?P<\1>[^/]+)", re.escape(x)) for x in t["store"].split("/"))
     m = re.fullmatch(rx.replace(r"\*", "[^/]+"), f.relative_to(store.DATA).with_suffix("").as_posix())
     return m.groupdict() if m else {}
@@ -226,6 +242,8 @@ def _route(item: dict) -> dict | None:
 def _keep_aside(item: dict) -> None:
     """The author is gone: the row moves to replaced/ beside its file (a doc: the file itself). Restorable."""
     t = next(x for x in types() if x["type"] == item["type"])
+    if t.get("reader"):                                # a SQL kind is put aside by its own route, never by rewriting a file
+        raise mcp.ToolError("failed", why=cfg()["not_found"])
     for f, r in _rows_of(t):
         if r is not None and str(_get(r, t.get("id", "id")) or (f.stem if t.get("shape") == "doc" else "")) == item["id"]:
             if t.get("shape") == "doc":
@@ -267,6 +285,12 @@ def delete(args: dict, ctx: dict) -> dict:
     return {"done": done, "deleted": sum(1 for d in done if d["ok"])}
 
 
+def _test_rows() -> list[dict]:
+    """The self-test's SQL kind (a reader returns rows; one archived, one whose parent is gone)."""
+    return [{"id": "r1", "by": "x", "name": "Kept", "thing": "t1"}, {"id": "r2", "by": "x", "name": "Gone", "archived_at": "z"},
+            {"id": "r3", "by": "x", "name": "Lost", "thing": "nope"}]
+
+
 def lets_blocked_in(request) -> bool:
     """core/auth.current_user: a blocked person's session passes only for this process's own clean-up call."""
     return secrets.compare_digest(request.headers.get(CLEAN_HEADER, ""), SECRET)
@@ -302,7 +326,9 @@ if __name__ == "__main__":  # ponytail: one runnable check - facts, the route as
           "delete": {"method": "DELETE", "path": "/api/things/{id}", "as": "author"}},
          {"type": "doc", "store": "docs/{cid}/files", "id": "id", "author": "by", "title": "name", "gone_when": ["discarded_at"],
           "delete": {"method": "DELETE", "path": "/api/docs/{cid}/{id}", "as": "author"}},
-         {"type": "build", "store": "guideme-{uid}", "rows": "rows", "id": "id", "author_from": "uid", "title": "title"}]
+         {"type": "build", "store": "guideme-{uid}", "rows": "rows", "id": "id", "author_from": "uid", "title": "title"},
+         {"type": "rec", "reader": "core.artifacts._test_rows", "id": "id", "author": "by", "title": "name", "gone_when": ["archived_at"],
+          "refs": [{"field": "thing", "type": "thing", "means": "orphan"}]}]
     real = engine.run
     engine.run = lambda cid, args=None, *x: {"types": T} if cid == "artifacts.types" else real(cid, args, *x)
     app = FastAPI()
@@ -327,6 +353,15 @@ if __name__ == "__main__":  # ponytail: one runnable check - facts, the route as
     every = {(r["type"], r["id"]): r for r in scan({}, ctx)["artifacts"]}
     assert ("doc", "d2") not in every and every[("doc", "d1")]["route_args"] == {"cid": "c9"}, "folder slot fills the route; soft-deleted gone"
     assert every[("build", "g1")]["author"] == a["id"], "rows under a key, author from the file-name slot"
+    assert ("rec", "r1") in every and ("rec", "r2") not in every and every[("rec", "r1")]["parent_missing"] is False, \
+        "a SQL kind is read through its reader (archived ones gone), and its rows count as parents"
+    assert every[("rec", "r3")]["parent_missing"] is True, "a reader row whose parent is gone"
+    for bad_ in ("os.system", "core.artifacts._test_rows()", "../x.y"):
+        try:
+            _reader(bad_) if bad_ != "os.system" else _reader("os.path.join/../x")
+            raise AssertionError(f"reader {bad_!r} accepted")
+        except (ValueError, AttributeError):
+            pass
     assert _when(0) == "" and _when(86400).startswith("1970-01-02") and _when("2026-01-01") == "2026-01-01", "epoch reads as ISO"
     assert delete({"items": [{"type": "doc", "id": "d1"}]}, ctx)["deleted"] == 1 and [x["id"] for x in store.read("docs/c9/files", [])] == ["d2"]
     assert "password" not in json.dumps(scan({"people_only": True}, ctx)), "no password ever leaves"
