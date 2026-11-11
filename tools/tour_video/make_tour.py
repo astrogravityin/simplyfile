@@ -646,7 +646,13 @@ def blocked(page, tour: dict) -> None:
         # browser context, which can. Without this every such tour "failed" while signed in.
         has_cookie = any(c.get("name", "").endswith(("_session", "_token")) and c.get("value")
                          for c in page.context.cookies())
-        if not (has_token or has_cookie) or page.locator(PASS_BOX).count():
+        # 2026-11-11: an EXPIRED session cookie still has a value, so the check above passed, the page fell back to the
+        # signed-out landing and the run said done. Ask the server: a portal whose bootstrap answers {"user": null} is
+        # signed out whatever the cookies say. A site with no such route (404, or no "user" key) is not asked.
+        signed_out = page.evaluate("""async (p) => { try { const r = await fetch(p, {credentials: 'include'}); if (!r.ok) return false;
+            const d = await r.json(); return d && typeof d === 'object' && 'user' in d && !d.user; } catch (e) { return false; } }""",
+                                   tour.get("signed_in_probe", "/api/bootstrap"))
+        if not (has_token or has_cookie) or signed_out or page.locator(PASS_BOX).count():
             raise SystemExit("FAILED not signed in on this site - press Sign in again (the session has expired or belongs to another site)")
     guard = page.locator("[data-access-denied], [data-screen-blocked]").locator("visible=true")
     if guard.count():
