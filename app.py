@@ -359,10 +359,10 @@ def api_tourvideo_job(_: dict = Depends(screen("tourvideo"))):
 
 
 @app.post("/api/tourvideo/{what}")
-def api_tourvideo_start(what: str, request: Request, body: dict = Body(default={}), _: dict = Depends(screen("tourvideo"))):
+def api_tourvideo_start(what: str, request: Request, body: dict = Body(default={}), me: dict = Depends(screen("tourvideo"))):
     if what not in ("check", "record", "login"):
         raise HTTPException(404, tourvideo.say("empty"))
-    return tourvideo.start(what, str((body or {}).get("key") or ""), str(request.base_url).rstrip("/"))
+    return tourvideo.start(what, str((body or {}).get("key") or ""), str(request.base_url).rstrip("/"), me["id"])
 
 
 @app.get("/api/tourvideo/{key}/file/{fid}")

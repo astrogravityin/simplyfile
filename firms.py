@@ -20,7 +20,7 @@ from pathlib import Path
 from fastapi import HTTPException, Request
 
 import delegation
-from core import access, auth, demo, engine, lists, mailer, ops, store
+from core import access, auth, demo, engine, lists, mailer, notify, ops, store
 
 FILE = "sf_firms"
 _LOCK = threading.Lock()  # ponytail: one lock for every firm; per-firm locks if sign-ups ever queue
@@ -318,6 +318,7 @@ def move(u: dict, fid: str, action: str, note: str = "") -> dict:
         _self_client(f)
     admin = next((x["email"] for x in store.users() if is_owner(x)), "")
     if to["to"] == k["waiting_state"]:
+        notify.fire("org_submitted", firm=f.get("name"), firm_id=f.get("id"))   # 2026-11-11 A20: the owner's bell, chip events.notify
         _mail(admin, "mail_submitted_subject", "mail_submitted_body", firm=f.get("name"), hours=settings()["review_hours"])
     else:
         _mail(f.get("email"), "mail_decided_subject", "mail_decided_body", firm=f.get("name"), state=to["to"], note=note)

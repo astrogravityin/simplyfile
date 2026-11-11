@@ -45,7 +45,7 @@ export function voiceNoteButton(onDone, extra = '') {
     b.classList.add('as-on'); b.setAttribute('aria-pressed', 'true');
     const t0 = Date.now();
     live(0);
-    tick = setInterval(() => {
+    tick = setInterval(() => {   // ticks only: the recording clock
       const s = Math.floor((Date.now() - t0) / 1000);
       live(s);
       if (K().voice_max_seconds && s >= K().voice_max_seconds) stop();

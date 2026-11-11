@@ -26,7 +26,7 @@ from pathlib import Path
 
 from fastapi import APIRouter, Depends, HTTPException
 
-from core import auth, engine, store
+from core import auth, engine, events, store
 
 
 class OutOfCredit(RuntimeError):
@@ -83,6 +83,8 @@ def save(m: dict) -> None:
         tmp = p.with_suffix(".tmp")
         tmp.write_text(json.dumps(m, indent=1, ensure_ascii=False), encoding="utf-8")
         tmp.replace(p)
+    # 2026-11-11 A20: progress is pushed (the work window paints it), never polled
+    events.to_person(m.get("owner_id", ""), "job", {"url": f"/api/core/jobs/{m['id']}", "job": summary(m)})
 
 
 def ready(m: dict) -> int:

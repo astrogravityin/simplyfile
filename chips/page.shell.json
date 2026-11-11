@@ -393,12 +393,6 @@
       "type": "number",
       "default": 5,
       "label": "A model's quality is shown out of this many stars"
-    },
-    {
-      "name": "job_poll_ms",
-      "type": "number",
-      "default": 1500,
-      "label": "How often a running job is asked for news (ms)"
     }
   ],
   "expr": {
@@ -414,8 +408,7 @@
       "pick_many": "$pick_many",
       "key_screen": "$key_screen",
       "rich": "$rich",
-      "quality_stars": "$quality_stars",
-      "job_poll_ms": "$job_poll_ms"
+      "quality_stars": "$quality_stars"
     }
   },
   "returns": "record",
@@ -761,8 +754,7 @@
           "video_w": 560,
           "video_h": 315
         },
-        "quality_stars": 5,
-        "job_poll_ms": 1500
+        "quality_stars": 5
       }
     }
   ]

@@ -17,6 +17,7 @@
 import { api, BASE, esc, say, modal, toast, busy, wireSecrets, applyTheme, nextTheme, shownTheme, hooks, confirmDialog, t, loadWords, remembersFor, ps, BUILD, reportIssue, myReports, when, clockAt, setProduct } from './ui.js';
 import { icon, logo as defaultLogo, spinner } from './icons.js';
 import { guideButton, wireGuide } from './guide.js';
+import { startEvents, onEvent } from './events.js';
 
 export const state = {
   user: null, productName: 'Portal', portalUrl: '', needsFirstAccount: false,
@@ -648,7 +649,7 @@ function wireSignin(root) {
       if (wait) wait.textContent = left > 0 ? w('resend_in', { at: `${Math.floor(left / 60)}:${String(left % 60).padStart(2, '0')}` }) : '';
       if (left <= 0) clearInterval(resendTimer);
     };
-    resendTimer = setInterval(tick, 1000);
+    resendTimer = setInterval(tick, 1000);   // ticks only: the resend countdown
     tick();
     resend.onclick = () => busy(resend, async () => {
       const signup = state.authMode === 'signup';
@@ -663,7 +664,7 @@ function wireSignin(root) {
       } catch (err) { showFieldError(form, err, msg); }
     }).then(() => {
       clearInterval(resendTimer);
-      resendTimer = setInterval(tick, 1000);
+      resendTimer = setInterval(tick, 1000);   // ticks only: the resend countdown
       tick();
     });
   }
@@ -828,6 +829,16 @@ function currentScreen() {
   return list.find((s) => s.id === id) || askable().find((s) => s.id === id)
     || list.find((s) => !s.hidden && !s.no_menu) || null;   // no screen named: the first MENU screen, never a no_menu subject (the bottom bar)
 }
+
+// the push stream moves the bell and the menu balloons in place - no reload, no timer (core/events.py)
+onEvent('bell', (d) => {
+  state.bellUnread = Number(d.unread) || 0;
+  const b = document.querySelector('#bell');
+  if (!b) return;
+  b.querySelector('.badge')?.remove();
+  if (state.bellUnread) b.append(Object.assign(document.createElement('span'), { className: 'badge', textContent: state.bellUnread > 99 ? '99+' : String(state.bellUnread) }));
+});
+onEvent('badge', (d) => setBadge(d.id, Number(d.n) || 0));
 
 const badgeOf = (id) => (id === 'issues' ? state.issuesOpen : Number((state.menuBadges || {})[id]) || 0);
 
@@ -1065,7 +1076,7 @@ function demoLeft() {
   if (!left) return dw('resetting');
   return dw('left', { h: Math.floor(left / 3600), m: Math.floor(left / 60) % 60, s: left % 60 });
 }
-setInterval(() => { if (state.demo) document.querySelectorAll('.demo-left').forEach((el) => { el.textContent = demoLeft(); }); }, 1000);
+setInterval(() => { if (state.demo) document.querySelectorAll('.demo-left').forEach((el) => { el.textContent = demoLeft(); }); }, 1000);   // ticks only: the demo clock
 
 /** Banners a rule put up (a Rule Chip Builder outcome). The text is the rule's, escaped; × hides it for this person. */
 function ruleBanners() {
@@ -1312,6 +1323,7 @@ function take(d) {
   state.bellUnread = d.bell_unread || 0;
   state.issuesOpen = d.issues_open || 0;
   state.menuBadges = d.menu_badges || {};
+  startEvents(d.user ? d.events : null);           // 2026-11-11 A20: one push stream - bell, balloons, job progress (core/events.py)
   state.issueReplies = d.issue_replies || [];
   state.banners = d.banners || [];
   state.health = d.health || null;

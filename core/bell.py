@@ -11,7 +11,7 @@ from __future__ import annotations
 
 from fastapi import APIRouter, Depends, Request
 
-from core import auth, engine, limits, store
+from core import auth, engine, events, limits, store
 
 router = APIRouter()
 
@@ -35,6 +35,7 @@ def push(uid: str, text: str, href: str = "") -> None:
         rows = [{"id": store.new_id(), "text": limits.clip(text, most), "href": limits.clip(href, most), "at": store.now(), "seen": False}]
         rows += list(store.read(_name(uid), []) or [])
         store.write(_name(uid), limits.newest(rows, settings()["keep"]))   # chip limits.newest
+    events.to_person(uid, "bell", {"unread": unread(uid)})            # 2026-11-11 A20: the badge moves with no reload
 
 
 def mine(uid: str) -> list[dict]:
@@ -48,7 +49,11 @@ def unread(uid: str) -> int:
 def seen(uid: str) -> dict:
     with store._LOCK:                                    # noqa: SLF001
         store.write(_name(uid), [r | {"seen": True} for r in mine(uid)])
+    events.to_person(uid, "bell", {"unread": 0})                      # the person's other tabs clear too
     return {"ok": True}
+
+
+events.HELLO.append(lambda u: ("bell", {"unread": unread(u["id"])}))   # a (re)connected stream starts from the count now
 
 
 def bootstrap_extra(request: Request, u: dict | None) -> dict:

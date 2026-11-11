@@ -3,6 +3,9 @@
 // screens invent their own popup.
 import { icon, spinner } from './icons.js';
 import { copyText as copyRaw } from './copy.js';
+import { onEvent } from './events.js';
+
+export { onEvent };
 
 // Where the portal lives, taken from this module's own URL (…/core-static/ui.js) — so it works at the
 // site root, at /tv, or anywhere else, with nothing to configure.
@@ -651,7 +654,7 @@ export function workWindow(title, { activity = '', onStop = null, note = '' } = 
     const stop = box.querySelector('[data-ww-stop]');
     if (stop) stop.onclick = () => { stop.disabled = true; onStop(); };
   };
-  tick = setInterval(paint, wk('tick_ms'));
+  tick = setInterval(paint, wk('tick_ms'));   // ticks only: the work window's time gone
   paint();
   return {
     set(patch) {
@@ -707,26 +710,29 @@ export function jobPanel(job, { working, stopId = '' }) {
     ${job.status === 'running' && stopId ? `<button type="button" class="small" data-stop>${icon('pause', 13)} ${esc(sw('job_stop'))}</button>` : ''}</div>`;
 }
 
-/** Follow a running job in `out` (the inline panel) and in the work window; `onDone(job)` once it ends. */
+/** Follow a running job in `out` (the inline panel) and in the work window; `onDone(job)` once it ends. Progress comes
+ *  down the push stream (topic job, core/events.py) - read once now, then only when the server says it moved. */
 export function watchJob(out, url, { onDone, working, stopId = '' }) {
   const stopIt = stopId ? () => api(`/api/core/jobs/${stopId}/stop`, { method: 'POST' }).catch(() => {}) : null;
-  const poll = setInterval(async () => {
-    let job;
-    try { job = await api(url); } catch { return; }
+  let off = () => {};
+  const paint = (job) => {
+    if (!job) return;
     followJob(url, working, job, stopIt);
-    if (!out || !out.isConnected) { clearInterval(poll); return; }
+    if (!out || !out.isConnected) { off(); return; }
     out.innerHTML = jobPanel(job, { working, stopId });
     const stop = out.querySelector('[data-stop]');
     if (stop) stop.onclick = stopIt;
     if (job.status === 'running') return;
-    clearInterval(poll);
+    off();
     onDone(job);
-  }, Number(ps('shell').job_poll_ms));
+  };
+  off = onEvent('job', (d) => { if (d.url === url) paint(d.job); });
+  api(url).then(paint).catch(() => {});
 }
 
 /** Follow a running job (`url` answers its manifest) in a work window. One window per run (url + start): a page that
- *  redraws and follows again reuses it; closed by hand it stays closed. It polls on its own, so it keeps going while
- *  the page underneath redraws or is left. */
+ *  redraws and follows again reuses it; closed by hand it stays closed. It listens to the push stream on its own, so it
+ *  keeps going while the page underneath redraws or is left. */
 const JOB_WINDOWS = {};
 export function followJob(url, title, job, onStop = null) {
   if (!job || job.status !== 'running') return null;
@@ -741,12 +747,10 @@ export function followJob(url, title, job, onStop = null) {
     return false;
   };
   paint(job);
-  const poll = setInterval(async () => {
-    if (!win.isOpen) { clearInterval(poll); return; }
-    let j;
-    try { j = await api(url); } catch { return; }
-    if (!paint(j)) clearInterval(poll);
-  }, wk('poll_ms'));
+  const off = onEvent('job', (d) => {           // pushed by the server (core/events.py) - no poll
+    if (d.url !== url) return;
+    if (!win.isOpen || !paint(d.job)) off();
+  });
   return win;
 }
 

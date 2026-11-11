@@ -72,6 +72,26 @@
       "name": "signup_exists_text",
       "type": "text",
       "default": "Somebody — perhaps you — tried to create an account on {product} with this address, but it already has one.\n\nIf it was you, sign in, or use Forgot password on the sign-in page to get a code.\n\nIf it was not you, ignore this message: nothing has changed.\n"
+    },
+    {
+      "name": "access_request_subject",
+      "type": "text",
+      "default": "{product}: {who} asks for access to {screen}"
+    },
+    {
+      "name": "access_request_text",
+      "type": "text",
+      "default": "{who} asked for access to {screen} on {product}.\n\nReason: {reason}\n\nOpen People & access > Requests to approve or reject it.\n"
+    },
+    {
+      "name": "access_decided_subject",
+      "type": "text",
+      "default": "{product}: your request for {screen} was {verdict}"
+    },
+    {
+      "name": "access_decided_text",
+      "type": "text",
+      "default": "Your request for access to {screen} on {product} was {verdict}.\n\n{why}\n"
     }
   ],
   "expr": {
@@ -89,13 +109,17 @@
       "test_subject": "$test_subject",
       "test_text": "$test_text",
       "signup_exists_subject": "$signup_exists_subject",
-      "signup_exists_text": "$signup_exists_text"
+      "signup_exists_text": "$signup_exists_text",
+      "access_request_subject": "$access_request_subject",
+      "access_request_text": "$access_request_text",
+      "access_decided_subject": "$access_decided_subject",
+      "access_decided_text": "$access_decided_text"
     }
   },
   "returns": "record",
-  "version": 2,
+  "version": 3,
   "status": "published",
-  "description_nl": "The words are plain text and the text part is sent exactly as written; since 2026-10-16 core/mailer.py build() adds the site's branded HTML beside it (chip mail.layout, the site file's mail mark / accent). {product}, {code}, {minutes}, {days}, {who}, {url}, {password}, {change_note} fill in.",
+  "description_nl": "The words are plain text and the text part is sent exactly as written; since 2026-10-16 core/mailer.py build() adds the site's branded HTML beside it (chip mail.layout, the site file's mail mark / accent). {product}, {code}, {minutes}, {days}, {who}, {url}, {password}, {change_note} fill in. 2026-11-11 A20: access_request / access_decided are sent by chip events.notify ({who}, {screen}, {reason}, {verdict}, {why}).",
   "test_cases": [
     {
       "args": {},
@@ -112,7 +136,11 @@
         "test_subject": "{product}: mail is working",
         "test_text": "If you are reading this, {product} can send mail.\n\nSign-up codes, password resets and invitations will reach people.\n",
         "signup_exists_subject": "{product}: somebody tried to sign up with this address",
-        "signup_exists_text": "Somebody — perhaps you — tried to create an account on {product} with this address, but it already has one.\n\nIf it was you, sign in, or use Forgot password on the sign-in page to get a code.\n\nIf it was not you, ignore this message: nothing has changed.\n"
+        "signup_exists_text": "Somebody — perhaps you — tried to create an account on {product} with this address, but it already has one.\n\nIf it was you, sign in, or use Forgot password on the sign-in page to get a code.\n\nIf it was not you, ignore this message: nothing has changed.\n",
+        "access_request_subject": "{product}: {who} asks for access to {screen}",
+        "access_request_text": "{who} asked for access to {screen} on {product}.\n\nReason: {reason}\n\nOpen People & access > Requests to approve or reject it.\n",
+        "access_decided_subject": "{product}: your request for {screen} was {verdict}",
+        "access_decided_text": "Your request for access to {screen} on {product} was {verdict}.\n\n{why}\n"
       }
     }
   ],

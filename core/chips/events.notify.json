@@ -1,0 +1,109 @@
+{
+  "chip_id": "events.notify",
+  "kind": "accessor",
+  "set": "events",
+  "audience": "admin",
+  "label": "Business events that notify: who hears, the bell words, mail and webhook",
+  "aliases": [
+    "notifications",
+    "bell events",
+    "webhooks",
+    "event notify"
+  ],
+  "params": [
+    {
+      "name": "events",
+      "type": "any",
+      "default": {
+        "access_request": {
+          "on": true,
+          "to": [
+            "owners"
+          ],
+          "bell": "{who} asks for access to {screen}",
+          "href": "#/access",
+          "mail": "access_request",
+          "webhook": ""
+        },
+        "access_decided": {
+          "on": true,
+          "to": [
+            "value:user_id"
+          ],
+          "bell": "Your request for {screen} was {verdict}",
+          "href": "#/",
+          "mail": "access_decided",
+          "webhook": ""
+        },
+        "org_submitted": {
+          "on": true,
+          "to": [
+            "owners"
+          ],
+          "bell": "{firm} is waiting for your approval",
+          "href": "#/approvals",
+          "mail": "",
+          "webhook": ""
+        }
+      },
+      "label": "Event id -> on, to (owners | value:<person id field>), bell words, screen link, mail.texts template (blank = no mail), webhook URL (blank = none)"
+    },
+    {
+      "name": "webhook_timeout_s",
+      "type": "number",
+      "default": 5,
+      "label": "Seconds a webhook receiver has to answer"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "events": "$events",
+      "webhook_timeout_s": "$webhook_timeout_s"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-11-11 A20: a business event (access request, decision, an organisation sent for approval) rings the bell of the people named here, sends the named mail.texts template and, if set, POSTs JSON {event, text, ...values} to the webhook - core/notify.py fire(). Add a row to make a new event notify; switch one off with on=false. org_submitted mails from the portal's own firm chip already, so its mail is blank.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "events": {
+          "access_request": {
+            "on": true,
+            "to": [
+              "owners"
+            ],
+            "bell": "{who} asks for access to {screen}",
+            "href": "#/access",
+            "mail": "access_request",
+            "webhook": ""
+          },
+          "access_decided": {
+            "on": true,
+            "to": [
+              "value:user_id"
+            ],
+            "bell": "Your request for {screen} was {verdict}",
+            "href": "#/",
+            "mail": "access_decided",
+            "webhook": ""
+          },
+          "org_submitted": {
+            "on": true,
+            "to": [
+              "owners"
+            ],
+            "bell": "{firm} is waiting for your approval",
+            "href": "#/approvals",
+            "mail": "",
+            "webhook": ""
+          }
+        },
+        "webhook_timeout_s": 5
+      }
+    }
+  ]
+}

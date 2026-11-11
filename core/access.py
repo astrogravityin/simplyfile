@@ -47,7 +47,7 @@ from pathlib import Path
 
 from fastapi import APIRouter, Body, Depends, HTTPException, Request
 
-from core import auth, engine, lists, mailer, store
+from core import auth, engine, lists, mailer, notify, store
 
 
 def say(key: str, **values) -> str:
@@ -538,6 +538,7 @@ def request_access(body: dict = Body(...), me: dict = Depends(auth.signed_in)):
              "status": "pending", "at": store.now()}
         d["requests"] = (d["requests"] + [r])[-limit("requests_kept"):]
         save(d)
+    notify.fire("access_request", user_id=me["id"], who=auth.who(me), screen=label_of(screen_id, function_id), reason=r["reason"])
     return {"request": r}
 
 
@@ -559,6 +560,8 @@ def review_request(request_id: str, verdict: str, me: dict = Depends(screen("acc
     # rather than letting "Approved" mean "still shut".
     who = store.user_by_id(r["user_id"])
     verdict_now = decide(who, r["screen"], r.get("function", "")) if who else {"allowed": False, "why": say("account_gone")}
+    notify.fire("access_decided", user_id=r["user_id"], screen=label_of(r["screen"], r.get("function", "")), verdict=r["status"],
+                why=verdict_now["why"])
     return {"request": r, "allowed": verdict_now["allowed"], "why": verdict_now["why"]}
 
 

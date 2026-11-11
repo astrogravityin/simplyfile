@@ -16,19 +16,12 @@
         "ready": "tag ok"
       },
       "label": "state tag"
-    },
-    {
-      "name": "poll_ms",
-      "type": "number",
-      "default": 2000,
-      "label": "poll ms"
     }
   ],
   "expr": {
     "vop": "record",
     "fields": {
-      "state_tag": "$state_tag",
-      "poll_ms": "$poll_ms"
+      "state_tag": "$state_tag"
     }
   },
   "returns": "record",
@@ -43,8 +36,7 @@
           "none": "tag",
           "stale": "tag warn",
           "ready": "tag ok"
-        },
-        "poll_ms": 2000
+        }
       }
     }
   ]

@@ -14,7 +14,7 @@ from pathlib import Path
 
 from fastapi import HTTPException
 
-from core import engine, lists
+from core import engine, events, lists
 
 ROOT = Path(__file__).resolve().parent          # SimplyFile: everything lives in this folder
 _JOB: dict = {}
@@ -67,7 +67,12 @@ def job() -> dict:
     return dict(_JOB) or {"status": "idle", "log": []}
 
 
-def start(what: str, key: str, base: str) -> dict:
+def _tell() -> None:
+    """2026-11-11 A20: the run's state goes down the push stream to whoever started it - the page never polls."""
+    events.to_person(_JOB.get("uid", ""), "job", {"url": "/api/tourvideo/job", "job": job()})
+
+
+def start(what: str, key: str, base: str, uid: str = "") -> dict:
     """what = check | record | login. One at a time; the runner's own lines are the log."""
     k, tours = settings(), _tours()
     if what != "login" and key not in tours:
@@ -80,7 +85,7 @@ def start(what: str, key: str, base: str) -> dict:
         title = row(key, tours[key])["title"] if key in tours else ""
         _JOB.clear()
         _JOB.update({"status": "running", "what": what, "key": key, "log": [], "started_ms": int(time.time() * 1000),
-                     "activity": say(f"working_{what}", title=title)})
+                     "activity": say(f"working_{what}", title=title), "uid": uid})
     threading.Thread(target=_run, args=(args, int(k["log_keep"])), daemon=True).start()
     return job()
 
@@ -90,13 +95,16 @@ def _run(args: list[str], keep: int) -> None:
         p = subprocess.Popen(args, cwd=ROOT, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, encoding="utf-8", errors="replace")
     except OSError as e:                                  # no such Python: say what to install
         _JOB.update({"status": "failed", "log": [str(e), say("needs", install=settings()["install"])]})
+        _tell()
         return
     for line in p.stdout:
         _JOB["log"] = (_JOB["log"] + [line.rstrip()])[-keep:]
+        _tell()
     code = p.wait()
     if code and any("No module named" in x for x in _JOB["log"]):
         _JOB["log"].append(say("needs", install=settings()["install"]))
     _JOB["status"] = "finished" if code == 0 else "failed"
+    _tell()
 
 
 if __name__ == "__main__":  # ponytail: the list reads every tour; a bad key and a missing video are refused

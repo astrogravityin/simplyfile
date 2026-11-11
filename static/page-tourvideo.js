@@ -3,7 +3,7 @@
 // script changed since / up to date), Check steps, Record video, and the MP4, subtitles and YouTube description.
 // The runner is the studio's own (chip tourvideo.settings); one job at a time, followed in the ONE work window.
 // Every word is chip ui.tourvideo.
-import { api, BASE, esc, toast, busy, pageHead, confirmDialog, t, loadWords, listBox, followJob, when, ps } from './app.js';
+import { api, BASE, esc, toast, busy, pageHead, confirmDialog, t, loadWords, listBox, followJob, when, ps, onEvent } from './app.js';
 import { icon } from './icons.js';
 
 const w = (k, v) => t('tourvideo', k, v);
@@ -17,12 +17,11 @@ export async function tourVideoPage(host) {
   const run = async (what, key, title) => {
     const j = await api(`/api/tourvideo/${what}`, { method: 'POST', body: { key } });
     followJob('/api/tourvideo/job', w(`working_${what}`, { title }), j, null);
-    const tick = setInterval(async () => {
-      const s = await api('/api/tourvideo/job').catch(() => null);
-      if (s && s.status === 'running') return;
-      clearInterval(tick);
+    const off = onEvent('job', (d) => {          // the server tells when the run ends (core/events.py) - no poll
+      if (d.url !== '/api/tourvideo/job' || d.job.status === 'running') return;
+      off();
       reload();
-    }, Number(ps('tourvideo').poll_ms));
+    });
   };
   host.querySelector('#tv-login').onclick = (e) => busy(e.currentTarget, async () => { try { await run('login', '', ''); } catch (err) { toast(err.message, 'bad', 8); } });
   listBox(host.querySelector('#tv-list'), {

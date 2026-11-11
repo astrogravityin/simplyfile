@@ -1,0 +1,71 @@
+{
+  "chip_id": "events.settings",
+  "kind": "accessor",
+  "set": "events",
+  "audience": "admin",
+  "label": "The push stream: topics, heartbeat, reconnect",
+  "aliases": [
+    "push stream",
+    "server sent events",
+    "sse",
+    "notifications stream"
+  ],
+  "params": [
+    {
+      "name": "topics",
+      "type": "any",
+      "default": {
+        "bell": "bell",
+        "badge": "badge",
+        "job": "job"
+      },
+      "label": "Topic -> the name it travels under on the stream (the page reads the same names from bootstrap)"
+    },
+    {
+      "name": "heartbeat_s",
+      "type": "number",
+      "default": 25,
+      "label": "Seconds between heartbeats when there is no news (keeps proxies from closing the stream)"
+    },
+    {
+      "name": "retry_ms",
+      "type": "number",
+      "default": 3000,
+      "label": "How long the browser waits before it reconnects (ms)"
+    },
+    {
+      "name": "replay_keep",
+      "type": "number",
+      "default": 500,
+      "label": "News kept for a page that reconnects (sent again after its Last-Event-ID)"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "topics": "$topics",
+      "heartbeat_s": "$heartbeat_s",
+      "retry_ms": "$retry_ms",
+      "replay_keep": "$replay_keep"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-11-11 A20 (owner: out-perform the ten benchmark products): news comes down ONE stream per signed-in page (GET /api/core/events, core/events.py) - bell count, menu balloons, job progress. No page timer asks the server; the guard selfcheck_push.py fails a new one.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "topics": {
+          "bell": "bell",
+          "badge": "badge",
+          "job": "job"
+        },
+        "heartbeat_s": 25,
+        "retry_ms": 3000,
+        "replay_keep": 500
+      }
+    }
+  ]
+}
