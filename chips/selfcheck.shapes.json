@@ -1,0 +1,178 @@
+{
+  "chip_id": "selfcheck.shapes",
+  "kind": "accessor",
+  "set": "selfcheck",
+  "label": "Shape walk (tools/shape_walk.py): the wrong-shape bodies every write route must survive without a server error",
+  "aliases": [
+    "shape walk",
+    "fuzz walk",
+    "wrong body",
+    "no 500"
+  ],
+  "params": [
+    {
+      "name": "values",
+      "type": "json",
+      "label": "Bad values sent to every key a route reads at once",
+      "default": [
+        "",
+        "abc",
+        -1,
+        1e+308,
+        null,
+        [],
+        {},
+        true,
+        "\u0000"
+      ]
+    },
+    {
+      "name": "per_key_values",
+      "type": "json",
+      "label": "Type probes sent to each key alone",
+      "default": [
+        "abc",
+        1,
+        []
+      ]
+    },
+    {
+      "name": "huge_len",
+      "type": "number",
+      "label": "Length of the huge string sent for every key",
+      "default": 200000
+    },
+    {
+      "name": "max_keys",
+      "type": "number",
+      "label": "At most this many keys of one route are tried one by one",
+      "default": 10
+    },
+    {
+      "name": "path_default",
+      "type": "text",
+      "label": "Value put in a path part with no real id (an unknown record)",
+      "default": "nope"
+    },
+    {
+      "name": "path_values",
+      "type": "json",
+      "label": "Path parts with a fixed value",
+      "default": {
+        "ay": "2026-27"
+      }
+    },
+    {
+      "name": "seed",
+      "type": "json",
+      "label": "Records made first so a path part has a real id: name -> [route, body, id field]",
+      "default": {
+        "cid": [
+          "/api/clients",
+          {
+            "name": "Shape Walk",
+            "status": "individual",
+            "pan": "ZZZPZ9999Z"
+          },
+          "id"
+        ]
+      }
+    },
+    {
+      "name": "owner",
+      "type": "json",
+      "label": "The walk's own owner account (a throw-away data folder)",
+      "default": {
+        "email": "owner@example.com",
+        "password": "a-good-password"
+      }
+    },
+    {
+      "name": "skip",
+      "type": "json",
+      "label": "Routes left out, each with its reason",
+      "default": [
+        {
+          "route": "POST /api/tourvideo/{what}",
+          "why": "starts a video render (browser and voice processes) - its job API is walked by the tour tools"
+        },
+        {
+          "route": "POST /api/taxwatch/{ay}/fetch",
+          "why": "reads the official tax sites over the network"
+        }
+      ]
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "values": "$values",
+      "per_key_values": "$per_key_values",
+      "huge_len": "$huge_len",
+      "max_keys": "$max_keys",
+      "path_default": "$path_default",
+      "path_values": "$path_values",
+      "seed": "$seed",
+      "owner": "$owner",
+      "skip": "$skip"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "W1.3 2026-11-11: every POST / PUT / PATCH route, the portal's and the framework's, gets no body, wrong top-level shapes, each key it reads with each bad value below, and a huge string. A 5xx fails the self-check. A route is left out only with its reason.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "values": [
+          "",
+          "abc",
+          -1,
+          1e+308,
+          null,
+          [],
+          {},
+          true,
+          "\u0000"
+        ],
+        "per_key_values": [
+          "abc",
+          1,
+          []
+        ],
+        "huge_len": 200000,
+        "max_keys": 10,
+        "path_default": "nope",
+        "path_values": {
+          "ay": "2026-27"
+        },
+        "seed": {
+          "cid": [
+            "/api/clients",
+            {
+              "name": "Shape Walk",
+              "status": "individual",
+              "pan": "ZZZPZ9999Z"
+            },
+            "id"
+          ]
+        },
+        "owner": {
+          "email": "owner@example.com",
+          "password": "a-good-password"
+        },
+        "skip": [
+          {
+            "route": "POST /api/tourvideo/{what}",
+            "why": "starts a video render (browser and voice processes) - its job API is walked by the tour tools"
+          },
+          {
+            "route": "POST /api/taxwatch/{ay}/fetch",
+            "why": "reads the official tax sites over the network"
+          }
+        ]
+      }
+    }
+  ]
+}

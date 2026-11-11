@@ -1,0 +1,36 @@
+# Lint and type gate (W1.3, 2026-11-11). The counts may only go DOWN: ceilings in chip selfcheck.quality,
+# checked by tools/quality_gate.py (selfcheck part "quality"). Coverage: tools/coverage_gate.py (part "coverage").
+[project]
+name = "simplyfile"
+version = "0"
+requires-python = ">=3.11"
+
+[tool.ruff]
+target-version = "py311"
+line-length = 200
+extend-exclude = [".venv", "venv", "tmp", "data", "docs", "Requirements", "tools/tour_video/showcase"]
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "B", "PLE"]
+# B008: FastAPI's Body()/Query() defaults are the idiom; E402: modules import after setting TV_DATA on purpose
+ignore = ["B008", "E402"]
+
+[tool.mypy]
+python_version = "3.11"
+files = ["*.py", "core/*.py"]   # the portal and the framework; tools/ are one-off scripts (tools/rulebook.py shares a name)
+ignore_missing_imports = true
+follow_imports = "silent"
+check_untyped_defs = false
+warn_unused_ignores = false
+exclude = ["^\\.venv/", "^venv/", "^tmp/", "^data/", "^docs/", "^Requirements/"]
+
+[tool.coverage.run]
+branch = false
+parallel = true
+patch = ["subprocess"]
+source = ["."]
+omit = [".venv/*", "venv/*", "tmp/*", "data/*", "tools/*", "*/__pycache__/*"]
+data_file = "tmp/coverage/.coverage"
+
+[tool.coverage.report]
+skip_empty = true

@@ -36,6 +36,7 @@ import os
 import sys
 from pathlib import Path
 
+from fastapi.exceptions import RequestValidationError
 from fastapi.staticfiles import StaticFiles
 
 from core import about  # noqa: E402 - 2026-11-09 About us: who we are + the live build (GET /api/about/build)
@@ -199,6 +200,7 @@ def install(app, *, catalog, chips=None, rules_dir=None, scenarios=None) -> None
     app.middleware("http")(_multipart_cap)
     app.middleware("http")(_head_as_get)
     app.middleware("http")(doctor.catch)     # added last = runs first: every unexpected error, from any layer (Error Doctor)
+    app.add_exception_handler(RequestValidationError, doctor.bad_shape)   # W1.3: a wrong-shape body is a 422, never a 500
     for module in (about, auth, access, ledger, memwatch, howto, menus, guide, storage, builder, find, jobs, words, lists, issues, bell, events, demo, doctor, mcp, mcp_oauth, agents):
         app.include_router(module.router)
     app.mount("/core-static", StaticFiles(directory=str(HERE / "static")), name="core-static")

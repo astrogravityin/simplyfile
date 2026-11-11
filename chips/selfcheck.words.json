@@ -1,0 +1,88 @@
+{
+  "chip_id": "selfcheck.words",
+  "kind": "accessor",
+  "set": "selfcheck",
+  "label": "Word drift (tools/words_drift.py): where a screen's menu word must be repeated exactly",
+  "aliases": [
+    "word drift",
+    "menu word",
+    "screen name",
+    "translation keys"
+  ],
+  "params": [
+    {
+      "name": "guide_field",
+      "type": "text",
+      "label": "Guide me chip field holding the screen name",
+      "default": "title"
+    },
+    {
+      "name": "tour_field",
+      "type": "text",
+      "label": "Tour script field holding the screen name",
+      "default": "title"
+    },
+    {
+      "name": "tour_prefix",
+      "type": "text",
+      "label": "Tour files are tours/<prefix>-<screen>.json",
+      "default": "sf"
+    },
+    {
+      "name": "ui_field",
+      "type": "text",
+      "label": "ui chip field holding the page heading (it starts with the menu word)",
+      "default": "title"
+    },
+    {
+      "name": "lang_field",
+      "type": "text",
+      "label": "Translation chip (lang.*) field holding English phrase -> translation",
+      "default": "phrases"
+    },
+    {
+      "name": "ui_title_differs",
+      "type": "json",
+      "label": "Screens whose page heading is not the menu word, each with its reason",
+      "default": [
+        {
+          "screen": "howto",
+          "why": "the menu says 'How to Use links' (the admin screen); the page it edits is headed 'How to Use'"
+        }
+      ]
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "guide_field": "$guide_field",
+      "tour_field": "$tour_field",
+      "tour_prefix": "$tour_prefix",
+      "ui_field": "$ui_field",
+      "lang_field": "$lang_field",
+      "ui_title_differs": "$ui_title_differs"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "W1.3 2026-11-11 (scorecard B15): a screen's name in catalog.json must be the Guide me title, the tour title, the start of the page heading in its ui chip, and a key in every translation chip - so changing the word in one place alone fails the self-check.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "guide_field": "title",
+        "tour_field": "title",
+        "tour_prefix": "sf",
+        "ui_field": "title",
+        "lang_field": "phrases",
+        "ui_title_differs": [
+          {
+            "screen": "howto",
+            "why": "the menu says 'How to Use links' (the admin screen); the page it edits is headed 'How to Use'"
+          }
+        ]
+      }
+    }
+  ]
+}

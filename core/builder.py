@@ -400,7 +400,7 @@ def evaluate(body: dict = Body(...), u: dict = Depends(guard_any)):
     """Run one node (or a whole unsaved rule) on a scenario's facts plus arguments, with drafts in play."""
     need(u, "test")
     lib = engine.with_drafts(body.get("with_drafts"))
-    facts = dict((scenarios().get(body.get("scenario")) or {}).get("facts") or {}) | (body.get("args") or {})
+    facts = dict((scenarios().get(str(body.get("scenario") or "")) or {}).get("facts") or {}) | (body.get("args") if isinstance(body.get("args"), dict) else {})   # W1.3 shapes
     try:
         if body.get("rule"):
             return rules.render(body["rule"], facts, lib)
@@ -446,7 +446,7 @@ def save_scenario(scenario_id: str, body: dict = Body(...), u: dict = Depends(gu
     if engine.run("builder.id_allowed", {"id": scenario_id, "pattern": k["scenario_id_pattern"]}) is not True \
             or not plain_file_name(scenario_id):
         raise HTTPException(400, say("bad_scenario_id"))
-    if body.get("subject") not in rules.SUBJECTS:
+    if not isinstance(body.get("subject"), str) or body.get("subject") not in rules.SUBJECTS:   # W1.3: a list was a 500
         raise HTTPException(400, say("scenario_subject"))
     if not isinstance(body.get("facts"), dict):
         raise HTTPException(400, say("scenario_facts"))

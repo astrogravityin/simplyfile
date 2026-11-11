@@ -63,7 +63,7 @@ def listed(_: dict = Depends(screen("menus"))):
 def save(body: dict = Body(...), _: dict = Depends(screen("menus"))):
     """The whole menu, in order: every row's label, group, icon and draft. Rows left out keep their edits."""
     known = {s["id"]: s for s in access.BASE}
-    rows = [r for r in (body.get("rows") or []) if isinstance(r, dict)]
+    rows = [r for r in (body.get("rows") if isinstance(body.get("rows"), list) else []) if isinstance(r, dict)]   # W1.3: a number was a 500
     with store._LOCK:                                     # noqa: SLF001
         edits = store.read("menus", {})
         for i, r in enumerate(rows):

@@ -1,0 +1,76 @@
+# The quality gate on every push (W1.3, 2026-11-11). The self-check runs as parallel parts (one job each) instead of one
+# long block; the end-to-end walks and coverage are jobs of their own. Installs come from the hash-pinned lock files only.
+# tools/quality_gate.py fails when selfcheck.py gains a part that is not in the matrix below.
+name: check
+
+on:
+  push:
+  pull_request:
+
+concurrency:
+  group: check-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PYTHONIOENCODING: utf-8
+  PIP_DISABLE_PIP_VERSION_CHECK: "1"
+
+jobs:
+  selfcheck:
+    name: selfcheck ${{ matrix.part }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        part: [modules, statics, chips, guides, name, verbs, ai, site, api, push, quality, shapes, words, clones, deps]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2          # quality: the ratchet compares the chip with the commit before
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: requirements*.lock
+      - run: pip install --require-hashes -r requirements.lock -r requirements-dev.lock
+      - run: python selfcheck.py ${{ matrix.part }}
+
+  e2e:
+    name: e2e ${{ matrix.walk }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        # e2e_demo reads the demo client's files, which stay off git (Requirements/) - it runs on the owner's PC
+        walk: [e2e_wizard, e2e_myreturn, e2e_taxwatch, e2e_itr6, e2e_bankonly]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: requirements*.lock
+      - run: pip install --require-hashes -r requirements.lock -r requirements-dev.lock
+      - run: python tools/${{ matrix.walk }}.py
+
+  coverage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: requirements*.lock
+      - run: pip install --require-hashes -r requirements.lock -r requirements-dev.lock
+      - run: python selfcheck.py coverage
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage
+          path: tmp/coverage/summary.txt

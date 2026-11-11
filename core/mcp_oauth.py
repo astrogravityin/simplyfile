@@ -269,7 +269,11 @@ def oauth_authorize(request: Request):
 
 @router.post("/oauth/token")
 async def oauth_token(request: Request):
-    form = dict(await request.form()) if "form" in (request.headers.get("content-type") or "") else (await request.json() or {})
+    try:
+        form = dict(await request.form()) if "form" in (request.headers.get("content-type") or "") else (await request.json() or {})
+    except ValueError:                       # W1.3 shape walk: a body that is not JSON was a 500
+        form = {}
+    form = form if isinstance(form, dict) else {}
     try:
         return JSONResponse(token(form), headers={"Cache-Control": "no-store"})
     except OAuthError as e:
@@ -279,7 +283,8 @@ async def oauth_token(request: Request):
 @router.post("/api/core/mcp/allow-info")
 def api_allow_info(body: dict = Body(...), _: dict = Depends(access.screen("connect-ai"))):
     try:
-        req = checked_request((body or {}).get("query") or {})
+        q = (body or {}).get("query")
+        req = checked_request(q if isinstance(q, dict) else {})   # W1.3: a non-object query was a 500
     except OAuthError as e:
         raise HTTPException(400, e.body()["error_description"]) from None
     return {"client": req["client_name"]}
@@ -288,7 +293,8 @@ def api_allow_info(body: dict = Body(...), _: dict = Depends(access.screen("conn
 @router.post("/api/core/mcp/approve")
 def api_approve(body: dict = Body(...), u: dict = Depends(access.screen("connect-ai"))):
     try:
-        return {"go": approve(u, (body or {}).get("query") or {}, bool((body or {}).get("allow")))}
+        q = (body or {}).get("query")
+        return {"go": approve(u, q if isinstance(q, dict) else {}, bool((body or {}).get("allow")))}
     except OAuthError as e:
         raise HTTPException(400, e.body()["error_description"]) from None
 

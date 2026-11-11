@@ -40,6 +40,14 @@ def K() -> dict:
     return engine.run("doctor.settings")
 
 
+async def bad_shape(_request: Request, exc: Exception) -> JSONResponse:
+    """A body of the wrong shape is a 422 the caller can read (W1.3 shape walk, 2026-11-11): FastAPI's own answer decodes the
+    raw input as UTF-8, so a binary upload sent to a JSON route crashed the error page itself into a 500."""
+    from fastapi.encoders import jsonable_encoder  # noqa: PLC0415
+    errors = exc.errors() if hasattr(exc, "errors") else []
+    return JSONResponse(status_code=422, content={"detail": jsonable_encoder(errors, custom_encoder={bytes: lambda b: b.decode("utf-8", "replace")})})
+
+
 def say(key: str, **v) -> str:
     return ops.template(engine.run("doctor.messages")[key], v)
 
@@ -203,7 +211,8 @@ async def api_csp(request: Request):
     try:
         import json as _json  # noqa: PLC0415
         rep = (_json.loads((await request.body())[:8000] or b"{}") or {}).get("csp-report") or {}
-    except ValueError:
+        rep = rep if isinstance(rep, dict) else {}
+    except (ValueError, AttributeError):   # W1.3 shape walk: a bare JSON string was a 500
         return {"ok": False}
     where = re.sub(r"^https?://[^/]+", "", str(rep.get("document-uri") or ""))[:200]
     blocked = re.sub(r"^(https?://[^/]+).*", r"\1", str(rep.get("blocked-uri") or ""))[:120]
@@ -219,8 +228,9 @@ def api_report(request: Request, body: dict = Body(default={})):
     if not limits.allow(K()["report_rate"], f"doctor:{who}"):
         return {"ok": False}
     src = re.sub(r"^https?://[^/]+", "", str(body.get("source") or ""))[:200]
+    line = str(body.get("line") or 0)[:9]   # 2026-11-11 W1.3 shape walk: int("abc") from a browser was a 500
     record("screen", str(body.get("kind") or "Error")[:80], str(body.get("message") or ""), route_of(str(body.get("screen") or ""))[:200],
-           f"{src}:{int(body.get('line') or 0)}")
+           f"{src}:{int(line) if line.isdecimal() else 0}")
     return {"ok": True}
 
 

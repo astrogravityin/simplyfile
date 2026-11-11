@@ -465,7 +465,7 @@ def put_keys(body: dict = Body(...), u: dict = Depends(screen("keys"))):
     # Wiping a key is a separate, deliberate act: `clear: true`.
     try:
         store.save_keys_for(u["id"],
-                            {f: v for f, v in (body.get("values") or {}).items() if not str(v).startswith("•")},
+                            {f: v for f, v in (body.get("values") if isinstance(body.get("values"), dict) else {}).items() if not str(v).startswith("•")},
                             keep_blank_secrets=not body.get("clear"))
     except ValueError as e:
         raise HTTPException(400, str(e))
@@ -482,9 +482,13 @@ def test_key(u: dict = Depends(screen("keys"))):
 @app.put("/api/funds")
 def put_funds(body: dict = Body(...), u: dict = Depends(screen("keys"))):
     """`loaded_usd` in dollars, or `loaded` in the person's own currency (chip money.currencies)."""
-    usd = float(body.get("loaded_usd") or 0) if "loaded_usd" in body else store.to_usd(u["id"], body.get("loaded"))
-    store.set_loaded(u["id"], body.get("provider", "gemini"), usd)
-    return {"funds": store.funds_for(u["id"], body.get("provider", "gemini"))}
+    try:                                   # W1.3 shape walk: "abc" here was a 500
+        usd = float(body.get("loaded_usd") or 0) if "loaded_usd" in body else store.to_usd(u["id"], body.get("loaded"))
+    except (TypeError, ValueError):
+        raise HTTPException(400, say("not_a_number", field="loaded")) from None
+    provider = str(body.get("provider") or "gemini")   # W1.3: a list here was a 500
+    store.set_loaded(u["id"], provider, usd)
+    return {"funds": store.funds_for(u["id"], provider)}
 
 
 @app.put("/api/currency")
@@ -590,9 +594,9 @@ def api_save_project(body: dict = Body(...), u: dict = Depends(screen("setup")))
         only_mine(projects.get_project(body["id"]), u, "that_project")
     try:
         row = projects.save_project(
-            body.get("id"), body.get("name", ""), body.get("folder", ""), body.get("site_url", ""), who(u),
-            source_kind=body.get("source_kind", "local"), git_url=body.get("git_url", ""),
-            git_branch=body.get("git_branch", ""), git_token=body.get("git_token"),
+            body.get("id"), str(body.get("name") or ""), str(body.get("folder") or ""), str(body.get("site_url") or ""), who(u),   # W1.3 shapes
+            source_kind=str(body.get("source_kind") or "local"), git_url=str(body.get("git_url") or ""),
+            git_branch=str(body.get("git_branch") or ""), git_token=None if body.get("git_token") is None else str(body.get("git_token")),
             owner_id=u["id"])
     except ValueError as e:
         raise HTTPException(400, str(e))
@@ -774,8 +778,9 @@ def api_save_manual(body: dict = Body(...), u: dict = Depends(screen("manuals"))
         only_mine(manuals.get(body["id"]), u, "that_manual")
     if body.get("project_id"):
         only_mine(projects.get_project(body["project_id"]), u, "that_project")
-    row = manuals.save(body.get("id"), body.get("project_id", ""), body.get("title", ""),
-                       body.get("manual") or {}, who(u), body.get("published"), owner_id=u["id"])
+    m = body.get("manual") if isinstance(body.get("manual"), dict) else {}   # W1.3 shape walk: a string here was a 500
+    row = manuals.save(body.get("id"), str(body.get("project_id") or ""), str(body.get("title") or ""),
+                       m, who(u), body.get("published"), owner_id=u["id"])
     wired = projects.merge_manual_links(row["project_id"], row["id"],
                                         manuals.help_targets(row, settings()["portal_url"]))
     return {"row": row, "public_url": public_manual_url(row), "wired_screens": wired}
@@ -1096,7 +1101,7 @@ def api_taxwatch_edit(ay: str, item: str, body: dict = Body(...), u: dict = Depe
 
 @app.post("/api/taxwatch/{ay}/apply")
 def api_taxwatch_apply(ay: str, body: dict = Body(...), u: dict = Depends(owner)):
-    return taxwatch.apply(u, ay, [str(x) for x in (body.get("ids") or [])])
+    return taxwatch.apply(u, ay, [str(x) for x in (body.get("ids") if isinstance(body.get("ids"), list) else [])])
 
 
 @app.get("/api/server")
@@ -1157,7 +1162,7 @@ def api_clients_year(cid: str, ay: str, body: dict = Body(...), u: dict = Depend
 @app.post("/api/clients/archive")
 def api_clients_archive_many(body: dict = Body(...), u: dict = Depends(firms.gate("clients", "archive"))):
     """The ticked clients at once - each with every filing of theirs (2026-10-04 owner)."""
-    return clients.archive_many(u, list(body.get("ids") or []), bool(body.get("archived", True)))
+    return clients.archive_many(u, list(body.get("ids") if isinstance(body.get("ids"), list) else []), bool(body.get("archived", True)))
 
 
 @app.post("/api/clients/{cid}/years/{ay}/archive")

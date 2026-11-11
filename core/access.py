@@ -468,7 +468,7 @@ def _add_grant(d: dict, subject: str, screen_id: str, function_id: str, effect: 
 def save_grant(body: dict = Body(...), me: dict = Depends(screen("access"))):
     subject, screen_id = str(body.get("subject") or ""), str(body.get("screen") or "")
     function_id, effect = str(body.get("function") or ""), body.get("effect")
-    if effect not in {"allow", "deny"}:
+    if not isinstance(effect, str) or effect not in {"allow", "deny"}:   # W1.3: a list here was a 500
         raise HTTPException(400, say("allow_or_deny"))
     s = _BY_ID.get(screen_id)
     if not s or (function_id and function_id not in {f["id"] for f in s.get("functions", [])}):
@@ -580,24 +580,24 @@ def list_users(request: Request, u: dict = Depends(screen("access"))):
 def create_user(request: Request, body: dict = Body(...), me: dict = Depends(screen("access"))):
     """With a password, the owner hands it over themselves. Leave it blank and the portal emails an
     invitation instead, so nobody has to send a password through a chat window."""
-    email = (body.get("email") or "").strip().lower()
-    username = (body.get("username") or "").strip().lower()
+    email = str(body.get("email") or "").strip().lower()      # W1.3 shape walk: a number here was a 500
+    username = str(body.get("username") or "").strip().lower()
     name = str(body.get("display_name") or body.get("name") or email.split("@")[0]).strip()
-    role = body.get("role") if body.get("role") in role_ids() else engine.run("people.new_account_role")
+    role = body.get("role") if isinstance(body.get("role"), str) and body.get("role") in role_ids() else engine.run("people.new_account_role")
     if role == "owner" and me.get("role") != "owner":
         raise HTTPException(403, say("only_owner_makes_owner"))
-    invite = not (body.get("password") or "").strip()
+    invite = not str(body.get("password") or "").strip()
     if invite and not mailer.configured():
         raise HTTPException(400, say("invite_needs_mail"))
     auth.check_fields(email=email, name=name, username=username or None,
-                      password=None if invite else body.get("password", ""))
+                      password=None if invite else str(body.get("password") or ""))
     if store.find_user(email):
         raise auth.fail(409, "taken_email", field="email")
     if username and store.username_taken(username):
         raise auth.fail(409, "taken_username", field="username")
     try:
         # An invited account gets an unguessable placeholder; the invitation link is the only way in.
-        u = store.add_user(email, body.get("password") or store.new_id() + store.new_id(),
+        u = store.add_user(email, str(body.get("password") or "") or store.new_id() + store.new_id(),
                            name, role, verified=not invite, username=username)
     except ValueError as e:
         raise HTTPException(400, str(e))

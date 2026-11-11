@@ -1,0 +1,366 @@
+{
+  "chip_id": "selfcheck.clones",
+  "kind": "accessor",
+  "set": "selfcheck",
+  "label": "Copy-pasted code the self-check accepts for now (tools/clones.py) - each group with its reason; anything else fails",
+  "aliases": [
+    "clone groups",
+    "duplicate functions",
+    "common code",
+    "repeated lines"
+  ],
+  "params": [
+    {
+      "name": "allowed",
+      "type": "json",
+      "label": "Clone groups allowed: members are file:function (no line numbers); why says when it will be merged",
+      "default": [
+        {
+          "members": [
+            "app.py:api_audit_facts",
+            "app.py:api_audit_point",
+            "app.py:api_clients_year",
+            "app.py:api_compute_set"
+          ],
+          "why": "Reference debt found 2026-11-11 (W1.3, clone check brought into SimplyFile): one shared function to replace these copies."
+        },
+        {
+          "members": [
+            "app.py:api_intake_upload",
+            "app.py:api_recon_upload"
+          ],
+          "why": "Reference debt found 2026-11-11 (W1.3, clone check brought into SimplyFile): one shared function to replace these copies."
+        },
+        {
+          "members": [
+            "app.py:api_intake_delete",
+            "app.py:api_recon_delete"
+          ],
+          "why": "Reference debt found 2026-11-11 (W1.3, clone check brought into SimplyFile): one shared function to replace these copies."
+        },
+        {
+          "members": [
+            "app.py:api_compute_3cd",
+            "app.py:api_compute_itr_json",
+            "app.py:api_compute_xlsx",
+            "app.py:api_compute_zip"
+          ],
+          "why": "Reference debt found 2026-11-11 (W1.3, clone check brought into SimplyFile): one shared function to replace these copies."
+        },
+        {
+          "members": [
+            "app.py:api_audit_check",
+            "app.py:api_audit_standard"
+          ],
+          "why": "Reference debt found 2026-11-11 (W1.3, clone check brought into SimplyFile): one shared function to replace these copies."
+        },
+        {
+          "members": [
+            "app.py:post_key_bill",
+            "app.py:post_pool_key",
+            "app.py:put_provider_choice"
+          ],
+          "why": "Reference debt found 2026-11-11 (W1.3, clone check brought into SimplyFile): one shared function to replace these copies."
+        },
+        {
+          "members": [
+            "audit.py:change"
+          ],
+          "why": "Reference debt found 2026-11-11 (W1.3, clone check brought into SimplyFile): one shared function to replace these copies."
+        },
+        {
+          "members": [
+            "chatfam.py:say",
+            "chipchat.py:say",
+            "delegation.py:say",
+            "server.py:say"
+          ],
+          "why": "Reference debt found 2026-11-11 (W1.3, clone check brought into SimplyFile): one shared function to replace these copies."
+        },
+        {
+          "members": [
+            "clients.py:get",
+            "keysales.py:_offer",
+            "keysales.py:_order",
+            "keyshare.py:_grant"
+          ],
+          "why": "Reference debt found 2026-11-11 (W1.3, clone check brought into SimplyFile): one shared function to replace these copies."
+        },
+        {
+          "members": [
+            "media.py:frame_command",
+            "media.py:last_frame_command"
+          ],
+          "why": "Reference debt found 2026-11-11 (W1.3, clone check brought into SimplyFile): one shared function to replace these copies."
+        },
+        {
+          "members": [
+            "selfcheck_agents.py:_chip",
+            "selfcheck_mcp.py:_chip"
+          ],
+          "why": "Reference debt found 2026-11-11 (W1.3, clone check brought into SimplyFile): one shared function to replace these copies."
+        },
+        {
+          "members": [
+            "static/page-myreturn.js:put",
+            "static/page-wizard.js:put"
+          ],
+          "why": "Reference debt found 2026-11-11 (W1.3, clone check brought into SimplyFile): one shared function to replace these copies."
+        },
+        {
+          "members": [
+            "tools/e2e_bankonly.py:step",
+            "tools/e2e_demo.py:step",
+            "tools/e2e_itr6.py:step",
+            "tools/e2e_wizard.py:step"
+          ],
+          "why": "Reference debt found 2026-11-11 (W1.3, clone check brought into SimplyFile): one shared function to replace these copies."
+        },
+        {
+          "members": [
+            "tools/e2e_bankonly.py:wrap",
+            "tools/e2e_demo.py:wrap",
+            "tools/e2e_itr6.py:wrap",
+            "tools/e2e_wizard.py:wrap"
+          ],
+          "why": "Reference debt found 2026-11-11 (W1.3, clone check brought into SimplyFile): one shared function to replace these copies."
+        },
+        {
+          "members": [
+            "tools/e2e_bankonly.py:session",
+            "tools/e2e_demo.py:session",
+            "tools/e2e_wizard.py:session"
+          ],
+          "why": "Reference debt found 2026-11-11 (W1.3, clone check brought into SimplyFile): one shared function to replace these copies."
+        },
+        {
+          "members": [
+            "tools/fix_demo_reseat.py:patch",
+            "tools/fix_fetch_ai.py:patch"
+          ],
+          "why": "Reference debt found 2026-11-11 (W1.3, clone check brought into SimplyFile): one shared function to replace these copies."
+        },
+        {
+          "members": [
+            "tools/make_business_chips.py:save",
+            "tools/make_itr3_myreturn.py:write"
+          ],
+          "why": "Reference debt found 2026-11-11 (W1.3, clone check brought into SimplyFile): one shared function to replace these copies."
+        },
+        {
+          "members": [
+            "tools/make_cg_chips.py:P",
+            "tools/make_itr6_chips.py:P",
+            "tools/make_wave3_chips.py:P",
+            "tools/make_wave4_chips.py:P"
+          ],
+          "why": "Reference debt found 2026-11-11 (W1.3, clone check brought into SimplyFile): one shared function to replace these copies."
+        },
+        {
+          "members": [
+            "tools/make_cg_chips.py:save",
+            "tools/make_wave2_chips.py:save"
+          ],
+          "why": "Reference debt found 2026-11-11 (W1.3, clone check brought into SimplyFile): one shared function to replace these copies."
+        },
+        {
+          "members": [
+            "tools/make_cg_chips.py:swap",
+            "tools/make_wave3_chips.py:swap"
+          ],
+          "why": "Reference debt found 2026-11-11 (W1.3, clone check brought into SimplyFile): one shared function to replace these copies."
+        }
+      ]
+    },
+    {
+      "name": "repeat_min_tokens",
+      "type": "number",
+      "label": "A repeated run of lines counts when it holds at least this many tokens (a bare closing bracket does not)",
+      "default": 8
+    },
+    {
+      "name": "repeat_allowed",
+      "type": "json",
+      "label": "Files whose repeated lines are allowed (none)",
+      "default": []
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "allowed": "$allowed",
+      "repeat_min_tokens": "$repeat_min_tokens",
+      "repeat_allowed": "$repeat_allowed"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "Every allowed clone group is written down with its reason, so the self-check fails on any new copy-paste. 2026-11-11: a run of lines repeated straight after itself fails too (Shoperative selfcheck.py:40-49 carried two lines five times and no guard saw it).",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "allowed": [
+          {
+            "members": [
+              "app.py:api_audit_facts",
+              "app.py:api_audit_point",
+              "app.py:api_clients_year",
+              "app.py:api_compute_set"
+            ],
+            "why": "Reference debt found 2026-11-11 (W1.3, clone check brought into SimplyFile): one shared function to replace these copies."
+          },
+          {
+            "members": [
+              "app.py:api_intake_upload",
+              "app.py:api_recon_upload"
+            ],
+            "why": "Reference debt found 2026-11-11 (W1.3, clone check brought into SimplyFile): one shared function to replace these copies."
+          },
+          {
+            "members": [
+              "app.py:api_intake_delete",
+              "app.py:api_recon_delete"
+            ],
+            "why": "Reference debt found 2026-11-11 (W1.3, clone check brought into SimplyFile): one shared function to replace these copies."
+          },
+          {
+            "members": [
+              "app.py:api_compute_3cd",
+              "app.py:api_compute_itr_json",
+              "app.py:api_compute_xlsx",
+              "app.py:api_compute_zip"
+            ],
+            "why": "Reference debt found 2026-11-11 (W1.3, clone check brought into SimplyFile): one shared function to replace these copies."
+          },
+          {
+            "members": [
+              "app.py:api_audit_check",
+              "app.py:api_audit_standard"
+            ],
+            "why": "Reference debt found 2026-11-11 (W1.3, clone check brought into SimplyFile): one shared function to replace these copies."
+          },
+          {
+            "members": [
+              "app.py:post_key_bill",
+              "app.py:post_pool_key",
+              "app.py:put_provider_choice"
+            ],
+            "why": "Reference debt found 2026-11-11 (W1.3, clone check brought into SimplyFile): one shared function to replace these copies."
+          },
+          {
+            "members": [
+              "audit.py:change"
+            ],
+            "why": "Reference debt found 2026-11-11 (W1.3, clone check brought into SimplyFile): one shared function to replace these copies."
+          },
+          {
+            "members": [
+              "chatfam.py:say",
+              "chipchat.py:say",
+              "delegation.py:say",
+              "server.py:say"
+            ],
+            "why": "Reference debt found 2026-11-11 (W1.3, clone check brought into SimplyFile): one shared function to replace these copies."
+          },
+          {
+            "members": [
+              "clients.py:get",
+              "keysales.py:_offer",
+              "keysales.py:_order",
+              "keyshare.py:_grant"
+            ],
+            "why": "Reference debt found 2026-11-11 (W1.3, clone check brought into SimplyFile): one shared function to replace these copies."
+          },
+          {
+            "members": [
+              "media.py:frame_command",
+              "media.py:last_frame_command"
+            ],
+            "why": "Reference debt found 2026-11-11 (W1.3, clone check brought into SimplyFile): one shared function to replace these copies."
+          },
+          {
+            "members": [
+              "selfcheck_agents.py:_chip",
+              "selfcheck_mcp.py:_chip"
+            ],
+            "why": "Reference debt found 2026-11-11 (W1.3, clone check brought into SimplyFile): one shared function to replace these copies."
+          },
+          {
+            "members": [
+              "static/page-myreturn.js:put",
+              "static/page-wizard.js:put"
+            ],
+            "why": "Reference debt found 2026-11-11 (W1.3, clone check brought into SimplyFile): one shared function to replace these copies."
+          },
+          {
+            "members": [
+              "tools/e2e_bankonly.py:step",
+              "tools/e2e_demo.py:step",
+              "tools/e2e_itr6.py:step",
+              "tools/e2e_wizard.py:step"
+            ],
+            "why": "Reference debt found 2026-11-11 (W1.3, clone check brought into SimplyFile): one shared function to replace these copies."
+          },
+          {
+            "members": [
+              "tools/e2e_bankonly.py:wrap",
+              "tools/e2e_demo.py:wrap",
+              "tools/e2e_itr6.py:wrap",
+              "tools/e2e_wizard.py:wrap"
+            ],
+            "why": "Reference debt found 2026-11-11 (W1.3, clone check brought into SimplyFile): one shared function to replace these copies."
+          },
+          {
+            "members": [
+              "tools/e2e_bankonly.py:session",
+              "tools/e2e_demo.py:session",
+              "tools/e2e_wizard.py:session"
+            ],
+            "why": "Reference debt found 2026-11-11 (W1.3, clone check brought into SimplyFile): one shared function to replace these copies."
+          },
+          {
+            "members": [
+              "tools/fix_demo_reseat.py:patch",
+              "tools/fix_fetch_ai.py:patch"
+            ],
+            "why": "Reference debt found 2026-11-11 (W1.3, clone check brought into SimplyFile): one shared function to replace these copies."
+          },
+          {
+            "members": [
+              "tools/make_business_chips.py:save",
+              "tools/make_itr3_myreturn.py:write"
+            ],
+            "why": "Reference debt found 2026-11-11 (W1.3, clone check brought into SimplyFile): one shared function to replace these copies."
+          },
+          {
+            "members": [
+              "tools/make_cg_chips.py:P",
+              "tools/make_itr6_chips.py:P",
+              "tools/make_wave3_chips.py:P",
+              "tools/make_wave4_chips.py:P"
+            ],
+            "why": "Reference debt found 2026-11-11 (W1.3, clone check brought into SimplyFile): one shared function to replace these copies."
+          },
+          {
+            "members": [
+              "tools/make_cg_chips.py:save",
+              "tools/make_wave2_chips.py:save"
+            ],
+            "why": "Reference debt found 2026-11-11 (W1.3, clone check brought into SimplyFile): one shared function to replace these copies."
+          },
+          {
+            "members": [
+              "tools/make_cg_chips.py:swap",
+              "tools/make_wave3_chips.py:swap"
+            ],
+            "why": "Reference debt found 2026-11-11 (W1.3, clone check brought into SimplyFile): one shared function to replace these copies."
+          }
+        ],
+        "repeat_min_tokens": 8,
+        "repeat_allowed": []
+      }
+    }
+  ]
+}

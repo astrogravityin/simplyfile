@@ -322,7 +322,7 @@ def css_vars(chip_id: str) -> str:
 def with_drafts(drafts: list[dict] | dict | None) -> dict:
     """The live library with some chips replaced by unsaved or draft versions (for a builder test)."""
     lib = dict(chips())
-    for c in (drafts.values() if isinstance(drafts, dict) else drafts or []):
+    for c in (drafts.values() if isinstance(drafts, dict) else drafts if isinstance(drafts, list) else []):   # W1.3: any other shape = none
         if isinstance(c, dict) and c.get("chip_id"):
             lib[c["chip_id"]] = {**c, "status": "published"}
     return lib

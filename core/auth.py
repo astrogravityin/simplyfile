@@ -592,14 +592,15 @@ def get_smtp(_: dict = Depends(owner)):
 @router.put("/api/smtp")
 def put_smtp(body: dict = Body(...), _: dict = Depends(owner)):
     # A masked value coming back means "leave it alone" — the browser never had the real one.
-    mailer.save({f: v for f, v in (body.get("values") or {}).items() if not str(v).startswith("•")})
+    vals = body.get("values") if isinstance(body.get("values"), dict) else {}   # W1.3 shape walk: a non-object was a 500
+    mailer.save({f: v for f, v in vals.items() if not str(v).startswith("•")})
     return {"configured": mailer.configured()}
 
 
 @router.post("/api/smtp/test")
 def test_smtp(body: dict = Body(default={}), me: dict = Depends(owner)):
     """Prove it before anyone depends on it. Errors come back as one sentence, not a stack trace."""
-    to = (body.get("to") or me["email"]).strip()
+    to = str(body.get("to") or me["email"]).strip()
     subject, text = mailer.compose("test", product=settings()["product_name"])
     try:
         mailer.send(to, subject, text)

@@ -1,0 +1,145 @@
+{
+  "chip_id": "selfcheck.quality",
+  "kind": "accessor",
+  "set": "selfcheck",
+  "label": "Quality gate (W1.3): lint and type ceilings that only fall, the coverage floor that only rises, one Python, audit exceptions",
+  "aliases": [
+    "quality gate",
+    "lint ceiling",
+    "type ceiling",
+    "coverage floor",
+    "ratchet"
+  ],
+  "params": [
+    {
+      "name": "ruff_ceiling",
+      "type": "number",
+      "label": "ruff findings allowed (pyproject.toml [tool.ruff]) - only falls",
+      "default": 154
+    },
+    {
+      "name": "mypy_ceiling",
+      "type": "number",
+      "label": "mypy errors allowed (pyproject.toml [tool.mypy]) - only falls",
+      "default": 559
+    },
+    {
+      "name": "coverage_floor",
+      "type": "number",
+      "label": "Lowest coverage % of the self-check (tools/coverage_gate.py) - only rises",
+      "default": 66.0
+    },
+    {
+      "name": "coverage_raise_step",
+      "type": "number",
+      "label": "Coverage this many points above the floor says: raise the floor",
+      "default": 1.0
+    },
+    {
+      "name": "ceilings",
+      "type": "json",
+      "label": "Knobs that may only go down",
+      "default": [
+        "ruff_ceiling",
+        "mypy_ceiling"
+      ]
+    },
+    {
+      "name": "floors",
+      "type": "json",
+      "label": "Knobs that may only go up",
+      "default": [
+        "coverage_floor"
+      ]
+    },
+    {
+      "name": "ci_elsewhere",
+      "type": "json",
+      "label": "Self-check parts the CI runs as a job of their own (not the selfcheck matrix)",
+      "default": [
+        "coverage"
+      ]
+    },
+    {
+      "name": "python_version",
+      "type": "text",
+      "label": "The one Python version: CI, pyproject (mypy), the lock files",
+      "default": "3.11"
+    },
+    {
+      "name": "lock_platforms",
+      "type": "json",
+      "label": "Platforms the lock files are resolved for (tools/make_lock.py): sys_platform -> the wheel tags it takes",
+      "default": {
+        "linux": [
+          "manylinux_2_28_x86_64",
+          "manylinux_2_17_x86_64",
+          "manylinux2014_x86_64",
+          "linux_x86_64"
+        ],
+        "win32": [
+          "win_amd64"
+        ]
+      }
+    },
+    {
+      "name": "audit_ignore",
+      "type": "json",
+      "label": "pip-audit vulnerability ids accepted for now, each with its reason (none)",
+      "default": []
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "ruff_ceiling": "$ruff_ceiling",
+      "mypy_ceiling": "$mypy_ceiling",
+      "coverage_floor": "$coverage_floor",
+      "coverage_raise_step": "$coverage_raise_step",
+      "ceilings": "$ceilings",
+      "floors": "$floors",
+      "ci_elsewhere": "$ci_elsewhere",
+      "python_version": "$python_version",
+      "lock_platforms": "$lock_platforms",
+      "audit_ignore": "$audit_ignore"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "W1.3 2026-11-11 (scorecard B9 / B13): tools/quality_gate.py fails when ruff or mypy finds more than its ceiling, and when a ceiling is raised (or the coverage floor lowered) against the last commit; tools/coverage_gate.py fails under the coverage floor; tools/deps_gate.py checks the lock, the one Python version and pip-audit. The ceilings were today's counts when the gate came in.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "ruff_ceiling": 154,
+        "mypy_ceiling": 559,
+        "coverage_floor": 66.0,
+        "coverage_raise_step": 1.0,
+        "ceilings": [
+          "ruff_ceiling",
+          "mypy_ceiling"
+        ],
+        "floors": [
+          "coverage_floor"
+        ],
+        "ci_elsewhere": [
+          "coverage"
+        ],
+        "python_version": "3.11",
+        "lock_platforms": {
+          "linux": [
+            "manylinux_2_28_x86_64",
+            "manylinux_2_17_x86_64",
+            "manylinux2014_x86_64",
+            "linux_x86_64"
+          ],
+          "win32": [
+            "win_amd64"
+          ]
+        },
+        "audit_ignore": []
+      }
+    }
+  ]
+}
