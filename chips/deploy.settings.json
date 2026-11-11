@@ -96,8 +96,20 @@
     {
       "name": "start_cmd",
       "type": "text",
-      "default": "{python} -m uvicorn app:app --host 127.0.0.1 --port {port}",
+      "default": "{python} -m uvicorn app:app --host 127.0.0.1 --port {port} --timeout-graceful-shutdown {graceful_stop_s}",
       "label": "How the probe starts a release (the systemd unit uses the same line)"
+    },
+    {
+      "name": "graceful_stop_s",
+      "type": "number",
+      "default": 3,
+      "label": "Seconds uvicorn waits for open requests (the push stream never closes by itself) before it stops"
+    },
+    {
+      "name": "stop_timeout_s",
+      "type": "number",
+      "default": 15,
+      "label": "Seconds systemd waits for the stop before it kills (TimeoutStopSec; its own default 90 s = a 90 s outage per deploy)"
     },
     {
       "name": "restart_cmd",
@@ -127,13 +139,15 @@
       "start_cmd": "$start_cmd",
       "restart_cmd": "$restart_cmd",
       "python": "$python",
-      "check_requirements": "$check_requirements"
+      "check_requirements": "$check_requirements",
+      "graceful_stop_s": "$graceful_stop_s",
+      "stop_timeout_s": "$stop_timeout_s"
     }
   },
   "returns": "record",
   "version": 1,
   "status": "published",
-  "description_nl": "2026-11-11 W1.4 (B10 deploy you can undo): deploy/deploy.sh reads this chip (env DEPLOY_<NAME> wins for one run). New code goes to releases/<commit>; the selfcheck and the probe health run before the current link moves; a failed live health moves it back; deploy.sh rollback goes to the release before. 2026-11-12: staging 8837 (8836 is valuefy on the VPS); check_requirements = the selfcheck's own tools (W1.3 gate failed the first server deploy without ruff).",
+  "description_nl": "2026-11-11 W1.4 (B10 deploy you can undo): deploy/deploy.sh reads this chip (env DEPLOY_<NAME> wins for one run). New code goes to releases/<commit>; the selfcheck and the probe health run before the current link moves; a failed live health moves it back; deploy.sh rollback goes to the release before. 2026-11-12: staging 8837 (8836 is valuefy on the VPS); check_requirements = the selfcheck's own tools (W1.3 gate failed the first server deploy without ruff). 2026-11-12: graceful stop 3 s + TimeoutStopSec 15 (uvicorn waited on the open push stream until systemd killed it at 90 s - a 90 s 502 per deploy, seen on codyfy).",
   "test_cases": [
     {
       "args": {
@@ -171,12 +185,14 @@
         ],
         "venv_args": "",
         "selfcheck": "{python} selfcheck.py",
-        "start_cmd": "{python} -m uvicorn app:app --host 127.0.0.1 --port {port}",
+        "start_cmd": "{python} -m uvicorn app:app --host 127.0.0.1 --port {port} --timeout-graceful-shutdown {graceful_stop_s}",
         "restart_cmd": "systemctl restart {service}",
         "python": "python3",
         "check_requirements": [
           "requirements-dev.lock"
-        ]
+        ],
+        "graceful_stop_s": 3,
+        "stop_timeout_s": 15
       }
     }
   ]

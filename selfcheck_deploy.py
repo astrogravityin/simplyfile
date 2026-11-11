@@ -37,6 +37,10 @@ def problems(f: dict[str, str]) -> list[str]:
         bad.append("deploy/portal.service.in has no non-root User=")
     if "WorkingDirectory={{BASE}}/current" not in unit:
         bad.append("deploy/portal.service.in does not run <base>/current (the release the switch points at)")
+    if "TimeoutStopSec={{STOP}}" not in unit:
+        bad.append("deploy/portal.service.in has no TimeoutStopSec - systemd waits 90 s on a stuck stop (a 90 s 502 per deploy)")
+    if "--timeout-graceful-shutdown" not in f["chips/deploy.settings.json"]:
+        bad.append("chip deploy.settings start_cmd has no --timeout-graceful-shutdown - uvicorn waits on the open push stream")
     code = "\n".join(line for line in sh.splitlines() if not line.lstrip().startswith("#"))
     if re.search(r"/opt/|\b8[0-9]{3}\b|keep_releases\s*=\s*\d", code):
         bad.append("deploy/deploy.sh has a folder or port typed in (chip deploy.settings holds them)")
@@ -76,15 +80,17 @@ def main() -> None:
     bad = problems(files)
     assert not bad, "deploy guard:\n  " + "\n  ".join(bad)
     # the guard bites: each loss, put back once, must be caught
-    bites = {
-        "Deploy-To-VPS.ps1": files["Deploy-To-VPS.ps1"] + "\n# default 'root@10.0.0.1'",
-        "deploy/portal.service.in": files["deploy/portal.service.in"].replace("User={{USER}}", "User=root"),
-        "deploy/deploy.sh": files["deploy/deploy.sh"] + "\nBASE=/opt/simplyfile\n",
-        "Dockerfile": files["Dockerfile"].replace("USER portal", ""),
-        ".gitignore": files[".gitignore"].replace("deploy/vps.local", ""),
-        "chips/deploy.settings.json": files["chips/deploy.settings.json"].replace('"port": 8837', '"port": 8830'),
-    }
-    for name, text in bites.items():
+    bites = [
+        ("Deploy-To-VPS.ps1", files["Deploy-To-VPS.ps1"] + "\n# default 'root@10.0.0.1'"),
+        ("deploy/portal.service.in", files["deploy/portal.service.in"].replace("User={{USER}}", "User=root")),
+        ("deploy/portal.service.in", files["deploy/portal.service.in"].replace("TimeoutStopSec={{STOP}}", "")),
+        ("deploy/deploy.sh", files["deploy/deploy.sh"] + "\nBASE=/opt/simplyfile\n"),
+        ("Dockerfile", files["Dockerfile"].replace("USER portal", "")),
+        (".gitignore", files[".gitignore"].replace("deploy/vps.local", "")),
+        ("chips/deploy.settings.json", files["chips/deploy.settings.json"].replace('"port": 8837', '"port": 8830')),
+        ("chips/deploy.settings.json", files["chips/deploy.settings.json"].replace(" --timeout-graceful-shutdown {graceful_stop_s}", "")),
+    ]
+    for name, text in bites:
         assert problems(files | {name: text}), f"deploy guard did not bite on {name}"
     print("deploy guard: release folders + rollback, non-root unit, no typed host, staging, image - ok")
 

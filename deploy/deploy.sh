@@ -70,7 +70,7 @@ set_link() {   # $1 link, $2 target folder (absolute)
 }
 live_sha() { [ -e "$CUR" ] && basename "$(readlink -f "$CUR")" || true; }
 vpy() { if [ -x "$1/bin/python" ]; then echo "$1/bin/python"; else echo "$1/Scripts/python.exe"; fi; }
-fill() { local s=$1; s=${s//\{python\}/$2}; s=${s//\{port\}/$3}; s=${s//\{service\}/$DEPLOY_SERVICE}; printf '%s' "$s"; }
+fill() { local s=$1; s=${s//\{python\}/$2}; s=${s//\{port\}/$3}; s=${s//\{service\}/$DEPLOY_SERVICE}; s=${s//\{graceful_stop_s\}/${DEPLOY_GRACEFUL_STOP_S:-3}}; printf '%s' "$s"; }
 
 health() {   # $1 port -> 0 when /health answers within health_wait_s
   local i
@@ -268,7 +268,7 @@ case "$CMD" in
     ;;
   unit)
     sed -e "s#{{BASE}}#$BASE#g" -e "s#{{SERVICE}}#$DEPLOY_SERVICE#g" -e "s#{{USER}}#$DEPLOY_USER#g" \
-        -e "s#{{TARGET}}#$TARGET#g" -e "s#{{PORT}}#$DEPLOY_PORT#g" \
+        -e "s#{{TARGET}}#$TARGET#g" -e "s#{{PORT}}#$DEPLOY_PORT#g" -e "s#{{STOP}}#$DEPLOY_STOP_TIMEOUT_S#g" \
         -e "s#{{EXEC}}#$(fill "$DEPLOY_START_CMD" "$BASE/current/.venv/bin/python" "$DEPLOY_PORT")#g" \
         "$HERE/deploy/portal.service.in"
     ;;

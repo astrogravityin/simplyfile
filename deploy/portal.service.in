@@ -16,6 +16,8 @@ EnvironmentFile=-{{BASE}}/portal.env
 ExecStart={{EXEC}}
 Restart=always
 RestartSec=3
+# uvicorn stops within --timeout-graceful-shutdown (chip deploy.settings graceful_stop_s); systemd kills after this
+TimeoutStopSec={{STOP}}
 UMask=0077
 NoNewPrivileges=true
 PrivateTmp=true
