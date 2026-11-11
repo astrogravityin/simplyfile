@@ -162,6 +162,16 @@ cd /opt/simplyfile && grep -E '^Environment=(PORTAL_COOKIE|TV_HTTPS|TV_OWNER_EMA
 chown -R simplyfile:simplyfile /opt/simplyfile && chown root:simplyfile portal.env
 echo 'simplyfile ALL=(root) NOPASSWD: /usr/bin/systemctl restart simplyfile, /usr/bin/systemctl restart simplyfile-demo-*' \
   > /etc/sudoers.d/simplyfile-deploy && chmod 440 /etc/sudoers.d/simplyfile-deploy && visudo -c
+git config --system --add safe.directory /opt/simplyfile        # root's own git (VPS Console) still reads the checkout
+# the GitHub read-only deploy key sits in ROOT's ~/.ssh/config: give the service user the same key, or its fetch fails
+# ("Could not resolve hostname github-simplyfile", 2026-11-12)
+install -d -o simplyfile -g simplyfile -m 700 /etc/simplyfile
+install -o simplyfile -g simplyfile -m 600 /root/.ssh/simplyfile_deploy /etc/simplyfile/github_deploy
+ssh-keyscan -t ed25519,rsa github.com > /etc/simplyfile/known_hosts
+printf 'Host github-simplyfile\n  HostName github.com\n  User git\n  IdentityFile /etc/simplyfile/github_deploy\n  IdentitiesOnly yes\n  UserKnownHostsFile /etc/simplyfile/known_hosts\n' > /etc/simplyfile/ssh_config
+chown simplyfile:simplyfile /etc/simplyfile/* && chmod 600 /etc/simplyfile/*
+runuser -u simplyfile -- git -C /opt/simplyfile config core.sshCommand "ssh -F /etc/simplyfile/ssh_config"
+runuser -u simplyfile -- git -C /opt/simplyfile fetch origin   # must succeed before going on
 runuser -u simplyfile -- bash deploy/deploy.sh init            # builds releases/<HEAD>, points current at it
 cp /etc/systemd/system/simplyfile.service /root/simplyfile.service.before
 bash deploy/deploy.sh unit > /etc/systemd/system/simplyfile.service   # User=simplyfile, WorkingDirectory=current
@@ -171,6 +181,10 @@ systemctl daemon-reload && systemctl restart simplyfile && curl -sf http://127.0
 Back out (if the health line fails): copy `/root/simplyfile.service.before` back, `daemon-reload`, restart. The VPS
 Console's SSO drop-in (`simplyfile.service.d/`) is kept by both. Staging: `git clone` the repo to
 `/opt/simplyfile-staging`, the same steps with `--target staging`, a `staging.` nginx block to port 8837.
+
+Done on sf.valuestream.in 2026-11-12 (service user `simplyfile`, back-out copy `/root/simplyfile.service.before`).
+Running as `simplyfile`, Server & sites can no longer read the sizes of other sites' root-only (0700) data folders.
+The demo units (`simplyfile-demo-*`) still run as root from the checkout - the next step is to move them onto `current`.
 
 ## Self-host image
 
