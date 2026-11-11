@@ -34,6 +34,7 @@ export const state = {
   storageRequest: null, // the owner asked THIS person to clean up: shown as a banner on every page
   bellUnread: 0,       // notes waiting under the bell (core/bell.py): replies, new works from people you follow
   issuesOpen: 0,        // reported issues waiting (only for whoever may answer them): the menu's balloon
+  menuBadges: {},       // 2026-11-11 owner: any screen's balloon {screen id: count} from the server (bootstrap menu_badges)
   issueReplies: [],     // answers to THIS person's reports: a banner until they close it
   banners: [],         // banners a rule put up for this person (core/rules.py): shown until dismissed or expired
   health: null,        // owners only: the Daily health check's answer (core/health.py) - replaced each check, never piled up
@@ -828,6 +829,17 @@ function currentScreen() {
     || list.find((s) => !s.hidden && !s.no_menu) || null;   // no screen named: the first MENU screen, never a no_menu subject (the bottom bar)
 }
 
+const badgeOf = (id) => (id === 'issues' ? state.issuesOpen : Number((state.menuBadges || {})[id]) || 0);
+
+/** A screen tells the menu its new count (it just changed the list): the balloon updates in place, no reload. */
+export function setBadge(id, n) {
+  state.menuBadges = { ...(state.menuBadges || {}), [id]: n };
+  const a = document.querySelector(`a[href="#/${id}"]`);
+  if (!a) return;
+  a.querySelector('.badge')?.remove();
+  if (n) a.append(Object.assign(document.createElement('span'), { className: 'badge news', textContent: String(n) }));
+}
+
 function shellView(route) {
   const list = screens().filter((s) => !s.hidden && !s.no_menu);   // Menu builder took it off the menu: the page still opens by its link
   const groups = [...new Set(list.map((s) => s.group || ''))];
@@ -836,7 +848,7 @@ function shellView(route) {
     .map((s) => `<a href="#/${esc(s.id)}" class="${route && s.id === route.id ? 'on' : ''}"
         ${folded ? `data-tip="${esc(s.label)}"` : ''} aria-label="${esc(s.label)}">
         ${icon(s.icon || 'right', 17)} <span class="lbl">${esc(s.label)}</span>
-        ${s.id === 'issues' && state.issuesOpen ? `<span class="badge">${state.issuesOpen}</span>` : ''}</a>`).join('')).join('');
+        ${badgeOf(s.id) ? `<span class="badge${s.id === 'issues' ? '' : ' news'}">${badgeOf(s.id)}</span>` : ''}</a>`).join('')).join('');
   const theme = shownTheme();
   const themeTip = w(theme === 'dark' ? 'to_light' : 'to_dark');
   const initials = (state.user.name || state.user.email || '?').trim()[0].toUpperCase();
@@ -1299,6 +1311,7 @@ function take(d) {
   state.storageRequest = d.storage_request || null;
   state.bellUnread = d.bell_unread || 0;
   state.issuesOpen = d.issues_open || 0;
+  state.menuBadges = d.menu_badges || {};
   state.issueReplies = d.issue_replies || [];
   state.banners = d.banners || [];
   state.health = d.health || null;

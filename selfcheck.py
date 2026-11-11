@@ -88,6 +88,10 @@ def static_checks() -> None:
                 assert r >= need, f"{name}: --{tok} on --{sf} is {r:.2f}:1, needs {need}:1"
     for rule in ("input,select,textarea{", "button{"):
         assert "border:1px solid var(--edge)" in css[css.index("\n" + rule):].split("}")[0], f"the shared {rule} rule must draw its border with --edge"
+    # 2026-11-11 owner (XForm Contact requests): a screen's news count comes from the server (bootstrap menu_badges) and is the
+    # RED balloon, like Code Editor's - it had shown as a pale number nobody noticed. setBadge updates it in place, no reload.
+    _sh = (HERE / "core" / "static" / "shell.js").read_text(encoding="utf-8")
+    assert "d.menu_badges" in _sh and "export function setBadge(" in _sh and "badge news" in _sh and ".badge.news{background:var(--bad)" in css,         "a screen's news count is no longer the red menu balloon (core shell.js menu_badges / setBadge, portal.css .badge.news)"
     print("  static: every import resolves, one page per screen, controls stand out OK")
 
 
