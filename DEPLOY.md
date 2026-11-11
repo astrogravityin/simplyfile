@@ -170,7 +170,7 @@ systemctl daemon-reload && systemctl restart simplyfile && curl -sf http://127.0
 
 Back out (if the health line fails): copy `/root/simplyfile.service.before` back, `daemon-reload`, restart. The VPS
 Console's SSO drop-in (`simplyfile.service.d/`) is kept by both. Staging: `git clone` the repo to
-`/opt/simplyfile-staging`, the same steps with `--target staging`, a `staging.` nginx block to port 8836.
+`/opt/simplyfile-staging`, the same steps with `--target staging`, a `staging.` nginx block to port 8837.
 
 ## Self-host image
 

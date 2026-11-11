@@ -109,14 +109,19 @@ build() {   # $1 sha
   local req="" f
   for f in $DEPLOY_REQUIREMENTS; do [ -f "$rel/$f" ] && { req=$f; break; }; done
   [ -n "$req" ] || die "release $sha has none of: $DEPLOY_REQUIREMENTS"
-  local key; key=$(cat "$rel/$req" | sha256sum | cut -c1-16)-$("$SYS_PY" -c 'import sys;print("%d%d" % sys.version_info[:2])')
+  local extra="" f2
+  for f2 in $DEPLOY_CHECK_REQUIREMENTS; do [ -f "$rel/$f2" ] && extra="$extra $f2"; done
+  local key; key=$( (cd "$rel" && cat "$req" $extra) | sha256sum | cut -c1-16)-$("$SYS_PY" -c 'import sys;print("%d%d" % sys.version_info[:2])')
   local venv=$BASE/venvs/$key
   if [ ! -f "$venv/.ready" ]; then
-    say "  packages: new venv $key from $req"
+    say "  packages: new venv $key from $req$extra"
     mkdir -p "$BASE/venvs"
     # shellcheck disable=SC2086
     "$SYS_PY" -m venv $DEPLOY_VENV_ARGS "$venv"
     "$(vpy "$venv")" -m pip install -q -r "$rel/$req" || die "pip install failed for $sha - the live release keeps serving"
+    for f2 in $extra; do   # what the selfcheck itself needs (chip deploy.settings check_requirements)
+      "$(vpy "$venv")" -m pip install -q -r "$rel/$f2" || die "pip install of $f2 failed for $sha - the live release keeps serving"
+    done
     touch "$venv/.ready"
   else
     say "  packages: venv $key (same $req as before)"

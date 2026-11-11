@@ -26,8 +26,8 @@
           "base": "/opt/simplyfile-staging",
           "service": "simplyfile-staging",
           "user": "simplyfile",
-          "port": 8836,
-          "probe_port": 8936,
+          "port": 8837,
+          "probe_port": 8937,
           "branch": "main",
           "also_restart": ""
         }
@@ -74,6 +74,14 @@
       "label": "Python packages: the first of these files that exists is installed (a lock file wins)"
     },
     {
+      "name": "check_requirements",
+      "type": "json",
+      "default": [
+        "requirements-dev.lock"
+      ],
+      "label": "Packages the selfcheck needs (the quality gate's ruff, mypy, pip-audit), installed into the same venv when the file exists"
+    },
+    {
       "name": "venv_args",
       "type": "text",
       "default": "",
@@ -118,13 +126,14 @@
       "selfcheck": "$selfcheck",
       "start_cmd": "$start_cmd",
       "restart_cmd": "$restart_cmd",
-      "python": "$python"
+      "python": "$python",
+      "check_requirements": "$check_requirements"
     }
   },
   "returns": "record",
   "version": 1,
   "status": "published",
-  "description_nl": "2026-11-11 W1.4 (B10 deploy you can undo): deploy/deploy.sh reads this chip (env DEPLOY_<NAME> wins for one run). New code goes to releases/<commit>; the selfcheck and the probe health run before the current link moves; a failed live health moves it back; deploy.sh rollback goes to the release before.",
+  "description_nl": "2026-11-11 W1.4 (B10 deploy you can undo): deploy/deploy.sh reads this chip (env DEPLOY_<NAME> wins for one run). New code goes to releases/<commit>; the selfcheck and the probe health run before the current link moves; a failed live health moves it back; deploy.sh rollback goes to the release before. 2026-11-12: staging 8837 (8836 is valuefy on the VPS); check_requirements = the selfcheck's own tools (W1.3 gate failed the first server deploy without ruff).",
   "test_cases": [
     {
       "args": {
@@ -145,8 +154,8 @@
             "base": "/opt/simplyfile-staging",
             "service": "simplyfile-staging",
             "user": "simplyfile",
-            "port": 8836,
-            "probe_port": 8936,
+            "port": 8837,
+            "probe_port": 8937,
             "branch": "main",
             "also_restart": ""
           }
@@ -164,7 +173,10 @@
         "selfcheck": "{python} selfcheck.py",
         "start_cmd": "{python} -m uvicorn app:app --host 127.0.0.1 --port {port}",
         "restart_cmd": "systemctl restart {service}",
-        "python": "python3"
+        "python": "python3",
+        "check_requirements": [
+          "requirements-dev.lock"
+        ]
       }
     }
   ]

@@ -82,7 +82,7 @@ def main() -> None:
         "deploy/deploy.sh": files["deploy/deploy.sh"] + "\nBASE=/opt/simplyfile\n",
         "Dockerfile": files["Dockerfile"].replace("USER portal", ""),
         ".gitignore": files[".gitignore"].replace("deploy/vps.local", ""),
-        "chips/deploy.settings.json": files["chips/deploy.settings.json"].replace('"port": 8836', '"port": 8830'),
+        "chips/deploy.settings.json": files["chips/deploy.settings.json"].replace('"port": 8837', '"port": 8830'),
     }
     for name, text in bites.items():
         assert problems(files | {name: text}), f"deploy guard did not bite on {name}"
