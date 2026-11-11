@@ -1,0 +1,171 @@
+{
+  "chip_id": "deploy.settings",
+  "kind": "accessor",
+  "set": "deploy",
+  "label": "Deploy: where each target lives, how many releases to keep, how long to wait for health",
+  "aliases": [
+    "deploy settings",
+    "release folders",
+    "staging target"
+  ],
+  "params": [
+    {
+      "name": "targets",
+      "type": "json",
+      "default": {
+        "prod": {
+          "base": "/opt/simplyfile",
+          "service": "simplyfile",
+          "user": "simplyfile",
+          "port": 8830,
+          "probe_port": 8930,
+          "branch": "main",
+          "also_restart": "simplyfile-demo-*"
+        },
+        "staging": {
+          "base": "/opt/simplyfile-staging",
+          "service": "simplyfile-staging",
+          "user": "simplyfile",
+          "port": 8836,
+          "probe_port": 8936,
+          "branch": "main",
+          "also_restart": ""
+        }
+      },
+      "label": "Each target: its folder (repo, releases/, current, data/), service, service user, live port, probe port (the new release is tried here before the switch), branch, other units restarted onto the same code"
+    },
+    {
+      "name": "default_target",
+      "type": "text",
+      "default": "prod",
+      "label": "Target used when none is named"
+    },
+    {
+      "name": "keep_releases",
+      "type": "number",
+      "default": 5,
+      "label": "Release folders kept (the live one and the one before it are never removed)"
+    },
+    {
+      "name": "health_path",
+      "type": "text",
+      "default": "/health",
+      "label": "The address that must answer before and after the switch"
+    },
+    {
+      "name": "health_wait_s",
+      "type": "number",
+      "default": 30,
+      "label": "Seconds to wait for the health answer"
+    },
+    {
+      "name": "probe",
+      "type": "boolean",
+      "default": true,
+      "label": "Start the new release on the probe port, with an empty data folder, and ask its health before the switch"
+    },
+    {
+      "name": "requirements",
+      "type": "json",
+      "default": [
+        "requirements.lock",
+        "requirements.txt"
+      ],
+      "label": "Python packages: the first of these files that exists is installed (a lock file wins)"
+    },
+    {
+      "name": "venv_args",
+      "type": "text",
+      "default": "",
+      "label": "Extra words for python -m venv"
+    },
+    {
+      "name": "selfcheck",
+      "type": "text",
+      "default": "{python} selfcheck.py",
+      "label": "Command run inside the new release before the switch; a non-zero exit keeps the live release"
+    },
+    {
+      "name": "start_cmd",
+      "type": "text",
+      "default": "{python} -m uvicorn app:app --host 127.0.0.1 --port {port}",
+      "label": "How the probe starts a release (the systemd unit uses the same line)"
+    },
+    {
+      "name": "restart_cmd",
+      "type": "text",
+      "default": "systemctl restart {service}",
+      "label": "How the live service is restarted onto the new release (sudo -n is added when not root)"
+    },
+    {
+      "name": "python",
+      "type": "text",
+      "default": "python3",
+      "label": "Python used to build release venvs"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "targets": "$targets",
+      "default_target": "$default_target",
+      "keep_releases": "$keep_releases",
+      "health_path": "$health_path",
+      "health_wait_s": "$health_wait_s",
+      "probe": "$probe",
+      "requirements": "$requirements",
+      "venv_args": "$venv_args",
+      "selfcheck": "$selfcheck",
+      "start_cmd": "$start_cmd",
+      "restart_cmd": "$restart_cmd",
+      "python": "$python"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-11-11 W1.4 (B10 deploy you can undo): deploy/deploy.sh reads this chip (env DEPLOY_<NAME> wins for one run). New code goes to releases/<commit>; the selfcheck and the probe health run before the current link moves; a failed live health moves it back; deploy.sh rollback goes to the release before.",
+  "test_cases": [
+    {
+      "args": {
+        "keep_releases": 3
+      },
+      "expect_value": {
+        "targets": {
+          "prod": {
+            "base": "/opt/simplyfile",
+            "service": "simplyfile",
+            "user": "simplyfile",
+            "port": 8830,
+            "probe_port": 8930,
+            "branch": "main",
+            "also_restart": "simplyfile-demo-*"
+          },
+          "staging": {
+            "base": "/opt/simplyfile-staging",
+            "service": "simplyfile-staging",
+            "user": "simplyfile",
+            "port": 8836,
+            "probe_port": 8936,
+            "branch": "main",
+            "also_restart": ""
+          }
+        },
+        "default_target": "prod",
+        "keep_releases": 3,
+        "health_path": "/health",
+        "health_wait_s": 30,
+        "probe": true,
+        "requirements": [
+          "requirements.lock",
+          "requirements.txt"
+        ],
+        "venv_args": "",
+        "selfcheck": "{python} selfcheck.py",
+        "start_cmd": "{python} -m uvicorn app:app --host 127.0.0.1 --port {port}",
+        "restart_cmd": "systemctl restart {service}",
+        "python": "python3"
+      }
+    }
+  ]
+}

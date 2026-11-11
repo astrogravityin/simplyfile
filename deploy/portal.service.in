@@ -1,0 +1,26 @@
+# {{SERVICE}} ({{TARGET}}) - written by: bash deploy/deploy.sh --target {{TARGET}} unit > /etc/systemd/system/{{SERVICE}}.service
+# Runs the release that {{BASE}}/current points at, as {{USER}} (never root). Site values that are not code
+# (cookie name, https, owner e-mail, keys) live in {{BASE}}/portal.env (root-owned, 0640, never in git).
+[Unit]
+Description={{SERVICE}} ({{TARGET}})
+After=network.target
+
+[Service]
+User={{USER}}
+Group={{USER}}
+WorkingDirectory={{BASE}}/current
+Environment=PORTAL_DATA={{BASE}}/data
+Environment=TV_DATA={{BASE}}/data
+Environment=PORT={{PORT}}
+EnvironmentFile=-{{BASE}}/portal.env
+ExecStart={{EXEC}}
+Restart=always
+RestartSec=3
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+
+[Install]
+WantedBy=multi-user.target

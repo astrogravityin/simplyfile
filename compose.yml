@@ -1,0 +1,20 @@
+# Self-host SimplyFile in one command:  docker compose up -d --build   ->  http://localhost:8830
+# The data volume keeps accounts, clients' statements and keys across upgrades; back it up like the VPS data folder
+# (docker run --rm -v simplyfile_data:/data -v "$PWD":/out busybox tar czf /out/sf-data.tgz -C /data .).
+# Site values come from a .env file beside this one (never in git) or the shell: PORTAL_OWNER_EMAIL, PORTAL_HTTPS ...
+services:
+  simplyfile:
+    build: .
+    image: simplyfile:${SF_TAG:-local}
+    restart: unless-stopped
+    ports:
+      - "${SF_PORT:-8830}:8830"
+    environment:
+      PORTAL_COOKIE: ${PORTAL_COOKIE:-sf_session}
+      PORTAL_HTTPS: ${PORTAL_HTTPS:-0}
+      PORTAL_OWNER_EMAIL: ${PORTAL_OWNER_EMAIL:-}
+    volumes:
+      - data:/data
+
+volumes:
+  data:

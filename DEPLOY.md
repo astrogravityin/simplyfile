@@ -126,6 +126,58 @@ On your machine, two double-clicks:
 
 Or on the VPS directly: `bash /opt/simplyfile/deploy.sh`.
 
+## Release folders - a deploy you can undo (W1.4, 2026-11-11)
+
+`deploy/deploy.sh` builds every update in its own folder and moves the site to it only when it passed:
+
+```
+<base>/releases/<commit>/     one per release (a git worktree); .venv -> <base>/venvs/<hash of the lock file>
+<base>/current -> releases/…  what the service runs
+<base>/data/                  the portal's memory - never inside a release
+```
+
+1. pull the checkout, build `releases/<commit>`, install packages (`requirements.lock` when there is one);
+2. run `selfcheck.py` inside the new release - a failure stops here, the live release is untouched;
+3. start the new release on the **probe port** with an empty data folder and ask `/health` - a failure stops here;
+4. move `current` (one atomic rename), restart, ask the live `/health` - a failure moves `current` back and restarts
+   the old release;
+5. keep the newest `keep_releases` folders (never the live one or the rollback one).
+
+`bash deploy/deploy.sh rollback` (or `Deploy-To-VPS.cmd -Rollback`) puts the release before back; `status` shows
+what is live and what a rollback would go to. `--target staging` does all of it in the staging folder on its own port.
+Folders, ports, service user, keep-N, health wait and commands are in chip **deploy.settings** (Ops & chips);
+`DEPLOY_<NAME>` overrides one run. The server address and ssh key are in `deploy/vps.local` on your machine (never in
+git) or `SF_VPS` / `SF_VPS_KEY`. Proof on any machine, no server touched: `bash deploy/harness/dryrun.sh`.
+Guard: `python selfcheck_deploy.py`.
+
+### Switch-over to release folders (once per server, owner)
+
+Until this is done `Deploy-To-VPS.cmd` keeps running the old `deploy.sh`, so nothing changes by accident.
+
+```bash
+# as root on the VPS
+useradd --system --home /opt/simplyfile --shell /usr/sbin/nologin simplyfile
+cd /opt/simplyfile && grep -E '^Environment=(PORTAL_COOKIE|TV_HTTPS|TV_OWNER_EMAIL)' \
+  /etc/systemd/system/simplyfile.service | sed 's/^Environment=//' > portal.env && chmod 640 portal.env
+chown -R simplyfile:simplyfile /opt/simplyfile && chown root:simplyfile portal.env
+echo 'simplyfile ALL=(root) NOPASSWD: /usr/bin/systemctl restart simplyfile, /usr/bin/systemctl restart simplyfile-demo-*' \
+  > /etc/sudoers.d/simplyfile-deploy && chmod 440 /etc/sudoers.d/simplyfile-deploy && visudo -c
+runuser -u simplyfile -- bash deploy/deploy.sh init            # builds releases/<HEAD>, points current at it
+cp /etc/systemd/system/simplyfile.service /root/simplyfile.service.before
+bash deploy/deploy.sh unit > /etc/systemd/system/simplyfile.service   # User=simplyfile, WorkingDirectory=current
+systemctl daemon-reload && systemctl restart simplyfile && curl -sf http://127.0.0.1:8830/health
+```
+
+Back out (if the health line fails): copy `/root/simplyfile.service.before` back, `daemon-reload`, restart. The VPS
+Console's SSO drop-in (`simplyfile.service.d/`) is kept by both. Staging: `git clone` the repo to
+`/opt/simplyfile-staging`, the same steps with `--target staging`, a `staging.` nginx block to port 8836.
+
+## Self-host image
+
+`docker compose up -d --build` runs the portal on port 8830 with its data in the `data` volume (`Dockerfile`, non-root
+user, health check). Site values (`PORTAL_OWNER_EMAIL`, `PORTAL_HTTPS`, ...) come from a `.env` file beside
+`compose.yml`.
+
 ## If something is wrong
 
 - `journalctl -u simplyfile -n 50` — the service log.

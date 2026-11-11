@@ -1,0 +1,123 @@
+dry run in /d/Temp/deploy-dryrun-20261111-191406  (python: python3)
+
+################ init prod at v1 + first start (the owner's one-time switch-over)
+    packages: new venv a6ab251b14fa4805-311 from requirements.txt
+  
+    selfcheck in releases/ac160193f1eb ...
+    built + selfcheck passed in 135.995 s
+  INIT OK - current -> releases/ac160193f1eb. Nothing was restarted: install the unit (bash deploy/deploy.sh --target prod unit) and restart once (DEPLOY.md, switch-over).
+
+################ deploy v2 (good)
+  === deploy prod on TCBLRLAP-5043 - D:/Temp/deploy-dryrun-20261111-191406/prod ===
+  code: ac160193f1eb -> 2677073a36c5
+    packages: venv a6ab251b14fa4805-311 (same requirements.txt as before)
+    selfcheck in releases/2677073a36c5 ...
+    built + selfcheck passed in 16.673 s
+    probe: /health answered on port 18930 in 29.535 s
+    switch: ac160193f1eb -> 2677073a36c5, live /health answered on port 18830 in 48.960 s
+  DEPLOY OK - 2677073a36c5 is live on port 18830 (prod) in 119.514 s; undo: bash deploy/deploy.sh --target prod rollback
+
+################ deploy v3 (selfcheck fails) -> v2 keeps serving
+  === deploy prod on TCBLRLAP-5043 - D:/Temp/deploy-dryrun-20261111-191406/prod ===
+  code: 2677073a36c5 -> ba67434e788c
+    packages: venv a6ab251b14fa4805-311 (same requirements.txt as before)
+    selfcheck in releases/ba67434e788c ...
+      | Traceback (most recent call last):
+      |   File "D:\Temp\deploy-dryrun-20261111-191406\prod\releases\ba67434e788c\selfcheck.py", line 3, in <module>
+      |     assert False, "v3: a check that fails"
+      |            ^^^^^
+      | AssertionError: v3: a check that fails
+  DEPLOY FAILED - selfcheck failed for ba67434e788c (30.191 s) - 2677073a36c5 keeps serving
+
+################ deploy v4 (/health 500) -> probe stops it
+  === deploy prod on TCBLRLAP-5043 - D:/Temp/deploy-dryrun-20261111-191406/prod ===
+  code: 2677073a36c5 -> 792c48b78c3f
+    packages: venv a6ab251b14fa4805-311 (same requirements.txt as before)
+    selfcheck in releases/792c48b78c3f ...
+    built + selfcheck passed in 28.672 s
+      | INFO:     Started server process [32176]
+      | INFO:     Waiting for application startup.
+      | INFO:     Application startup complete.
+      | INFO:     Uvicorn running on http://127.0.0.1:18930 (Press CTRL+C to quit)
+      | INFO:     127.0.0.1:56664 - "GET /health HTTP/1.1" 500 Internal Server Error
+      | INFO:     127.0.0.1:56790 - "GET /health HTTP/1.1" 500 Internal Server Error
+      | INFO:     127.0.0.1:56990 - "GET /health HTTP/1.1" 500 Internal Server Error
+      | INFO:     127.0.0.1:57100 - "GET /health HTTP/1.1" 500 Internal Server Error
+      | INFO:     127.0.0.1:57198 - "GET /health HTTP/1.1" 500 Internal Server Error
+      | INFO:     127.0.0.1:64146 - "GET /health HTTP/1.1" 500 Internal Server Error
+      | INFO:     127.0.0.1:64262 - "GET /health HTTP/1.1" 500 Internal Server Error
+      | INFO:     127.0.0.1:64360 - "GET /health HTTP/1.1" 500 Internal Server Error
+      | INFO:     127.0.0.1:64431 - "GET /health HTTP/1.1" 500 Internal Server Error
+      | INFO:     127.0.0.1:64482 - "GET /health HTTP/1.1" 500 Internal Server Error
+      | INFO:     127.0.0.1:64542 - "GET /health HTTP/1.1" 500 Internal Server Error
+  DEPLOY FAILED - the new release did not answer /health on probe port 18930 (54.381 s) - 2677073a36c5 keeps serving
+
+################ deploy v5 (fails on live data) -> switched back
+  === deploy prod on TCBLRLAP-5043 - D:/Temp/deploy-dryrun-20261111-191406/prod ===
+  code: 2677073a36c5 -> 1519cdbb764b
+    packages: venv a6ab251b14fa4805-311 (same requirements.txt as before)
+    selfcheck in releases/1519cdbb764b ...
+    built + selfcheck passed in 12.792 s
+    probe: /health answered on port 18930 in 17.228 s
+    live health FAILED on port 18830 - moving back to 2677073a36c5
+    2677073a36c5 is serving again (56.006 s)
+  DEPLOY FAILED - 1519cdbb764b failed its live health and was switched back (92.571 s)
+
+################ rollback (one command) -> v1
+  === rollback prod: 2677073a36c5 -> ac160193f1eb ===
+    switch: 2677073a36c5 -> ac160193f1eb, live /health answered on port 18830 in 16.329 s
+  ROLLBACK OK - ac160193f1eb is live on port 18830 (prod) in 23.426 s
+
+################ deploy v2 again (roll forward, release reused)
+  === deploy prod on TCBLRLAP-5043 - D:/Temp/deploy-dryrun-20261111-191406/prod ===
+  code: ac160193f1eb -> 2677073a36c5
+  release 2677073a36c5 already built - reusing it
+    probe: /health answered on port 18930 in 10.844 s
+    switch: ac160193f1eb -> 2677073a36c5, live /health answered on port 18830 in 11.949 s
+    pruned old release 1519cdbb764b
+    pruned old release 792c48b78c3f
+    pruned old release ba67434e788c
+  DEPLOY OK - 2677073a36c5 is live on port 18830 (prod) in 37.072 s; undo: bash deploy/deploy.sh --target prod rollback
+
+################ staging: its own folder and port, same script
+    packages: new venv a6ab251b14fa4805-311 from requirements.txt
+  
+    selfcheck in releases/ac160193f1eb ...
+    built + selfcheck passed in 62.494 s
+  INIT OK - current -> releases/ac160193f1eb. Nothing was restarted: install the unit (bash deploy/deploy.sh --target staging unit) and restart once (DEPLOY.md, switch-over).
+
+################ staging: deploy v2 on port 18836
+  === deploy staging on TCBLRLAP-5043 - D:/Temp/deploy-dryrun-20261111-191406/staging ===
+  code: ac160193f1eb -> 2677073a36c5
+    packages: venv a6ab251b14fa4805-311 (same requirements.txt as before)
+    selfcheck in releases/2677073a36c5 ...
+    built + selfcheck passed in 14.678 s
+    probe: /health answered on port 18936 in 14.136 s
+    switch: ac160193f1eb -> 2677073a36c5, live /health answered on port 18836 in 12.563 s
+  DEPLOY OK - 2677073a36c5 is live on port 18836 (staging) in 54.166 s; undo: bash deploy/deploy.sh --target staging rollback
+
+################ status
+  target prod  base D:/Temp/deploy-dryrun-20261111-191406/prod  port 18830
+  live     : 2677073a36c5  (answers)
+  rollback : ac160193f1eb
+    2677073a36c5 checked
+    ac160193f1eb checked
+
+################ unit for prod (as deploy.sh renders it from chip deploy.settings, no overrides)
+  User=simplyfile
+  WorkingDirectory=/opt/simplyfile/current
+  Environment=PORT=8830
+  ExecStart=/opt/simplyfile/current/.venv/bin/python -m uvicorn app:app --host 127.0.0.1 --port 8830
+
+================ RESULT (909 s in all, folder /d/Temp/deploy-dryrun-20261111-191406)
+OK  init prod at v1, service started                                  -  port 18830 serves v1
+OK  deploy v2 (good)                                             138.9s  exit 0, port 18830 serves v2
+OK  deploy v3 (selfcheck fails) -> v2 keeps serving               75.2s  exit 1, port 18830 serves v2
+OK  deploy v4 (/health 500) -> probe stops it                    118.7s  exit 1, port 18830 serves v2
+OK  deploy v5 (fails on live data) -> switched back              115.7s  exit 1, port 18830 serves v2
+OK  rollback (one command) -> v1                                  28.9s  exit 0, port 18830 serves v1
+OK  deploy v2 again (roll forward, release reused)                51.4s  exit 0, port 18830 serves v2
+OK  staging: deploy v2 on port 18836                              65.5s  exit 0, port 18836 serves v2
+OK  prod untouched by the staging deploy                              -  port 18830 serves v2
+OK  prune keeps keep_releases (3) + live/rollback                     -  2 release folders
+passed 10, failed 0
