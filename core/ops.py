@@ -412,6 +412,95 @@ def date_shift(date: Any = "", days: Any = 0, months: Any = 0, closed: Any = Non
     return None
 
 
+def spoken_number(text: Any = "", units: Any = None, tens: Any = None, scales: Any = None, repeats: Any = None) -> str:
+    """Number words in speech turned to digits, the rest of the text kept: "nine eight double five" -> "9855", "forty two"
+    -> "42", "nineteen eighty" -> "1980", "two hundred five" -> "205". The word tables come from the caller's chip
+    (units: word -> 0-19, ordinals too; tens: word -> 20..90; scales: hundred / thousand / lakh; repeats: double -> 2),
+    so a language is a chip row, never code. 2026-11-08 VUI: a voice answer is words, a form wants digits."""
+    units, tens, scales, repeats = ({str(k).lower(): v for k, v in (x or {}).items()} for x in (units, tens, scales, repeats))
+    known = sorted(set(units) | set(tens) | set(scales) | set(repeats), key=len, reverse=True)
+    if not known:
+        return str(text or "")
+    w_ = "|".join(re.escape(k) for k in known)
+
+    def one(m: re.Match) -> str:
+        run = [w for w in re.split(r"[\s-]+", m[0].lower()) if w and w != "and"]
+        if any(w in scales for w in run):               # a cardinal with hundred / thousand / lakh: worked out as a sum
+            total, cur = 0, 0
+            for w in run:
+                if w in scales:
+                    if scales[w] >= 1000:
+                        total, cur = total + max(cur, 1) * scales[w], 0
+                    else:
+                        cur = max(cur, 1) * scales[w]
+                else:
+                    cur += tens.get(w, units.get(w, 0))
+            return str(total + cur)
+        chunks, times, i = [], 1, 0                     # a string of digits said in pieces: each piece written as said
+        while i < len(run):
+            w = run[i]
+            if w in repeats:
+                times, i = int(repeats[w]), i + 1
+                continue
+            n = tens.get(w, units.get(w, 0))
+            if w in tens and i + 1 < len(run) and 0 < units.get(run[i + 1], 0) < 10:
+                n, i = n + units[run[i + 1]], i + 1
+            chunks.append(str(n) * times)
+            times, i = 1, i + 1
+        return "".join(chunks)
+
+    return re.sub(rf"(?i)\b(?:{w_})(?:(?:[\s-]+and)?[\s-]+(?:{w_}))*\b", one, str(text or ""))
+
+
+def parse_date(text: Any = "", months: Any = None, order: Any = "dmy", pivot: Any = 30) -> str | None:
+    """The first date in free text as an ISO date (YYYY-MM-DD): "3rd March 1980", "march 3 1980", "3 of march 19 80",
+    "03/03/80", "1980-03-03". `months` = month word -> 1..12 (from the caller's chip); `order` = how an all-number date reads
+    (dmy in India, mdy in the US); a two-digit year at or below `pivot` is 20yy, above it 19yy. None when no real date is
+    there (31 February is not one). 2026-11-08 VUI: the spoken answer to "date of birth?"."""
+    from datetime import date as _d  # noqa: PLC0415
+    s = re.sub(r"(\d+)(st|nd|rd|th)\b", r"\1", str(text or "").lower())
+    mon = {str(k).lower(): int(v) for k, v in (months or {}).items()}
+    piv = int(_num(pivot) or 0)
+
+    def year(y: str) -> int:
+        return int(y) if len(y) > 2 else (2000 + int(y) if int(y) <= piv else 1900 + int(y))
+
+    def real(y: int, m: int, d: int) -> str | None:
+        try:
+            return _d(y, m, d).isoformat()
+        except (ValueError, TypeError):
+            return None
+
+    m = re.search(r"\b(\d{4})-(\d{1,2})-(\d{1,2})\b", s)
+    if m:
+        return real(int(m[1]), int(m[2]), int(m[3]))
+    m = re.search(r"\b(\d{1,2})[/.\-](\d{1,2})[/.\-](\d{2}|\d{4})\b", s)
+    if m:
+        a, b = int(m[1]), int(m[2])
+        d, mo = (b, a) if str(order or "dmy").lower().startswith("m") else (a, b)
+        return real(year(m[3]), mo, d)
+    names = "|".join(sorted((re.escape(k) for k in mon), key=len, reverse=True))
+    if not names:
+        return None
+    yr = r"(\d{4}|\d{2}\s+\d{2}|\d{2})"
+    for pat, di, mi, yi in ((rf"\b(\d{{1,2}})\s+(?:of\s+)?({names})\b,?\s+(?:in\s+)?{yr}\b", 1, 2, 3),
+                            (rf"\b({names})\s+(\d{{1,2}}),?\s+{yr}\b", 2, 1, 3)):
+        m = re.search(pat, s)
+        if m:
+            return real(year(re.sub(r"\s+", "", m[yi])), mon[m[mi]], int(m[di]))
+    return None
+
+
+def years_between(start: Any = "", end: Any = "") -> int | None:
+    """Whole years from one ISO date to another - an age: the birthday counts on the day itself. None when unreadable."""
+    from datetime import date as _d  # noqa: PLC0415
+    try:
+        a, b = _d.fromisoformat(str(start)[:10]), _d.fromisoformat(str(end)[:10])
+    except (ValueError, TypeError):
+        return None
+    return b.year - a.year - ((b.month, b.day) < (a.month, a.day))
+
+
 def split_text(text: Any = "", separators: Any = ", ;", strip: Any = " @", pattern: Any = "") -> list:
     """Text cut into words at any of the separator characters (or, given, at every match of the regular expression
     `pattern`); each word trimmed of `strip` characters, blanks dropped. "a.com, @b.org" → ["a.com", "b.org"]."""
@@ -1546,7 +1635,7 @@ OPS = {f.__name__: f for f in (
     add, sub, mul, div, pct, round_to, floor_to, first_free_slot, clamp, largest, smallest, first_at_least, slab_tax, step_rate, median, median_shift,
     template, starts_with_any, ends_with_any, text_length, matches, split_text, key_sentences, pattern_hits, shared_runs, replace_once, first_with, html_texts, html_put_texts, script_of, script_shift, same_members, search, text_pick, values_matching, cut_at_any,
     truncate, sub_text, contains, ip_network, first_matching, epoch_date,
-    pluck, slice_list, months_part, date_shift, first_index_matching, missing, count, last, compact, coalesce, json_in_text, fit_count, match_case, stable_hash, hash_hex, strings_in, total, first_named, pack_text, trim_to_sentence, after_heading, last_line, pack_words, name_value_lines, ease, filter_rows, rank_rows, rows_view, fuzzy_rows, match_rows, rows_math, group_rows, rows_aggregate,
+    pluck, slice_list, months_part, date_shift, spoken_number, parse_date, years_between, first_index_matching, missing, count, last, compact, coalesce, json_in_text, fit_count, match_case, stable_hash, hash_hex, strings_in, total, first_named, pack_text, trim_to_sentence, after_heading, last_line, pack_words, name_value_lines, ease, filter_rows, rank_rows, rows_view, fuzzy_rows, match_rows, rows_math, group_rows, rows_aggregate,
     rows_product, rows_band, rows_index, rows_lookup, rows_check, rows_having, decision_table, doc_problems, literal, record, merge, get,
     list_prefer, number_series, growth_rows, deposit_rows, deposits_at, payout_rows, group_digits, path_refusal, parts_of_whole, series_bucket, rows_delta,
 )}
@@ -1770,5 +1859,18 @@ if __name__ == "__main__":
     assert number_series(2, 4, 6, 24) == [2, 6, 10, 14, 18, 22] and number_series(22, 4, 3, 24) == [22, 2, 6]
     assert path_refusal("/opt", ["/opt"]) and path_refusal("/opt/app/x", [], [], [], "/opt/app") and path_refusal("/a/../b", [], [], [".."])
     assert path_refusal("rel/x") == "absolute" and path_refusal("/var/backups/x.tar.gz", ["/var"], ["/etc"], [".git"]) == ""
+    # 2026-11-08 VUI: voice answers to digits, dates and ages
+    U_ = {"zero": 0, "oh": 0, "one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7, "eight": 8, "nine": 9,
+          "nineteen": 19, "third": 3}
+    T_, S_, P_ = {"twenty": 20, "forty": 40, "eighty": 80}, {"hundred": 100, "thousand": 1000}, {"double": 2, "triple": 3}
+    assert spoken_number("call nine eight double five oh", U_, T_, S_, P_) == "call 98550", spoken_number("call nine eight double five oh", U_, T_, S_, P_)
+    assert spoken_number("forty two years", U_, T_, S_, P_) == "42 years" and spoken_number("nineteen eighty", U_, T_) == "1980"
+    assert spoken_number("two hundred and five", U_, T_, S_, P_) == "205" and spoken_number("no numbers here.", U_) == "no numbers here."
+    M_ = {"march": 3, "mar": 3, "february": 2}
+    assert parse_date("born on 3rd March 1980", M_) == "1980-03-03" and parse_date("march 3, 1980", M_) == "1980-03-03"
+    assert parse_date("3 of march 19 80", M_) == "1980-03-03" and parse_date("03/04/85", M_) == "1985-04-03"
+    assert parse_date("03/04/85", M_, "mdy") == "1985-03-04" and parse_date("5/5/12", M_, "dmy", 30) == "2012-05-05"
+    assert parse_date("31 february 1990", M_) is None and parse_date("no date", M_) is None and parse_date("1980-03-03") == "1980-03-03"
+    assert years_between("1980-03-03", "2026-03-02") == 45 and years_between("1980-03-03", "2026-03-03") == 46 and years_between("x", "2026-01-01") is None
     assert {o["op"] for o in catalog()} == set(OPS)
     print("core.ops self-check OK")

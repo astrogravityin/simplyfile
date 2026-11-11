@@ -1265,7 +1265,7 @@ export function pickList(host, { list, args = {}, url = '', name = (r) => r.name
   const q = host.querySelector('.pk-q');
   const box = host.querySelector('.pk-list');
   const shut = () => { box.hidden = true; q.setAttribute('aria-expanded', 'false'); };
-  const choose = (r) => { st.chosen = r; q.value = name(r); shut(); onPick(r); };
+  const choose = (r) => { clearTimeout(st.timer); st.chosen = r; q.value = name(r); shut(); onPick(r); };
   const load = async () => {
     let r;
     const typed = st.chosen && q.value === name(st.chosen) ? '' : q.value;

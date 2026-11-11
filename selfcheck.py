@@ -46,6 +46,13 @@ def module_checks() -> None:
 
 
 def static_checks() -> None:
+    assert "const choose = (r) => { clearTimeout(st.timer);" in (HERE / "core" / "static" / "ui.js").read_text(encoding="utf-8"), \
+        "pickList: a pick must drop the pending search, or the list reopens over the page (2026-11-09)"
+    # 2026-11-08 VUI go-live: DEPLOY.md's unit had no Environment=PORT=, so deploy.sh (which reads it) stopped every update
+    unit = (HERE / "DEPLOY.md").read_text(encoding="utf-8") if (HERE / "DEPLOY.md").is_file() else ""
+    if "--port " in unit:   # a hand-written unit (VPS Console's New site writes its own, with the line)
+        unit_port = re.search(r"^Environment=PORT=(\S+)$", unit, re.M)
+        assert unit_port and f"--port {unit_port.group(1)}" in unit, "DEPLOY.md's unit needs Environment=PORT=<its --port> (deploy.sh reads it)"
     app_js = (HERE / "static" / "app.js").read_text(encoding="utf-8")
     for f in sorted((HERE / "static").glob("*.js")) + sorted((HERE / "core" / "static").glob("*.js")):
         for imp in re.findall(r"""^\s*import\s[^'"]*?from\s*['"]([^'"]+)['"]""", f.read_text(encoding="utf-8"), re.M):

@@ -28,6 +28,7 @@ Environment=TV_DATA=/opt/simplyfile/data
 Environment=PORTAL_COOKIE=sf_session
 Environment=TV_HTTPS=1
 Environment=TV_OWNER_EMAIL=chandra.s.vempati@gmail.com
+Environment=PORT=8830
 ExecStart=/opt/simplyfile/.venv/bin/python -m uvicorn app:app --host 127.0.0.1 --port 8830
 Restart=always
 RestartSec=3
