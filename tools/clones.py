@@ -68,7 +68,7 @@ def repeats(root: Path = ROOT, min_tokens: int = 8) -> list[str]:
     """file:line for every run of lines that is repeated straight after itself (copy-paste or a script run twice)."""
     found = []
     for rel, text in sources(root):
-        lines = [x.strip() for x in text.splitlines()]
+        lines = [x.rstrip() for x in text.splitlines()]     # indent kept: a line inside a loop and the same line after it differ
         n, i = len(lines), 0
         while i < n:
             hit = 0
@@ -146,6 +146,8 @@ def selftest() -> None:
         twice = ['SCREENS += [s for s in ("cart", "orders") if s not in SCREENS]', 'WORK += ["cart", "orders"]']
         (r / "d.py").write_text("\n".join(["x = 1", *twice * 3, "y = 2", "}", "}", ""]), encoding="utf-8")
         assert repeats(r) == ["d.py:2 (2 line(s) repeated)"], f"lines pasted back to back must be found (and a bare closer not): {repeats(r)}"
+        (r / "d.py").write_text("for t in ts:\n    out.write_text(json.dumps(lines) + newline)\nout.write_text(json.dumps(lines) + newline)\n", encoding="utf-8")
+        assert repeats(r) == [], f"the same line inside a loop and after it is not a paste: {repeats(r)}"
     print("clones self-check OK")
 
 

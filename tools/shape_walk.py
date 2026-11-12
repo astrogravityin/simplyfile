@@ -127,13 +127,16 @@ def selftest() -> None:
 
 def main() -> int:
     cfg = chip()
-    data = str(Path(tempfile.mkdtemp(prefix="sf-shapes-")) / "data")   # always its own throw-away folder (one copy per folder)
+    data = str(Path(tempfile.mkdtemp(prefix="shapes-")) / "data")   # always its own throw-away folder (one copy per folder)
     os.environ["TV_DATA"] = os.environ["PORTAL_DATA"] = data
     os.environ.pop("PORTAL_EDITION", None)
     sys.path.insert(0, str(ROOT))
     os.chdir(ROOT)
     from fastapi.testclient import TestClient
     import app  # noqa: PLC0415 - after TV_DATA
+    if cfg.get("rates_off"):      # a rate-limited route answers "slow down" before it reads the body: the probes must reach it
+        from core import limits  # noqa: PLC0415
+        limits.allow = lambda *_a, **_k: True
     c = TestClient(app.app, raise_server_exceptions=False)
     acct = cfg["owner"]
     assert c.post("/api/auth/first-account", json=acct).status_code == 200, "the walk's owner account"

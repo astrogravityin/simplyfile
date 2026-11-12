@@ -101,6 +101,12 @@
           "why": "reads the official tax sites over the network"
         }
       ]
+    },
+    {
+      "name": "rates_off",
+      "type": "boolean",
+      "label": "Rate limits off during the walk (a limited route answers before it reads the body, hiding its bugs)",
+      "default": true
     }
   ],
   "expr": {
@@ -114,7 +120,8 @@
       "path_values": "$path_values",
       "seed": "$seed",
       "owner": "$owner",
-      "skip": "$skip"
+      "skip": "$skip",
+      "rates_off": "$rates_off"
     }
   },
   "returns": "record",
@@ -171,7 +178,8 @@
             "route": "POST /api/taxwatch/{ay}/fetch",
             "why": "reads the official tax sites over the network"
           }
-        ]
+        ],
+        "rates_off": true
       }
     }
   ]
