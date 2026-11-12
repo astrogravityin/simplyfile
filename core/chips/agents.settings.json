@@ -60,6 +60,17 @@
         "month"
       ],
       "label": "How often a schedule can run"
+    },
+    {
+      "name": "run_states",
+      "type": "json",
+      "default": {
+        "live": "running",
+        "cut_short": "stopped",
+        "failed": "failed",
+        "done": "done"
+      },
+      "label": "Words a run's status is stored as: live (running), cut_short (stopped by a restart), failed, done"
     }
   ],
   "expr": {
@@ -72,7 +83,8 @@
       "keep_chars": "$keep_chars",
       "keep_rows": "$keep_rows",
       "history_rows": "$history_rows",
-      "cadences": "$cadences"
+      "cadences": "$cadences",
+      "run_states": "$run_states"
     }
   },
   "returns": "record",
@@ -96,7 +108,13 @@
           "day",
           "week",
           "month"
-        ]
+        ],
+        "run_states": {
+          "live": "running",
+          "cut_short": "stopped",
+          "failed": "failed",
+          "done": "done"
+        }
       }
     }
   ]

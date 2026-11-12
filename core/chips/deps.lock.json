@@ -1,0 +1,194 @@
+{
+  "chip_id": "deps.lock",
+  "kind": "accessor",
+  "set": "deps",
+  "audience": "admin",
+  "label": "Packages: the lock the server installs",
+  "aliases": [
+    "requirements lock",
+    "pinned packages",
+    "pip-audit"
+  ],
+  "params": [
+    {
+      "name": "requirements",
+      "type": "text",
+      "default": "requirements.txt",
+      "label": "What the portal asks for (names and lowest versions)"
+    },
+    {
+      "name": "lock",
+      "type": "text",
+      "default": "requirements.lock",
+      "label": "What the server installs: exact versions and hashes"
+    },
+    {
+      "name": "platforms",
+      "type": "json",
+      "default": [
+        "manylinux_2_39_x86_64",
+        "manylinux_2_34_x86_64",
+        "manylinux_2_28_x86_64",
+        "manylinux_2_17_x86_64",
+        "manylinux2014_x86_64",
+        "linux_x86_64"
+      ],
+      "label": "The server's platform tags (the VPS: Ubuntu 24.04, glibc 2.39 - every manylinux up to it)"
+    },
+    {
+      "name": "python_version",
+      "type": "text",
+      "default": "312",
+      "label": "The server's Python (3.12)"
+    },
+    {
+      "name": "extra",
+      "type": "json",
+      "default": [
+        "uvloop"
+      ],
+      "label": "Packages the server needs only on Linux (pip cannot see Linux-only markers from Windows)"
+    },
+    {
+      "name": "header",
+      "type": "json",
+      "default": [
+        "Made by: python tools/lock_deps.py (chip deps.lock) - never edit by hand.",
+        "deploy.sh installs exactly these, each checked by its hash."
+      ],
+      "label": "The lock file's first lines"
+    },
+    {
+      "name": "audit_args",
+      "type": "json",
+      "default": [
+        "--no-deps",
+        "--disable-pip",
+        "--progress-spinner",
+        "off"
+      ],
+      "label": "pip-audit arguments when it reads the lock (warning only, at commit)"
+    },
+    {
+      "name": "words",
+      "type": "json",
+      "default": {
+        "made": "{lock}: {n} packages for {platform} / Python {python}",
+        "matches": "{lock}: matches {req}",
+        "none": "{lock}: none yet (deploy installs from {req})",
+        "missing": "{name}: in {req}, not in {lock}",
+        "unpinned": "{lock}: line without an exact version and a hash: {line}",
+        "no_audit": "pip-audit is not installed here - skipped (pip install pip-audit)"
+      },
+      "label": "What tools/lock_deps.py says"
+    },
+    {
+      "name": "resolve_args",
+      "type": "json",
+      "default": [
+        "--no-user",
+        "--dry-run",
+        "--ignore-installed",
+        "--quiet",
+        "--only-binary=:all:",
+        "--implementation",
+        "cp"
+      ],
+      "label": "resolve args"
+    },
+    {
+      "name": "resolve_env",
+      "type": "json",
+      "default": {
+        "PIP_USER": "0"
+      },
+      "label": "resolve env"
+    },
+    {
+      "name": "install_line",
+      "type": "text",
+      "default": "--require-hashes --no-deps -r requirements.lock",
+      "label": "install line"
+    },
+    {
+      "name": "constraints",
+      "type": "text",
+      "default": "",
+      "label": "A pip constraints file the lock must stay inside (the portal's tested pins); empty = none"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "requirements": "$requirements",
+      "lock": "$lock",
+      "platforms": "$platforms",
+      "python_version": "$python_version",
+      "extra": "$extra",
+      "header": "$header",
+      "audit_args": "$audit_args",
+      "words": "$words",
+      "resolve_args": "$resolve_args",
+      "resolve_env": "$resolve_env",
+      "install_line": "$install_line",
+      "constraints": "$constraints"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-11-12 owner (\"Yes, A and B\" on the VS standards review): requirements.lock pins every package at one version with its sha256 for the server's platform (tools/lock_deps.py); deploy.sh installs from it with --require-hashes when present; the commit script runs pip-audit on it (warning only).",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "requirements": "requirements.txt",
+        "lock": "requirements.lock",
+        "platforms": [
+          "manylinux_2_39_x86_64",
+          "manylinux_2_34_x86_64",
+          "manylinux_2_28_x86_64",
+          "manylinux_2_17_x86_64",
+          "manylinux2014_x86_64",
+          "linux_x86_64"
+        ],
+        "python_version": "312",
+        "extra": [
+          "uvloop"
+        ],
+        "header": [
+          "Made by: python tools/lock_deps.py (chip deps.lock) - never edit by hand.",
+          "deploy.sh installs exactly these, each checked by its hash."
+        ],
+        "audit_args": [
+          "--no-deps",
+          "--disable-pip",
+          "--progress-spinner",
+          "off"
+        ],
+        "words": {
+          "made": "{lock}: {n} packages for {platform} / Python {python}",
+          "matches": "{lock}: matches {req}",
+          "none": "{lock}: none yet (deploy installs from {req})",
+          "missing": "{name}: in {req}, not in {lock}",
+          "unpinned": "{lock}: line without an exact version and a hash: {line}",
+          "no_audit": "pip-audit is not installed here - skipped (pip install pip-audit)"
+        },
+        "resolve_args": [
+          "--no-user",
+          "--dry-run",
+          "--ignore-installed",
+          "--quiet",
+          "--only-binary=:all:",
+          "--implementation",
+          "cp"
+        ],
+        "resolve_env": {
+          "PIP_USER": "0"
+        },
+        "install_line": "--require-hashes --no-deps -r requirements.lock",
+        "constraints": ""
+      }
+    }
+  ]
+}

@@ -48,6 +48,7 @@ export async function aboutDialog() {
         <dt>${esc(a('commit_date'))}</dt><dd>${esc(at(d.commit_date))}</dd>
         <dt>${esc(a('deployed'))}</dt><dd>${esc(at(d.deployed_at))}</dd>
         <dt>${esc(a('started'))}</dt><dd>${esc(at(d.started_at))}</dd>
+        <dt>${esc(a('framework'))}</dt><dd data-about="framework">${esc(d.framework ? a('framework_line', d.framework) : a('unknown'))}</dd>
         <dt>${esc(a('server_build'))}</dt><dd>${esc(d.build || a('unknown'))}</dd>
         <dt>${esc(a('page_build'))}</dt><dd>${esc(mine || a('unknown'))}</dd></dl>`;
   modal(a('title'), `${CSS}<h4>${esc(a('who_title'))}</h4>${who}

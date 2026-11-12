@@ -263,18 +263,42 @@ def write(name: str, value) -> None:
 
 # --- users and sign-in -------------------------------------------------------------------------
 
-def hash_password(password: str, salt: str = "") -> str:
-    salt = salt or secrets.token_hex(16)
-    digest = hashlib.pbkdf2_hmac("sha256", password.encode("utf-8"), salt.encode("utf-8"), 200_000)
-    return f"pbkdf2$200000${salt}${digest.hex()}"
+def _rounds() -> int:
+    return int(_chip("auth.limits")["hash_rounds"])
+
+
+def hash_password(password: str, salt: str = "", rounds: int = 0) -> str:
+    """PBKDF2-SHA256 with the rounds of chip auth.limits hash_rounds (2026-11-12: 200,000 -> OWASP's 600,000); the rounds are
+    stored with the hash, so an older one still checks and is re-made at its next sign-in (rehash)."""
+    salt, rounds = salt or secrets.token_hex(16), int(rounds or _rounds())
+    digest = hashlib.pbkdf2_hmac("sha256", password.encode("utf-8"), salt.encode("utf-8"), rounds)
+    return f"pbkdf2${rounds}${salt}${digest.hex()}"
+
+
+def _parts(stored: str) -> tuple[int, str] | None:
+    try:
+        kind, rounds, salt, _ = (stored or "").split("$", 3)
+        return (int(rounds), salt) if kind == "pbkdf2" else None
+    except ValueError:
+        return None
 
 
 def check_password(password: str, stored: str) -> bool:
-    try:
-        _, _, salt, _ = (stored or "").split("$", 3)
-    except ValueError:
-        return False
-    return secrets.compare_digest(hash_password(password, salt), stored)
+    got = _parts(stored)
+    return got is not None and secrets.compare_digest(hash_password(password, got[1], got[0]), stored)
+
+
+def rehash(user_id: str, password: str) -> bool:
+    """After a good sign-in: a password stored with fewer rounds than the chip asks is stored again with them. True = re-made."""
+    with _LOCK:
+        rows = users()
+        for u in rows:
+            got = _parts(u.get("password", ""))
+            if u.get("id") == user_id and got and got[0] < _rounds() and check_password(password, u["password"]):
+                u["password"] = hash_password(password)
+                write("users", rows)
+                return True
+    return False
 
 
 def users() -> list[dict]:
@@ -627,6 +651,10 @@ if __name__ == "__main__":  # ponytail: one runnable self-check
     h = hash_password("correct horse battery")
     assert check_password("correct horse battery", h)
     assert not check_password("wrong", h)
+    assert h.startswith(f"pbkdf2${_rounds()}$"), "a new hash does not use chip auth.limits hash_rounds"
+    old = hash_password("correct horse battery", rounds=200_000)   # a hash made before 2026-11-12
+    assert check_password("correct horse battery", old) and not check_password("wrong", old), "an older hash no longer checks"
+    assert not check_password("x", "bcrypt$1$a$b") and not check_password("x", ""), "a hash of another kind passed"
 
     import tempfile
     with tempfile.TemporaryDirectory() as tmp:

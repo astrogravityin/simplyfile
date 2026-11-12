@@ -36,6 +36,7 @@ router = APIRouter()
 PREFIX = "agents.recipe."
 ACTIONS: dict[str, Callable[[dict, dict], dict]] = {}
 _LOCAL = threading.local()
+_RECOVERED: set[str] = set()     # data files whose cut-short runs were marked stopped in this process
 _WRITE = threading.Lock()
 _STARTED: list = []
 
@@ -67,6 +68,11 @@ def db() -> sqlite3.Connection:
         c.execute("PRAGMA journal_mode=WAL")
         c.executescript(SCHEMA)
         _LOCAL.c, _LOCAL.path = c, path
+        if path not in _RECOVERED:   # 2026-11-12: a run the server stopped mid-way is stopped, never "running" for ever
+            _RECOVERED.add(path)
+            with _WRITE, c:
+                st = settings()["run_states"]
+                c.execute("UPDATE runs SET status=?, done=?, why=? WHERE status=?", (st["cut_short"], time.time(), say("stopped_restart"), st["live"]))
     return c
 
 
@@ -151,7 +157,7 @@ def execute(agent_id: str, phase: str, by_id: str, given: dict | None = None, tr
     c = db()
     with _WRITE, c:
         c.execute("INSERT INTO runs(ref, agent, phase, status, by_id, trigger, inputs, made) VALUES(?,?,?,?,?,?,?,?)",
-                  (ref, agent_id, phase, "running", by_id, trigger, json.dumps(ins, default=str), time.time()))
+                  (ref, agent_id, phase, settings()["run_states"]["live"], by_id, trigger, json.dumps(ins, default=str), time.time()))
     outs: dict = {}
     steps: list = []
     why = ""
@@ -172,7 +178,7 @@ def execute(agent_id: str, phase: str, by_id: str, given: dict | None = None, tr
         steps.append(row)
         if row["error"]:
             break
-    status = "failed" if why else "done"
+    status = settings()["run_states"]["failed" if why else "done"]
     with _WRITE, c:
         c.execute("UPDATE runs SET status=?, steps=?, done=?, why=? WHERE ref=?",
                   (status, json.dumps(steps, default=str, ensure_ascii=False), time.time(), why, ref))
@@ -182,7 +188,7 @@ def execute(agent_id: str, phase: str, by_id: str, given: dict | None = None, tr
 def view(row) -> dict:
     d = dict(row)
     d["inputs"], d["steps"] = json.loads(d["inputs"] or "{}"), json.loads(d["steps"] or "[]")
-    d["waiting"] = d["phase"] == "preview" and d["status"] == "done" and any(
+    d["waiting"] = d["phase"] == "preview" and d["status"] == settings()["run_states"]["done"] and any(
         s["gate"] == "preview" for s in d["steps"]) and not d.get("approved")
     return d
 
@@ -200,7 +206,7 @@ def _owners() -> list[str]:
 def _after_trigger(agent_id: str, run: dict) -> str:
     """A triggered dry run: chip agents.trigger_gate says what happens next; the owners' bell hears it."""
     writes = [s for s in run["steps"] if s["gate"] == "preview"]
-    verdict = engine.run("agents.trigger_gate", {"facts": {"failed": run["status"] == "failed", "blocked": False,
+    verdict = engine.run("agents.trigger_gate", {"facts": {"failed": run["status"] == settings()["run_states"]["failed"], "blocked": False,
                                                            "has_writes": bool(writes), "all_writes_trusted": all(s["trusted"] for s in writes)}})
     name = engine.run("ui.agents").get(f"name_{agent_id}") or agent_id      # a recipe whose words are not written yet: its id
     if verdict == "approve":

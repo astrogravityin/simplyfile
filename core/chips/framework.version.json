@@ -1,0 +1,53 @@
+{
+ "chip_id": "framework.version",
+ "kind": "accessor",
+ "set": "framework",
+ "audience": "admin",
+ "label": "Framework version this portal carries",
+ "aliases": [
+  "framework version",
+  "version"
+ ],
+ "params": [
+  {
+   "name": "version",
+   "type": "text",
+   "default": "1.0",
+   "label": "The framework version this copy carries (bump the minor for every change to starter/core, the major for a change a portal must act on)"
+  },
+  {
+   "name": "date",
+   "type": "text",
+   "default": "2026-11-12",
+   "label": "The day this version was made (YYYY-MM-DD)"
+  },
+  {
+   "name": "notes",
+   "type": "text",
+   "default": "Naming standards (tables, documents, exceptions, settings), jobs that never fail in silence, a health check that tests the store, request IDs, stronger password hashing, pinned packages.",
+   "label": "What this version brought, in one line"
+  }
+ ],
+ "expr": {
+  "vop": "record",
+  "fields": {
+   "version": "$version",
+   "date": "$date",
+   "notes": "$notes"
+  }
+ },
+ "returns": "record",
+ "version": 1,
+ "status": "published",
+ "description_nl": "2026-11-12 owner: \"How in UI, I know which framework version we are working?\" - core/** travels to every portal with sync_boilerplate, so this chip says which DomainTemplate version a portal was last synced from. About us shows it; CodyFy's Build setup > Framework shows the copy it sends build computers.",
+ "test_cases": [
+  {
+   "args": {},
+   "expect_value": {
+    "version": "1.0",
+    "date": "2026-11-12",
+    "notes": "Naming standards (tables, documents, exceptions, settings), jobs that never fail in silence, a health check that tests the store, request IDs, stronger password hashing, pinned packages."
+   }
+  }
+ ]
+}

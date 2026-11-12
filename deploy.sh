@@ -21,7 +21,8 @@ before=$DEPLOY_PULLED
 after=$(git rev-parse --short HEAD)
 echo "code: $before -> $after"
 
-.venv/bin/pip install -q -r requirements.txt
+# 2026-11-12 (VS standards): the lock, when the portal has one, is installed exactly - every file checked by its hash (chip deps.lock)
+if [ -f requirements.lock ]; then .venv/bin/pip install -q --require-hashes --no-deps -r requirements.lock; else .venv/bin/pip install -q -r requirements.txt; fi
 .venv/bin/python selfcheck.py
 
 systemctl restart "$SERVICE"

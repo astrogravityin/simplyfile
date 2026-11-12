@@ -70,6 +70,12 @@
    "type": "number",
    "default": 365,
    "label": "How long a browser that has signed in is remembered as returning (days) - it then skips the landing page"
+  },
+  {
+   "name": "hash_rounds",
+   "type": "number",
+   "default": 600000,
+   "label": "Password hashing rounds (PBKDF2-SHA256; OWASP 2023: 600,000). A stored password with fewer is re-made at its next sign-in"
   }
  ],
  "expr": {
@@ -85,7 +91,8 @@
    "codes_kept": "$codes_kept",
    "code_log_kept": "$code_log_kept",
    "code_log_seconds": "$code_log_seconds",
-   "known_days": "$known_days"
+   "known_days": "$known_days",
+   "hash_rounds": "$hash_rounds"
   }
  },
  "returns": "record",
@@ -106,7 +113,8 @@
     "codes_kept": 2000,
     "code_log_kept": 5000,
     "code_log_seconds": 86400,
-    "known_days": 365
+    "known_days": 365,
+    "hash_rounds": 600000
    }
   }
  ],

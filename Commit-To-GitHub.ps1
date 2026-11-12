@@ -91,6 +91,7 @@ if (-not $Yes) {
 if (-not $NoVerify) {
     # The same check deploy.sh runs on the VPS before a restart: failing here costs a minute, failing there is a
     # deploy that stops half-way.
+    & $Python tools/lock_deps.py --audit   # 2026-11-12: known holes in the locked packages - a warning, never a stop (chip deps.lock)
     Write-Host 'Running selfcheck.py before commit...' -ForegroundColor Cyan
     & $Python tools\commit_scope.py --check | Out-Null
     Assert-Ok 'commit_scope.py'

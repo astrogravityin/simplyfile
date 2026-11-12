@@ -18,7 +18,7 @@ chip (`wizard.*`, `ui.wizard`, `guide.wizard`); `tools/make_wizard_chips.py` wri
 | A trust | - | ITR-7 | **not yet** - one switch: `wizard.settings` who[trust].supported (opens once clients.settings has a trust status) |
 
 A not-yet card says so in one line (`ui.wizard` ny_trust) and offers an individual's return instead or Clients & years - never a
-dead end. The company card was switched on the same night, once ITR-6 was built (`company.py`, docs/ITR6.md): its documents are the
+dead end. The company card was switched on the same night, once ITR-6 was built (`company.py`, docs/simplyfile-itr6_spec-v1_0.md): its documents are the
 certificate of incorporation (`coi`, read by `wizard.entity_sniff`), the final accounts, computation of income and fixed-asset
 schedule (kind books), 26AS / AIS and the GST certificate.
 

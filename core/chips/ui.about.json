@@ -150,6 +150,18 @@
       "type": "text",
       "default": "Could not ask the server for its build: {error}",
       "label": "failed"
+    },
+    {
+      "name": "framework",
+      "type": "text",
+      "default": "Framework",
+      "label": "framework"
+    },
+    {
+      "name": "framework_line",
+      "type": "text",
+      "default": "{version} · {date}",
+      "label": "framework line"
     }
   ],
   "expr": {
@@ -178,7 +190,9 @@
       "latest": "$latest",
       "newer": "$newer",
       "reload": "$reload",
-      "failed": "$failed"
+      "failed": "$failed",
+      "framework": "$framework",
+      "framework_line": "$framework_line"
     }
   },
   "returns": "record",
@@ -212,7 +226,9 @@
         "latest": "You are on the latest build.",
         "newer": "A newer build is live - reload to get it.",
         "reload": "Reload now",
-        "failed": "Could not ask the server for its build: {error}"
+        "failed": "Could not ask the server for its build: {error}",
+        "framework": "Framework",
+        "framework_line": "{version} · {date}"
       }
     }
   ]

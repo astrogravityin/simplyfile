@@ -78,6 +78,12 @@
       "type": "text",
       "default": "It cannot run yet: {why}",
       "label": "cannot run"
+    },
+    {
+      "name": "stopped_restart",
+      "type": "text",
+      "default": "Stopped: the server restarted while this run was going. Run it again.",
+      "label": "stopped restart"
     }
   ],
   "expr": {
@@ -94,7 +100,8 @@
       "ran": "$ran",
       "bell_review": "$bell_review",
       "bell_failed": "$bell_failed",
-      "cannot_run": "$cannot_run"
+      "cannot_run": "$cannot_run",
+      "stopped_restart": "$stopped_restart"
     }
   },
   "returns": "record",
@@ -116,7 +123,8 @@
         "ran": "Done - the agent made its changes.",
         "bell_review": "{name} has something for you to approve.",
         "bell_failed": "{name} could not finish: {why}",
-        "cannot_run": "It cannot run yet: {why}"
+        "cannot_run": "It cannot run yet: {why}",
+        "stopped_restart": "Stopped: the server restarted while this run was going. Run it again."
       }
     }
   ]

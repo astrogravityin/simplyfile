@@ -317,6 +317,7 @@ def signin(request: Request, response: Response, body: dict = Body(...)):
         note_fail(tries)
         raise fail(401, "wrong_password")
     clear_fails(identity)
+    store.rehash(u["id"], body.get("password", ""))   # 2026-11-12: an older, weaker hash is re-made now (chip auth.limits hash_rounds)
     if engine.run("auth.signin_gate", {"verified": u.get("verified") is not False, "mail": mailer.configured()}) == "verify_first":
         raise fail(403, "verify_first")
     return _sign_in(response, u)

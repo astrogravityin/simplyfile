@@ -24,6 +24,39 @@
       "type": "number",
       "default": 10,
       "label": "Give each outside check this many seconds"
+    },
+    {
+      "name": "work_hours",
+      "type": "number",
+      "default": 48,
+      "label": "An agent whose latest run in this many hours failed or was cut short shows on the warning bar"
+    },
+    {
+      "name": "probe_file",
+      "type": "text",
+      "default": ".health",
+      "label": "File written and removed in the data folder to prove it takes a write"
+    },
+    {
+      "name": "db_probe",
+      "type": "text",
+      "default": "SELECT 1 AS ok",
+      "label": "Query each Postgres database must answer"
+    },
+    {
+      "name": "reason_chars",
+      "type": "number",
+      "default": 200,
+      "label": "Longest reason shown when a probe fails (characters)"
+    },
+    {
+      "name": "alert_states",
+      "type": "json",
+      "default": [
+        "failed",
+        "cut_short"
+      ],
+      "label": "Agent run states (agents.settings run_states keys) that put an agent on the warning bar"
     }
   ],
   "expr": {
@@ -31,11 +64,16 @@
     "fields": {
       "min_free_gb": "$min_free_gb",
       "cert_min_days": "$cert_min_days",
-      "timeout_s": "$timeout_s"
+      "timeout_s": "$timeout_s",
+      "work_hours": "$work_hours",
+      "probe_file": "$probe_file",
+      "db_probe": "$db_probe",
+      "reason_chars": "$reason_chars",
+      "alert_states": "$alert_states"
     }
   },
   "returns": "record",
-  "version": 1,
+  "version": 2,
   "status": "published",
   "description_nl": "2026-10-23: the numbers of core/health.py (Daily health check agent).",
   "test_cases": [
@@ -44,7 +82,15 @@
       "expect_value": {
         "min_free_gb": 5,
         "cert_min_days": 14,
-        "timeout_s": 10
+        "timeout_s": 10,
+        "work_hours": 48,
+        "alert_states": [
+          "failed",
+          "cut_short"
+        ],
+        "reason_chars": 200,
+        "db_probe": "SELECT 1 AS ok",
+        "probe_file": ".health"
       }
     }
   ]

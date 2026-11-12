@@ -46,6 +46,39 @@ def disk() -> dict:
     return {"ok": ok, "say": say("disk_ok" if ok else "disk_low", gb=round(free_gb, 1))}
 
 
+def work() -> dict:
+    """2026-11-12 owner (from the VS standards: "silence is not acceptable for batch failures"): every agent whose latest run in the
+    last chip health.settings work_hours failed or was cut short by a restart - until a later run of it finishes."""
+    since = time.time() - float(settings()["work_hours"]) * 3600
+    rows = agents.db().execute("SELECT agent, status FROM runs r WHERE made >= ? AND made = "
+                               "(SELECT MAX(made) FROM runs WHERE agent = r.agent)", (since,)).fetchall()
+    bad = sorted({r["agent"] for r in rows if r["status"] in {agents.settings()["run_states"][s] for s in settings()["alert_states"]}})
+    words = engine.run("ui.agents") or {}
+    names = ", ".join(str(words.get(f"name_{a}") or a) for a in bad)
+    return {"ok": not bad, "say": say("work_bad", names=names) if bad else say("work_ok", n=len(rows))}
+
+
+def ready() -> str:
+    """GET /health (2026-11-12, from the VS standards: a health check tests what the portal depends on): "" when the data folder
+    takes a write and every Postgres db answers, else the reason - the route then answers 503, so deploy and CC see it."""
+    from core import sqlstore  # noqa: PLC0415
+    try:
+        store.DATA.mkdir(parents=True, exist_ok=True)
+        k = settings()
+        t = store.DATA / k["probe_file"]
+        t.write_text(store.now(), encoding="utf-8")
+        t.unlink(missing_ok=True)
+    except OSError as e:
+        return say("ready_disk", why=str(e)[:int(settings()["reason_chars"])])
+    for db in sorted(sqlstore._SCHEMA):   # noqa: SLF001 - the dbs this portal registered
+        if sqlstore.kind(db) == "postgres":
+            try:
+                sqlstore.one(db, settings()["db_probe"])
+            except Exception as e:  # noqa: BLE001 - the driver's own reason is what the owner reads
+                return say("ready_db", db=db, why=str(e)[:int(settings()["reason_chars"])])
+    return ""
+
+
 def cert_days(host: str) -> float:
     """Days until this host's https certificate ends (a refused or broken https raises - that is the problem)."""
     ctx = ssl.create_default_context()
@@ -102,6 +135,7 @@ def bootstrap_extra(request: Request, u: dict | None) -> dict:
 
 
 probe("disk", disk)
+probe("work", work)
 agents.action("health.check", check)
 agents.action("health.warn", warn)
 
@@ -133,4 +167,27 @@ if __name__ == "__main__":  # ponytail: a probe that raises is a problem, the ba
     assert store.read(BAR, {})["problems"] == [] and len(rang) == 2, "fixed: the bar clears by itself, nothing piles up"
     assert bootstrap_extra(None, {"role": "owner"}) == {}, "an empty bar is not shown"
     assert engine.run("health.disk_ok", {"free_gb": 1, "min_free_gb": 5}) is False and disk()["say"]
+    # 2026-11-12: an agent run cut short by a restart is stopped, and the warning bar names it until a later run finishes
+    c = agents.db()
+    now, rs = time.time(), agents.settings()["run_states"]
+    c.execute("INSERT INTO runs(ref, agent, phase, status, by_id, made) VALUES('r1', 'ag_x', 'run', ?, '', ?)", (rs["live"], now - 60))
+    c.commit()
+    agents._RECOVERED.clear()   # noqa: SLF001 - as at the next start
+    agents._LOCAL.c = None      # noqa: SLF001
+    c = agents.db()
+    row = c.execute("SELECT status, why FROM runs WHERE ref='r1'").fetchone()
+    assert row["status"] == rs["cut_short"] and row["why"], "a run cut short by a restart stayed 'running'"
+    assert not work()["ok"] and "ag_x" in work()["say"], "a cut-short run did not show on the bar"
+    c.execute("INSERT INTO runs(ref, agent, phase, status, by_id, made) VALUES('r2', 'ag_x', 'run', ?, '', ?)", (rs["done"], now))
+    c.commit()
+    assert work()["ok"], "a later run that finished did not clear the bar"
+    c.execute("INSERT INTO runs(ref, agent, phase, status, by_id, made) VALUES('r3', 'ag_y', 'run', ?, '', ?)", (rs["failed"], now - 999999))
+    c.commit()
+    assert work()["ok"], "a failure older than work_hours still shows"
+    assert ready() == ""
+    real, store.DATA = store.DATA, Path(tempfile.mkdtemp()) / "file"
+    store.DATA.parent.mkdir(exist_ok=True)
+    store.DATA.write_text("x")          # a file where the data folder should be: no write possible
+    assert ready().startswith("not ready"), "a data folder that cannot be written passed the health check"
+    store.DATA = real
     print("health self-check OK")

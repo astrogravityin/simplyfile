@@ -611,10 +611,44 @@ def site_manifest_check() -> None:
     print(f"  site file: {SITE_FILE} ({m['id']}, {m['host']}) for ValueStream CC OK")
 
 
+# 2026-11-12 owner ("Yes, A and B" on the VS standards review): one naming standard for tables, documents, exceptions and settings -
+# every rule in chip standards.naming, the reading in core/standards.py; names made before the rule wait in db_known (only shrinks).
+def standards_check() -> None:
+    sk = json.loads((HERE / "core" / "chips" / "standards.naming.json").read_text(encoding="utf-8"))
+    sk = {p["name"]: p["default"] for p in sk["params"]}   # read from the file: a selfcheck part never imports store in-process
+    w = sk["check_words"]
+    dk = {p["name"]: p["default"] for p in json.loads((HERE / "core" / "chips" / "deps.lock.json").read_text(encoding="utf-8"))["params"]}
+    r = subprocess.run([sys.executable, "-m", "core.standards"], cwd=HERE, capture_output=True, text=True, timeout=120)
+    assert r.returncode == 0, w["selftest_failed"] + "\n" + (r.stdout + r.stderr)[-2000:]
+    code = ("import json, sys; from pathlib import Path; from core import standards as s\n"
+            "H = Path('.'); k = s.K(); skip = set(k['scan_skip'])\n"
+            "fs = [f for f in [*H.glob('*.py'), *(H / 'core').glob('*.py'), *(H / 'tools').rglob('*.py')] if f.name not in skip and not f.name.startswith('selfcheck')]\n"
+            "txt = {f: f.read_text(encoding='utf-8', errors='replace') for f in fs}\n"
+            "db = [p for f, t in txt.items() for p in s.db_problems(f.stem, t, k)]\n"
+            "docs = [p for d in k['doc_folders'] if (H / d).is_dir() for p in s.doc_problems(sorted(x.name for x in (H / d).glob('*.md')), k)]\n"
+            "exc = [p for n in k['exception_files'] if (H / n).is_file() for p in s.exception_problems((H / n).read_text(encoding='utf-8'), k)]\n"
+            "env = s.env_problems(set().union(*[s.env_read(t) for t in txt.values()]), (H / k['env_file']).read_text(encoding='utf-8') if (H / k['env_file']).is_file() else '', k)\n"
+            "print(json.dumps({'db': db, 'known': k['db_known'], 'docs': docs, 'exc': exc, 'env': env, 'env_file': k['env_file']}))\n")
+    r = subprocess.run([sys.executable, "-c", code], cwd=HERE, capture_output=True, text=True, timeout=120)
+    assert r.returncode == 0, w["scan_failed"] + "\n" + (r.stdout + r.stderr)[-2000:]
+    got = json.loads(r.stdout.strip().splitlines()[-1])
+    new = [p for p in got["db"] if p not in got["known"]]
+    gone = [p for p in got["known"] if p not in got["db"]]
+    for key, bad in (("db_new", new), ("db_gone", gone), ("docs", got["docs"]), ("exc", got["exc"]), ("env", got["env"])):
+        assert not bad, w[key] + "\n  " + "\n  ".join(bad)
+    # pinned packages: the lock (when the portal has one) names everything requirements.txt asks for, each line exact and hashed;
+    # deploy.sh installs from it with --require-hashes
+    r = subprocess.run([sys.executable, "tools/lock_deps.py", "--check"], cwd=HERE, capture_output=True, text=True, timeout=120)
+    assert r.returncode == 0, w["lock_behind"] + "\n" + (r.stdout + r.stderr)[-1500:]
+    dep_ = (HERE / "deploy.sh").read_text(encoding="utf-8")
+    assert dk["install_line"] in dep_, w["deploy_unhashed"]
+    print("  " + w["ok"].format(known=len(got["known"]), env_file=got["env_file"]))
+
+
 if __name__ == "__main__":
     print("SimplyFy - self-check")
     only = sys.argv[1:]
-    for name, fn in {"modules": module_checks, "statics": static_checks, "chips": chips_first_check, "guides": guides_tours_check, "name": name_once_check, "verbs": verbs_check, "ai": ai_check, "site": site_manifest_check, "api": api_check, "push": lambda: __import__("selfcheck_push").main()}.items():
+    for name, fn in {"modules": module_checks, "statics": static_checks, "chips": chips_first_check, "guides": guides_tours_check, "name": name_once_check, "verbs": verbs_check, "ai": ai_check, "site": site_manifest_check, "standards": standards_check, "api": api_check, "push": lambda: __import__("selfcheck_push").main()}.items():
         if not only or name in only:
             fn()
     import selfcheck_quality  # W1.3 quality gate: lint/types, shape walk, word drift, clones, deps (+ coverage when named)

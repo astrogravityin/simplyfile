@@ -43,7 +43,7 @@ Check everything, no paid call: `python selfcheck.py`.
   losses set off and carried (s.72, s.79, unabsorbed depreciation), 80M / 80G, MAT u/s 115JB and its credit, and the
   ITR-6 JSON checked against the CBDT schema; audit report 3CA-3CD; due 31 October. Chips `company.*`
   (`tools/make_itr6_chips.py`); test `tools/e2e_itr6.py`; demo `tools/showcase/pre_companies.py`; tour `tours/sf-company.json`.
-  Everything, the sources and what is left: **[docs/ITR6.md](docs/ITR6.md)**.
+  Everything, the sources and what is left: **[docs/simplyfile-itr6_spec-v1_0.md](docs/simplyfile-itr6_spec-v1_0.md)**.
 - **Intake & map** (`intake.py`): the client's Excel (.xls / .xlsx / .csv, Tally exports included) per year. Every
   row with a figure gets an **SF Ref** — `3CD 31(a) #2`, `ITR3 HP`, several joined with `;` — from a person, from the
   file's own SF Ref column, or from a suggestion a person accepts. Download the workbook back with the column filled.
@@ -89,3 +89,14 @@ that site's `data/` folder, never in git.
 | `Requirements/` `SimplyFile-Workflow.html` | the client's material — kept here, never committed |
 
 Deploying: `DEPLOY.md`.
+
+## Documented exceptions (framework 1.0 naming standard, chip standards.naming)
+
+```text
+# EXCEPTION: requirements.lock made by tools/make_lock.py
+# Standard: python tools/lock_deps.py makes requirements.lock for the server's platform (chip deps.lock)
+# This project uses: tools/make_lock.py (W1.3) - the tested venv versions, Linux and Windows markers, multi-line hashes; lock_deps.py only checks and audits it
+# Reason: the W1.3 quality gate (tools/deps_gate.py) compares the lock with the venv it tested, on both platforms
+# Owner: SimplyFile portal owner
+# Revisit: next DomainTemplate sync - fold make_lock.py into lock_deps.py
+```

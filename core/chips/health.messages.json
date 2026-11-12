@@ -78,6 +78,42 @@
       "type": "text",
       "default": "{n} new {n:thing needs|things need} you: {names} - see the warning bar",
       "label": "bell new"
+    },
+    {
+      "name": "probe_work",
+      "type": "text",
+      "default": "Agent runs",
+      "label": "probe work"
+    },
+    {
+      "name": "work_ok",
+      "type": "text",
+      "default": "{n} {n:agent|agents} ran fine",
+      "label": "work ok"
+    },
+    {
+      "name": "work_bad",
+      "type": "text",
+      "default": "{names} - the last run did not finish; open Agents, read why and run it again",
+      "label": "work bad"
+    },
+    {
+      "name": "ready_ok",
+      "type": "text",
+      "default": "ok",
+      "label": "ready ok"
+    },
+    {
+      "name": "ready_disk",
+      "type": "text",
+      "default": "not ready: the data folder cannot be written ({why})",
+      "label": "ready disk"
+    },
+    {
+      "name": "ready_db",
+      "type": "text",
+      "default": "not ready: database {db} does not answer ({why})",
+      "label": "ready db"
     }
   ],
   "expr": {
@@ -94,11 +130,17 @@
       "cert_host": "$cert_host",
       "cert_low": "$cert_low",
       "probe_failed": "$probe_failed",
-      "bell_new": "$bell_new"
+      "bell_new": "$bell_new",
+      "probe_work": "$probe_work",
+      "work_ok": "$work_ok",
+      "work_bad": "$work_bad",
+      "ready_ok": "$ready_ok",
+      "ready_disk": "$ready_disk",
+      "ready_db": "$ready_db"
     }
   },
   "returns": "record",
-  "version": 1,
+  "version": 2,
   "status": "published",
   "description_nl": "2026-10-23: words of core/health.py; each probe's name is probe_<id>.",
   "test_cases": [
@@ -116,7 +158,13 @@
         "cert_host": "{host} ends in {days} days",
         "cert_low": "Certificate ending soon: {hosts} - renew it (certbot) before visitors see a warning",
         "probe_failed": "Could not check: {why}",
-        "bell_new": "{n} new {n:thing needs|things need} you: {names} - see the warning bar"
+        "bell_new": "{n} new {n:thing needs|things need} you: {names} - see the warning bar",
+        "probe_work": "Agent runs",
+        "work_ok": "{n} {n:agent|agents} ran fine",
+        "ready_db": "not ready: database {db} does not answer ({why})",
+        "ready_ok": "ok",
+        "work_bad": "{names} - the last run did not finish; open Agents, read why and run it again",
+        "ready_disk": "not ready: the data folder cannot be written ({why})"
       }
     }
   ]

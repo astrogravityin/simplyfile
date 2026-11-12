@@ -39,6 +39,7 @@ from pathlib import Path
 from fastapi.exceptions import RequestValidationError
 from fastapi.staticfiles import StaticFiles
 
+from core import logs  # noqa: E402 - 2026-11-12 request id + JSON log lines (chip log.settings)
 from core import about  # noqa: E402 - 2026-11-09 About us: who we are + the live build (GET /api/about/build)
 from core import access, auth, bell, builder, demo, doctor, engine, events, find, geo, guide, health, howto, issues, jobs, ledger, lists, mcp, mcp_oauth, memwatch, menus, rules, storage, store, words
 from core import artifacts  # noqa: E402,F401 - 2026-11-05 ValueStream CC Clean-up: artifacts_scan / artifacts_delete on the MCP door
@@ -200,6 +201,8 @@ def install(app, *, catalog, chips=None, rules_dir=None, scenarios=None) -> None
     app.middleware("http")(_multipart_cap)
     app.middleware("http")(_head_as_get)
     app.middleware("http")(doctor.catch)     # added last = runs first: every unexpected error, from any layer (Error Doctor)
+    app.middleware("http")(logs.request_id)  # 2026-11-12: outermost - one request id for every log line, error and answer
+    logs.install()
     app.add_exception_handler(RequestValidationError, doctor.bad_shape)   # W1.3: a wrong-shape body is a 422, never a 500
     for module in (about, auth, access, ledger, memwatch, howto, menus, guide, storage, builder, find, jobs, words, lists, issues, bell, events, demo, doctor, mcp, mcp_oauth, agents):
         app.include_router(module.router)

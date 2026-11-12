@@ -1584,7 +1584,10 @@ def _embeddable(url: str) -> bool:
 
 @app.get("/health", response_class=PlainTextResponse)
 def health():
-    return "ok"
+    """2026-11-12: 200 "ok" only when the data folder takes a write and every Postgres db answers; else 503 with the reason."""
+    from core import health as _health  # noqa: PLC0415
+    why = _health.ready()
+    return PlainTextResponse(why, status_code=503) if why else _health.say("ready_ok")
 
 
 def _boot_commit() -> str:

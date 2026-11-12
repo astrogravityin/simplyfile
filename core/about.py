@@ -45,7 +45,8 @@ STARTED = dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds")
 @router.get("/api/about/build")
 def api_build(_user=Depends(signed_in)):   # signed in: the menu that opens it is; a commit is not for strangers
     from core import BUILD  # noqa: PLC0415 - set by install()
-    return {"build": BUILD, **commit(), "started_at": STARTED}
+    from core import engine  # noqa: PLC0415
+    return {"build": BUILD, **commit(), "started_at": STARTED, "framework": engine.run("framework.version")}   # 2026-11-12: which framework
 
 
 def check() -> list[str]:

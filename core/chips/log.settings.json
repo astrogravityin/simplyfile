@@ -1,0 +1,77 @@
+{
+  "chip_id": "log.settings",
+  "kind": "accessor",
+  "set": "log",
+  "audience": "admin",
+  "label": "Logs: request id and JSON lines",
+  "aliases": [
+    "logging",
+    "request id"
+  ],
+  "params": [
+    {
+      "name": "header",
+      "type": "text",
+      "default": "X-Request-ID",
+      "label": "The request id's header, in and out"
+    },
+    {
+      "name": "id_pattern",
+      "type": "text",
+      "default": "^[A-Za-z0-9_-]{8,64}$",
+      "label": "A caller's id is kept only in this shape (else a new one is made)"
+    },
+    {
+      "name": "id_bytes",
+      "type": "number",
+      "default": 8,
+      "label": "Random bytes in a new id (shown as twice as many hex letters)"
+    },
+    {
+      "name": "json",
+      "type": "boolean",
+      "default": true,
+      "label": "Log lines as JSON (a log service reads them as they are)"
+    },
+    {
+      "name": "level",
+      "type": "text",
+      "default": "warning",
+      "label": "Lowest level Python logging writes"
+    },
+    {
+      "name": "time_format",
+      "type": "text",
+      "default": "%Y-%m-%dT%H:%M:%SZ",
+      "label": "time format"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "header": "$header",
+      "id_pattern": "$id_pattern",
+      "id_bytes": "$id_bytes",
+      "json": "$json",
+      "level": "$level",
+      "time_format": "$time_format"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-11-12 owner (\"Yes, A and B\" on the VS standards review): every request carries one id (the caller's if well-formed), returned on the answer and written into every log line, so a reported error leads to its exact lines. core/logs.py.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "header": "X-Request-ID",
+        "id_pattern": "^[A-Za-z0-9_-]{8,64}$",
+        "id_bytes": 8,
+        "json": true,
+        "level": "warning",
+        "time_format": "%Y-%m-%dT%H:%M:%SZ"
+      }
+    }
+  ]
+}

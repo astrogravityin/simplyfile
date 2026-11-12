@@ -1,0 +1,431 @@
+{
+  "chip_id": "standards.naming",
+  "kind": "accessor",
+  "set": "standards",
+  "audience": "admin",
+  "label": "Naming standards: tables, documents, exceptions, settings",
+  "aliases": [
+    "naming",
+    "standards",
+    "db naming",
+    "doc naming"
+  ],
+  "params": [
+    {
+      "name": "exception_marker",
+      "type": "text",
+      "default": "# EXCEPTION:",
+      "label": "The line that starts a documented exception in README.md / ARCHITECTURE.md"
+    },
+    {
+      "name": "exception_fields",
+      "type": "json",
+      "default": [
+        "Standard",
+        "This project uses",
+        "Reason",
+        "Owner",
+        "Revisit"
+      ],
+      "label": "Fields every documented exception fills (after '# EXCEPTION: <what>')"
+    },
+    {
+      "name": "exception_files",
+      "type": "json",
+      "default": [
+        "README.md",
+        "ARCHITECTURE.md"
+      ],
+      "label": "Where a portal writes its exceptions"
+    },
+    {
+      "name": "name_pattern",
+      "type": "text",
+      "default": "^[a-z][a-z0-9_]*$",
+      "label": "A table or column name: snake_case, lower case"
+    },
+    {
+      "name": "plural_endings",
+      "type": "json",
+      "default": [
+        "s"
+      ],
+      "label": "A table name's last word ends with one of these (plural)"
+    },
+    {
+      "name": "singular_suffixes",
+      "type": "json",
+      "default": [
+        "_log",
+        "_config",
+        "_settings",
+        "_master",
+        "_data"
+      ],
+      "label": "Fixed category words a table may end with, in the singular (an audit_log, a pipeline_config)"
+    },
+    {
+      "name": "banned_suffixes",
+      "type": "json",
+      "default": [
+        "_logs",
+        "_configs"
+      ],
+      "label": "Plural forms of the fixed words - never"
+    },
+    {
+      "name": "banned_prefixes",
+      "type": "json",
+      "default": [
+        "cfg_",
+        "tbl_"
+      ],
+      "label": "Abbreviated prefixes - spell the word out"
+    },
+    {
+      "name": "pk_name",
+      "type": "text",
+      "default": "id",
+      "label": "A table's own single-column primary key"
+    },
+    {
+      "name": "fk_suffix",
+      "type": "text",
+      "default": "_id",
+      "label": "A column that refers to another table: <singular table>_id"
+    },
+    {
+      "name": "singular_rules",
+      "type": "json",
+      "default": [
+        [
+          "ies",
+          "y"
+        ],
+        [
+          "ses",
+          "s"
+        ],
+        [
+          "s",
+          ""
+        ]
+      ],
+      "label": "How a plural table name becomes singular (ending -> ending), first match wins"
+    },
+    {
+      "name": "bool_types",
+      "type": "json",
+      "default": [
+        "BOOLEAN",
+        "BOOL"
+      ],
+      "label": "Column types that are yes / no"
+    },
+    {
+      "name": "bool_prefixes",
+      "type": "json",
+      "default": [
+        "is_",
+        "has_",
+        "can_"
+      ],
+      "label": "A yes / no column starts with one of these"
+    },
+    {
+      "name": "backup_pattern",
+      "type": "text",
+      "default": "^_backup_[a-z0-9]+_[0-9]{8}_[a-z][a-z0-9_]*$",
+      "label": "A snapshot table: _backup_<project>_<YYYYMMDD>_<table>"
+    },
+    {
+      "name": "backup_keep_days",
+      "type": "number",
+      "default": 30,
+      "label": "A snapshot table older than this many days is reported for deletion"
+    },
+    {
+      "name": "db_known",
+      "type": "json",
+      "default": [
+        "agents: runs: primary key 'ref' (want 'id')",
+        "agents: trig: not plural",
+        "agents: trig: no single-column primary key",
+        "ledger: activity: not plural",
+        "mcp_oauth: clients: primary key 'client_id' (want 'id')"
+      ],
+      "label": "Names made before the rule (2026-11-12) - this list only shrinks; a new table follows the rule"
+    },
+    {
+      "name": "doc_pattern",
+      "type": "text",
+      "default": "^[a-z0-9]+-[a-z0-9_]+-(v[0-9]+_[0-9]+|[0-9]{8})\\.md$",
+      "label": "A document's file name: <project>-<topic_words>-vM_m.md or -YYYYMMDD.md"
+    },
+    {
+      "name": "doc_exempt",
+      "type": "json",
+      "default": [
+        "README.md",
+        "CLAUDE.md",
+        "SKILL.md",
+        "START_HERE.md",
+        "AUTH.md",
+        "CHANGELOG.md",
+        "MASTER-PROMPT.md",
+        "REBUILD-PROMPT.md",
+        "DEPLOY.md",
+        "ARCHITECTURE.md",
+        "_INDEX.md"
+      ],
+      "label": "Well-known names tools and people look for - kept as they are"
+    },
+    {
+      "name": "doc_kinds",
+      "type": "json",
+      "default": [
+        "spec",
+        "grammar",
+        "design",
+        "workbook",
+        "plan",
+        "crosswalk",
+        "review",
+        "guidance",
+        "overview"
+      ],
+      "label": "The last topic word says what kind of document it is"
+    },
+    {
+      "name": "doc_folders",
+      "type": "json",
+      "default": [
+        "docs",
+        "../docs"
+      ],
+      "label": "Folders whose .md files follow the document naming rule"
+    },
+    {
+      "name": "doc_archive",
+      "type": "text",
+      "default": "archives",
+      "label": "Where a superseded edition goes (inside the docs folder), with a STATUS: SUPERSEDED banner"
+    },
+    {
+      "name": "env_file",
+      "type": "text",
+      "default": ".env.example",
+      "label": "The file that lists every setting the server reads from its environment (names only)"
+    },
+    {
+      "name": "env_ignore",
+      "type": "json",
+      "default": [
+        "PYTHONPATH",
+        "DISPLAY",
+        "WAYLAND_DISPLAY",
+        "PATH",
+        "HOME",
+        "TEMP",
+        "TMP"
+      ],
+      "label": "System variables a portal reads but never sets"
+    },
+    {
+      "name": "scan_skip",
+      "type": "json",
+      "default": [
+        "standards.py",
+        "sqlstore.py",
+        "selfcheck.py"
+      ],
+      "label": "scan skip"
+    },
+    {
+      "name": "check_words",
+      "type": "json",
+      "default": {
+        "selftest_failed": "core.standards self-test failed:",
+        "scan_failed": "standards scan failed:",
+        "db_new": "a table or column breaks the naming standard (chip standards.naming; plural snake_case, id, <entity>_id, is_, _log singular):",
+        "db_gone": "fixed - take these out of chip standards.naming db_known (the list only shrinks):",
+        "docs": "a document's file name breaks the naming standard (chip standards.naming doc_pattern):",
+        "exc": "a documented exception is not filled in (chip standards.naming exception_fields):",
+        "env": "a setting the code reads is not listed:",
+        "lock_behind": "requirements.lock is behind requirements.txt - run python tools/lock_deps.py:",
+        "deploy_unhashed": "deploy.sh does not install from the lock by its hashes (chip deps.lock install_line)",
+        "ok": "standards: tables named to the standard ({known} older names waiting), documents named, exceptions filled, every setting in {env_file} OK",
+        "no_rehash": "an older password hash was not re-made at sign-in (chip auth.limits hash_rounds)",
+        "no_request_id": "an answer has no request id (chip log.settings)",
+        "id_not_kept": "a caller's request id was not kept (chip log.settings id_pattern)"
+      },
+      "label": "check words"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "exception_marker": "$exception_marker",
+      "exception_fields": "$exception_fields",
+      "exception_files": "$exception_files",
+      "name_pattern": "$name_pattern",
+      "plural_endings": "$plural_endings",
+      "singular_suffixes": "$singular_suffixes",
+      "banned_suffixes": "$banned_suffixes",
+      "banned_prefixes": "$banned_prefixes",
+      "pk_name": "$pk_name",
+      "fk_suffix": "$fk_suffix",
+      "singular_rules": "$singular_rules",
+      "bool_types": "$bool_types",
+      "bool_prefixes": "$bool_prefixes",
+      "backup_pattern": "$backup_pattern",
+      "backup_keep_days": "$backup_keep_days",
+      "db_known": "$db_known",
+      "doc_pattern": "$doc_pattern",
+      "doc_exempt": "$doc_exempt",
+      "doc_kinds": "$doc_kinds",
+      "doc_folders": "$doc_folders",
+      "doc_archive": "$doc_archive",
+      "env_file": "$env_file",
+      "env_ignore": "$env_ignore",
+      "scan_skip": "$scan_skip",
+      "check_words": "$check_words"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-11-12 owner (\"Yes, A and B\" on the VS standards review): one chip for the naming rules core/standards.py checks - database tables and columns (four kinds of data, plural snake_case, id / <entity>_id / is_, _log singular, config spelled out, dated snapshots), document file names (<project>-<topic_words>-vM_m / -YYYYMMDD, a kind word last, a new version replaces the old in full), documented exceptions and the .env.example list. db_known is a ratchet: names from before the rule, only ever removed.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "exception_marker": "# EXCEPTION:",
+        "exception_fields": [
+          "Standard",
+          "This project uses",
+          "Reason",
+          "Owner",
+          "Revisit"
+        ],
+        "exception_files": [
+          "README.md",
+          "ARCHITECTURE.md"
+        ],
+        "name_pattern": "^[a-z][a-z0-9_]*$",
+        "plural_endings": [
+          "s"
+        ],
+        "singular_suffixes": [
+          "_log",
+          "_config",
+          "_settings",
+          "_master",
+          "_data"
+        ],
+        "banned_suffixes": [
+          "_logs",
+          "_configs"
+        ],
+        "banned_prefixes": [
+          "cfg_",
+          "tbl_"
+        ],
+        "pk_name": "id",
+        "fk_suffix": "_id",
+        "singular_rules": [
+          [
+            "ies",
+            "y"
+          ],
+          [
+            "ses",
+            "s"
+          ],
+          [
+            "s",
+            ""
+          ]
+        ],
+        "bool_types": [
+          "BOOLEAN",
+          "BOOL"
+        ],
+        "bool_prefixes": [
+          "is_",
+          "has_",
+          "can_"
+        ],
+        "backup_pattern": "^_backup_[a-z0-9]+_[0-9]{8}_[a-z][a-z0-9_]*$",
+        "backup_keep_days": 30,
+        "db_known": [
+          "agents: runs: primary key 'ref' (want 'id')",
+          "agents: trig: not plural",
+          "agents: trig: no single-column primary key",
+          "ledger: activity: not plural",
+          "mcp_oauth: clients: primary key 'client_id' (want 'id')"
+        ],
+        "doc_pattern": "^[a-z0-9]+-[a-z0-9_]+-(v[0-9]+_[0-9]+|[0-9]{8})\\.md$",
+        "doc_exempt": [
+          "README.md",
+          "CLAUDE.md",
+          "SKILL.md",
+          "START_HERE.md",
+          "AUTH.md",
+          "CHANGELOG.md",
+          "MASTER-PROMPT.md",
+          "REBUILD-PROMPT.md",
+          "DEPLOY.md",
+          "ARCHITECTURE.md",
+          "_INDEX.md"
+        ],
+        "doc_kinds": [
+          "spec",
+          "grammar",
+          "design",
+          "workbook",
+          "plan",
+          "crosswalk",
+          "review",
+          "guidance",
+          "overview"
+        ],
+        "doc_folders": [
+          "docs",
+          "../docs"
+        ],
+        "doc_archive": "archives",
+        "env_file": ".env.example",
+        "env_ignore": [
+          "PYTHONPATH",
+          "DISPLAY",
+          "WAYLAND_DISPLAY",
+          "PATH",
+          "HOME",
+          "TEMP",
+          "TMP"
+        ],
+        "scan_skip": [
+          "standards.py",
+          "sqlstore.py",
+          "selfcheck.py"
+        ],
+        "check_words": {
+          "selftest_failed": "core.standards self-test failed:",
+          "scan_failed": "standards scan failed:",
+          "db_new": "a table or column breaks the naming standard (chip standards.naming; plural snake_case, id, <entity>_id, is_, _log singular):",
+          "db_gone": "fixed - take these out of chip standards.naming db_known (the list only shrinks):",
+          "docs": "a document's file name breaks the naming standard (chip standards.naming doc_pattern):",
+          "exc": "a documented exception is not filled in (chip standards.naming exception_fields):",
+          "env": "a setting the code reads is not listed:",
+          "lock_behind": "requirements.lock is behind requirements.txt - run python tools/lock_deps.py:",
+          "deploy_unhashed": "deploy.sh does not install from the lock by its hashes (chip deps.lock install_line)",
+          "ok": "standards: tables named to the standard ({known} older names waiting), documents named, exceptions filled, every setting in {env_file} OK",
+          "no_rehash": "an older password hash was not re-made at sign-in (chip auth.limits hash_rounds)",
+          "no_request_id": "an answer has no request id (chip log.settings)",
+          "id_not_kept": "a caller's request id was not kept (chip log.settings id_pattern)"
+        }
+      }
+    }
+  ]
+}

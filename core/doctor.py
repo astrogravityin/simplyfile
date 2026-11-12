@@ -198,6 +198,8 @@ async def catch(request: Request, call_next):
         return await call_next(request)
     except Exception as e:   # noqa: BLE001 - the one place every unexpected error is caught
         r = record("server", type(e).__name__, str(e), route_of(request.url.path), our_line(e))
+        from core import logs  # noqa: PLC0415 - 2026-11-12: the reference the person reads leads to this line in the journal
+        logs.line("server_error", "error", fp=r["fp"], error=type(e).__name__, route=route_of(request.url.path))
         return JSONResponse({"detail": say("server_error", fp=r["fp"])}, status_code=500)
 
 
