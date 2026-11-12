@@ -26,7 +26,6 @@ HERE = Path(__file__).resolve().parent
 # ratchet: files that still poll (2026-11-11). Only shrinks. Each is a screen to move onto the stream (topic in chip events.settings).
 POLLING = {
     "static/dock.js",                    # Connect Plus kit's own chat-list badge (k.list_poll_ms) - the kit's stream is next
-    "core/static/page-memory.js",        # Memory watch Auto refresh - a `memory` topic is next
 }
 BUDGET_S = 2.0                           # the owner's bar for "rings the other in < 2 s" (gap plan W1.2)
 _FETCH = re.compile(r"\bapi\(|\bfetch\(|\bPage\(|\bcountConnect\(|\.json\(\)")
@@ -166,8 +165,32 @@ def live() -> None:
             log.close()
 
 
+def memory_pushed() -> None:
+    """A new Memory watch reading reaches a page that may open the screen (key s:memory), and only when one listens."""
+    import asyncio
+    sys.path.insert(0, str(HERE))
+    import store  # noqa: F401 - registers the portal's chips
+    from core import access, events, memwatch
+    access.load(HERE / "catalog.json")                                   # who may open which screen
+
+    async def _main():
+        assert memwatch.SCREEN_KEY in events.keys_of({"id": "o", "role": "owner"}), "the owner's stream must carry Memory watch news"
+        loop, q = asyncio.get_running_loop(), asyncio.Queue()
+        memwatch.tell({"t": "nobody"})                                   # nobody listening: nothing made
+        events._SUBS[memwatch.SCREEN_KEY].add((loop, q))  # noqa: SLF001
+        try:
+            memwatch.tell({"t": "x1"})
+            _, name, data = await asyncio.wait_for(q.get(), 5)
+            assert name == events.topic("memory") and data == {"t": "x1"} and q.empty(), (name, data)
+        finally:
+            events._SUBS[memwatch.SCREEN_KEY].discard((loop, q))  # noqa: SLF001
+    asyncio.run(_main())
+    print("  Memory watch pushed: each reading reaches open Memory watch pages OK")
+
+
 def main() -> None:
     no_polls()
+    memory_pushed()
     csp_quiet()
     live()
 

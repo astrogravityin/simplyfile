@@ -20,7 +20,6 @@ from packaging.requirements import Requirement
 from packaging.utils import canonicalize_name
 
 ROOT = Path(__file__).resolve().parent.parent
-BIN = Path(sys.executable).parent
 
 
 def knobs() -> dict:
@@ -53,9 +52,8 @@ def unmet(req_text: str, locked: dict[str, str]) -> list[str]:
 
 
 def audit(lock: Path, ignore: list[str]) -> list[str]:
-    exe = BIN / ("pip-audit" + (".exe" if sys.platform == "win32" else ""))
-    if not exe.exists():
-        raise SystemExit("pip-audit is not installed - pip install --require-hashes -r requirements-dev.lock")
+    from quality_gate import tool   # one lookup: beside python, or the user Scripts folder (Windows Store Python)
+    exe = tool("pip-audit")
     r = subprocess.run([str(exe), "-r", str(lock), "--require-hashes", "--no-deps", "--disable-pip", "-f", "json", "--progress-spinner", "off"],
                        cwd=ROOT, capture_output=True, text=True, encoding="utf-8", errors="replace")
     try:

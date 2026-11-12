@@ -167,7 +167,7 @@ if (ok.some((x) => !x)) { console.log(JSON.stringify(ok)); process.exit(1); }"""
         assert all(words.get(s) for s in ("clients", "intake", "recon", "app")), "a screen has no words"
         bad = []
         for route in app.app.routes:
-            path, methods = getattr(route, "path", ""), getattr(route, "methods", set()) or set()
+            path, methods = getattr(route, "path", ""), getattr(route, "methods", None) or set[str]()
             # 2026-11-12: the push stream (core/events, /api/core/events) never ends by design - a GET of it here hung the
             # whole selfcheck; selfcheck_push walks it with a real disconnect
             if "GET" in methods and "{" not in path and path.startswith("/api/") and path != "/api/core/events":

@@ -11,6 +11,7 @@ the last commit fails: the gate only tightens.
 from __future__ import annotations
 
 import json
+import os
 import re
 import subprocess
 import sys
@@ -42,8 +43,16 @@ def loosened(now: dict, before: dict | None) -> list[str]:
     return bad + [f"{k} {before[k]} -> {now[k]}" for k in now.get("floors", []) if k in before and now[k] < before[k]]
 
 
+def places() -> list[Path]:
+    """Where a dev tool may sit: beside python, or the user Scripts folder (Windows Store Python / pip --user - 2026-11-12
+    the gate said 'ruff is not installed' on a machine that had it there)."""
+    import sysconfig
+    return [BIN, Path(sysconfig.get_path("scripts")), Path(sysconfig.get_path("scripts", f"{os.name}_user"))]
+
+
 def tool(name: str) -> str:
-    exe = BIN / (name + (".exe" if sys.platform == "win32" else ""))
+    file = name + (".exe" if sys.platform == "win32" else "")
+    exe = next((d / file for d in places() if (d / file).exists()), BIN / file)
     if not exe.exists():
         raise SystemExit(f"{name} is not installed in this Python - pip install --require-hashes -r requirements-dev.lock")
     return str(exe)
@@ -96,6 +105,8 @@ def gate() -> int:
 
 
 def selftest() -> None:
+    import sysconfig
+    assert Path(sysconfig.get_path("scripts", f"{os.name}_user")) in places(), "the user Scripts folder must be searched for ruff/mypy/pip-audit"
     k = {"ceilings": ["ruff_ceiling"], "floors": ["coverage_floor"], "ruff_ceiling": 10, "coverage_floor": 50.0}
     assert loosened(k | {"ruff_ceiling": 11}, k) == ["ruff_ceiling 10 -> 11"], "a raised ceiling must fail"
     assert loosened(k | {"coverage_floor": 49.0}, k) == ["coverage_floor 50.0 -> 49.0"], "a lowered floor must fail"

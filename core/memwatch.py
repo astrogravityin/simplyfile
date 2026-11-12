@@ -349,11 +349,17 @@ def sample(path: str = "") -> dict:
     return row
 
 
+def tell(row: dict) -> None:
+    """Server tells: open Memory watch pages re-read after a new reading (no page timer). Nobody listening = nothing sent."""
+    if events.listening(SCREEN_KEY):
+        events.publish(SCREEN_KEY, "memory", {"t": row["t"]}, replay=False)
+
+
 def _loop() -> None:
     last_disk = 0.0
     while True:
         try:
-            sample()
+            tell(sample())
             if time.time() - last_disk >= _S["disk_every_seconds"]:
                 last_disk = time.time()
                 refresh_disk()
@@ -427,7 +433,11 @@ def _limit_mb() -> int:
 
 # --- the page -----------------------------------------------------------------------------------
 
-from core.access import screen  # noqa: E402 - access imports store/auth only, no cycle back here
+from core.access import may, screen  # noqa: E402 - access imports store/auth only, no cycle back here
+from core import events  # noqa: E402
+
+SCREEN_KEY = "s:memory"
+events.KEYS.append(lambda u: [SCREEN_KEY] if may(u, "memory") else [])   # only those who may open the screen hear it
 
 
 def snapshot() -> dict:

@@ -2,8 +2,8 @@
 // server around it (CPU, memory, disk, bandwidth: this portal against everything else), which request
 // moved memory, and a verdict in words. Every judgement on this page comes from a `memory.*` chip on the
 // server; the page only draws what it is given. Refresh is the shell's (top right); this page adds
-// auto-refresh on the server's own sample cadence and Clear moves.
-import { api, esc, toast, pageHead, confirmDialog, t, loadWords, clockAt } from './ui.js';
+// Auto (the server says when it took a new reading - push stream topic memory, no page timer) and Clear moves.
+import { api, esc, toast, pageHead, confirmDialog, t, loadWords, clockAt, onEvent } from './ui.js';
 import { icon } from './icons.js';
 
 const gb = (mb) => (mb >= 1024 ? `${(mb / 1024).toFixed(1)} GB` : `${Math.round(mb || 0)} MB`);
@@ -19,7 +19,7 @@ const LEVEL = {
   warn: ['warn', 'alert', 'level_warn'], kill: ['bad', 'alert', 'level_kill'],
 };
 let auto = true;
-let timer = 0;
+let stopLive = () => {};   // the open screen's stream listener (one at a time)
 
 /** Lines over time in one SVG. series: [{key, cls}] read from rows; refs: [{value, cls, label}]. */
 function lines(rows, series, { max, refs = [], fmt = String, h = 170 } = {}) {
@@ -59,7 +59,7 @@ function table(head, rows, { hot, empty, mono = [] } = {}) {
 }
 
 export async function memoryPage(host) {
-  clearTimeout(timer);
+  stopLive();
   const d = await api('/api/core/memory');
   if (!host.isConnected) return;
   const v = d.verdict;
@@ -133,8 +133,10 @@ export async function memoryPage(host) {
       try { await api('/api/core/memory/clear-events', { method: 'POST' }); toast(mw('cleared'), 'ok'); memoryPage(host); }
       catch (err) { toast(err.message, 'bad'); }
     }, mw('clear'), { tone: 'danger' });
-  if (auto) {
-    timer = setTimeout(() => { if (host.isConnected && location.hash === '#/memory') memoryPage(host).catch(() => {}); },
-      Math.max(5, d.sample_seconds) * 1000);
-  }
+  stopLive();
+  stopLive = auto ? onEvent('memory', () => {           // pushed after each reading (core/memwatch.py) - no poll
+    if (!host.isConnected || location.hash !== '#/memory') { stopLive(); return; }
+    stopLive();
+    memoryPage(host).catch(() => {});
+  }) : () => {};
 }

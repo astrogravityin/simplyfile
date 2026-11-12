@@ -27,6 +27,7 @@ _SUBS: dict[str, set[tuple[asyncio.AbstractEventLoop, asyncio.Queue]]] = collect
 _LOG: collections.deque = collections.deque()          # (id, key, topic, data) - what a reconnect may have missed
 _IDS = itertools.count(1)
 HELLO: list = []                                         # fn(user) -> (topic, data) | None: the state a fresh stream starts from
+KEYS: list = []                                          # fn(user) -> [extra key]: e.g. s:memory for whoever may open Memory watch
 
 
 def K() -> dict:
@@ -39,17 +40,30 @@ def topic(name: str) -> str:
 
 
 def keys_of(u: dict) -> list[str]:
-    return [f"u:{u['id']}"] + ([f"f:{u['firm_id']}"] if u.get("firm_id") else [])
+    return ([f"u:{u['id']}"] + ([f"f:{u['firm_id']}"] if u.get("firm_id") else [])
+            + ([f"r:{u['role']}"] if u.get("role") else []) + [k for fn in KEYS for k in (fn(u) or [])])
 
 
-def publish(key: str, name: str, data: dict | None = None) -> int:
+def listening(key: str) -> bool:
+    """Is any page holding a stream on this key right now (so a costly piece of news is worth making)?"""
+    with _LOCK:
+        return bool(_SUBS.get(key))
+
+
+def to_role(role: str, name: str, data: dict | None = None) -> int:
+    """News for everyone signed in with this role (CC 2026-11-12: a VPS job any owner may be watching)."""
+    return publish(f"r:{role}", name, data) if role else 0
+
+
+def publish(key: str, name: str, data: dict | None = None, replay: bool = True) -> int:
     """One piece of news to everyone listening on `key` (u:<id> or f:<firm id>). Safe from any thread.
     ponytail: in-process fan-out - one uvicorn worker (start.sh); more workers need a shared bus (Postgres NOTIFY / Redis)."""
     if not key:
         return 0
     with _LOCK:
         eid = next(_IDS)
-        _LOG.append((eid, key, topic(name), data or {}))
+        if replay:                                        # a "new reading" nudge is stale at once - never replayed
+            _LOG.append((eid, key, topic(name), data or {}))
         while len(_LOG) > int(K()["replay_keep"]):
             _LOG.popleft()
         subs = list(_SUBS.get(key, ()))
@@ -133,6 +147,13 @@ if __name__ == "__main__":  # ponytail: one runnable self-check - fan-out by key
             to_person("c", "bell", {})
         assert len(_LOG) == int(K()["replay_keep"]), "replay log capped"
         assert keys_of({"id": "a", "firm_id": "x"}) == ["u:a", "f:x"] and keys_of({"id": "a"}) == ["u:a"]
+        assert keys_of({"id": "a", "role": "owner"}) == ["u:a", "r:owner"] and to_role("", "job") == 0
+        KEYS.append(lambda u: ["s:x"] if u.get("id") == "a" else [])
+        assert keys_of({"id": "a"}) == ["u:a", "s:x"] and keys_of({"id": "b"}) == ["u:b"]
+        KEYS.pop()
+        n = len(_LOG)
+        publish("s:x", "memory", {"t": 1}, replay=False)
+        assert len(_LOG) == n and not listening("s:none") and listening("u:a"), "a nudge is never replayed"
         assert to_person("", "bell") == 0 and publish("", "bell") == 0
         assert _frame(3, "bell", {"n": 1}) == 'id: 3\nevent: bell\ndata: {"n": 1}\n\n'
     asyncio.run(_main())
