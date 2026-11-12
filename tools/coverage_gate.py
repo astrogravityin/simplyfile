@@ -18,7 +18,6 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "tmp" / "coverage"
-BIN = Path(sys.executable).parent
 
 
 def verdict(pct: float, floor: float, step: float) -> tuple[bool, str]:
@@ -30,7 +29,8 @@ def verdict(pct: float, floor: float, step: float) -> tuple[bool, str]:
 
 
 def measure() -> tuple[float, list[str]]:
-    cov = str(BIN / ("coverage" + (".exe" if sys.platform == "win32" else "")))
+    from quality_gate import tool   # one lookup: beside python, or the user Scripts folder
+    cov = tool("coverage")
     shutil.rmtree(OUT, ignore_errors=True)
     OUT.mkdir(parents=True)
     r = subprocess.run([cov, "run", "selfcheck.py"], cwd=ROOT, capture_output=True, text=True, encoding="utf-8", errors="replace")
