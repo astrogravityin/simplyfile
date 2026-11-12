@@ -34,7 +34,7 @@ from typing import Any, Callable
 from fastapi import APIRouter, Body, Depends, HTTPException, Request
 from fastapi.responses import JSONResponse, Response
 
-from core import access, auth, engine, lists, store
+from core import access, auth, engine, events, lists, store
 
 router = APIRouter()
 TOOLS: dict[str, Callable[[dict, dict], dict]] = {}
@@ -265,6 +265,7 @@ def make_key(u: dict, label: str) -> dict:
     row = {"id": store.new_id(), "label": str(label or "").strip()[: int(k["label_chars"])] or say("key_default_label"),
            "hash": _hash(raw), "hint": raw[-4:], "made_by": u["id"], "made_at": store.now(), "revoked_at": "", "last_used": ""}
     store.write(KEYS, keys() + [row])
+    announce(u["id"])
     return {"key": raw, "row": {x: row[x] for x in ("id", "label", "hint", "made_at")}, "message": say("key_made")}
 
 
@@ -275,6 +276,7 @@ def revoke_key(key_id: str) -> dict:
         raise HTTPException(404, say("key_missing"))
     row["revoked_at"] = store.now()
     store.write(KEYS, all_)
+    announce(row["made_by"])
     return {"message": say("key_revoked")}
 
 
@@ -316,6 +318,7 @@ def caller(raw: str) -> tuple[dict | None, str, str]:
             if x["id"] == row["id"]:
                 x["last_used"] = store.now()
         store.write(KEYS, all_)
+        announce(u["id"])
     return u, (row or {}).get("id", ""), "" if u else "bad_key"
 
 
@@ -355,6 +358,15 @@ def status(u: dict) -> dict:
     best = max(used, default=None)
     recent = bool(best) and time.time() - best[0] < float(cfg()["check"]["connected_days"]) * 86400
     return {"connections": conns, "last": {"at": best[0], "who": best[1]} if best else None, "connected": recent}
+
+
+def announce(uid: str) -> None:
+    """Server tells (portal-builder, owner 2026-11-08): the new status line down the person's push stream (topic mcp,
+    chip events.settings) - a key or AI sign-in used, an app connected or disconnected, a key made or revoked.
+    ponytail: only the person whose key / sign-in it is hears it; other owners see it when they open the screen."""
+    u = store.user_by_id(uid) if uid else None
+    if u:
+        events.to_person(uid, "mcp", status(u))
 
 
 def check(u: dict, request: Request) -> dict:
@@ -399,7 +411,7 @@ def api_mcp_check(request: Request, u: dict = Depends(access.screen("connect-ai"
 @router.get("/api/core/mcp")
 def api_mcp(request: Request, u: dict = Depends(access.screen("connect-ai"))):
     srv = cfg()["server"] | naming()
-    return {"url": f"{_base(request)}/mcp", "name": srv["name"], "title": srv["title"], "status": status(u), "poll_seconds": cfg()["poll_seconds"],
+    return {"url": f"{_base(request)}/mcp", "name": srv["name"], "title": srv["title"], "status": status(u),
             "tools": [{"name": r["name"], "title": r.get("title") or r["name"], "description": r.get("description") or "",
                        "on": bool(r.get("on")), "ready": ready(r), "kind": r.get("kind") or "read"} for r in rows()],
             "keys": [{x: k[x] for x in ("id", "label", "hint", "made_at", "last_used")} for k in keys() if not k.get("revoked_at")],

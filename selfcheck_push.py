@@ -26,7 +26,6 @@ HERE = Path(__file__).resolve().parent
 # ratchet: files that still poll (2026-11-11). Only shrinks. Each is a screen to move onto the stream (topic in chip events.settings).
 POLLING = {
     "static/dock.js",                    # Connect Plus kit's own chat-list badge (k.list_poll_ms) - the kit's stream is next
-    "core/static/page-connect-ai.js",    # Connect your AI: MCP status re-read while open - an `mcp` topic is next
     "core/static/page-memory.js",        # Memory watch Auto refresh - a `memory` topic is next
 }
 BUDGET_S = 2.0                           # the owner's bar for "rings the other in < 2 s" (gap plan W1.2)
@@ -72,8 +71,8 @@ def no_polls() -> None:
     assert not new, f"a page asks the server on a timer - use the push stream (core/static/events.js onEvent): {new}"
     gone = POLLING - set(found)
     assert not gone, f"{sorted(gone)} no longer poll - take them off POLLING in selfcheck_push.py (the list only shrinks)"
-    for name in ("core/static/shell.js", "core/static/ui.js", "static/page-tourvideo.js"):
-        assert name not in found, f"{name} polls again (bell / job progress / tour runs come down the stream)"
+    for name in ("core/static/shell.js", "core/static/ui.js", "static/page-tourvideo.js", "core/static/page-connect-ai.js"):
+        assert name not in found, f"{name} polls again (bell / job progress / tour runs / MCP status come down the stream)"
     print(f"  no polls: {len(POLLING)} files still on the shrinking list, none new OK")
 
 

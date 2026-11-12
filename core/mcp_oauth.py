@@ -182,6 +182,7 @@ def _issue(g) -> dict:
     with _WRITE, db():
         db().execute("UPDATE grants SET access_hash=?, access_exp=?, refresh_hash=?, refresh_exp=?, connected_at=CASE WHEN connected_at=0 THEN ? ELSE connected_at END WHERE id=?",
                      (_hash(acc), now + float(cfg()["access_minutes"]) * 60, _hash(ref), now + float(cfg()["refresh_days"]) * 86400, now, g["id"]))
+    _announce(g["user_id"])                                                              # the app just connected
     return {"access_token": acc, "token_type": "Bearer", "expires_in": int(cfg()["access_minutes"]) * 60, "refresh_token": ref, "scope": cfg()["scope"]}
 
 
@@ -214,6 +215,7 @@ def bearer_grant(raw: str):
         return None, None
     with _WRITE, db():
         db().execute("UPDATE grants SET last_used=?, calls=calls+1 WHERE id=?", (time.time(), g["id"]))
+    _announce(user["id"])
     return user, g["id"]
 
 
@@ -228,6 +230,12 @@ def disconnect(user: dict, grant_id: str) -> None:
                          (time.time(), grant_id, user["id"])).rowcount
     if n != 1:
         raise HTTPException(404, OAuthError("invalid_request", "connection_missing").body()["error_description"])
+    _announce(user["id"])
+
+
+def _announce(uid: str) -> None:
+    from core import mcp  # noqa: PLC0415 - mcp imports this module; the status line lives there
+    mcp.announce(uid)
 
 
 # --- routes -----------------------------------------------------------------------------------------------------------------
@@ -339,9 +347,13 @@ if __name__ == "__main__":  # ponytail: the whole sign-in round trip, each refus
     code = approve(o, q, True).split("code=")[1].split("&")[0]
     tok = token({"grant_type": "authorization_code", "code": code, "client_id": app_["client_id"], "redirect_uri": q["redirect_uri"], "code_verifier": verifier})
     assert bearer_grant(tok["access_token"])[0]["id"] == o["id"] and connections(o)[0]["calls"] == 1
+    from core import events  # noqa: PLC0415 - server tells: the use reached the person's push stream with the new line
+    told = [d for _e, k, tp, d in events._LOG if k == f"u:{o['id']}" and tp == events.topic("mcp")]
+    assert told and told[-1]["connected"] and told[-1]["connections"][0]["calls"] == 1, "MCP use not told on the stream"
     new = token({"grant_type": "refresh_token", "refresh_token": tok["refresh_token"], "client_id": app_["client_id"]})
     refused(lambda: token({"grant_type": "refresh_token", "refresh_token": tok["refresh_token"]}), "invalid_grant")   # rotated
     assert bearer_grant(tok["access_token"]) == (None, None) and bearer_grant(new["access_token"])[0]
     disconnect(o, connections(o)[0]["id"])
     assert bearer_grant(new["access_token"]) == (None, None) and connections(o) == [], "disconnected = stopped at once"
+    assert [d for _e, k, tp, d in events._LOG if k == f"u:{o['id']}"][-1]["connections"] == [], "disconnect not told"
     print("mcp_oauth self-check OK")

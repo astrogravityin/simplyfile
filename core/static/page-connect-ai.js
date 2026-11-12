@@ -5,9 +5,11 @@
 // "For developers". The Allow card is this same screen (?allow=1...). Every word is chip ui.connect_ai.
 import { api, esc, toast, busy, say, pageHead, modal, confirmDialog, t, loadWords, clockAt, copyText, listBox } from './ui.js';
 import { icon } from './icons.js';
+import { onEvent } from './events.js';
 
 const w = (k, v) => t('connect_ai', k, v);
 const paint = (el, html) => { el.innerHTML = html; };   // 2026-10-24: the screen's one place that writes HTML (html_sinks ratchet)
+let stopLive = () => {};                                 // the open screen's stream listener (one at a time)
 const at = (sec) => (sec ? clockAt(new Date(sec * 1000).toISOString()) : '');
 
 /** The picture: an AI app and this portal, joined by one line with a key on it. */
@@ -97,16 +99,15 @@ export async function connectAiPage(host) {
     }, w('disconnect'), { tone: 'danger' });
   });
   wireApps();
-  // the LIVE status: re-read while this screen is open, so "Connected" appears the moment the app first calls
-  const tick = setInterval(async () => {
-    if (!host.isConnected || !host.querySelector('#ca-status')) { clearInterval(tick); return; }
-    try {
-      const s = await api('/api/core/mcp/status');
-      paint(host.querySelector('#ca-status'), statusLine(s));
-      paint(host.querySelector('#ca-apps'), appsList(s));
-      wireApps();
-    } catch { /* the next tick tries again */ }
-  }, Number(d.poll_seconds || 8) * 1000);
+  // the LIVE status: the server sends it down the push stream (topic mcp, core/mcp.py announce) the moment a key or AI
+  // sign-in is used, an app connects or a key changes - the page never asks on a timer (owner 2026-11-08)
+  stopLive();
+  stopLive = onEvent('mcp', (s) => {
+    if (!host.isConnected || !host.querySelector('#ca-status')) { stopLive(); return; }
+    paint(host.querySelector('#ca-status'), statusLine(s));
+    paint(host.querySelector('#ca-apps'), appsList(s));
+    wireApps();
+  });
   host.querySelector('#ca-check').onclick = (e) => busy(e.currentTarget, async () => {
     try {
       const r = await api('/api/core/mcp/check', { method: 'POST' });
