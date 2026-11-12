@@ -48,12 +48,12 @@ def _moved_in() -> None:
     """The first read in a data folder moves an old JSON register into the table (a register made before 2026-11-12)."""
     if str(store.DATA) in _MOVED:
         return
-    _MOVED.add(str(store.DATA))
-    old = [c for c in store.read(FILE, []) or [] if isinstance(c, dict) and c.get("id")]
-    if old and not sqlstore.one(DB, "SELECT 1 AS x FROM clients LIMIT 1"):
+    if not sqlstore.one(DB, "SELECT 1 AS x FROM clients LIMIT 1"):      # the table first: the old file is read only when empty
+        old = [c for c in store.read(FILE, []) or [] if isinstance(c, dict) and c.get("id")]
         with sqlstore.tx(DB) as x:
             for c in old:
                 _put(x, c)
+    _MOVED.add(str(store.DATA))
 
 
 def _put(x, c: dict) -> None:
@@ -435,6 +435,13 @@ if __name__ == "__main__":  # ponytail: one runnable self-check - a made-up clie
         store.write(FILE, [{"id": "c1", "firm_id": "f1", "name": "Old One", "pan": "AAAHS1234K", "status": "huf", "years": {},
                             "created_at": "2026-01-01"}])
         assert [c["id"] for c in _all()] == ["c1"] and get("c1")["name"] == "Old One", "the old JSON register did not move in"
+        reads: list = []   # 2026-11-12: a start with rows in the table never reads the old file (TradyFy parsed 3.5 MB per start)
+        real_read = store.read
+        store.read = lambda n, *a, **kw: (reads.append(n), real_read(n, *a, **kw))[1]
+        _MOVED.discard(str(store.DATA))
+        _all()
+        store.read = real_read
+        assert not {FILE} & set(reads), f"the old file was read with rows in the table: {reads}"
         told = []
         store.watch(r"^sf_clients\.json$", lambda n, o, w: told.append((o, w)))
         u1, u2 = {"id": "u1", "firm_id": "f1"}, {"id": "u2", "firm_id": "f2"}
