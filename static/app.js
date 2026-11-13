@@ -193,11 +193,11 @@ startPortal({
         <label for="proj">${w('project')}</label>
         <select id="proj">${state.projects.map((p) => `<option value="${esc(p.id)}" ${p.id === state.projectId ? 'selected' : ''}>${esc(p.name)}</option>`).join('')}</select></div>` : ''}
     ${!may(keyScreen()) || !onMenu(keyScreen()) ? '' : state.hasKey
-      ? `<span class="tag ok" title="${esc(w('ai_ready_tip'))}">${icon('spark', 12)} ${w('ai_ready')}</span>`
-      : `<a href="#/${esc(keyScreen())}" class="chipbtn">${icon('key', 14)} ${w('add_key')}</a>`}`,
+      ? `<span class="tag ok" title="${esc(w('ai_ready_tip'))}">${icon('spark', 12)} <span class="tb-lbl">${w('ai_ready')}</span></span>`
+      : `<a href="#/${esc(keyScreen())}" class="chipbtn" title="${esc(w('add_key'))}" aria-label="${esc(w('add_key'))}">${icon('key', 14)} <span class="tb-lbl">${w('add_key')}</span></a>`}`,
   // 2026-09-28 owner: "Launch -> Studio at top right" - a door opens the workshop (the studio) in a new tab
   topbarEnd: () => (state.edition && state.edition.launch ? `<a class="chipbtn" href="${esc(state.edition.launch)}" target="_blank" rel="noopener">
-      ${icon('wand', 14)} ${w('launch_studio')}</a>` : ''),
+      ${icon('wand', 14)} <span class="tb-lbl">${w('launch_studio')}</span></a>` : ''),
   wireTopbar: (root) => {
     syncDock(state.user);                               // 2026-10-04: the dock, bottom-right, signed in only
     const picker = root.querySelector('#proj');

@@ -75,6 +75,10 @@ def static_checks() -> None:
     # 2026-10-05 owner: "Copy the prompt" barely visible on white - controls were drawn with --line-2 (1.4:1). A control's
     # edge is --edge (>= 3:1) and quiet text --muted (>= 4.5:1) on every surface, light and dark (same guard as tv).
     css = (HERE / "core" / "static" / "portal.css").read_text(encoding="utf-8")
+    # 2026-11-13 owner (phone app): "Add your AI key" wrapped to four lines in the top bar - a top-bar chip never wraps and on
+    # a phone shows its icon only (the word is its title)
+    _app = (HERE / "static" / "app.js").read_text(encoding="utf-8")
+    assert ".chipbtn{white-space:nowrap}" in css and ".topbar .tb-lbl{display:none}" in css and "<span class=\"tb-lbl\">${w('add_key')}</span>" in _app, "top bar: the AI key chip wraps on a phone (portal.css .chipbtn nowrap + .tb-lbl, static/app.js tb-lbl)"
     def lum(h: str) -> float:
         c = [int(h[i:i + 2], 16) / 255 for i in (1, 3, 5)]
         c = [v / 12.92 if v <= 0.03928 else ((v + 0.055) / 1.055) ** 2.4 for v in c]
