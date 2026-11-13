@@ -43,6 +43,25 @@ def loosened(now: dict, before: dict | None) -> list[str]:
     return bad + [f"{k} {before[k]} -> {now[k]}" for k in now.get("floors", []) if k in before and now[k] < before[k]]
 
 
+def off_lock(root: Path = ROOT) -> list[str]:
+    """Locked packages installed here at another version. The counts depend on them: 2026-11-13 the ceilings were measured
+    in a venv with other fastapi/httpx versions and the VPS (which installs the lock) counted 3 more mypy errors, so its
+    deploy stopped. A package that is not installed at all is a platform-only one (uvloop on Windows) and is skipped."""
+    from importlib import metadata
+    lk = knobs((root / "core" / "chips" / "deps.lock.json").read_text(encoding="utf-8"))
+    out = []
+    for f in (lk[k] for k in ("lock", "dev_lock") if k in lk):     # an older deps.lock chip has no dev_lock
+        p = root / f
+        for name, ver in re.findall(r"^([A-Za-z0-9_.\-]+)==([^\s;\\]+)", p.read_text(encoding="utf-8") if p.exists() else "", re.M):
+            try:
+                have = metadata.version(name)
+            except metadata.PackageNotFoundError:
+                continue
+            if have != ver:
+                out.append(f"{name} {have} (lock {ver})")
+    return out
+
+
 def places() -> list[Path]:
     """Where a dev tool may sit: beside python, or the user Scripts folder (Windows Store Python / pip --user - 2026-11-12
     the gate said 'ruff is not installed' on a machine that had it there)."""
@@ -93,6 +112,10 @@ def gate() -> int:
     missing = selfcheck_parts() - ci_parts() - set(k["ci_elsewhere"])
     if missing:
         fails.append(f"selfcheck parts with no CI job (.github/workflows/check.yml matrix part): {sorted(missing)}")
+    off = off_lock()
+    if off:
+        fails.append("counted off the lock - install it first (pip install --require-hashes --no-deps -r requirements.lock "
+                     "-r requirements-dev.lock), the ceilings hold for the locked versions only: " + ", ".join(off[:10]))
     for name, found, cap in (("ruff", ruff(), k["ruff_ceiling"]), ("mypy", mypy(), k["mypy_ceiling"])):
         if len(found) > cap:
             fails.append(f"{name}: {len(found)} findings, ceiling {cap} - fix the new ones:\n    " + "\n    ".join(found[-15:]))
@@ -112,6 +135,13 @@ def selftest() -> None:
     assert loosened(k | {"coverage_floor": 49.0}, k) == ["coverage_floor 50.0 -> 49.0"], "a lowered floor must fail"
     assert loosened(k | {"ruff_ceiling": 9, "coverage_floor": 51.0}, k) == [], "tightening is always fine"
     assert loosened(k, None) == [], "no history, nothing to compare"
+    import tempfile
+    with tempfile.TemporaryDirectory() as t:
+        (Path(t) / "core" / "chips").mkdir(parents=True)
+        (Path(t) / "core" / "chips" / "deps.lock.json").write_text(json.dumps({"params": [{"name": "lock", "default": "a.lock"},
+                                                                                       {"name": "dev_lock", "default": "b.lock"}]}))
+        (Path(t) / "a.lock").write_text("pip==0.0.1 --hash=sha256:x\nno-such-package-xyz==1.0 --hash=sha256:y\n")
+        assert [x.split()[0] for x in off_lock(Path(t))] == ["pip"], "a locked package at another version must be named; a missing one skipped"
     print("quality gate self-check OK")
 
 
