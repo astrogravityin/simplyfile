@@ -76,7 +76,10 @@ else echo "$Dir is not in the release layout yet - DEPLOY.md, 'Switch-over to re
 nohup `$run > deploy.log 2>&1 < /dev/null & pid=`$!; tail -n +1 -f --pid=`$pid deploy.log; wait `$pid
 "@ -replace "`r", ''
 Write-Host "$verb on $Server ($Dir)..." -ForegroundColor Cyan
-ssh @sshArgs $Server $remote
+# Windows PowerShell 5.1 drops the inner double quotes of a native argument (2026-11-13: the VPS ran run=bash deploy.sh
+# unquoted - 'nohup: missing operand'); the script travels as base64, which has no quote to lose, on 5.1 and 7 alike.
+$b64 = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($remote))
+ssh @sshArgs $Server "echo $b64 | base64 -d | bash"
 if ($LASTEXITCODE -eq 3) {
     throw "$Dir on the VPS is not a checkout - the site was never set up there. First setup: VPS Console -> New site, or DEPLOY.md."
 }
