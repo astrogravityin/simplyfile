@@ -109,7 +109,10 @@ d prod init v1 2>&1 | sed 's/^/  /'; bash "$ROOT/fake-service.sh" "$ROOT/prod" "
 for _ in $(seq 1 20); do [ "$(version $PROD_PORT)" = v1 ] && break; sleep 0.5; done
 [ "$(version $PROD_PORT)" = v1 ] && row OK "init prod at v1, service started" "-" "port $PROD_PORT serves v1" || row BAD "init prod at v1" "-" "port $PROD_PORT serves $(version $PROD_PORT)"
 
+# 2026-11-14: a video the running release made (chip deploy.settings kept: tmp/tour_video) outlives the release
+mkdir -p "$ROOT/prod/current/tmp/tour_video/x"; echo film >"$ROOT/prod/current/tmp/tour_video/x/x.mp4"
 step "deploy v2 (good)"                                  0 "$PROD_PORT" v2 prod deploy v2
+[ -f "$ROOT/prod/current/tmp/tour_video/x/x.mp4" ] && row OK "a Tour Video made on v1 is still there on v2" "-" "kept/tmp/tour_video linked" || row BAD "a Tour Video made on v1 is still there on v2" "-" "gone with the release"
 step "deploy v3 (selfcheck fails) -> v2 keeps serving"   1 "$PROD_PORT" v2 prod deploy v3
 step "deploy v4 (/health 500) -> probe stops it"         1 "$PROD_PORT" v2 prod deploy v4
 step "deploy v5 (fails on live data) -> switched back"   1 "$PROD_PORT" v2 prod deploy v5

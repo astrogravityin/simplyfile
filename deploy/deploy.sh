@@ -127,6 +127,15 @@ build() {   # $1 sha
     say "  packages: venv $key (same $req as before)"
   fi
   set_link "$rel/.venv" "$venv"
+  # Folders a release writes that must outlive it (chip deploy.settings kept: Tour Video's videos). The first time, what
+  # the live release had is copied over; a folder the commit itself carries is merged in, never lost.
+  local k
+  for k in $DEPLOY_KEPT; do
+    mkdir -p "$BASE/kept/$k" "$(dirname "$rel/$k")"
+    if [ -d "$CUR/$k" ] && [ ! -L "$CUR/$k" ]; then cp -an "$CUR/$k/." "$BASE/kept/$k/"; fi
+    if [ -d "$rel/$k" ] && [ ! -L "$rel/$k" ]; then cp -an "$rel/$k/." "$BASE/kept/$k/"; rm -rf "${rel:?}/$k"; fi
+    set_link "$rel/$k" "$BASE/kept/$k"
+  done
   local py; py=$(vpy "$rel/.venv")
   say "  selfcheck in releases/$sha ..."
   if ! (cd "$rel" && bash -c "$(fill "$DEPLOY_SELFCHECK" "$py" "")") >"$rel/.selfcheck.log" 2>&1; then
