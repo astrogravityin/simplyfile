@@ -136,6 +136,8 @@ build() {   # $1 sha
   fi
   touch "$rel/.ok"; rm -f "$rel/.failed"
   say "  built + selfcheck passed in $(since "$t")"
+  # 2026-11-14 owner: Tour Video records on the server - its Python lives in the shared venv (.venv/tour), chip tourvideo.settings
+  (cd "$rel" && "$py" -c "import store, tourvideo; print('  ' + tourvideo.ensure_recorder())") || say "  tour recorder: not installed (Tour Video cannot record here)"
 }
 
 # Start the release on the probe port with an empty data folder and ask its health; stop it again.
