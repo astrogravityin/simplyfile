@@ -2100,3 +2100,11 @@ export function dragRows(list, onDone) {
     };
   });
 }
+
+/** One small row of pills, one pressed - the language picker's look for any short choice (Menu: Side pane / Top menu).
+ *  Each pill carries data-<key>="<id>"; the caller wires what a press does. */
+export function choicePicker(list, now, label, key) {
+  if (!Array.isArray(list) || list.length < 2) return '';
+  return `<div class="langpick" role="group" aria-label="${esc(label)}">${list.map((x) =>
+    `<button type="button" data-${esc(key)}="${esc(x.id)}" aria-pressed="${x.id === now}">${esc(x.label)}</button>`).join('')}</div>`;
+}

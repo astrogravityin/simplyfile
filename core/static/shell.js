@@ -14,7 +14,7 @@
 //     navFoot: html | () => html, userMenu: html | () => html,
 //     onBoot: async (bootstrap) => {},             // copy the host's own bootstrap fields into state
 //   })
-import { api, BASE, esc, say, modal, toast, busy, wireSecrets, applyTheme, nextTheme, shownTheme, hooks, confirmDialog, t, loadWords, remembersFor, ps, BUILD, reportIssue, myReports, when, clockAt, setProduct } from './ui.js';
+import { api, BASE, esc, say, modal, toast, busy, wireSecrets, applyTheme, nextTheme, shownTheme, hooks, confirmDialog, t, loadWords, remembersFor, ps, BUILD, reportIssue, myReports, when, clockAt, setProduct, choicePicker, keep, kept } from './ui.js';
 import { icon, logo as defaultLogo, spinner } from './icons.js';
 import { guideButton, wireGuide } from './guide.js';
 import { startEvents, onEvent } from './events.js';
@@ -50,6 +50,13 @@ const w = (k, v) => t('shell', k, v);
 let pageDirty = false;
 /** The menu folded to icons (<<) or open (>>), remembered in this browser only. */
 const signedInBefore = () => { try { return localStorage.getItem('portal.signed_in_before') === '1'; } catch { return false; } };
+// 2026-11-14 owner "change the Side Pane to Top Menu in all the site": each person's pick, chip shell.nav (the layouts and the
+// first one); kept per person in this browser (keep/kept: scoped to who is signed in). One menu list, two shapes - switching
+// never redraws the page.
+const navLayout = () => {
+  const n = state.nav || {}, v = kept('nav');
+  return (n.layouts || []).includes(v) ? v : (n.default_layout || '');
+};
 const sideCollapsed = () => { try { return localStorage.getItem('portal.side') === 'collapsed'; } catch { return false; } };   // something was typed on this page since it was drawn: Refresh asks first
 let config = { views: {}, pitch: () => '', brandSub: '', logo: defaultLogo, landing: '',
   topbar: () => '', topbarEnd: () => '', wireTopbar: () => {}, navFoot: '', userMenu: '', onBoot: async () => {} };
@@ -849,22 +856,95 @@ export function setBadge(id, n) {
   if (!a) return;
   a.querySelector('.badge')?.remove();
   if (n) a.append(Object.assign(document.createElement('span'), { className: 'badge news', textContent: String(n) }));
+  navGroupBadge(a.closest('.ng'));
 }
+
+
+/** The top menu's group button shows the sum of its screens' balloons (a Contact request stays seen while the group is shut). */
+function navGroupBadge(ng) {
+  const b = ng && ng.querySelector(':scope > .sep > .badge');
+  if (!b) return;
+  const n = [...ng.querySelectorAll('.ng-items a .badge')].reduce((x, e) => x + (Number(e.textContent) || 0), 0);
+  b.textContent = String(n);
+  b.hidden = !n;
+}
+
+/** Name menu row: Side pane / Top menu (chip shell.nav, words ui.shell nav_<layout>). Nothing to pick with one layout. */
+function navRow() {
+  const ids = (state.nav && state.nav.layouts) || [];
+  if (ids.length < 2) return '';
+  return `<div class="langrow navrow"><span>${icon('menu', 15)} ${w('nav_layout')}</span>${choicePicker(ids.map((id) => ({ id, label: w(`nav_${id}`) })), navLayout(), w('nav_layout'), 'nav')}</div>`;   // closed set: chip shell.nav layouts
+}
+
+/** Put the menu in the picked shape without redrawing the page (a half-typed form stays). */
+function applyNavLayout(root, id) {
+  keep('nav', id);
+  if (root.querySelector('.nav-g, .nav [data-redraw]')) { render(); return; }   // a config.foldMenu shell draws each shape its own way
+  const top = navLayout() === 'top';
+  const shell = root.querySelector('.shell');
+  shell.classList.toggle('top', top);
+  shell.classList.toggle('collapsed', !top && sideCollapsed());
+  closeNavGroups(root);
+  root.querySelectorAll('.ng > .sep').forEach((b) => { b.tabIndex = top ? 0 : -1; });
+  root.querySelectorAll('[data-nav]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.nav === navLayout())));
+}
+
+function closeNavGroups(root, except = null) {
+  root.querySelectorAll('.ng.open').forEach((g) => {
+    if (g === except) return;
+    g.classList.remove('open');
+    g.querySelector('.sep').setAttribute('aria-expanded', 'false');
+  });
+}
+
+/** Top menu: a group button opens its list under it (fixed, so the bar's own scroll never clips it); Escape, a pick or a
+ *  click elsewhere shuts it. In the side pane and on a phone the same buttons are only headings. */
+function wireNavGroups(root) {
+  root.querySelectorAll('.ng > .sep').forEach((b) => {
+    b.onclick = () => {
+      if (!root.querySelector('.shell.top') || getComputedStyle(b.parentElement).display === 'contents') return;
+      const g = b.parentElement, open = !g.classList.contains('open');
+      closeNavGroups(root, g);
+      g.classList.toggle('open', open);
+      b.setAttribute('aria-expanded', String(open));
+      if (!open) return;
+      const r = b.getBoundingClientRect(), box = g.querySelector('.ng-items');
+      box.style.top = `${r.bottom + 6}px`;
+      box.style.left = `${Math.max(8, Math.min(r.left, innerWidth - box.offsetWidth - 8))}px`;
+    };
+  });
+  root.querySelectorAll('.ng-items a').forEach((a) => a.addEventListener('click', () => closeNavGroups(root)));
+  root.querySelector('.nav')?.addEventListener('scroll', () => closeNavGroups(root));
+  root.querySelectorAll('[data-nav]').forEach((b) => { b.onclick = () => applyNavLayout(root, b.dataset.nav); });
+}
+document.addEventListener('click', (e) => { if (!(e.target.closest && e.target.closest('.ng'))) closeNavGroups(document); });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeNavGroups(document); });
 
 function shellView(route) {
   const list = screens().filter((s) => !s.hidden && !s.no_menu);   // Menu builder took it off the menu: the page still opens by its link
   const groups = [...new Set(list.map((s) => s.group || ''))];
-  const folded = sideCollapsed();
-  const nav = groups.map((g) => `${g ? `<div class="sep">${esc(g)}</div>` : ''}` + list.filter((s) => (s.group || '') === g)
-    .map((s) => `<a href="#/${esc(s.id)}" class="${route && s.id === route.id ? 'on' : ''}"
+  const top = navLayout() === 'top';
+  const folded = !top && sideCollapsed();
+  const link = (s) => `<a href="#/${esc(s.id)}" class="${route && s.id === route.id ? 'on' : ''}"
         ${folded ? `data-tip="${esc(s.label)}"` : ''} aria-label="${esc(s.label)}">
         ${icon(s.icon || 'right', 17)} <span class="lbl">${esc(s.label)}</span>
-        ${badgeOf(s.id) ? `<span class="badge${s.id === 'issues' ? '' : ' news'}">${badgeOf(s.id)}</span>` : ''}</a>`).join('')).join('');
+        ${badgeOf(s.id) ? `<span class="badge${s.id === 'issues' ? '' : ' news'}">${badgeOf(s.id)}</span>` : ''}</a>`;
+  // A group = its heading + its screens. Side pane: the heading is a label over the list (.ng is display:contents). Top menu:
+  // the heading is a button that opens the group's list, with its screens' balloons added up on it (navGroupBadge).
+  const nav = groups.map((g) => {
+    const items = list.filter((s) => (s.group || '') === g);
+    if (!g) return items.map(link).join('');
+    const html = items.map(link).join('');
+    const n = [...html.matchAll(/class="badge[^"]*">(\d+)</g)].reduce((a, x) => a + Number(x[1]), 0);
+    return `<div class="ng${route && items.some((s) => s.id === route.id) ? ' on' : ''}">
+      <button type="button" class="sep" aria-expanded="false"${top ? '' : ' tabindex="-1"'}>${esc(g)}<span class="badge news"${n ? '' : ' hidden'}>${n}</span>${icon('down', 13)}</button>
+      <div class="ng-items">${html}</div></div>`;
+  }).join('');
   const theme = shownTheme();
   const themeTip = w(theme === 'dark' ? 'to_light' : 'to_dark');
   const initials = (state.user.name || state.user.email || '?').trim()[0].toUpperCase();
 
-  return `<div class="shell ${folded ? 'collapsed' : ''}">
+  return `<div class="shell ${folded ? 'collapsed' : ''} ${top ? 'top' : ''}">
     <nav class="side" id="side">
       <div class="brand">${config.home ? `<a class="brand-home" href="${esc(config.home)}" aria-label="${esc(state.productName)}">` : ''}${config.logo(30)}
         <div class="name">${esc(state.productName)}${brandSub() ? `<span>${esc(brandSub())}</span>` : ''}</div>${config.home ? '</a>' : ''}
@@ -903,6 +983,7 @@ function shellView(route) {
             <button type="button" id="report-issue">${icon('alert', 15)} ${w('report_issue')}</button>
             <button type="button" id="my-reports">${icon('chat', 15)} ${w('my_reports')}</button>
             <button type="button" id="chpass">${icon('shield', 15)} ${w('change_password')}</button>
+            ${navRow()}
             <button type="button" id="about-us">${icon('info', 15)} ${t('about', 'menu')}</button>
             <button type="button" id="signout">${icon('right', 15)} ${w('sign_out')}</button>
           </div>
@@ -1203,6 +1284,7 @@ function wireShell(root, route) {
   };
   const burger = root.querySelector('#burger');
   if (burger) burger.onclick = () => root.querySelector('#side').classList.toggle('open');
+  wireNavGroups(root);
 
   root.querySelector('#signout').onclick = signOut;
   const askMore = root.querySelector('#ask-more');
@@ -1297,6 +1379,7 @@ export function passwordDialog() {
 
 function take(d) {
   state.user = d.user;
+  state.nav = d.nav || state.nav;                  // chip shell.nav: Side pane / Top menu (navLayout)
   remembersFor(d.user && d.user.id);    // every load binds this browser's memory to whoever is signed in now
   state.needsFirstAccount = d.needs_first_account;
   state.reservedOwner = d.reserved_owner || '';

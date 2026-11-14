@@ -1468,3 +1468,42 @@ select option{background:var(--panel);color:var(--ink)}
 /* 2026-11-13 owner: a top-bar chip never wraps; on a phone only its icon shows (word = its title) */
 .chipbtn{white-space:nowrap}
 @media (max-width:640px){.topbar .tb-lbl{display:none}.topbar .chipbtn{padding:7px 9px}}
+
+/* ── menu layout: Side pane / Top menu (2026-11-14 owner, chip shell.nav, shell.js navLayout) ───────────────────────
+   One menu list, two shapes. Side pane: a group is its label + its screens (.ng and .ng-items are display:contents, so the
+   pane looks exactly as before). Top menu (wider than the phone width): brand, then each group as a button that opens its
+   list, the group's balloons added up on it; the bar scrolls sideways before it ever wraps. Phone: both shapes are the same
+   Menu button and sheet. */
+.ng,.ng-items{display:contents}
+/* the side pane's group label is a button only so the top menu can open it: here it keeps the label's own look */
+.nav .ng > .sep{justify-content:flex-start;gap:6px;min-height:0;padding:0;border:0;border-radius:0;background:none;
+  box-shadow:none;text-align:left;cursor:default;transition:none;transform:none}
+.nav .ng > .sep > .ico,.nav .ng > .sep > .badge{display:none}
+.navrow .langpick button{white-space:nowrap}
+@media (min-width:901px){
+  .shell.top{grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr)}
+  .shell.top .side{position:sticky;top:0;z-index:40;height:auto;flex-direction:row;align-items:center;gap:14px;
+    padding:8px 18px;border-right:0;border-bottom:1px solid var(--line)}
+  .shell.top .brand{padding:0;flex:none;max-width:240px}
+  .shell.top .brand .fold{display:none}
+  .shell.top .nav{flex:1 1 auto;flex-direction:row;align-items:center;gap:2px;margin:0;padding:2px 0;
+    overflow-x:auto;overflow-y:hidden;white-space:nowrap;min-width:0}
+  .shell.top .nav::-webkit-scrollbar{height:5px}
+  .shell.top .ng{display:block;position:static;flex:none}
+  .shell.top .nav > a,.shell.top .nav .ng > .sep{flex:none;display:inline-flex;align-items:center;gap:6px;margin:0;
+    padding:7px 11px;border-radius:var(--radius-sm);font-size:13px;font-weight:600;color:var(--ink-2);
+    letter-spacing:normal;text-transform:none;cursor:pointer;white-space:nowrap}
+  .shell.top .nav .ng > .sep > .ico{display:inline-flex;color:var(--faint);transition:transform var(--ease)}
+  .shell.top .nav .ng > .sep > .badge:not([hidden]){display:inline-flex}
+  .shell.top .nav .ng > .sep:hover,.shell.top .ng.open > .sep{background:var(--panel-2);color:var(--ink)}
+  .shell.top .ng.on > .sep{background:var(--brand-soft);color:var(--brand)}
+  .shell.top .ng.open > .sep > .ico{transform:rotate(180deg)}
+  .shell.top .nav .ng > .sep:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+  .shell.top .ng-items{display:none;position:fixed;z-index:70;min-width:230px;max-width:min(340px,calc(100vw - 16px));
+    max-height:min(70vh,560px);overflow:auto;flex-direction:column;gap:1px;padding:6px;white-space:normal;
+    background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow-2)}
+  .shell.top .ng.open > .ng-items{display:flex}
+  .shell.top .ng-items a{font-size:13.5px}
+  .shell.top .side .foot{margin:0;padding:0;border:0;flex:none}
+  .shell.top .powered{flex:none;font-size:0;gap:0;margin:0;padding:0;border:0}
+}

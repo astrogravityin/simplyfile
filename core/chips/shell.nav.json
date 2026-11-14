@@ -1,0 +1,51 @@
+{
+  "chip_id": "shell.nav",
+  "kind": "accessor",
+  "set": "shell",
+  "label": "The menu's layout: side pane or top menu, and which one a new visitor sees",
+  "aliases": [
+    "menu layout",
+    "side pane",
+    "top menu"
+  ],
+  "params": [
+    {
+      "name": "layouts",
+      "type": "list",
+      "default": [
+        "side",
+        "top"
+      ],
+      "label": "Layouts a person can pick (their words: chip ui.shell nav_<layout>)"
+    },
+    {
+      "name": "default_layout",
+      "type": "text",
+      "default": "side",
+      "label": "Layout before a person picks one"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "layouts": "$layouts",
+      "default_layout": "$default_layout"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-11-14 owner: \"an option where user can change the Side Pane to Top Menu in all the site\". Each person picks Side pane or Top menu in their user menu (Menu); the pick applies to every screen of the portal and is kept in that browser, like the theme. The top menu lists the same screens and groups as the side pane - one menu, two shapes. On a phone (under the shell's narrow width) both shapes are the same Menu button and sheet.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "layouts": [
+          "side",
+          "top"
+        ],
+        "default_layout": "side"
+      }
+    }
+  ]
+}

@@ -2620,6 +2620,24 @@
       "type": "text",
       "default": "0.1",
       "label": "chars low"
+    },
+    {
+      "name": "nav_layout",
+      "type": "text",
+      "default": "Menu",
+      "label": "user menu: the menu layout row"
+    },
+    {
+      "name": "nav_side",
+      "type": "text",
+      "default": "Side pane",
+      "label": "menu layout: the left side pane"
+    },
+    {
+      "name": "nav_top",
+      "type": "text",
+      "default": "Top menu",
+      "label": "menu layout: a bar across the top"
     }
   ],
   "expr": {
@@ -3124,7 +3142,10 @@
       "health_checked": "$health_checked",
       "health_open": "$health_open",
       "chars_left": "$chars_left",
-      "chars_low": "$chars_low"
+      "chars_low": "$chars_low",
+      "nav_layout": "$nav_layout",
+      "nav_side": "$nav_side",
+      "nav_top": "$nav_top"
     }
   },
   "returns": "record",
@@ -3634,7 +3655,10 @@
         "health_checked": "Checked {when}",
         "health_open": "Open Agents",
         "chars_left": "{n} characters left",
-        "chars_low": "0.1"
+        "chars_low": "0.1",
+        "nav_layout": "Menu",
+        "nav_side": "Side pane",
+        "nav_top": "Top menu"
       }
     }
   ],

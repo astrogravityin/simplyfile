@@ -292,6 +292,7 @@ def bootstrap(request: Request):
            "portal_url": s["portal_url"], "base": BASE,
            "can_email": mailer.configured(),
            "no_mail_policy": engine.run("auth.no_mail_policy"),
+           "nav": engine.run("shell.nav"),   # 2026-11-14: Side pane / Top menu - the layouts and the first one
            "can_signup": s["signup_mode"] in {"open", "domain"},
            "verify_email": mailer.configured(),
            "code": {"digits": c["digits"], "resend_after_seconds": c["resend_after_seconds"]},
