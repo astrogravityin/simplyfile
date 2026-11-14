@@ -869,11 +869,25 @@ function navGroupBadge(ng) {
   b.hidden = !n;
 }
 
-/** Name menu row: Side pane / Top menu (chip shell.nav, words ui.shell nav_<layout>). Nothing to pick with one layout. */
+/** Each layout's picture on the Menu toggle: the shape it gives the portal (brand = the menu, lines = the page). */
+const NAV_ART = {
+  side: `<svg class="nav-art" viewBox="0 0 34 24" aria-hidden="true"><rect class="na-frame" x="1" y="1" width="32" height="22" rx="4"/>
+    <path class="na-bar" d="M5 1h6v22H5a4 4 0 0 1-4-4V5a4 4 0 0 1 4-4z"/><circle class="na-dot" cx="6" cy="7" r="1.6"/>
+    <circle class="na-dot" cx="6" cy="12" r="1.6"/><circle class="na-dot" cx="6" cy="17" r="1.6"/>
+    <path class="na-line" d="M15 8h13M15 12.5h9M15 17h11"/></svg>`,
+  top: `<svg class="nav-art" viewBox="0 0 34 24" aria-hidden="true"><rect class="na-frame" x="1" y="1" width="32" height="22" rx="4"/>
+    <path class="na-bar" d="M1 5a4 4 0 0 1 4-4h24a4 4 0 0 1 4 4v3H1z"/><circle class="na-dot" cx="7" cy="4.6" r="1.6"/>
+    <circle class="na-dot" cx="13" cy="4.6" r="1.6"/><circle class="na-dot" cx="19" cy="4.6" r="1.6"/>
+    <path class="na-line" d="M6 13h22M6 17.5h15"/></svg>`,
+};
+
+/** Name menu row: Menu - Side pane | Top menu, as one toggle (chip shell.nav, words ui.shell nav_<layout>). Nothing to pick
+ *  with one layout. */
 function navRow() {
   const ids = (state.nav && state.nav.layouts) || [];
   if (ids.length < 2) return '';
-  return `<div class="langrow navrow"><span>${icon('menu', 15)} ${w('nav_layout')}</span>${choicePicker(ids.map((id) => ({ id, label: w(`nav_${id}`) })), navLayout(), w('nav_layout'), 'nav')}</div>`;   // closed set: chip shell.nav layouts
+  const list = ids.map((id) => ({ id, label: w(`nav_${id}`), art: NAV_ART[id] || '' }));   // closed set: chip shell.nav layouts
+  return `<div class="navrow"><span class="navrow-h">${icon('menu', 15)} ${w('nav_layout')}</span>${choicePicker(list, navLayout(), w('nav_layout'), 'nav', 'navtoggle')}</div>`;
 }
 
 /** Put the menu in the picked shape without redrawing the page (a half-typed form stays). */

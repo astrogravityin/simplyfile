@@ -61,12 +61,14 @@ def nav_problems() -> list[str]:
         out.append("core/auth.py bootstrap must carry chip shell.nav")
     shell = (CORE / "static" / "shell.js").read_text(encoding="utf-8")
     for need, why in (("const navLayout = () =>", "the person's pick"), ("${navRow()}", "the Menu row in the user menu"),
-                      ("wireNavGroups(root);", "the top menu's group buttons"), ("${top ? 'top' : ''}", "the shell's top class"),
+                      ("wireNavGroups(root);", "the top menu's group buttons"), ("${top ? 'top' : ''}", "the shell's top class"), ("'nav', 'navtoggle')", "the Menu toggle with its pictures"),
                       ("navGroupBadge(a.closest('.ng'))", "a balloon still counts on a shut group")):
         if need not in shell and not (need.startswith("navGroupBadge") and "export function setBadge" not in shell):
             out.append(f"core/static/shell.js lost {why} ({need})")
     if "export function choicePicker" not in (CORE / "static" / "ui.js").read_text(encoding="utf-8"):
         out.append("core/static/ui.js lost choicePicker")
+    if ".usermenu .pop .navtoggle{" not in (CORE / "static" / "portal.css").read_text(encoding="utf-8"):
+        out.append("core/static/portal.css lost the Menu toggle's own look (.navtoggle)")
     if not re.search(r"\.shell\.top \.ng-items\{", (CORE / "static" / "portal.css").read_text(encoding="utf-8")):
         out.append("core/static/portal.css lost the top menu's shape (.shell.top)")
     return out

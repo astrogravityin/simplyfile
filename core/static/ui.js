@@ -2101,10 +2101,11 @@ export function dragRows(list, onDone) {
   });
 }
 
-/** One small row of pills, one pressed - the language picker's look for any short choice (Menu: Side pane / Top menu).
- *  Each pill carries data-<key>="<id>"; the caller wires what a press does. */
-export function choicePicker(list, now, label, key) {
+/** A short choice as one toggle: one button per option, one pressed (Menu: Side pane / Top menu). `cls` names its look
+ *  (default the language pills); an option may carry `art` - a small inline SVG drawn above its words. Each button carries
+ *  data-<key>="<id>"; the caller wires what a press does. */
+export function choicePicker(list, now, label, key, cls = 'langpick') {
   if (!Array.isArray(list) || list.length < 2) return '';
-  return `<div class="langpick" role="group" aria-label="${esc(label)}">${list.map((x) =>
-    `<button type="button" data-${esc(key)}="${esc(x.id)}" aria-pressed="${x.id === now}">${esc(x.label)}</button>`).join('')}</div>`;
+  return `<div class="${esc(cls)}" role="group" aria-label="${esc(label)}">${list.map((x) =>
+    `<button type="button" data-${esc(key)}="${esc(x.id)}" aria-pressed="${x.id === now}">${x.art || ''}<span>${esc(x.label)}</span></button>`).join('')}</div>`;
 }
