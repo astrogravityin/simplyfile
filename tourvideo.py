@@ -117,6 +117,8 @@ def start(what: str, key: str, base: str, uid: str = "", u: dict | None = None) 
         if _JOB.get("status") == "running":
             raise HTTPException(409, say("busy"))
         base = (auth.settings().get("portal_url") or "").strip().rstrip("/") or base
+        if auth.BASE and not base.endswith(auth.BASE):     # a portal under a path (demo copies: /vui, /healthyfy) - its pages live there
+            base += auth.BASE
         args = [python(), str(ROOT / k["runner"])] + (["--login"] if what == "login" else [str(tours[key])]) + \
                (["--check"] if what == "check" else []) + ["--base", base]
         title = row(key, tours[key])["title"] if key in tours else ""
