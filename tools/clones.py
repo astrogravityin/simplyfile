@@ -52,9 +52,21 @@ def _js_body(text: str, start: int) -> str:
     return text[start:]
 
 
+def ignored_dirs(root: Path) -> set[str]:
+    """Folders git ignores (releases/, venvs/, .cache/ on the VPS - 2026-11-14 they stopped every deploy) are never this
+    portal's code. No git = only SKIP."""
+    import subprocess
+    try:
+        r = subprocess.run(["git", "-C", str(root), "ls-files", "-oi", "--exclude-standard", "--directory"],
+                           capture_output=True, text=True, timeout=60)
+    except (OSError, subprocess.TimeoutExpired):
+        return set()
+    return {ln.rstrip("/") for ln in r.stdout.splitlines() if ln.endswith("/")} if r.returncode == 0 else set()
+
+
 def sources(root: Path = ROOT):
     """(rel path, text) of every .py / .js file of the portal's own - skipped folders are never walked into (.venv is big)."""
-    skip_dirs = {s.rstrip("/") for s in SKIP}
+    skip_dirs = {s.rstrip("/") for s in SKIP} | ignored_dirs(root)
     for dirpath, dirs, files in os.walk(root):
         base = Path(dirpath).relative_to(root).as_posix()
         dirs[:] = sorted(d for d in dirs if (f"{base}/{d}" if base != "." else d) not in skip_dirs and d not in ("__pycache__", ".git"))
