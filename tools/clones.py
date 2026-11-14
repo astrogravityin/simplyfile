@@ -26,7 +26,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 MIN_TOKENS = 40
-SKIP = ("core/", ".venv/", "venv/", "tmp/", "data/", "node_modules/", "tools/tour_video/", "static/vendor/",
+SKIP = ("core/", ".venv/", "venv/", "venvs/", ".cache/", "tmp/", "data/", "node_modules/", "tools/tour_video/", "static/vendor/",
         "template-patches/")   # 2026-11-02: staged copies of framework files for the template are not this portal's code
 JS_FN = re.compile(r"(?:function\s+(\w+)\s*\([^)]*\)|(\w+)\s*[:=]\s*(?:async\s*)?function\s*\([^)]*\)|(\w+)\s*=\s*(?:async\s*)?\([^)]*\)\s*=>)\s*\{")
 
