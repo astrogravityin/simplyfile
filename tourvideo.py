@@ -174,6 +174,7 @@ if __name__ == "__main__":  # ponytail: the list reads every tour; a bad key and
         except HTTPException as e:
             assert e.status_code == 404
     assert python() and isinstance(settings()["python"], list), "tourvideo.settings python is a list of candidates"
+    assert settings()["python"][0].startswith(".venv/"), "the server recorder lives under .venv/ - code scanners skip it (2026-11-14: .tourvenv failed 3 deploys)"
     _mine = lambda: sum(1 for x in store.read("sessions", []) if x.get("user_id") == "tv-selftest")  # noqa: E731
     _before = _mine()
     _f, _t = session_file({"id": "tv-selftest"}, "https://tv.example", ".auth-selftest.json")   # 2026-11-14

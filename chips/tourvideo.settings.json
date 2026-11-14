@@ -35,7 +35,7 @@
       "name": "python",
       "type": "list",
       "default": [
-        ".tourvenv/bin/python",
+        ".venv/tour/bin/python",
         "python"
       ],
       "label": "python"
@@ -55,13 +55,13 @@
     {
       "name": "install",
       "type": "long",
-      "default": "python3 -m venv .tourvenv && .tourvenv/bin/pip install -r tools/tour_video/requirements.txt && .tourvenv/bin/python -m playwright install --with-deps chromium",
+      "default": "python3 -m venv .venv/tour && .venv/tour/bin/pip install -r tools/tour_video/requirements.txt && .venv/tour/bin/python -m playwright install --with-deps chromium",
       "label": "install"
     },
     {
       "name": "update",
       "type": "long",
-      "default": ".tourvenv/bin/pip install -q -r tools/tour_video/requirements.txt",
+      "default": ".venv/tour/bin/pip install -q -r tools/tour_video/requirements.txt",
       "label": "update"
     },
     {
@@ -105,7 +105,7 @@
   "returns": "record",
   "version": 3,
   "status": "published",
-  "description_nl": "2026-10-02 owner: \"bring Tour Video from the studio to sm, visible to portal admin\". The screen runs the studio's own runner (tools/tour_video/make_tour.py, skill module-tour-video) on each tour script (tours/<tours_glob>): Check steps walks it without sound, Record makes the narrated MP4 + subtitles + YouTube chapters, Sign in opens a window on this computer once. Paths are from the repo root. python = the Python that has Playwright and edge-tts (a hosting fact); install = what to run when it does not. One job at a time; the last log_keep lines are kept. 2026-10-05: every portal's own tour scripts (SimplyFy sf-*, JustyFy jf-*) - the folder holds only tours. 2026-11-14 owner: Tour Video records on the live server (as GamyFy): python = candidates, first found wins (the server's recorder venv .tourvenv, made by deploy.sh with install, kept current with update; a developer's python). Record and Check sign the recorder in as the person who pressed it - a session of session_minutes, ended when the run ends; no password is kept.",
+  "description_nl": "2026-10-02 owner: \"bring Tour Video from the studio to sm, visible to portal admin\". The screen runs the studio's own runner (tools/tour_video/make_tour.py, skill module-tour-video) on each tour script (tours/<tours_glob>): Check steps walks it without sound, Record makes the narrated MP4 + subtitles + YouTube chapters, Sign in opens a window on this computer once. Paths are from the repo root. python = the Python that has Playwright and edge-tts (a hosting fact); install = what to run when it does not. One job at a time; the last log_keep lines are kept. 2026-10-05: every portal's own tour scripts (SimplyFy sf-*, JustyFy jf-*) - the folder holds only tours. 2026-11-14 owner: Tour Video records on the live server (as GamyFy): python = candidates, first found wins (the server's recorder venv .venv/tour, made by deploy.sh with install, kept current with update; a developer's python). Record and Check sign the recorder in as the person who pressed it - a session of session_minutes, ended when the run ends; no password is kept. 2026-11-14 later: the recorder lives in .venv/tour - code scanners (clones, upload reader) skip .venv/ but walked .tourvenv and failed CodyFy, YCS and Shoperative deploys.",
   "test_cases": [
     {
       "args": {},
@@ -115,11 +115,11 @@
         "tours_dir": "tours",
         "tours_glob": "*.json",
         "python": [
-          ".tourvenv/bin/python",
+          ".venv/tour/bin/python",
           "python"
         ],
         "log_keep": 200,
-        "install": "python3 -m venv .tourvenv && .tourvenv/bin/pip install -r tools/tour_video/requirements.txt && .tourvenv/bin/python -m playwright install --with-deps chromium",
+        "install": "python3 -m venv .venv/tour && .venv/tour/bin/pip install -r tools/tour_video/requirements.txt && .venv/tour/bin/python -m playwright install --with-deps chromium",
         "files": [
           {
             "id": "mp4",
@@ -137,7 +137,7 @@
             "type": "text/plain"
           }
         ],
-        "update": ".tourvenv/bin/pip install -q -r tools/tour_video/requirements.txt",
+        "update": ".venv/tour/bin/pip install -q -r tools/tour_video/requirements.txt",
         "session_minutes": 90
       }
     }
