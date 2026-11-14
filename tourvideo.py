@@ -7,6 +7,8 @@ tourvideo.state (none / stale / ready), list.tour_videos, ui.tourvideo. Glue onl
 from __future__ import annotations
 
 import json
+import os
+import shutil
 import subprocess
 import threading
 import time
@@ -14,7 +16,7 @@ from pathlib import Path
 
 from fastapi import HTTPException
 
-from core import engine, events, lists
+from core import auth, engine, events, lists, store
 
 ROOT = Path(__file__).resolve().parent          # SimplyFile: everything lives in this folder
 _JOB: dict = {}
@@ -23,6 +25,40 @@ _LOCK = threading.Lock()
 
 def settings() -> dict:
     return engine.run("tourvideo.settings")
+
+
+def python() -> str:
+    """The first Python in the chip's list that is here (2026-11-14: the server has no `python`, only its recorder venv)."""
+    for c in settings()["python"]:
+        if (ROOT / c).is_file():
+            return str(ROOT / c)
+        if shutil.which(c):
+            return c
+    return settings()["python"][-1]
+
+
+def ensure_recorder() -> str:
+    """deploy.sh: the server's recorder Python (the chip's first candidate): made with the chip's install line, then
+    brought to the recorder's requirements on every deploy with its update line (pip: seconds when nothing changed)."""
+    first = ROOT / settings()["python"][0]
+    made = first.is_file()          # 2026-11-14: made once but never updated - edge-tts 7.2.8 then got 403 from the voice service
+    subprocess.run(settings()["update" if made else "install"], shell=True, cwd=ROOT, check=True)   # noqa: S602 - the chip's own line
+    return "tour recorder: " + ("updated" if made else "installed")
+
+
+def session_file(u: dict, base: str, name: str) -> tuple[Path, str]:
+    """Record signed in as the person who pressed Record: a short session of theirs, as the recorder's auth file
+    (TOUR_AUTH). No password is kept anywhere; the session ends when the run does (chip session_minutes)."""
+    from urllib.parse import urlparse  # noqa: PLC0415
+    ttl = int(settings()["session_minutes"]) * 60
+    token = store.start_session(u, ttl)
+    host, secure = urlparse(base).hostname or "", base.startswith("https://")
+    jar = [{"name": n, "value": v, "domain": host, "path": auth.BASE or "/", "expires": time.time() + ttl,
+            "httpOnly": True, "secure": secure, "sameSite": "Lax"} for n, v in ((auth.COOKIE, token), (getattr(auth, "KNOWN", ""), "1")) if n]
+    f = ROOT / settings()["out_dir"] / name
+    f.parent.mkdir(parents=True, exist_ok=True)
+    f.write_text(json.dumps({"cookies": jar, "origins": []}), encoding="utf-8")
+    return f, token
 
 
 def say(key: str, **values) -> str:
@@ -72,7 +108,7 @@ def _tell() -> None:
     events.to_person(_JOB.get("uid", ""), "job", {"url": "/api/tourvideo/job", "job": job()})
 
 
-def start(what: str, key: str, base: str, uid: str = "") -> dict:
+def start(what: str, key: str, base: str, uid: str = "", u: dict | None = None) -> dict:
     """what = check | record | login. One at a time; the runner's own lines are the log."""
     k, tours = settings(), _tours()
     if what != "login" and key not in tours:
@@ -80,19 +116,34 @@ def start(what: str, key: str, base: str, uid: str = "") -> dict:
     with _LOCK:
         if _JOB.get("status") == "running":
             raise HTTPException(409, say("busy"))
-        args = [k["python"], str(ROOT / k["runner"])] + (["--login"] if what == "login" else [str(tours[key])]) + \
+        base = (auth.settings().get("portal_url") or "").strip().rstrip("/") or base
+        args = [python(), str(ROOT / k["runner"])] + (["--login"] if what == "login" else [str(tours[key])]) + \
                (["--check"] if what == "check" else []) + ["--base", base]
         title = row(key, tours[key])["title"] if key in tours else ""
         _JOB.clear()
         _JOB.update({"status": "running", "what": what, "key": key, "log": [], "started_ms": int(time.time() * 1000),
                      "activity": say(f"working_{what}", title=title), "uid": uid})
-    threading.Thread(target=_run, args=(args, int(k["log_keep"])), daemon=True).start()
+        env, token, jar = dict(os.environ), "", None
+        if u and what != "login":                         # login stays for a computer with a screen
+            jar, token = session_file(u, base, f".auth-{_JOB['started_ms']}.json")
+            env["TOUR_AUTH"] = str(jar)
+    threading.Thread(target=_run, args=(args, int(k["log_keep"]), env, token, jar), daemon=True).start()
     return job()
 
 
-def _run(args: list[str], keep: int) -> None:
+def _run(args: list[str], keep: int, env: dict | None = None, token: str = "", jar: Path | None = None) -> None:
     try:
-        p = subprocess.Popen(args, cwd=ROOT, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, encoding="utf-8", errors="replace")
+        _record(args, keep, env)
+    finally:                                              # the recorder's session never outlives its run
+        if token:
+            store.end_session(token)
+        if jar:
+            jar.unlink(missing_ok=True)
+
+
+def _record(args: list[str], keep: int, env: dict | None) -> None:
+    try:
+        p = subprocess.Popen(args, cwd=ROOT, env=env, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, encoding="utf-8", errors="replace")
     except OSError as e:                                  # no such Python: say what to install
         _JOB.update({"status": "failed", "log": [str(e), say("needs", install=settings()["install"])]})
         _tell()
@@ -122,6 +173,14 @@ if __name__ == "__main__":  # ponytail: the list reads every tour; a bad key and
             raise SystemExit("a bad key or file was accepted")
         except HTTPException as e:
             assert e.status_code == 404
+    assert python() and isinstance(settings()["python"], list), "tourvideo.settings python is a list of candidates"
+    _mine = lambda: sum(1 for x in store.read("sessions", []) if x.get("user_id") == "tv-selftest")  # noqa: E731
+    _before = _mine()
+    _f, _t = session_file({"id": "tv-selftest"}, "https://tv.example", ".auth-selftest.json")   # 2026-11-14
+    _c = json.loads(_f.read_text(encoding="utf-8"))["cookies"]
+    assert {c["name"] for c in _c} == {auth.COOKIE, getattr(auth, "KNOWN", auth.COOKIE)} and _c[0]["domain"] == "tv.example" and _c[0]["secure"], _c
+    _run(["no-such-python-tv"], 5, None, _t, _f)       # even a run that cannot start ends its session + file
+    assert not _f.exists() and _mine() == _before, "the recorder session outlived its run"
     import importlib.util  # noqa: PLC0415 - 2026-10-16: the recorder's email mask works before paint, in a real browser
     _spec = importlib.util.spec_from_file_location("make_tour", Path(__file__).resolve().parent / "tools" / "tour_video" / "make_tour.py")
     _mt = importlib.util.module_from_spec(_spec)

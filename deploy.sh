@@ -24,6 +24,8 @@ echo "code: $before -> $after"
 # 2026-11-12 (VS standards): the lock, when the portal has one, is installed exactly - every file checked by its hash (chip deps.lock)
 if [ -f requirements.lock ]; then .venv/bin/pip install -q --require-hashes --no-deps -r requirements.lock; else .venv/bin/pip install -q -r requirements.txt; fi
 .venv/bin/python selfcheck.py
+# 2026-11-14 owner: Tour Video records on the server - its own Python (.tourvenv: Playwright + edge-tts), chip tourvideo.settings
+.venv/bin/python -c "import store, tourvideo; print(tourvideo.ensure_recorder())" || echo "tour recorder: not installed (Tour Video cannot record here)"
 
 systemctl restart "$SERVICE"
 for i in $(seq 1 30); do

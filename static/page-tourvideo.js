@@ -10,8 +10,7 @@ const w = (k, v) => t('tourvideo', k, v);
 
 export async function tourVideoPage(host) {
   await loadWords('tourvideo');
-  host.innerHTML = pageHead(w('title'), w('lede'),
-    `<button type="button" class="ghost" id="tv-login" data-tip="${esc(w('tip_sign_in'))}">${icon('key', 14)} ${esc(w('sign_in'))}</button>`)
+  host.innerHTML = pageHead(w('title'), w('lede'))   // 2026-11-14: Record signs in as you - no Sign in once
     + '<section class="card" id="tv-list"></section>';
   let reload = () => {};
   const run = async (what, key, title) => {
@@ -23,7 +22,6 @@ export async function tourVideoPage(host) {
       reload();
     });
   };
-  host.querySelector('#tv-login').onclick = (e) => busy(e.currentTarget, async () => { try { await run('login', '', ''); } catch (err) { toast(err.message, 'bad', 8); } });
   listBox(host.querySelector('#tv-list'), {
     list: 'tour_videos',
     empty: w('empty'),
