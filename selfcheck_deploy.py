@@ -32,6 +32,8 @@ def problems(f: dict[str, str]) -> list[str]:
         bad.append("Deploy-To-VPS.ps1 names an ssh key file (use SF_VPS_KEY / deploy/vps.local)")
     if re.search(r"^\s*ssh\b[^\n]*\$remote", ps1, re.M):   # 2026-11-13: Windows PowerShell 5.1 drops an argument's inner quotes
         bad.append("Deploy-To-VPS.ps1 hands the remote script to ssh as an argument - PowerShell 5.1 loses its quotes; send it as base64")
+    if "System32\\OpenSSH" not in ps1:   # 2026-11-14: from Git Bash, Git's own ssh has no agent
+        bad.append("Deploy-To-VPS.ps1 does not put Windows' OpenSSH first - from Git Bash its ssh has no agent (Permission denied)")
     if not re.search(r"^deploy/vps\.local$", ign, re.M):
         bad.append(".gitignore does not keep deploy/vps.local out of git")
     user = re.search(r"^User=(\S+)$", unit, re.M)
@@ -85,6 +87,7 @@ def main() -> None:
     bites = [
         ("Deploy-To-VPS.ps1", files["Deploy-To-VPS.ps1"] + "\n# default 'root@10.0.0.1'"),
         ("Deploy-To-VPS.ps1", files["Deploy-To-VPS.ps1"] + "\nssh @sshArgs $Server $remote\n"),
+        ("Deploy-To-VPS.ps1", files["Deploy-To-VPS.ps1"].replace("System32\\OpenSSH", "")),
         ("deploy/portal.service.in", files["deploy/portal.service.in"].replace("User={{USER}}", "User=root")),
         ("deploy/portal.service.in", files["deploy/portal.service.in"].replace("TimeoutStopSec={{STOP}}", "")),
         ("deploy/deploy.sh", files["deploy/deploy.sh"] + "\nBASE=/opt/simplyfile\n"),

@@ -61,6 +61,11 @@ if (-not $Rollback -and -not $Status) {
     }
 }
 
+# 2026-11-14: run from Git Bash, `ssh` was Git's own (no ssh-agent, "Permission denied"). Windows' OpenSSH goes first, so
+# the key the Windows ssh-agent holds opens the VPS from any shell.
+$winSsh = Join-Path $env:SystemRoot 'System32\OpenSSH'
+if (Test-Path (Join-Path $winSsh 'ssh.exe')) { $env:PATH = "$winSsh;$env:PATH" }
+
 $sshArgs = @('-o', 'StrictHostKeyChecking=accept-new')
 if ($Key -and (Test-Path $Key)) { $sshArgs += @('-i', $Key) }
 $verb = if ($Status) { 'status' } elseif ($Rollback) { 'rollback' } else { 'deploy' }
