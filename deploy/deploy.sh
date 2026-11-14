@@ -136,6 +136,15 @@ build() {   # $1 sha
     if [ -d "$rel/$k" ] && [ ! -L "$rel/$k" ]; then cp -an "$rel/$k/." "$BASE/kept/$k/"; rm -rf "${rel:?}/$k"; fi
     set_link "$rel/$k" "$BASE/kept/$k"
   done
+  # A fresh checkout dates every file now: the files a "changed since" check reads (Tour Video: a video older than its
+  # tour / Guide me is stale) get the time of their last commit (chip deploy.settings commit_times).
+  local f ct
+  if [ -n "$DEPLOY_COMMIT_TIMES" ]; then
+    # shellcheck disable=SC2086
+    while IFS= read -r f; do
+      ct=$(git -C "$rel" log -1 --format=%ct -- "$f") && [ -n "$ct" ] && touch -m -d "@$ct" "$rel/$f"
+    done < <(git -C "$rel" ls-files -- $DEPLOY_COMMIT_TIMES)
+  fi
   local py; py=$(vpy "$rel/.venv")
   say "  selfcheck in releases/$sha ..."
   if ! (cd "$rel" && bash -c "$(fill "$DEPLOY_SELFCHECK" "$py" "")") >"$rel/.selfcheck.log" 2>&1; then

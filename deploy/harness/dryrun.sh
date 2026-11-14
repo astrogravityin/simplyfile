@@ -68,7 +68,8 @@ APP
 }
 selfcheck() { printf 'import app\nassert app.VERSION\n%s\nprint("All checks passed.")\n' "${1:-}" >"$W/selfcheck.py"; }
 commit() { git -C "$W" add -A; git -C "$W" commit -qm "$1"; git -C "$W" tag "$1"; }
-app v1 ok;      selfcheck;                                   commit v1
+mkdir -p "$W/tours"; echo "{}" >"$W/tours/x.json"   # 2026-11-14: dated by its commit in every release (chip commit_times)
+app v1 ok;      selfcheck;                                   GIT_COMMITTER_DATE="2020-01-01T00:00:00Z" commit v1
 app v2 ok;      selfcheck;                                   commit v2
 app v3 ok;      selfcheck 'assert False, "v3: a check that fails"'; commit v3
 app v4 500;     selfcheck;                                   commit v4
@@ -112,6 +113,7 @@ for _ in $(seq 1 20); do [ "$(version $PROD_PORT)" = v1 ] && break; sleep 0.5; d
 # 2026-11-14: a video the running release made (chip deploy.settings kept: tmp/tour_video) outlives the release
 mkdir -p "$ROOT/prod/current/tmp/tour_video/x"; echo film >"$ROOT/prod/current/tmp/tour_video/x/x.mp4"
 step "deploy v2 (good)"                                  0 "$PROD_PORT" v2 prod deploy v2
+[ "$(stat -c %Y "$ROOT/prod/current/tours/x.json")" = 1577836800 ] && row OK "a tour file keeps its commit time in a new release" "-" "2020-01-01, not the deploy time" || row BAD "a tour file keeps its commit time in a new release" "-" "dated $(stat -c %y "$ROOT/prod/current/tours/x.json")"
 [ -f "$ROOT/prod/current/tmp/tour_video/x/x.mp4" ] && row OK "a Tour Video made on v1 is still there on v2" "-" "kept/tmp/tour_video linked" || row BAD "a Tour Video made on v1 is still there on v2" "-" "gone with the release"
 step "deploy v3 (selfcheck fails) -> v2 keeps serving"   1 "$PROD_PORT" v2 prod deploy v3
 step "deploy v4 (/health 500) -> probe stops it"         1 "$PROD_PORT" v2 prod deploy v4
