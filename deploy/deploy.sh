@@ -154,8 +154,10 @@ build() {   # $1 sha
   fi
   touch "$rel/.ok"; rm -f "$rel/.failed"
   say "  built + selfcheck passed in $(since "$t")"
-  # 2026-11-14 owner: Tour Video records on the server - its Python lives in the shared venv (.venv/tour), chip tourvideo.settings
-  (cd "$rel" && "$py" -c "import store, tourvideo; print('  ' + tourvideo.ensure_recorder())") || say "  tour recorder: not installed (Tour Video cannot record here)"
+  # 2026-11-14 owner: Tour Video records on the server - its Python lives in the shared venv (.venv/tour), chip tourvideo.settings;
+  # its browser in <base>/.playwright - the service (non-root, ProtectHome) cannot reach root's ~/.cache (portal.service.in)
+  (cd "$rel" && PLAYWRIGHT_BROWSERS_PATH="$BASE/.playwright" "$py" -c "import store, tourvideo; print('  ' + tourvideo.ensure_recorder())") || say "  tour recorder: not installed (Tour Video cannot record here)"
+  [ -d "$BASE/.playwright" ] && [ -n "${DEPLOY_USER:-}" ] && id "$DEPLOY_USER" >/dev/null 2>&1 && chown -R "$DEPLOY_USER:" "$BASE/.playwright" "$BASE/kept" 2>/dev/null || true
 }
 
 # Start the release on the probe port with an empty data folder and ask its health; stop it again.

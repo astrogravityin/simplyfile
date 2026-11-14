@@ -48,6 +48,12 @@ def problems(f: dict[str, str]) -> list[str]:
     code = "\n".join(line for line in sh.splitlines() if not line.lstrip().startswith("#"))
     if re.search(r"/opt/|\b8[0-9]{3}\b|keep_releases\s*=\s*\d", code):
         bad.append("deploy/deploy.sh has a folder or port typed in (chip deploy.settings holds them)")
+    if 'set_link "$rel/$k" "$BASE/kept/$k"' not in code or "tmp/tour_video" not in f["chips/deploy.settings.json"]:
+        bad.append("deploy/deploy.sh does not keep tmp/tour_video across releases (chip deploy.settings kept) - every deploy loses the recorded Tour Videos")
+    if "tourvideo.ensure_recorder()" not in code or "PLAYWRIGHT_BROWSERS_PATH" not in code:
+        bad.append("deploy/deploy.sh does not install the Tour Video recorder (and its browser in <base>/.playwright) per release")
+    if "Environment=PLAYWRIGHT_BROWSERS_PATH={{BASE}}/.playwright" not in unit:
+        bad.append("deploy/portal.service.in does not point the service at <base>/.playwright - a non-root service cannot reach root's browser")
     for step in ("selfcheck failed", "probe", "moving back", "rollback"):
         if step not in sh:
             bad.append(f"deploy/deploy.sh lost its '{step}' step")
@@ -91,6 +97,11 @@ def main() -> None:
         ("deploy/portal.service.in", files["deploy/portal.service.in"].replace("User={{USER}}", "User=root")),
         ("deploy/portal.service.in", files["deploy/portal.service.in"].replace("TimeoutStopSec={{STOP}}", "")),
         ("deploy/deploy.sh", files["deploy/deploy.sh"] + "\nBASE=/opt/simplyfile\n"),
+        ("deploy/deploy.sh", files["deploy/deploy.sh"].replace('set_link "$rel/$k" "$BASE/kept/$k"', "")),
+        ("chips/deploy.settings.json", files["chips/deploy.settings.json"].replace("tmp/tour_video", "tmp/other")),
+        ("deploy/deploy.sh", files["deploy/deploy.sh"].replace("tourvideo.ensure_recorder()", "")),
+        ("deploy/deploy.sh", files["deploy/deploy.sh"].replace('PLAYWRIGHT_BROWSERS_PATH="$BASE/.playwright" ', "")),
+        ("deploy/portal.service.in", files["deploy/portal.service.in"].replace("Environment=PLAYWRIGHT_BROWSERS_PATH={{BASE}}/.playwright", "")),
         ("Dockerfile", files["Dockerfile"].replace("USER portal", "")),
         (".gitignore", files[".gitignore"].replace("deploy/vps.local", "")),
         ("chips/deploy.settings.json", files["chips/deploy.settings.json"].replace('"port": 8837', '"port": 8830')),
