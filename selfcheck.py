@@ -116,6 +116,8 @@ def api_check() -> None:
         os.environ.pop("PORTAL_EDITION", None)
         sys.path.insert(0, str(HERE))
         import app  # noqa: PLC0415 - after TV_DATA
+        from core import store as _st  # noqa: PLC0415 - 2026-11-16: the walk must never touch the real data
+        assert Path(_st.DATA).resolve().is_relative_to(Path(tmp).resolve()), f"the api walk would run on real data: {_st.DATA}"
         import recon  # noqa: PLC0415
         c = TestClient(app.app)
         # 2026-11-02 link card: WhatsApp asks HEAD first - 405 there meant a pasted link showed no card
