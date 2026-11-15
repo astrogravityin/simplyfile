@@ -296,6 +296,9 @@ def _named(got: Any, lib: dict) -> Any:
     return got
 
 
+
+LANG: "ContextVar[str]" = __import__("contextvars").ContextVar("portal_lang", default="")   # this request's language (core/words.py; 2026-11-15 carried with Access Control)
+
 def say(chip_id: str, key: str, **values) -> str:
     """One sentence from a messages chip, with {placeholders} filled in:
     `raise HTTPException(404, engine.say("access.messages", "no_group"))`."""

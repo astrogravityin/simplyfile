@@ -16,6 +16,17 @@ screen and the server can never disagree. The model is the studio's, the same as
                    with the person's own rules on top. New sign-ups land here.
     INHERIT      → a group may name ONE parent (`inherits`); members get the parent's rules live, plus the
                    group's own. A loop is refused when saved, and the reader stops at one anyway.
+    NEAREST WINS → (2026-11-15 owner, chip knob access.settings nearest_wins, on) a group OVERRIDES its parent: per
+                   screen the nearest rule decides - the person's own, then their group, then its parent, and so
+                   on. Between two groups a person is in, a deny still wins. Knob off = DENY WINS above.
+
+Groups ARE roles (2026-11-15 owner: "User Group and Role are same"). Each person has ONE main group - the Group
+dropdown on People (`main`, in the access file) - and may sit in more. A group carries `rights` (a builder level from
+chip people.roles: author / editor, or none); picking a person's group sets their `role` from it, so every
+`role == "owner"` and builder.can check keeps working. "Owner" in that dropdown = role owner. A group may be
+INACTIVE (`active: false`): it gives nothing and its members fall back to its nearest active parent. Day one
+(`_roles_to_groups`, once): Editor and Author become groups; an editor/author in no group joins theirs (it
+inherits Catch All, so no menu changes), anyone already placed keeps their groups and role.
 
 Catch All (id `catch_all`, name from chip access.messages, renamable, never deletable, no member list) is
 "what an account nobody has placed sees". A personal rule alone does NOT make a person managed (chip
@@ -40,6 +51,8 @@ A host portal hands install() its catalog: [{id, label, group, icon, admin?, fun
 Routes guard themselves with `Depends(screen("video"))` or `Depends(screen("video", "draft"))`.
 """
 from __future__ import annotations
+
+from typing import Callable
 
 import json
 import secrets
@@ -89,9 +102,13 @@ CORE_SCREENS = [
     {"id": "issues", "label": "Reported issues", "group": "Admin", "icon": "alert", "admin": True},
     {"id": "memory", "label": "Memory watch", "group": "Admin", "icon": "spark", "admin": True},
     {"id": "agents", "label": "Agents", "group": "Admin", "icon": "agent", "admin": True},          # 2026-10-24 core/agents.py
-    {"id": "connect-ai", "label": "Connect your AI", "group": "Admin", "icon": "plug", "admin": True},    # 2026-10-24 core/mcp.py
+    {"id": "connect-ai", "label": "Connect your AI", "group": "Admin", "icon": "plug", "admin": True, "openable": True},    # 2026-10-24 core/mcp.py
     {"id": "howto-config", "label": "How to Use pages", "group": "Admin", "icon": "help", "admin": True},
     {"id": "menus", "label": "Menu builder", "group": "Admin", "icon": "menu", "admin": True},           # 2026-10-26 core/menus.py
+    {"id": "credentials", "label": "Credentials", "group": "Admin", "icon": "lock", "admin": True},     # 2026-11-02 core/credentials.py
+    {"id": "syscheck", "label": "System checks", "group": "Admin", "icon": "shield", "admin": True},   # 2026-11-02 core/syscheck.py
+    # 2026-11-11 core/mailtemplates.py: "switch" = a chip whose `on` shows the screen; off = off the menu (still the owner's alone)
+    {"id": "mailtemplates", "label": "Mail templates", "group": "Admin", "icon": "mail", "admin": True, "switch": "mail.templates"},
     # 2026-09-17 owner: the builders change what the whole portal does, so they are the owner's alone -
     # hidden from everyone else and closed to grants, like every Admin screen.
     {"id": "ocb", "label": "Ops & chips", "group": "Build", "icon": "chip", "admin": True},
@@ -104,14 +121,20 @@ _BY_ID: dict[str, dict] = {}
 router = APIRouter()
 
 
-def load(catalog: list[dict] | str | Path) -> None:
-    if not isinstance(catalog, list):
-        catalog = json.loads(Path(catalog).read_text(encoding="utf-8"))
+def load(catalog_in: list[dict] | str | Path) -> None:
+    catalog: list[dict] = catalog_in if isinstance(catalog_in, list) else json.loads(Path(catalog_in).read_text(encoding="utf-8"))
     core_ids = {c["id"] for c in CORE_SCREENS}
     # 2026-10-26 a portal may take a framework screen off its menu ({"id": "ocb", "hidden": true} in its catalog) -
     # still the owner's alone and still opens by its link; nothing else about it can be changed from the host.
     off = {s["id"] for s in catalog if s["id"] in core_ids and s.get("hidden")}
-    BASE[:] = [s for s in catalog if s["id"] not in core_ids] + [c | ({"hidden": True} if c["id"] in off else {}) for c in CORE_SCREENS]
+    off |= {c["id"] for c in CORE_SCREENS if c.get("switch") and not engine.knobs(str(c["switch"])).get("on")}   # 2026-11-11 a component that is off
+    # 2026-11-09 GamyFyStudio: authors connect their own AI. A core screen marked "openable" (Connect your AI only) may be
+    # opened to the portal's people by its catalog row {"id": "connect-ai", "admin": false} - then Access Control decides,
+    # like any screen. Every other core screen stays the owner's alone, whatever the catalog says.
+    shared = {s["id"] for s in catalog if s["id"] in core_ids and s.get("admin") is False}
+    BASE[:] = [s for s in catalog if s["id"] not in core_ids] + [
+        c | ({"hidden": True} if c["id"] in off else {}) | ({"admin": False} if c["id"] in shared and c.get("openable") else {})
+        for c in CORE_SCREENS]
     reapply()
 
 
@@ -191,18 +214,43 @@ def _add_new_screens(d: dict) -> bool:
     return True
 
 
+def _roles_to_groups(d: dict, people: list[dict]) -> None:
+    """Day one of groups-as-roles (2026-11-15), in place, once. Every builder level (people.roles minus owner and
+    member) gets a group carrying it, inheriting Catch All. An editor/author in NO group joins it and it becomes their
+    main group - Catch All still decides their screens, so no menu changes. Anyone already in a group keeps their
+    groups AND their role until the owner picks their group. Groups made earlier gain nothing but the defaults."""
+    d.setdefault("main", {})
+    for r in rights_rows():
+        g = next((x for x in d["groups"] if x.get("rights") == r["id"]), None)
+        if g is None:
+            name = r["label"] if not any(x["name"].lower() == r["label"].lower() for x in d["groups"]) else f"{r['label']} ({r['id']})"
+            g = {"id": store.new_id(), "name": name, "description": r.get("doc", ""), "members": [],
+                 "inherits": CATCH_ALL, "rights": r["id"], "active": True}
+            d["groups"].append(g)
+        for u in people:
+            if u.get("role") == r["id"] and not any(u["id"] in x.get("members", []) for x in d["groups"] if x["id"] != CATCH_ALL):
+                g["members"] = sorted(set(g["members"]) | {u["id"]})
+                d["main"][u["id"]] = g["id"]
+    d["roles_as_groups"] = store.now()
+
+
 def data() -> dict:
-    """The access file. With a catalog loaded, the first read migrates it to Catch All (saved, once) and every
-    read adds a newly catalogued screen to Catch All (saved, once). No catalog yet = nothing decided or saved."""
+    """The access file. With a catalog loaded, the first read migrates it to Catch All (saved, once), then roles to
+    groups (saved, once), and every read adds a newly catalogued screen to Catch All (saved, once). No catalog yet =
+    nothing decided or saved."""
     d = _raw()
     if not CATALOG:
         return d
-    if not any(g["id"] == CATCH_ALL for g in d["groups"]) or not {s["id"] for s in CATALOG} <= set(d.get("seen_screens") or []):
+    if (not any(g["id"] == CATCH_ALL for g in d["groups"]) or not d.get("roles_as_groups")
+            or not {s["id"] for s in CATALOG} <= set(d.get("seen_screens") or [])):
         with store._LOCK:                                 # noqa: SLF001
             d = _raw()
             changed = not any(g["id"] == CATCH_ALL for g in d["groups"])
             if changed:
                 _migrate(d)
+            if not d.get("roles_as_groups"):
+                _roles_to_groups(d, store.users())
+                changed = True
             if _add_new_screens(d) or changed:
                 save(d)
     return d
@@ -212,20 +260,77 @@ def save(d: dict) -> None:
     store.write("access", d)
 
 
+def is_active(g: dict) -> bool:
+    return g.get("active", True) is not False
+
+
 def groups_of(user_id: str, d: dict | None = None) -> list[str]:
-    """The groups this person was PUT in. Catch All is never one of them: it is the absence of a choice."""
+    """The groups this person counts as in. Catch All is never one of them: it is the absence of a choice. An
+    INACTIVE group they were put in stands for its nearest active parent (none = they are unassigned)."""
     d = d or data()
-    return [g["id"] for g in d["groups"] if g["id"] != CATCH_ALL and user_id in g.get("members", [])]
+    out: list[str] = []
+    for g in d["groups"]:
+        if g["id"] == CATCH_ALL or user_id not in g.get("members", []):
+            continue
+        gid = next(iter(chain(g["id"], d)), "")             # chain() skips inactive groups
+        if gid and gid != CATCH_ALL and gid not in out:
+            out.append(gid)
+    return out
 
 
-def chain(group_id: str, d: dict) -> list[str]:
-    """This group, then the groups it inherits from, nearest first (INHERIT). Stops at a loop or a missing group."""
+def chain(group_id: str, d: dict, *, every: bool = False) -> list[str]:
+    """This group, then the groups it inherits from, nearest first (INHERIT). Stops at a loop or a missing group.
+    An inactive group is passed over (its members get its parent); every=True keeps it (loop checks)."""
     by_id = {g["id"]: g for g in d["groups"]}
     out: list[str] = []
-    while group_id and group_id in by_id and group_id not in out:
-        out.append(group_id)
+    seen: set[str] = set()
+    while group_id and group_id in by_id and group_id not in seen:
+        seen.add(group_id)
+        if every or is_active(by_id[group_id]):
+            out.append(group_id)
         group_id = by_id[group_id].get("inherits") or ""
     return out
+
+
+_PEOPLE_ADMIN: list[bool] = [False]
+
+
+def offer_people_admin() -> None:
+    """The host has /api/people-admin/* (Edit person, Organisations - the starter's app.py): the page shows them. A host
+    without them never shows a button that answers 404 (2026-11-15 TradyFy showed [peopleedit.tab_orgs])."""
+    _PEOPLE_ADMIN[0] = True
+
+
+def rights_rows() -> list[dict]:
+    """The builder levels a group can give (chip people.roles minus owner and the plain member)."""
+    return [r for r in engine.run("people.roles") if r["id"] not in ("owner", engine.run("people.new_account_role"))]
+
+
+def main_of(user_id: str, d: dict) -> str:
+    """The person's ONE group, as the People dropdown shows it: the one picked, while they are still in it; else the
+    first group they are in; else Catch All."""
+    picked = (d.get("main") or {}).get(user_id, "")
+    mine = [g["id"] for g in d["groups"] if g["id"] != CATCH_ALL and user_id in g.get("members", [])]
+    return picked if picked in mine else (mine[0] if mine else CATCH_ALL)
+
+
+def role_for(group_id: str, d: dict) -> str:
+    """The role a person gets from their main group: its rights, or the plain member."""
+    g: dict = next((x for x in d["groups"] if x["id"] == group_id), {})
+    return g.get("rights") or engine.run("people.new_account_role")
+
+
+def _sync_rights(d: dict, only: set[str] | None = None) -> None:
+    """A person whose group was PICKED (main) carries that group's rights as their role; owners are never touched."""
+    rows, changed = store.users(), False
+    for u in rows:
+        if u.get("role") == "owner" or u["id"] not in (d.get("main") or {}) or (only is not None and u["id"] not in only):
+            continue
+        want = role_for(main_of(u["id"], d), d)
+        if u.get("role") != want:
+            u["role"], changed = want, True
+    if changed:
+        store.write("users", rows)
 
 
 def subject_label(subject: str, d: dict, users: list[dict], via: dict | None = None) -> str:
@@ -292,14 +397,37 @@ def facts_for(user: dict | None, screen_id: str, function_id: str = "", d: dict 
         facts["in_group"] = bool(mine)
         facts["has_personal"] = any(g["subject"] == f"user:{user['id']}" for g in d["grants"])
         who = users if users is not None else None
+        nearest = engine.setting("access.settings", "nearest_wins")
+        # NEAREST WINS: one branch per group the person is in (that group, then its parents); the person's own rules are
+        # the nearest of all. Each branch gives the rule of its nearest member that has one (a function's own rule
+        # before the whole screen's); then a deny among the branches wins.
+        branches = [[f"user:{user['id']}"]] + [[f"group:{x}" for x in chain(g, d)] for g in mine]
         for lane, subjects in (("", own), ("ca_", {f"group:{CATCH_ALL}"})):
+            if nearest:
+                picks = _nearest(here, branches if lane == "" else [[f"group:{CATCH_ALL}"]], function_id)
             for effect in ("deny", "allow"):
-                hit = next((g for g in here if g["subject"] in subjects and g["effect"] == effect), None)
+                hit = (next((g for g in picks if g["effect"] == effect), None) if nearest else
+                       next((g for g in here if g["subject"] in subjects and g["effect"] == effect), None))
                 if hit:
                     who = who if who is not None else store.users()
                     facts[f"{lane}{effect}_by"] = subject_label(hit["subject"], d, who, via if lane == "" else None)
                     facts[f"{lane}{effect}_on"] = label_of(screen_id, hit.get("function", ""))
     return facts
+
+
+def _nearest(here: list[dict], branches: list[list[str]], function_id: str) -> list[dict]:
+    """The deciding rule of each branch (nearest subject that has a rule here). The person's own branch, when it has
+    a rule, is the only one that counts - nothing is nearer than the person."""
+    picks = []
+    for i, branch in enumerate(branches):
+        for subj in branch:
+            mine = [g for g in here if g["subject"] == subj]
+            if mine:
+                picks.append(next((g for g in mine if function_id and g.get("function", "") == function_id), mine[0]))
+                break
+        if i == 0 and picks:
+            return picks
+    return picks
 
 
 def decide(user: dict | None, screen_id: str, function_id: str = "", d: dict | None = None,
@@ -340,9 +468,19 @@ def my_access(u: dict | None) -> dict:
     return out
 
 
+# 2026-11-13 owner: "If Portal Admin will not have data then why to have menu" - a module names its screen with a test
+# "nothing here for this person"; such a screen leaves THEIR menu (hidden, as Menu builder does) and still opens by its link.
+EMPTY_FOR: dict[str, Callable[[dict], bool]] = {}
+
+
+def menu_for(u: dict | None, catalog: list[dict]) -> list[dict]:
+    return [s | {"hidden": True} if u and s["id"] in EMPTY_FOR and EMPTY_FOR[s["id"]](u) else s for s in catalog]
+
+
 def bootstrap_extra(request: Request, u: dict | None) -> dict:
     d = data() if u else {}
-    return {"catalog": CATALOG, "access": my_access(u),
+    from core import words  # noqa: PLC0415 - words imports engine only; the menu's labels in the reader's language
+    return {"catalog": menu_for(u, words.dress(CATALOG)), "access": my_access(u),
             "pending_requests": [r["screen"] for r in d.get("requests", [])
                                  if u and r["user_id"] == u["id"] and r["status"] == "pending"]}
 
@@ -361,7 +499,7 @@ def _people_rows(user: dict, args: dict) -> list[dict]:
     for u in store.users():
         if (only and u["id"] != only) or (group and u["id"] not in sets.get(group, ())) or (args.get("not_owner") and u.get("role") == "owner"):
             continue
-        rows.append(store.public_user(u) | {"groups": [gid for gid, m in sets.items() if u["id"] in m]})
+        rows.append(store.public_user(u) | {"groups": [gid for gid, m in sets.items() if u["id"] in m], "main": main_of(u["id"], d)})
     return rows
 
 
@@ -400,7 +538,7 @@ def overview(_: dict = Depends(screen("access"))):
             "can_email": mailer.configured(), "roles": engine.run("people.roles"),
             "reset_defaults": {k: v for k, v in engine.run("people.reset_password").items() if k != "alphabet"},
             "password_min_length": engine.knobs("auth.password_problem")["min_length"],
-            "new_account_role": engine.run("people.new_account_role"), "catch_all": CATCH_ALL,
+            "new_account_role": engine.run("people.new_account_role"), "catch_all": CATCH_ALL, "rights": rights_rows(), "people_admin": _PEOPLE_ADMIN[0],
             "new_group_inherits": CATCH_ALL if engine.setting("access.settings", "new_group_inherits_catch_all") else ""}
 
 
@@ -434,24 +572,78 @@ def save_group(body: dict = Body(...), _: dict = Depends(screen("access"))):
             base = set(body["members"]) if "members" in body else set(g.get("members") or [])
             base = (base | set(body.get("add") or [])) - set(body.get("remove") or [])
             g["members"] = sorted(m for m in base if m in known)
+        if "active" in body:                          # INACTIVE: gives nothing; members fall back to its parent
+            if g["id"] == CATCH_ALL and body["active"] is not True:
+                raise HTTPException(400, say("catch_all_always_on"))
+            g["active"] = body["active"] is not False
+        if "rights" in body and g["id"] != CATCH_ALL:  # the builder level its members get (groups ARE roles)
+            ok = [r["id"] for r in rights_rows()]
+            if body["rights"] and body["rights"] not in ok:
+                raise HTTPException(400, say("bad_rights", rights=", ".join(ok)))
+            g["rights"] = body["rights"] or ""
         save(d)
+        _sync_rights(d)
     return {"group": g}
 
 
 @router.delete("/api/core/access/groups/{group_id}")
-def delete_group(group_id: str, _: dict = Depends(screen("access"))):
+def delete_group(group_id: str, move_to: str = "", _: dict = Depends(screen("access"))):
+    """Its members move to `move_to` (another group, or Catch All = none); children inherit its parent."""
     if group_id == CATCH_ALL:
         raise HTTPException(400, say("catch_all_builtin"))
     with store._LOCK:                                 # noqa: SLF001
         d = data()
         gone = next((g for g in d["groups"] if g["id"] == group_id), {})
+        dest = next((g for g in d["groups"] if g["id"] == (move_to or CATCH_ALL) and g["id"] != group_id), None)
+        if dest is None:
+            raise HTTPException(400, say("move_unknown"))
         for g in d["groups"]:                          # a child inherits from the deleted group's own parent
             if g.get("inherits") == group_id:
                 g["inherits"] = gone.get("inherits") or ""
+        moved = set(gone.get("members") or [])
+        if dest["id"] != CATCH_ALL:
+            dest["members"] = sorted(set(dest.get("members") or []) | moved)
+        for uid, gid in list((d.get("main") or {}).items()):
+            if gid == group_id:
+                d["main"][uid] = dest["id"]
         d["groups"] = [g for g in d["groups"] if g["id"] != group_id]
         d["grants"] = [g for g in d["grants"] if g["subject"] != f"group:{group_id}"]
         save(d)
-    return {"ok": True}
+        _sync_rights(d, moved)
+    return {"ok": True, "moved": len(moved)}
+
+
+@router.put("/api/core/access/people/{user_id}/group")
+def set_group(user_id: str, body: dict = Body(...), me: dict = Depends(auth.owner)):
+    """The People dropdown (groups ARE roles): "owner", or a group - the person leaves their old main group, joins
+    this one, and takes its rights as their role. Their other groups stay."""
+    gid = str(body.get("group") or "")
+    if gid == "owner":
+        return set_role(user_id, {"role": "owner"}, me)
+    with store._LOCK:                                 # noqa: SLF001
+        d = data()
+        g = next((x for x in d["groups"] if x["id"] == gid), None)
+        if g is None:
+            raise HTTPException(400, say("bad_group"))
+        if not is_active(g):
+            raise HTTPException(400, say("group_inactive", name=g["name"]))
+        if not any(u["id"] == user_id for u in store.users()):
+            raise HTTPException(404, say("no_account"))
+        if user_id == me["id"]:
+            raise HTTPException(400, say("no_self_demote"))
+        old = main_of(user_id, d)
+        for x in d["groups"]:
+            if x["id"] == old and old != CATCH_ALL:
+                x["members"] = [m for m in x.get("members", []) if m != user_id]
+            if x["id"] == gid and gid != CATCH_ALL:
+                x["members"] = sorted(set(x.get("members") or []) | {user_id})
+        d.setdefault("main", {})[user_id] = gid
+        save(d)
+        rows = store.users()
+        u = next(x for x in rows if x["id"] == user_id)
+        u["role"] = role_for(gid, d)                    # an owner picked into a group stops being an owner
+        store.write("users", rows)
+    return {"user": store.public_user(u), "group": gid}
 
 
 def _add_grant(d: dict, subject: str, screen_id: str, function_id: str, effect: str, by: str) -> dict:
@@ -512,6 +704,16 @@ def check(user_id: str, _: dict = Depends(screen("access"))):
                          **decide(u, s["id"], "", d, users),
                          "functions": [{"id": f["id"], "label": f["label"], **decide(u, s["id"], f["id"], d, users)}
                                        for f in s.get("functions", [])]} for s in CATALOG]}
+
+
+@router.get("/api/core/access/check")
+def check_by_email(email: str = "", me: dict = Depends(screen("access"))):
+    """The same answer by email (MCP tool access_explain). An address rides in the query, never the path: the activity
+    ledger keeps paths only."""
+    u = store.find_user(str(email).strip().lower())
+    if not u:
+        raise HTTPException(404, say("no_account"))
+    return check(u["id"], me)
 
 
 # --- asking for access --------------------------------------------------------------------------
@@ -584,6 +786,14 @@ def create_user(request: Request, body: dict = Body(...), me: dict = Depends(scr
     username = str(body.get("username") or "").strip().lower()
     name = str(body.get("display_name") or body.get("name") or email.split("@")[0]).strip()
     role = body.get("role") if isinstance(body.get("role"), str) and body.get("role") in role_ids() else engine.run("people.new_account_role")
+    gid = str(body.get("group") or "")                # 2026-11-15 groups ARE roles: Add person picks a group (or Owner)
+    if gid == "owner":
+        role, gid = "owner", ""
+    elif gid:
+        g = next((x for x in data()["groups"] if x["id"] == gid), None)
+        if g is None or not is_active(g):
+            raise HTTPException(400, say("bad_group") if g is None else say("group_inactive", name=g["name"]))
+        role = role_for(gid, data())
     if role == "owner" and me.get("role") != "owner":
         raise HTTPException(403, say("only_owner_makes_owner"))
     invite = not str(body.get("password") or "").strip()
@@ -601,6 +811,13 @@ def create_user(request: Request, body: dict = Body(...), me: dict = Depends(scr
                            name, role, verified=not invite, username=username)
     except ValueError as e:
         raise HTTPException(400, str(e))
+    if gid and gid != CATCH_ALL:
+        with store._LOCK:                             # noqa: SLF001
+            d = data()
+            g = next(x for x in d["groups"] if x["id"] == gid)
+            g["members"] = sorted(set(g.get("members") or []) | {u["id"]})
+            d.setdefault("main", {})[u["id"]] = gid
+            save(d)
     if invite:
         ttl = int(auth.codes()["invite_ttl_seconds"])
         token = store.make_token("invite", email, ttl)
@@ -666,6 +883,9 @@ def reset_password(user_id: str, body: dict = Body(default={}), me: dict = Depen
         auth.check_fields(password=password, known_user=target.get("username", ""))
     require_change = bool(body.get("require_change", knobs["require_change_default"]))
     store.set_password(target["email"], password, must_change=require_change)
+    # 2026-11-05: the owner vouches for the account; an invited member never accepted stayed behind verify_first
+    # and the new password was refused ("Confirm your email address first")
+    store.verify_user(target["email"])
     store.end_sessions_for(target["id"])
     auth.clear_fails(target["email"])
     auth.clear_fails(target.get("username", ""))
@@ -856,15 +1076,31 @@ if __name__ == "__main__":  # ponytail: one runnable self-check of the resolver 
         _add_grant(d, "group:fam", "keys", "", "allow", "t")
         save(d)
         assert not may(fam[1], "memory"), "no rule opens an admin screen to anyone but an owner"
-        assert not may(fam[1], "keys"), "deny wins: Catch All's deny reaches My Family through INHERIT"
-        why = decide(fam[1], "keys")["why"]
-        assert say("inherited_label", name="Catch All", via="My Family") in why, why
-        # bite (in memory): a decide chip without its deny-wins case lets the allow through
-        chip = copy.deepcopy(engine.chips()["access.decide"])
-        chip["expr"]["cases"] = [c for c in chip["expr"]["cases"]
-                                 if c["when"] != {"op": "ne", "left": "$deny_by", "right": ""}]
-        assert engine.run("access.decide", facts_for(fam[1], "keys"), engine.with_drafts([chip]))["allowed"] is True, \
-            "the deny-wins guard cannot bite"
+        # 2026-11-15 NEAREST WINS: My Family's own allow overrides the deny it inherits from Catch All
+        assert may(fam[1], "keys"), "inherit and override: the group's own allow beats its parent's deny"
+        assert "My Family" in decide(fam[1], "keys")["why"]
+        assert not may(lone, "keys"), "Catch All itself still denies keys to the unassigned"
+        assert not may(fam[0], "books"), "a person's own deny is nearest of all"
+        knobs_ = copy.deepcopy(engine.chips()["access.settings"])   # knob off = the old deny-wins model, still there
+        next(p_ for p_ in knobs_["params"] if p_["name"] == "nearest_wins")["default"] = False
+        _real_setting = engine.setting
+        engine.setting = lambda chip_id, key: (engine.run(chip_id, {}, engine.with_drafts([knobs_]))[key] if chip_id == "access.settings" else _real_setting(chip_id, key))
+        try:
+            assert not may(fam[1], "keys"), "nearest_wins off: Catch All's deny reaches My Family through INHERIT"
+            why = decide(fam[1], "keys")["why"]
+            assert say("inherited_label", name="Catch All", via="My Family") in why, why
+            # bite (in memory): a decide chip without its deny case lets the allow through
+            chip = copy.deepcopy(engine.chips()["access.decide"])
+            chip["expr"]["cases"] = [c for c in chip["expr"]["cases"]
+                                     if c["when"] != {"op": "ne", "left": "$deny_by", "right": ""}]
+            assert engine.run("access.decide", facts_for(fam[1], "keys"), engine.with_drafts([chip]))["allowed"] is True, \
+                "the deny-wins guard cannot bite"
+        finally:
+            engine.setting = _real_setting
+        d = data()
+        _add_grant(d, "group:fam", "keys", "", "deny", "t")
+        save(d)
+        assert not may(fam[1], "keys"), "the group's own deny decides again"
         # MANAGED sees only its allows; INHERIT gives the parent's, live
         solo = store.add_user("s@x.io", "password-s")
         kid = store.add_user("k@x.io", "password-k")
@@ -917,12 +1153,77 @@ if __name__ == "__main__":  # ponytail: one runnable self-check of the resolver 
         load(SCREENS + [{"id": "fresh", "label": "Fresh"}, {"id": "wip", "label": "Wip"}])
         assert not may(lone, "wip") and not may(fam[1], "wip"), "a draft put live opens to nobody until allowed"
         # deleting a parent hands its children the grandparent
-        delete_group("solo", {})
+        delete_group("solo", "", {})
         assert next(g for g in data()["groups"] if g["id"] == "kid")["inherits"] == ""
         d = data()
         _add_grant(d, "group:kid", "video", "", "allow", "t")
         _add_grant(d, "group:kid", "video", "", "deny", "t")
         assert len([x for x in d["grants"] if x["subject"] == "group:kid"]) == 1, "saving a rule again replaces it"
+        # --- 3. groups ARE roles (2026-11-15) -----------------------------------------------------------------
+        ed = next(g for g in data()["groups"] if g.get("rights") == "editor")
+        au = next(g for g in data()["groups"] if g.get("rights") == "author")
+        assert ed["inherits"] == CATCH_ALL and is_active(ed), "day one: Editor is a group from Catch All"
+        d = data()
+        d.pop("roles_as_groups")                                # day one again, on people with old roles
+        save(d)
+        wr = store.add_user("w@x.io", "password-w", role="editor")          # an editor in no group
+        rows_ = store.users()
+        next(u for u in rows_ if u["id"] == fam[2]["id"])["role"] = "author"  # an author already in My Family
+        store.write("users", rows_)
+        fam2 = next(u for u in store.users() if u["id"] == fam[2]["id"])
+        before_ = {u["id"]: _menu(u, _raw(), store.users()) for u in (wr, fam2)}
+        d = data()                                             # migrates again (flag gone), once
+        assert len([g for g in d["groups"] if g.get("rights") == "editor"]) == 1, "an existing role group is reused"
+        assert wr["id"] in next(g for g in d["groups"] if g.get("rights") == "editor")["members"] and main_of(wr["id"], d) == ed["id"]
+        assert fam2["id"] not in next(g for g in d["groups"] if g.get("rights") == "author")["members"], "a placed person stays put"
+        for u in (wr, fam2):
+            assert _menu(u, d, store.users()) == before_[u["id"]], f"day one changed {u['email']}'s menu"
+        assert next(u for u in store.users() if u["id"] == fam[2]["id"])["role"] == "author", "and keeps their role"
+        # the Group dropdown: a group sets membership AND the role; Owner is a choice; an inactive group is not
+        assert set_group(lone["id"], {"group": au["id"]}, own)["group"] == au["id"]
+        lone_ = next(u for u in store.users() if u["id"] == lone["id"])
+        assert lone_["role"] == "author" and groups_of(lone["id"]) == [au["id"]] and main_of(lone["id"], data()) == au["id"]
+        set_group(lone["id"], {"group": ed["id"]}, own)
+        assert groups_of(lone["id"]) == [ed["id"]], "picking a new group leaves the old main one"
+        assert next(u for u in store.users() if u["id"] == lone["id"])["role"] == "editor"
+        assert refused(set_group, lone["id"], {"group": "nope"}, own) == 400 and refused(set_group, own["id"], {"group": ed["id"]}, own) == 400
+        set_group(lone["id"], {"group": "owner"}, own)
+        assert next(u for u in store.users() if u["id"] == lone["id"])["role"] == "owner", "Owner is a pick in the same box"
+        set_group(lone["id"], {"group": CATCH_ALL}, own)
+        assert groups_of(lone["id"]) == [] and next(u for u in store.users() if u["id"] == lone["id"])["role"] == "member", \
+            "Catch All = no group, a plain member; an owner picked into a group is an owner no more"
+        # rights change on the group reach its people
+        set_group(lone["id"], {"group": ed["id"]}, own)
+        save_group({"id": ed["id"], "name": ed["name"], "rights": "author"}, {})
+        assert next(u for u in store.users() if u["id"] == lone["id"])["role"] == "author", "group rights follow to its people"
+        assert refused(save_group, {"id": ed["id"], "name": ed["name"], "rights": "owner"}, {}) == 400, "rights never make an owner"
+        save_group({"id": ed["id"], "name": ed["name"], "rights": "editor"}, {})
+        # INACTIVE: gives nothing, members fall back to its parent; it cannot be picked
+        d = data()
+        _add_grant(d, f"group:{ed['id']}", "sound", "", "allow", "t")
+        save(d)
+        assert may(lone, "sound")
+        save_group({"id": ed["id"], "name": ed["name"], "active": False}, {})
+        assert not may(lone, "sound") and may(lone, "video") == may(newbie, "video"), "inactive: back to the parent (Catch All)"
+        assert refused(set_group, wr["id"], {"group": ed["id"]}, own) == 400, "an inactive group is not a pick"
+        assert refused(save_group, {"id": CATCH_ALL, "name": "Unassigned", "active": False}, {}) == 400
+        save_group({"id": ed["id"], "name": ed["name"], "active": True}, {})
+        assert may(lone, "sound"), "active again: its screens come back"
+        # DELETE moves the members where the owner says, and their role follows the new group
+        assert refused(delete_group, ed["id"], "nope", {}) == 400
+        assert delete_group(ed["id"], au["id"], {})["moved"] >= 1
+        assert au["id"] in groups_of(lone["id"]) and main_of(lone["id"], data()) == au["id"]
+        assert next(u for u in store.users() if u["id"] == lone["id"])["role"] == "author"
+        # within one group a button's own rule beats the whole screen's, in either order of saving
+        d = data()
+        _add_grant(d, f"group:{au['id']}", "video", "draft", "deny", "t")
+        _add_grant(d, f"group:{au['id']}", "video", "", "allow", "t")
+        save(d)
+        assert may(lone, "video") and not may(lone, "video", "draft"), "a function rule beats its screen rule"
+        # the page gets the rights list and each person's main group
+        assert [r["id"] for r in overview({})["rights"]] == ["editor", "author"]
+        assert lists.page("access_people", own, {"id": lone["id"]})["rows"][0]["main"] == au["id"]
+
         # 2026-10-19 owner "allow flexi search here": Groups & rules finds a screen with a typo or half a word
         found = lists.page("access_screens", own, {"q": "sound frm"})["rows"]
         assert found and found[0]["id"] == "sound", found

@@ -34,7 +34,9 @@ def static_check(app) -> None:  # noqa: ARG001 - the shared signature
     assert "agents" in access._BY_ID, "Agents is not on the Admin menu (core/access.py CORE_SCREENS)"  # noqa: SLF001
     # 2026-10-24 (TradyFy has its own "Agents" research screen): access.load drops a portal screen whose id is a core one, silently -
     # a portal's screen must never share a core screen's id, or its people lose it without a word
-    own = {s["id"] for s in json.loads((HERE / "catalog.json").read_text(encoding="utf-8"))}
+    # a row that only sets a core screen's flags ({"id": "syscheck", "hidden": true}) is a setting on that screen
+    # (core/access.py load), not a screen of the portal's own
+    own = {s["id"] for s in json.loads((HERE / "catalog.json").read_text(encoding="utf-8")) if set(s) - {"id", "hidden", "admin"}}
     clash = own & {s["id"] for s in access.CORE_SCREENS}
     assert not clash, f"catalog.json uses a core screen's id {sorted(clash)} - that screen would be replaced by core's; rename the portal's"
     shell = (HERE / "core" / "static" / "shell.js").read_text(encoding="utf-8")

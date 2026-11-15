@@ -13,11 +13,6 @@
       "default": "People & access"
     },
     {
-      "name": "lede",
-      "type": "text",
-      "default": "Who has an account, which groups they are in, and which of the portal’s screens each may open. An account in no group sees what Catch All allows; a group member sees what their groups allow. A deny always beats an allow. This page, activity, visitors, memory, How to Use pages and email are yours alone as owner."
-    },
-    {
       "name": "add_person",
       "type": "text",
       "default": "Add a person"
@@ -180,7 +175,7 @@
     {
       "name": "user_name_hint",
       "type": "text",
-      "default": "Blank uses the first part of their email."
+      "default": "Blank: the first part of their email."
     },
     {
       "name": "email_placeholder",
@@ -200,12 +195,12 @@
     {
       "name": "first_password_invite",
       "type": "text",
-      "default": "Leave blank to email them an invitation instead — nobody has to send a password through a chat window."
+      "default": "Leave blank and they get an email invitation instead."
     },
     {
       "name": "first_password_no_email",
       "type": "text",
-      "default": "Email is not set up, so give them a first password (at least {n} {n:character|characters}) and tell them to change it."
+      "default": "No email server yet: share this password with them yourself. At least {n} {n:character|characters}."
     },
     {
       "name": "cancel",
@@ -411,11 +406,6 @@
       "name": "delete_group_title",
       "type": "text",
       "default": "Delete \"{name}\"?"
-    },
-    {
-      "name": "delete_group_body",
-      "type": "text",
-      "default": "Its rules go with it. Its members keep their accounts; a group that inherited from it inherits from its parent instead."
     },
     {
       "name": "group_deleted",
@@ -845,11 +835,6 @@
       "default": "The account \"{to}\" has no email address, so no code can reach it. Add one, or set a password from People."
     },
     {
-      "name": "catch_all_note",
-      "type": "text",
-      "default": "What unassigned accounts and new sign-ups see - everyone who is in no group. Allow a screen here to open it to them; every group that inherits Catch All gets it too. A deny here wins for all of them. Built in: it can be renamed, never deleted."
-    },
-    {
       "name": "catch_all_tag",
       "type": "text",
       "default": "Built in"
@@ -868,16 +853,6 @@
       "name": "inherits_none",
       "type": "text",
       "default": "Nothing - only its own allows"
-    },
-    {
-      "name": "inherits_note",
-      "type": "text",
-      "default": "Members get everything the parent allows, live, plus this group's own allows. A deny anywhere wins."
-    },
-    {
-      "name": "group_inherits",
-      "type": "text",
-      "default": "Inherits everything \"{name}\" allows, plus its own allows below."
     },
     {
       "name": "group_inherits_none",
@@ -938,6 +913,158 @@
       "name": "no_group",
       "type": "text",
       "default": "No folder"
+    },
+    {
+      "name": "add_person_lede",
+      "type": "text",
+      "default": "They sign in with their email or user name.",
+      "label": "add person lede"
+    },
+    {
+      "name": "generate",
+      "type": "text",
+      "default": "Generate",
+      "label": "generate"
+    },
+    {
+      "name": "lede",
+      "type": "text",
+      "default": "Who has an account, which group each person belongs to, and which screens every group may open. A group can inherit another and override any of its rules; the nearest rule always decides. This page, activity, visitors, memory, How to Use pages and email are yours alone as owner."
+    },
+    {
+      "name": "inherits_note",
+      "type": "text",
+      "default": "Members get everything the parent allows, live. A rule set here overrides the parent's rule for that screen."
+    },
+    {
+      "name": "group_inherits",
+      "type": "text",
+      "default": "Inherits \"{name}\" and overrides it where a rule is set below."
+    },
+    {
+      "name": "catch_all_note",
+      "type": "text",
+      "default": "What new sign-ups and people in no group see. Every group that inherits Catch All starts from these screens and may override any of them. Built in: renamable, never deleted."
+    },
+    {
+      "name": "col_group",
+      "type": "text",
+      "default": "Group"
+    },
+    {
+      "name": "col_also",
+      "type": "text",
+      "default": "Also in"
+    },
+    {
+      "name": "now_in_group",
+      "type": "text",
+      "default": "Now in {group}."
+    },
+    {
+      "name": "now_owner",
+      "type": "text",
+      "default": "Now an owner - opens everything."
+    },
+    {
+      "name": "group_map",
+      "type": "text",
+      "default": "Groups at a glance"
+    },
+    {
+      "name": "group_map_lede",
+      "type": "text",
+      "default": "Each person sits in one group, picked in the Group column. A group inherits its parent's screens and may override them. Owner opens everything."
+    },
+    {
+      "name": "map_owner",
+      "type": "text",
+      "default": "Opens everything"
+    },
+    {
+      "name": "map_members",
+      "type": "text",
+      "default": "{n} in it"
+    },
+    {
+      "name": "inactive_tag",
+      "type": "text",
+      "default": "Inactive"
+    },
+    {
+      "name": "active_label",
+      "type": "text",
+      "default": "Active"
+    },
+    {
+      "name": "active_note",
+      "type": "text",
+      "default": "An inactive group gives nothing: its members fall back to its parent group until it is active again."
+    },
+    {
+      "name": "make_inactive",
+      "type": "text",
+      "default": "Make inactive"
+    },
+    {
+      "name": "make_active",
+      "type": "text",
+      "default": "Make active"
+    },
+    {
+      "name": "group_now_inactive",
+      "type": "text",
+      "default": "\"{name}\" is inactive - its members now get its parent's screens."
+    },
+    {
+      "name": "group_now_active",
+      "type": "text",
+      "default": "\"{name}\" is active again."
+    },
+    {
+      "name": "rights_label",
+      "type": "text",
+      "default": "Ops & chips rights"
+    },
+    {
+      "name": "rights_none",
+      "type": "text",
+      "default": "None - uses screens only"
+    },
+    {
+      "name": "rights_note",
+      "type": "text",
+      "default": "What members may do in Ops & chips. Their menu comes from the screens below."
+    },
+    {
+      "name": "rights_tag",
+      "type": "text",
+      "default": "{rights}"
+    },
+    {
+      "name": "move_members_to",
+      "type": "text",
+      "default": "Move members to"
+    },
+    {
+      "name": "inactive_group_pick",
+      "type": "text",
+      "default": "{name} (inactive)"
+    },
+    {
+      "name": "delete_group_body",
+      "type": "text",
+      "default": "Its rules go with it. Groups that inherit from it inherit its parent instead. Its {n} members move to the group you pick."
+    },
+    {
+      "name": "delete_group_body_one",
+      "type": "text",
+      "default": "Its rules go with it. Groups that inherit from it inherit its parent instead. Its one member moves to the group you pick."
+    },
+    {
+      "name": "map_members_one",
+      "type": "text",
+      "default": "1 in it"
     }
   ],
   "expr": {
@@ -1128,7 +1255,32 @@
       "clear_search": "$clear_search",
       "no_screen_hint": "$no_screen_hint",
       "as_screen_tip": "$as_screen_tip",
-      "no_group": "$no_group"
+      "no_group": "$no_group",
+      "add_person_lede": "$add_person_lede",
+      "generate": "$generate",
+      "col_group": "$col_group",
+      "col_also": "$col_also",
+      "now_in_group": "$now_in_group",
+      "now_owner": "$now_owner",
+      "group_map": "$group_map",
+      "group_map_lede": "$group_map_lede",
+      "map_owner": "$map_owner",
+      "map_members": "$map_members",
+      "inactive_tag": "$inactive_tag",
+      "active_label": "$active_label",
+      "active_note": "$active_note",
+      "make_inactive": "$make_inactive",
+      "make_active": "$make_active",
+      "group_now_inactive": "$group_now_inactive",
+      "group_now_active": "$group_now_active",
+      "rights_label": "$rights_label",
+      "rights_none": "$rights_none",
+      "rights_note": "$rights_note",
+      "rights_tag": "$rights_tag",
+      "move_members_to": "$move_members_to",
+      "inactive_group_pick": "$inactive_group_pick",
+      "delete_group_body_one": "$delete_group_body_one",
+      "map_members_one": "$map_members_one"
     }
   },
   "returns": "record",
@@ -1140,7 +1292,7 @@
       "args": {},
       "expect_value": {
         "title": "People & access",
-        "lede": "Who has an account, which groups they are in, and which of the portal’s screens each may open. An account in no group sees what Catch All allows; a group member sees what their groups allow. A deny always beats an allow. This page, activity, visitors, memory, How to Use pages and email are yours alone as owner.",
+        "lede": "Who has an account, which group each person belongs to, and which screens every group may open. A group can inherit another and override any of its rules; the nearest rule always decides. This page, activity, visitors, memory, How to Use pages and email are yours alone as owner.",
         "add_person": "Add a person",
         "tab_people": "People",
         "tab_rules": "Groups & rules",
@@ -1173,12 +1325,12 @@
         "display_name_placeholder": "How their name appears",
         "user_name": "User name (optional)",
         "user_name_placeholder": "letters, numbers, . _ -",
-        "user_name_hint": "Blank uses the first part of their email.",
+        "user_name_hint": "Blank: the first part of their email.",
         "email_placeholder": "you@example.com",
         "first_password": "First password",
         "show": "Show",
-        "first_password_invite": "Leave blank to email them an invitation instead — nobody has to send a password through a chat window.",
-        "first_password_no_email": "Email is not set up, so give them a first password (at least {n} {n:character|characters}) and tell them to change it.",
+        "first_password_invite": "Leave blank and they get an email invitation instead.",
+        "first_password_no_email": "No email server yet: share this password with them yourself. At least {n} {n:character|characters}.",
         "cancel": "Cancel",
         "add": "Add",
         "invited": "Invitation emailed to {email}. It expires in 7 days.",
@@ -1220,7 +1372,7 @@
         "as_screen": "Same as screen",
         "owner_only_note": "and email (SMTP) are yours alone as the portal owner. No rule can open them to anyone else.",
         "delete_group_title": "Delete \"{name}\"?",
-        "delete_group_body": "Its rules go with it. Its members keep their accounts; a group that inherited from it inherits from its parent instead.",
+        "delete_group_body": "Its rules go with it. Groups that inherit from it inherit its parent instead. Its {n} members move to the group you pick.",
         "group_deleted": "Group deleted.",
         "edit_group": "Edit \"{name}\"",
         "new_group": "New group",
@@ -1306,13 +1458,13 @@
         "ml_h_throttled": "{per_hour} codes an hour to one address, so this one was not sent. The next can go after {next}.",
         "ml_h_no_account": "Nobody here signs in as \"{to}\", so nothing was sent. Check the spelling, or look the person up in People.",
         "ml_h_no_email": "The account \"{to}\" has no email address, so no code can reach it. Add one, or set a password from People.",
-        "catch_all_note": "What unassigned accounts and new sign-ups see - everyone who is in no group. Allow a screen here to open it to them; every group that inherits Catch All gets it too. A deny here wins for all of them. Built in: it can be renamed, never deleted.",
+        "catch_all_note": "What new sign-ups and people in no group see. Every group that inherits Catch All starts from these screens and may override any of them. Built in: renamable, never deleted.",
         "catch_all_tag": "Built in",
         "rename": "Rename",
         "inherits_label": "Inherits from",
         "inherits_none": "Nothing - only its own allows",
-        "inherits_note": "Members get everything the parent allows, live, plus this group's own allows. A deny anywhere wins.",
-        "group_inherits": "Inherits everything \"{name}\" allows, plus its own allows below.",
+        "inherits_note": "Members get everything the parent allows, live. A rule set here overrides the parent's rule for that screen.",
+        "group_inherits": "Inherits \"{name}\" and overrides it where a rule is set below.",
         "group_inherits_none": "Inherits nothing: its members see only what this group allows.",
         "person_in_no_group": "Catch All (in no group)",
         "check_catch_all": "In no group: Catch All decides what this person sees, with their own rules on top. A deny always wins.",
@@ -1324,7 +1476,32 @@
         "clear_search": "Clear search",
         "no_screen_hint": "Try fewer letters, or another word from the screen’s name.",
         "as_screen_tip": "No rule of its own: this button is open exactly when its screen above is open",
-        "no_group": "No folder"
+        "no_group": "No folder",
+        "add_person_lede": "They sign in with their email or user name.",
+        "generate": "Generate",
+        "col_group": "Group",
+        "col_also": "Also in",
+        "now_in_group": "Now in {group}.",
+        "now_owner": "Now an owner - opens everything.",
+        "group_map": "Groups at a glance",
+        "group_map_lede": "Each person sits in one group, picked in the Group column. A group inherits its parent's screens and may override them. Owner opens everything.",
+        "map_owner": "Opens everything",
+        "map_members": "{n} in it",
+        "inactive_tag": "Inactive",
+        "active_label": "Active",
+        "active_note": "An inactive group gives nothing: its members fall back to its parent group until it is active again.",
+        "make_inactive": "Make inactive",
+        "make_active": "Make active",
+        "group_now_inactive": "\"{name}\" is inactive - its members now get its parent's screens.",
+        "group_now_active": "\"{name}\" is active again.",
+        "rights_label": "Ops & chips rights",
+        "rights_none": "None - uses screens only",
+        "rights_note": "What members may do in Ops & chips. Their menu comes from the screens below.",
+        "rights_tag": "{rights}",
+        "move_members_to": "Move members to",
+        "inactive_group_pick": "{name} (inactive)",
+        "delete_group_body_one": "Its rules go with it. Groups that inherit from it inherit its parent instead. Its one member moves to the group you pick.",
+        "map_members_one": "1 in it"
       }
     }
   ],

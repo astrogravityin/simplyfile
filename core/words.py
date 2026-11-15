@@ -21,6 +21,41 @@ _SCREEN = re.compile(r"^[a-z][a-z0-9_]{1,40}$")
 _LANG = re.compile(r"^[a-z]{2,3}$")
 
 
+def current() -> str:
+    """This request's language - "" for the chip words' own (English)."""
+    return engine.LANG.get()
+
+
+def phrase(text, lang: str = ""):
+    """A label that is not a word key (a menu name...) in the reader's language: chip lang.<code> maps the English phrase
+    to its translation; a phrase it does not hold stays as it is."""
+    lang = lang or current()
+    if not lang or not isinstance(text, str) or f"lang.{lang}" not in engine.chips():
+        return text
+    m = engine.run(f"lang.{lang}").get("phrases") or {}
+    if text in m:
+        return m[text]
+    name = engine.product_name()                      # the engine fills {product} in the answers, not in the keys
+    return m.get(text.replace(name, "{product}"), text) if name and name in text else text
+
+
+DRESSED = ("label", "group", "one", "many", "title", "hint", "help", "placeholder", "tab", "sub", "line", "lede", "eyebrow",
+           "q", "a", "start", "menu", "brand", "tag", "cta", "fine", "demo", "watch", "name_label", "empty", "text", "say")
+
+
+def dress(obj, lang: str = ""):
+    """A copy of `obj` with every label-like field (DRESSED) through phrase() - for structures that are not word chips
+    (2026-11-15 carried from the DomainTemplate with Access Control: access.bootstrap_extra dresses the menu)."""
+    lang = lang or current()
+    if not lang:
+        return obj
+    if isinstance(obj, list):
+        return [dress(x, lang) for x in obj]
+    if isinstance(obj, dict):
+        return {k: (phrase(v, lang) if k in DRESSED and isinstance(v, str) else dress(v, lang)) for k, v in obj.items()}
+    return obj
+
+
 def words(screen: str, lang: str = "") -> dict:
     """The words of one screen, in `lang` where a translation exists, else the chip's own words."""
     if not _SCREEN.match(screen or ""):

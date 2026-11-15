@@ -4,6 +4,7 @@
 import { api, esc, say, modal, confirmDialog, toast, busy, pageHead, secretField, wireSecrets, t, loadWords, listBox, when, offAttr } from './ui.js';
 import { state, refresh, clearFieldErrors, showFieldError, wireFieldErrors } from './shell.js';
 import { icon } from './icons.js';
+import { art, treeSvg, count } from './kit.js';
 
 let tab = 'people';
 let subject = '';                  // the Rules tab's selected person or group ('' = Catch All)
@@ -28,15 +29,18 @@ let ruleQ = '';                    // what the Rules tab's screen search holds (
 
 // Every word on this screen is chip ui.access (core/words.py) - none is written here.
 const w = (k, v) => t('access', k, v);
+const pe = (k, v) => t('peopleedit', k, v);   // Edit + Organisations (chip ui.peopleedit)
 
 const TABS = () => [
   ['people', w('tab_people'), 'users'], ['rules', w('tab_rules'), 'shield'], ['check', w('tab_check'), 'search'],
   ['requests', w('tab_requests'), 'send'], ['portal', w('tab_portal'), 'setup'],
+  ...(canAdmin() ? [['orgs', pe('tab_orgs'), 'users']] : []),
 ];
 const isOwner = () => state.user.role === 'owner';
+const canAdmin = () => isOwner() && !!(d && d.people_admin);   // Edit person + Organisations: only where the host has them
 
 export async function accessPage(host) {
-  [d] = await Promise.all([api('/api/core/access'), loadWords('access')]);
+  [d] = await Promise.all([api('/api/core/access'), loadWords('access', 'peopleedit')]);
   const pending = d.requests.filter((r) => r.status === 'pending').length;
   host.innerHTML = `${pageHead(w('title'), w('lede'),
     `<button class="primary" type="button" id="add-person">${icon('plus')} ${w('add_person')}</button>`)}
@@ -47,7 +51,7 @@ export async function accessPage(host) {
   host.querySelectorAll('[data-tab]').forEach((b) => { b.onclick = () => { tab = b.dataset.tab; accessPage(host); }; });
   host.querySelector('#add-person').onclick = () => addPerson(host);
   const body = host.querySelector('#acc-body');
-  ({ people, rules, check, requests, portal })[tab](body, host);
+  ({ people, rules, check, requests, portal, orgs })[tab](body, host);
 }
 
 const reload = (host) => accessPage(host);
@@ -68,11 +72,12 @@ function personRow(p) {
           ${p.must_change_password ? `<span class="tag warn">${w('tag_must_change')}</span>` : ''}</span>` : ''}</td>
       <td>${esc(p.email)}</td>
       <td>${isOwner() && p.id !== state.user.id
-        ? `<select data-role="${esc(p.id)}" class="fit" aria-label="${esc(w('col_role'))}">${roleOptions(p.role)}</select>`
-        : `<span class="tag ${p.role === 'owner' ? 'brand' : ''}">${esc((d.roles.find((r) => r.id === p.role) || {}).label || p.role)}</span>`}</td>
-      <td>${p.groups.map((g) => `<span class="tag">${esc(groupName(g))}</span>`).join(' ') || '<span class="muted small">—</span>'}</td>
+        ? `<select data-group="${esc(p.id)}" class="fit" aria-label="${esc(w('col_group'))}">${groupOptions(pickOf(p))}</select>`
+        : `<span class="tag ${p.role === 'owner' ? 'brand' : ''}">${esc(p.role === 'owner' ? ownerLabel() : groupName(p.main))}</span>`}</td>
+      <td>${p.groups.filter((g) => g !== p.main).map((g) => `<span class="tag">${esc(groupName(g))}</span>`).join(' ') || '<span class="muted small">—</span>'}</td>
       <td class="small muted">${when(p.created_at)}</td>
       <td class="a"><button class="small" type="button" data-check="${esc(p.id)}">${icon('search', 13)} ${w('access_button')}</button>
+        ${canAdmin() ? `<button class="small" type="button" data-edit="${esc(p.id)}">${icon('edit', 13)} ${pe('edit')}</button>` : ''}
         ${isOwner() && p.id !== state.user.id ? `<button class="small" type="button" data-reset="${esc(p.id)}">${icon('key', 13)} ${w('reset_password')}</button>` : ''}
         ${p.id === state.user.id ? '' : `<button class="small danger" type="button" data-del="${esc(p.id)}" data-name="${esc(p.email)}">${w('remove')}</button>`}</td>
     </tr>`;
@@ -80,25 +85,25 @@ function personRow(p) {
 
 function people(body, host) {
   body.innerHTML = `<div class="card flush" id="acc-people"></div>
-    <div class="card"><h2>${icon('users', 16)} ${w('roles')}</h2><table class="rules"><tbody>
-      ${d.roles.map((r) => `<tr><td><span class="tag ${r.id === 'owner' ? 'brand' : ''}">${esc(r.label)}</span></td><td class="small">${esc(r.doc)}</td></tr>`).join('')}
-      </tbody></table>
-      <p class="small muted">${w('roles_note', { role: esc(d.new_account_role) })}</p></div>`;
+    <div class="card"><h2>${icon('users', 16)} ${w('group_map')}</h2>
+      <p class="small muted">${w('group_map_lede')}</p>${groupMap()}</div>`;
   listBox(body.querySelector('#acc-people'), { list: 'access_people', row: personRow,
     wrap: (html) => `<div class="scroll" style="max-height:none"><table>
-      <thead><tr><th>${w('col_name')}</th><th>${w('col_email')}</th><th>${w('col_role')}</th><th>${w('col_groups')}</th><th>${w('col_joined')}</th><th></th></tr></thead>
+      <thead><tr><th>${w('col_name')}</th><th>${w('col_email')}</th><th>${w('col_group')}</th><th>${w('col_also')}</th><th>${w('col_joined')}</th><th></th></tr></thead>
       <tbody>${html}</tbody></table></div>`,
     wire: (rows, r, again) => {
-      rows.querySelectorAll('[data-role]').forEach((sel) => {
+      rows.querySelectorAll('[data-group]').forEach((sel) => {
         sel.onchange = async () => {
+          sel.disabled = true;
           try {
-            await api(`/api/core/access/people/${sel.dataset.role}/role`, { method: 'PUT', body: { role: sel.value } });
-            toast(w(/^[aeiou]/.test(sel.value) ? 'now_an' : 'now_a', { role: sel.value }), 'ok');
+            await api(`/api/core/access/people/${sel.dataset.group}/group`, { method: 'PUT', body: { group: sel.value } });
+            toast(sel.value === 'owner' ? w('now_owner') : w('now_in_group', { group: groupName(sel.value) }), 'ok');
           } catch (e) { toast(e.message, 'bad'); }
           again();
         };
       });
       rows.querySelectorAll('[data-reset]').forEach((b) => { b.onclick = () => resetPassword(picked[b.dataset.reset], again); });
+      rows.querySelectorAll('[data-edit]').forEach((b) => { b.onclick = () => editPerson(b.dataset.edit, again); });
       rows.querySelectorAll('[data-check]').forEach((b) => {
         b.onclick = () => { checkUser = b.dataset.check; checkLabel = (picked[checkUser] || {}).email || ''; tab = 'check'; reload(host); };
       });
@@ -111,9 +116,24 @@ function people(body, host) {
     } });
 }
 
-/** Every role from the people.roles chip, most powerful first. */
-function roleOptions(current, long = false) {
-  return d.roles.map((r) => `<option value="${esc(r.id)}" ${r.id === current ? 'selected' : ''}>${esc(long ? `${r.label} — ${r.doc}` : r.label)}</option>`).join('');
+// 2026-11-15 owner: "User Group and Role are same". One box everywhere: Owner, then every active group (Catch All first);
+// a group's rights (chip people.roles) show beside its name. A person's current inactive group stays listed, marked.
+const ownerLabel = () => (d.roles.find((r) => r.id === 'owner') || {}).label || '';
+const rightsLabel = (id) => (d.rights.find((r) => r.id === id) || {}).label || '';
+const rightsTag = (g) => (g.rights && rightsLabel(g.rights) !== g.name ? rightsLabel(g.rights) : '');   // never "Editor · Editor"
+const pickOf = (p) => (p.role === 'owner' ? 'owner' : p.main || d.catch_all);
+function groupOptions(current) {
+  const opt = (id, label) => `<option value="${esc(id)}" ${id === current ? 'selected' : ''}>${esc(label)}</option>`;
+  return opt('owner', ownerLabel()) + groupsFirst().filter((g) => g.active !== false || g.id === current)
+    .map((g) => opt(g.id, `${g.active === false ? w('inactive_group_pick', { name: g.name }) : g.name}${rightsTag(g) ? ` · ${rightsTag(g)}` : ''}`)).join('');
+}
+/** Groups at a glance: Owner on top, then the inheritance tree (kit treeSvg). */
+function groupMap() {
+  const rows = [{ id: '_owner', parent: '', label: ownerLabel(), sub: w('map_owner') },
+    ...groupsFirst().map((g) => ({ id: g.id, parent: g.inherits || '', label: g.name, muted: g.active === false,
+      sub: isCatchAll(g) ? w('catch_all_tag') : count(w, 'map_members', g.members_n || 0),
+      tag: g.active === false ? w('inactive_tag') : rightsTag(g) }))];
+  return treeSvg(rows, { label: w('group_map'), width: Math.min(380, Math.max(280, innerWidth - 90)) });   // text stays ~13px on a phone
 }
 
 /** A labelled box with room for the server's answer about it ({message, field}). */
@@ -140,39 +160,59 @@ async function copyText(text, button, selectEl) {
   setTimeout(() => { button.textContent = w('copy'); }, 2200);
 }
 
+/** People → Add a person. 2026-11-04 owner's design gate ("compact, attractive, intuitive, professional narration, elegant and
+ *  pro, beautiful SVG"): the fields pair up (name | email, user name | role) so labels line up, the role is a row of choices
+ *  with its meaning under it, and a first password can be generated and copied. Words: chip ui.access; roles: chip people.roles. */
 function addPerson(host) {
+  const doc = (id) => (id === 'owner' ? w('map_owner') : (d.groups.find((g) => g.id === id) || {}).description || '');
   modal(w('add_person'), `
+    <p class="nu-lede">${art('people', 44)}<span>${esc(w('add_person_lede'))}</span></p>
     <div id="nu-msg"></div>
-    <div class="grid two">
+    <div class="grid two nu-grid">
       ${box('nu-name', w('display_name'), 'name', `autocomplete="off" placeholder="${esc(w('display_name_placeholder'))}"`)}
+      ${box('nu-email', w('col_email'), 'email', `type="email" autocomplete="off" inputmode="email" autocapitalize="off" spellcheck="false" placeholder="${esc(w('email_placeholder'))}"`)}
       ${box('nu-user', w('user_name'), 'username', `autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="${esc(w('user_name_placeholder'))}"`,
-        w('user_name_hint'))}
+        esc(w('user_name_hint')))}
+      ${isOwner() ? `<div class="field"><label for="nu-group">${esc(w('col_group'))}</label>
+        <select id="nu-group">${groupOptions(d.catch_all)}</select><span class="small muted" id="nu-group-doc">${esc(doc(d.catch_all))}</span></div>` : ''}
     </div>
-    <div style="margin-top:12px">${box('nu-email', w('col_email'), 'email', `type="email" autocomplete="off" inputmode="email" autocapitalize="off" spellcheck="false" placeholder="${esc(w('email_placeholder'))}"`)}</div>
-    <div class="field" data-for="password" style="margin-top:12px"><label for="nu-pass">${w('first_password')}</label>
-      <span class="withbtn"><input id="nu-pass" type="password" autocomplete="new-password" aria-describedby="nu-pass-err"/>
+    <div class="field" data-for="password"><label for="nu-pass">${w('first_password')}</label>
+      <span class="withbtn wide"><input id="nu-pass" type="password" autocomplete="new-password" spellcheck="false" autocapitalize="off"
+          data-lpignore="true" aria-describedby="nu-pass-err"/>
+        <button type="button" data-copy="nu-pass">${w('copy')}</button>
         <button type="button" data-reveal="nu-pass">${w('show')}</button></span>
       <span class="err" id="nu-pass-err" role="alert" hidden></span>
-      <span class="small muted">${d.can_email
-        ? w('first_password_invite')
-        : w('first_password_no_email', { n: d.password_min_length })}</span></div>
-    ${isOwner() ? `<div class="field" style="margin-top:12px"><label for="nu-role">${w('col_role')}</label>
-      <select id="nu-role">${roleOptions(d.new_account_role, true)}</select></div>` : ''}`, {
-    footer: `<button type="button" data-cancel>${w('cancel')}</button><button type="button" class="primary" id="nu-save">${w('add')}</button>`,
+      <div class="rp-gen"><button type="button" class="small" id="nu-gen">${icon('spark', 13)} ${w('generate')}</button></div></div>
+    <p class="nu-note ${d.can_email ? '' : 'warn'}">${icon(d.can_email ? 'mail' : 'alert', 15)}<span>${esc(d.can_email
+      ? w('first_password_invite') : w('first_password_no_email', { n: d.password_min_length }))}</span></p>`, {
+    footer: `<button type="button" data-cancel>${w('cancel')}</button><button type="button" class="primary" id="nu-save">${icon('plus', 15)} ${w('add')}</button>`,
     onOpen: (b2, close) => {
       const card = b2.closest('.modal');
       wireSecrets(b2);
       wireFieldErrors(b2);
       const user = b2.querySelector('#nu-user');
+      const pass = b2.querySelector('#nu-pass');
       user.addEventListener('input', () => { if (user.value !== user.value.toLowerCase()) user.value = user.value.toLowerCase(); });
+      const grp = b2.querySelector('#nu-group');
+      if (grp) grp.onchange = () => { b2.querySelector('#nu-group-doc').textContent = doc(grp.value); };
+      // a password the owner can read out: no look-alike letters, longer than the portal's minimum
+      b2.querySelector('#nu-gen').onclick = () => {
+        const abc = 'abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+        const n = Math.max(14, Number(d.password_min_length) + 4);
+        pass.value = [...crypto.getRandomValues(new Uint32Array(n))].map((x) => abc[x % abc.length]).join('');
+        pass.type = 'text';
+        pass.dispatchEvent(new Event('input', { bubbles: true }));
+      };
+      const copy = b2.querySelector('[data-copy]');
+      copy.onclick = () => (pass.value ? copyText(pass.value, copy, pass) : toast(w('nothing_to_copy'), 'warn'));
       card.querySelector('[data-cancel]').onclick = () => close();
       card.querySelector('#nu-save').onclick = (e) => busy(e.currentTarget, async () => {
         clearFieldErrors(b2);
         try {
           const r = await api('/api/users', { method: 'POST', body: {
             display_name: b2.querySelector('#nu-name').value.trim(), username: user.value.trim(),
-            email: b2.querySelector('#nu-email').value.trim(), password: b2.querySelector('#nu-pass').value,
-            role: (b2.querySelector('#nu-role') || {}).value || '' } });
+            email: b2.querySelector('#nu-email').value.trim(), password: pass.value,
+            group: (grp || {}).value || '' } });
           close();
           toast(r.invited ? w('invited', { email: r.user.email }) : w('can_sign_in', { email: r.user.email }), 'ok');
           reload(host);
@@ -272,6 +312,89 @@ function resetPassword(p, redraw) {
     } });
 }
 
+// --- People -> Edit, and the Organisations tab (2026-11-03 owner "Can we have UI for it": people_admin.py on the web) ---
+// The server checks everything (people_admin.save_user / save_org); these dialogs only collect the fields.
+
+async function editPerson(id, redraw) {
+  const { person: p, orgs: list } = await api(`/api/people-admin/person/${encodeURIComponent(id)}`);
+  const orgOpts = `<option value="">${esc(pe('no_org'))}</option>`
+    + list.map((o) => `<option value="${esc(o.id)}" ${o.id === p.firm_id ? 'selected' : ''}>${esc(`${o.name} (${o.kind})`)}</option>`).join('');
+  const roleOpts = (fid) => ((list.find((o) => o.id === fid) || {}).roles || [])
+    .map((r) => `<option value="${esc(r.id)}" ${r.id === p.firm_role ? 'selected' : ''}>${esc(r.label)}</option>`).join('');
+  modal(p.name || p.email, `<div id="pe-msg"></div>
+    <div class="grid two">
+      ${box('pe-name', w('display_name'), 'name', `autocomplete="off" value="${esc(p.name)}"`)}
+      ${box('pe-user', w('user_name'), 'username', `autocomplete="off" autocapitalize="off" spellcheck="false" value="${esc(p.username)}"`)}
+    </div>
+    <div style="margin-top:12px">${box('pe-email', w('col_email'), 'email', `type="email" autocomplete="off" autocapitalize="off" spellcheck="false" value="${esc(p.email)}"`)}</div>
+    <div class="grid two" style="margin-top:12px">
+      <div class="field"><label for="pe-org">${pe('organisation')}</label><select id="pe-org">${orgOpts}</select></div>
+      <div class="field" id="pe-role-f"><label for="pe-role">${pe('org_role')}</label><select id="pe-role">${roleOpts(p.firm_id)}</select></div>
+    </div>
+    <p class="small muted">${pe('move_note')}</p>`, {
+    eyebrow: pe('edit_title'),
+    footer: `<button type="button" data-cancel>${w('cancel')}</button><button type="button" class="primary" id="pe-save">${icon('check', 15)} ${pe('save')}</button>`,
+    onOpen: (b2, close) => {
+      const card = b2.closest('.modal');
+      const org = b2.querySelector('#pe-org');
+      const role = b2.querySelector('#pe-role');
+      const roleField = b2.querySelector('#pe-role-f');
+      const sync = () => { roleField.hidden = !org.value; };
+      org.onchange = () => { role.innerHTML = roleOpts(org.value); sync(); };
+      sync();
+      card.querySelector('[data-cancel]').onclick = () => close();
+      card.querySelector('#pe-save').onclick = (e) => busy(e.currentTarget, async () => {
+        clearFieldErrors(b2);
+        try {
+          await api(`/api/people-admin/person/${encodeURIComponent(id)}`, { method: 'PUT', body: {
+            name: b2.querySelector('#pe-name').value.trim(), username: b2.querySelector('#pe-user').value.trim().toLowerCase(),
+            email: b2.querySelector('#pe-email').value.trim(), firm_id: org.value, firm_role: org.value ? role.value : '' } });
+          close();
+          toast(pe('saved'), 'ok');
+          if (id === state.user.id) refresh();
+          redraw();
+        } catch (err) { showFieldError(b2, err, b2.querySelector('#pe-msg')); }
+      });
+      b2.querySelector('#pe-name').focus();
+    } });
+}
+
+const ORG_COLS = [['name', 'col_org'], ['owner_name', 'col_owner'], ['phone', 'col_phone'], ['email', 'col_email'], ['address', 'col_address']];
+
+async function orgs(body) {
+  const { orgs: rows } = await api('/api/people-admin/orgs');
+  body.innerHTML = `<div class="card flush"><p class="small muted" style="padding:12px 16px 0">${pe('orgs_lede')}</p>
+    ${rows.length ? `<div class="scroll" style="max-height:none"><table>
+      <thead><tr>${ORG_COLS.map(([, label]) => `<th>${pe(label)}</th>`).join('')}<th>${pe('col_kind')}</th><th></th></tr></thead>
+      <tbody>${rows.map((o) => `<tr>${ORG_COLS.map(([k]) => `<td>${k === 'name' ? `<b>${esc(o[k] || '—')}</b>` : esc(o[k] || '—')}</td>`).join('')}
+        <td class="small muted">${esc(o.kind)}</td>
+        <td class="a"><button class="small" type="button" data-org="${esc(o.id)}">${icon('edit', 13)} ${pe('edit')}</button></td></tr>`).join('')}</tbody>
+      </table></div>` : `<p class="muted" style="padding:16px">${pe('no_orgs')}</p>`}</div>`;
+  body.querySelectorAll('[data-org]').forEach((b) => { b.onclick = () => editOrg(rows.find((o) => o.id === b.dataset.org), () => orgs(body)); });
+}
+
+function editOrg(o, redraw) {
+  modal(o.name || o.kind, `<div id="po-msg"></div>
+    ${ORG_COLS.map(([k, label]) => `<div class="field" style="margin-top:10px"><label for="po-${k}">${pe(label)}</label>
+      <input id="po-${k}" ${k === 'email' ? 'type="email" autocapitalize="off" spellcheck="false"' : ''} autocomplete="off" value="${esc(o[k])}"/></div>`).join('')}`, {
+    eyebrow: pe('org_edit_title'),
+    footer: `<button type="button" data-cancel>${w('cancel')}</button><button type="button" class="primary" id="po-save">${icon('check', 15)} ${pe('save')}</button>`,
+    onOpen: (b2, close) => {
+      const card = b2.closest('.modal');
+      card.querySelector('[data-cancel]').onclick = () => close();
+      card.querySelector('#po-save').onclick = (e) => busy(e.currentTarget, async () => {
+        try {
+          await api(`/api/people-admin/orgs/${encodeURIComponent(o.id)}`, { method: 'PUT',
+            body: Object.fromEntries(ORG_COLS.map(([k]) => [k, b2.querySelector(`#po-${k}`).value.trim()])) });
+          close();
+          toast(pe('saved'), 'ok');
+          redraw();
+        } catch (err) { say(b2.querySelector('#po-msg'), 'bad', esc(err.message)); }
+      });
+      b2.querySelector('#po-name').focus();
+    } });
+}
+
 // --- groups & rules --------------------------------------------------------------------------------
 // Master / detail: every group and person on the left with a count of their rules, and the selected
 // one's rules on the right as a grid — one row per screen and per function, three choices each.
@@ -294,7 +417,8 @@ function rules(body, host) {
       <div class="scrollbody"><div class="list">
         <div class="grp">${w('groups')}</div>
         ${groupsFirst().map((g) => subjectItem(`group:${g.id}`, g.name, rulesOf(`group:${g.id}`).length,
-          isCatchAll(g) ? `<span class="tag">${w('catch_all_tag')}</span>` : `<span class="small muted">${g.members_n || 0}</span>`)).join('')}
+          isCatchAll(g) ? `<span class="tag">${w('catch_all_tag')}</span>` : `${g.active === false ? `<span class="tag warn">${w('inactive_tag')}</span>`
+            : rightsTag(g) ? `<span class="tag">${esc(rightsTag(g))}</span>` : ''}<span class="small muted">${g.members_n || 0}</span>`)).join('')}
         <div class="grp">${w('tab_people')}</div></div>
         <div id="acc-subjects"></div></div></div>
     <div class="pane"><div class="scrollbody pad" id="rule-detail"></div></div></div>`;
@@ -339,11 +463,14 @@ async function ruleDetail(box, host) {
       <h2 style="margin:0">${icon(g ? 'users' : 'user', 17)} ${esc(g ? g.name : p.email)}</h2>
       ${g ? `<span class="row tight">
         <button class="small" type="button" id="edit-group">${icon('edit', 13)} ${w(isCatchAll(g) ? 'rename' : 'name_members')}</button>
-        ${isCatchAll(g) ? '' : `<button class="small danger" type="button" id="del-group">${icon('trash', 13)} ${w('delete')}</button>`}</span>` : ''}
+        ${isCatchAll(g) ? '' : `<button class="small" type="button" id="act-group">${icon(g.active === false ? 'check' : 'ban', 13)} ${w(g.active === false ? 'make_active' : 'make_inactive')}</button>
+        <button class="small danger" type="button" id="del-group">${icon('trash', 13)} ${w('delete')}</button>`}</span>` : ''}
     </div>
     <p class="small muted">${g ? (isCatchAll(g)
         ? w('catch_all_note')
         : `${esc(g.description || '')} ${g.inherits ? w('group_inherits', { name: esc(groupName(g.inherits)) }) : w('group_inherits_none')}
+          ${g.rights ? `<span class="tag">${esc(rightsLabel(g.rights))}</span>` : ''}
+          ${g.active === false ? `<span class="tag warn">${w('inactive_tag')}</span> ${w('active_note')}` : ''}
           ${g.members_n ? '' : `<i>${w('no_members')}</i>`}`)
       : w('person_rules', { groups: p.groups.map((x) => `<span class="tag">${esc(groupName(x))}</span>`).join(' ') || esc(w('person_in_no_group')) })}</p>
     ${g && !isCatchAll(g) && g.members_n ? '<div id="grp-members" class="small" style="margin-bottom:10px"></div>' : ''}
@@ -412,11 +539,39 @@ async function ruleDetail(box, host) {
   });
   const edit = box.querySelector('#edit-group');
   if (edit) edit.onclick = () => groupDialog(g, host);
+  const act = box.querySelector('#act-group');
+  if (act) act.onclick = () => busy(act, async () => {
+    try {
+      await api('/api/core/access/groups', { method: 'POST', body: { id: g.id, name: g.name, active: g.active === false } });
+      toast(w(g.active === false ? 'group_now_active' : 'group_now_inactive', { name: g.name }), 'ok');
+      reload(host);
+    } catch (e) { toast(e.message, 'bad'); }
+  });
   const del = box.querySelector('#del-group');
-  if (del) del.onclick = () => confirmDialog(w('delete_group_title', { name: g.name }), w('delete_group_body'), async () => {
-    try { await api(`/api/core/access/groups/${g.id}`, { method: 'DELETE' }); subject = ''; toast(w('group_deleted'), 'ok'); reload(host); }
-    catch (e) { toast(e.message, 'bad'); }
-  }, w('delete'), { tone: 'danger' });
+  if (del) del.onclick = () => deleteGroup(g, host);
+}
+
+/** Delete a group: the members go where the owner picks (its parent by default), never silently out. */
+function deleteGroup(g, host) {
+  const to = g.inherits || d.catch_all;
+  modal(w('delete_group_title', { name: g.name }), `<div id="dg-msg"></div>
+    <p class="confirm-msg">${esc(count(w, 'delete_group_body', g.members_n || 0))}</p>
+    ${g.members_n ? `<div class="field" style="margin-top:12px"><label for="dg-to">${w('move_members_to')}</label>
+      <select id="dg-to">${groupsFirst().filter((x) => x.id !== g.id && x.active !== false)
+        .map((x) => `<option value="${esc(x.id)}" ${x.id === to ? 'selected' : ''}>${esc(x.name)}</option>`).join('')}</select></div>` : ''}`, {
+    cls: 'confirm tone-danger',
+    footer: `<button type="button" class="pill" data-cancel>${w('cancel')}</button><button type="button" class="danger" id="dg-yes">${icon('trash', 14)} ${w('delete')}</button>`,
+    onOpen: (b2, close) => {
+      const card = b2.closest('.modal');
+      card.querySelector('[data-cancel]').onclick = close;
+      card.querySelector('#dg-yes').onclick = (e) => busy(e.currentTarget, async () => {
+        try {
+          const q = new URLSearchParams({ move_to: (b2.querySelector('#dg-to') || {}).value || d.catch_all });
+          await api(`/api/core/access/groups/${g.id}?${q}`, { method: 'DELETE' });
+          close(); subject = ''; toast(w('group_deleted'), 'ok'); reload(host);
+        } catch (err) { say(b2.querySelector('#dg-msg'), 'bad', esc(err.message)); }
+      });
+    } });
 }
 
 // 2026-09-28 a group of thousands: its members are a searched list of ticks; what changed is sent (add / remove)
@@ -438,6 +593,10 @@ function groupDialog(g, host) {
       <select id="g-parent"><option value="">${esc(w('inherits_none'))}</option>
         ${parents.map((x) => `<option value="${esc(x.id)}" ${x.id === parent ? 'selected' : ''}>${esc(x.name)}</option>`).join('')}</select>
       <span class="small muted">${w('inherits_note')}</span></div>
+    <div class="field" style="margin-top:12px"><label for="g-rights">${w('rights_label')}</label>
+      <select id="g-rights"><option value="">${esc(w('rights_none'))}</option>
+        ${d.rights.map((r) => `<option value="${esc(r.id)}" ${g && g.rights === r.id ? 'selected' : ''}>${esc(r.label)}</option>`).join('')}</select>
+      <span class="small muted">${w('rights_note')}</span></div>
     <div class="field" style="margin-top:12px"><label>${w('members')}</label><div id="g-people"></div></div>`}`, {
     footer: `<button type="button" data-cancel>${w('cancel')}</button><button type="button" class="primary" id="g-save">${w('save_group')}</button>`,
     onOpen: (b2, close) => {
@@ -459,7 +618,8 @@ function groupDialog(g, host) {
         try {
           const r = await api('/api/core/access/groups', { method: 'POST', body: {
             id: g ? g.id : undefined, name: b2.querySelector('#g-name').value, description: b2.querySelector('#g-desc').value,
-            ...(ca ? {} : { inherits: b2.querySelector('#g-parent').value, add: [...add], remove: [...remove] }) } });
+            ...(ca ? {} : { inherits: b2.querySelector('#g-parent').value, rights: b2.querySelector('#g-rights').value,
+              add: [...add], remove: [...remove] }) } });
           close();
           subject = `group:${r.group.id}`;
           toast(w('group_saved'), 'ok');

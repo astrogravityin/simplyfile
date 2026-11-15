@@ -46,6 +46,16 @@ def module_checks() -> None:
 
 
 def static_checks() -> None:
+    # 2026-11-15 owner (Tour Video Record did nothing on every portal): a confirmDialog callback runs after the click is
+    # over, when e.currentTarget is null and busy(null) quietly returns - hold the button first, never pass the event on
+    _late = [f"{f.relative_to(HERE)}:{n}" for f in sorted((HERE / "static").glob("*.js")) + sorted((HERE / "core" / "static").glob("*.js"))
+             for n, line in enumerate(f.read_text(encoding="utf-8").splitlines(), 1)
+             if re.search(r"confirmDialog\(.*=>[^;]*\(e\)", line)]
+    assert not _late, f"a confirmDialog callback reuses the click event (busy(null) does nothing): {_late}"
+    # 2026-11-15 owner (live tf, 800 px): People & access scrolled sideways - its six columns are cards up to tablet width
+    _pcss = (HERE / "core" / "static" / "portal.css").read_text(encoding="utf-8")
+    _card = re.search(r"@media \(max-width:(\d+)px\)\{#acc-people thead\{display:none\}", _pcss)
+    assert _card and int(_card.group(1)) >= 1024, "People & access: the people table must turn into cards up to 1024 px (portal.css people-phone-card)"
     assert "const choose = (r) => { clearTimeout(st.timer);" in (HERE / "core" / "static" / "ui.js").read_text(encoding="utf-8"), \
         "pickList: a pick must drop the pending search, or the list reopens over the page (2026-11-09)"
     # 2026-11-08 VUI go-live: DEPLOY.md's unit had no Environment=PORT=, so deploy.sh (which reads it) stopped every update

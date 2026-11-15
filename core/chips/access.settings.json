@@ -44,6 +44,12 @@
       "type": "boolean",
       "default": true,
       "label": "A new group inherits Catch All unless the owner picks otherwise"
+    },
+    {
+      "name": "nearest_wins",
+      "type": "boolean",
+      "default": true,
+      "label": "Inherit and override (owner 2026-11-15): the nearest rule decides - a person's own rule, then their group, then the group it inherits from. Off = a deny anywhere wins (the model until 2026-11-15)."
     }
   ],
   "expr": {
@@ -55,7 +61,8 @@
       "requests_kept": "$requests_kept",
       "requests_shown": "$requests_shown",
       "new_screens_to_catch_all": "$new_screens_to_catch_all",
-      "new_group_inherits_catch_all": "$new_group_inherits_catch_all"
+      "new_group_inherits_catch_all": "$new_group_inherits_catch_all",
+      "nearest_wins": "$nearest_wins"
     }
   },
   "returns": "record",
@@ -72,7 +79,8 @@
         "requests_kept": 1000,
         "requests_shown": 300,
         "new_screens_to_catch_all": true,
-        "new_group_inherits_catch_all": true
+        "new_group_inherits_catch_all": true,
+        "nearest_wins": true
       }
     }
   ],

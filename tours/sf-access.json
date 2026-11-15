@@ -1,0 +1,170 @@
+{
+ "prod_base": "https://sf.valuestream.in",
+ "voice": "en-IN-NeerjaNeural",
+ "rate": "+0%",
+ "viewport": {
+  "width": 1280,
+  "height": 720
+ },
+ "blur": [
+  "#whoami",
+  "#userpop .head"
+ ],
+ "page_key": "sf-access",
+ "title": "People & access",
+ "start_url": "/#/access",
+ "covers": [
+  "people & access",
+  "one group per person",
+  "add a person",
+  "groups at a glance",
+  "make a group",
+  "inherit and override",
+  "make inactive",
+  "delete safely",
+  "why can't they?"
+ ],
+ "tags": [
+  "access control",
+  "groups",
+  "roles"
+ ],
+ "steps": [
+  {
+   "chapter": "People & access",
+   "say": "People and access, in two minutes: Groups are roles: one group per person, groups inherit and override, and every screen's rule in one place.",
+   "do": [
+    {
+     "wait": 1.5
+    }
+   ]
+  },
+  {
+   "chapter": "People & access",
+   "say": "Who has an account in {product}, which group each person is in, and what every group may open.",
+   "do": [
+    {
+     "highlight_target": "header.pagehead",
+     "optional": true,
+     "timeout": 5
+    }
+   ]
+  },
+  {
+   "chapter": "One group per person",
+   "say": "Pick a person's group here. Owner opens everything; any other group gives its screens, and its Ops & chips rights.",
+   "do": [
+    {
+     "click": "[data-tab=people]",
+     "optional": true
+    },
+    {
+     "wait": 0.8
+    },
+    {
+     "highlight_target": "#acc-people select[data-group]",
+     "optional": true,
+     "timeout": 5
+    }
+   ]
+  },
+  {
+   "chapter": "Add a person",
+   "say": "Add someone and choose their group in the same step. Leave the password empty and they get an invitation by email.",
+   "do": [
+    {
+     "highlight_target": "#add-person",
+     "optional": true,
+     "timeout": 5
+    }
+   ]
+  },
+  {
+   "chapter": "Groups at a glance",
+   "say": "The family tree of your groups: each one inherits its parent's screens. Faded means inactive.",
+   "do": [
+    {
+     "highlight_target": ".tr-svg",
+     "optional": true,
+     "timeout": 5
+    }
+   ]
+  },
+  {
+   "chapter": "Make a group",
+   "say": "Make as many groups as you need. Choose its parent, its Ops & chips rights and its members.",
+   "do": [
+    {
+     "click": "[data-tab=rules]",
+     "optional": true
+    },
+    {
+     "wait": 0.8
+    },
+    {
+     "highlight_target": "#new-group",
+     "optional": true,
+     "timeout": 5
+    }
+   ]
+  },
+  {
+   "chapter": "Inherit and override",
+   "say": "No rule follows the parent. Allow or Deny here overrides it for this group. The nearest rule always decides; a person's own rule is nearest of all.",
+   "do": [
+    {
+     "click": "[data-subj]:has-text('Interns')",
+     "optional": true
+    },
+    {
+     "wait": 0.6
+    },
+    {
+     "highlight_target": "#rule-table",
+     "optional": true,
+     "timeout": 5
+    }
+   ]
+  },
+  {
+   "chapter": "Make inactive",
+   "say": "An inactive group gives nothing: its members get its parent's screens until you make it active again.",
+   "do": [
+    {
+     "highlight_target": "#act-group|#rule-detail",
+     "optional": true,
+     "timeout": 5
+    }
+   ]
+  },
+  {
+   "chapter": "Delete safely",
+   "say": "Delete asks where the members go, so nobody is left without a group by accident.",
+   "do": [
+    {
+     "highlight_target": "#del-group|#rule-detail",
+     "optional": true,
+     "timeout": 5
+    }
+   ]
+  },
+  {
+   "chapter": "Why can't they?",
+   "say": "Check a person shows every screen they may open, and the rule that decided it.",
+   "do": [
+    {
+     "click": "[data-tab=check]",
+     "optional": true
+    },
+    {
+     "wait": 0.8
+    },
+    {
+     "highlight_target": "#acc-body",
+     "optional": true,
+     "timeout": 5
+    }
+   ]
+  }
+ ]
+}

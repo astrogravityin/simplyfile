@@ -44,7 +44,10 @@ export async function tourVideoPage(host) {
         const { key, title } = el.dataset;
         const go = (what) => (e) => busy(e.currentTarget, async () => { try { await run(what, key, title); } catch (err) { toast(err.message, 'bad', 8); } });
         el.querySelector('[data-check]').onclick = go('check');
-        el.querySelector('[data-record]').onclick = (e) => confirmDialog(w('rec_title', { title }), w('rec_body'), () => go('record')(e), w('rec_yes'), { tone: 'brand' });
+        // 2026-11-15 owner (tf People & access): Record did nothing - confirmDialog calls back after the click, when
+        // e.currentTarget is null and busy(null) quietly returns. Hold the button before the dialog opens.
+        el.querySelector('[data-record]').onclick = (e) => { const btn = e.currentTarget;
+          confirmDialog(w('rec_title', { title }), w('rec_body'), () => go('record')({ currentTarget: btn }), w('rec_yes'), { tone: 'brand' }); };
         const d = el.querySelector('[data-desc]');
         if (d) d.onclick = () => busy(d, async () => {
           const txt = await fetch(`${BASE}/api/tourvideo/${encodeURIComponent(key)}/file/txt`, { credentials: 'include' }).then((x) => x.text());

@@ -685,6 +685,71 @@
               "path": "/api/users/{user_id}"
             }
           ]
+        },
+        {
+          "name": "access_explain",
+          "title": "Why can this person open that?",
+          "on": true,
+          "kind": "read",
+          "function": "tool_access_explain",
+          "description": "For one person of {product}: their group, the groups it inherits, and every screen and button they may or may not open, each with the reason. Portal Admin only.",
+          "input_schema": {
+            "type": "object",
+            "properties": {
+              "email": {
+                "type": "string",
+                "maxLength": 200
+              }
+            },
+            "required": [
+              "email"
+            ],
+            "additionalProperties": false
+          },
+          "calls": [
+            {
+              "method": "GET",
+              "path": "/api/core/access/check",
+              "query": {
+                "email": "{email}"
+              }
+            }
+          ]
+        },
+        {
+          "name": "person_group",
+          "title": "Put a person in a group",
+          "on": true,
+          "kind": "change",
+          "function": "tool_person_group",
+          "description": "Sets one person's group in {product} (People & access): a group id from access_explain, or owner. The group's rights become their role.",
+          "input_schema": {
+            "type": "object",
+            "properties": {
+              "user_id": {
+                "type": "string",
+                "maxLength": 40
+              },
+              "group": {
+                "type": "string",
+                "maxLength": 40
+              }
+            },
+            "required": [
+              "user_id",
+              "group"
+            ],
+            "additionalProperties": false
+          },
+          "calls": [
+            {
+              "method": "PUT",
+              "path": "/api/core/access/people/{user_id}/group",
+              "body": {
+                "group": "{group}"
+              }
+            }
+          ]
         }
       ],
       "label": "tools"
@@ -1376,6 +1441,71 @@
               {
                 "method": "DELETE",
                 "path": "/api/users/{user_id}"
+              }
+            ]
+          },
+          {
+            "name": "access_explain",
+            "title": "Why can this person open that?",
+            "on": true,
+            "kind": "read",
+            "function": "tool_access_explain",
+            "description": "For one person of {product}: their group, the groups it inherits, and every screen and button they may or may not open, each with the reason. Portal Admin only.",
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "type": "string",
+                  "maxLength": 200
+                }
+              },
+              "required": [
+                "email"
+              ],
+              "additionalProperties": false
+            },
+            "calls": [
+              {
+                "method": "GET",
+                "path": "/api/core/access/check",
+                "query": {
+                  "email": "{email}"
+                }
+              }
+            ]
+          },
+          {
+            "name": "person_group",
+            "title": "Put a person in a group",
+            "on": true,
+            "kind": "change",
+            "function": "tool_person_group",
+            "description": "Sets one person's group in {product} (People & access): a group id from access_explain, or owner. The group's rights become their role.",
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "user_id": {
+                  "type": "string",
+                  "maxLength": 40
+                },
+                "group": {
+                  "type": "string",
+                  "maxLength": 40
+                }
+              },
+              "required": [
+                "user_id",
+                "group"
+              ],
+              "additionalProperties": false
+            },
+            "calls": [
+              {
+                "method": "PUT",
+                "path": "/api/core/access/people/{user_id}/group",
+                "body": {
+                  "group": "{group}"
+                }
               }
             ]
           }

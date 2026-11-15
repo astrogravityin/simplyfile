@@ -1,0 +1,175 @@
+{
+  "chip_id": "guide.access",
+  "kind": "accessor",
+  "set": "guide",
+  "label": "Guide me: People & access",
+  "aliases": [
+    "people and access",
+    "access control",
+    "groups"
+  ],
+  "params": [
+    {
+      "name": "title",
+      "type": "text",
+      "default": "People & access",
+      "label": "title"
+    },
+    {
+      "name": "lede",
+      "type": "text",
+      "default": "Groups are roles: one group per person, groups inherit and override, and every screen's rule in one place.",
+      "label": "lede"
+    },
+    {
+      "name": "icon",
+      "type": "text",
+      "default": "users",
+      "label": "icon"
+    },
+    {
+      "name": "minutes",
+      "type": "number",
+      "default": 2,
+      "label": "minutes"
+    },
+    {
+      "name": "steps",
+      "type": "list",
+      "default": [
+        {
+          "title": "People & access",
+          "say": "Who has an account in {product}, which group each person is in, and what every group may open.",
+          "target": "header.pagehead",
+          "art": {
+            "kind": "hero",
+            "icon": "users"
+          }
+        },
+        {
+          "title": "One group per person",
+          "say": "Pick a person's group here. Owner opens everything; any other group gives its screens, and its Ops & chips rights.",
+          "target": "#acc-people select[data-group]",
+          "open": "[data-tab=people]"
+        },
+        {
+          "title": "Add a person",
+          "say": "Add someone and choose their group in the same step. Leave the password empty and they get an invitation by email.",
+          "target": "#add-person"
+        },
+        {
+          "title": "Groups at a glance",
+          "say": "The family tree of your groups: each one inherits its parent's screens. Faded means inactive.",
+          "target": ".tr-svg"
+        },
+        {
+          "title": "Make a group",
+          "say": "Make as many groups as you need. Choose its parent, its Ops & chips rights and its members.",
+          "target": "#new-group",
+          "open": "[data-tab=rules]"
+        },
+        {
+          "title": "Inherit and override",
+          "say": "No rule follows the parent. Allow or Deny here overrides it for this group. The nearest rule always decides; a person's own rule is nearest of all.",
+          "target": "#rule-table"
+        },
+        {
+          "title": "Make inactive",
+          "say": "An inactive group gives nothing: its members get its parent's screens until you make it active again.",
+          "target": "#act-group|#rule-detail"
+        },
+        {
+          "title": "Delete safely",
+          "say": "Delete asks where the members go, so nobody is left without a group by accident.",
+          "target": "#del-group|#rule-detail"
+        },
+        {
+          "title": "Why can't they?",
+          "say": "Check a person shows every screen they may open, and the rule that decided it.",
+          "target": "#acc-body",
+          "open": "[data-tab=check]"
+        }
+      ],
+      "label": "steps: title, say, target (what to light up), open (what to press first)"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "title": "$title",
+      "lede": "$lede",
+      "icon": "$icon",
+      "minutes": "$minutes",
+      "steps": "$steps"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-11-15 (core, every portal): People & access - groups are roles, inherit and override, inactive, delete with move (core/static/page-access.js).",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "title": "People & access",
+        "lede": "Groups are roles: one group per person, groups inherit and override, and every screen's rule in one place.",
+        "icon": "users",
+        "minutes": 2,
+        "steps": [
+          {
+            "title": "People & access",
+            "say": "Who has an account in {product}, which group each person is in, and what every group may open.",
+            "target": "header.pagehead",
+            "art": {
+              "kind": "hero",
+              "icon": "users"
+            }
+          },
+          {
+            "title": "One group per person",
+            "say": "Pick a person's group here. Owner opens everything; any other group gives its screens, and its Ops & chips rights.",
+            "target": "#acc-people select[data-group]",
+            "open": "[data-tab=people]"
+          },
+          {
+            "title": "Add a person",
+            "say": "Add someone and choose their group in the same step. Leave the password empty and they get an invitation by email.",
+            "target": "#add-person"
+          },
+          {
+            "title": "Groups at a glance",
+            "say": "The family tree of your groups: each one inherits its parent's screens. Faded means inactive.",
+            "target": ".tr-svg"
+          },
+          {
+            "title": "Make a group",
+            "say": "Make as many groups as you need. Choose its parent, its Ops & chips rights and its members.",
+            "target": "#new-group",
+            "open": "[data-tab=rules]"
+          },
+          {
+            "title": "Inherit and override",
+            "say": "No rule follows the parent. Allow or Deny here overrides it for this group. The nearest rule always decides; a person's own rule is nearest of all.",
+            "target": "#rule-table"
+          },
+          {
+            "title": "Make inactive",
+            "say": "An inactive group gives nothing: its members get its parent's screens until you make it active again.",
+            "target": "#act-group|#rule-detail"
+          },
+          {
+            "title": "Delete safely",
+            "say": "Delete asks where the members go, so nobody is left without a group by accident.",
+            "target": "#del-group|#rule-detail"
+          },
+          {
+            "title": "Why can't they?",
+            "say": "Check a person shows every screen they may open, and the rule that decided it.",
+            "target": "#acc-body",
+            "open": "[data-tab=check]"
+          }
+        ]
+      }
+    }
+  ]
+}
