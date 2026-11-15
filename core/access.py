@@ -123,18 +123,21 @@ router = APIRouter()
 
 def load(catalog_in: list[dict] | str | Path) -> None:
     catalog: list[dict] = catalog_in if isinstance(catalog_in, list) else json.loads(Path(catalog_in).read_text(encoding="utf-8"))
-    core_ids = {c["id"] for c in CORE_SCREENS}
+    # 2026-11-15 CodyFy: a switched core screen whose chip this portal lacks is not one of its components - the portal's
+    # own catalog row of that id (CodyFy's Mail templates, Configuration) stands, never replaced by a hidden core row
+    present = [c for c in CORE_SCREENS if not c.get("switch") or str(c["switch"]) in engine.chips()]
+    core_ids = {c["id"] for c in present}
     # 2026-10-26 a portal may take a framework screen off its menu ({"id": "ocb", "hidden": true} in its catalog) -
     # still the owner's alone and still opens by its link; nothing else about it can be changed from the host.
     off = {s["id"] for s in catalog if s["id"] in core_ids and s.get("hidden")}
-    off |= {c["id"] for c in CORE_SCREENS if c.get("switch") and not engine.knobs(str(c["switch"])).get("on")}   # 2026-11-11 a component that is off
+    off |= {c["id"] for c in present if c.get("switch") and not engine.knobs(str(c["switch"])).get("on")}   # 2026-11-11 a component that is off
     # 2026-11-09 GamyFyStudio: authors connect their own AI. A core screen marked "openable" (Connect your AI only) may be
     # opened to the portal's people by its catalog row {"id": "connect-ai", "admin": false} - then Access Control decides,
     # like any screen. Every other core screen stays the owner's alone, whatever the catalog says.
     shared = {s["id"] for s in catalog if s["id"] in core_ids and s.get("admin") is False}
     BASE[:] = [s for s in catalog if s["id"] not in core_ids] + [
         c | ({"hidden": True} if c["id"] in off else {}) | ({"admin": False} if c["id"] in shared and c.get("openable") else {})
-        for c in CORE_SCREENS]
+        for c in present]
     reapply()
 
 
@@ -167,6 +170,12 @@ def _open_screens() -> list[str]:
     return [s["id"] for s in CATALOG if not s.get("admin")]
 
 
+def _for_all() -> list[str]:
+    """The open screens Catch All may be given by itself (day one, and a newly catalogued screen); a catalog row's
+    `no_catch_all` keeps a screen for the groups the owner names (GamyFyAds 2026-10-31: Control room never reaches Catch All)."""
+    return [s["id"] for s in CATALOG if not s.get("admin") and not s.get("no_catch_all")]
+
+
 def _raw() -> dict:
     return {"groups": [], "grants": [], "requests": []} | store.read("access", {})
 
@@ -186,7 +195,7 @@ def _migrate(d: dict) -> None:
             kept.append(g)
     by, at = say("migration_by"), store.now()
     d["grants"] = kept + [{"id": store.new_id(), "subject": f"group:{CATCH_ALL}", "screen": sid, "function": "",
-                           "effect": "allow", "by": by, "at": at} for sid in _open_screens() if sid not in shut]
+                           "effect": "allow", "by": by, "at": at} for sid in _for_all() if sid not in shut]
     groups = [g for g in d["groups"] if g["id"] not in (_RETIRED_EVERYONE, CATCH_ALL)]
     for g in groups:
         g.setdefault("inherits", CATCH_ALL)             # My Family keeps everything it saw, plus its own allows
@@ -203,7 +212,7 @@ def _add_new_screens(d: dict) -> bool:
     every = [s["id"] for s in CATALOG]                   # 2026-10-26 owner: a draft is remembered too, so putting it
     if set(every) <= seen:                               # live never opens it to everyone - Access Control decides
         return False
-    new = [sid for sid in _open_screens() if sid not in seen]
+    new = [sid for sid in _for_all() if sid not in seen]
     if engine.setting("access.settings", "new_screens_to_catch_all"):
         by, at = say("migration_by"), store.now()
         d["grants"] += [{"id": store.new_id(), "subject": f"group:{CATCH_ALL}", "screen": sid, "function": "",
@@ -1152,6 +1161,18 @@ if __name__ == "__main__":  # ponytail: one runnable self-check of the resolver 
         data()                                           # a draft (admin until live) is seen as it arrives
         load(SCREENS + [{"id": "fresh", "label": "Fresh"}, {"id": "wip", "label": "Wip"}])
         assert not may(lone, "wip") and not may(fam[1], "wip"), "a draft put live opens to nobody until allowed"
+        # 2026-11-15 (GamyFyAds Control room): a no_catch_all screen is never one Catch All is given by itself
+        CATALOG.append({"id": "sales_only", "label": "Sales only", "no_catch_all": True})
+        assert "sales_only" in _open_screens() and "sales_only" not in _for_all(), "no_catch_all lost: Catch All would get it"
+        CATALOG.pop()
+        # 2026-11-15 CodyFy: a host row whose id is a switched core screen this portal lacks the chip for stays the host's
+        _sw: dict = next(c for c in CORE_SCREENS if c.get("switch"))
+        _real, _base = engine.chips, list(BASE)
+        engine.chips = lambda: {}  # type: ignore[assignment]
+        load([{"id": _sw["id"], "label": "Host own", "group": "Configuration"}])
+        assert _BY_ID[_sw["id"]]["label"] == "Host own" and not _BY_ID[_sw["id"]].get("hidden"), "a lacking core component replaced the host row"
+        engine.chips = _real  # type: ignore[method-assign]
+        load(_base)
         # deleting a parent hands its children the grandparent
         delete_group("solo", "", {})
         assert next(g for g in data()["groups"] if g["id"] == "kid")["inherits"] == ""

@@ -508,7 +508,7 @@ async function ruleDetail(box, host) {
     box.querySelector('#rule-clear').hidden = !find.value;
     box.querySelector('#rule-none').hidden = !ids || ids.size > 0;
     box.querySelector('#rule-table').hidden = !!ids && !ids.size;
-    box.querySelector('#rule-none-q').innerHTML = w('no_screen_match', { q: esc(q) });
+    box.querySelector('#rule-none-q').textContent = w('no_screen_match', { q });
   };
   let findTimer = 0;
   find.oninput = () => {
@@ -777,7 +777,7 @@ async function drawSmtp(box) {
 // session to explain. Recent mail shows every code and notice the portal tried to send and what became of it.
 async function drawMailLog(el) {
   const d = await api('/api/smtp/log').catch(() => null);
-  if (!d) { el.innerHTML = ''; return; }
+  if (!d) { el.replaceChildren(); return; }
   const rows = d.rows.map((r) => {
     const hint = w(`ml_h_${r.outcome}`, { sender: esc(d.sender), error: esc(r.error || ''), per_hour: d.per_hour,
       next: esc(when(r.next_at)), to: esc(r.to) });

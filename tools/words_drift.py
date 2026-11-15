@@ -32,6 +32,8 @@ def drift(root: Path = ROOT) -> list[str]:
     langs = sorted((root / "chips").glob("lang.*.json")) + sorted((root / "core" / "chips").glob("lang.*.json"))
     bad = []
     for row in json.loads((root / "catalog.json").read_text(encoding="utf-8")):
+        if "label" not in row:          # a flag-only row ({"id": "syscheck", "hidden": true}) sets a core screen, it names nothing
+            continue
         sid, label = row["id"], row["label"]
         g = chip_file(root, f"guide.{sid.replace('-', '_')}")
         if g and params(g).get(k["guide_field"]) not in (None, label):
