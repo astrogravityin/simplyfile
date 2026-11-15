@@ -2,6 +2,18 @@
 
 Read and follow these before every change.
 
+## Every change - QA stage, then QC gate (HARD, every session, every account, owner 2026-11-15)
+
+- **QA = the stage, while building:** [docs/dt-qa_standard-v1_0.md](docs/dt-qa_standard-v1_0.md) - journey, narration + SVG,
+  progress window over 2 s, standard components, reuse first, chips and ops with no hardcoding, ACT (Accuracy highest, Cost and
+  Time lowest), performance, Guide me, Tour Video script, UI check per piece, real testing on every device and role, AI agent +
+  MCP scope, never the same mistake, carry it home to DomainTemplate.
+- **QC = the gate, when done:** [docs/dt-qc_gate-v1_0.md](docs/dt-qc_gate-v1_0.md) - every line confirmed with evidence (a test
+  run, a screenshot read back, a diff), never memory; no evidence = FAIL. Same numbers: QC-5 checks QA-5. Covers sub-sessions.
+- **A report without the QC table is not finished** (owner 2026-11-16) - the owner reads a missing table as "the rules were
+  not followed". End with: Status table, numbered Pending table (with whom), Next paragraph - sub-sessions included.
+- Guard: `python -m core.qualitycheck` (run by selfcheck) fails if this block or either document goes missing or drifts.
+
 ## Every change - the owner's standard (HARD, AstroStage + every FY portal, 2026-10-30)
 
 Every feature, screen or fix is finished only when ALL of these are true. Answer each one in the closing report

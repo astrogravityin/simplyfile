@@ -660,6 +660,7 @@ def standards_check() -> None:
 
 
 if __name__ == "__main__":
+    from core import qualitycheck; print(qualitycheck.check())   # QA/QC travel with the repo (owner 2026-11-16)
     print("SimplyFy - self-check")
     only = sys.argv[1:]
     for name, fn in {"modules": module_checks, "statics": static_checks, "chips": chips_first_check, "guides": guides_tours_check, "name": name_once_check, "verbs": verbs_check, "ai": ai_check, "site": site_manifest_check, "standards": standards_check, "api": api_check, "push": lambda: __import__("selfcheck_push").main()}.items():
