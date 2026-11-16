@@ -46,16 +46,20 @@ def loosened(now: dict, before: dict | None) -> list[str]:
 def off_lock(root: Path = ROOT) -> list[str]:
     """Locked packages installed here at another version. The counts depend on them: 2026-11-13 the ceilings were measured
     in a venv with other fastapi/httpx versions and the VPS (which installs the lock) counted 3 more mypy errors, so its
-    deploy stopped. A package that is not installed at all is a platform-only one (uvloop on Windows) and is skipped."""
+    deploy stopped. A locked package that is not installed is off the lock too, unless chip deps.lock names it in `extra`
+    (Linux-only, uvloop): 2026-11-16 a hash install of the Linux lock failed on Windows, the venv stayed empty, every
+    package was skipped and the mypy ceiling was set from the wrong count (481; the lock counts 483)."""
     from importlib import metadata
     lk = knobs((root / "core" / "chips" / "deps.lock.json").read_text(encoding="utf-8"))
-    out = []
+    out, linux_only = [], {x.lower() for x in lk.get("extra", [])}
     for f in (lk[k] for k in ("lock", "dev_lock") if k in lk):     # an older deps.lock chip has no dev_lock
         p = root / f
         for name, ver in re.findall(r"^([A-Za-z0-9_.\-]+)==([^\s;\\]+)", p.read_text(encoding="utf-8") if p.exists() else "", re.M):
             try:
                 have = metadata.version(name)
             except metadata.PackageNotFoundError:
+                if name.lower() not in linux_only:
+                    out.append(f"{name} not installed (lock {ver})")
                 continue
             if have != ver:
                 out.append(f"{name} {have} (lock {ver})")
@@ -115,7 +119,8 @@ def gate() -> int:
     off = off_lock()
     if off:
         fails.append("counted off the lock - install it first (pip install --require-hashes --no-deps -r requirements.lock "
-                     "-r requirements-dev.lock), the ceilings hold for the locked versions only: " + ", ".join(off[:10]))
+                     "-r requirements-dev.lock; on Windows the hashes are the Linux server's, so install the same versions "
+                     "without --require-hashes), the ceilings hold for the locked versions only: " + ", ".join(off[:10]))
     for name, found, cap in (("ruff", ruff(), k["ruff_ceiling"]), ("mypy", mypy(), k["mypy_ceiling"])):
         if len(found) > cap:
             fails.append(f"{name}: {len(found)} findings, ceiling {cap} - fix the new ones:\n    " + "\n    ".join(found[-15:]))
@@ -139,9 +144,12 @@ def selftest() -> None:
     with tempfile.TemporaryDirectory() as t:
         (Path(t) / "core" / "chips").mkdir(parents=True)
         (Path(t) / "core" / "chips" / "deps.lock.json").write_text(json.dumps({"params": [{"name": "lock", "default": "a.lock"},
-                                                                                       {"name": "dev_lock", "default": "b.lock"}]}))
-        (Path(t) / "a.lock").write_text("pip==0.0.1 --hash=sha256:x\nno-such-package-xyz==1.0 --hash=sha256:y\n")
-        assert [x.split()[0] for x in off_lock(Path(t))] == ["pip"], "a locked package at another version must be named; a missing one skipped"
+                                                                                       {"name": "dev_lock", "default": "b.lock"},
+                                                                                       {"name": "extra", "default": ["linux-only-xyz"]}]}))
+        (Path(t) / "a.lock").write_text("pip==0.0.1 --hash=sha256:x\nno-such-package-xyz==1.0 --hash=sha256:y\n"
+                                        "linux-only-xyz==1.0 --hash=sha256:z\n")
+        assert [x.split()[0] for x in off_lock(Path(t))] == ["pip", "no-such-package-xyz"], \
+            "a locked package at another version, or not installed at all (an empty venv), must be named; a Linux-only extra skipped"
     print("quality gate self-check OK")
 
 
