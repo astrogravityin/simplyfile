@@ -5,7 +5,8 @@ A session reads only the CLAUDE.md of the repo it works in, so each portal carri
 1. both documents (docs/dt-qa_standard-v1_0.md + docs/dt-qc_gate-v1_0.md, the DomainTemplate copies) with the same numbers
    (QC-5 checks QA-5);
 2. a CLAUDE.md that points at both and says a report without the QC table is not finished;
-3. on the owner's computer (DomainTemplate beside the repo), the same QC rows as DomainTemplate - a drifted copy fails.
+3. the QC gate sized to the change (S/M/L section, owner 2026-11-16);
+4. on the owner's computer (DomainTemplate beside the repo), the same QC rows as DomainTemplate - a drifted copy fails.
 Run by every portal's selfcheck (`from core import qualitycheck; qualitycheck.check()`) and alone: `python -m core.qualitycheck`.
 """
 from __future__ import annotations
@@ -17,6 +18,7 @@ ROOT = Path(__file__).resolve().parent.parent
 DOCS = (("docs/dt-qa_standard-v1_0.md", "docs/dt-qc_gate-v1_0.md"),   # DomainTemplate names (every Fy portal)
         ("docs/quality/QA_STANDARD.md", "docs/quality/QC_GATE.md"))   # AstroStage names
 NO_TABLE = "A report without the QC table is not finished"
+SIZED = "## Size the gate to the change"   # owner 2026-11-16: S/M/L evidence, a one-line fix pays no six screenshots
 QA_ITEM = re.compile(r"^(\d+)\. \*\*", re.M)
 QC_ROW = re.compile(r"^\| QC-(\d+) \| ([^|]+)\|", re.M)
 
@@ -35,6 +37,7 @@ def check(root: Path = ROOT) -> str:
     qc = [int(n) for n, _ in QC_ROW.findall(qc_text)]
     assert qc and qc == list(range(1, len(qc) + 1)), f"QC numbers not 1..n: {qc}"
     assert qa == qc, f"every QA item needs its QC check (QA {qa} vs QC {qc})"
+    assert SIZED in qc_text, f"{qc_p.name} lacks '{SIZED}' (S/M/L) - copy it from DomainTemplate"
     claude = root / "CLAUDE.md"
     assert claude.is_file(), "no CLAUDE.md - a new session here would never see the QA/QC rules"
     s = claude.read_text(encoding="utf-8")

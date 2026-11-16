@@ -23,6 +23,20 @@ screenshot read back, a diff), never memory. A line without evidence counts as F
 | QC-15 | Fixed bugs can't come back | Guard name, with proof it fails when the bug is reintroduced |
 | QC-16 | DomainTemplate updated | File or commit in DomainTemplate |
 
+## Size the gate to the change (owner 2026-11-16)
+
+The table is always there; how much evidence each line needs depends on the size of the change. Decide the size first
+and name it in the table's title row ("QC - size S").
+
+- **S - no screen change** (a fix inside one function, config, chip value, docs, a guard): evidence only for QC-6 (diff
+  read), QC-12 (tests run), QC-15 (if a bug was fixed) and QC-16. The other lines go in ONE row: `n/a (size S, no
+  screen)`. No screenshots.
+- **M - a change on screens that already exist**: every line. QC-11 = two screenshots per changed screen (laptop light,
+  phone dark) at half scale; full scale only to read small text. Use all six only if the layout or theme code changed.
+- **L - a new screen, module, flow or portal**: every line at full evidence. QC-11 = six screenshots per new screen.
+
+When unsure, pick the bigger size. A line shown as n/a is not a pass: say in a few words why it doesn't apply.
+
 Then the report: Status table, numbered Pending table (with whom), Next paragraph - sub-sessions included.
 
 A report without the QC table is not finished (owner 2026-11-16): the owner reads a missing table as "the rules were not
