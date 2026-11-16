@@ -106,6 +106,12 @@ def static_checks() -> None:
     # RED balloon, like Code Editor's - it had shown as a pale number nobody noticed. setBadge updates it in place, no reload.
     _sh = (HERE / "core" / "static" / "shell.js").read_text(encoding="utf-8")
     assert "d.menu_badges" in _sh and "export function setBadge(" in _sh and "badge news" in _sh and ".badge.news{background:var(--bad)" in css,         "a screen's news count is no longer the red menu balloon (core shell.js menu_badges / setBadge, portal.css .badge.news)"
+    # 2026-11-16 owner (phone screenshot): the top bar stays ONE row on a phone - labels hide (tb-lbl, Guide me too),
+    # gaps tighten and the avatar never drops to a second line or gets clipped (320 px owner bar with the AI key chip).
+    _css = (HERE / 'core' / 'static' / 'portal.css').read_text(encoding='utf-8')
+    _gj = (HERE / 'core' / 'static' / 'guide.js').read_text(encoding='utf-8')
+    assert '{.topbar{flex-wrap:nowrap' in _css and '.usermenu .who > svg.ico{display:none}' in _css and 'class="tb-lbl">${esc(w(\'guide_me\'))}' in _gj, \
+        "phone top bar: one row (portal.css @media 640/400 rules) and Guide me's word in tb-lbl (guide.js)"
     print("  static: every import resolves, one page per screen, controls stand out OK")
 
 

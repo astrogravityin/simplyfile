@@ -16,7 +16,7 @@ const w = (k, v) => t('guide', k, v);
 export function guideButton(screen, settings = {}) {
   const glow = settings.pulse_until_seen !== false && !kept(`guide.seen.${screen}`);
   return `<button type="button" class="chipbtn gd-btn ${glow ? 'gd-glow' : ''}" data-guide="${esc(screen)}"
-    data-tip="${esc(w('guide_tip'))}" aria-label="${esc(w('guide_tip'))}">${icon('spark', 14)} ${esc(w('guide_me'))}</button>`;
+    data-tip="${esc(w('guide_tip'))}" aria-label="${esc(w('guide_tip'))}">${icon('spark', 14)} <span class="tb-lbl">${esc(w('guide_me'))}</span></button>`;
 }
 
 export function wireGuide(root, product = '') {
