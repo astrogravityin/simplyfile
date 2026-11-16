@@ -55,13 +55,13 @@
     {
       "name": "install",
       "type": "long",
-      "default": "python3 -m venv .venv/tour && .venv/tour/bin/pip install -r tools/tour_video/requirements.txt && .venv/tour/bin/python -m playwright install chromium",
+      "default": "python3 -m venv .venv/tour && .venv/tour/bin/python -m pip install -r tools/tour_video/requirements.txt && .venv/tour/bin/python -m playwright install chromium",
       "label": "install"
     },
     {
       "name": "update",
       "type": "long",
-      "default": ".venv/tour/bin/pip install -q -r tools/tour_video/requirements.txt && .venv/tour/bin/python -m playwright install chromium",
+      "default": ".venv/tour/bin/python -m pip install -q -r tools/tour_video/requirements.txt && .venv/tour/bin/python -m playwright install chromium",
       "label": "update"
     },
     {
@@ -119,7 +119,7 @@
           "python"
         ],
         "log_keep": 200,
-        "install": "python3 -m venv .venv/tour && .venv/tour/bin/pip install -r tools/tour_video/requirements.txt && .venv/tour/bin/python -m playwright install chromium",
+        "install": "python3 -m venv .venv/tour && .venv/tour/bin/python -m pip install -r tools/tour_video/requirements.txt && .venv/tour/bin/python -m playwright install chromium",
         "files": [
           {
             "id": "mp4",
@@ -137,7 +137,7 @@
             "type": "text/plain"
           }
         ],
-        "update": ".venv/tour/bin/pip install -q -r tools/tour_video/requirements.txt && .venv/tour/bin/python -m playwright install chromium",
+        "update": ".venv/tour/bin/python -m pip install -q -r tools/tour_video/requirements.txt && .venv/tour/bin/python -m playwright install chromium",
         "session_minutes": 90
       }
     }
