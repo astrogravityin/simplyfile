@@ -494,7 +494,7 @@ if __name__ == "__main__":  # ponytail: one runnable self-check (the chips certi
     before = rss()
     big = bytearray(os.urandom(1) * (30 * MB))              # touched pages, so resident
     note_request("GET", "/x", before, 200, 1)
-    assert EVENTS and EVENTS[-1]["path"] == "/x" and EVENTS[-1]["delta"] >= 25, list(EVENTS)
+    assert EVENTS and EVENTS[-1]["path"] == "/x" and EVENTS[-1]["delta"] >= 20, list(EVENTS)   # ponytail: 30 MB touched reads ~24 resident on Windows (flaky at 25, 2026-11-16)
     refresh_disk()
     assert _DISK["total_mb"] > 0 and _DISK["app_mb"] + _DISK["other_mb"] == _DISK["used_mb"], _DISK
     snap = snapshot()
