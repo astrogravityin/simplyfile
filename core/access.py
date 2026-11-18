@@ -155,6 +155,49 @@ def reapply() -> None:
     _BY_ID["connect-ai"] = _BY_ID["connect-ai"] | {"functions": [{"id": r["function"], "label": r.get("title") or r["name"]}
                                                                 for r in tools if r.get("function")]}
     CATALOG[:] = [_BY_ID.get(s["id"], s) for s in CATALOG]
+    row = dock_row()
+    if row and row["id"] not in _BY_ID:
+        CATALOG.append(row)
+        _BY_ID[row["id"]] = row
+
+
+def dock_row() -> dict | None:
+    """2026-11-18 owner: "make bottom bar as part of Access control including each button". One row, off the menu, one
+    function per bar button - all from chip access.dock, words from ui.access. On for everyone until a rule denies it
+    (open_unless_denied, chip access.decide), so nobody loses the bar the day it arrives. No chip = no row."""
+    if "access.dock" not in engine.chips():
+        return None
+    k = engine.run("access.dock")
+    word = lambda key: engine.say("ui.access", key)  # noqa: E731
+    return {"id": k["screen"], "label": word(k["label_word"]), "group": word(k["group_word"]), "icon": k["icon"],
+            "hidden": True, "open_unless_denied": True, "bottom_bar": True,
+            "functions": [{"id": f["id"], "label": word(f["word"])} for f in k["functions"]]}
+
+
+def _dock_route(path: str, method: str) -> str:
+    """The bar function whose route this is (chip access.dock routes), or ""."""
+    if "access.dock" not in engine.chips():
+        return ""
+    for f in engine.run("access.dock")["functions"]:
+        for r in f.get("routes") or []:
+            if r.get("method") and r["method"] != method:
+                continue
+            if ("path" in r and path == r["path"]) or ("prefix" in r and path.startswith(r["prefix"])):
+                return f["id"]
+    return ""
+
+
+async def dock_guard(request: Request, call_next):
+    """A bar button switched off for this person is refused on the server too, not only left off the page: every route the
+    chip names for it answers 403 with the same sentence as any shut screen. Signed out = the route's own guard answers."""
+    fn = _dock_route(request.url.path, request.method)
+    if fn:
+        u = auth.current_user(request)
+        sid = engine.run("access.dock")["screen"]
+        if u and not may(u, sid, fn):
+            from fastapi.responses import JSONResponse  # noqa: PLC0415
+            return JSONResponse({"detail": say("no_access", label=label_of(sid, fn))}, status_code=403)
+    return await call_next(request)
 
 
 def label_of(screen_id: str, function_id: str = "") -> str:
@@ -173,7 +216,7 @@ def _open_screens() -> list[str]:
 def _for_all() -> list[str]:
     """The open screens Catch All may be given by itself (day one, and a newly catalogued screen); a catalog row's
     `no_catch_all` keeps a screen for the groups the owner names (GamyFyAds 2026-10-31: Control room never reaches Catch All)."""
-    return [s["id"] for s in CATALOG if not s.get("admin") and not s.get("no_catch_all")]
+    return [s["id"] for s in CATALOG if not s.get("admin") and not s.get("no_catch_all") and not s.get("open_unless_denied")]
 
 
 def _raw() -> dict:
@@ -387,6 +430,8 @@ def facts_for(user: dict | None, screen_id: str, function_id: str = "", d: dict 
     screen = _BY_ID.get(screen_id) or {}
     facts = {"signed_in": bool(user), "role": (user or {}).get("role", "member"), "known": bool(screen),
              "admin": bool(screen.get("admin")), "screen": screen_id, "label": screen.get("label", screen_id)}
+    if screen.get("open_unless_denied"):              # 2026-11-18 the bottom bar: on until a rule denies it
+        facts["open_unless_denied"] = True
     if user and screen.get("admin") and user.get("role") != "owner" and _LENDER and _LENDER[0](user, screen_id):
         facts["lent"] = "yes"
     if user and screen and _AVAILABLE.get(screen_id) is not None:
@@ -474,6 +519,8 @@ def my_access(u: dict | None) -> dict:
         out[s["id"]] = {"allowed": verdict["allowed"],
                         "functions": {f["id"]: decide(u, s["id"], f["id"], d, users)["allowed"]
                                       for f in s.get("functions", [])}}
+        if s.get("bottom_bar"):                       # 2026-11-18 the bottom bar's row: static/dock.js finds it by this mark
+            out[s["id"]]["bottom_bar"] = True
     return out
 
 
@@ -968,12 +1015,13 @@ def _legacy_may(d: dict, u: dict, screen_id: str, function_id: str = "") -> bool
 def _menu(u: dict, d: dict, users: list[dict]) -> dict:
     return {s["id"]: (decide(u, s["id"], "", d, users)["allowed"],
                       {f["id"]: decide(u, s["id"], f["id"], d, users)["allowed"] for f in s.get("functions", [])})
-            for s in CATALOG}
+            for s in CATALOG if not s.get("open_unless_denied")}
 
 
 def _legacy_menu(u: dict, d: dict) -> dict:
     return {s["id"]: (_legacy_may(d, u, s["id"]), {f["id"]: _legacy_may(d, u, s["id"], f["id"]) for f in s.get("functions", [])})
-            for s in CATALOG}
+            for s in CATALOG
+            if not s.get("open_unless_denied")}
 
 
 def prove_migration(old: dict, people: list[dict]) -> dict:
@@ -1056,7 +1104,8 @@ if __name__ == "__main__":  # ponytail: one runnable self-check of the resolver 
         users = store.users()
         for p in people:
             assert _menu(p, d, users) == before[p["id"]], (p["email"], _menu(p, d, users), before[p["id"]])
-            assert {k: (v["allowed"], v["functions"]) for k, v in my_access(p).items()} == before[p["id"]], p["email"]
+            assert {k: (v["allowed"], v["functions"]) for k, v in my_access(p).items()
+                    if not _BY_ID[k].get("open_unless_denied")} == before[p["id"]], p["email"]
         assert d["groups"][0]["id"] == CATCH_ALL and d["groups"][0]["name"] == say("catch_all_name")
         assert not any(g["id"] == "everyone" for g in d["groups"]), "Everyone is retired"
         assert not any(g["effect"] not in ("allow", "deny") or g["subject"] == "group:everyone" for g in d["grants"]), \
@@ -1251,6 +1300,51 @@ if __name__ == "__main__":  # ponytail: one runnable self-check of the resolver 
         assert {r["id"] for r in lists.page("access_screens", own, {"q": "draf"})["rows"]} == {"video"}, "a function's name finds its screen"
         assert not lists.page("access_screens", own, {"q": "zzqx"})["rows"] and len(lists.page("access_screens", own, {})["rows"]) == len([s for s in CATALOG if not s.get("admin")])
         assert refused(lists.page, "access_screens", fam[0], {}) == 403, "the screen list is the owner's, like the page"
+
+        # --- 4. the bottom bar (2026-11-18 owner: "switch off entire bottom bar or ... Chip Chat, or Voice notes") ---------
+        dk = engine.run("access.dock")
+        sid, fns = dk["screen"], [f["id"] for f in dk["functions"]]
+        assert _BY_ID[sid].get("hidden") and [f["id"] for f in _BY_ID[sid]["functions"]] == fns, "the bar's row comes from chip access.dock"
+        assert sid not in _for_all(), "Catch All is never handed the bar: it is on without an allow"
+        bar = store.add_user("bar@x.io", "password-bar")                   # unassigned: Catch All, no rule on the bar
+        solo = store.add_user("sales@x.io", "password-sales")              # in a group that inherits nothing
+        d = data()
+        d["groups"].append({"id": "sales", "name": "Sales", "members": [solo["id"]], "inherits": ""})
+        save(d)
+        assert all(may(bar, sid, f) for f in fns) and all(may(solo, sid, f) for f in fns), "day one: every button, for everyone"
+        d = data()
+        _add_grant(d, "group:sales", sid, "notes", "deny", "t")            # Sales loses Notes alone
+        _add_grant(d, f"group:{CATCH_ALL}", sid, "", "deny", "t")          # Catch All loses the whole bar
+        save(d)
+        assert not may(solo, sid, "notes") and may(solo, sid, "chat"), "one button off, the rest stay"
+        assert not any(may(bar, sid, f) for f in fns), "the whole bar off"
+        assert my_access(solo)[sid]["functions"]["notes"] is False and my_access(solo)[sid]["functions"]["chat"] is True, \
+            "the page is told which buttons to draw (bootstrap access)"
+        assert may(own, sid, "notes"), "the owner keeps the bar"
+        from fastapi import FastAPI  # noqa: PLC0415
+        from fastapi.testclient import TestClient  # noqa: PLC0415
+        app_ = FastAPI()
+        app_.middleware("http")(dock_guard)
+        app_.get("/api/notes")(lambda: {"ok": 1})
+        app_.get("/api/chat/examples")(lambda: {"ok": 1})
+        app_.post("/api/core/issues")(lambda: {"ok": 1})
+        app_.get("/api/core/issues/x")(lambda: {"ok": 1})
+        c_ = TestClient(app_)
+        c_.cookies.set(auth.COOKIE, store.start_session(solo, 3600))
+        assert c_.get("/api/notes").status_code == 403, "a switched-off button's route answers 403"
+        assert c_.get("/api/chat/examples").status_code == 200, "a button still on keeps its route"
+        c_.cookies.set(auth.COOKIE, store.start_session(bar, 3600))
+        assert c_.post("/api/core/issues").status_code == 403 and c_.get("/api/core/issues/x").status_code == 200, \
+            "Report an issue refuses the report itself; the issue screens' other routes are not the bar's"
+        assert c_.get("/api/chat/examples").status_code == 403, "the whole bar off: Chip Chat refused too"
+        chip = copy.deepcopy(engine.chips()["access.decide"])              # bite (in memory): no deny case = the bar stays on
+        chip["expr"]["cases"] = [c for c in chip["expr"]["cases"] if c["when"] != {"op": "ne", "left": "$deny_by", "right": ""}]
+        assert engine.run("access.decide", facts_for(solo, sid, "notes"), engine.with_drafts([chip]))["allowed"] is True, \
+            "the switched-off-button guard cannot bite"
+        chip = copy.deepcopy(engine.chips()["access.decide"])              # bite: no open case = everybody loses the bar
+        chip["expr"]["cases"] = [c for c in chip["expr"]["cases"] if c["then"]["fields"]["why"]["text"] != "$msg_open"]
+        assert engine.run("access.decide", facts_for(solo, sid, "chat"), engine.with_drafts([chip]))["allowed"] is False, \
+            "the on-by-default guard cannot bite"
     # 2026-10-19: data() SAVES its day-one migration, so every core module's self-check that reaches access must point the
     # store at a temp folder - the studio's core/find.py once wrote its real data/access.json this way
     for p_ in sorted(Path(__file__).resolve().parent.glob("*.py")):

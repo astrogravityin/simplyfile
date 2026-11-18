@@ -67,6 +67,12 @@
       "label": "Knob: a personal rule alone makes a person managed (off: an account in no group keeps Catch All, its own rules on top)"
     },
     {
+      "name": "open_unless_denied",
+      "type": "boolean",
+      "default": false,
+      "label": "The row is on for everyone until a rule denies it (the bottom bar, chip access.dock)"
+    },
+    {
       "name": "screen",
       "type": "text",
       "default": ""
@@ -185,6 +191,11 @@
       "name": "msg_not_in_catch_all",
       "type": "text",
       "default": "In no group, so Catch All decides, and it does not allow {label}."
+    },
+    {
+      "name": "msg_open",
+      "type": "text",
+      "default": "{label} is on for everyone until a rule switches it off."
     }
   ],
   "expr": {
@@ -445,6 +456,76 @@
           "op": "all",
           "items": [
             {
+              "op": "eq",
+              "left": "$open_unless_denied",
+              "right": true
+            },
+            {
+              "op": "any",
+              "items": [
+                {
+                  "op": "any",
+                  "items": [
+                    {
+                      "op": "eq",
+                      "left": "$in_group",
+                      "right": true
+                    },
+                    {
+                      "op": "all",
+                      "items": [
+                        {
+                          "op": "eq",
+                          "left": "$personal_rule_manages",
+                          "right": true
+                        },
+                        {
+                          "op": "eq",
+                          "left": "$has_personal",
+                          "right": true
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "op": "eq",
+                  "left": "$ca_deny_by",
+                  "right": ""
+                }
+              ]
+            }
+          ]
+        },
+        "then": {
+          "vop": "record",
+          "fields": {
+            "allowed": true,
+            "why": {
+              "vop": "template",
+              "text": "$msg_open",
+              "values": {
+                "screen": "$screen",
+                "label": "$label",
+                "role": "$role",
+                "deny_by": "$deny_by",
+                "deny_on": "$deny_on",
+                "allow_by": "$allow_by",
+                "allow_on": "$allow_on",
+                "ca_deny_by": "$ca_deny_by",
+                "ca_deny_on": "$ca_deny_on",
+                "ca_allow_by": "$ca_allow_by",
+                "ca_allow_on": "$ca_allow_on"
+              }
+            }
+          }
+        }
+      },
+      {
+        "when": {
+          "op": "all",
+          "items": [
+            {
               "op": "any",
               "items": [
                 {
@@ -666,7 +747,7 @@
     }
   },
   "returns": "record",
-  "version": 3,
+  "version": 4,
   "status": "published",
   "description_nl": "The one resolver behind the menu, every API guard and 'Check a person' (model 2026-10-19, the studio's model, as SteadyMove's core). Order: signed out -> no; unknown screen -> no (the owner too); a screen with nothing on it for this person (available no) -> no; owner -> always (the way back in can never be locked); admin screen -> owner only; a role gate chip says no -> no. Then DENY WINS: any deny for the person, a group they are in, or a group those inherit from -> no. MANAGED = in a group other than Catch All (or, with knob personal_rule_manages on, holding a rule of their own): they see ONLY what their groups, the groups those INHERIT from (one parent each, read live) and their own rules allow - anything else -> no. UNASSIGNED = in no group: Catch All decides - its deny -> no, their own allow -> yes, Catch All's allow -> yes, anything else -> no. Catch All is the built-in, non-deletable, renamable group (id catch_all) for every account in no group, new sign-ups included. The old built-in group Everyone is retired: on day one its denies became Catch All denies, its allows became the Catch All allow list, every existing group was set to inherit Catch All, and an 'Only allowed' screen was simply left out of Catch All - so every menu stayed the same. personal_rule_manages is off so that approving a request (a personal allow) never empties an unassigned person's menu. A screen nobody allowed is closed; access.settings new_screens_to_catch_all adds a newly catalogued screen to Catch All once. A function check honours rules on the whole screen and on that function; a screen check ignores function-only rules. register_available screens answer 'no' before everything else, and hide_when_denied leaves them out of the menu. 2026-10-04 owner: an Admin screen the owner LENT to this person today (delegation, fact lent) opens for them - checked after owner, before admin; register_available(functions=True) answers per button (a tenant's role).",
   "test_cases": [
@@ -876,6 +957,43 @@
       "expect_value": {
         "allowed": false,
         "why": "Only the portal owner can open this."
+      }
+    },
+    {
+      "args": {
+        "signed_in": true,
+        "open_unless_denied": true,
+        "label": "Bottom bar"
+      },
+      "expect_value": {
+        "allowed": true,
+        "why": "Bottom bar is on for everyone until a rule switches it off."
+      }
+    },
+    {
+      "args": {
+        "signed_in": true,
+        "open_unless_denied": true,
+        "label": "Bottom bar",
+        "deny_by": "Sales",
+        "deny_on": "Bottom bar"
+      },
+      "expect_value": {
+        "allowed": false,
+        "why": "Denied for Sales on Bottom bar."
+      }
+    },
+    {
+      "args": {
+        "signed_in": true,
+        "open_unless_denied": true,
+        "label": "Bottom bar",
+        "ca_deny_by": "Catch All",
+        "ca_deny_on": "Bottom bar"
+      },
+      "expect_value": {
+        "allowed": false,
+        "why": "In no group, so Catch All decides: denied for Catch All on Bottom bar."
       }
     }
   ],

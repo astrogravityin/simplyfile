@@ -200,6 +200,7 @@ def install(app, *, catalog, chips=None, rules_dir=None, scenarios=None) -> None
     app.middleware("http")(_json_cap)
     app.middleware("http")(_multipart_cap)
     app.middleware("http")(_head_as_get)
+    app.middleware("http")(access.dock_guard)    # 2026-11-18 a bar button switched off: its routes answer 403 (chip access.dock)
     app.middleware("http")(doctor.catch)     # added last = runs first: every unexpected error, from any layer (Error Doctor)
     app.middleware("http")(logs.request_id)  # 2026-11-12: outermost - one request id for every log line, error and answer
     logs.install()

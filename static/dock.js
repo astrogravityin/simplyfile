@@ -108,7 +108,7 @@ export function listen(quiet = false) {   // quiet: started by Notes opening, no
   S.aimed = !!liveBox(S.target);
   caption(); draw(); listeners.forEach((f) => f());
 }
-export const toggleMic = () => (S.stopListening ? S.stopListening() : listen());
+export const toggleMic = () => (S.stopListening ? S.stopListening() : allowed('voice') && listen());   // Voice typing off = no mic anywhere
 export const listening = () => !!S.stopListening;
 const listeners = new Set();                                       // Notes / Issues redraw their microphone button
 export const onMicChange = (f) => { listeners.add(f); return () => listeners.delete(f); };
@@ -181,8 +181,8 @@ function grabResult(grab) {
       <div class="pd-grab-acts">
         ${picture ? `<button type="button" class="as-btn" data-a="copy">${icon('copy', 14)}${esc(w('grab.copy'))}</button>` : ''}
         <button type="button" class="as-btn" data-a="download">${icon('download', 14)}${esc(w('grab.download'))}</button>
-        ${picture ? `<button type="button" class="as-btn" data-a="note">${icon('notebook', 14)}${esc(w('grab.note'))}</button>
-          <button type="button" class="as-btn" data-a="issue">${icon('flag', 14)}${esc(w('grab.issue'))}</button>` : ''}
+        ${picture && allowed('notes') ? `<button type="button" class="as-btn" data-a="note">${icon('notebook', 14)}${esc(w('grab.note'))}</button>` : ''}
+        ${picture && allowed('issue') ? `<button type="button" class="as-btn" data-a="issue">${icon('flag', 14)}${esc(w('grab.issue'))}</button>` : ''}
         <button type="button" class="as-btn as-danger" data-a="discard">${icon('trash', 14)}${esc(w('grab.discard'))}</button></div></div>`, {
     wide: true, stay: true,
     onClose: () => URL.revokeObjectURL(url),
@@ -237,7 +237,7 @@ export async function openNotes(picture) {
   S.target = null; S.aimed = false;                              // words spoken before the note is up must not land behind it
   const m = await import('./notes-modal.js');
   m.notesModal({ picture, onClose: () => { if (S.stopListening) S.stopListening(); } });
-  if (!S.stopListening) listen(true);                             // the studio: the microphone is on as Notes opens
+  if (!S.stopListening && allowed('voice')) listen(true);         // the studio: the microphone is on as Notes opens (Voice typing on)
 }
 export async function openIssues(shot) {
   const m = await import('./issues-modal.js');
@@ -293,13 +293,21 @@ const TOOLS = {
 };
 // 2026-10-26: a portal may gate each tool per group (Access Control): syncDock(user, may) with may(toolId) -> bool.
 // No checker = every tool the settings list. Chip Chat shows unless the settings say chat: false.
-const allowed = (id) => !S.may || S.may(id);
+// 2026-11-18 owner ("switch off entire bottom bar or ... Chip Chat, or Voice notes"): no checker = Access Control's own
+// row for the bar (chip access.dock, sent with the bootstrap as state.access[<row>].functions[<tool id>]); a portal
+// without that row draws every tool the settings list.
+const barRow = () => Object.values(state.access || {}).find((a) => a && a.bottom_bar) || null;   // the row marked bottom_bar (core/access.my_access)
+const allowed = (id) => (S.may ? S.may(id) : !barRow() || barRow().functions[id] !== false);
 const chatOn = () => K().chat !== false && allowed('chat');
 const chatBtn = () => !chatOn() ? '' : `<button type="button" class="pd-b" data-dock-chip-chat title="${esc(w('bar.chat_tip'))}" aria-label="${esc(w('bar.chat_label'))}">${chipChatGlyph(24)}</button>`;
+
+/** The buttons this person may see right now; none = no bar at all. */
+const shown = () => (K().tools || Object.keys(TOOLS)).filter(allowed).map((id) => (TOOLS[id] ? TOOLS[id]() || '' : '')).filter(Boolean);
 
 function draw() {
   const el = document.getElementById('sf-dock');
   if (!el) return;
+  if (!chatOn() && !shown().length) { el.remove(); return; }   // every button switched off: no bar
   const open = kept('sf.dock.open', '1') !== '0';
   const col = kept('sf.dock.dir', 'row') === 'col';
   el.dataset.dir = open ? (col ? 'col' : 'row') : 'folded';
@@ -307,7 +315,7 @@ function draw() {
     ? `<button type="button" class="pd-arrow" data-open="row" title="${esc(w('bar.open_row'))}" aria-label="${esc(w('bar.open_row_label'))}">${icon('left', 16)}</button>
        <div class="pd-stack"><button type="button" class="pd-arrow pd-up" data-open="col" title="${esc(w('bar.open_col'))}" aria-label="${esc(w('bar.open_col_label'))}">${icon('up', 16)}</button>${chatBtn()}</div>`
     : `<button type="button" class="pd-arrow ${col ? 'pd-up' : ''}" data-hide title="${esc(w('bar.hide'))}" aria-label="${esc(w('bar.hide_label'))}">${icon(col ? 'down' : 'right', 16)}</button>
-       ${chatBtn()}${(K().tools || Object.keys(TOOLS)).filter(allowed).map((id) => (TOOLS[id] ? TOOLS[id]() || '' : '')).join('')}`;
+       ${chatBtn()}${shown().join('')}`;
   el.querySelectorAll('[data-open]').forEach((b) => { b.onclick = () => { keep('sf.dock.open', '1'); keep('sf.dock.dir', b.dataset.open); draw(); }; });
   const hide = el.querySelector('[data-hide]');
   if (hide) hide.onclick = () => { keep('sf.dock.open', '0'); draw(); };

@@ -56,7 +56,8 @@ def clean(row: dict, known: dict) -> dict:
 def listed(_: dict = Depends(screen("menus"))):
     base = {s["id"]: s for s in access.BASE}
     return {"rows": [r | {"core": bool(base[r["id"]].get("admin")),
-                          "base": {k: base[r["id"]].get(k, "") for k in ("label", "group", "icon")}} for r in access.CATALOG]}
+                          "base": {k: base[r["id"]].get(k, "") for k in ("label", "group", "icon")}} for r in access.CATALOG
+                     if not r.get("bottom_bar")]}   # 2026-11-18 the bottom bar's Access Control row is no menu entry
 
 
 @router.put("/api/core/menus")

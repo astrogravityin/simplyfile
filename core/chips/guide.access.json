@@ -6,7 +6,9 @@
   "aliases": [
     "people and access",
     "access control",
-    "groups"
+    "groups",
+    "bottom bar",
+    "switch off chip chat"
   ],
   "params": [
     {
@@ -74,6 +76,11 @@
           "target": "#rule-table"
         },
         {
+          "title": "The bottom bar",
+          "say": "The Bottom bar row switches the floating bar per group. Deny on the row takes the whole bar away; Deny on Chip Chat, Voice typing or any other button takes only that one, and its server door closes too. No rule keeps it on.",
+          "target": "#rule-table tr[data-sid=dock]|#rule-table"
+        },
+        {
           "title": "Make inactive",
           "say": "An inactive group gives nothing: its members get its parent's screens until you make it active again.",
           "target": "#act-group|#rule-detail"
@@ -104,7 +111,7 @@
     }
   },
   "returns": "record",
-  "version": 1,
+  "version": 2,
   "status": "published",
   "description_nl": "2026-11-15 (core, every portal): People & access - groups are roles, inherit and override, inactive, delete with move (core/static/page-access.js).",
   "test_cases": [
@@ -151,6 +158,11 @@
             "title": "Inherit and override",
             "say": "No rule follows the parent. Allow or Deny here overrides it for this group. The nearest rule always decides; a person's own rule is nearest of all.",
             "target": "#rule-table"
+          },
+          {
+            "title": "The bottom bar",
+            "say": "The Bottom bar row switches the floating bar per group. Deny on the row takes the whole bar away; Deny on Chip Chat, Voice typing or any other button takes only that one, and its server door closes too. No rule keeps it on.",
+            "target": "#rule-table tr[data-sid=dock]|#rule-table"
           },
           {
             "title": "Make inactive",

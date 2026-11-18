@@ -1,0 +1,186 @@
+{
+  "chip_id": "access.dock",
+  "kind": "accessor",
+  "set": "access",
+  "audience": "admin",
+  "label": "The bottom bar in Access Control: one function per button, and the routes behind each",
+  "aliases": [
+    "bottom bar access",
+    "dock access",
+    "switch off chip chat"
+  ],
+  "params": [
+    {
+      "name": "screen",
+      "type": "text",
+      "default": "dock",
+      "label": "The Access Control row id (never shown)"
+    },
+    {
+      "name": "icon",
+      "type": "text",
+      "default": "menu"
+    },
+    {
+      "name": "label_word",
+      "type": "text",
+      "default": "dock_screen",
+      "label": "Word key in ui.access for the row"
+    },
+    {
+      "name": "group_word",
+      "type": "text",
+      "default": "dock_group",
+      "label": "Word key in ui.access for its folder"
+    },
+    {
+      "name": "functions",
+      "type": "json",
+      "default": [
+        {
+          "id": "chat",
+          "word": "dock_fn_chat",
+          "routes": [
+            {
+              "prefix": "/api/chat/"
+            }
+          ]
+        },
+        {
+          "id": "capture",
+          "word": "dock_fn_capture",
+          "routes": []
+        },
+        {
+          "id": "record",
+          "word": "dock_fn_record",
+          "routes": []
+        },
+        {
+          "id": "voice",
+          "word": "dock_fn_voice",
+          "routes": []
+        },
+        {
+          "id": "notes",
+          "word": "dock_fn_notes",
+          "routes": [
+            {
+              "path": "/api/notes"
+            },
+            {
+              "prefix": "/api/notes/"
+            }
+          ]
+        },
+        {
+          "id": "issue",
+          "word": "dock_fn_issue",
+          "routes": [
+            {
+              "path": "/api/dock/issues"
+            },
+            {
+              "prefix": "/api/dock/issues/"
+            },
+            {
+              "path": "/api/core/issues",
+              "method": "POST"
+            }
+          ]
+        },
+        {
+          "id": "connect",
+          "word": "dock_fn_connect",
+          "routes": []
+        }
+      ],
+      "label": "One per bar button: id = the button's tool id in static/dock.js (chip page.dock tools, plus chat); word = its label key in ui.access; routes = what the server refuses without it (path = exact, prefix = starts with, method = only that verb)"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "screen": "$screen",
+      "icon": "$icon",
+      "label_word": "$label_word",
+      "group_word": "$group_word",
+      "functions": "$functions"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "Owner 2026-11-18: \"make bottom bar as part of Access control including each button\". The bar is one Access Control row (hidden from the menu) with one function per button. It is ON unless a rule denies it (catalog flag open_unless_denied, chip access.decide): a deny on the row takes the whole bar away, a deny on one function takes that button away and its routes answer 403 (core/access.dock_guard).",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "screen": "dock",
+        "icon": "menu",
+        "label_word": "dock_screen",
+        "group_word": "dock_group",
+        "functions": [
+          {
+            "id": "chat",
+            "word": "dock_fn_chat",
+            "routes": [
+              {
+                "prefix": "/api/chat/"
+              }
+            ]
+          },
+          {
+            "id": "capture",
+            "word": "dock_fn_capture",
+            "routes": []
+          },
+          {
+            "id": "record",
+            "word": "dock_fn_record",
+            "routes": []
+          },
+          {
+            "id": "voice",
+            "word": "dock_fn_voice",
+            "routes": []
+          },
+          {
+            "id": "notes",
+            "word": "dock_fn_notes",
+            "routes": [
+              {
+                "path": "/api/notes"
+              },
+              {
+                "prefix": "/api/notes/"
+              }
+            ]
+          },
+          {
+            "id": "issue",
+            "word": "dock_fn_issue",
+            "routes": [
+              {
+                "path": "/api/dock/issues"
+              },
+              {
+                "prefix": "/api/dock/issues/"
+              },
+              {
+                "path": "/api/core/issues",
+                "method": "POST"
+              }
+            ]
+          },
+          {
+            "id": "connect",
+            "word": "dock_fn_connect",
+            "routes": []
+          }
+        ]
+      }
+    }
+  ],
+  "weight_basis": "Data only: ids, word keys and route paths."
+}

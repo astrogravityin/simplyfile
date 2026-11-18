@@ -20,6 +20,7 @@
   "groups at a glance",
   "make a group",
   "inherit and override",
+  "the bottom bar",
   "make inactive",
   "delete safely",
   "why can't they?"
@@ -27,7 +28,9 @@
  "tags": [
   "access control",
   "groups",
-  "roles"
+  "roles",
+  "bottom bar",
+  "chip chat"
  ],
  "steps": [
   {
@@ -121,6 +124,17 @@
     },
     {
      "highlight_target": "#rule-table",
+     "optional": true,
+     "timeout": 5
+    }
+   ]
+  },
+  {
+   "chapter": "The bottom bar",
+   "say": "The Bottom bar row switches the floating bar per group. Deny on the row takes the whole bar away; Deny on Chip Chat, Voice typing or any other button takes only that one, and its server door closes too. No rule keeps it on.",
+   "do": [
+    {
+     "highlight_target": "#rule-table tr[data-sid=dock]|#rule-table",
      "optional": true,
      "timeout": 5
     }

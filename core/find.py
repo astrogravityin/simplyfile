@@ -64,7 +64,7 @@ def rows(u: dict | None, host: str = "") -> list[dict]:
     words, out = keywords(), []
     shown = _MENU["of"](host) if _MENU["of"] else None
     for s in access.CATALOG:
-        if not access.may(u, s["id"]) or (shown is not None and s["id"] not in shown):
+        if s.get("bottom_bar") or not access.may(u, s["id"]) or (shown is not None and s["id"] not in shown):   # the bar: no page
             continue
         icon = s.get("icon") or "right"
         out.append({"id": s["id"], "kind": "screen", "label": s["label"], "group": s.get("group", ""), "menu": s.get("group", ""),

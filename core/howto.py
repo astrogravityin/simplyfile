@@ -46,7 +46,7 @@ def clean(link: dict) -> dict:
 
 
 def pages() -> list[dict]:
-    return extra_pages() + [{k: s.get(k, "") for k in ("id", "label", "group")} for s in CATALOG]
+    return extra_pages() + [{k: s.get(k, "") for k in ("id", "label", "group")} for s in CATALOG if not s.get("bottom_bar")]   # the bar: no page
 
 
 @router.get("/api/core/howto")

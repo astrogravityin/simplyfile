@@ -481,7 +481,7 @@ async function ruleDetail(box, host) {
     <div class="fx-none" id="rule-none" hidden>${FX_ART}<b id="rule-none-q"></b><span class="small">${w('no_screen_hint')}</span></div>
     <table class="rules" id="rule-table"><thead><tr><th>${w('col_screen')}</th><th>${w('col_rule')}</th></tr></thead><tbody>
     ${d.catalog.filter((s) => !s.admin).map((s, i, all) => `${i && all[i - 1].group === s.group ? '' : `<tr class="rg" data-rg="${esc(s.group || '')}"><td colspan="2">${icon('folder', 13)} ${esc(s.group || w('no_group'))}</td></tr>`}
-      <tr data-sid="${esc(s.id)}" data-g="${esc(s.group || '')}"><td><b>${esc(s.label)}</b></td><td>${choice(s.id, '', w('open'))}</td></tr>
+      <tr data-sid="${esc(s.id)}" data-g="${esc(s.group || '')}"><td><b>${esc(s.label)}</b></td><td>${s.open_unless_denied ? choice(s.id, '', w('open_on'), w('open_on_tip')) : choice(s.id, '', w('open'))}</td></tr>
       ${(s.functions || []).map((f) => `<tr class="fn" data-sid="${esc(s.id)}" data-g="${esc(s.group || '')}"><td>↳ ${esc(f.label)}</td><td>${choice(s.id, f.id, w('as_screen'), w('as_screen_tip'))}</td></tr>`).join('')}`).join('')}
     </tbody></table>
     <p class="small muted" style="margin-top:12px">${icon('lock', 13)} ${esc(d.catalog.filter((s) => s.admin).map((s) => s.label).join(', '))}
