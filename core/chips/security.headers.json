@@ -15,7 +15,7 @@
       "default": {
         "X-Content-Type-Options": "nosniff",
         "Referrer-Policy": "strict-origin-when-cross-origin",
-        "Content-Security-Policy": "default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; connect-src 'self' https://sso.valuestream.in https://*.valuestream.in https://*.astrostage.in; img-src 'self' data: blob: https:; media-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; font-src 'self' data:; frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'self' https://*.valuestream.in https://astrostage.in https://*.astrostage.in; report-uri /api/core/doctor/csp",
+        "Content-Security-Policy": "default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; connect-src 'self' https://sso.valuestream.in https://*.valuestream.in https://*.astrostage.in wss://sso.valuestream.in wss://*.valuestream.in wss://*.astrostage.in; img-src 'self' data: blob: https:; media-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; font-src 'self' data:; frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'self' https://*.valuestream.in https://astrostage.in https://*.astrostage.in; report-uri /api/core/doctor/csp",
         "X-Frame-Options": "SAMEORIGIN"
       },
       "label": "Header -> value, added to every answer that does not set its own (a file's own Content-Security-Policy wins)"
@@ -55,7 +55,7 @@
         "headers": {
           "X-Content-Type-Options": "nosniff",
           "Referrer-Policy": "strict-origin-when-cross-origin",
-          "Content-Security-Policy": "default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; connect-src 'self' https://sso.valuestream.in https://*.valuestream.in https://*.astrostage.in; img-src 'self' data: blob: https:; media-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; font-src 'self' data:; frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'self' https://*.valuestream.in https://astrostage.in https://*.astrostage.in; report-uri /api/core/doctor/csp",
+          "Content-Security-Policy": "default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; connect-src 'self' https://sso.valuestream.in https://*.valuestream.in https://*.astrostage.in wss://sso.valuestream.in wss://*.valuestream.in wss://*.astrostage.in; img-src 'self' data: blob: https:; media-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; font-src 'self' data:; frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'self' https://*.valuestream.in https://astrostage.in https://*.astrostage.in; report-uri /api/core/doctor/csp",
           "X-Frame-Options": "SAMEORIGIN"
         },
         "hsts": "max-age=31536000",

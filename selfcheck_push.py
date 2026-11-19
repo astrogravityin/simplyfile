@@ -94,8 +94,13 @@ def csp_enforced(pol: str) -> dict:
         bad = [s for s in srcs if s == "*" or s in ("'unsafe-eval'", "'strict-dynamic'")]
         assert not bad, f"the enforced CSP {d} allows {bad} - any site may run code or receive data: {pol!r}"
     for d in ("script-src", "connect-src"):
-        named = [s for s in parts[d] if s.startswith("'") or re.fullmatch(r"https://(\*\.)?[a-z0-9-]+(\.[a-z0-9-]+)+(:\d+)?", s)]
+        named = [s for s in parts[d] if s.startswith("'") or re.fullmatch(r"(https|wss)://(\*\.)?[a-z0-9-]+(\.[a-z0-9-]+)+(:\d+)?", s)]
         assert named == parts[d] and "'unsafe-inline'" not in named, f"{d} must name its hosts (a *.domain is fine, * / https: is not): {parts[d]}"
+    # 2026-11-20 prod: Connect Plus calls broke - LiveKit signals over wss://api.astrostage.in and Chromium 151 does NOT let
+    # https://*.astrostage.in cover a wss:// subdomain (measured: BLOCKED by connect-src; same-origin wss stays 'self').
+    # Every https host the page may call is listed again as wss, so a WebSocket to it (calls, live news) is never refused.
+    no_ws = [s for s in parts["connect-src"] if s.startswith("https://") and "wss://" + s[8:] not in parts["connect-src"]]
+    assert not no_ws, f"connect-src lists {no_ws} without its wss:// form - a WebSocket there (LiveKit calls) is blocked: {parts['connect-src']}"
     sso = re.sub(r"^(https?://[^/]+).*", r"\1", str(_chip_defaults("sso.settings").get("api") or ""))
     host = sso.split("://")[-1]
     ok = not sso or any(s == sso or (s.startswith("https://*.") and host.endswith(s[9:])) for s in parts["connect-src"])
