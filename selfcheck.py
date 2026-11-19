@@ -19,6 +19,11 @@ import sys
 import tempfile
 from pathlib import Path
 
+# 2026-11-20 SimplyFile deploy: store tests run with PORTAL_DATA=<tmp>/tmpX, so the seal key defaulted to <tmp>/seal.key - one
+# file for every portal on the server; a root-run check left it 0600 and the next portal's non-root check could not read it
+# (PermissionError, deploy refused). Each self-check run keeps its own key; child processes inherit it.
+os.environ.setdefault("PORTAL_SEAL_KEY_FILE", str(Path(tempfile.mkdtemp(prefix="sealkey-")) / "seal.key"))
+
 HERE = Path(__file__).resolve().parent
 PY = sys.executable
 MODULES = ["firms", "itr_json", "myreturn", "myreturn_read", "wizard", "wizard_firm", "rulewatch", "taxwatch", "rulebook", "analytics", "portal_stats", "server", "delegation", "chipchat", "chatfam", "notes", "dock_issues", "itr_import", "clients", "intake", "recon", "compute", "company", "audit", "changelog", "edition", "tourvideo", "manuals", "projects", "scan", "source", "keyshare",
