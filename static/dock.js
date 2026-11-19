@@ -10,7 +10,7 @@
 //                      words spoken before a box is chosen go into the next box clicked.
 //   Notes / Issues   - notes-modal.js, issues-modal.js. Issues' badge = own issues answered and not opened yet.
 // Settings: chip page.dock (the studio's ui.dock_tools). Words: chip ui.dock (the studio's ui.dock_words, word for word).
-import { api, esc, toast, t, ps, loadWords, modal, confirmDialog, keep, kept, BASE } from './app.js';
+import { api, esc, toast, t, ps, loadWords, modal, confirmDialog, keep, kept, BASE, state } from './app.js';
 import { icon, chipChatGlyph } from './icons.js';
 
 export const w = (k, v) => t('dock', k.replace(/[.-]/g, '_'), v);
