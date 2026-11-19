@@ -139,7 +139,7 @@ def main() -> int:
         limits.allow = lambda *_a, **_k: True
     c = TestClient(app.app, raise_server_exceptions=False)
     acct = cfg["owner"]
-    assert c.post("/api/auth/first-account", json=acct).status_code == 200, "the walk's owner account"
+    assert c.post("/api/auth/first-account", json={**acct, "setup_code": app.auth.setup_code()}).status_code == 200, "the walk's owner account"
 
     def sign_in() -> None:
         c.post("/api/auth/signin", json={"identity": acct["email"], "password": acct["password"]})

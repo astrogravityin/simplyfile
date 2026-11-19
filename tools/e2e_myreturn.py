@@ -9,6 +9,7 @@ import sys
 sys.stdout.reconfigure(encoding="utf-8")   # rupee signs in the report, even when piped (Windows cp1252)
 import tempfile
 from pathlib import Path
+_ROOT = Path(__file__).resolve().parents[1]   # repo root: paths never depend on the folder it is started from
 
 os.environ["PORTAL_DATA"] = tempfile.mkdtemp(prefix="mr-e2e-")
 os.environ["TV_DATA"] = os.environ["PORTAL_DATA"]
@@ -19,7 +20,7 @@ import myreturn  # noqa: E402
 import itr_json  # noqa: E402
 import myreturn_read  # noqa: E402
 
-DOCS = Path("tools/tour_video/showcase/self")
+DOCS = (_ROOT / "tools/tour_video/showcase/self")
 u = {"id": "u-demo", "firm_id": "", "role": "owner"}
 c = clients.save(u, {"name": "Anil Kumar Demo", "pan": "ZZDPK0042Q", "status": "individual", "email": "anil.demo@demo.example",
                      "phone": "9000000042", "address": "Flat 42, Demo Residency, Madhapur, Hyderabad 500081"})

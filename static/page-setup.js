@@ -284,9 +284,9 @@ function drawScan(host, msg) {
       <thead><tr>
       <th></th><th>${w('col_label')}</th><th>${w('col_key')}</th><th>${w('col_group')}</th><th>${w('col_route')}</th><th>${w('col_why')}</th><th></th>
     </tr></thead><tbody>${scanned.map((s, i) => `<tr class="${s.selected ? '' : 'off'}">
-      <td><input type="checkbox" data-i="${i}" data-f="selected" ${s.selected ? 'checked' : ''}/></td>
-      <td><input data-i="${i}" data-f="label" value="${esc(s.label)}"/></td>
-      <td><input data-i="${i}" data-f="key" value="${esc(s.key)}"/></td>
+      <td><input type="checkbox" data-i="${i}" data-f="selected" ${s.selected ? 'checked' : ''} aria-label="${esc(s.label)}"/></td>
+      <td><input data-i="${i}" data-f="label" value="${esc(s.label)}" aria-label="${esc(w('col_label'))}"/></td>
+      <td><input data-i="${i}" data-f="key" value="${esc(s.key)}" aria-label="${esc(w('col_key'))}"/></td>
       <td><input data-i="${i}" data-f="group" value="${esc(s.group || '')}" placeholder="—"/></td>
       <td><input data-i="${i}" data-f="route" value="${esc(s.route || '')}" placeholder="—"/></td>
       <td class="small muted">${esc(s.why)}<br/><span class="tag ${s.confidence === 'maybe' ? 'warn' : s.confidence === 'saved' ? 'ok' : ''}">${esc(s.confidence)}</span>

@@ -38,6 +38,12 @@
         },
         {
           "when": {
+            "reaches_out": true
+          },
+          "set": "review"
+        },
+        {
+          "when": {
             "all_writes_trusted": true
           },
           "set": "approve"
@@ -57,9 +63,9 @@
     "current": "$default"
   },
   "returns": "any",
-  "version": 1,
+  "version": 2,
   "status": "published",
-  "description_nl": "A schedule or an event only ever starts a dry run. Then: a failed dry run tells the owner once (tell_error); one over a cap waits for review; one with nothing to write just tells the owner what it found (tell - the Weekly digest); one whose every write step the owner ticked trusted is approved on its own (approve); anything else waits in the bell for Review and approve. (2026-10-23: copied unchanged from AstroStage so both portals gate agent steps by the same rules.)",
+  "description_nl": "A schedule or an event only ever starts a dry run. Then: a failed dry run tells the owner once (tell_error); one over a cap waits for review; one with nothing to write just tells the owner what it found (tell - the Weekly digest); one whose every write step the owner ticked trusted is approved on its own (approve); anything else waits in the bell for Review and approve. (2026-10-23: copied unchanged from AstroStage so both portals gate agent steps by the same rules.) 2026-11-18 (gap audit C1-16, UV-54): a dry run whose write reaches outside the portal (chip agents.settings outside_effects: mail, money, another site) always waits for review, trusted or not; a trusted local write is approved on its own only while a fresh dry run gives the same seal (core/agents.approve).",
   "test_cases": [
     {
       "chart": "profile_1_hyd",
@@ -117,6 +123,19 @@
         }
       },
       "expect_value": "tell_error"
+    },
+    {
+      "chart": "profile_1_hyd",
+      "args": {
+        "facts": {
+          "failed": false,
+          "blocked": false,
+          "has_writes": true,
+          "all_writes_trusted": true,
+          "reaches_out": true
+        }
+      },
+      "expect_value": "review"
     }
   ]
 }

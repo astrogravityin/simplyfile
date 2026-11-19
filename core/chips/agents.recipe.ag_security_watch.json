@@ -1,0 +1,119 @@
+{
+  "chip_id": "agents.recipe.ag_security_watch",
+  "kind": "accessor",
+  "set": "agents",
+  "label": "Agent: weekly security watch",
+  "aliases": [
+    "recipe.ag_security_watch"
+  ],
+  "params": [
+    {
+      "name": "recipe",
+      "type": "record",
+      "default": {
+        "id": "ag_security_watch",
+        "icon": "shield",
+        "inputs": [],
+        "steps": [
+          {
+            "id": "watch",
+            "action": "securitywatch.run",
+            "args": {},
+            "trusted": true
+          },
+          {
+            "id": "found",
+            "action": "health.check",
+            "args": {}
+          },
+          {
+            "id": "bar",
+            "action": "health.warn",
+            "args": {
+              "found": "@steps.found"
+            },
+            "trusted": true
+          }
+        ],
+        "diagram": [
+          "schedule",
+          "securitywatch.run",
+          "health.check",
+          "health.warn"
+        ],
+        "triggers": [
+          {
+            "key": "weekly",
+            "kind": "schedule",
+            "every": "week",
+            "weekday": 0,
+            "at": "01:30",
+            "on": true
+          }
+        ],
+        "order": 2
+      },
+      "label": "The recipe: inputs, steps, triggers"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "recipe": "$recipe"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-11-19 owner (\"Every week (or based on schedule) verify the software vulnerability and fix\"): every Monday 01:30 UTC core/securitywatch.py checks the pinned packages against osv.dev and re-runs the portal's own security checks, then the owners' bar shows each high or critical finding and the bell rings once for a new one. Trusted: it runs by itself. The trigger is the schedule; chip securitywatch.settings every_days + grace_days say when the bar calls it overdue.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "recipe": {
+          "id": "ag_security_watch",
+          "icon": "shield",
+          "inputs": [],
+          "steps": [
+            {
+              "id": "watch",
+              "action": "securitywatch.run",
+              "args": {},
+              "trusted": true
+            },
+            {
+              "id": "found",
+              "action": "health.check",
+              "args": {}
+            },
+            {
+              "id": "bar",
+              "action": "health.warn",
+              "args": {
+                "found": "@steps.found"
+              },
+              "trusted": true
+            }
+          ],
+          "diagram": [
+            "schedule",
+            "securitywatch.run",
+            "health.check",
+            "health.warn"
+          ],
+          "triggers": [
+            {
+              "key": "weekly",
+              "kind": "schedule",
+              "every": "week",
+              "weekday": 0,
+              "at": "01:30",
+              "on": true
+            }
+          ],
+          "order": 2
+        }
+      }
+    }
+  ]
+}

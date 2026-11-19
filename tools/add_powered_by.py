@@ -3,9 +3,10 @@ on the sign-in page and at the foot of the menu. Boilerplate: core/static/shell.
 core/static/valuestream.png. Re-runnable. Run from the portal's root (D:/Simplyfile)."""
 import json
 from pathlib import Path
+_ROOT = Path(__file__).resolve().parents[1]   # repo root: paths never depend on the folder it is started from
 
 W = {"powered_by": "Powered by", "powered_name": "ValueStream", "powered_href": "https://valuestream.in"}
-p = Path("core/chips/ui.shell.json")
+p = (_ROOT / "core/chips/ui.shell.json")
 c = json.loads(p.read_text(encoding="utf-8"))
 have = {x["name"] for x in c["params"]}
 for k, v in W.items():
@@ -20,7 +21,7 @@ c["version"] += 1
 c["description_nl"] += " 2026-10-07: powered_by / powered_name / powered_href - 'Powered by ValueStream' on the sign-in page and the menu foot."
 p.write_text(json.dumps(c, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
-s_path = Path("core/static/shell.js")
+s_path = (_ROOT / "core/static/shell.js")
 s = s_path.read_text(encoding="utf-8")
 FN = """
 /** "Powered by ValueStream" with its logo (2026-10-07 owner: every portal is a valuestream.in sub-domain). Words: ui.shell. */
@@ -41,7 +42,7 @@ if "function poweredBy()" not in s:
     s = s.replace(a, "      ${slot(config.navFoot) ? `<div class=\"foot\">${slot(config.navFoot)}</div>` : ''}\n      ${poweredBy()}\n    </nav>")
     s_path.write_text(s, encoding="utf-8")
 
-css = Path("core/static/portal.css")
+css = (_ROOT / "core/static/portal.css")
 t = css.read_text(encoding="utf-8")
 if ".powered{" not in t:
     t += ("\n/* Powered by ValueStream (2026-10-07): sign-in pitch and menu foot */\n"

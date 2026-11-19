@@ -15,6 +15,7 @@ from pathlib import Path
 
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
+_ROOT = Path(__file__).resolve().parents[2]   # repo root: paths never depend on the folder it is started from
 
 HOLDER = "ZZ ANIL KUMAR DEMO"
 ACCOUNT = "9900000000042"
@@ -158,7 +159,7 @@ def build(drop: int | None = None, **kw) -> bytes:
 
 
 if __name__ == "__main__":
-    out = Path("tools/tour_video/showcase/case-bank-only")
+    out = (_ROOT / "tools/tour_video/showcase/case-bank-only")
     out.mkdir(parents=True, exist_ok=True)
     pdf, truth = build_with_truth()
     (out / "1 Bank statement - Demo Savings - FY 2025-26.pdf").write_bytes(pdf)

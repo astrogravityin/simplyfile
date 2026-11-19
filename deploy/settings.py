@@ -17,14 +17,14 @@ from pathlib import Path
 CHIP = "deploy.settings"
 
 
-def _chip(repo: Path) -> dict:
+def _chip(repo: Path, chip_id: str = CHIP) -> dict:
     try:
         sys.path.insert(0, str(repo))
         from core import engine  # noqa: PLC0415
         engine.register_dir(repo / "chips")
-        return engine.run(CHIP)
+        return engine.run(chip_id)
     except Exception:  # noqa: BLE001 - no engine here (a bare checkout): the chip file's own defaults
-        chip = json.loads((repo / "chips" / f"{CHIP}.json").read_text(encoding="utf-8"))
+        chip = json.loads((repo / "chips" / f"{chip_id}.json").read_text(encoding="utf-8"))
         return {p["name"]: p.get("default") for p in chip["params"]}
 
 

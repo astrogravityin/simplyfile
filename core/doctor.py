@@ -25,7 +25,7 @@ from pathlib import Path
 from fastapi import APIRouter, Body, Request
 from fastapi.responses import JSONResponse
 
-from core import bell, engine, limits, ops, store
+from core import bell, engine, limits, ops, secretscan, store
 
 router = APIRouter()
 FILE = "doctor"
@@ -53,8 +53,12 @@ def say(key: str, **v) -> str:
 
 
 def mask(text: str) -> str:
-    """Never a person's data in the ledger: e-mails, long numbers and long ids become placeholders."""
-    t = re.sub(r"[\w.+-]+@[\w-]+\.[\w.]+", "<email>", str(text or ""))
+    """Never a person's data in the ledger: keys and tokens (chip security.secret_patterns, 2026-11-18 gap audit C1-12),
+    e-mails, long numbers and long ids become placeholders."""
+    t = str(text or "")
+    for _kind, rx in secretscan.compiled():
+        t = rx.sub("<secret>", t)
+    t = re.sub(r"[\w.+-]+@[\w-]+\.[\w.]+", "<email>", t)
     t = re.sub(r"\b[0-9a-f]{16,}\b", "<id>", t, flags=re.I)
     return re.sub(r"\d{4,}", "<n>", t)
 
@@ -205,7 +209,7 @@ async def catch(request: Request, call_next):
 
 @router.post("/api/core/doctor/csp")
 async def api_csp(request: Request):
-    """2026-10-21: the report-only script policy's violations (chip security.headers) - one row per directive + blocked source,
+    """2026-10-21: the CSP's violations (chip security.headers; enforced since 2026-11-18, report-uri kept) - one row per directive + blocked source,
     counted, rate-limited like a screen error. Read as raw JSON: browsers send application/csp-report."""
     who = request.client.host if request.client else ""
     if not limits.allow(K()["report_rate"], f"doctor:{who}"):
@@ -238,6 +242,8 @@ def api_report(request: Request, body: dict = Body(default={})):
 
 if __name__ == "__main__":   # ponytail: the pure parts
     assert mask("a@b.co failed 1234567 at 0123456789abcdef0") == "<email> failed <n> at <id>", mask("a@b.co failed 1234567 at 0123456789abcdef0")
+    for fake in ("AKIA" + "Q" * 16, "ghp_" + "a" * 36, "postgres://app:" + "hunter22@db.example", "sk_live_" + "b" * 20):
+        assert fake[6:] not in mask(f"failed with {fake} here"), f"a key reached the log: {mask(f'failed with {fake} here')}"
     assert route_of("/api/requests/86/to-claude") == "/api/requests/{id}/to-claude"
     row = {"kind": "", "message": "", "where": "/api/x", "line": "app.py:1"}
     assert rule_for(row | {"kind": "TypeError", "message": "Failed to fetch"})["who"] == "ignore", "noise is told"

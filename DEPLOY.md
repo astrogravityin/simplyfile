@@ -10,8 +10,12 @@ dig +short sf.valuestream.in                 # must print the VPS IP before step
 # 1. the code (a private repo: use a deploy key or a read-only token)
 cd /opt && git clone https://github.com/astrogravityin/simplyfile.git simplyfile
 cd /opt/simplyfile
-python3 -m venv .venv && .venv/bin/pip install -q -r requirements.txt
-.venv/bin/python selfcheck.py                 # "All checks passed."
+# the service's own user (never root): packages, the self-check and the app run as it (2026-11-18 gap audit C1-18)
+useradd --system --home-dir /opt/simplyfile --no-create-home --shell /usr/sbin/nologin simplyfile
+mkdir -p data && chown -R simplyfile:simplyfile /opt/simplyfile && git config --system --add safe.directory /opt/simplyfile
+runuser -u simplyfile -- python3 -m venv .venv
+runuser -u simplyfile -- .venv/bin/pip install -q --require-hashes --no-deps -r requirements.lock   # every file checked by its hash
+runuser -u simplyfile -- .venv/bin/python selfcheck.py                                             # "All checks passed."
 
 # 2. a free port (8810 tv, 8820 sm are taken)
 for p in $(seq 8830 8899); do ss -ltnH "sport = :$p" | grep -q . || { echo "FREE $p"; break; }; done
@@ -23,9 +27,9 @@ Description=SimplyFile (sf.valuestream.in)
 After=network.target
 
 [Service]
-WorkingDirectory=/opt/simplyfile
-Environment=TV_DATA=/opt/simplyfile/data
-Environment=PORTAL_COOKIE=sf_session
+User=simplyfile
+Group=simplyfile
+WorkingDirectory=C:/Program Files/Git/opt/simplyfile/nEnvironment=TV_DATA=/opt/simplyfile/data/nEnvironment=PORTAL_COOKIE=sf_session
 Environment=TV_HTTPS=1
 Environment=TV_OWNER_EMAIL=chandra.s.vempati@gmail.com
 Environment=PORT=8830
@@ -36,7 +40,7 @@ RestartSec=3
 [Install]
 WantedBy=multi-user.target
 UNIT
-mkdir -p /opt/simplyfile/data && chmod 700 /opt/simplyfile/data    # client statements and PANs live here
+chmod 700 /opt/simplyfile/data    # client statements and PANs live here (owned by simplyfile)
 systemctl daemon-reload && systemctl enable --now simplyfile
 curl -sf http://127.0.0.1:8830/health && echo " simplyfile up"
 
@@ -71,6 +75,10 @@ printf 'SF_OFFSITE=sfcrypt:
 23 * * * * root bash /opt/simplyfile/tools/backup.sh
 ' >/etc/cron.d/simplyfile-backup
 rm -f /var/backups/sf-data-*.tar.gz   # the old one-file-per-hour copies, if this VPS had them
+# 6b. restore drill - monthly, restores the newest copy into a temp folder and checks it (see "Restore drill" below)
+printf '41 4 1 * * root SF_APP=/opt/simplyfile SF_BACKUPS=/var/backups/sf /opt/simplyfile/.venv/bin/python /opt/simplyfile/tools/restore_drill.py
+' >/etc/cron.d/simplyfile-restore-drill
+bash /opt/simplyfile/tools/backup.sh && SF_BACKUPS=/var/backups/sf /opt/simplyfile/.venv/bin/python /opt/simplyfile/tools/restore_drill.py   # the first drill, now
 ```
 
 Then open https://sf.valuestream.in, create the owner (the first account; `TV_OWNER_EMAIL` reserves the seat for that
@@ -111,11 +119,25 @@ tar xzf /var/backups/sf/hour-09.tar.gz -C /opt/simplyfile      # or: rclone copy
 systemctl start simplyfile
 ```
 
+### Restore drill (monthly, automatic)
+
+A backup nobody restored is a hope. `tools/restore_drill.py` (cron line `/etc/cron.d/simplyfile-restore-drill`, step 6b) takes
+the newest copy in `SF_BACKUPS`, unpacks it into a temp folder, checks every `.json` parses and every `.sqlite3` passes
+`PRAGMA integrity_check`, starts the portal on that copy and asks `/api/bootstrap` (chip `health.settings` `drill_*`), then
+writes the date and the result to `data/restore_drill.json`. The live portal is not stopped. The owners' health bar turns red
+(and the bell rings once) when the last drill failed or the last good one is older than 35 days (`drill_max_days`), or when
+a server has never drilled. Run it by hand the same way any time; exit 0 = good.
+
 For the big sites on the same VPS the same idea saves most of the space: an hourly `tar` of 3.1 GB that barely changes
 stores 3.1 GB every hour. `restic` keeps only what changed between copies (and encrypts), so 24 hourly copies of a
 3.1 GB site cost about 3.1 GB plus the day's changes.
 
 ## Every update
+
+2026-11-18 (gap audit C1-18): `deploy.sh` runs the package install, the self-check and the Tour Video recorder as the unit's
+`User=` (root keeps only `git pull`, the one sign-in drop-in and the restart); a unit still without `User=` makes it print
+`WARNING: <service> runs as root` - do the switch-over below once. Only a hashed `requirements.lock` is installed (no lock = the
+deploy stops); the recorder installs `tools/tour_video/requirements.lock` the same way.
 
 On your machine, two double-clicks:
 
@@ -185,6 +207,32 @@ Console's SSO drop-in (`simplyfile.service.d/`) is kept by both. Staging: `git c
 Done on sf.valuestream.in 2026-11-12 (service user `simplyfile`, back-out copy `/root/simplyfile.service.before`).
 Running as `simplyfile`, Server & sites can no longer read the sizes of other sites' root-only (0700) data folders.
 The demo units (`simplyfile-demo-*`) still run as root from the checkout - the next step is to move them onto `current`.
+
+## Seal key - credentials and AI keys sealed at rest
+
+The stores named in chip `store.seal` (Credentials, people's AI keys, the key pool, Issue push keys) are written ENCRYPTED
+(Fernet). The key that opens them lives OUTSIDE `data/`, so the hourly backup of `data/` alone opens nothing:
+
+- On the VPS: `/opt/simplyfile/seal.key` (beside `data/`, mode 600, owned by the service user) - made by the portal itself at the
+  first save of a sealed store. `PORTAL_SEAL_KEY_FILE=<path>` in `portal.env` puts it elsewhere; `PORTAL_SEAL_KEY=<key>` gives
+  the key itself (wins over the file). Docker: the `/seal` volume (`compose.yml`).
+- Back it up ONCE, apart from the data backups, the day it appears: `cat /opt/simplyfile/seal.key` into the owner's password
+  manager (or an offline copy). Never in `/var/backups/<site>`, the off-site remote or git (`.gitignore` has `seal.key`).
+- Restoring `data/` on a new server: put `seal.key` back beside `data/` (same name, `chmod 600`, service user's) BEFORE the
+  first start. Without it the portal does not guess: a sealed store answers an error naming the missing key, nothing is read
+  as empty and nothing is overwritten; with the key put back and a restart, everything opens again.
+- Files saved before sealing (plain JSON) still read, and are sealed at their next save - nothing to run.
+- Staging has its OWN seal key: `deploy.sh --target staging` refuses a staging whose key equals prod's (below).
+
+## Staging is kept apart from prod
+
+`bash deploy/deploy.sh --target staging deploy` (and `init`) first runs `deploy/separation.py`, which reads both targets'
+`portal.env`, unit and drop-ins (`/etc/systemd/system/<service>.service.d/*.conf`), data folder, `smtp.json` and seal key,
+and REFUSES - nothing built, nothing switched - when staging's data folder, database connection string, a `CRED_*` value, the
+sign-in key, the seal key or the mail server + login equal prod's, or when staging holds a live payment key (`_live_`):
+staging takes test keys only. Which settings, which targets: chip `deploy.separation`. Run the deploy as root (it reads
+prod's root-only drop-ins before handing itself to the service user). Proof: `bash deploy/harness/dryrun.sh` cases
+"staging pointing at prod's data" and "staging with a live payment key".
 
 ## Self-host image
 

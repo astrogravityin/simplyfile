@@ -22,6 +22,7 @@ screenshot read back, a diff), never memory. A line without evidence counts as F
 | QC-14 | MCP scope | Built (tool name), or no (why) |
 | QC-15 | Fixed bugs can't come back | Guard name, with proof it fails when the bug is reintroduced |
 | QC-16 | DomainTemplate updated | File or commit in DomainTemplate |
+| QC-17 | Security watch green | Watch row read back (agent `ag_security_watch` last run, no High/Critical), plus `python selfcheck.py` PASS |
 
 ## Size the gate to the change (owner 2026-11-16)
 

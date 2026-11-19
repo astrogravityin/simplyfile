@@ -76,6 +76,18 @@
    "type": "number",
    "default": 600000,
    "label": "Password hashing rounds (PBKDF2-SHA256; OWASP 2023: 600,000). A stored password with fewer is re-made at its next sign-in"
+  },
+  {
+   "name": "ip_fail_after",
+   "type": "number",
+   "default": 15,
+   "label": "Wrong passwords from one address, across ALL accounts, before that address must wait (password spray)"
+  },
+  {
+   "name": "ip_fail_window_seconds",
+   "type": "number",
+   "default": 900,
+   "label": "How long one address's wrong passwords are counted, and how long it then waits (seconds)"
   }
  ],
  "expr": {
@@ -92,13 +104,15 @@
    "code_log_kept": "$code_log_kept",
    "code_log_seconds": "$code_log_seconds",
    "known_days": "$known_days",
-   "hash_rounds": "$hash_rounds"
+   "hash_rounds": "$hash_rounds",
+   "ip_fail_after": "$ip_fail_after",
+   "ip_fail_window_seconds": "$ip_fail_window_seconds"
   }
  },
  "returns": "record",
- "version": 4,
+ "version": 6,
  "status": "published",
- "description_nl": "auth_per_minute: sign-in calls one IP may make a minute. lock_after wrong passwords for one account rest it lock_for_seconds. sends_per_hour: codes one address may be sent an hour, so the portal can never be used to bombard somebody's inbox. session_days: how long a sign-in lasts. 2026-10-04 owner: \"Chips and ops audit for core/store.py\" - caps, user-name making, the last-owner test, the new role and the public fields the store held.",
+ "description_nl": "auth_per_minute: sign-in calls one IP may make a minute. lock_after wrong passwords for one account rest it lock_for_seconds. sends_per_hour: codes one address may be sent an hour, so the portal can never be used to bombard somebody's inbox. session_days: how long a sign-in lasts. 2026-10-04 owner: \"Chips and ops audit for core/store.py\" - caps, user-name making, the last-owner test, the new role and the public fields the store held. 2026-11-18 gap audit C1-20 (password spray): ip_fail_after wrong passwords from one address across any accounts within ip_fail_window_seconds -> 429 for that address (auth.messages spray).",
  "test_cases": [
   {
    "args": {},
@@ -114,7 +128,9 @@
     "code_log_kept": 5000,
     "code_log_seconds": 86400,
     "known_days": 365,
-    "hash_rounds": 600000
+    "hash_rounds": 600000,
+    "ip_fail_after": 15,
+    "ip_fail_window_seconds": 900
    }
   }
  ],

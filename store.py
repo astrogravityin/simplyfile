@@ -142,8 +142,8 @@ def funds_for(user_id: str, provider: str | None = None) -> dict:
 def _fetch_json(url: str, timeout: float) -> dict:
     """One GET, JSON back. A test replaces this name so the suite never touches the network."""
     import json  # noqa: PLC0415
-    import urllib.request  # noqa: PLC0415
-    with urllib.request.urlopen(url, timeout=timeout) as r:  # noqa: S310 - the url is the chip's, not a person's
+    from core import egress  # noqa: PLC0415
+    with egress.fetch(url, timeout=timeout, purpose="funds") as r:
         return json.loads(r.read().decode("utf-8"))
 
 

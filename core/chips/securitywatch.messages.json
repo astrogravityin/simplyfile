@@ -1,0 +1,115 @@
+{
+  "chip_id": "securitywatch.messages",
+  "kind": "accessor",
+  "set": "security",
+  "label": "Security watch: every sentence",
+  "aliases": [
+    "messages"
+  ],
+  "params": [
+    {
+      "name": "ok",
+      "type": "text",
+      "default": "Security watch {at}: {checks} checks, {pkgs} packages, no high or critical finding ({lower} lower)",
+      "label": "All clear"
+    },
+    {
+      "name": "never",
+      "type": "text",
+      "default": "The security watch has never run on this server. Agents -> Security watch -> Run, and keep its weekly trigger on.",
+      "label": "Never ran (server)"
+    },
+    {
+      "name": "not_here",
+      "type": "text",
+      "default": "The security watch has not run on this computer yet (it runs on the server weekly).",
+      "label": "Never ran (PC)"
+    },
+    {
+      "name": "off",
+      "type": "text",
+      "default": "The security watch's weekly trigger is off - turn it on in Agents -> Security watch.",
+      "label": "Trigger off"
+    },
+    {
+      "name": "overdue",
+      "type": "text",
+      "default": "The security watch last ran {days} days ago (every {every} days) - run it now in Agents -> Security watch.",
+      "label": "Overdue"
+    },
+    {
+      "name": "dep",
+      "type": "text",
+      "default": "{pkg} {ver} ({eco}) has {sev} advisory {ids}{fixed} - raise the pin, lock again (tools/lock_deps.py), deploy",
+      "label": "A vulnerable package"
+    },
+    {
+      "name": "fixed_in",
+      "type": "text",
+      "default": ", fixed in {v}",
+      "label": "Fixed-in tail"
+    },
+    {
+      "name": "dep_unchecked",
+      "type": "text",
+      "default": "Packages could not be checked against osv.dev: {why}",
+      "label": "osv.dev unreachable"
+    },
+    {
+      "name": "check_failed",
+      "type": "text",
+      "default": "{check}: {why}",
+      "label": "A check found a problem"
+    },
+    {
+      "name": "check_missing",
+      "type": "text",
+      "default": "{check} is missing from this portal ({why}) - carry it from DomainTemplate",
+      "label": "A check could not load"
+    },
+    {
+      "name": "plan",
+      "type": "text",
+      "default": "Checks {n} lock {n:file|files} against osv.dev, then secrets, route guards, CSP, egress, Python, restore drill",
+      "label": "Dry-run words"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "ok": "$ok",
+      "never": "$never",
+      "not_here": "$not_here",
+      "off": "$off",
+      "overdue": "$overdue",
+      "dep": "$dep",
+      "fixed_in": "$fixed_in",
+      "dep_unchecked": "$dep_unchecked",
+      "check_failed": "$check_failed",
+      "check_missing": "$check_missing",
+      "plan": "$plan"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "Words of core/securitywatch.py and its health row.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "ok": "Security watch {at}: {checks} checks, {pkgs} packages, no high or critical finding ({lower} lower)",
+        "never": "The security watch has never run on this server. Agents -> Security watch -> Run, and keep its weekly trigger on.",
+        "not_here": "The security watch has not run on this computer yet (it runs on the server weekly).",
+        "off": "The security watch's weekly trigger is off - turn it on in Agents -> Security watch.",
+        "overdue": "The security watch last ran {days} days ago (every {every} days) - run it now in Agents -> Security watch.",
+        "dep": "{pkg} {ver} ({eco}) has {sev} advisory {ids}{fixed} - raise the pin, lock again (tools/lock_deps.py), deploy",
+        "fixed_in": ", fixed in {v}",
+        "dep_unchecked": "Packages could not be checked against osv.dev: {why}",
+        "check_failed": "{check}: {why}",
+        "check_missing": "{check} is missing from this portal ({why}) - carry it from DomainTemplate",
+        "plan": "Checks {n} lock {n:file|files} against osv.dev, then secrets, route guards, CSP, egress, Python, restore drill"
+      }
+    }
+  ]
+}

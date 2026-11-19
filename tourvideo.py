@@ -16,7 +16,7 @@ from pathlib import Path
 
 from fastapi import HTTPException
 
-from core import auth, engine, events, lists, store
+from core import auth, engine, events, guide, lists, store
 
 ROOT = Path(__file__).resolve().parent          # SimplyFile: everything lives in this folder
 _JOB: dict = {}
@@ -87,8 +87,10 @@ def file_of(key: str, fid: str) -> tuple[Path, str]:
 def row(key: str, path: Path) -> dict:
     t = json.loads(path.read_text(encoding="utf-8"))
     screen = t.get("start_url", "").split("/")[-1].split("?")[0]
-    guide = ROOT / "chips" / f"guide.{screen}.json"           # Guide me changing makes the video stale too
-    script_at = max(path.stat().st_mtime, guide.stat().st_mtime if guide.is_file() else 0)
+    # Guide me changing makes the video stale too - wherever that chip lives (core/chips, this portal's chips, an import in
+    # the data layer; "connect-ai" plays guide.connect_ai). 2026-11-18 week class 41: this read only <ROOT>/chips/guide.<screen>
+    # - a core-held or hyphenated screen's guide never made its video stale (SteadyMove G-53, the same miss across repos)
+    script_at = max([path.stat().st_mtime] + [f.stat().st_mtime for f in engine.files_of(guide.chip_of(screen))])
     mp4 = out_dir(key) / f"{key}.mp4"
     video_at = mp4.stat().st_mtime if mp4.is_file() else 0
     return {"id": key, "key": key, "title": t.get("title") or key, "steps": len(t.get("steps") or []), "screen": screen,
@@ -168,6 +170,23 @@ if __name__ == "__main__":  # ponytail: the list reads every tour; a bad key and
     except HTTPException as e:
         assert e.status_code == 403, e
     rs = [row(k, p) for k, p in _tours().items()]     # the rows the list pages (no portal catalog in this self-check)
+    # 2026-11-18 week class 41 (SteadyMove G-53): the guide a tour plays lives in whichever chips folder holds it - another
+    # repo's / layer's folder and a hyphenated screen (zz-wk41 -> guide.zz_wk41) still make its video stale
+    import tempfile  # noqa: PLC0415
+    with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as _d:
+        _other = Path(_d) / "chips"
+        _other.mkdir()
+        (_other / "guide.zz_wk41.json").write_text(json.dumps({"chip_id": "guide.zz_wk41", "kind": "accessor", "params": [],
+                                                               "expr": {"vop": "record", "fields": {}}}), encoding="utf-8")
+        _tour = Path(_d) / "st-zz-wk41.json"
+        _tour.write_text(json.dumps({"start_url": "/#/zz-wk41", "steps": [{"say": "x"}]}), encoding="utf-8")
+        os.utime(_tour, (1_000_000_000, 1_000_000_000))
+        engine.register_dir(_other)
+        try:
+            assert row("zz-wk41", _tour)["script_at"] > 1_000_000_000, "a tour's Guide me in another chips folder (or a hyphenated screen) never makes its video stale - read the guide through engine.files_of(guide.chip_of(screen))"
+        finally:
+            engine.DIRS.remove(_other.resolve())
+            engine.refresh()
     assert rs and all(r["state"] in ("none", "stale", "ready") and r["steps"] for r in rs), rs[:2]
     for bad in (lambda: file_of("../app", "mp4"), lambda: file_of(rs[0]["key"], "nope"), lambda: start("check", "../x", "http://x")):
         try:

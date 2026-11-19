@@ -17,7 +17,7 @@ HERE = Path(__file__).parent
 creds = dict(line.split("=", 1) for line in (HERE / "TEST-LOGIN.txt").read_text().split())
 PACK = Path(_R + r"\Requirements\Showcase - Demo CA Filing Firm\A Firm papers - placeholders")
 adm = TestClient(app.app)
-assert adm.post("/api/auth/first-account", json={"email": creds["admin"], "password": creds["admin_pw"]}).status_code == 200
+assert adm.post("/api/auth/first-account", json={"setup_code": app.auth.setup_code(), "email": creds["admin"], "password": creds["admin_pw"]}).status_code == 200
 assert adm.post("/api/users", json={"email": creds["uncle"], "password": creds["uncle_pw"], "display_name": "Demo CA Filing Firm"}).status_code == 200
 ca = TestClient(app.app)
 assert ca.post("/api/auth/signin", json={"identity": creds["uncle"], "password": creds["uncle_pw"]}).status_code == 200

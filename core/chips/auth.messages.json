@@ -25,6 +25,11 @@
       "default": "Too many attempts from this address. Wait a minute."
     },
     {
+      "name": "spray",
+      "type": "text",
+      "default": "Too many wrong passwords from this address. Try again in {minutes} minute(s)."
+    },
+    {
       "name": "verify_first",
       "type": "text",
       "default": "Confirm your email address first — use Forgot password to get a code."
@@ -57,7 +62,7 @@
     {
       "name": "owner_reserved",
       "type": "text",
-      "default": "This portal is reserved for {email}. Sign in with that address to set it up."
+      "default": "This portal is reserved for its owner's address. Use the address the portal was set up with."
     },
     {
       "name": "taken_email",
@@ -154,6 +159,26 @@
       "type": "text",
       "default": "This account is blocked. Ask the portal owner.",
       "label": "blocked"
+    },
+    {
+      "name": "setup_code_wrong",
+      "type": "string",
+      "default": "That setup code is not right. Read it again on the server, or send it to the owner's address."
+    },
+    {
+      "name": "setup_code_mail_subject",
+      "type": "string",
+      "default": "Your setup code for {product}"
+    },
+    {
+      "name": "setup_code_mail_text",
+      "type": "string",
+      "default": "Your setup code is {code}. Enter it on the Set this portal up screen. If you did not ask for it, ignore this mail."
+    },
+    {
+      "name": "setup_code_cannot_mail",
+      "type": "string",
+      "default": "This portal can't send email yet. Read the setup code on the server: the service log line 'setup code', or the file setup_code.txt in the data folder."
     }
   ],
   "expr": {
@@ -187,11 +212,16 @@
       "owner_only": "$owner_only",
       "bad_purpose": "$bad_purpose",
       "unknown_link": "$unknown_link",
-      "blocked": "$blocked"
+      "blocked": "$blocked",
+      "setup_code_wrong": "$setup_code_wrong",
+      "setup_code_mail_subject": "$setup_code_mail_subject",
+      "setup_code_mail_text": "$setup_code_mail_text",
+      "setup_code_cannot_mail": "$setup_code_cannot_mail",
+      "spray": "$spray"
     }
   },
   "returns": "record",
-  "version": 2,
+  "version": 3,
   "status": "published",
   "description_nl": "Words shown on the sign-in card and in errors. {minutes}, {domains}, {email} fill in. Forgot and send-code answer the same sentence for a stranger and for a real account, so they cannot be used to find out who has one.",
   "test_cases": [
@@ -207,7 +237,7 @@
         "signup_waits_for_mail": "Sign-up opens once the owner sets up email.",
         "no_owner_yet": "This portal has no owner yet. The owner sets it up first.",
         "owner_exists": "This portal already has an owner. Ask them for an account.",
-        "owner_reserved": "This portal is reserved for {email}. Sign in with that address to set it up.",
+        "owner_reserved": "This portal is reserved for its owner's address. Use the address the portal was set up with.",
         "taken_email": "That email already has an account. Sign in, or use Forgot password.",
         "taken_username": "That user name is taken. Choose another.",
         "code_sent": "If that address can receive a code here, it is on its way. Check your inbox and spam folder.",
@@ -226,7 +256,12 @@
         "owner_only": "Only an owner can do that.",
         "bad_purpose": "purpose is signup or reset",
         "unknown_link": "Unknown link",
-        "blocked": "This account is blocked. Ask the portal owner."
+        "blocked": "This account is blocked. Ask the portal owner.",
+        "setup_code_wrong": "That setup code is not right. Read it again on the server, or send it to the owner's address.",
+        "setup_code_mail_subject": "Your setup code for {product}",
+        "setup_code_mail_text": "Your setup code is {code}. Enter it on the Set this portal up screen. If you did not ask for it, ignore this mail.",
+        "setup_code_cannot_mail": "This portal can't send email yet. Read the setup code on the server: the service log line 'setup code', or the file setup_code.txt in the data folder.",
+        "spray": "Too many wrong passwords from this address. Try again in {minutes} minute(s)."
       }
     }
   ],

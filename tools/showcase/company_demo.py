@@ -17,6 +17,7 @@ import io
 from pathlib import Path
 
 from openpyxl import Workbook
+_ROOT = Path(__file__).resolve().parents[2]   # repo root: paths never depend on the folder it is started from
 
 AY = "2026-27"
 
@@ -221,7 +222,7 @@ def documents(key: str) -> list[tuple[str, bytes]]:
 
 
 if __name__ == "__main__":
-    out = Path("tools/tour_video/showcase/company")
+    out = (_ROOT / "tools/tour_video/showcase/company")
     for key in COMPANIES:
         d = out / key
         d.mkdir(parents=True, exist_ok=True)

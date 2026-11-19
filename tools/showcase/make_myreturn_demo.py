@@ -7,11 +7,12 @@ obviously fake (Demo Software, PAN ZZDPK0042Q, phone 90000 00042, @demo.example)
 import io
 import json
 from pathlib import Path
+_ROOT = Path(__file__).resolve().parents[2]   # repo root: paths never depend on the folder it is started from
 
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
 
-OUT = Path("tools/tour_video/showcase/self")
+OUT = (_ROOT / "tools/tour_video/showcase/self")
 OUT.mkdir(parents=True, exist_ok=True)
 PAN, DOB, NAME = "ZZDPK0042Q", "1988-04-15", ("Anil", "Kumar", "Demo")
 TAN, EMP = "HYDD00042E", "DEMO SOFTWARE PRIVATE LIMITED"

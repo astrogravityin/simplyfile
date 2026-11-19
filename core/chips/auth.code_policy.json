@@ -43,6 +43,11 @@
       "name": "resend_after_seconds",
       "type": "number",
       "default": 60
+    },
+    {
+      "name": "setup_digits",
+      "type": "number",
+      "default": 8
     }
   ],
   "expr": {
@@ -54,7 +59,8 @@
       "invite_ttl_seconds": "$invite_ttl_seconds",
       "proof_ttl_seconds": "$proof_ttl_seconds",
       "max_attempts": "$max_attempts",
-      "resend_after_seconds": "$resend_after_seconds"
+      "resend_after_seconds": "$resend_after_seconds",
+      "setup_digits": "$setup_digits"
     }
   },
   "returns": "record",
@@ -71,7 +77,8 @@
         "invite_ttl_seconds": 604800,
         "proof_ttl_seconds": 900,
         "max_attempts": 5,
-        "resend_after_seconds": 60
+        "resend_after_seconds": 60,
+        "setup_digits": 8
       }
     }
   ],

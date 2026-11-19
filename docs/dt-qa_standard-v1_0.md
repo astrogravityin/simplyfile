@@ -53,6 +53,14 @@ The end-of-work check is [QC_GATE.md](dt-qc_gate-v1_0.md) - same numbers: QC-5 c
 16. **Carry it home.** Every new learning goes into the DomainTemplate skills, prompts and framework in the same
     change.
 
+## G. Stay safe
+
+17. **Security watch green before anything ships.** The weekly watch (agent `ag_security_watch`, `core/securitywatch.py`)
+    checks every pinned package against osv.dev and re-runs the security walls; its row on the owner's bar is green, and
+    `python selfcheck.py` (which holds the every-route wall) passes. A new advisory is fixed (raise the pin, lock again)
+    before the change ships, never waived. Each week the sweep in skill `security-watch` files every new class as a gap
+    with its guard.
+
 ## Report format (end of every reply that changed something)
 
 1. **Status:** a table of what was done, where, and its state, including sub-sessions.

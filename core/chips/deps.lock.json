@@ -115,6 +115,27 @@
       "type": "text",
       "default": "",
       "label": "A pip constraints file the lock must stay inside (the portal's tested pins); empty = none"
+    },
+    {
+      "name": "tour_requirements",
+      "type": "text",
+      "default": "tools/tour_video/requirements.txt",
+      "label": "The Tour Video recorder's packages (names and versions)"
+    },
+    {
+      "name": "tour_lock",
+      "type": "text",
+      "default": "tools/tour_video/requirements.lock",
+      "label": "Their lock: what .venv/tour on the server installs (python tools/lock_deps.py --tour)"
+    },
+    {
+      "name": "local_only",
+      "type": "json",
+      "default": [
+        "start.sh",
+        "start.cmd"
+      ],
+      "label": "Developer start scripts: they install requirements.txt on the developer's own computer (the lock's hashes are the Linux server's) - the supply-chain guard lets only these install without hashes"
     }
   ],
   "expr": {
@@ -131,11 +152,14 @@
       "resolve_args": "$resolve_args",
       "resolve_env": "$resolve_env",
       "install_line": "$install_line",
-      "constraints": "$constraints"
+      "constraints": "$constraints",
+      "tour_requirements": "$tour_requirements",
+      "tour_lock": "$tour_lock",
+      "local_only": "$local_only"
     }
   },
   "returns": "record",
-  "version": 1,
+  "version": 2,
   "status": "published",
   "description_nl": "2026-11-12 owner (\"Yes, A and B\" on the VS standards review): requirements.lock pins every package at one version with its sha256 for the server's platform (tools/lock_deps.py); deploy.sh installs from it with --require-hashes when present; the commit script runs pip-audit on it (warning only).",
   "test_cases": [
@@ -187,7 +211,13 @@
           "PIP_USER": "0"
         },
         "install_line": "--require-hashes --no-deps -r requirements.lock",
-        "constraints": ""
+        "constraints": "",
+        "tour_requirements": "tools/tour_video/requirements.txt",
+        "tour_lock": "tools/tour_video/requirements.lock",
+        "local_only": [
+          "start.sh",
+          "start.cmd"
+        ]
       }
     }
   ]

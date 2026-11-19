@@ -3,6 +3,7 @@ been closed." - the busy line names the AI picked (word fetching takes {ai}), an
 Run from D:/Simplyfile (re-runnable)."""
 import json
 from pathlib import Path
+_ROOT = Path(__file__).resolve().parents[1]   # repo root: paths never depend on the folder it is started from
 
 
 def patch(path, a, b):
@@ -24,7 +25,7 @@ patch("static/page-rulewatch.js",
       "      S.ai = host.querySelector('#tw-ai') ? host.querySelector('#tw-ai').value : '';\n"
       "      const pick = (S.ais || []).find((a) => a.provider === S.ai) || (S.ais || []).find((a) => a.ready) || {};\n"
       "      btn.dataset.work = w('fetching', { ai: pick.label || w('ai_auto') });   // the AI actually asked\n")
-p = Path("chips/ui.taxwatch.json")
+p = (_ROOT / "chips/ui.taxwatch.json")
 c = json.loads(p.read_text(encoding="utf-8"))
 old, new = "Asking Gemini, official sources only...", "Asking {ai}, official sources only..."
 if old in json.dumps(c, ensure_ascii=False):

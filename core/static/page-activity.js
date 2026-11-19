@@ -48,9 +48,9 @@ async function ledger(body) {
         <td class="small">${esc(r.screen || '')}</td><td>${statusTag(r.status)}</td>
         <td class="small muted">${w('ms', { n: r.ms })}</td><td class="small muted">${esc(r.ip || '')}</td></tr>`).join('')}</tbody></table></div></div>
       <div class="row between"><span class="small muted">${w('ledger_foot', { total: d.total.toLocaleString(), days: d.keep_days })}</span>
-        <span class="row tight"><button class="small" type="button" data-pg="-1"${offAttr(page <= 1 ? t('shell', 'off_first_page') : '')}>${icon('left', 13)}</button>
+        <span class="row tight"><button class="small" type="button" data-pg="-1" aria-label="${esc(t('shell', 'list_prev'))}"${offAttr(page <= 1 ? t('shell', 'off_first_page') : '')}>${icon('left', 13)}</button>
         <span class="small">${w('page_of', { page, pages })}</span>
-        <button class="small" type="button" data-pg="1"${offAttr(page >= pages ? t('shell', 'off_last_page') : '')}>${icon('right', 13)}</button></span></div>`
+        <button class="small" type="button" data-pg="1" aria-label="${esc(t('shell', 'list_next'))}"${offAttr(page >= pages ? t('shell', 'off_last_page') : '')}>${icon('right', 13)}</button></span></div>`
       : `<div class="card"><div class="empty">${icon('pulse', 36)}<h3>${w('nothing_matches')}</h3><p>${w('nothing_matches_hint')}</p></div></div>`;
     body.querySelectorAll('[data-pg]').forEach((b) => { b.onclick = () => { page += Number(b.dataset.pg); draw(); }; });
   };

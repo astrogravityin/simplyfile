@@ -1,0 +1,186 @@
+{
+  "chip_id": "securitywatch.settings",
+  "kind": "accessor",
+  "set": "security",
+  "audience": "admin",
+  "label": "Security watch: what it checks, how often it must have run, which findings turn the bar red",
+  "aliases": [
+    "security watch",
+    "vulnerability scan",
+    "weekly security"
+  ],
+  "params": [
+    {
+      "name": "record",
+      "type": "text",
+      "default": "security_watch",
+      "label": "Store name of the last watch's answer (body-free: package names, file:line, check names)"
+    },
+    {
+      "name": "block_severities",
+      "type": "json",
+      "default": [
+        "CRITICAL",
+        "HIGH"
+      ],
+      "label": "Severities that turn the owner's bar red and stop a ship"
+    },
+    {
+      "name": "unknown_severity",
+      "type": "text",
+      "default": "HIGH",
+      "label": "A known vulnerability whose advisory names no severity counts as this (never as nothing)"
+    },
+    {
+      "name": "locks",
+      "type": "json",
+      "default": [
+        {
+          "file": "requirements.lock",
+          "ecosystem": "PyPI"
+        },
+        {
+          "file": "package-lock.json",
+          "ecosystem": "npm"
+        },
+        {
+          "file": "frontend/package-lock.json",
+          "ecosystem": "npm"
+        }
+      ],
+      "label": "Hash lock files read (paths from the portal folder; a missing one is skipped)"
+    },
+    {
+      "name": "osv_batch_url",
+      "type": "text",
+      "default": "https://api.osv.dev/v1/querybatch",
+      "label": "osv.dev batch lookup"
+    },
+    {
+      "name": "osv_vuln_url",
+      "type": "text",
+      "default": "https://api.osv.dev/v1/vulns/{id}",
+      "label": "osv.dev advisory detail"
+    },
+    {
+      "name": "osv_hosts",
+      "type": "json",
+      "default": [
+        "api.osv.dev"
+      ],
+      "label": "Hosts the watch may fetch (core/egress allow-list)"
+    },
+    {
+      "name": "batch_size",
+      "type": "number",
+      "default": 500,
+      "label": "Packages per osv.dev call"
+    },
+    {
+      "name": "timeout_seconds",
+      "type": "number",
+      "default": 30,
+      "label": "Seconds per osv.dev call"
+    },
+    {
+      "name": "max_advisories",
+      "type": "number",
+      "default": 300,
+      "label": "Most advisories read in one run (the rest count at unknown_severity)"
+    },
+    {
+      "name": "every_days",
+      "type": "number",
+      "default": 7,
+      "label": "The schedule: days between watches (the agent's trigger says week)"
+    },
+    {
+      "name": "grace_days",
+      "type": "number",
+      "default": 2,
+      "label": "Days past every_days before the bar says the watch is overdue"
+    },
+    {
+      "name": "ledger_kind",
+      "type": "text",
+      "default": "security_watch",
+      "label": "Ledger security-event kind for one watch run (counts only)"
+    },
+    {
+      "name": "agent",
+      "type": "text",
+      "default": "ag_security_watch",
+      "label": "The agent that runs the watch"
+    },
+    {
+      "name": "lower_shown",
+      "type": "number",
+      "default": 20,
+      "label": "Lower (not blocking) findings kept in the record"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "record": "$record",
+      "block_severities": "$block_severities",
+      "unknown_severity": "$unknown_severity",
+      "locks": "$locks",
+      "osv_batch_url": "$osv_batch_url",
+      "osv_vuln_url": "$osv_vuln_url",
+      "osv_hosts": "$osv_hosts",
+      "batch_size": "$batch_size",
+      "timeout_seconds": "$timeout_seconds",
+      "max_advisories": "$max_advisories",
+      "every_days": "$every_days",
+      "grace_days": "$grace_days",
+      "ledger_kind": "$ledger_kind",
+      "agent": "$agent",
+      "lower_shown": "$lower_shown"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-11-19 owner: \"Every week (or based on schedule) verify the software vulnerability and fix\". The agent ag_security_watch (its trigger is the schedule) checks every pinned package against osv.dev (the database pip-audit and npm audit read), the secret scan, the route guards, the CSP, the egress ratchet, the lowest Python, the restore drill; core/securitywatch.py keeps the answer in `record`, the health bar shows each blocking finding.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "record": "security_watch",
+        "block_severities": [
+          "CRITICAL",
+          "HIGH"
+        ],
+        "unknown_severity": "HIGH",
+        "locks": [
+          {
+            "file": "requirements.lock",
+            "ecosystem": "PyPI"
+          },
+          {
+            "file": "package-lock.json",
+            "ecosystem": "npm"
+          },
+          {
+            "file": "frontend/package-lock.json",
+            "ecosystem": "npm"
+          }
+        ],
+        "osv_batch_url": "https://api.osv.dev/v1/querybatch",
+        "osv_vuln_url": "https://api.osv.dev/v1/vulns/{id}",
+        "osv_hosts": [
+          "api.osv.dev"
+        ],
+        "batch_size": 500,
+        "timeout_seconds": 30,
+        "max_advisories": 300,
+        "every_days": 7,
+        "grace_days": 2,
+        "ledger_kind": "security_watch",
+        "agent": "ag_security_watch",
+        "lower_shown": 20
+      }
+    }
+  ]
+}

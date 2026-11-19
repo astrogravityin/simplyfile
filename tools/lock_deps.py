@@ -3,10 +3,11 @@
 
     python tools/lock_deps.py            make or refresh requirements.lock from requirements.txt, for the server (chip deps.lock)
     python tools/lock_deps.py --check    exit 1 when requirements.txt names a package the lock lacks (selfcheck runs this)
+    python tools/lock_deps.py --tour     the same for the Tour Video recorder (.venv/tour on the server; chip deps.lock tour_*)
     python tools/lock_deps.py --audit    pip-audit on the lock (the commit script; a warning, never a stop)
 
-deploy.sh installs from the lock when it exists (pip --require-hashes --no-deps), else from requirements.txt as before - so a
-portal moves over by committing its lock, after its self-check passed with those versions on the server.
+deploy.sh installs from the lock (pip --require-hashes --no-deps); since 2026-11-18 (gap audit C1-18) a portal without a lock
+does not deploy - commit its lock after its self-check passed with those versions on the server.
 ponytail: pip's own resolver (--dry-run --report) for the server's platform and Python; no pip-tools or uv needed. pip judges
 platform markers by THIS machine, so a package the server needs only on Linux is named in chip deps.lock extra (uvloop).
 """
@@ -57,11 +58,11 @@ def problems(req: Path, lock: Path) -> list[str]:
     return bad
 
 
-def make(req: Path, lock: Path) -> int:
+def make(req: Path, lock: Path, extra: bool = True) -> int:
     k = K()
     with tempfile.TemporaryDirectory() as t:
         src = Path(t) / "req.txt"
-        src.write_text(req.read_text(encoding="utf-8") + "\n" + "\n".join(k["extra"]) + "\n", encoding="utf-8")
+        src.write_text(req.read_text(encoding="utf-8") + "\n" + "\n".join(k["extra"] if extra else []) + "\n", encoding="utf-8")
         cmd = [sys.executable, "-m", "pip", "install", *k["resolve_args"], "--report", str(Path(t) / "r.json"),
                "--python-version", str(k["python_version"]), "--target", str(Path(t) / "x"), "-r", str(src)]
         if k.get("constraints") and (HERE / k["constraints"]).is_file():   # the portal's tested pins: the lock stays inside them
@@ -80,7 +81,9 @@ def make(req: Path, lock: Path) -> int:
 
 
 if __name__ == "__main__":
-    req, lock = HERE / K()["requirements"], HERE / K()["lock"]
+    # 2026-11-18 gap audit C1-18: the Tour Video recorder's venv on the server installs from its own hashed lock too
+    which = "tour_" if "--tour" in sys.argv else ""
+    req, lock = HERE / K()[which + "requirements"], HERE / K()[which + "lock"]
     if "--audit" in sys.argv:   # the commit script: known holes in the locked versions - a warning, never a stop
         if not lock.is_file():
             sys.exit(0)
@@ -95,4 +98,4 @@ if __name__ == "__main__":
         bad = problems(req, lock)
         print("\n".join(bad) or K()["words"]["matches" if lock.is_file() else "none"].format(lock=lock.name, req=req.name))
         sys.exit(1 if bad else 0)
-    sys.exit(make(req, lock))
+    sys.exit(make(req, lock, extra=not which))

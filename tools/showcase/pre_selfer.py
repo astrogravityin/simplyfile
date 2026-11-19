@@ -10,12 +10,13 @@ import sys
 import urllib.request
 import uuid
 from pathlib import Path
+_ROOT = Path(__file__).resolve().parents[2]   # repo root: paths never depend on the folder it is started from
 
 BASE = next((a for a in sys.argv[1:] if a.startswith("http")), "http://localhost:8832")
 HERE = Path(__file__).parent
 creds = dict(line.split("=", 1) for line in (HERE / "TEST-LOGIN.txt").read_text().split())
-PACK = Path(r"Requirements/Showcase - Demo CA Filing Firm/A Firm papers - placeholders")
-DOCS = Path("tools/tour_video/showcase/self")
+PACK = (_ROOT / r"Requirements/Showcase - Demo CA Filing Firm/A Firm papers - placeholders")
+DOCS = (_ROOT / "tools/tour_video/showcase/self")
 
 
 def client():

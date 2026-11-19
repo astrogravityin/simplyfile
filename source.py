@@ -159,9 +159,9 @@ if __name__ == "__main__":  # ponytail: one runnable self-check
     assert branch_ok("feature/x-1") and not branch_ok("main; rm -rf /") and not branch_ok("")
     assert _authed("https://github.com/o/r.git", "abc").startswith("https://x-access-token:abc@github.com/")
     assert _authed("git@github.com:o/r.git", "abc") == "git@github.com:o/r.git", "ssh carries no token"
-    assert _scrub("fatal: https://x-access-token:SECRET@github.com/o/r not found") \
+    assert _scrub("fatal: https://x-access-token:" + "SECRET@github.com/o/r not found") \
         == "fatal: https://github.com/o/r not found", "a token never reaches the screen"
-    assert "SECRET" not in _scrub("a https://SECRET@h/x and https://u:SECRET@h/y"), "every token, not the first"
+    assert "SECRET" not in _scrub("a https://SECRET@h/x and https://u:" + "SECRET@h/y"), "every token, not the first"
     assert is_windows_path("D:\\Work") and is_windows_path("c:/Users/me")
     assert not is_windows_path("/srv/app") and not is_windows_path("srv/app")
     assert "by hand" in missing_folder_message("/nope") and "No folder is set" in missing_folder_message("")

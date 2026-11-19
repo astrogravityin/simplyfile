@@ -1,0 +1,108 @@
+{
+  "chip_id": "security.alerts",
+  "kind": "accessor",
+  "set": "security",
+  "audience": "admin",
+  "label": "Security events: what the health check tells the owners",
+  "aliases": [
+    "security alerts"
+  ],
+  "params": [
+    {
+      "name": "look_back_hours",
+      "type": "number",
+      "default": 24,
+      "label": "Look at security events of the last this many hours (the daily health check)"
+    },
+    {
+      "name": "signin_kind",
+      "type": "text",
+      "default": "signin_fail",
+      "label": "Ledger event kind of a failed sign-in"
+    },
+    {
+      "name": "signin_fail_limit",
+      "type": "number",
+      "default": 20,
+      "label": "Tell when one network has at least this many failed sign-ins in one window"
+    },
+    {
+      "name": "signin_window_minutes",
+      "type": "number",
+      "default": 15,
+      "label": "Window for failed sign-ins (minutes)"
+    },
+    {
+      "name": "reads_limit",
+      "type": "number",
+      "default": 600,
+      "label": "Tell when one person reads at least this many pages in one window"
+    },
+    {
+      "name": "reads_window_minutes",
+      "type": "number",
+      "default": 10,
+      "label": "Window for bulk reads (minutes)"
+    },
+    {
+      "name": "reads_prefix",
+      "type": "text",
+      "default": "/api/",
+      "label": "Requests that count as reads start with this"
+    },
+    {
+      "name": "reads_method",
+      "type": "text",
+      "default": "GET",
+      "label": "Request method that counts as a read"
+    },
+    {
+      "name": "event_kinds",
+      "type": "json",
+      "default": [
+        "mcp_key",
+        "role",
+        "first_account"
+      ],
+      "label": "Ledger event kinds told one by one (each kind has a sentence sec_<kind> in health.messages)"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "look_back_hours": "$look_back_hours",
+      "signin_kind": "$signin_kind",
+      "signin_fail_limit": "$signin_fail_limit",
+      "signin_window_minutes": "$signin_window_minutes",
+      "reads_limit": "$reads_limit",
+      "reads_window_minutes": "$reads_window_minutes",
+      "reads_prefix": "$reads_prefix",
+      "reads_method": "$reads_method",
+      "event_kinds": "$event_kinds"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-11-18 gap audit C1-19: security-event alerts from the ledger (core/health.py probe security) - each told once on the owners' bar and bell.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "look_back_hours": 24,
+        "signin_kind": "signin_fail",
+        "signin_fail_limit": 20,
+        "signin_window_minutes": 15,
+        "reads_limit": 600,
+        "reads_window_minutes": 10,
+        "reads_prefix": "/api/",
+        "reads_method": "GET",
+        "event_kinds": [
+          "mcp_key",
+          "role",
+          "first_account"
+        ]
+      }
+    }
+  ]
+}

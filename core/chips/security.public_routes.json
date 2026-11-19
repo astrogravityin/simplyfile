@@ -1,0 +1,107 @@
+{
+  "chip_id": "security.public_routes",
+  "kind": "accessor",
+  "set": "security",
+  "label": "API routes open to signed-out callers on purpose, and how many routes may still check sign-in inside their body",
+  "aliases": [
+    "public routes",
+    "route guard",
+    "open routes"
+  ],
+  "params": [
+    {
+      "name": "routes",
+      "type": "list",
+      "default": [
+        "GET /api/bootstrap",
+        "POST /api/auth/signin",
+        "POST /api/auth/signout",
+        "POST /api/auth/signup",
+        "POST /api/auth/reset",
+        "POST /api/auth/setup-code",
+        "POST /api/auth/first-account",
+        "POST /api/auth/code/send",
+        "POST /api/auth/code/check",
+        "GET /api/auth/token/{kind}/{token}",
+        "POST /api/auth/invite",
+        "POST /api/auth/sso/redeem",
+        "POST /api/auth/sso/password-check",
+        "POST /api/auth/sso/end",
+        "POST /api/demo/code/send",
+        "POST /api/demo/code/check",
+        "POST /api/core/view",
+        "GET /api/core/howto",
+        "GET /api/core/words",
+        "GET /api/core/issues/push/back",
+        "POST /api/core/doctor/csp",
+        "POST /api/core/doctor/report",
+        "GET /api/public/howto/{project_key}",
+        "GET /api/showcase"
+      ],
+      "label": "METHOD path of each route a signed-out visitor may call (sign-in doors, the landing, browser error reports)"
+    },
+    {
+      "name": "unguarded_ceiling",
+      "type": "number",
+      "default": 1,
+      "label": "Routes allowed to check sign-in only inside their body (no guard dependency) - only falls; a new route needs a guard"
+    },
+    {
+      "name": "long_lived",
+      "type": "string",
+      "default": [
+        "GET /api/core/events"
+      ],
+      "label": "Routes that stay open (the push stream): the wall calls them signed out only - signed in they never end"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "routes": "$routes",
+      "unguarded_ceiling": "$unguarded_ceiling",
+      "long_lived": "$long_lived"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-11-18 gap audit C1-7: every /api route carries a guard dependency (access.screen, auth.signed_in, auth.owner, a firm gate, a site key) or is listed here as public. Routes that still check sign-in inside the body count against unguarded_ceiling, which only falls. Read by core/routeguard.py, checked by the selfcheck api part.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "routes": [
+          "GET /api/bootstrap",
+          "POST /api/auth/signin",
+          "POST /api/auth/signout",
+          "POST /api/auth/signup",
+          "POST /api/auth/reset",
+          "POST /api/auth/setup-code",
+          "POST /api/auth/first-account",
+          "POST /api/auth/code/send",
+          "POST /api/auth/code/check",
+          "GET /api/auth/token/{kind}/{token}",
+          "POST /api/auth/invite",
+          "POST /api/auth/sso/redeem",
+          "POST /api/auth/sso/password-check",
+          "POST /api/auth/sso/end",
+          "POST /api/demo/code/send",
+          "POST /api/demo/code/check",
+          "POST /api/core/view",
+          "GET /api/core/howto",
+          "GET /api/core/words",
+          "GET /api/core/issues/push/back",
+          "POST /api/core/doctor/csp",
+          "POST /api/core/doctor/report",
+          "GET /api/public/howto/{project_key}",
+          "GET /api/showcase"
+        ],
+        "unguarded_ceiling": 1,
+        "long_lived": [
+          "GET /api/core/events"
+        ]
+      }
+    }
+  ]
+}

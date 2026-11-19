@@ -197,7 +197,7 @@ from fastapi.testclient import TestClient  # noqa: E402
 import app  # noqa: E402
 
 adm = TestClient(app.app)
-adm.post("/api/auth/first-account", json={"email": "admin@valuestream.test", "password": "Admin-pass-123"})
+adm.post("/api/auth/first-account", json={"setup_code": app.auth.setup_code(), "email": "admin@valuestream.test", "password": "Admin-pass-123"})
 adm.post("/api/users", json={"email": "demo@valuestream.in", "password": "Uncle-pass-123", "display_name": "Demo Partner"})
 c = TestClient(app.app)
 c.post("/api/auth/signin", json={"identity": "demo@valuestream.in", "password": "Uncle-pass-123"})

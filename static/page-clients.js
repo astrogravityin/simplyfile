@@ -154,7 +154,7 @@ export async function clientsPage(host) {
 
 function rowsBox(kind, items, cols) {
   const one = (x = {}) => `<div class="row tight" data-${kind} style="align-items:end">${cols.map(([f, label]) =>
-    `<div class="field" style="flex:1;min-width:110px;margin:0"><label>${esc(w(label))}</label><input data-f="${f}" value="${esc(x[f] || '')}"/></div>`).join('')}
+    `<div class="field" style="flex:1;min-width:110px;margin:0"><label>${esc(w(label))}</label><input data-f="${f}" aria-label="${esc(w(label))}" value="${esc(x[f] || '')}"/></div>`).join('')}
     <button type="button" class="small ghost" data-rm aria-label="${esc(w('remove'))}">${icon('close', 12)}</button></div>`;
   return { html: items.map(one).join(''), one };
 }

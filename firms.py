@@ -20,7 +20,7 @@ from pathlib import Path
 from fastapi import HTTPException, Request
 
 import delegation
-from core import access, auth, demo, engine, lists, mailer, notify, ops, store
+from core import access, auth, demo, engine, lists, mailer, notify, ops, store, writes
 
 FILE = "sf_firms"
 _LOCK = threading.Lock()  # ponytail: one lock for every firm; per-firm locks if sign-ups ever queue
@@ -277,24 +277,30 @@ def doc_path(u: dict, fid: str, did: str) -> tuple[Path, str]:
     return store.DATA / "sf_firms" / fid / d["file"], d["name"]
 
 
-def _mail(to: str, subject_key: str, body_key: str, **values) -> None:
-    """Best effort: no mail set up, or a failed send, never blocks a decision (it is on the screen either way)."""
+def _mail(to: str, subject_key: str, body_key: str, once: str = "", **values) -> None:
+    """Best effort: no mail set up, or a failed send, never blocks a decision (it is on the screen either way).
+    `once`: the decision's own key - one mail per decision, however often the request is repeated (core/writes)."""
     if not to or not mailer.configured():
         return
     try:
-        mailer.send(to, say(subject_key, **values), say(body_key, **values))
+        if once:
+            mailer.send_once(to, say(subject_key, **values), say(body_key, **values), once)
+        else:
+            mailer.send(to, say(subject_key, **values), say(body_key, **values))
     except RuntimeError:
         pass
 
 
-def move(u: dict, fid: str, action: str, note: str = "") -> dict:
-    """Submit (the firm), approve / return / reject / suspend / restore / reopen (the portal admin) - chip firm.move."""
+def move(u: dict, fid: str, action: str, note: str = "", version=None) -> dict:
+    """Submit (the firm), approve / return / reject / suspend / restore / reopen (the portal admin) - chip firm.move.
+    `version` (the one the page read): an older one is refused, 409 - two admins never decide over each other (core/writes)."""
     with _LOCK:
         rows = _all()
         f = next((x for x in rows if x["id"] == fid), None)
         admin = acts_as_admin(u)
         if not f or not (admin or tenant(u) == fid):
             raise HTTPException(404, say("no_firm"))
+        writes.check_version(f, version)
         by = "admin" if admin and tenant(u) != fid else u.get("firm_role", "")
         if action == "submit":
             r = ready(f)
@@ -312,16 +318,18 @@ def move(u: dict, fid: str, action: str, note: str = "") -> dict:
             to = engine.run("firm.move", {"facts": {"action": "approve", "state": f["state"], "by": "admin"}})
             f["state"] = to["to"]
             f[f"{to['to']}_at"] = store.now()
+        writes.bump(f)
         _save(rows)
     k = settings()
     if to["to"] == k["working_state"] and kind_of(f["kind"])["self_client"]:
         _self_client(f)
     admin = next((x["email"] for x in store.users() if is_owner(x)), "")
+    once = f"{f['id']}|{to['to']}|{f.get(writes.settings()['version_field'])}"     # this decision (the row's version): mailed once
     if to["to"] == k["waiting_state"]:
         notify.fire("org_submitted", firm=f.get("name"), firm_id=f.get("id"))   # 2026-11-11 A20: the owner's bell, chip events.notify
-        _mail(admin, "mail_submitted_subject", "mail_submitted_body", firm=f.get("name"), hours=settings()["review_hours"])
+        _mail(admin, "mail_submitted_subject", "mail_submitted_body", once=once, firm=f.get("name"), hours=settings()["review_hours"])
     else:
-        _mail(f.get("email"), "mail_decided_subject", "mail_decided_body", firm=f.get("name"), state=to["to"], note=note)
+        _mail(f.get("email"), "mail_decided_subject", "mail_decided_body", once=once, firm=f.get("name"), state=to["to"], note=note)
     return f | {"say": say(to["say"])}
 
 

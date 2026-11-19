@@ -85,10 +85,9 @@
       "name": "requirements",
       "type": "json",
       "default": [
-        "requirements.lock",
-        "requirements.txt"
+        "requirements.lock"
       ],
-      "label": "Python packages: the first of these files that exists is installed (a lock file wins)"
+      "label": "Python packages: the first of these files that exists is installed - hashed locks only (2026-11-18 gap audit C1-18: an unhashed requirements.txt is never installed on a server)"
     },
     {
       "name": "check_requirements",
@@ -199,8 +198,7 @@
         "health_wait_s": 30,
         "probe": true,
         "requirements": [
-          "requirements.lock",
-          "requirements.txt"
+          "requirements.lock"
         ],
         "venv_args": "",
         "selfcheck": "{python} selfcheck.py",

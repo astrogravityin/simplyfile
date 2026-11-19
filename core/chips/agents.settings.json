@@ -68,9 +68,20 @@
         "live": "running",
         "cut_short": "stopped",
         "failed": "failed",
-        "done": "done"
+        "done": "done",
+        "approved_phase": "preview_approved",
+        "stale_phase": "preview_stale"
       },
       "label": "Words a run's status is stored as: live (running), cut_short (stopped by a restart), failed, done"
+    },
+    {
+      "name": "outside_effects",
+      "type": "json",
+      "default": [
+        "external",
+        "paid"
+      ],
+      "label": "Side effects that reach outside this portal (mail, money, another site): a triggered dry run with one of these always waits for review, trusted or not"
     }
   ],
   "expr": {
@@ -84,7 +95,8 @@
       "keep_rows": "$keep_rows",
       "history_rows": "$history_rows",
       "cadences": "$cadences",
-      "run_states": "$run_states"
+      "run_states": "$run_states",
+      "outside_effects": "$outside_effects"
     }
   },
   "returns": "record",
@@ -113,8 +125,14 @@
           "live": "running",
           "cut_short": "stopped",
           "failed": "failed",
-          "done": "done"
-        }
+          "done": "done",
+          "approved_phase": "preview_approved",
+          "stale_phase": "preview_stale"
+        },
+        "outside_effects": [
+          "external",
+          "paid"
+        ]
       }
     }
   ]

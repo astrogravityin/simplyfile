@@ -67,7 +67,7 @@ def card(v, name):
 
 
 admin = TestClient(app.app)
-assert admin.post("/api/auth/first-account", json={"email": "admin@valuestream.test", "password": "Admin-pass-123"}).status_code == 200
+assert admin.post("/api/auth/first-account", json={"setup_code": app.auth.setup_code(), "email": "admin@valuestream.test", "password": "Admin-pass-123"}).status_code == 200
 admin.post("/api/users", json={"email": "ca@demo.example", "password": "Demo-pass-1234", "display_name": "Demo Partner"})
 ca = session("ca@demo.example", "Demo-pass-1234")
 

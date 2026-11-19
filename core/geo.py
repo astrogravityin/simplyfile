@@ -25,7 +25,7 @@ from datetime import datetime, timedelta, timezone
 from functools import lru_cache
 from pathlib import Path
 
-from core import engine, ops, store
+from core import egress, engine, ops, store
 
 MARKER = b"\xab\xcd\xefMaxMind.com"
 DAY = 86400                # seconds in a day: a unit, not a policy
@@ -207,7 +207,7 @@ def download(dest: Path) -> None:
         try:
             req = urllib.request.Request(ops.template(k["url_template"], {"month": month}),
                                          headers={"User-Agent": "portal-core-geo"})
-            with urllib.request.urlopen(req, timeout=float(k["download_timeout_seconds"])) as resp, gzip.GzipFile(fileobj=resp) as gz, \
+            with egress.fetch(req, timeout=float(k["download_timeout_seconds"]), purpose="geo") as resp, gzip.GzipFile(fileobj=resp) as gz, \
                     open(tmp, "wb") as out:
                 shutil.copyfileobj(gz, out, 1 << 20)
             Reader(tmp).buf.close()  # refuse a truncated or wrong file before it replaces a good one

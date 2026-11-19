@@ -112,6 +112,23 @@ def static_checks() -> None:
     _gj = (HERE / 'core' / 'static' / 'guide.js').read_text(encoding='utf-8')
     assert '{.topbar{flex-wrap:nowrap' in _css and '.usermenu .who > svg.ico{display:none}' in _css and 'class="tb-lbl">${esc(w(\'guide_me\'))}' in _gj, \
         "phone top bar: one row (portal.css @media 640/400 rules) and Guide me's word in tb-lbl (guide.js)"
+    # 2026-11-18 gap audit C1-13: backups are drilled, not hoped for - the drill tool, its monthly cron line beside the backup's,
+    # its health probe; and the drill's integrity step refuses a broken file (a fake record red/old is core/health.py's self-test)
+    _dep, _hp = (HERE / "DEPLOY.md").read_text(encoding="utf-8"), (HERE / "core" / "health.py").read_text(encoding="utf-8")
+    assert (HERE / "tools" / "restore_drill.py").is_file() and re.search(r"[\n'][0-9*/, ]+ [0-9*/, ]+ [0-9*/, ]+ \* \* root .*tools/restore_drill\.py", _dep) \
+        and "/etc/cron.d/simplyfile-restore-drill" in _dep and 'probe("drill", drill)' in _hp, \
+        "restore drill: tools/restore_drill.py, its monthly cron line in DEPLOY.md step 6b and probe drill in core/health.py"
+    _ri = subprocess.run([sys.executable, "-c", "import sys, tempfile\nfrom pathlib import Path\nsys.path.insert(0, 'tools')\nimport restore_drill as r\nb = Path(tempfile.mkdtemp())\n(b / 'users.json').write_text('{broken', encoding='utf-8')\ntry:\n    r.integrity(b)\nexcept RuntimeError:\n    sys.exit(0)\nsys.exit(1)\n"], cwd=HERE)   # own process: importing core loads the store
+    assert _ri.returncode == 0, "restore drill: a broken users.json passed the drill's integrity check"
+    # 2026-11-18 gap audit C1-19: every security event the health check tells about is written somewhere (body-free, ids only)
+    _sa = json.loads((HERE / "core" / "chips" / "security.alerts.json").read_text(encoding="utf-8"))
+    _kinds = {p["name"]: p["default"] for p in _sa["params"]}
+    _src = "".join(f.read_text(encoding="utf-8") for f in [*(HERE / "core").glob("*.py"), *HERE.glob("*.py")])
+    _unwritten = [k for k in [_kinds["signin_kind"], *_kinds["event_kinds"]] if f'ledger.security("{k}"' not in _src]
+    assert not _unwritten and 'probe("security", security_events)' in _hp, f"security events nobody records: {_unwritten}"
+    # 2026-11-18 gap audit B3 week classes 18/40/41/42/47: named controls, typed hosts (ratchet), repo-root paths, ORDER BY
+    # tie-breaks, push redraws through paintIfChanged - chip selfcheck.codeguards
+    subprocess.run([sys.executable, "-m", "core.codeguards"], cwd=HERE, check=True)   # own process: importing core loads the store (api walk's real-data guard)
     print("  static: every import resolves, one page per screen, controls stand out OK")
 
 
@@ -179,8 +196,47 @@ if (ok.some((x) => !x)) { console.log(JSON.stringify(ok)); process.exit(1); }"""
             assert over_ not in said_, f"the pitch promises '{over_}' - SimplyFy fills the utility, the CA files"
         assert c.get("/health").text == "ok"
         assert c.get("/api/clients/settings").status_code == 401, "signed-out callers get nothing"
-        r = c.post("/api/auth/first-account", json={"email": "owner@example.com", "password": "a-good-password"})
-        assert r.status_code == 200, r.text
+        # 2026-11-18 gap audit C1-9: the empty portal went to the first caller, and a refusal named the reserved address.
+        # Now the seat needs the setup code (service log / data folder, or mailed to that address); no answer names it.
+        fa_au, fa_keep = app.auth, app.auth.OWNER_EMAIL
+        fa_au.OWNER_EMAIL = "reserved-owner@example.com"
+        try:
+            assert c.get("/api/bootstrap").json()["reserved_owner"] is True, "the first-run screen hears yes/no, not the address"
+            fa_r = c.post("/api/auth/first-account", json={"email": "reserved-owner@example.com", "password": "a-good-password"})
+            assert fa_r.status_code == 403 and "reserved-owner" not in fa_r.text, f"no setup code -> 403 naming no address: {fa_r.text}"
+            fa_r = c.post("/api/auth/first-account", json={"setup_code": fa_au.setup_code(), "email": "x@example.com", "password": "a-good-password"})
+            assert fa_r.status_code == 403 and "reserved-owner" not in fa_r.text, f"the wrong address -> 403 naming no address: {fa_r.text}"
+            assert "reserved-owner" not in c.get("/api/bootstrap").text
+        finally:
+            fa_au.OWNER_EMAIL = fa_keep
+        assert c.post("/api/auth/first-account", json={"setup_code": fa_au.setup_code(), "email": "owner@example.com",
+                                                        "password": "a-good-password"}).status_code == 200
+        assert not (fa_au.store.DATA / fa_au.SETUP_FILE).exists(), "the setup code is gone once the seat is taken"
+        # 2026-11-18 gap audit C1-20: wrong passwords on ONE account -> 429; one address spraying MANY accounts -> 429 (each in
+        # chip auth.messages words). The per-minute knock limit is lifted here so each limit is proven on its own.
+        sp_au, sp_lim = app.auth, app.auth.limits()
+        sp_au.OVERRIDES["auth_per_minute"] = 10_000
+        try:
+            sp_c = TestClient(app.app)
+            sp_c.headers["X-Real-IP"] = "203.0.113.7"
+            sp_codes = [sp_c.post("/api/auth/signin", json={"identity": "owner@example.com", "password": f"wrong-{i}"}).status_code
+                        for i in range(int(sp_lim["lock_after"]) + 1)]
+            assert sp_codes[-1] == 429 and set(sp_codes[:-1]) == {401}, f"N wrong passwords for one account must end in 429: {sp_codes}"
+            sp_r = sp_c.post("/api/auth/signin", json={"identity": "owner@example.com", "password": "wrong"})
+            assert sp_r.status_code == 429 and sp_r.json()["detail"] in {sp_au.msg("locked", minutes=m) for m in range(1, sp_lim["lock_for_seconds"] // 60 + 1)}, sp_r.text
+            sp_c.headers["X-Real-IP"] = "203.0.113.8"
+            sp_codes = [sp_c.post("/api/auth/signin", json={"identity": f"spray{i}@example.com", "password": "Summer2026!"}).status_code
+                        for i in range(20)]
+            assert 429 in sp_codes and set(sp_codes[:int(sp_lim["ip_fail_after"])]) == {401}, \
+                f"20 user names from one address must reach 429 (chip auth.limits ip_fail_after): {sp_codes}"
+            sp_r = sp_c.post("/api/auth/signin", json={"identity": "spray99@example.com", "password": "x"})
+            assert sp_r.status_code == 429 and sp_r.json()["detail"] in {sp_au.msg("spray", minutes=m) for m in range(1, sp_lim["ip_fail_window_seconds"] // 60 + 1)},                 f"the spray 429 must say so in chip auth.messages words: {sp_r.text}"
+            assert TestClient(app.app).post("/api/auth/signin", json={"identity": "owner@example.com", "password": "a-good-password"}).status_code == 200, \
+                "a spray from one address locked the owner out everywhere"
+        finally:
+            sp_au.OVERRIDES.pop("auth_per_minute", None)
+            for sp_k in [k for k in sp_au._FAILS if "203.0.113." in k]:  # noqa: SLF001
+                sp_au._FAILS.pop(sp_k, None)  # noqa: SLF001
         boot = c.get("/api/bootstrap").json()
         menu = [s["id"] for s in boot["catalog"] if s["id"] in SCREENS]
         assert menu == SCREENS, menu
@@ -355,6 +411,7 @@ if (ok.some((x) => !x)) { console.log(JSON.stringify(ok)); process.exit(1); }"""
         assert not wd["locked"] and wd["revising"] and wd["filings"][-1]["status"] == "withdrawn" and wd["current"]["ack_no"] == "998877665544332",             "a revised return undone: the original stands again, the revision is open"
         # Firms (tenants): sign up -> papers -> wait -> the portal admin approves -> team; another firm's client is not there
         firm_check(app, c, cl["id"])
+        __import__("core.routeguard", fromlist=["check"]).check(app.app)   # 2026-11-18 gap audit C1-7: a new open route fails
         # 2026-10-24 Connect your AI (the SteadyMove / AstroStage door, core/mcp.py): the Portal Admin's key, the tools only, a
         # person's step said never run, the portal's own routes as the owner (selfcheck_mcp.py, boilerplate)
         import selfcheck_mcp  # noqa: PLC0415
@@ -432,6 +489,83 @@ def firm_check(app, owner, house_cid: str) -> None:
     assert home["self"] and [x["pan"] for x in home["clients"]] == ["AAAHG4321K"], home
     assert me2.get(f"/api/myreturn/{home['clients'][0]['id']}/{home['current_ay']}").status_code == 200
     assert me2.post("/api/clients", json={"name": "X", "status": "individual", "pan": "ABCPX1234K"}).status_code == 403
+    # 2026-11-18 gap audit C1-8 / C1-15 (DomainTemplate): every /api route walled per firm, and the risky writes happen once
+    owner.post(f"/api/firm/{f['id']}/move", json={"action": "restore"})
+    route_wall(app, ca, me2, [mine["id"], f["id"]])
+    writes_walk(app, owner, {"firm": f})
+
+
+def writes_walk(app, owner, org) -> None:
+    """2026-11-18 gap audit C1-15 (UV-50, UV-118): the risky writes happen once. Two identical POSTs with one Idempotency-Key
+    (a stage move, an invite, a wallet charge) make ONE effect and get the same answer; a stale `version` is refused 409."""
+    import wallet as wl_  # noqa: PLC0415
+    hk = app.engine.run("writes.settings")["header"]
+    move = f"/api/firm/{org['firm']['id']}/move"
+    body = {"action": "suspend", "note": "Paused by the selfcheck"}
+    one = owner.post(move, json=body, headers={hk: "sc-move-1"})
+    two = owner.post(move, json=body, headers={hk: "sc-move-1"})
+    assert one.status_code == two.status_code == 200 and one.json() == two.json(),         ("two identical stage moves with one key made two effects", one.status_code, two.status_code, two.text[:200])
+    v = one.json()["version"]
+    assert owner.post(move, json={"action": "restore", "version": v - 1}).status_code == 409, "a stale version moved the stage"
+    assert owner.post(move, json={"action": "restore", "version": v}).json()["state"] == "approved", "the current version moves"
+    ask = {"email": "once@demo.example", "display_name": "Asked Once", "password": "a-good-password-once"}
+    a = owner.post("/api/users", json=ask, headers={hk: "sc-invite-1"})
+    b = owner.post("/api/users", json=ask, headers={hk: "sc-invite-1"})
+    assert a.status_code == b.status_code == 200 and a.json() == b.json(), ("two identical invites with one key", b.status_code, b.text[:200])
+    assert sum(u["email"] == ask["email"] for u in sys.modules["core.store"].users()) == 1, "an invite made two accounts"
+    charged: list = []
+    real, ac_ = wl_.add, sys.modules["core.access"]
+    real_may = vars(ac_)["may"]
+
+    def fake_add(u, email, usd, note=""):
+        charged.append(usd)
+        return {"charged": len(charged)}
+    vars(wl_)["add"] = fake_add
+    vars(ac_)["may"] = lambda u, s, f="", *a: True if s == "keys" else real_may(u, s, f, *a)   # Keys is off with no AI feature
+    try:
+        got = [owner.post("/api/wallet/add", json={"email": "once@demo.example", "amount": 5}, headers={hk: "sc-charge-1"}).json() for _ in range(2)]
+        assert len(charged) == 1 and got[0] == got[1], ("two identical wallet charges with one key charged twice", charged, got)
+        owner.post("/api/wallet/add", json={"email": "once@demo.example", "amount": 5})
+        assert len(charged) == 2, "a charge without a key works as before"
+    finally:
+        vars(wl_)["add"] = real
+        vars(ac_)["may"] = real_may
+    print("  writes: a stage move, an invite and a wallet charge sent twice with one key -> one effect; a stale version -> 409 OK")
+
+
+def route_wall(app, a, b, seeds: list) -> None:
+    """2026-11-18 gap audit C1-8 - wall() above covered 4 sample routes. Now EVERY /api route, parameterised ones filled with
+    ids organisation A made: a signed-out caller gets a 4xx on every route not public by chip security.public_routes, and
+    organisation B never gets a 2xx that carries one of A's ids. Runs last: B's writes may change B."""
+    from fastapi.testclient import TestClient
+    from core import engine as en_, routeguard as rg_
+    pr_ = en_.run("security.public_routes")
+    public, stays = set(pr_["routes"]), set(pr_["long_lived"])
+    nobody = TestClient(app.app, raise_server_exceptions=False)
+    b2 = TestClient(app.app, raise_server_exceptions=False, cookies=dict(b.cookies))
+    routes = [(m, r.path) for r, _ in rg_._flat(app.app.routes) if r.path.startswith("/api")  # noqa: SLF001
+              for m in sorted(r.methods - {"HEAD", "OPTIONS"})]
+    ID = re.compile(r'"id":\s*"([0-9a-f]{12})"')    # a record id (store.new_id); "audit.clear", "add_client" are function/answer keys
+    seen = lambda cl: {i for m, p in routes if m == "GET" and "{" not in p and f"GET {p}" not in stays  # noqa: E731
+                       for i in ID.findall(cl.get(p).text)}
+    a_ids = list(dict.fromkeys([*seeds, *sorted(seen(a) - seen(b2))]))[:10]
+    holes, n, t0 = [], 0, __import__("time").time()
+    for m, p in sorted(routes, key=lambda x: x[0] != "GET"):          # reads first, then writes
+        for i in (a_ids if "{" in p else [""]):
+            url = re.sub(r"\{[^}]+\}", i, p)
+            if f"{m} {p}" not in public:
+                x = nobody.request(m, url, json={})
+                n += 1
+                if not 400 <= x.status_code < 500:
+                    holes.append(f"nobody {m} {url} -> {x.status_code}")
+            if f"{m} {p}" in stays | public:            # public = anyone's read already; the stream never ends
+                continue
+            y = b2.request(m, url, json={})
+            n += 1
+            if y.status_code < 300 and any(k in y.text for k in a_ids):
+                holes.append(f"org B {m} {url} -> {y.status_code} with org A's id {[k for k in a_ids if k in y.text]}")
+    assert not holes, f"{len(holes)} holes in the wall: {holes[:20]}"
+    print(f"  route wall: {len(routes)} routes x {len(a_ids)} of org A's ids, {n} calls in {__import__('time').time() - t0:.0f} s - signed-out 4xx, org B sees none of A OK")
 
 
 # Chips-first guard (2026-10-04 audit). Every rate, threshold and decision of the Filing screens is a chip; these are the
@@ -672,7 +806,7 @@ if __name__ == "__main__":
     _sp.run([sys.executable, "-m", "core.qualitycheck"], cwd=sys.path[0] or ".", check=True)   # QA/QC travel with the repo (owner 2026-11-16); own process - importing core loads the store
     print("SimplyFy - self-check")
     only = sys.argv[1:]
-    for name, fn in {"modules": module_checks, "statics": static_checks, "chips": chips_first_check, "guides": guides_tours_check, "name": name_once_check, "verbs": verbs_check, "ai": ai_check, "site": site_manifest_check, "standards": standards_check, "api": api_check, "push": lambda: __import__("selfcheck_push").main()}.items():
+    for name, fn in {"modules": module_checks, "statics": static_checks, "chips": chips_first_check, "guides": guides_tours_check, "name": name_once_check, "verbs": verbs_check, "ai": ai_check, "site": site_manifest_check, "standards": standards_check, "api": api_check, "secrets": lambda: __import__("core.secretscan", fromlist=["check"]).check(HERE), "push": lambda: __import__("selfcheck_push").main()}.items():
         if not only or name in only:
             fn()
     import selfcheck_quality  # W1.3 quality gate: lint/types, shape walk, word drift, clones, deps (+ coverage when named)

@@ -3,8 +3,9 @@ foreign income, clubbing, s.89, ITR-U, s.234A in an extended year). Re-runnable:
 'not built' notes these waves closed are cleared. Run from D:/Simplyfile."""
 import json
 from pathlib import Path
+_ROOT = Path(__file__).resolve().parents[1]   # repo root: paths never depend on the folder it is started from
 
-p = Path("chips/rulebook.sections.json")
+p = (_ROOT / "chips/rulebook.sections.json")
 c = json.loads(p.read_text(encoding="utf-8"))
 P = {x["name"]: x for x in c["params"]}
 areas, rules = P["areas"]["default"], P["rules"]["default"]
@@ -73,4 +74,4 @@ c["test_cases"] = [{"args": {}, "expect_value": {"areas": areas, "rules": rules}
 c["version"] += 1
 c["description_nl"] += f" 2026-10-07: {len(add)} rules added (capital gains, residence and foreign income, clubbing, s.89, ITR-U, s.234A in an extended year, 44AE, agri, special rates)."
 p.write_text(json.dumps(c, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-print("added", len(add), "missing chips:", [r["chip"] for r in add if not Path(f"chips/{r['chip']}.json").exists()])
+print("added", len(add), "missing chips:", [r["chip"] for r in add if not (_ROOT / f"chips/{r['chip']}.json").exists()])

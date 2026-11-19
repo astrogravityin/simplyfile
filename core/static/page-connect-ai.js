@@ -6,9 +6,10 @@
 import { api, esc, toast, busy, say, pageHead, modal, confirmDialog, t, loadWords, clockAt, copyText, listBox } from './ui.js';
 import { icon } from './icons.js';
 import { onEvent } from './events.js';
+import { paintIfChanged } from './paint.js';
 
 const w = (k, v) => t('connect_ai', k, v);
-const paint = (el, html) => { el.innerHTML = html; };   // 2026-10-24: the screen's one place that writes HTML (html_sinks ratchet)
+const paint = (el, html) => paintIfChanged(el, html);   // 2026-10-24: the screen's one place that writes HTML (html_sinks ratchet)
 let stopLive = () => {};                                 // the open screen's stream listener (one at a time)
 const at = (sec) => (sec ? clockAt(new Date(sec * 1000).toISOString()) : '');
 

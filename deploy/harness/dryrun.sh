@@ -7,8 +7,9 @@
 #   v1 good, v2 good, v3 selfcheck fails, v4 selfcheck passes but /health is 500, v5 healthy on an empty data
 #   folder (the probe) but 500 on the live data (a data-shaped bug).
 # It then deploys v1 -> v2 -> v3 -> v4 -> v5, checks after each that the right version still serves, rolls back,
-# rolls forward, deploys staging on its own port, and prints how long each step took. The deploy files used are the
-# ones in this checkout (deploy/deploy.sh, deploy/settings.py, chips/deploy.settings.json); the harness only overrides
+# rolls forward, deploys staging on its own port, refuses staging pointed at prod (C1-14), and prints how long each
+# step took. The deploy files used are the ones in this checkout (deploy/deploy.sh, settings.py, separation.py, their
+# chips); the harness only overrides
 # folders, ports and the restart command through DEPLOY_* env - the same doors an owner has.
 set -uo pipefail
 SRC=$(cd "$(dirname "$0")/../.." && pwd)
@@ -42,8 +43,8 @@ SVC
 git init -q --bare -b main "$ROOT/origin.git"
 W=$ROOT/work; git init -q -b main "$W"; git -C "$W" config user.email dryrun@localhost; git -C "$W" config user.name dryrun; git -C "$W" config core.autocrlf false
 mkdir -p "$W/deploy" "$W/chips"
-cp "$SRC/deploy/deploy.sh" "$SRC/deploy/settings.py" "$SRC/deploy/portal.service.in" "$W/deploy/"
-cp "$SRC/chips/deploy.settings.json" "$W/chips/"
+cp "$SRC/deploy/deploy.sh" "$SRC/deploy/settings.py" "$SRC/deploy/separation.py" "$SRC/deploy/portal.service.in" "$W/deploy/"
+cp "$SRC/chips/deploy.settings.json" "$SRC/chips/deploy.separation.json" "$W/chips/"
 printf 'fastapi\nuvicorn\n' >"$W/requirements.txt"
 printf 'data/\nreleases/\ncurrent\nvenvs/\n.deploy.lock/\n' >"$W/.gitignore"
 app() {   # $1 version, $2 health mode: ok | 500 | live500
@@ -81,14 +82,14 @@ git clone -q "$ROOT/origin.git" "$ROOT/prod"
 git clone -q "$ROOT/origin.git" "$ROOT/staging"
 mkdir -p "$ROOT/prod/data"; echo "the live data" >"$ROOT/prod/data/live.marker"
 export DEPLOY_PYTHON=$PY DEPLOY_VENV_ARGS=--system-site-packages DEPLOY_HEALTH_WAIT_S=12 DEPLOY_USER= DEPLOY_ALSO_RESTART= \
-       DEPLOY_KEEP_RELEASES=3
+       DEPLOY_KEEP_RELEASES=3 DEPLOY_REQUIREMENTS=requirements.txt   # the stub portal has no lock (a real one installs only hashed locks)
 d() {   # $1 prod|staging, rest = deploy.sh command
   local t=$1; shift
   if [ "$t" = prod ]; then
     DEPLOY_BASE=$ROOT/prod DEPLOY_PORT=$PROD_PORT DEPLOY_PROBE_PORT=$((PROD_PORT+100)) \
       DEPLOY_RESTART_CMD="bash $ROOT/fake-service.sh $ROOT/prod $PROD_PORT" bash "$ROOT/prod/deploy/deploy.sh" --target prod "$@"
   else
-    DEPLOY_BASE=$ROOT/staging DEPLOY_PORT=$STAGE_PORT DEPLOY_PROBE_PORT=$((STAGE_PORT+100)) \
+    DEPLOY_BASE=$ROOT/staging DEPLOY_PROD_BASE=$ROOT/prod DEPLOY_PORT=$STAGE_PORT DEPLOY_PROBE_PORT=$((STAGE_PORT+100)) \
       DEPLOY_RESTART_CMD="bash $ROOT/fake-service.sh $ROOT/staging $STAGE_PORT" bash "$ROOT/staging/deploy/deploy.sh" --target staging "$@"
   fi
 }
@@ -125,6 +126,13 @@ echo; echo "################ staging: its own folder and port, same script"
 d staging init v1 2>&1 | sed 's/^/  /'; bash "$ROOT/fake-service.sh" "$ROOT/staging" "$STAGE_PORT"
 for _ in $(seq 1 20); do [ "$(version $STAGE_PORT)" = v1 ] && break; sleep 0.5; done
 step "staging: deploy v2 on port $STAGE_PORT"            0 "$STAGE_PORT" v2 staging deploy v2
+# 2026-11-18 gap audit C1-14: staging pointing at prod (its data folder, or a live payment key) is refused before any build
+PDATA=$ROOT/prod/data; windows && PDATA=$(cygpath -m "$PDATA")   # the path as the portal's Python reads it
+printf 'PORTAL_DATA=%s\n' "$PDATA" >"$ROOT/staging/portal.env"
+step "staging pointing at prod's data -> refused, v2 serves"  1 "$STAGE_PORT" v2 staging deploy v1
+printf 'CRED_PAY_KEY_ID=%s\n' "rzp_""live_dryrun" >"$ROOT/staging/portal.env"
+step "staging with a live payment key -> refused"         1 "$STAGE_PORT" v2 staging deploy v1
+rm -f "$ROOT/staging/portal.env"
 [ "$(version $PROD_PORT)" = v2 ] && row OK "prod untouched by the staging deploy" "-" "port $PROD_PORT serves v2" || row BAD "prod untouched by staging" "-" "port $PROD_PORT serves $(version $PROD_PORT)"
 
 echo; echo "################ status"

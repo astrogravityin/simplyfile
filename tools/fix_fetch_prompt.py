@@ -4,12 +4,13 @@ figure in force with note "unchanged", null only when the law changed it and the
 D:/Simplyfile (re-runnable)."""
 import json
 from pathlib import Path
+_ROOT = Path(__file__).resolve().parents[1]   # repo root: paths never depend on the folder it is started from
 
 ADD = (" A figure that no Finance Act, notification or circular has changed CARRIES FORWARD: give the value in force for"
        " AY {ay} (usually the one shown for AY {live_ay}) with note \"unchanged - <the provision, e.g. s.80C>\"; do not give"
        " null just because the figure is not restated for the year. Give null only when the law changed the figure and you"
        " cannot find the new value.")
-p = Path("chips/taxwatch.settings.json")
+p = (_ROOT / "chips/taxwatch.settings.json")
 c = json.loads(p.read_text(encoding="utf-8"))
 pr = next(x for x in c["params"] if x["name"] == "prompt")
 anchor = "If AY {ay} has not been announced yet, or you are not sure, give null and say why in note."

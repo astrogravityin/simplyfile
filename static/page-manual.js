@@ -176,10 +176,10 @@ function editor(host) {
             <button class="small danger" data-rm="${i}" type="button" ${offAttr(m.pages.length === 1 ? w('last_page_stays') : '')}>${w('remove')}</button>
           </div></div>
         <div class="grid two" style="margin-top:8px">
-          <div class="field"><label>${w('header')}</label><input data-p="${i}" data-f="header" value="${esc(pg.header)}"/></div>
-          <div class="field"><label>${w('background')}</label><select data-p="${i}" data-f="background">${bgOptions(pg.background)}</select></div>
-          <div class="field"><label>${w('documents_screen')}</label><select data-p="${i}" data-f="screen_key">${screenOptions(pg.screen_key)}</select></div>
-          <div class="field"><label>${w('picture_label')}</label><input data-p="${i}" data-f="image_label" value="${esc(pg.image_label)}"/></div>
+          <div class="field"><label>${w('header')}</label><input data-p="${i}" data-f="header" aria-label="${esc(w('header'))}" value="${esc(pg.header)}"/></div>
+          <div class="field"><label>${w('background')}</label><select data-p="${i}" data-f="background" aria-label="${esc(w('background'))}">${bgOptions(pg.background)}</select></div>
+          <div class="field"><label>${w('documents_screen')}</label><select data-p="${i}" data-f="screen_key" aria-label="${esc(w('documents_screen'))}">${screenOptions(pg.screen_key)}</select></div>
+          <div class="field"><label>${w('picture_label')}</label><input data-p="${i}" data-f="image_label" aria-label="${esc(w('picture_label'))}" value="${esc(pg.image_label)}"/></div>
         </div>
         <div class="field" style="margin-top:8px"><label>${w('picture')}</label>
           <div class="row tight">${dropZone(`mi-${i}`, { accept: 'image/*', title: w('picture') })}

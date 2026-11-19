@@ -1,0 +1,52 @@
+{
+  "chip_id": "writes.messages",
+  "kind": "accessor",
+  "set": "writes",
+  "label": "Writes that happen once: every sentence",
+  "aliases": [
+    "stale write",
+    "signed refused"
+  ],
+  "params": [
+    {
+      "name": "stale",
+      "type": "text",
+      "default": "Someone changed this since you opened it - reload to see the newest, then try again.",
+      "label": "A write naming an older version"
+    },
+    {
+      "name": "key_reused",
+      "type": "text",
+      "default": "This request key was already used for a different request - send a new key.",
+      "label": "One idempotency key, two different bodies"
+    },
+    {
+      "name": "signed_changed",
+      "type": "text",
+      "default": "Refused: this would change signed text ({rows}). A signed record is never rewritten - make a new version and sign it again.",
+      "label": "A write that would change a signed row"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "stale": "$stale",
+      "key_reused": "$key_reused",
+      "signed_changed": "$signed_changed"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-11-18: words of core/writes.py and the signed-row refusal in core/store.write.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "stale": "Someone changed this since you opened it - reload to see the newest, then try again.",
+        "key_reused": "This request key was already used for a different request - send a new key.",
+        "signed_changed": "Refused: this would change signed text ({rows}). A signed record is never rewritten - make a new version and sign it again."
+      }
+    }
+  ]
+}

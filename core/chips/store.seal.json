@@ -1,0 +1,37 @@
+{
+  "chip_id": "store.seal",
+  "kind": "accessor",
+  "set": "store",
+  "audience": "admin",
+  "label": "Sealed stores: which data files are kept encrypted at rest, and where their key lives",
+  "aliases": ["seal", "encrypt at rest", "secrets at rest", "seal key", "credentials encryption"],
+  "params": [
+    {"name": "files", "type": "json", "default": ["credentials", "user_keys", "keypool", "push_keys"],
+     "label": "Stores (data/<name>.json) written sealed - credentials and AI keys. A plain file of these names still reads and is sealed at its next save"},
+    {"name": "key_env", "type": "text", "default": "PORTAL_SEAL_KEY",
+     "label": "The environment variable that may hold the seal key itself (a Fernet key) - wins over the key file"},
+    {"name": "key_file_env", "type": "text", "default": "PORTAL_SEAL_KEY_FILE",
+     "label": "The environment variable naming the key file's path"},
+    {"name": "key_file", "type": "text", "default": "seal.key",
+     "label": "With no path set: this file BESIDE the data folder (never inside it, so a backup of data/ alone opens nothing); made once, owner-only"},
+    {"name": "marker", "type": "text", "default": "_sealed",
+     "label": "The one field a sealed file holds on disk"},
+    {"name": "words", "type": "json", "default": {
+        "no_key": "data/{name}.json is sealed and its seal key is not at {path} (nor in env {env}) - put the seal key back (DEPLOY.md, Seal key) and restart. Nothing was changed.",
+        "wrong_key": "data/{name}.json is sealed with another seal key than the one at {path} - put the right key back (DEPLOY.md, Seal key) and restart. Nothing was changed."
+      },
+     "label": "What the store says when a sealed file cannot be opened"}
+  ],
+  "expr": {"vop": "record", "fields": {"files": "$files", "key_env": "$key_env", "key_file_env": "$key_file_env",
+                                       "key_file": "$key_file", "marker": "$marker", "words": "$words"}},
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "DomainTemplate 2026-11-18 gap audit C1-11: credentials and AI keys were plain JSON at rest. core/store.py seals the files named here with Fernet (cryptography, already locked); the key comes from env key_env, else the file env key_file_env names, else key_file beside the data folder (made once, mode 600, only while no sealed file exists). A sealed file that cannot be opened is never read as empty and never overwritten: the store raises with words.no_key / words.wrong_key. smtp is not listed: deploy/demo/setup.sh copies prod's smtp.json to a demo that has no prod key.",
+  "test_cases": [
+    {"args": {}, "expect_value": {"files": ["credentials", "user_keys", "keypool", "push_keys"], "key_env": "PORTAL_SEAL_KEY",
+      "key_file_env": "PORTAL_SEAL_KEY_FILE", "key_file": "seal.key", "marker": "_sealed", "words": {
+        "no_key": "data/{name}.json is sealed and its seal key is not at {path} (nor in env {env}) - put the seal key back (DEPLOY.md, Seal key) and restart. Nothing was changed.",
+        "wrong_key": "data/{name}.json is sealed with another seal key than the one at {path} - put the right key back (DEPLOY.md, Seal key) and restart. Nothing was changed."}}}
+  ]
+}

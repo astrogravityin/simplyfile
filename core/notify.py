@@ -13,7 +13,7 @@ import json
 import threading
 import urllib.request
 
-from core import auth, bell, engine, mailer, ops, store
+from core import auth, bell, egress, engine, mailer, ops, store
 
 
 def K() -> dict:
@@ -51,7 +51,7 @@ def _mail(template: str, people: list[dict], values: dict) -> None:
 def _hook(url: str, body: dict) -> None:
     try:
         req = urllib.request.Request(url, data=json.dumps(body).encode(), headers={"Content-Type": "application/json"})
-        urllib.request.urlopen(req, timeout=float(K()["webhook_timeout_s"])).close()   # noqa: S310 - owner's own chip URL
+        egress.fetch(req, timeout=float(K()["webhook_timeout_s"]), purpose="webhook").close()   # https, public address only
     except Exception:  # noqa: BLE001 - the receiver being down never breaks the event
         pass
 

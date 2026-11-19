@@ -5,10 +5,11 @@ import json
 import sys
 from pathlib import Path
 
-sys.path.insert(0, ".")
+ROOT = Path(__file__).resolve().parent.parent   # the portal root, whatever folder it is run from (week class 41)
+sys.path.insert(0, str(ROOT))
 SUFFIXES = ("; add your team below.", " add your team below.")
 
-p = Path("chips/ui.firm.json")
+p = ROOT / "chips" / "ui.firm.json"
 c = json.loads(p.read_text(encoding="utf-8"))
 names = [x["name"] for x in c["params"]]
 if "st_approved_solo" not in names:
@@ -35,7 +36,7 @@ if "st_approved_solo" not in names:
     p.write_text(json.dumps(c, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     print("ui.firm st_approved_solo:", solo)
 
-j = Path("static/page-firm.js")
+j = ROOT / "static" / "page-firm.js"
 s = j.read_text(encoding="utf-8")
 a = "`st_${f.state}`, { hours"
 b = "f.state === d.settings.working_state && !('team' in d) ? 'st_approved_solo' : `st_${f.state}`, { hours"

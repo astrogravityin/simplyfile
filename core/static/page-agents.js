@@ -88,7 +88,7 @@ function agentCard(a) {
       <div class="ag-acts">
         <button type="button" class="small ghost" data-history data-tip="${esc(w('history'))}">${icon('clock', 13)} ${w('history')}</button>
         <button type="button" class="small" data-dry data-tip="${esc(w('dry_tip'))}">${icon('eye', 13)} ${w('dry_run')}</button>
-        ${r && r.waiting ? `<button type="button" class="small primary" data-approve="${esc(r.ref)}" data-tip="${esc(w('approve_tip'))}">${icon('check', 13)} ${w('approve')}</button>` : ''}
+        ${r && r.waiting ? `<button type="button" class="small primary" data-approve="${esc(r.ref)}" data-seal="${esc(r.seal || '')}" data-tip="${esc(w('approve_tip'))}">${icon('check', 13)} ${w('approve')}</button>` : ''}
       </div></div>
     <div class="ag-out">${r ? runBox(r) : ''}</div>
   </section>`;
@@ -116,8 +116,8 @@ export async function agentsPage(host) {
     });
     const ok = card.querySelector('[data-approve]');
     if (ok) ok.onclick = (e) => busy(e.currentTarget, async () => {
-      try { toast((await api(`/api/core/agents/${id}/run`, { method: 'POST', body: { approve: true, ref: ok.dataset.approve } })).message, 'ok', 8); again(); }
-      catch (err) { say(msg, 'bad', esc(err.message)); }
+      try { toast((await api(`/api/core/agents/${id}/run`, { method: 'POST', body: { approve: true, ref: ok.dataset.approve, seal: ok.dataset.seal } })).message, 'ok', 8); again(); }
+      catch (err) { toast(err.message, 'bad', 10); again(); }   // a changed effect: the fresh dry run is shown to read again
     });
     card.querySelector('[data-history]').onclick = async () => {
       const h = await api(`/api/core/agents/${id}/runs`);

@@ -280,7 +280,7 @@
     {
       "name": "first_reserved",
       "type": "text",
-      "default": "It is waiting for its owner, <b>{owner}</b>. Choose a password and it is yours."
+      "default": "It is waiting for its owner. Use the address it was set up with, and the setup code."
     },
     {
       "name": "first_nobody",
@@ -2638,6 +2638,21 @@
       "type": "text",
       "default": "Top menu",
       "label": "menu layout: a bar across the top"
+    },
+    {
+      "name": "setup_code",
+      "type": "string",
+      "default": "Setup code"
+    },
+    {
+      "name": "setup_code_hint",
+      "type": "string",
+      "default": "Printed on the server when this screen first opened (service log, or setup_code.txt in the data folder)."
+    },
+    {
+      "name": "setup_code_mail",
+      "type": "string",
+      "default": "Email the code to the owner's address"
     }
   ],
   "expr": {
@@ -3145,7 +3160,10 @@
       "chars_low": "$chars_low",
       "nav_layout": "$nav_layout",
       "nav_side": "$nav_side",
-      "nav_top": "$nav_top"
+      "nav_top": "$nav_top",
+      "setup_code": "$setup_code",
+      "setup_code_hint": "$setup_code_hint",
+      "setup_code_mail": "$setup_code_mail"
     }
   },
   "returns": "record",
@@ -3210,7 +3228,7 @@
         "forgot_lede": "Type your user name or email. We email a code to the address on the account.",
         "send_reset": "Send reset code",
         "first_title": "Set this portal up",
-        "first_reserved": "It is waiting for its owner, <b>{owner}</b>. Choose a password and it is yours.",
+        "first_reserved": "It is waiting for its owner. Use the address it was set up with, and the setup code.",
         "first_nobody": "Nobody owns this portal yet. The account you create now becomes its owner.",
         "user_name_optional": "Optional — leave blank to use your email’s first part.",
         "create_owner": "Create the owner account",
@@ -3658,7 +3676,10 @@
         "chars_low": "0.1",
         "nav_layout": "Menu",
         "nav_side": "Side pane",
-        "nav_top": "Top menu"
+        "nav_top": "Top menu",
+        "setup_code": "Setup code",
+        "setup_code_hint": "Printed on the server when this screen first opened (service log, or setup_code.txt in the data folder).",
+        "setup_code_mail": "Email the code to the owner's address"
       }
     }
   ],

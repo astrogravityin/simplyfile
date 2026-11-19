@@ -74,7 +74,11 @@ STEP_KEYS = {"say", "speak", "chapter", "do", "hold", "picture"}
 PICTURE = re.compile(r"^pictures/(?!\.\.?/)[\w.-]+/[0-9a-f]{8}\.(png|jpg)$")
 TOUR_KEYS = {"page_key", "title", "start_url", "prod_base", "also", "anonymous", "review", "covers", "voice", "rate", "viewport", "vars", "steps", "note", "blur", "settle_ms", "type_emails", "locale", "tags", "mask", "mask_words"}
 SETTING_KEYS = {"start_url", "anonymous", "vars", "before", "viewport", "voice", "rate", "prod_base", "blur", "note", "product", "settle_ms", "mask"}
-PROD_BASE = "https://astrostage.in"   # a tour on another production host (tedbook.in) says so in prod_base
+# 2026-11-18 week class 40 (CodyFy G-45 / G-84: a typed host or repo went stale): every starter tour said its production site was
+# astrostage.in. The site is THIS repo's own - valuestream.site.json `host` (one place, read by deploy and CC too); a tour on
+# another host says so in prod_base.
+_SITE = ROOT / "valuestream.site.json"
+PROD_BASE = f"https://{json.loads(_SITE.read_text(encoding='utf-8'))['host']}" if _SITE.is_file() else ""
 
 # Headless video has no mouse pointer - draw one, plus a ring on whatever the tour touches.
 CURSOR_JS = """

@@ -1,0 +1,145 @@
+{
+  "chip_id": "security.egress",
+  "kind": "accessor",
+  "set": "security",
+  "audience": "admin",
+  "label": "Where the server may fetch from: https to public addresses only, every redirect checked",
+  "aliases": [
+    "egress",
+    "ssrf",
+    "outbound fetch",
+    "webhook address"
+  ],
+  "params": [
+    {
+      "name": "exceptions",
+      "type": "json",
+      "default": {
+        "recite": {
+          "http": true,
+          "nets": [
+            "127.0.0.0/8",
+            "::1/128",
+            "10.0.0.0/8",
+            "172.16.0.0/12",
+            "192.168.0.0/16"
+          ]
+        },
+        "providers": {
+          "http": true,
+          "nets": [
+            "127.0.0.0/8",
+            "::1/128"
+          ]
+        }
+      },
+      "label": "Purposes allowed past the default (https to a public address only): http true = plain http allowed; nets = private networks it may reach. Link-local / metadata (169.254.x) is never reachable. recite: a speech service on the owner's own computer or LAN; providers: a model served on this computer (Ollama, http://127.0.0.1:11434)"
+    },
+    {
+      "name": "drop_on_host_change",
+      "type": "json",
+      "default": [
+        "authorization",
+        "x-site-key"
+      ],
+      "label": "Headers dropped when a redirect goes to another host (keys never follow a redirect away)"
+    },
+    {
+      "name": "direct_pattern",
+      "type": "string",
+      "default": "urlopen\\(|\\bhttpx\\.|(?<![\\w.-])requests\\.\\w+\\(",
+      "label": "A line that opens a URL itself (the ratchet's grep)"
+    },
+    {
+      "name": "direct_files",
+      "type": "json",
+      "default": [
+        "server.py",
+        "selfcheck_push.py",
+        "tools/package_standalone.py",
+        "tools/phone_bar.py",
+        "tools/showcase/about_shots.py"
+      ],
+      "label": "Files allowed to open a URL themselves - each only talks to this portal's own local server (launcher, tests, tools)"
+    },
+    {
+      "name": "direct_ceiling",
+      "type": "number",
+      "default": 10,
+      "label": "Lines in those files that open a URL themselves - only falls"
+    },
+    {
+      "name": "words",
+      "type": "json",
+      "default": {
+        "scheme": "Refused to open {url}: only https addresses may be fetched ({scheme} is not allowed here).",
+        "host": "Refused to open an address on {host}: it is not one this call may reach.",
+        "address": "Refused to open {ip}: a private, local or cloud-metadata address is never fetched from the server.",
+        "ratchet_file": "{file} opens a URL itself ({n} line(s)) - go through core/egress.fetch, or list the file in chip security.egress direct_files if it only talks to its own local server.",
+        "ratchet_ceiling": "{n} lines open a URL outside core/egress.py; the ceiling is {ceiling} (chip security.egress direct_ceiling only falls)."
+      },
+      "label": "What a refusal says"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "exceptions": "$exceptions",
+      "drop_on_host_change": "$drop_on_host_change",
+      "direct_pattern": "$direct_pattern",
+      "direct_files": "$direct_files",
+      "direct_ceiling": "$direct_ceiling",
+      "words": "$words"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-11-18 gap audit C1-17 (server-side request forgery): every outbound fetch - webhooks, AI providers, recite, push, SSO, geo download, funds feed - goes through core/egress.fetch, which refuses non-https, private / loopback / link-local / metadata addresses (checked on the IP actually dialled, again on each redirect) and hosts outside a caller's allow-list. exceptions lets a named purpose use http or a private network (recite: a service on the owner's own computer). direct_files + direct_ceiling: the grep ratchet - only those files may open a URL themselves, and their count only falls. Guard: python -m core.egress.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "exceptions": {
+          "recite": {
+            "http": true,
+            "nets": [
+              "127.0.0.0/8",
+              "::1/128",
+              "10.0.0.0/8",
+              "172.16.0.0/12",
+              "192.168.0.0/16"
+            ]
+          },
+          "providers": {
+            "http": true,
+            "nets": [
+              "127.0.0.0/8",
+              "::1/128"
+            ]
+          }
+        },
+        "drop_on_host_change": [
+          "authorization",
+          "x-site-key"
+        ],
+        "direct_pattern": "urlopen\\(|\\bhttpx\\.|(?<![\\w.-])requests\\.\\w+\\(",
+        "direct_files": [
+          "server.py",
+          "selfcheck_push.py",
+          "tools/package_standalone.py",
+          "tools/phone_bar.py",
+          "tools/showcase/about_shots.py"
+        ],
+        "direct_ceiling": 10,
+        "words": {
+          "scheme": "Refused to open {url}: only https addresses may be fetched ({scheme} is not allowed here).",
+          "host": "Refused to open an address on {host}: it is not one this call may reach.",
+          "address": "Refused to open {ip}: a private, local or cloud-metadata address is never fetched from the server.",
+          "ratchet_file": "{file} opens a URL itself ({n} line(s)) - go through core/egress.fetch, or list the file in chip security.egress direct_files if it only talks to its own local server.",
+          "ratchet_ceiling": "{n} lines open a URL outside core/egress.py; the ceiling is {ceiling} (chip security.egress direct_ceiling only falls)."
+        }
+      }
+    }
+  ]
+}

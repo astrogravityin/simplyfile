@@ -24,7 +24,7 @@ import app  # noqa: E402
 import itr_json  # noqa: E402
 
 adm = TestClient(app.app)
-adm.post("/api/auth/first-account", json={"email": "admin@valuestream.test", "password": "Admin-pass-123"})
+adm.post("/api/auth/first-account", json={"setup_code": app.auth.setup_code(), "email": "admin@valuestream.test", "password": "Admin-pass-123"})
 PAPERS = OUT / "A Firm papers - placeholders"
 
 

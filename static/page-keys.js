@@ -665,7 +665,7 @@ async function modelCheck(host) {
       ${!p.error && !p.new.length && !p.gone.length ? `<p class="small muted">${esc(w('mc_same'))}</p>` : ''}
       ${p.new.map((m) => `<div class="mc-row" data-p="${esc(p.provider)}" data-id="${esc(m.id)}" data-kind="${esc(m.kind)}">
         <span class="tag ok">${esc(w('mc_new'))}</span><b>${esc(m.id)}</b><span class="muted small">${esc(w(`mc_kind_${m.kind}`))}</span>
-        <input data-f="label" value="${esc(m.label)}"/>${priceFields(m)}<select data-f="quality" title="${esc(w('mc_quality'))}">${qual}</select>
+        <input data-f="label" value="${esc(m.label)}" aria-label="${esc(w('label_label'))}"/>${priceFields(m)}<select data-f="quality" title="${esc(w('mc_quality'))}">${qual}</select>
         <input data-f="good_for" placeholder="${esc(w('mc_good_for'))}"/>
         <button type="button" class="small primary" data-add>${icon('plus', 12)} ${w('mc_add')}</button></div>`).join('')}
       ${p.gone.map((m) => `<div class="mc-row" data-id="${esc(m.id)}">

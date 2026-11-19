@@ -44,6 +44,15 @@ if [ "$(cd "$BASE" 2>/dev/null && pwd)" != "$HERE" ] && [ "$CMD" != unit ]; then
   exec bash "$BASE/deploy/deploy.sh" --target "$TARGET" "$CMD" "$@"
 fi
 
+# 2026-11-18 gap audit C1-14: a test target (chip deploy.separation) never shares prod's data folder, database, mail, sign-in
+# key, seal key or credentials, nor holds a live payment key - checked before anything is built, while still root (it reads
+# both targets' settings); the run handed to the service user and the pulled copy do not ask again (a checkout from before
+# this check has no separation.py: the pulled copy asks).
+if { [ "$CMD" = deploy ] || [ "$CMD" = init ]; } && [ -z "${DEPLOY_SEPARATE_OK:-}" ] && [ -f "$BASE/deploy/separation.py" ]; then
+  "$SYS_PY" "$BASE/deploy/separation.py" "$BASE" "$TARGET" || die "$TARGET is not kept apart (above) - nothing was built or switched"
+  export DEPLOY_SEPARATE_OK=1
+fi
+
 windows() { case "$(uname -s)" in MINGW*|MSYS*|CYGWIN*) return 0;; esac; return 1; }
 
 # Run as the service user, never root: a root shell (today's ssh login) hands itself to that user once it exists
@@ -69,6 +78,7 @@ set_link() {   # $1 link, $2 target folder (absolute)
   fi
 }
 live_sha() { [ -e "$CUR" ] && basename "$(readlink -f "$CUR")" || true; }
+lockflags() { case "$1" in *.lock) echo "--require-hashes --no-deps";; esac; }
 vpy() { if [ -x "$1/bin/python" ]; then echo "$1/bin/python"; else echo "$1/Scripts/python.exe"; fi; }
 fill() { local s=$1; s=${s//\{python\}/$2}; s=${s//\{port\}/$3}; s=${s//\{service\}/$DEPLOY_SERVICE}; s=${s//\{graceful_stop_s\}/${DEPLOY_GRACEFUL_STOP_S:-3}}; printf '%s' "$s"; }
 
@@ -118,9 +128,10 @@ build() {   # $1 sha
     mkdir -p "$BASE/venvs"
     # shellcheck disable=SC2086
     "$SYS_PY" -m venv $DEPLOY_VENV_ARGS "$venv"
-    "$(vpy "$venv")" -m pip install -q -r "$rel/$req" || die "pip install failed for $sha - the live release keeps serving"
+    # a lock (tools/lock_deps.py) is installed exactly: every file checked by its hash, nothing beyond it (2026-11-18 gap audit C1-18)
+    "$(vpy "$venv")" -m pip install -q $(lockflags "$req") -r "$rel/$req" || die "pip install failed for $sha - the live release keeps serving"
     for f2 in $extra; do   # what the selfcheck itself needs (chip deploy.settings check_requirements)
-      "$(vpy "$venv")" -m pip install -q -r "$rel/$f2" || die "pip install of $f2 failed for $sha - the live release keeps serving"
+      "$(vpy "$venv")" -m pip install -q $(lockflags "$f2") -r "$rel/$f2" || die "pip install of $f2 failed for $sha - the live release keeps serving"
     done
     touch "$venv/.ready"
   else

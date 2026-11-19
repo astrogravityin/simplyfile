@@ -145,7 +145,7 @@ export async function howtoPage(host) {
             <input data-i="${i}" data-f="url" value="${esc(l.url || '')}" placeholder="https://…"/>
           </div>
           <div class="kind"><span data-typeicon="${i}">${typeIcon(l.type)}</span>
-            <select data-i="${i}" data-f="type">
+            <select data-i="${i}" data-f="type" aria-label="${esc(w('type_label'))}">
               <option value="" ${l.type ? '' : 'selected'}>${w('type_auto')}</option>
               ${TYPES().map((t) => `<option ${l.type === t ? 'selected' : ''}>${t}</option>`).join('')}</select></div>
           <button class="small danger icon" data-drop="${i}" type="button" title="${esc(w('remove'))}">${icon('close', 15)}</button>

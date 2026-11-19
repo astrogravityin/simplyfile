@@ -189,8 +189,15 @@ def build(to: str, subject: str, text: str, c: dict | None = None, root: Path | 
     return msg
 
 
-def send(to: str, subject: str, text: str) -> None:
-    """One message: plain text (unchanged) + the site's branded HTML (build())."""
+def send_once(to: str, subject: str, text: str, once: str) -> bool:
+    """send(), but a message already sent to this address with this key (`once`, the event's own key) is never sent again
+    (core/writes.send_once, 2026-11-18 week class 30). False = it went before, nothing sent."""
+    from core import writes  # noqa: PLC0415 - writes reads chips; mailer is imported early
+    return writes.send_once("mail", f"{to}|{once}", lambda: send(to, subject, text))
+
+
+def send(to: str, subject: str, text: str, picture: bytes | None = None) -> None:
+    """One message: plain text (unchanged) + the site's branded HTML (build()); `picture` = a PNG shown above the words."""
     c = config()
     if not configured():
         raise RuntimeError(engine.say("mail.errors", "not_configured"))

@@ -60,7 +60,7 @@ from pathlib import Path
 
 from fastapi import APIRouter, Body, Depends, HTTPException, Request
 
-from core import auth, engine, lists, mailer, notify, store
+from core import auth, engine, lists, mailer, notify, store, writes
 
 
 def say(key: str, **values) -> str:
@@ -697,8 +697,11 @@ def set_group(user_id: str, body: dict = Body(...), me: dict = Depends(auth.owne
         save(d)
         rows = store.users()
         u = next(x for x in rows if x["id"] == user_id)
+        before = u.get("role")
         u["role"] = role_for(gid, d)                    # an owner picked into a group stops being an owner
         store.write("users", rows)
+    if before != u["role"]:
+        _role_event(me, user_id)
     return {"user": store.public_user(u), "group": gid}
 
 
@@ -837,7 +840,11 @@ def list_users(request: Request, u: dict = Depends(screen("access"))):
 @router.post("/api/users")
 def create_user(request: Request, body: dict = Body(...), me: dict = Depends(screen("access"))):
     """With a password, the owner hands it over themselves. Leave it blank and the portal emails an
-    invitation instead, so nobody has to send a password through a chat window."""
+    invitation instead, so nobody has to send a password through a chat window. One invite per Idempotency-Key (core/writes)."""
+    return writes.once(request, me["id"], body, lambda: _create_user(request, body, me))
+
+
+def _create_user(request: Request, body: dict, me: dict) -> dict:
     email = str(body.get("email") or "").strip().lower()      # W1.3 shape walk: a number here was a 500
     username = str(body.get("username") or "").strip().lower()
     name = str(body.get("display_name") or body.get("name") or email.split("@")[0]).strip()
@@ -867,6 +874,8 @@ def create_user(request: Request, body: dict = Body(...), me: dict = Depends(scr
                            name, role, verified=not invite, username=username)
     except ValueError as e:
         raise HTTPException(400, str(e))
+    if role == "owner":
+        _role_event(me, u["id"])                      # a new owner is the change that matters most
     if gid and gid != CATCH_ALL:
         with store._LOCK:                             # noqa: SLF001
             d = data()
@@ -899,9 +908,18 @@ def set_role(user_id: str, body: dict = Body(...), me: dict = Depends(auth.owner
             raise HTTPException(404, say("no_account"))
         if u["id"] == me["id"] and role != "owner":
             raise HTTPException(400, say("no_self_demote"))
+        before = u.get("role")
         u["role"] = role
         store.write("users", rows)
+    if before != role:
+        _role_event(me, user_id)
     return {"user": store.public_user(u)}
+
+
+def _role_event(me: dict, user_id: str) -> None:
+    """C1-19: an owner/role change is a security event (ids only) - the health check tells the owners once."""
+    from core import ledger  # noqa: PLC0415 - ledger imports access
+    ledger.security("role", me["id"], user_id)
 
 
 @router.put("/api/core/access/people/{user_id}/block")

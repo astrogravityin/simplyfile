@@ -133,11 +133,27 @@ def rate_ok(ip: str, per_minute: int | None = None, bucket: dict | None = None) 
     return len(hits) <= (limits()["auth_per_minute"] if per_minute is None else per_minute)
 
 
+def _wait(key: str, after: float, window: float) -> int:
+    fails = _recent(_FAILS, key, window)
+    return 0 if len(fails) < after else int(window - (time.time() - fails[0])) + 1
+
+
 def locked_out(identity: str) -> int:
     """Seconds this account must wait, 0 when it may try now."""
     lim = limits()
-    fails = _recent(_FAILS, (identity or "").strip().lower(), lim["lock_for_seconds"])
-    return 0 if len(fails) < lim["lock_after"] else int(lim["lock_for_seconds"] - (time.time() - fails[0])) + 1
+    return _wait((identity or "").strip().lower(), lim["lock_after"], lim["lock_for_seconds"])
+
+
+#: 2026-11-18 gap audit C1-20 (password spray): one address trying one password on many accounts never trips a per-account
+#: lock. Its wrong passwords across ALL accounts are counted under this key ('@' first: no user name or email starts with it,
+#: so clear_fails of a real sign-in never resets it) - chip auth.limits ip_fail_after / ip_fail_window_seconds.
+def _ip_key(ip: str) -> str:
+    return f"@ip|{ip}"
+
+
+def spray_wait(ip: str) -> int:
+    lim = limits()
+    return _wait(_ip_key(ip), lim["ip_fail_after"], lim["ip_fail_window_seconds"])
 
 
 def note_fail(identity: str) -> None:
@@ -286,9 +302,11 @@ def bootstrap(request: Request):
     s = settings()
     c = codes()
     first = not store.users()
+    if first:
+        setup_code()                        # made and printed on the server the first time the empty portal is opened
     # 2026-10-01 assessment: the owner's address went to every anonymous visitor - only the first-run screen needs it
     out = {"needs_first_account": first, "user": store.public_user(u) if u else None,
-           "reserved_owner": OWNER_EMAIL if first else "", "product_name": s["product_name"],
+           "reserved_owner": bool(OWNER_EMAIL) and first, "product_name": s["product_name"],   # 2026-11-18: yes/no, never the address
            "portal_url": s["portal_url"], "base": BASE,
            "can_email": mailer.configured(),
            "no_mail_policy": engine.run("auth.no_mail_policy"),
@@ -309,13 +327,20 @@ def signin(request: Request, response: Response, body: dict = Body(...)):
     identity = _norm(body.get("identity") or body.get("email"))
     # 2026-10-02 security test: 8 wrong passwords from ANYONE locked the owner out for 15 minutes, again and again. Wrong
     # tries now count per account AND address - a stranger locks out only their own tries
-    tries = f"{identity}|{client_ip(request)}"
+    ip = client_ip(request)
+    tries = f"{identity}|{ip}"
     wait = locked_out(tries)
     if wait:
         raise fail(429, "locked", minutes=max(1, wait // 60))
+    wait = spray_wait(ip)
+    if wait:
+        raise fail(429, "spray", minutes=max(1, wait // 60))
     u = store.find_user(identity)
     if not u or not store.check_password(body.get("password", ""), u.get("password", "")):
         note_fail(tries)
+        _recent(_FAILS, _ip_key(ip), limits()["ip_fail_window_seconds"]).append(time.time())
+        from core import ledger  # noqa: PLC0415 - ledger imports auth
+        ledger.security("signin_fail", "", u["id"] if u else "", ip)   # C1-19: ids and the cut network only
         raise fail(401, "wrong_password")
     clear_fails(identity)
     store.rehash(u["id"], body.get("password", ""))   # 2026-11-12: an older, weaker hash is re-made now (chip auth.limits hash_rounds)
@@ -324,19 +349,60 @@ def signin(request: Request, response: Response, body: dict = Body(...)):
     return _sign_in(response, u)
 
 
-@router.post("/api/auth/first-account")
-def first_account(response: Response, body: dict = Body(...)):
-    """Only ever works once: the first person to open the portal becomes its owner.
-    With `PORTAL_OWNER_EMAIL` set that seat is RESERVED — nobody else can take it, however early."""
+SETUP_FILE = "setup_code.txt"   # in the data folder, beside the store - the operator reads it on the server
+
+
+def setup_code() -> str:
+    """The one-time code that proves whoever claims the empty portal can see its server (2026-11-18, gap audit C1-9:
+    the first caller became owner). Made once, printed to the service log, kept in the data folder until the seat is
+    taken, then deleted."""
+    f = store.DATA / SETUP_FILE
+    if f.exists():
+        return f.read_text(encoding="utf-8").strip()
+    code = "".join(secrets.choice("0123456789") for _ in range(int(codes()["setup_digits"])))
+    f.parent.mkdir(parents=True, exist_ok=True)
+    f.write_text(code, encoding="utf-8")
+    print(f"[auth] setup code for the first account: {code} (also in {f})", flush=True)
+    return code
+
+
+@router.post("/api/auth/setup-code")
+def send_setup_code(request: Request):
+    """Mails the setup code to the reserved owner address - and says the same thing whoever asks."""
     if store.users():
         raise fail(409, "owner_exists")
+    if not (OWNER_EMAIL and mailer.configured()):
+        raise fail(400, "setup_code_cannot_mail")
+    if locked_out(f"setup|{client_ip(request)}"):
+        raise fail(429, "rate_limited")
+    note_fail(f"setup|{client_ip(request)}")       # each send counts, so the reserved inbox is never flooded
+    product = settings()["product_name"]
+    _mail("setup", OWNER_EMAIL, msg("setup_code_mail_subject", product=product), msg("setup_code_mail_text", code=setup_code()))
+    return {"message": msg("code_sent")}
+
+
+@router.post("/api/auth/first-account")
+def first_account(request: Request, response: Response, body: dict = Body(...)):
+    """Only ever works once, and only with the setup code (server log / data folder, or mailed to the reserved address).
+    With `PORTAL_OWNER_EMAIL` set that seat is RESERVED — nobody else can take it. No answer ever names the address."""
+    if store.users():
+        raise fail(409, "owner_exists")
+    tries = f"setup|{client_ip(request)}"
+    if locked_out(tries):
+        raise fail(429, "rate_limited")
+    if not secrets.compare_digest(str(body.get("setup_code") or "").strip(), setup_code()):
+        note_fail(tries)
+        raise fail(403, "setup_code_wrong", "setup_code")
     email, username = _norm(body.get("email")), _norm(body.get("username"))
     if OWNER_EMAIL and email != OWNER_EMAIL:
-        raise fail(403, "owner_reserved", email=OWNER_EMAIL)
+        raise fail(403, "owner_reserved", "email")
     name = str(body.get("display_name") or body.get("name") or email.split("@")[0]).strip()
     check_fields(email=email, name=name, username=username or None,
                  password=body.get("password", ""), confirm=body.get("confirm"))
     u = store.add_user(email, body.get("password", ""), name, role="owner", username=username)
+    (store.DATA / SETUP_FILE).unlink(missing_ok=True)
+    from core import ledger  # noqa: PLC0415 - ledger imports auth
+    ledger.security("first_account", u["id"], u["id"], client_ip(request))
     return _sign_in(response, u)
 
 

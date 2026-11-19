@@ -294,6 +294,24 @@
       "type": "text",
       "default": "Every {min} minutes",
       "label": "every tick"
+    },
+    {
+      "name": "name_ag_security_watch",
+      "type": "text",
+      "default": "Weekly security watch",
+      "label": "name_ag_security_watch"
+    },
+    {
+      "name": "about_ag_security_watch",
+      "type": "text",
+      "default": "Every Monday it checks every package {product} runs on against the public vulnerability list (osv.dev) and re-runs its own security checks - secrets, route guards, the content policy, outbound fetches, Python, the restore drill. Each high or critical finding stays on your warning bar until it is fixed.",
+      "label": "about_ag_security_watch"
+    },
+    {
+      "name": "act_securitywatch_run",
+      "type": "text",
+      "default": "Check packages and security walls",
+      "label": "act_securitywatch_run"
     }
   ],
   "expr": {
@@ -346,7 +364,10 @@
       "out_shown": "$out_shown",
       "out_would_show": "$out_would_show",
       "every_month": "$every_month",
-      "every_tick": "$every_tick"
+      "every_tick": "$every_tick",
+      "name_ag_security_watch": "$name_ag_security_watch",
+      "about_ag_security_watch": "$about_ag_security_watch",
+      "act_securitywatch_run": "$act_securitywatch_run"
     }
   },
   "returns": "record",
@@ -404,7 +425,10 @@
         "out_shown": "Problems on the bar",
         "out_would_show": "Problems it would show",
         "every_month": "Every month on day {day} at {at}",
-        "every_tick": "Every {min} minutes"
+        "every_tick": "Every {min} minutes",
+        "name_ag_security_watch": "Weekly security watch",
+        "about_ag_security_watch": "Every Monday it checks every package {product} runs on against the public vulnerability list (osv.dev) and re-runs its own security checks - secrets, route guards, the content policy, outbound fetches, Python, the restore drill. Each high or critical finding stays on your warning bar until it is fixed.",
+        "act_securitywatch_run": "Check packages and security walls"
       }
     }
   ]

@@ -3,7 +3,7 @@ before that, so the research screens stayed hidden until a manual refresh. Sendi
 the portal so the menu is drawn again. Run from a portal's root (re-runnable): python tools/fix_solo_reload.py"""
 from pathlib import Path
 
-j = Path("static/page-firm.js")
+j = Path(__file__).resolve().parent.parent / "static" / "page-firm.js"   # the portal root, not the cwd (week class 41)
 s = j.read_text(encoding="utf-8")
 a = "        toast(r.say, 'ok'); firmPage(host);\n"
 b = ("        toast(r.say, 'ok');\n"

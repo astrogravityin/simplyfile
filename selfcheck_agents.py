@@ -67,7 +67,7 @@ def walk(app, c, co) -> None:
         assert not (store.read(health.BAR, {}) or {}).get("problems"), "a dry run changed the owners' bar"
         assert c.get("/api/bootstrap").json().get("health") is None, "the bar shows before anyone approved"
         if run.get("waiting"):
-            ok = c.post("/api/core/agents/ag_health/run", json={"approve": True, "ref": run["ref"]})
+            ok = c.post("/api/core/agents/ag_health/run", json={"approve": True, "ref": run["ref"], "seal": run["seal"]})
             assert ok.status_code == 200, ok.text[:300]
         else:   # a portal whose chip lets the health check approve itself: run it for real the same way a trigger would
             from core import agents

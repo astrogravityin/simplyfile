@@ -44,6 +44,7 @@ from core import about  # noqa: E402 - 2026-11-09 About us: who we are + the liv
 from core import access, auth, bell, builder, demo, doctor, engine, events, find, geo, guide, health, howto, issues, jobs, ledger, lists, mcp, mcp_oauth, memwatch, menus, rules, storage, store, words
 from core import artifacts  # noqa: E402,F401 - 2026-11-05 ValueStream CC Clean-up: artifacts_scan / artifacts_delete on the MCP door
 from core import agents  # noqa: E402 - 2026-10-24 Agents (the SteadyMove / AstroStage runtime)
+from core import securitywatch  # noqa: E402,F401 - 2026-11-19 weekly security watch: osv.dev + our own walls (agent ag_security_watch)
 
 screen = access.screen
 signed_in, owner, current_user = auth.signed_in, auth.owner, auth.current_user

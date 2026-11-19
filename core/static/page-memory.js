@@ -3,7 +3,7 @@
 // moved memory, and a verdict in words. Every judgement on this page comes from a `memory.*` chip on the
 // server; the page only draws what it is given. Refresh is the shell's (top right); this page adds
 // Auto (the server says when it took a new reading - push stream topic memory, no page timer) and Clear moves.
-import { api, esc, toast, pageHead, confirmDialog, t, loadWords, clockAt, onEvent } from './ui.js';
+import { api, esc, toast, pageHead, confirmDialog, t, loadWords, clockAt, onEvent, paintIfChanged } from './ui.js';
 import { icon } from './icons.js';
 
 const gb = (mb) => (mb >= 1024 ? `${(mb / 1024).toFixed(1)} GB` : `${Math.round(mb || 0)} MB`);
@@ -75,7 +75,7 @@ export async function memoryPage(host) {
   const spike = d.knobs.spike_mb;
   const tile = (label, value, sub) => `<div class="stat"><span>${label}</span><b>${value}</b><span title="${esc(sub)}">${esc(sub)}</span></div>`;
 
-  host.innerHTML = `${pageHead(mw('title'), mw('lede'))}
+  paintIfChanged(host, `${pageHead(mw('title'), mw('lede'))}
     <div class="toolbar">
       <button type="button" class="small" id="mw-auto">${icon(auto ? 'pulse' : 'play', 14)} ${mw(auto ? 'auto_on' : 'auto_off')}</button>
       <button type="button" class="small" id="mw-clear" data-tip="${esc(mw('clear_tip'))}">${icon('trash', 14)} ${mw('clear_moves')}</button>
@@ -125,7 +125,7 @@ export async function memoryPage(host) {
         ${table([mw('col_when'), mw('col_request'), mw('col_before_after'), mw('col_move'), mw('col_took')], d.events.map((e) => ({ cells: [hhmm(e.t), `${e.method} ${e.path}`, `${e.before} → ${e.after} MB`, signed(e.delta), `${e.ms} ms`], big: e.delta })),
           { hot: (r) => r.big >= spike, mono: [1], empty: mw('no_moves') })}
         <p class="small muted">${mw('moves_note')}</p></div>
-    </div>`;
+    </div>`);   // a pushed reading that changed nothing repaints nothing (week class 47)
 
   host.querySelector('#mw-auto').onclick = () => { auto = !auto; memoryPage(host).catch(() => {}); };
   host.querySelector('#mw-clear').onclick = () => confirmDialog(mw('clear_title'),

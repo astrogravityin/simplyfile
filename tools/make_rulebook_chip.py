@@ -4,6 +4,7 @@ come from the chips themselves (tools/rulebook.py reads them), never from here. 
 Hand-edit chips/rulebook.sections.json afterwards - this is only how it was first written."""
 import json
 from pathlib import Path
+_ROOT = Path(__file__).resolve().parents[1]   # repo root: paths never depend on the folder it is started from
 
 AREAS = [
     {"id": "form", "label": "Which return, and by when"},
@@ -122,5 +123,5 @@ chip = {"chip_id": "rulebook.sections", "kind": "accessor", "set": "rulebook", "
         "expr": {"vop": "record", "fields": {"areas": "$areas", "rules": "$rules"}}, "returns": "record", "version": 1, "status": "published",
         "description_nl": "2026-10-06 owner: the rule book a CA reviews - for each rule chip the section of the Act it follows, what it does in plain words and what it does not cover yet. Figures, worked examples and the chip's own wording are read from the rule chips by tools/rulebook.py, so the book cannot drift from the engine.",
         "test_cases": [{"args": {}, "expect_value": {"areas": AREAS, "rules": RULES}}]}
-Path("chips/rulebook.sections.json").write_text(json.dumps(chip, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+(_ROOT / "chips/rulebook.sections.json").write_text(json.dumps(chip, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 print("wrote rulebook.sections:", len(RULES), "rules in", len(AREAS), "areas")

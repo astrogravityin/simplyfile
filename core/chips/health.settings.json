@@ -57,6 +57,42 @@
         "cut_short"
       ],
       "label": "Agent run states (agents.settings run_states keys) that put an agent on the warning bar"
+    },
+    {
+      "name": "drill_max_days",
+      "type": "number",
+      "default": 35,
+      "label": "Warn when the last good restore drill is older than this many days"
+    },
+    {
+      "name": "drill_record",
+      "type": "text",
+      "default": "restore_drill",
+      "label": "Data-folder file (no .json) where tools/restore_drill.py writes its last result"
+    },
+    {
+      "name": "drill_smoke_path",
+      "type": "text",
+      "default": "/api/bootstrap",
+      "label": "Address the restored copy must answer 200 on (the api smoke)"
+    },
+    {
+      "name": "drill_smoke_timeout_s",
+      "type": "number",
+      "default": 300,
+      "label": "Seconds the restored copy's api smoke may take"
+    },
+    {
+      "name": "drill_backup_glob",
+      "type": "text",
+      "default": "*.tar.gz",
+      "label": "Which files in the backups folder are backups (the newest is drilled)"
+    },
+    {
+      "name": "stale_hours",
+      "type": "number",
+      "default": 48,
+      "label": "The warning bar's answer is older than this many hours (the daily check stopped): owners are told the bar may be out of date"
     }
   ],
   "expr": {
@@ -69,13 +105,19 @@
       "probe_file": "$probe_file",
       "db_probe": "$db_probe",
       "reason_chars": "$reason_chars",
-      "alert_states": "$alert_states"
+      "alert_states": "$alert_states",
+      "drill_max_days": "$drill_max_days",
+      "drill_record": "$drill_record",
+      "drill_smoke_path": "$drill_smoke_path",
+      "drill_smoke_timeout_s": "$drill_smoke_timeout_s",
+      "drill_backup_glob": "$drill_backup_glob",
+      "stale_hours": "$stale_hours"
     }
   },
   "returns": "record",
-  "version": 2,
+  "version": 3,
   "status": "published",
-  "description_nl": "2026-10-23: the numbers of core/health.py (Daily health check agent).",
+  "description_nl": "2026-10-23: the numbers of core/health.py (Daily health check agent). 2026-11-18 gap audit C1-13: the monthly restore drill (tools/restore_drill.py) and how old its last good run may be.",
   "test_cases": [
     {
       "args": {},
@@ -90,7 +132,13 @@
         ],
         "reason_chars": 200,
         "db_probe": "SELECT 1 AS ok",
-        "probe_file": ".health"
+        "probe_file": ".health",
+        "drill_max_days": 35,
+        "drill_record": "restore_drill",
+        "drill_smoke_path": "/api/bootstrap",
+        "drill_smoke_timeout_s": 300,
+        "drill_backup_glob": "*.tar.gz",
+        "stale_hours": 48
       }
     }
   ]

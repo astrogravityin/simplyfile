@@ -168,6 +168,8 @@ def approve(user: dict, q: dict, allow: bool) -> str:
         db().execute("INSERT INTO grants(id, user_id, client_id, client_name, code_hash, challenge, redirect_uri, made, code_exp) VALUES(?,?,?,?,?,?,?,?,?)",
                      (store.new_id(), user["id"], req["client_id"], req["client_name"], _hash(code), req["challenge"], req["redirect_uri"], now,
                       now + float(cfg()["code_minutes"]) * 60))
+    from core import ledger  # noqa: PLC0415 - ledger imports access
+    ledger.security("mcp_key", user["id"], req["client_id"])          # an app allowed in is a new key too (C1-19)
     return _back(req["redirect_uri"], code=code, state=req["state"])
 
 
@@ -220,7 +222,7 @@ def bearer_grant(raw: str):
 
 
 def connections(user: dict) -> list[dict]:
-    rows = db().execute("SELECT * FROM grants WHERE user_id=? AND connected_at>0 AND revoked_at=0 ORDER BY connected_at DESC LIMIT 50", (user["id"],))
+    rows = db().execute("SELECT * FROM grants WHERE user_id=? AND connected_at>0 AND revoked_at=0 ORDER BY connected_at DESC, id LIMIT 50", (user["id"],))
     return [{"id": g["id"], "client": g["client_name"], "connected_at": g["connected_at"], "last_used": g["last_used"], "calls": g["calls"]} for g in rows]
 
 

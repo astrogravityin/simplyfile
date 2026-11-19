@@ -178,7 +178,7 @@ async function detail(host) {
     ${p.items.length ? `<div class="scroll" style="max-height:none"><table>
       <thead><tr><th style="width:34px"><input type="checkbox" id="st-all" ${s.can_delete ? '' : 'disabled'} aria-label="${esc(w('select_all'))}"/></th>
         <th>${w('col_item')}</th><th>${w('col_files')}</th><th>${w('col_size')}</th><th>${w('col_created')}</th><th>${w('col_age')}</th></tr></thead>
-      <tbody>${p.items.map((it) => `<tr><td><input type="checkbox" data-item="${esc(it.id)}" ${s.can_delete ? '' : 'disabled'}/></td>
+      <tbody>${p.items.map((it) => `<tr><td><input type="checkbox" data-item="${esc(it.id)}" ${s.can_delete ? '' : 'disabled'} aria-label="${esc(it.title)}"/></td>
         <td>${esc(it.title)}</td><td>${it.files}</td><td>${size(it.bytes)}</td><td class="small">${day(it.created_at)}</td>
         <td class="small muted">${age(it.created_at)}</td></tr>`).join('')}</tbody></table></div>
       <div class="row" style="margin-top:12px">

@@ -4,8 +4,9 @@
 import { icon, spinner } from './icons.js';
 import { copyText as copyRaw } from './copy.js';
 import { onEvent } from './events.js';
+import { paintIfChanged } from './paint.js';
 
-export { onEvent };
+export { onEvent, paintIfChanged };
 
 // Where the portal lives, taken from this module's own URL (…/core-static/ui.js) — so it works at the
 // site root, at /tv, or anywhere else, with nothing to configure.
@@ -740,7 +741,7 @@ export function watchJob(out, url, { onDone, working, stopId = '' }) {
     if (!job) return;
     followJob(url, working, job, stopIt);
     if (!out || !out.isConnected) { off(); return; }
-    out.innerHTML = jobPanel(job, { working, stopId });
+    paintIfChanged(out, jobPanel(job, { working, stopId }));   // a push that changed nothing repaints nothing (week class 47)
     const stop = out.querySelector('[data-stop]');
     if (stop) stop.onclick = stopIt;
     if (job.status === 'running') return;

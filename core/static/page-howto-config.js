@@ -58,7 +58,7 @@ function detail(host) {
           <span class="t-${esc(l.type || 'link')}">${icon(KIND[l.type] || 'link', 18)}</span>
           <div class="stack2"><input data-f="label" data-i="${i}" value="${esc(l.label)}" placeholder="${esc(w('label_placeholder'))}"/>
             <input data-f="url" data-i="${i}" value="${esc(l.url)}" placeholder="https://youtu.be/…"/></div>
-          <div class="kind"><select data-f="type" data-i="${i}">${['auto', ...TYPES].map((t) =>
+          <div class="kind"><select data-f="type" data-i="${i}" aria-label="${esc(w('type_label'))}">${['auto', ...TYPES].map((t) =>
             `<option ${(l.type || 'auto') === t ? 'selected' : ''}>${t}</option>`).join('')}</select>
             <label class="check"><input type="checkbox" data-f="active" data-i="${i}" ${l.active === false ? '' : 'checked'}/> ${w('live')}</label></div>
           <button class="small danger icon" type="button" data-drop="${i}" title="${esc(w('remove'))}">${icon('close', 15)}</button>

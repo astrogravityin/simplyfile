@@ -1,0 +1,53 @@
+{
+  "chip_id": "security.over_limit",
+  "kind": "predicate",
+  "set": "security",
+  "audience": "admin",
+  "label": "Has a count reached its limit",
+  "aliases": [
+    "over limit"
+  ],
+  "params": [
+    {
+      "name": "count",
+      "type": "number",
+      "default": 0,
+      "label": "How many"
+    },
+    {
+      "name": "limit",
+      "type": "number",
+      "default": 1,
+      "label": "Tell at this many"
+    }
+  ],
+  "expr": {
+    "op": "ge",
+    "left": "$count",
+    "right": "$limit"
+  },
+  "returns": "boolean",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-11-18 gap audit C1-19: a failed sign-in or read count against chip security.alerts.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": false
+    },
+    {
+      "args": {
+        "count": 20,
+        "limit": 20
+      },
+      "expect_value": true
+    },
+    {
+      "args": {
+        "count": 19,
+        "limit": 20
+      },
+      "expect_value": false
+    }
+  ]
+}

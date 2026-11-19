@@ -114,6 +114,126 @@
       "type": "text",
       "default": "not ready: database {db} does not answer ({why})",
       "label": "ready db"
+    },
+    {
+      "name": "probe_drill",
+      "type": "text",
+      "default": "Restore drill",
+      "label": "probe drill"
+    },
+    {
+      "name": "drill_ok",
+      "type": "text",
+      "default": "Last restore drill {at}: {backup} restored, {checked} files checked, the api answered.",
+      "label": "drill ok"
+    },
+    {
+      "name": "drill_old",
+      "type": "text",
+      "default": "The last good restore drill was {days} days ago ({at}) - the most allowed is {max} days. Check the drill's cron line.",
+      "label": "drill old"
+    },
+    {
+      "name": "drill_failed",
+      "type": "text",
+      "default": "The last restore drill failed ({at}): {why}",
+      "label": "drill failed"
+    },
+    {
+      "name": "drill_never",
+      "type": "text",
+      "default": "No restore drill has run on this server. Run tools/restore_drill.py once and add its monthly cron line (DEPLOY.md).",
+      "label": "drill never"
+    },
+    {
+      "name": "drill_not_here",
+      "type": "text",
+      "default": "No backups on this computer, so no restore drill.",
+      "label": "drill not here"
+    },
+    {
+      "name": "probe_security",
+      "type": "text",
+      "default": "Security events",
+      "label": "probe security"
+    },
+    {
+      "name": "security_ok",
+      "type": "text",
+      "default": "No security event to tell ({n} recorded in the last {hours} h).",
+      "label": "security ok"
+    },
+    {
+      "name": "sec_signin_fail",
+      "type": "text",
+      "default": "{n} failed sign-ins from {ip} within {minutes} minutes.",
+      "label": "sec signin fail"
+    },
+    {
+      "name": "sec_reads",
+      "type": "text",
+      "default": "{who} read {n} pages within {minutes} minutes.",
+      "label": "sec reads"
+    },
+    {
+      "name": "sec_mcp_key",
+      "type": "text",
+      "default": "A new AI key or app connection was made by {who} ({at}).",
+      "label": "sec mcp key"
+    },
+    {
+      "name": "sec_role",
+      "type": "text",
+      "default": "{target}'s role was changed by {who} ({at}).",
+      "label": "sec role"
+    },
+    {
+      "name": "sec_first_account",
+      "type": "text",
+      "default": "The first account (the owner) was taken by {target} ({at}).",
+      "label": "sec first account"
+    },
+    {
+      "name": "sec_shell",
+      "type": "text",
+      "default": "the server's shell",
+      "label": "sec shell"
+    },
+    {
+      "name": "drill_no_backup",
+      "type": "text",
+      "default": "No backup in {folder}.",
+      "label": "drill no backup"
+    },
+    {
+      "name": "drill_no_data",
+      "type": "text",
+      "default": "{backup} holds no data folder.",
+      "label": "drill no data"
+    },
+    {
+      "name": "drill_smoke_bad",
+      "type": "text",
+      "default": "The restored copy answered {got} on {path}.",
+      "label": "drill smoke bad"
+    },
+    {
+      "name": "probe_stale",
+      "type": "text",
+      "default": "Health check itself",
+      "label": "probe stale"
+    },
+    {
+      "name": "stale_say",
+      "type": "text",
+      "default": "has not run for {days} {days:day|days} - this bar may be out of date. Check that agent ag_health still runs",
+      "label": "stale say"
+    },
+    {
+      "name": "probe_watch",
+      "type": "text",
+      "default": "Security watch",
+      "label": "probe watch"
     }
   ],
   "expr": {
@@ -136,13 +256,33 @@
       "work_bad": "$work_bad",
       "ready_ok": "$ready_ok",
       "ready_disk": "$ready_disk",
-      "ready_db": "$ready_db"
+      "ready_db": "$ready_db",
+      "probe_drill": "$probe_drill",
+      "drill_ok": "$drill_ok",
+      "drill_old": "$drill_old",
+      "drill_failed": "$drill_failed",
+      "drill_never": "$drill_never",
+      "drill_not_here": "$drill_not_here",
+      "probe_security": "$probe_security",
+      "security_ok": "$security_ok",
+      "sec_signin_fail": "$sec_signin_fail",
+      "sec_reads": "$sec_reads",
+      "sec_mcp_key": "$sec_mcp_key",
+      "sec_role": "$sec_role",
+      "sec_first_account": "$sec_first_account",
+      "sec_shell": "$sec_shell",
+      "drill_no_backup": "$drill_no_backup",
+      "drill_no_data": "$drill_no_data",
+      "drill_smoke_bad": "$drill_smoke_bad",
+      "probe_stale": "$probe_stale",
+      "stale_say": "$stale_say",
+      "probe_watch": "$probe_watch"
     }
   },
   "returns": "record",
-  "version": 2,
+  "version": 3,
   "status": "published",
-  "description_nl": "2026-10-23: words of core/health.py; each probe's name is probe_<id>.",
+  "description_nl": "2026-10-23: words of core/health.py; each probe's name is probe_<id>. 2026-11-18 gap audit C1-13 (restore drill) and C1-19 (security events from the ledger).",
   "test_cases": [
     {
       "args": {},
@@ -164,7 +304,27 @@
         "ready_db": "not ready: database {db} does not answer ({why})",
         "ready_ok": "ok",
         "work_bad": "{names} - the last run did not finish; open Agents, read why and run it again",
-        "ready_disk": "not ready: the data folder cannot be written ({why})"
+        "ready_disk": "not ready: the data folder cannot be written ({why})",
+        "probe_drill": "Restore drill",
+        "drill_ok": "Last restore drill {at}: {backup} restored, {checked} files checked, the api answered.",
+        "drill_old": "The last good restore drill was {days} days ago ({at}) - the most allowed is {max} days. Check the drill's cron line.",
+        "drill_failed": "The last restore drill failed ({at}): {why}",
+        "drill_never": "No restore drill has run on this server. Run tools/restore_drill.py once and add its monthly cron line (DEPLOY.md).",
+        "drill_not_here": "No backups on this computer, so no restore drill.",
+        "probe_security": "Security events",
+        "security_ok": "No security event to tell ({n} recorded in the last {hours} h).",
+        "sec_signin_fail": "{n} failed sign-ins from {ip} within {minutes} minutes.",
+        "sec_reads": "{who} read {n} pages within {minutes} minutes.",
+        "sec_mcp_key": "A new AI key or app connection was made by {who} ({at}).",
+        "sec_role": "{target}'s role was changed by {who} ({at}).",
+        "sec_first_account": "The first account (the owner) was taken by {target} ({at}).",
+        "sec_shell": "the server's shell",
+        "drill_no_backup": "No backup in {folder}.",
+        "drill_no_data": "{backup} holds no data folder.",
+        "drill_smoke_bad": "The restored copy answered {got} on {path}.",
+        "probe_stale": "Health check itself",
+        "stale_say": "has not run for {days} {days:day|days} - this bar may be out of date. Check that agent ag_health still runs",
+        "probe_watch": "Security watch"
       }
     }
   ]

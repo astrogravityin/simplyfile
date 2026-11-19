@@ -21,7 +21,7 @@ from urllib.parse import urlencode
 
 from fastapi import HTTPException
 
-from core import engine, store
+from core import egress, engine, store
 
 _SLOT = re.compile(r"\{(\w+)(\|html)?\}")
 
@@ -106,7 +106,7 @@ def _grant(client_id: str, got: dict) -> dict:
 def _http(t: dict, path: str, data: bytes, ctype: str) -> dict:
     req = urllib.request.Request(str(t["base"]).rstrip("/") + path, data=data, method="POST", headers={"Content-Type": ctype, "Accept": "application/json"})
     try:
-        with urllib.request.urlopen(req, timeout=float(K()["timeout_s"])) as r:   # noqa: S310 - the address is the chip's
+        with egress.fetch(req, timeout=float(K()["timeout_s"]), purpose="push") as r:
             return json.loads(r.read().decode("utf-8") or "{}")
     except urllib.error.HTTPError as e:
         raise PushFailed(f"{e.code} {e.read().decode('utf-8', 'replace')[:200]}") from e
@@ -172,7 +172,7 @@ def _rpc(t: dict, key: str, method: str, params: dict | None = None) -> dict:
                                  headers={"Authorization": fill(t["key_format"], {"key": key}), "Content-Type": "application/json",
                                           "Accept": "application/json, text/event-stream"})
     try:
-        with urllib.request.urlopen(req, timeout=float(K()["timeout_s"])) as r:   # noqa: S310 - the address is the chip's
+        with egress.fetch(req, timeout=float(K()["timeout_s"]), purpose="push") as r:
             got = json.loads(r.read().decode("utf-8") or "{}")
     except urllib.error.HTTPError as e:
         raise PushFailed(f"{e.code} {e.read().decode('utf-8', 'replace')[:200]}") from e
@@ -321,6 +321,8 @@ if __name__ == "__main__":  # ponytail: one runnable self-check - a stand-in MCP
     store.DATA = Path(tempfile.mkdtemp())
     real = me.K()
     me.K = lambda: real | {"targets": [real["targets"][0] | {"base": f"http://127.0.0.1:{srv.server_port}"}]}  # noqa: E731
+    eg = egress.K()   # the stand-in door is on this machine: a test-only http + loopback exception (core/egress.py refuses it otherwise)
+    egress.K = lambda: eg | {"exceptions": eg["exceptions"] | {"push": {"http": True, "nets": ["127.0.0.0/8"]}}}  # noqa: E731
     store.write("issues", [{"id": "i1", "by": "k1", "name": "Kid", "title": "Download to Excel", "text": "Please add Excel.",
                             "status": "open", "context": "Results"}])
     t0 = me.targets()[0]

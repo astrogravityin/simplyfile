@@ -1,0 +1,142 @@
+{
+  "chip_id": "writes.settings",
+  "kind": "accessor",
+  "set": "writes",
+  "label": "Writes that happen once: idempotency keys, row versions, send-once, signed rows",
+  "aliases": [
+    "idempotency",
+    "conditional write",
+    "send once",
+    "signed text"
+  ],
+  "params": [
+    {
+      "name": "header",
+      "type": "text",
+      "default": "Idempotency-Key",
+      "label": "The request header a caller puts its idempotency key in"
+    },
+    {
+      "name": "body_key",
+      "type": "text",
+      "default": "idempotency_key",
+      "label": "...or this key in the JSON body"
+    },
+    {
+      "name": "key_max",
+      "type": "number",
+      "default": 120,
+      "label": "An idempotency key is cut to this many letters"
+    },
+    {
+      "name": "ttl_seconds",
+      "type": "number",
+      "default": 86400,
+      "label": "A repeated POST with the same key within this many seconds gets the first answer and makes no second effect"
+    },
+    {
+      "name": "answers_file",
+      "type": "text",
+      "default": "idempotency",
+      "label": "The data file (owner-only) that keeps each key's first answer while it lives"
+    },
+    {
+      "name": "answers_most",
+      "type": "number",
+      "default": 5000,
+      "label": "At most this many kept answers; the oldest go first"
+    },
+    {
+      "name": "lock_stripes",
+      "type": "number",
+      "default": 64,
+      "label": "How many locks keys are spread over (two requests with one key never run at once)"
+    },
+    {
+      "name": "version_field",
+      "type": "text",
+      "default": "version",
+      "label": "The field a row's version is kept in; a write naming an older version is refused (409)"
+    },
+    {
+      "name": "version_body_key",
+      "type": "text",
+      "default": "version",
+      "label": "The body key a caller sends the version it read in"
+    },
+    {
+      "name": "sent_file",
+      "type": "text",
+      "default": "sent_once",
+      "label": "The data file that remembers each message sent once (kind + key, hashed)"
+    },
+    {
+      "name": "sent_keep_days",
+      "type": "number",
+      "default": 400,
+      "label": "A send-once mark is forgotten after this many days"
+    },
+    {
+      "name": "signed_hash_field",
+      "type": "text",
+      "default": "signed_hash",
+      "label": "A row holding this field is SIGNED: sha256 of its signed fields"
+    },
+    {
+      "name": "signed_fields_field",
+      "type": "text",
+      "default": "signed_fields",
+      "label": "...and this field lists which of its fields the signature covers"
+    },
+    {
+      "name": "id_field",
+      "type": "text",
+      "default": "id",
+      "label": "A signed row is known by this field (else by its place in the file)"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "header": "$header",
+      "body_key": "$body_key",
+      "key_max": "$key_max",
+      "ttl_seconds": "$ttl_seconds",
+      "answers_file": "$answers_file",
+      "answers_most": "$answers_most",
+      "lock_stripes": "$lock_stripes",
+      "version_field": "$version_field",
+      "version_body_key": "$version_body_key",
+      "sent_file": "$sent_file",
+      "sent_keep_days": "$sent_keep_days",
+      "signed_hash_field": "$signed_hash_field",
+      "signed_fields_field": "$signed_fields_field",
+      "id_field": "$id_field"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-11-18 (DomainTemplate gap audit C1-15 + week class 30: UV-50, UV-118, UV-338, UV-339; G-42 second Send over the partner's edits, G-63 a data fix rewrote two signed agreements): the numbers and names of core/writes.py and the signed-row check in core/store.write.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "header": "Idempotency-Key",
+        "body_key": "idempotency_key",
+        "key_max": 120,
+        "ttl_seconds": 86400,
+        "answers_file": "idempotency",
+        "answers_most": 5000,
+        "lock_stripes": 64,
+        "version_field": "version",
+        "version_body_key": "version",
+        "sent_file": "sent_once",
+        "sent_keep_days": 400,
+        "signed_hash_field": "signed_hash",
+        "signed_fields_field": "signed_fields",
+        "id_field": "id"
+      }
+    }
+  ]
+}

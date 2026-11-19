@@ -75,6 +75,13 @@ def _layers() -> list[tuple[str, Path]]:
     return [("core" if d == HERE / "chips" else "portal", d) for d in DIRS] + [("data", data_dir())]
 
 
+def files_of(chip_id: str) -> list[Path]:
+    """Every file holding this chip, in every layer (core, each registered portal folder, the data layer). A fingerprint of a
+    chip watches these, never one typed folder (2026-11-18, week class 41 - SteadyMove G-53: its tour videos read "stale"
+    for ever because the fingerprint hashed another repo's chips folder)."""
+    return [d / f"{chip_id}.json" for _, d in _layers() if (d / f"{chip_id}.json").is_file()]
+
+
 def chips() -> dict[str, dict]:
     """Every live chip by id (published and inactive), later layers winning; re-read when a file changes."""
     with _lock:

@@ -26,7 +26,8 @@ DATA = Path(os.getenv("PORTAL_DATA", ROOT / "data"))
 _LOCK = threading.RLock()
 
 #: Files that hold secrets, written owner-only. A host portal adds its own (e.g. API keys).
-SECRET_FILES = {"users", "sessions", "smtp", "tokens", "codes", "secret", "push_keys"}   # push_keys: Issue > Push to (core/push.py)
+SECRET_FILES = {"users", "sessions", "smtp", "tokens", "codes", "secret", "push_keys",   # push_keys: Issue > Push to (core/push.py)
+                "idempotency"}   # core/writes: a kept first answer may hold a one-time password (Add member)
 
 
 def keep_aside(path, copy: bool = False) -> Path | None:
@@ -106,6 +107,89 @@ def path_of(name: str) -> Path:
     return DATA / f"{name}.json"
 
 
+# --- sealed stores (2026-11-18 gap audit C1-11) ------------------------------------------------------------------------
+# Credentials and AI keys are kept ENCRYPTED on disk (Fernet) - which files and where the key lives: chip store.seal. The key
+# sits OUTSIDE data/ (env, a file the env names, or a file beside data/), so a backup of data/ alone opens nothing. A plain
+# file of a sealed name still reads and is sealed at its next save. A sealed file that cannot be opened is never answered as
+# empty and never overwritten: SealError, with what to do.
+
+class SealError(RuntimeError):
+    """A sealed store cannot be opened (no key, or another key). Not a ValueError: read() must never answer `default` here."""
+
+
+_SEAL: dict = {}
+
+
+def _seal_cfg() -> dict:
+    if "cfg" not in _SEAL:
+        _SEAL["cfg"] = {}                              # while the chip loads, nothing is sealed (no recursion)
+        try:
+            _SEAL["cfg"] = dict(_chip("store.seal"))
+        except Exception:
+            _SEAL.pop("cfg", None)                     # never left "nothing sealed" by a chip that failed to load
+            raise
+    return _SEAL["cfg"]
+
+
+def sealed(name: str) -> bool:
+    return name in (_seal_cfg().get("files") or ())
+
+
+def seal_key_path() -> Path:
+    c = _seal_cfg()
+    return Path(os.getenv(c["key_file_env"]) or (DATA.parent / c["key_file"]))
+
+
+def _fernet(name: str, create: bool):
+    from cryptography.fernet import Fernet  # noqa: PLC0415 - only the sealed stores need it
+    c = _seal_cfg()
+    raw = os.getenv(c["key_env"], "").strip()
+    p = seal_key_path()
+    if not raw and p.is_file():
+        raw = p.read_text(encoding="utf-8").strip()
+    if not raw and create and not any(_is_sealed_text(path_of(n)) for n in c["files"]):
+        p.parent.mkdir(parents=True, exist_ok=True)
+        try:                                           # made once, owner-only from its first byte
+            fd = os.open(p, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+            with os.fdopen(fd, "w", encoding="utf-8") as fh:
+                fh.write(Fernet.generate_key().decode("ascii"))
+        except FileExistsError:                        # another process made it a moment ago
+            pass
+        raw = p.read_text(encoding="utf-8").strip()
+    if not raw:
+        raise SealError(c["words"]["no_key"].format(name=name, path=p, env=c["key_env"]))
+    return Fernet(raw.encode("ascii"))
+
+
+def _is_sealed_text(p: Path) -> bool:
+    try:
+        return f'"{_seal_cfg()["marker"]}"' in p.read_text(encoding="utf-8")[:64]
+    except OSError:
+        return False
+
+
+def _open_sealed(name: str, val):
+    """What read() parsed -> the stored value: a sealed file is decrypted, a plain one (written before sealing) as it is."""
+    m = _seal_cfg().get("marker")
+    if not (isinstance(val, dict) and m and len(val) == 1 and m in val):
+        return val
+    from cryptography.fernet import InvalidToken  # noqa: PLC0415
+    try:
+        return json.loads(_fernet(name, create=False).decrypt(str(val[m]).encode("ascii")))
+    except InvalidToken:
+        raise SealError(_seal_cfg()["words"]["wrong_key"].format(name=name, path=seal_key_path())) from None
+
+
+def _seal_text(name: str, value) -> str:
+    if not sealed(name):
+        return json.dumps(value, indent=2, ensure_ascii=False)
+    p = path_of(name)
+    if _is_sealed_text(p):                             # never overwrite a sealed file this key cannot open (a lost/replaced key)
+        _open_sealed(name, json.loads(p.read_text(encoding="utf-8")))
+    token = _fernet(name, create=True).encrypt(json.dumps(value, ensure_ascii=False).encode("utf-8")).decode("ascii")
+    return json.dumps({_seal_cfg()["marker"]: token})
+
+
 _TEXT: dict = {}
 
 
@@ -123,7 +207,7 @@ def read(name: str, default):
         try:
             if (_TEXT.get(name) or (None,))[0] != sig:
                 _TEXT[name] = (sig, p.read_text(encoding="utf-8"))
-            return json.loads(_TEXT[name][1])
+            return _open_sealed(name, json.loads(_TEXT[name][1]))
         except (OSError, ValueError):
             _TEXT.pop(name, None)
             return default
@@ -152,7 +236,9 @@ def view(name: str, default):
             return hit[1]
         try:
             text = p.read_text(encoding="utf-8")
-            val = json.loads(text)
+            val = _open_sealed(name, json.loads(text))
+            if sealed(name):
+                text = json.dumps(val)                 # views_intact compares against the opened value
         except (OSError, ValueError):
             _VIEW.pop(name, None)
             return default
@@ -223,22 +309,55 @@ def watch(pattern: str, fn) -> None:
     WATCHERS.append((re.compile(pattern), fn))
 
 
+class SignedText(ValueError):
+    """A write that would change a signed row (core/writes.sign) - refused, the file is left as it was."""
+
+
+_MARK: list[bytes] = []
+
+
+def _signed_mark() -> bytes:
+    """The field that marks a signed row (chip writes.settings signed_hash_field), read once per process."""
+    if not _MARK:
+        _MARK.append(json.dumps(_chip("writes.settings")["signed_hash_field"]).encode())
+    return _MARK[0]
+
+
 def write(name: str, value) -> None:
     hits = [fn for pat, fn in WATCHERS if pat.search(name)]
     old = None
     with _LOCK:
-        _VIEW.pop(name, None)                          # the shared copy is never older than the file
-        _TEXT.pop(name, None)                          # nor read()'s kept text (a same-size write inside one mtime tick)
         DATA.mkdir(parents=True, exist_ok=True)
         p = path_of(name)
-        if hits and p.exists():
+        raw = b""
+        if p.exists():
             try:
-                old = json.loads(p.read_text(encoding="utf-8"))
-            except (OSError, ValueError):
+                raw = p.read_bytes()
+            except OSError:
+                raw = b""
+        text = _seal_text(name, value)                 # before the tmp file: a SealError leaves the file as it was
+        mark = _signed_mark()
+        # 2026-11-18 (week class 30, CodyFy G-63: a data fix's find-replace rewrote two signed agreements): a signed row is never
+        # rewritten - not by a screen, not by a script. Guard: core/writes.py self-check.
+        if mark in raw or mark.decode() in text:
+            from core import writes  # noqa: PLC0415 - writes imports store
+            try:
+                was = _open_sealed(name, json.loads(raw)) if raw else None
+            except ValueError:
+                was = None
+            bad = writes.broken(was, value)
+            if bad:
+                raise SignedText(writes.say("signed_changed", rows=", ".join(bad[:5])))
+        _VIEW.pop(name, None)                          # the shared copy is never older than the file
+        _TEXT.pop(name, None)                          # nor read()'s kept text (a same-size write inside one mtime tick)
+        if hits and raw:
+            try:
+                old = _open_sealed(name, json.loads(raw))
+            except ValueError:
                 old = None
         tmp = p.with_suffix(".tmp")
         with open(tmp, "w", encoding="utf-8") as fh:   # 2026-11-11 (B8): on disk before the rename, so a power cut never leaves an empty file
-            fh.write(json.dumps(value, indent=2, ensure_ascii=False))
+            fh.write(text)
             fh.flush()
             os.fsync(fh.fileno())
         tmp.replace(p)
@@ -249,7 +368,7 @@ def write(name: str, value) -> None:
             finally:
                 os.close(fd)
         # Keys and sessions are secrets: keep them owner-only where the OS supports it.
-        if name in SECRET_FILES:
+        if name in SECRET_FILES or sealed(name):
             try:
                 os.chmod(p, 0o600)
             except OSError:
@@ -259,6 +378,22 @@ def write(name: str, value) -> None:
             fn(name, old, value)
         except Exception as e:  # noqa: BLE001 - a broken watcher never breaks the save it watches
             print(f"[store] watcher on {name}: {e}")
+
+
+def update(name: str, row_id: str, fields: dict, expect_version=None, key: str = "id") -> dict:
+    """Change one row of a list file - a compare-and-set: `expect_version` older than the row's -> 409 (core/writes), and
+    the row's version moves by one. 2026-11-18 gap audit C1-15 (UV-118, UV-338): the check sits at the write, under the lock."""
+    from core import writes  # noqa: PLC0415 - writes imports store
+    with _LOCK:
+        rows = read(name, [])
+        r = next((x for x in rows if isinstance(x, dict) and str(x.get(key)) == str(row_id)), None)
+        if r is None:
+            raise KeyError(row_id)
+        writes.check_version(r, expect_version)
+        r.update(fields)
+        writes.bump(r)
+        write(name, rows)
+        return dict(r)
 
 
 # --- users and sign-in -------------------------------------------------------------------------
@@ -735,4 +870,35 @@ if __name__ == "__main__":  # ponytail: one runnable self-check
             raise AssertionError("the last owner was deleted")
         except ValueError:
             pass
+
+    # 2026-11-18 gap audit C1-11: credentials and AI keys are sealed at rest; the key lives outside data/
+    with tempfile.TemporaryDirectory() as tmp:
+        globals()["DATA"] = Path(tmp) / "data"
+        kf = Path(tmp) / "elsewhere" / "seal.key"
+        os.environ.pop(_seal_cfg()["key_env"], None)
+        os.environ[_seal_cfg()["key_file_env"]] = str(kf)
+        s1 = "sk-" + "live-" + "ZQ7x" * 6                  # a synthetic secret, built so no scanner sees a key here
+        name = _seal_cfg()["files"][0]
+        path_of(name).parent.mkdir(parents=True, exist_ok=True)
+        path_of(name).write_text(json.dumps({"pay": {"key": "plain-before"}}), encoding="utf-8")
+        assert read(name, {})["pay"]["key"] == "plain-before", "a plain file written before sealing no longer reads"
+        write(name, {"pay": {"key": s1}})
+        assert s1 not in path_of(name).read_text(encoding="utf-8"), "a credential is on disk in clear (chip store.seal)"
+        assert "plain-before" not in path_of(name).read_text(encoding="utf-8"), "the plain row was not sealed at its next save"
+        assert read(name, {})["pay"]["key"] == s1 and view(name, {})["pay"]["key"] == s1, "a sealed credential does not read back"
+        assert kf.is_file() and not str(kf).startswith(str(DATA)), "the seal key is not kept outside the data folder"
+        if os.name == "posix":
+            assert (kf.stat().st_mode & 0o077) == 0, "the seal key file is readable by others"
+        on_disk = path_of(name).read_text(encoding="utf-8")
+        kf.rename(kf.with_suffix(".away"))                # a backup of data/ restored without its key
+        for step in (lambda: read(name, {}), lambda: write(name, {}), lambda: write(_seal_cfg()["files"][1], {"x": 1})):
+            try:
+                step()
+                raise AssertionError("a sealed store opened, or was overwritten, with no seal key")
+            except SealError:
+                pass
+        assert path_of(name).read_text(encoding="utf-8") == on_disk and not kf.exists(), "no key: the sealed file changed or a new key was made"
+        kf.with_suffix(".away").rename(kf)
+        assert read(name, {})["pay"]["key"] == s1, "the key put back opens it again"
+        os.environ.pop(_seal_cfg()["key_file_env"], None)
     print("core.store self-check OK")

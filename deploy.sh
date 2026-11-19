@@ -21,11 +21,21 @@ before=$DEPLOY_PULLED
 after=$(git rev-parse --short HEAD)
 echo "code: $before -> $after"
 
-# 2026-11-12 (VS standards): the lock, when the portal has one, is installed exactly - every file checked by its hash (chip deps.lock)
-if [ -f requirements.lock ]; then .venv/bin/pip install -q --require-hashes --no-deps -r requirements.lock; else .venv/bin/pip install -q -r requirements.txt; fi
-.venv/bin/python selfcheck.py
+# 2026-11-18 gap audit C1-18: packages, the self-check and the recorder run as the service's own user (the unit's User=), never
+# root - a package's install script or a test then cannot touch the server. Root keeps only the pull above, the one sign-in
+# drop-in and the restart below. A unit still running as root says so loudly (switch over: DEPLOY.md "Switch-over").
+APP_USER=$(grep -oP '^User=\K\S+' "/etc/systemd/system/$SERVICE.service" 2>/dev/null || true)
+as_app() { if [ "$(id -u)" = 0 ] && [ -n "$APP_USER" ] && [ "$APP_USER" != root ]; then runuser -u "$APP_USER" -- "$@"; else "$@"; fi; }
+if [ -z "$APP_USER" ] || [ "$APP_USER" = root ]; then
+  echo "WARNING: $SERVICE runs as root - packages and the self-check run as root too. Switch over: DEPLOY.md \"Switch-over\"."
+fi
+# 2026-11-12 (VS standards): the lock is installed exactly - every file checked by its hash (chip deps.lock). No lock, no deploy:
+# an unhashed requirements.txt is never installed on a server (2026-11-18 C1-18).
+[ -f requirements.lock ] || { echo "DEPLOY STOPPED - no requirements.lock (python tools/lock_deps.py, commit it)"; exit 1; }
+as_app .venv/bin/pip install -q --require-hashes --no-deps -r requirements.lock
+as_app .venv/bin/python selfcheck.py
 # 2026-11-14 owner: Tour Video records on the server - its own Python (.venv/tour: Playwright + edge-tts), chip tourvideo.settings
-.venv/bin/python -c "import store, tourvideo; print(tourvideo.ensure_recorder())" || echo "tour recorder: not installed (Tour Video cannot record here)"
+as_app .venv/bin/python -c "import store, tourvideo; print(tourvideo.ensure_recorder())" || echo "tour recorder: not installed (Tour Video cannot record here)"
 
 systemctl restart "$SERVICE"
 for i in $(seq 1 30); do

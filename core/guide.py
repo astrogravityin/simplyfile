@@ -39,8 +39,14 @@ def screens() -> list[str]:
                   if c.startswith("guide.") and c[6:] not in skip and v.get("status") != "inactive")
 
 
-def tour(screen: str) -> dict:
+def chip_of(screen: str) -> str:
+    """The Guide me chip a screen plays (tourvideo reads its files through engine.files_of)."""
     cid = f"guide.{screen.replace('-', '_')}"
+    return cid
+
+
+def tour(screen: str) -> dict:
+    cid = chip_of(screen)
     if not _SCREEN.match(screen.replace("-", "_")) or cid not in engine.chips() or screen in engine.run("guide.settings")["not_tours"]:
         raise HTTPException(404, say("no_tour"))
     t = engine.run(cid)

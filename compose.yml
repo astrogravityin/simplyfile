@@ -1,6 +1,8 @@
 # Self-host SimplyFile in one command:  docker compose up -d --build   ->  http://localhost:8830
 # The data volume keeps accounts, clients' statements and keys across upgrades; back it up like the VPS data folder
 # (docker run --rm -v simplyfile_data:/data -v "$PWD":/out busybox tar czf /out/sf-data.tgz -C /data .).
+# The seal volume holds the key to the sealed credentials and AI keys (chip store.seal): back it up APART from data -
+# (... -v simplyfile_seal:/seal ... tar czf /out/sf-seal.tgz -C /seal .) - a data copy without it cannot open them.
 # Site values come from a .env file beside this one (never in git) or the shell: PORTAL_OWNER_EMAIL, PORTAL_HTTPS ...
 services:
   simplyfile:
@@ -15,6 +17,8 @@ services:
       PORTAL_OWNER_EMAIL: ${PORTAL_OWNER_EMAIL:-}
     volumes:
       - data:/data
+      - seal:/seal
 
 volumes:
   data:
+  seal:

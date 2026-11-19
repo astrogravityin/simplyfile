@@ -3,15 +3,15 @@
 // script changed since / up to date), Check steps, Record video, and the MP4, subtitles and YouTube description.
 // The runner is the studio's own (chip tourvideo.settings); one job at a time, followed in the ONE work window.
 // Every word is chip ui.tourvideo.
-import { api, BASE, esc, toast, busy, pageHead, confirmDialog, t, loadWords, listBox, followJob, when, ps, onEvent } from './app.js';
+import { api, BASE, esc, toast, busy, pageHead, confirmDialog, t, loadWords, listBox, followJob, when, ps, onEvent, paintIfChanged } from './app.js';
 import { icon } from './icons.js';
 
 const w = (k, v) => t('tourvideo', k, v);
 
 export async function tourVideoPage(host) {
   await loadWords('tourvideo');
-  host.innerHTML = pageHead(w('title'), w('lede'))   // 2026-11-14: Record signs in as you - no Sign in once
-    + '<section class="card" id="tv-list"></section>';
+  paintIfChanged(host, pageHead(w('title'), w('lede'))   // 2026-11-14: Record signs in as you - no Sign in once
+    + '<section class="card" id="tv-list"></section>');
   let reload = () => {};
   const run = async (what, key, title) => {
     const j = await api(`/api/tourvideo/${what}`, { method: 'POST', body: { key } });

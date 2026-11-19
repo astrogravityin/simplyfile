@@ -5,8 +5,9 @@ TDS/TCS and reliefs) is over Rs 1 lakh (Explanation 1 to s.234A). The conservati
 extension); chip compute.due_234a picks the date 234A counts from. Run from D:/Simplyfile."""
 import json
 from pathlib import Path
+_ROOT = Path(__file__).resolve().parents[1]   # repo root: paths never depend on the folder it is started from
 
-p = Path("chips/close.dates.json")
+p = (_ROOT / "chips/close.dates.json")
 c = json.loads(p.read_text(encoding="utf-8"))
 F = c["expr"]["fields"]
 
@@ -48,5 +49,5 @@ chip = {"chip_id": "compute.due_234a", "kind": "accessor", "set": "compute", "la
         "test_cases": [{"args": {"due": 20261121, "due_rule": 20261031, "owed": 250000}, "expect_value": 20261031},
                        {"args": {"due": 20261121, "due_rule": 20261031, "owed": 90000}, "expect_value": 20261121},
                        {"args": {"due": 20260731, "due_rule": 20260731, "owed": 900000}, "expect_value": 20260731}]}
-Path("chips/compute.due_234a.json").write_text(json.dumps(chip, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+(_ROOT / "chips/compute.due_234a.json").write_text(json.dumps(chip, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 print("compute.due_234a")

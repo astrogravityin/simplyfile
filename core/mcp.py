@@ -229,8 +229,6 @@ def answer(msg: Any, allowed, key_id: Any, ctx: dict) -> dict | None:
         return _error(rid, BAD_PARAMS, say("tool_off", tool=name))
     if not allowed(row):
         return _error(rid, BAD_PARAMS, say("not_allowed", tool=name))
-    if over_rate(key_id):
-        return _error(rid, INVALID, say("rate"))
     args = params.get("arguments") or {}
     bad = problems(row.get("input_schema") or {"type": "object"}, args) if isinstance(args, dict) else ["arguments (object)"]
     if bad:
@@ -265,6 +263,8 @@ def make_key(u: dict, label: str) -> dict:
     row = {"id": store.new_id(), "label": str(label or "").strip()[: int(k["label_chars"])] or say("key_default_label"),
            "hash": _hash(raw), "hint": raw[-4:], "made_by": u["id"], "made_at": store.now(), "revoked_at": "", "last_used": ""}
     store.write(KEYS, keys() + [row])
+    from core import ledger  # noqa: PLC0415 - ledger imports access, which this module imports
+    ledger.security("mcp_key", u["id"], row["id"])
     announce(u["id"])
     return {"key": raw, "row": {x: row[x] for x in ("id", "label", "hint", "made_at")}, "message": say("key_made")}
 
@@ -332,6 +332,11 @@ async def mcp_door(request: Request):
         body = json.loads(await request.body() or b"null")
     except ValueError:
         return JSONResponse(_error(None, PARSE, say("parse")), status_code=400)
+    # 2026-11-18 gap audit C1-20: a key over its rate is a 429 (HTTP), not a 200 carrying an error - every tool call in the
+    # message (a batch counts each) is one call against chip mcp.server limits.calls_per_minute
+    tool_calls = sum(1 for m in (body if isinstance(body, list) else [body]) if isinstance(m, dict) and m.get("method") == "tools/call")
+    if any([over_rate(rate_id) for _ in range(tool_calls)]):  # noqa: C419 - a list, so every call is counted
+        return JSONResponse(_error(None, INVALID, say("rate")), status_code=429)
     allowed = lambda r: access.may(u, "connect-ai", str(r.get("function") or ""))   # noqa: E731
     ctx = {"user": u, "base": _base(request), "app": request.app, "ip": auth.client_ip(request)}
     from starlette.concurrency import run_in_threadpool  # noqa: PLC0415 - a tool may call this same app (run_calls)

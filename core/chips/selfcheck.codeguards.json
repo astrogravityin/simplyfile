@@ -1,0 +1,208 @@
+{
+  "chip_id": "selfcheck.codeguards",
+  "kind": "accessor",
+  "set": "selfcheck",
+  "label": "Code guards from the week's glitches (core/codeguards.py): named controls, typed web addresses, repo-root paths, steady ordering, no-flicker redraws",
+  "aliases": [
+    "code guards",
+    "typed hosts",
+    "url drift",
+    "aria label",
+    "order by tie",
+    "flicker"
+  ],
+  "params": [
+    {
+      "name": "a11y_globs",
+      "type": "list",
+      "default": [
+        "static/page-*.js",
+        "core/static/page-*.js"
+      ],
+      "label": "Screen files whose buttons, links and fields must each have a name (aria-label, title, a label or their own words)"
+    },
+    {
+      "name": "a11y_ceiling",
+      "type": "number",
+      "default": 0,
+      "label": "Nameless controls allowed in those files (only falls)"
+    },
+    {
+      "name": "host_exts",
+      "type": "list",
+      "default": [
+        ".py",
+        ".js",
+        ".sh",
+        ".ps1"
+      ],
+      "label": "Code files read for typed web addresses"
+    },
+    {
+      "name": "skip_dirs",
+      "type": "list",
+      "default": [
+        ".venv",
+        "node_modules",
+        "tmp",
+        ".claude",
+        "__pycache__",
+        ".git",
+        "data"
+      ],
+      "label": "Folders never read (tools, data, caches)"
+    },
+    {
+      "name": "host_ok",
+      "type": "text",
+      "default": "(^|\\.)(example(\\.(com|org|net))?|test|localhost|invalid)$|^(0\\.0\\.0\\.0|www\\.w3\\.org)$|^(10|127|169\\.254|192\\.168|172\\.(1[6-9]|2\\d|3[01]))\\.[\\d.]+$",
+      "label": "Addresses that are never a real site (reserved test names, private / link-local / this-machine IPs, the SVG namespace) - not counted"
+    },
+    {
+      "name": "host_ceiling",
+      "type": "number",
+      "default": 59,
+      "label": "Real web addresses still typed in code instead of a chip (only falls - move one into a chip, then lower this)"
+    },
+    {
+      "name": "cwd_path_re",
+      "type": "text",
+      "default": "\\b(?:Path|open)\\(\\s*[rf]?[\\\"'][A-Za-z0-9_.-]+/",
+      "label": "A path read from wherever the script was started (Path(\"chips/...\")) instead of from the repo root"
+    },
+    {
+      "name": "order_tie_keys",
+      "type": "list",
+      "default": [
+        "id",
+        "ref",
+        "n",
+        "name",
+        "day",
+        "bucket",
+        "user_id",
+        "screen",
+        "path",
+        "1",
+        "ORDINAL_POSITION",
+        "SEQ_IN_INDEX"
+      ],
+      "label": "Unique columns: an ORDER BY must end its terms with one, so equal values never swap places between two runs"
+    },
+    {
+      "name": "push_globs",
+      "type": "list",
+      "default": [
+        "static/page-*.js",
+        "core/static/page-*.js"
+      ],
+      "label": "Screens that redraw on the push stream (onEvent) must write their HTML through paintIfChanged"
+    },
+    {
+      "name": "say_a11y",
+      "type": "text",
+      "default": "{n} control(s) with no name a screen reader can say (ceiling {cap}) - add aria-label or title: {hits}",
+      "label": "say a11y"
+    },
+    {
+      "name": "say_hosts",
+      "type": "text",
+      "default": "{n} real web address(es) typed in code (ceiling {cap}) - read it from a chip (one place) instead: {hits}",
+      "label": "say hosts"
+    },
+    {
+      "name": "say_cwd",
+      "type": "text",
+      "default": "a path read from the folder the script was started in, not the repo root - build it from Path(__file__): {hits}",
+      "label": "say cwd"
+    },
+    {
+      "name": "say_order",
+      "type": "text",
+      "default": "an ORDER BY with no unique last term - equal values come back in another order run to run; add a tie-break (id): {hits}",
+      "label": "say order"
+    },
+    {
+      "name": "say_paint",
+      "type": "text",
+      "default": "a screen that redraws on the push stream writes innerHTML directly - every update flickers; use paintIfChanged(el, html): {hits}",
+      "label": "say paint"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "a11y_globs": "$a11y_globs",
+      "a11y_ceiling": "$a11y_ceiling",
+      "host_exts": "$host_exts",
+      "skip_dirs": "$skip_dirs",
+      "host_ok": "$host_ok",
+      "host_ceiling": "$host_ceiling",
+      "cwd_path_re": "$cwd_path_re",
+      "order_tie_keys": "$order_tie_keys",
+      "push_globs": "$push_globs",
+      "say_a11y": "$say_a11y",
+      "say_hosts": "$say_hosts",
+      "say_cwd": "$say_cwd",
+      "say_order": "$say_order",
+      "say_paint": "$say_paint"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-11-18 gap audit B3, week classes 18 / 40 / 41 / 42 / 47 (CodyFy G-40, G-45, G-84, G-53, G-23, G-83): a nameless icon-only button, a host or repo typed into a script that later moved, a fingerprint that read another folder, a list whose equal rows swapped places, an open screen that flickered on every pushed update. core/codeguards.py reads the code with these knobs (selfcheck part static); its own self-test plants each fault and must catch it. Ceilings only fall.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "a11y_globs": [
+          "static/page-*.js",
+          "core/static/page-*.js"
+        ],
+        "a11y_ceiling": 0,
+        "host_exts": [
+          ".py",
+          ".js",
+          ".sh",
+          ".ps1"
+        ],
+        "skip_dirs": [
+          ".venv",
+          "node_modules",
+          "tmp",
+          ".claude",
+          "__pycache__",
+          ".git",
+          "data"
+        ],
+        "host_ok": "(^|\\.)(example(\\.(com|org|net))?|test|localhost|invalid)$|^(0\\.0\\.0\\.0|www\\.w3\\.org)$|^(10|127|169\\.254|192\\.168|172\\.(1[6-9]|2\\d|3[01]))\\.[\\d.]+$",
+        "host_ceiling": 59,
+        "cwd_path_re": "\\b(?:Path|open)\\(\\s*[rf]?[\\\"'][A-Za-z0-9_.-]+/",
+        "order_tie_keys": [
+          "id",
+          "ref",
+          "n",
+          "name",
+          "day",
+          "bucket",
+          "user_id",
+          "screen",
+          "path",
+          "1",
+          "ORDINAL_POSITION",
+          "SEQ_IN_INDEX"
+        ],
+        "push_globs": [
+          "static/page-*.js",
+          "core/static/page-*.js"
+        ],
+        "say_a11y": "{n} control(s) with no name a screen reader can say (ceiling {cap}) - add aria-label or title: {hits}",
+        "say_hosts": "{n} real web address(es) typed in code (ceiling {cap}) - read it from a chip (one place) instead: {hits}",
+        "say_cwd": "a path read from the folder the script was started in, not the repo root - build it from Path(__file__): {hits}",
+        "say_order": "an ORDER BY with no unique last term - equal values come back in another order run to run; add a tie-break (id): {hits}",
+        "say_paint": "a screen that redraws on the push stream writes innerHTML directly - every update flickers; use paintIfChanged(el, html): {hits}"
+      }
+    }
+  ]
+}

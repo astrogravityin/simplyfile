@@ -75,18 +75,46 @@ def no_polls() -> None:
     print(f"  no polls: {len(POLLING)} files still on the shrinking list, none new OK")
 
 
+def _chip_defaults(name: str) -> dict:
+    """A chip's defaults read from its file (the portal's own chips/ wins over core's) - never import core here: an import binds
+    core.store to the real data folder before the api part sets its throw-away one (the starter's api check then saw accounts)."""
+    chip = next((f for f in (HERE / "chips" / f"{name}.json", HERE / "core" / "chips" / f"{name}.json") if f.is_file()), None)
+    if chip is None:                                   # a portal without that chip (no sso.settings: no outside sign-in page)
+        return {}
+    return {x["name"]: x.get("default") for x in json.loads(chip.read_text(encoding="utf-8"))["params"]}
+
+
+def csp_enforced(pol: str) -> dict:
+    """2026-11-18 gap audit C1-10 (N-23, class J) + week class 39: the ENFORCED policy (chip security.headers) has a host
+    allow-list - an injected script may neither run from nor send data to another site. Returns the policy as directive -> sources."""
+    parts = {p.split()[0]: p.split()[1:] for p in (pol or "").split(";") if p.strip()}
+    for need in ("default-src", "script-src", "connect-src", "worker-src"):
+        assert need in parts, f"the enforced CSP has no {need}: {pol!r}"
+    for d, srcs in parts.items():
+        bad = [s for s in srcs if s == "*" or s in ("'unsafe-eval'", "'strict-dynamic'")]
+        assert not bad, f"the enforced CSP {d} allows {bad} - any site may run code or receive data: {pol!r}"
+    for d in ("script-src", "connect-src"):
+        named = [s for s in parts[d] if s.startswith("'") or re.fullmatch(r"https://(\*\.)?[a-z0-9-]+(\.[a-z0-9-]+)+(:\d+)?", s)]
+        assert named == parts[d] and "'unsafe-inline'" not in named, f"{d} must name its hosts (a *.domain is fine, * / https: is not): {parts[d]}"
+    sso = re.sub(r"^(https?://[^/]+).*", r"\1", str(_chip_defaults("sso.settings").get("api") or ""))
+    host = sso.split("://")[-1]
+    ok = not sso or any(s == sso or (s.startswith("https://*.") and host.endswith(s[9:])) for s in parts["connect-src"])
+    assert ok, f"the sign-in page calls {sso} (chip sso.settings api) but connect-src blocks it: {parts['connect-src']}"
+    assert "'self'" in parts["worker-src"], f"worker-src must let the portal's own service worker start: {parts['worker-src']}"
+    return parts
+
+
 def csp_quiet() -> None:
     """2026-11-11 A20: the admin bell filled with 'Error Doctor needs you: CSP style-src-attr / style-src-elem at /start' -
-    the shell draws with inline style attributes and <style> blocks on purpose. The report-only policy must allow inline
-    STYLES (chip security.headers) while scripts stay 'self', or every page view rings the owner again."""
-    sys.path.insert(0, str(HERE))
-    from core import engine
-    pol = engine.run("security.headers")["headers"]["Content-Security-Policy-Report-Only"]
-    parts = {p.split()[0]: p.split()[1:] for p in pol.split(";") if p.strip()}
+    the shell draws with inline style attributes and <style> blocks on purpose. The policy must allow inline STYLES
+    (chip security.headers) while scripts stay 'self', or every page view rings the owner (2026-11-18: the policy is enforced,
+    report-only is gone - a forbidden inline style would now be a broken page, not just a note)."""
+    pol = _chip_defaults("security.headers")["headers"]["Content-Security-Policy"]
+    parts = csp_enforced(pol)
     inline = any('style="' in f.read_text(encoding="utf-8") for f in (HERE / "core" / "static").glob("*.js"))
-    assert not inline or "'unsafe-inline'" in parts.get("style-src", []),         f"pages use inline styles but the report-only CSP forbids them - the Doctor floods the owner's bell: {pol}"
-    assert "'unsafe-inline'" not in parts.get("script-src", parts.get("default-src", [])), "inline scripts must stay reported"
-    print("  CSP report-only: inline styles allowed, scripts 'self' (no Doctor flood) OK")
+    assert not inline or "'unsafe-inline'" in parts.get("style-src", []),         f"pages use inline styles but the CSP forbids them: {pol}"
+    assert "'unsafe-inline'" not in parts.get("script-src", parts.get("default-src", [])), "inline scripts must stay blocked"
+    print("  CSP (chip): enforced, hosts named for script/connect/worker, inline styles allowed, scripts 'self' OK")
 
 
 def _free_port() -> int:
@@ -116,7 +144,11 @@ def live() -> None:
             else:
                 raise AssertionError("server never came up: " + (Path(tmp) / "server.log").read_text(errors="replace")[-2000:])
             owner, member = httpx.Client(base_url=base, timeout=10), httpx.Client(base_url=base, timeout=10)
-            assert owner.post("/api/auth/first-account", json={"email": "owner@example.com", "password": "a-good-password"}).status_code == 200
+            csp_enforced(owner.get("/").headers.get("content-security-policy", ""))   # C1-10: the policy a real answer carries
+            print("  CSP read back from GET /: enforced, script-src + connect-src + worker-src, no * / unsafe-eval / strict-dynamic OK")
+            owner.get("/api/bootstrap")                      # the empty portal makes its setup code (C1-9) in the data folder
+            code = (Path(data) / "setup_code.txt").read_text(encoding="utf-8").strip()
+            assert owner.post("/api/auth/first-account", json={"setup_code": code, "email": "owner@example.com", "password": "a-good-password"}).status_code == 200
             r = owner.post("/api/users", json={"email": "push-member@demo.example", "password": "a-good-password-p", "display_name": "Push Member"})
             assert r.status_code == 200, r.text
             assert member.post("/api/auth/signin", json={"identity": "push-member@demo.example", "password": "a-good-password-p"}).status_code == 200

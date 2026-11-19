@@ -191,7 +191,20 @@ def door_walk(app, c, co, other) -> None:  # noqa: ARG001 - the shared walk sign
     word = max(re.findall(r"[A-Za-z]+", t["title"]), key=len).lower()
     lst = c.get("/api/lists/mcp_tools", params={"q": word[:2] + word[3:]}).json()
     assert any(x["name"] == t["name"] for x in lst["rows"]), (f"the tools list does not forgive a typo ({word[:2] + word[3:]})", lst)
-    # revoked = stopped at once
+    # 2026-11-18 gap audit C1-20: a key over its calls a minute hears 429 in plain words (chip mcp.server rate), not a 200
     kid = made.json()["row"]["id"]
+    real_cfg = mcp.cfg
+    mcp.cfg = lambda: real_cfg() | {"limits": real_cfg()["limits"] | {"calls_per_minute": 2}}  # noqa: E731
+    mcp._CALLS.pop(kid, None)  # noqa: SLF001
+    try:
+        tool = "rate-probe"   # every tools/call counts at the door, a known tool or not
+        codes = [_rpc(bare, key, "tools/call", {"name": tool, "arguments": {}}).status_code for _ in range(3)]
+        over = _rpc(bare, key, "tools/call", {"name": tool, "arguments": {}})
+        assert codes[:2] == [200, 200] and codes[2] == 429 and over.status_code == 429, f"an MCP key over its rate must get 429: {codes}"
+        assert over.json()["error"]["message"] == mcp.say("rate"), "the 429 must carry chip mcp.server's words"
+    finally:
+        mcp.cfg = real_cfg
+        mcp._CALLS.pop(kid, None)  # noqa: SLF001
+    # revoked = stopped at once
     assert c.delete(f"/api/core/mcp/keys/{kid}").status_code == 200 and _rpc(bare, key, "tools/list").status_code == 401, "a revoked key works"
     print("  connect your ai door: the Portal Admin's key alone, only the tools, people's steps said not run, in Portal Activity, Check OK")

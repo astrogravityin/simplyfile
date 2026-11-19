@@ -48,7 +48,7 @@ rules.kind("model_watch", "Check models", [{"name": "cooldown_minutes", "type": 
            "Asks every provider for its models; gone ones hand over to their successor (chip providers.watch).", _model_watch)
 from core import memwatch  # noqa: E402 - registers the daily trigger this outcome belongs to
 rules.TRIGGERS["daily"]["kinds"].append("model_watch")
-from core import access
+from core import access, writes
 from core.access import screen
 from core.auth import owner, signed_in, who
 import manuals
@@ -282,13 +282,14 @@ def get_keys(u: dict = Depends(screen("keys"))):
 
 # 2026-09-28 managed credits: the owner adds what someone paid (in the owner's own currency) and sets a daily cap
 @app.post("/api/wallet/add")
-def post_wallet_add(body: dict = Body(...), u: dict = Depends(screen("keys"))):
+def post_wallet_add(request: Request, body: dict = Body(...), u: dict = Depends(screen("keys"))):
     b = body or {}
     try:
         usd = store.to_usd(u["id"], float(b.get("amount") or 0))
     except (TypeError, ValueError):
         usd = 0.0
-    return wallet.add(u, str(b.get("email") or ""), usd, str(b.get("note") or ""))
+    # 2026-11-18 C1-15: a repeated Add with the same Idempotency-Key adds the money once (core/writes)
+    return writes.once(request, u["id"], b, lambda: wallet.add(u, str(b.get("email") or ""), usd, str(b.get("note") or "")))
 
 
 @app.post("/api/wallet/cap")
@@ -882,13 +883,15 @@ def api_firm_doc_get(fid: str, did: str, u: dict = Depends(signed_in)):
 
 
 @app.post("/api/firm/{fid}/move")
-def api_firm_move(fid: str, body: dict = Body(...), u: dict = Depends(signed_in)):
-    return firms.move(u, fid, str(body.get("action") or ""), str(body.get("note") or ""))
+def api_firm_move(fid: str, request: Request, body: dict = Body(...), u: dict = Depends(signed_in)):
+    """A stage move: once per Idempotency-Key, refused (409) when `version` is older than the organisation's (core/writes)."""
+    return writes.once(request, u["id"], body, lambda: firms.move(u, fid, str(body.get("action") or ""), str(body.get("note") or ""),
+                                                                 writes.expected(body)))
 
 
 @app.post("/api/firm/team")
 def api_firm_team_add(request: Request, body: dict = Body(...), u: dict = Depends(screen("firm"))):
-    return firms.add_member(request, u, body)
+    return writes.once(request, u["id"], body, lambda: firms.add_member(request, u, body))   # an invite: one account per key
 
 
 @app.put("/api/firm/team/{uid}")

@@ -147,7 +147,7 @@ export const rulewatchPage = (name) => async (host) => {
         ${groups.map((g) => `<tr class="tw-group"><td colspan="5">${esc(w(`g_${g}`))}</td></tr>${rows.filter((r) => r.group === g).map((r) => `<tr class="tw-row s-${r.state}">
           <td><b>${esc(r.label)}</b><div class="small muted">${esc(w('where'))}: ${r.where.map((x) => `<code>${esc(x)}</code>`).join(' ')}</div></td>
           <td>${show(r.kind, r.live)}</td>
-          <td>${S.edit === r.id ? `<textarea class="tw-json" rows="5">${esc(JSON.stringify(r.new ?? r.live, null, 1))}</textarea>
+          <td>${S.edit === r.id ? `<textarea class="tw-json" rows="5" aria-label="${esc(r.label)}">${esc(JSON.stringify(r.new ?? r.live, null, 1))}</textarea>
                 <div class="tw-ed"><button class="btn sm primary" data-save="${esc(r.id)}">${esc(w('save'))}</button><button class="btn sm ghost" data-cancel>${esc(w('cancel'))}</button></div>`
             : `${show(r.kind, r.new, r.live)}<div class="tw-state"><span class="sv-pill" style="--c:var(${tone[r.state]})">${esc(w(r.state))}</span>${r.edited ? ` <span class="small muted">${esc(w('edited'))}</span>` : ''}
                 ${can ? `<button class="link small" data-edit="${esc(r.id)}">${esc(w('edit'))}</button>` : ''}</div>${r.note ? `<div class="small muted">${esc(r.note)}</div>` : ''}`}</td>
@@ -156,7 +156,7 @@ export const rulewatchPage = (name) => async (host) => {
         </tbody></table></div>
         ${can ? `<div class="tw-apply" id="tw-apply"><button class="btn primary" id="tw-do" ${picked.length ? '' : 'disabled'}>${icon('check', 14)} ${esc(picked.length ? w('apply', { n: picked.length, ay: d.ay }) : w('apply_none'))}</button></div>` : ''}</section>`
       + (d.fetched ? `<section class="card"><h3 class="rc-h">${icon('alert', 15)} ${esc(w('new_h'))}</h3><p class="small muted">${esc(w('new_p'))}</p>
-          ${(d.new_rules || []).length ? `<ul class="tw-new">${d.new_rules.map((x) => `<li><b>${esc(x.what)}</b>${x.who ? ` <span class="small muted">${esc(w('new_who', { who: x.who }))}</span>` : ''}${/^https?:\/\//.test(x.source) ? ` <a class="small" href="${esc(x.source)}" target="_blank" rel="noopener noreferrer">${icon('external', 11)}</a>` : ''}</li>`).join('')}</ul>`
+          ${(d.new_rules || []).length ? `<ul class="tw-new">${d.new_rules.map((x) => `<li><b>${esc(x.what)}</b>${x.who ? ` <span class="small muted">${esc(w('new_who', { who: x.who }))}</span>` : ''}${/^https?:\/\//.test(x.source) ? ` <a class="small" href="${esc(x.source)}" target="_blank" rel="noopener noreferrer" aria-label="${esc(x.source)}">${icon('external', 11)}</a>` : ''}</li>`).join('')}</ul>`
             : `<p class="small">${esc(w('new_none'))}</p>`}</section>` : '')
       + (d.pages.length ? `<section class="card"><h3 class="rc-h">${icon('globe', 15)} ${esc(w('sources'))}</h3><ul class="tw-pages">${d.pages.map((p) => `<li><a href="${esc(p.uri)}" target="_blank" rel="noopener noreferrer">${esc(p.title || p.uri)}</a></li>`).join('')}</ul></section>` : '');
     wire();

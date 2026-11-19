@@ -21,7 +21,7 @@ import { startEvents, onEvent } from './events.js';
 
 export const state = {
   user: null, productName: 'Portal', portalUrl: '', needsFirstAccount: false,
-  reservedOwner: '',   // PORTAL_OWNER_EMAIL on the server: only this address may claim the portal
+  reservedOwner: false,   // PORTAL_OWNER_EMAIL set on the server: only that address may claim the portal (never sent here)
   canEmail: false, canSignup: false, verifyEmail: false, signupDomains: '',
   userLen: [],         // chip auth.username_problem [min, max] - shown in the user name box
   noMailPolicy: 'verify_later',     // chip auth.no_mail_policy: what sign-up does when no email can be sent
@@ -444,15 +444,15 @@ function forgotStep(step) {
 
 function firstAccountView() {
   return authShell(`<h1>${w('first_title')}</h1>
-    <p class="lede">${state.reservedOwner
-      ? w('first_reserved', { owner: esc(state.reservedOwner) })
-      : w('first_nobody')}</p>
+    <p class="lede">${state.reservedOwner ? w('first_reserved') : w('first_nobody')}</p>
     <div id="auth-msg"></div>
+    ${authField('au-setup', w('setup_code'), { name: 'setup_code', hint: w('setup_code_hint'), auto: 'one-time-code',
+      extra: 'inputmode="numeric" autocapitalize="off" spellcheck="false"' })}
+    ${state.reservedOwner && state.canEmail ? `<p class="alt"><button type="button" class="link" id="au-setup-mail">${icon('mail')} ${w('setup_code_mail')}</button></p>` : ''}
     ${authField('au-name', w('display_name'), { name: 'name', placeholder: w('display_name_placeholder'), auto: 'name' })}
     ${authField('au-user', w('user_name'), { name: 'username', placeholder: w('user_name_placeholder', { min: state.userLen[0], max: state.userLen[1] }), auto: 'username',
       hint: w('user_name_optional'), extra: 'autocapitalize="off" spellcheck="false" data-lower' })}
     ${authField('au-email', w('email'), { name: 'email', type: 'email', placeholder: w('email_placeholder'), auto: 'email',
-      value: state.reservedOwner || undefined, readonly: !!state.reservedOwner,
       extra: 'inputmode="email" autocapitalize="off" spellcheck="false"' })}
     ${authField('au-pass', w('password'), { name: 'password', type: 'password', placeholder: w('at_least', { n: state.passwordMin }),
       auto: 'new-password', reveal: true })}
@@ -516,8 +516,8 @@ async function submitStep(form, msg) {
   const post = (path, body) => api(path, { method: 'POST', body });
 
   if (state.needsFirstAccount) {
-    const d = await post('/api/auth/first-account', { display_name: v('au-name').trim(), username: v('au-user').trim(),
-      email: v('au-email').trim(), password: v('au-pass'), confirm: v('au-confirm') });
+    const d = await post('/api/auth/first-account', { setup_code: v('au-setup').trim(), display_name: v('au-name').trim(),
+      username: v('au-user').trim(), email: v('au-email').trim(), password: v('au-pass'), confirm: v('au-confirm') });
     forgetFlow();
     await landed(d.user);
     return;
@@ -673,6 +673,13 @@ function wireSignin(root) {
       clearInterval(resendTimer);
       resendTimer = setInterval(tick, 1000);   // ticks only: the resend countdown
       tick();
+    });
+  }
+
+  const setupMail = form.querySelector('#au-setup-mail');
+  if (setupMail) {
+    setupMail.onclick = () => busy(setupMail, async () => {
+      try { say(msg, 'ok', esc((await api('/api/auth/setup-code', { method: 'POST', body: {} })).message)); } catch (err) { showFieldError(form, err, msg); }
     });
   }
 
@@ -1396,7 +1403,7 @@ function take(d) {
   state.nav = d.nav || state.nav;                  // chip shell.nav: Side pane / Top menu (navLayout)
   remembersFor(d.user && d.user.id);    // every load binds this browser's memory to whoever is signed in now
   state.needsFirstAccount = d.needs_first_account;
-  state.reservedOwner = d.reserved_owner || '';
+  state.reservedOwner = !!d.reserved_owner;
   state.canEmail = !!d.can_email;
   state.canSignup = !!d.can_signup;
   state.demo = !!d.demo;                           // a demo copy (core/demo.py): the card leads with Try the demo

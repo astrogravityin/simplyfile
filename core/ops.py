@@ -998,7 +998,9 @@ def rows_view(rows: Any = None, query: Any = "", search_keys: Any = None, sort_k
             v = r.get(sort_key)
             n = _num(v)
             return (0, n, "") if n is not None else (1, 0, str(v or ""))
-        kept = sorted(kept, key=lambda r: (r.get(sort_key) in (None, ""), key(r)), reverse=_truthy(sort_desc))
+        # 2026-11-18 week class 42 (CodyFy G-23: two projects made in one second came back in another order): equal keys are
+        # broken by the row's id, so the same rows in any order give the same page
+        kept = sorted(kept, key=lambda r: (r.get(sort_key) in (None, ""), key(r), str(r.get("id") or "")), reverse=_truthy(sort_desc))
         if _truthy(sort_desc):                                     # blanks stay LAST whichever way it is sorted
             kept = [r for r in kept if r.get(sort_key) not in (None, "")] + [r for r in kept if r.get(sort_key) in (None, "")]
     size = max(1, min(int(_num(page_size) or 30), int(_num(max_page_size) or 300)))

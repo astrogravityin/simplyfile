@@ -8,7 +8,9 @@ and chip agents.actions says what that action is: its words and its side effect 
 For every step chip agents.step_when (does its `when` hold for these inputs) and chip agents.step_gate (run / preview /
 skip for this phase and side effect) decide - the AstroStage rules, unchanged:
   1. Dry run (phase "preview"): reads run for real, writes are only previewed (the action gets preview=True), paid skipped.
-  2. Approve (phase "run"): the recipe runs again for real.
+  2. Approve (phase "run"): the recipe runs again for real - only if the effect is still the one previewed. Every dry run
+     keeps a SEAL (sha256 of its inputs and its previewed write steps' answers); Approve carries the seal it showed, a
+     fresh dry run is made, and a different seal refuses and leaves the fresh one waiting (2026-11-18 gap audit C1-16, UV-54).
 A trigger (a schedule in chip agents.settings cadences, or an event a module emits with agents.emit) starts a dry run;
 chip agents.trigger_gate then says: tell, approve by itself (every write ticked trusted), wait for review, or tell an error.
 
@@ -20,6 +22,7 @@ Every number is chip agents.settings; every sentence chip agents.messages; the p
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import secrets
 import sqlite3
@@ -37,13 +40,13 @@ PREFIX = "agents.recipe."
 ACTIONS: dict[str, Callable[[dict, dict], dict]] = {}
 _LOCAL = threading.local()
 _RECOVERED: set[str] = set()     # data files whose cut-short runs were marked stopped in this process
-_WRITE = threading.Lock()
+_WRITE = threading.RLock()   # 2026-11-19: re-entrant - db() takes it on a fresh folder, and set_trigger already holds it
 _STARTED: list = []
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS runs(ref TEXT PRIMARY KEY, agent TEXT NOT NULL, phase TEXT NOT NULL, status TEXT NOT NULL, by_id TEXT NOT NULL,
   trigger TEXT NOT NULL DEFAULT '', inputs TEXT NOT NULL DEFAULT '{}', steps TEXT NOT NULL DEFAULT '[]', made REAL NOT NULL,
-  done REAL NOT NULL DEFAULT 0, why TEXT NOT NULL DEFAULT '') WITHOUT ROWID;
+  done REAL NOT NULL DEFAULT 0, why TEXT NOT NULL DEFAULT '', seal TEXT NOT NULL DEFAULT '') WITHOUT ROWID;
 CREATE INDEX IF NOT EXISTS runs_agent ON runs(agent, made);
 CREATE TABLE IF NOT EXISTS trig(agent TEXT NOT NULL, key TEXT NOT NULL, on_state INTEGER, last_at REAL NOT NULL DEFAULT 0,
   PRIMARY KEY(agent, key)) WITHOUT ROWID;
@@ -67,6 +70,8 @@ def db() -> sqlite3.Connection:
         c.row_factory = sqlite3.Row
         c.execute("PRAGMA journal_mode=WAL")
         c.executescript(SCHEMA)
+        if "seal" not in {r[1] for r in c.execute("PRAGMA table_info(runs)")}:   # a data folder from before the seal (2026-11-18)
+            c.execute("ALTER TABLE runs ADD COLUMN seal TEXT NOT NULL DEFAULT ''")
         _LOCAL.c, _LOCAL.path = c, path
         if path not in _RECOVERED:   # 2026-11-12: a run the server stopped mid-way is stopped, never "running" for ever
             _RECOVERED.add(path)
@@ -146,6 +151,14 @@ def _short(out: Any) -> Any:
     return out
 
 
+def seal(ins: dict, steps: list, outs: dict) -> str:
+    """What Approve is bound to: the inputs and the full answers of the steps that were only previewed (the effect).
+    A read step's own answer is left out on purpose - a clock in it would refuse every approval; what it fed a write
+    shows in that write's preview."""
+    eff = [[s["id"], s["action"], outs.get(s["id"])] for s in steps if s["gate"] == "preview"]
+    return hashlib.sha256(json.dumps({"in": ins, "effect": eff}, sort_keys=True, default=str).encode()).hexdigest()
+
+
 def execute(agent_id: str, phase: str, by_id: str, given: dict | None = None, trigger: str = "") -> dict:
     """Run a recipe now, in this thread: every step through chips step_when + step_gate, kept as one row of runs."""
     r, cat = recipe(agent_id), catalog()
@@ -180,8 +193,9 @@ def execute(agent_id: str, phase: str, by_id: str, given: dict | None = None, tr
             break
     status = settings()["run_states"]["failed" if why else "done"]
     with _WRITE, c:
-        c.execute("UPDATE runs SET status=?, steps=?, done=?, why=? WHERE ref=?",
-                  (status, json.dumps(steps, default=str, ensure_ascii=False), time.time(), why, ref))
+        c.execute("UPDATE runs SET status=?, steps=?, done=?, why=?, seal=? WHERE ref=?",
+                  (status, json.dumps(steps, default=str, ensure_ascii=False), time.time(), why,
+                   seal(ins, steps, outs) if phase == "preview" else "", ref))
     return view(c.execute("SELECT * FROM runs WHERE ref=?", (ref,)).fetchone())
 
 
@@ -195,7 +209,7 @@ def view(row) -> dict:
 
 def runs(agent_id: str = "", most: int = 0) -> list[dict]:
     most = most or int(settings()["history_rows"])
-    q = "SELECT * FROM runs " + ("WHERE agent=? " if agent_id else "") + "ORDER BY made DESC LIMIT ?"
+    q = "SELECT * FROM runs " + ("WHERE agent=? " if agent_id else "") + "ORDER BY made DESC, ref LIMIT ?"
     return [view(r) for r in db().execute(q, ((agent_id,) if agent_id else ()) + (most,))]
 
 
@@ -207,11 +221,15 @@ def _after_trigger(agent_id: str, run: dict) -> str:
     """A triggered dry run: chip agents.trigger_gate says what happens next; the owners' bell hears it."""
     writes = [s for s in run["steps"] if s["gate"] == "preview"]
     verdict = engine.run("agents.trigger_gate", {"facts": {"failed": run["status"] == settings()["run_states"]["failed"], "blocked": False,
-                                                           "has_writes": bool(writes), "all_writes_trusted": all(s["trusted"] for s in writes)}})
+                                                           "has_writes": bool(writes), "all_writes_trusted": all(s["trusted"] for s in writes),
+                                                           "reaches_out": any(s["side_effect"] in settings()["outside_effects"] for s in writes)}})
     name = engine.run("ui.agents").get(f"name_{agent_id}") or agent_id      # a recipe whose words are not written yet: its id
     if verdict == "approve":
-        execute(agent_id, "run", run["by_id"], run["inputs"], run["trigger"])
-    elif verdict in ("review", "tell_error"):
+        try:                                     # trusted, but still bound to what it previewed - a changed effect waits for review
+            approve(agent_id, run["ref"], run["seal"], run["by_id"], "")
+        except HTTPException:
+            verdict = "review"
+    if verdict in ("review", "tell_error"):
         for uid in _owners():
             bell.push(uid, say("bell_review" if verdict == "review" else "bell_failed", name=name, why=run["why"][:120]), "#/agents")
     return verdict
@@ -314,23 +332,35 @@ def api_agents(_: dict = Depends(access.screen("agents"))):
     return {"agents": [card(aid, r) for aid, r in recipes().items()], "actions": catalog()}
 
 
+def approve(agent_id: str, ref: str, shown_seal: str, by_id: str, by_name: str) -> dict:
+    """Run a waiting dry run for real - only while its effect is the one previewed: the seal the approver saw must be the
+    run's, and a fresh dry run made now must give the same seal. Otherwise 409; the fresh dry run waits instead (re-ask)."""
+    st = settings()["run_states"]
+    prev = db().execute("SELECT * FROM runs WHERE ref=? AND agent=?", (str(ref or ""), agent_id)).fetchone()
+    if not prev or not view(prev)["waiting"]:
+        raise HTTPException(400, say("nothing_waits"))
+    if not prev["seal"] or str(shown_seal or "") != prev["seal"]:
+        raise HTTPException(409, say("seal_unknown"))
+    given = view(prev)["inputs"]
+    fresh = execute(agent_id, "preview", by_id, given, prev["trigger"])
+    if fresh["seal"] != prev["seal"]:
+        with _WRITE, db():
+            db().execute("UPDATE runs SET phase=?, why=? WHERE ref=?", (st["stale_phase"], say("changed_since"), prev["ref"]))
+        raise HTTPException(409, say("changed_since"))
+    with _WRITE, db():
+        db().execute("UPDATE runs SET phase=?, why=? WHERE ref IN (?, ?)",
+                     (st["approved_phase"], say("approved_by", name=by_name), prev["ref"], fresh["ref"]))
+    return execute(agent_id, "run", by_id, given, prev["trigger"])
+
+
 @router.post("/api/core/agents/{agent_id}/run")
 def api_agent_run(agent_id: str, body: dict = Body(default={}), u: dict = Depends(access.screen("agents"))):
-    """Dry run (default) or, for a dry run that waits, approve = run it for real with the same inputs."""
-    phase = "run" if (body or {}).get("approve") else "preview"
-    given = (body or {}).get("inputs") or {}
-    if phase == "run":
-        prev = db().execute("SELECT * FROM runs WHERE ref=? AND agent=?", (str(body.get("ref") or ""), agent_id)).fetchone()
-        if not prev or not view(prev)["waiting"]:
-            raise HTTPException(400, say("nothing_waits"))
-        given = view(prev)["inputs"]
-        with _WRITE, db():
-            db().execute("UPDATE runs SET why=? WHERE ref=?", (say("approved_by", name=u.get("name") or u.get("email") or ""), prev["ref"]))
-    got = execute(agent_id, phase, u["id"], given)
-    if phase == "run":
-        with _WRITE, db():
-            db().execute("UPDATE runs SET phase='preview_approved' WHERE ref=?", (str(body.get("ref")),))
-    return {"run": got, "message": say("ran" if phase == "run" else "dry_ran")}
+    """Dry run (default) or, for a dry run that waits, approve = run it for real with the same inputs - bound to the seal
+    of the dry run the page showed (body `seal`)."""
+    if (body or {}).get("approve"):
+        got = approve(agent_id, str(body.get("ref") or ""), str(body.get("seal") or ""), u["id"], u.get("name") or u.get("email") or "")
+        return {"run": got, "message": say("ran")}
+    return {"run": execute(agent_id, "preview", u["id"], (body or {}).get("inputs") or {}), "message": say("dry_ran")}
 
 
 @router.get("/api/core/agents/{agent_id}/runs")
@@ -348,6 +378,14 @@ if __name__ == "__main__":  # ponytail: one runnable self-check - dry run previe
     import tempfile
     from pathlib import Path
     store.DATA = Path(tempfile.mkdtemp())
+    # 2026-11-19 (security watch self-test hung): set_trigger holds _WRITE, then its first db() on a fresh data folder took it again
+    def _first_db() -> None:
+        with _WRITE:
+            db()
+    first = threading.Thread(target=_first_db, daemon=True)
+    first.start()
+    first.join(10)
+    assert not first.is_alive(), "the first db() under a held write lock hangs (set_trigger on a fresh data folder) - _WRITE must be re-entrant"
     wrote, rang = [], []
     bell.push = lambda uid, text, href="": rang.append(text)
     globals()["_owners"] = lambda: ["o"]
@@ -369,6 +407,27 @@ if __name__ == "__main__":  # ponytail: one runnable self-check - dry run previe
     assert dry["steps"][1]["out"] == {"would": 4} and "_secret" not in dry["steps"][0]["out"] and dry["waiting"], dry
     done = execute("t", "run", "o")
     assert wrote == [4] and done["steps"][1]["out"] == {"wrote": 4}, "approve writes for real"
+    # 2026-11-18 C1-16: Approve is bound to the previewed effect - a wrong seal, or data changed since the dry run, is refused
+    wrote.clear()
+    shown = execute("t", "preview", "o")
+    for bad_seal in ("", "0" * 64):
+        try:
+            approve("t", shown["ref"], bad_seal, "o", "")
+            raise AssertionError("an approval without the dry run's seal ran")
+        except HTTPException as e:
+            assert e.status_code == 409 and not wrote, ("approve needs the seal it was shown", e.detail)
+    action("t.read", lambda a, ctx: {"n": a["n"] * 3})          # the data moved between the dry run and Approve
+    try:
+        approve("t", shown["ref"], shown["seal"], "o", "")
+        raise AssertionError("changed data between preview and approve was approved")
+    except HTTPException as e:
+        assert e.status_code == 409 and not wrote, ("a changed effect is refused, nothing written", e.detail, wrote)
+    again = runs("t", 1)[0]
+    assert again["waiting"] and again["seal"] != shown["seal"] and not view(db().execute(
+        "SELECT * FROM runs WHERE ref=?", (shown["ref"],)).fetchone())["waiting"], "re-ask: the fresh dry run waits, the old one does not"
+    assert approve("t", again["ref"], again["seal"], "o", "")["status"] == "done" and wrote == [6], "the re-read effect approves"
+    action("t.read", lambda a, ctx: {"n": a["n"] * 2})
+    wrote.clear()
     action("t.read", lambda a, ctx: (_ for _ in ()).throw(ValueError("no disk")))
     bad = execute("t", "preview", "o")
     assert bad["status"] == "failed" and bad["why"] == "no disk" and len(bad["steps"]) == 1, "a failed step stops the run"

@@ -15,9 +15,8 @@
       "default": {
         "X-Content-Type-Options": "nosniff",
         "Referrer-Policy": "strict-origin-when-cross-origin",
-        "Content-Security-Policy": "frame-ancestors 'self' https://*.valuestream.in https://astrostage.in https://*.astrostage.in",
-        "X-Frame-Options": "SAMEORIGIN",
-        "Content-Security-Policy-Report-Only": "default-src 'self'; script-src 'self'; object-src 'none'; style-src 'self' 'unsafe-inline'; base-uri 'self'; frame-ancestors 'self' https://*.valuestream.in https://astrostage.in https://*.astrostage.in; report-uri /api/core/doctor/csp"
+        "Content-Security-Policy": "default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; connect-src 'self' https://sso.valuestream.in https://*.valuestream.in https://*.astrostage.in; img-src 'self' data: blob: https:; media-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; font-src 'self' data:; frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'self' https://*.valuestream.in https://astrostage.in https://*.astrostage.in; report-uri /api/core/doctor/csp",
+        "X-Frame-Options": "SAMEORIGIN"
       },
       "label": "Header -> value, added to every answer that does not set its own (a file's own Content-Security-Policy wins)"
     },
@@ -46,9 +45,9 @@
     }
   },
   "returns": "record",
-  "version": 3,
+  "version": 5,
   "status": "published",
-  "description_nl": "2026-10-01 portal assessment: the sibling portals sent no Content-Security-Policy, X-Frame-Options, nosniff or Referrer-Policy, and one had no HSTS (nginx config not in the repo). Every answer now carries these from core (core/__init__ _stamp_build), so all three sites get them from one list; change a value here, never in code. frame-ancestors lets the studio and the valuestream sites frame each other; CSP stays frame-ancestors only (inline styles everywhere - a full script/style policy is a later step). 2026-10-21 reviews: a full script policy runs in report-only mode first - each violation is filed once by the Error Doctor (/api/core/doctor/csp); once quiet, it becomes the enforced policy. 2026-11-11 A20: the admin bell filled with Error Doctor notes 'CSP style-src-attr at /start' - the shell draws bars, swatches and widths as style attributes on purpose; style-src 'self' 'unsafe-inline' allows the shell's inline style attributes and its <style> blocks (ui-spacing from chip, page CSS) but no style sheet from another site; the SCRIPT policy is unchanged, which is what report-only is there to catch.",
+  "description_nl": "2026-10-01 portal assessment: the sibling portals sent no Content-Security-Policy, X-Frame-Options, nosniff or Referrer-Policy, and one had no HSTS (nginx config not in the repo). Every answer now carries these from core (core/__init__ _stamp_build), so all three sites get them from one list; change a value here, never in code. frame-ancestors lets the studio and the valuestream sites frame each other; CSP stays frame-ancestors only (inline styles everywhere - a full script/style policy is a later step). 2026-10-21 reviews: a full script policy runs in report-only mode first - each violation is filed once by the Error Doctor (/api/core/doctor/csp); once quiet, it becomes the enforced policy. 2026-11-03 Shoperative review (B-3): the report-only script policy was quiet on every screen the crawler opens (243 views, 0 console errors) once the landing page's one inline script moved to a file, so script-src 'self', object-src 'none' and base-uri 'self' are now ENFORCED; the stricter default-src (inline styles) stays report-only. A portal narrows frame-ancestors with its own chips/security.headers.json (later layers win). 2026-11-11 A20: the admin bell filled with Error Doctor notes 'CSP style-src-attr / style-src-elem at /start' - the shell draws with inline style attributes and <style> blocks on purpose; style-src 'self' 'unsafe-inline' allows them (no style sheet from another site); the SCRIPT policy is unchanged, which is what report-only is there to catch. 2026-11-18 gap audit C1-10 (N-23, class J): an injected script could still send data anywhere - connect-src and default-src were only report-only. The whole policy is now ENFORCED with a host allow-list: connect-src 'self' plus the one sign-in's API (chip sso.settings api - keep the two in step, the polls part checks it); img-src allows https: because rich text shows pictures by URL (chip rich.allow_list); frame-src names the video players the pages embed (chip portal.embeddable_video, page.shell youtube_embed) - a new player host is added HERE; worker-src 'self' blob: (week class 39: a worker in a sandboxed page has an opaque origin and only starts from blob:); report-uri keeps every block filed by the Error Doctor. Never '*', 'unsafe-eval' or 'strict-dynamic' (selfcheck polls: csp_enforced reads the header of a real answer). Same day, from CodyFy's prod report-only rows: connect only reached the one sign-in and our own sites (https://*.valuestream.in, https://*.astrostage.in), and Connect Plus call backgrounds need WebAssembly - script-src 'wasm-unsafe-eval' (compiles wasm only; 'unsafe-eval' stays forbidden). A portal may shadow this chip with its own chips/security.headers.json.",
   "test_cases": [
     {
       "args": {},
@@ -56,9 +55,8 @@
         "headers": {
           "X-Content-Type-Options": "nosniff",
           "Referrer-Policy": "strict-origin-when-cross-origin",
-          "Content-Security-Policy": "frame-ancestors 'self' https://*.valuestream.in https://astrostage.in https://*.astrostage.in",
-          "X-Frame-Options": "SAMEORIGIN",
-          "Content-Security-Policy-Report-Only": "default-src 'self'; script-src 'self'; object-src 'none'; style-src 'self' 'unsafe-inline'; base-uri 'self'; frame-ancestors 'self' https://*.valuestream.in https://astrostage.in https://*.astrostage.in; report-uri /api/core/doctor/csp"
+          "Content-Security-Policy": "default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; connect-src 'self' https://sso.valuestream.in https://*.valuestream.in https://*.astrostage.in; img-src 'self' data: blob: https:; media-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; font-src 'self' data:; frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'self' https://*.valuestream.in https://astrostage.in https://*.astrostage.in; report-uri /api/core/doctor/csp",
+          "X-Frame-Options": "SAMEORIGIN"
         },
         "hsts": "max-age=31536000",
         "frame_ok_paths": [

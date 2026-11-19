@@ -14,7 +14,6 @@ import json
 import subprocess
 import sys
 import time
-import urllib.request
 from pathlib import Path
 
 from packaging.requirements import Requirement
@@ -72,10 +71,17 @@ def resolve(reqs: list[str], plat: str, tag: list[str], python: str, constraints
         extra += sorted(set(missing) - set(extra))
 
 
+def _egress():
+    """core/egress: every outbound fetch through one door (2026-11-18 gap audit, chip security.egress)."""
+    sys.path.insert(0, str(ROOT))
+    from core import egress  # noqa: PLC0415 - only the hash look-up needs core
+    return egress
+
+
 def hashes(name: str, version: str, tries: int = 6) -> list[str]:
     for i in range(tries):            # PyPI over a slow link times out now and then
         try:
-            with urllib.request.urlopen(f"https://pypi.org/pypi/{name}/{version}/json", timeout=90) as r:   # noqa: S310 - PyPI
+            with _egress().fetch(f"https://pypi.org/pypi/{name}/{version}/json", timeout=90) as r:   # the one outbound door (core/egress)
                 return sorted({u["digests"]["sha256"] for u in json.load(r)["urls"]})
         except OSError:
             if i == tries - 1:

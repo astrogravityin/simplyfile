@@ -57,6 +57,9 @@ CREATE TABLE IF NOT EXISTS views (
   email TEXT, path TEXT, title TEXT, referrer TEXT, ip TEXT, country TEXT, region TEXT, city TEXT,
   tz TEXT, lang TEXT, device TEXT, browser TEXT, os TEXT, vw INTEGER, vh INTEGER, dwell_ms INTEGER);
 CREATE INDEX IF NOT EXISTS views_at ON views(at);
+CREATE TABLE IF NOT EXISTS security (
+  id INTEGER PRIMARY KEY, at TEXT NOT NULL, kind TEXT NOT NULL, by_id TEXT, target_id TEXT, ip TEXT);
+CREATE INDEX IF NOT EXISTS security_at ON security(at);
 """
 
 
@@ -127,6 +130,7 @@ def _drain() -> None:
                     cutoff = (datetime.now(timezone.utc) - timedelta(days=keep_days())).isoformat(timespec="seconds")
                     c.execute("DELETE FROM activity WHERE at < ?", (cutoff,))
                     c.execute("DELETE FROM views WHERE at < ?", (cutoff,))
+                    c.execute("DELETE FROM security WHERE at < ?", (cutoff,))
         except sqlite3.Error:
             pass          # a locked or broken ledger must never take a request down with it
         finally:
@@ -190,6 +194,15 @@ def backfill_places() -> None:
 
 def now() -> str:
     return datetime.now(timezone.utc).isoformat(timespec="seconds")
+
+
+# --- writer 3: security events (2026-11-18 gap audit C1-19) ----------------------------------------
+# A failed sign-in, a new MCP key, an owner/role change, the first account taken: the kind, who did it, whom it touched (ids)
+# and the cut network - never an address typed, a key, a password. core/health.py's `security` probe reads them.
+
+def security(kind: str, by_id: str = "", target_id: str = "", ip: str = "") -> None:
+    _put("INSERT INTO security(at,kind,by_id,target_id,ip) VALUES(?,?,?,?,?)",
+         (now(), str(kind)[:40], str(by_id or "")[:40], str(target_id or "")[:40], cut_ip(ip)))
 
 
 # --- writer 1: every request --------------------------------------------------------------------
@@ -317,11 +330,11 @@ def report(range: str = "30d", _: dict = Depends(screen("activity"))):  # noqa: 
         people = rows(c, """SELECT user_id, email, COUNT(*) AS requests, SUM(status >= 400) AS failed,
                                    COUNT(DISTINCT screen) AS screens, MAX(at) AS last_at
                             FROM activity WHERE user_id IS NOT NULL AND at >= ?
-                            GROUP BY user_id ORDER BY requests DESC LIMIT ?""", (start, int(settings()["report_people_shown"])))
+                            GROUP BY user_id ORDER BY requests DESC, user_id LIMIT ?""", (start, int(settings()["report_people_shown"])))
         screens = rows(c, """SELECT screen, COUNT(*) AS requests, COUNT(DISTINCT user_id) AS people,
                                     SUM(status >= 400) AS failed, CAST(AVG(ms) AS INTEGER) AS avg_ms
                              FROM activity WHERE screen IS NOT NULL AND at >= ?
-                             GROUP BY screen ORDER BY requests DESC""", (start,))
+                             GROUP BY screen ORDER BY requests DESC, screen""", (start,))
         signins = rows(c, """SELECT substr(at, 1, 10) AS day, SUM(status < 400) AS ok, SUM(status >= 400) AS failed
                              FROM activity WHERE method = 'POST' AND path = '/api/auth/signin' AND at >= ?
                              GROUP BY day ORDER BY day""", (start,))
@@ -348,7 +361,7 @@ def visitors(range: str = "7d", _: dict = Depends(screen("visitors"))):  # noqa:
     np_sql = ",".join("?" * len(not_people))
     top = lambda col, n: rows(c, f"""SELECT COALESCE(NULLIF({col}, ''), 'unknown') AS name, COUNT(*) AS views,
                                      COUNT(DISTINCT session_id) AS sessions FROM views WHERE at >= ?
-                                     GROUP BY name ORDER BY views DESC LIMIT ?""", (start, int(n)))  # noqa: E731
+                                     GROUP BY name ORDER BY views DESC, name LIMIT ?""", (start, int(n)))  # noqa: E731
     with db() as c:
         totals = dict(c.execute(f"""SELECT COUNT(*) AS views, COUNT(DISTINCT session_id) AS sessions,
                                            COUNT(DISTINCT user_id) AS people, SUM(user_id IS NULL) AS anonymous,
@@ -357,7 +370,7 @@ def visitors(range: str = "7d", _: dict = Depends(screen("visitors"))):  # noqa:
         out = {"range": range, "totals": totals,
                "pages": rows(c, """SELECT path AS name, COUNT(*) AS views, COUNT(DISTINCT session_id) AS sessions,
                                           CAST(AVG(NULLIF(dwell_ms, 0)) AS INTEGER) AS avg_dwell_ms
-                                   FROM views WHERE at >= ? GROUP BY path ORDER BY views DESC LIMIT ?""",
+                                   FROM views WHERE at >= ? GROUP BY path ORDER BY views DESC, path LIMIT ?""",
                              (start, int(kn["visitor_pages_shown"]))),
                "countries": top("country", kn["visitor_top_shown"]), "cities": top("city", kn["visitor_top_shown"]),
                "devices": top("device", kn["visitor_devices_shown"]), "browsers": top("browser", kn["visitor_browsers_shown"]),

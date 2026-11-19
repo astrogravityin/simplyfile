@@ -22,7 +22,7 @@ from pathlib import Path
 from fastapi import HTTPException
 
 import store
-from core import engine
+from core import egress, engine
 
 def kinds() -> list[str]:
     """The kinds of work a model does (chip providers.settings) - 2026-09-26, was a tuple here."""
@@ -620,7 +620,7 @@ def _post_json(url: str, key: str, body: dict, timeout: float, extra_headers: di
     headers = {"Content-Type": "application/json"} | ({"Authorization": f"Bearer {key}"} if key else {}) | (extra_headers or {})
     req = urllib.request.Request(url, data=data, headers=headers, method="POST")
     try:
-        with urllib.request.urlopen(req, timeout=timeout) as resp:
+        with egress.fetch(req, timeout=timeout, purpose="providers") as resp:
             return json.loads(resp.read().decode("utf-8"))
     except urllib.error.HTTPError as e:
         detail = e.read().decode("utf-8", "replace")[:300]
@@ -630,14 +630,14 @@ def _post_json(url: str, key: str, body: dict, timeout: float, extra_headers: di
 def _get_json(url: str, key: str, timeout: float, extra_headers: dict | None = None) -> dict:
     headers = ({"Authorization": f"Bearer {key}"} if key else {}) | (extra_headers or {})
     req = urllib.request.Request(url, headers=headers, method="GET")
-    with urllib.request.urlopen(req, timeout=timeout) as resp:
+    with egress.fetch(req, timeout=timeout, purpose="providers") as resp:
         return json.loads(resp.read().decode("utf-8"))
 
 
 def _download(url: str, out: Path, timeout: float) -> None:
     import shutil  # noqa: PLC0415
     out.parent.mkdir(parents=True, exist_ok=True)
-    with urllib.request.urlopen(urllib.request.Request(url), timeout=timeout) as resp, out.open("wb") as f:
+    with egress.fetch(url, timeout=timeout, purpose="providers") as resp, out.open("wb") as f:
         shutil.copyfileobj(resp, f, 1024 * 1024)       # 2026-10-02 review: streamed to disk, never the whole clip in memory
 
 
@@ -682,7 +682,7 @@ def _post_multipart(url: str, key: str, fields: dict, files: list[tuple[str, Pat
     req = urllib.request.Request(url, data=b"".join(parts) + f"--{edge}--{crlf}".encode(), method="POST",
                                  headers={"Content-Type": f"multipart/form-data; boundary={edge}", "Authorization": f"Bearer {key}"})
     try:
-        with urllib.request.urlopen(req, timeout=timeout) as resp:
+        with egress.fetch(req, timeout=timeout, purpose="providers") as resp:
             return json.loads(resp.read().decode("utf-8"))
     except urllib.error.HTTPError as e:
         raise RuntimeError(say("refused", status=e.code, reason=e.read().decode("utf-8", "replace")[:300]))

@@ -84,6 +84,18 @@
       "type": "text",
       "default": "Stopped: the server restarted while this run was going. Run it again.",
       "label": "stopped restart"
+    },
+    {
+      "name": "seal_unknown",
+      "type": "text",
+      "default": "This approval does not match the dry run on the screen - reload and read it again.",
+      "label": "seal unknown"
+    },
+    {
+      "name": "changed_since",
+      "type": "text",
+      "default": "The data changed since the dry run, so it was not run. A new dry run is waiting - read it and approve again.",
+      "label": "changed since"
     }
   ],
   "expr": {
@@ -101,7 +113,9 @@
       "bell_review": "$bell_review",
       "bell_failed": "$bell_failed",
       "cannot_run": "$cannot_run",
-      "stopped_restart": "$stopped_restart"
+      "stopped_restart": "$stopped_restart",
+      "seal_unknown": "$seal_unknown",
+      "changed_since": "$changed_since"
     }
   },
   "returns": "record",
@@ -124,7 +138,9 @@
         "bell_review": "{name} has something for you to approve.",
         "bell_failed": "{name} could not finish: {why}",
         "cannot_run": "It cannot run yet: {why}",
-        "stopped_restart": "Stopped: the server restarted while this run was going. Run it again."
+        "stopped_restart": "Stopped: the server restarted while this run was going. Run it again.",
+        "seal_unknown": "This approval does not match the dry run on the screen - reload and read it again.",
+        "changed_since": "The data changed since the dry run, so it was not run. A new dry run is waiting - read it and approve again."
       }
     }
   ]
