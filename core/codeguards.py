@@ -160,14 +160,27 @@ def paint_unit(root: Path) -> str:
     again. '' when it holds (or no node here - the static half still ran), else what broke."""
     if not shutil.which("node"):
         return ""
-    js = (root / "core" / "static" / "paint.js").as_uri()
+    # 2026-11-19 Ask-Harshal deploy: node 18 on the server reads a plain .js as CommonJS, so import() of paint.js threw
+    # "Unexpected token 'export'" and the deploy gate refused a good release (node 22+ guesses the module type, so the laptop
+    # passed). The unit imports a .mjs copy - an ES module on every node.
+    import tempfile  # noqa: PLC0415
+    tmp = Path(tempfile.mkdtemp(prefix="paintunit-"))
+    mjs = tmp / "paint.mjs"
+    shutil.copyfile(root / "core" / "static" / "paint.js", mjs)
+    js = mjs.as_uri()
     test = (f"import('{js}').then(({{ paintIfChanged: p }}) => {{ let n = 0; const el = {{ firstChild: null, set innerHTML(h) "
             "{ n++; this.firstChild = {}; } }; p(el, 'a'); p(el, 'a'); if (n !== 1) throw new Error('same HTML painted twice'); "
             "el.firstChild = {}; p(el, 'a'); if (n !== 2) throw new Error('a box redrawn by someone else was not painted again'); "
             "p(el, 'b'); if (n !== 3) throw new Error('new HTML was not painted'); })"
             ".catch((e) => { console.error(e.message); process.exit(1); });")
-    r = subprocess.run(["node", "-e", test], capture_output=True, text=True, encoding="utf-8", errors="replace")
+    try:
+        r = subprocess.run(["node", *NODE_FLAGS, "-e", test], capture_output=True, text=True, encoding="utf-8", errors="replace")
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
     return (r.stderr or r.stdout).strip()[-300:] if r.returncode else ""
+
+
+NODE_FLAGS: list[str] = []   # the self-test sets --no-experimental-detect-module: today's node then reads .js the way node 18 does
 
 
 def check(root: Path = ROOT) -> None:
@@ -220,6 +233,14 @@ if __name__ == "__main__":
         if shutil.which("node"):
             (t / "core" / "static" / "paint.js").write_text("export function paintIfChanged(el, html) { el.innerHTML = html; return true; }\n", encoding="utf-8")
             assert "same HTML painted twice" in paint_unit(t), "a paintIfChanged that always paints was not caught"
+            # 2026-11-19: node 18 (the server) reads a .js file as CommonJS - the good paint.js must still pass there
+            shutil.copyfile(Path(__file__).parent / "static" / "paint.js", t / "core" / "static" / "paint.js")
+            flag = ["--no-experimental-detect-module"]   # node 22+ guesses ESM; node 18 has no such option and reads .js as CommonJS already
+            NODE_FLAGS[:] = flag if subprocess.run(["node", *flag, "-e", "0"], capture_output=True).returncode == 0 else []
+            try:
+                assert paint_unit(t) == "", f"paint unit fails on a node that reads .js as CommonJS (the server's node 18): {paint_unit(t)}"
+            finally:
+                NODE_FLAGS[:] = []
     # class 42: the same rows in any order give byte-identical pages (equal sort keys broken by id)
     rows = [{"id": f"r{i:02d}", "made": "2026-11-12T10:00:00", "name": "same"} for i in range(30)]
     pages = set()
