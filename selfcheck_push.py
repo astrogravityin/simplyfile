@@ -24,9 +24,7 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 # ratchet: files that still poll (2026-11-11). Only shrinks. Each is a screen to move onto the stream (topic in chip events.settings).
-POLLING = {
-    "static/dock.js",                    # Connect Plus kit's own chat-list badge (k.list_poll_ms) - the kit's stream is next
-}
+POLLING: set[str] = set()   # 2026-11-20: static/dock.js left - the Connect badge hears the kit's push stream (ConnectPlus.onNews)
 BUDGET_S = 2.0                           # the owner's bar for "rings the other in < 2 s" (gap plan W1.2)
 _FETCH = re.compile(r"\bapi\(|\bfetch\(|\bPage\(|\bcountConnect\(|\.json\(\)")
 

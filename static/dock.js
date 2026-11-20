@@ -259,8 +259,7 @@ function connectPlus() {
     document.head.appendChild(sheet);
     cp = import(`${BASE}/static/connect-plus/connect-plus.js`).then(async (m) => {
       await m.default.mount({ apiBase: `${BASE}/api`, token: () => null });
-      const k = await api('/api/connect/knobs');
-      if (k.list_poll_ms) setInterval(() => S.user && countConnect(), Number(k.list_poll_ms));   // the badge: the kit's own list poll
+      if (m.default.onNews) await m.default.onNews(() => S.user && countConnect());   // the badge: the kit tells on its push stream - no timer (2026-11-20)
       return m.default;
     });
     cp.catch(() => { cp = null; });
