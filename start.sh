@@ -11,7 +11,10 @@ python -c "import fastapi, openpyxl, jsonschema" 2>/dev/null || {
   python -m pip install -r requirements.txt
 }
 
-PORT="${TV_PORT:-8830}"
+# 2026-11-22 (DomainTemplate lesson feedback_port_identify_then_next_free): reuse the port only if THIS folder answers there, else the next free one
+read -r PICK PORT < <(python -I tools/pick_port.py "${TV_PORT:-8830}") || true
+[ -n "$PICK" ] || { echo "  No free port near ${TV_PORT:-8830}"; exit 1; }
+if [ "$PICK" = running ]; then echo; echo "  SimplyFy is already running  ->  http://localhost:$PORT"; echo; exit 0; fi
 export PORTAL_COOKIE="${PORTAL_COOKIE:-sf_session}"
 echo
 echo "  SimplyFy  ->  http://localhost:$PORT"

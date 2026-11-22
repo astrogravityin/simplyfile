@@ -1613,7 +1613,7 @@ def health_run(request: Request):
     if request.headers.get("x-forwarded-for") or request.headers.get("x-real-ip"):
         raise HTTPException(404)
     running = sum(1 for j in list(narrator._JOBS.values()) if (j or {}).get("status") == "running")  # noqa: SLF001
-    return {"status": "healthy", "commit": _BOOT["commit"][:7], "commit_full": _BOOT["commit"],
+    return {"status": "healthy", "root": str(ROOT), "commit": _BOOT["commit"][:7], "commit_full": _BOOT["commit"],
             "started_at": _BOOT["started_at"], "jobs_running": running, "edition": edition.current().get("id", "")}
 
 

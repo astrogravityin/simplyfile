@@ -30,6 +30,21 @@ if not exist "%PY%" (
 
 if "%TV_PORT%"=="" set TV_PORT=8830
 if "%PORTAL_COOKIE%"=="" set PORTAL_COOKIE=sf_session
+REM 2026-11-22 (DomainTemplate lesson feedback_port_identify_then_next_free): reuse the port only if THIS folder answers
+REM /health/run there, else the next free port from TV_PORT (tools\pick_port.py).
+set "PICK="
+for /f "tokens=1,2" %%a in ('%PY% -I tools\pick_port.py %TV_PORT%') do (set "PICK=%%a" & set "TV_PORT=%%b")
+if "%PICK%"=="" goto :fail
+set "URL=http://localhost:%TV_PORT%/"
+if "%PICK%"=="running" (
+  echo.
+  echo   SimplyFy is already running  -^>  %URL%
+  echo   ^(To stop it, press Ctrl+C in its own window.^)
+  echo.
+  if not "%TV_NO_BROWSER%"=="1" start "" "%URL%"
+  ping -n 6 127.0.0.1 >nul
+  goto :eof
+)
 echo.
 echo   SimplyFy  -^>  http://localhost:%TV_PORT%
 echo   Stop it with Ctrl+C.
