@@ -51,6 +51,9 @@ def module_checks() -> None:
 
 
 def static_checks() -> None:
+    # 2026-11-22 (XfDesk 'Book and invite' went blank): `button:disabled:hover{` outranks button.primary - a greyed primary
+    # under the mouse painted white under its own white text; the plain hover reset must skip filled buttons
+    assert "button:disabled:hover{" not in (HERE / "core" / "static" / "portal.css").read_text(encoding="utf-8"), "a disabled hover reset paints filled buttons white"
     # 2026-11-15 owner (Tour Video Record did nothing on every portal): a confirmDialog callback runs after the click is
     # over, when e.currentTarget is null and busy(null) quietly returns - hold the button first, never pass the event on
     _late = [f"{f.relative_to(HERE)}:{n}" for f in sorted((HERE / "static").glob("*.js")) + sorted((HERE / "core" / "static").glob("*.js"))

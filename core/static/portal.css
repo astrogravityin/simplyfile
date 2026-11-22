@@ -272,7 +272,8 @@ button{
 button:hover{background:var(--panel-2);border-color:var(--ink-2)}
 button:active{transform:translateY(.5px)}
 button:disabled{opacity:.45;cursor:not-allowed;box-shadow:none;transform:none}
-button:disabled:hover{background:var(--panel);border-color:var(--edge)}
+/* 2026-11-22: a greyed primary under the mouse went white text on white - the plain hover reset skips filled buttons */
+button:disabled:hover:not(.primary):not(.on){background:var(--panel);border-color:var(--edge)}
 
 button.primary{background:linear-gradient(180deg,var(--brand-2),var(--brand));border-color:transparent;
   color:var(--brand-ink);box-shadow:0 1px 2px rgba(91,91,214,.35),0 4px 14px rgba(91,91,214,.22)}
