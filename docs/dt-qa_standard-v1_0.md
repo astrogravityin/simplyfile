@@ -31,8 +31,8 @@ The end-of-work check is [QC_GATE.md](dt-qc_gate-v1_0.md) - same numbers: QC-5 c
     `tours/<prefix>-<screen>.json`. Target: the video renders on first view with a progress window and is
     kept until the script or screen changes; only videos shared outside (marketing, demo cards, client links) are
     pre-rendered and checked for sound and picture.
-    *Until render-on-first-view ships, `guide_drift` still fails `video_stale`, so re-render the changed screen's
-    video as before.*
+    *Owner 2026-11-23: render ON REQUEST only - a screen the owner asks for, or one batch before going public (Video
+    Map, ValueStream CC). A video older than its script is counted and shown; it no longer fails a change.*
 
 ## D. Check as you go
 

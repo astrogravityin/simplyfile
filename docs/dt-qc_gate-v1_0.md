@@ -15,7 +15,7 @@ screenshot read back, a diff), never memory. A line without evidence counts as F
 | QC-7 | ACT met | Accuracy check, cost per run, time taken |
 | QC-8 | Performance acceptable | Measured times, plus the plan for any slow step |
 | QC-9 | Guide me updated | File changed, plus `python selfcheck.py` PASS |
-| QC-10 | Tour script updated (video re-rendered until render-on-first-view ships) | Script diff, plus `python tools/make_tours.py` + `python selfcheck.py` PASS |
+| QC-10 | Tour script updated (video rendered only on request - owner 2026-11-23) | Script diff, plus `python tools/make_tours.py` + `python selfcheck.py` PASS |
 | QC-11 | UI verified on laptop, tablet and phone, in light and dark | Six screenshots per changed screen |
 | QC-12 | Tested end to end, every role | Test run output, plus the role table |
 | QC-13 | AI agent scope | Proposed (what), or no (why) |
