@@ -92,7 +92,8 @@ def csp_enforced(pol: str) -> dict:
         bad = [s for s in srcs if s == "*" or s in ("'unsafe-eval'", "'strict-dynamic'")]
         assert not bad, f"the enforced CSP {d} allows {bad} - any site may run code or receive data: {pol!r}"
     for d in ("script-src", "connect-src"):
-        named = [s for s in parts[d] if s.startswith("'") or re.fullmatch(r"(https|wss)://(\*\.)?[a-z0-9-]+(\.[a-z0-9-]+)+(:\d+)?", s)]
+        named = [s for s in parts[d] if s.startswith("'") or re.fullmatch(r"(https|wss)://(\*\.)?[a-z0-9-]+(\.[a-z0-9-]+)+(:\d+)?", s)
+                 or re.fullmatch(r"http://(127\.0\.0\.1|localhost)(:\d+)?", s)]   # the PC's own loopback (a local connector) is no other site
         assert named == parts[d] and "'unsafe-inline'" not in named, f"{d} must name its hosts (a *.domain is fine, * / https: is not): {parts[d]}"
     # 2026-11-20 prod: Connect Plus calls broke - LiveKit signals over wss://api.astrostage.in and Chromium 151 does NOT let
     # https://*.astrostage.in cover a wss:// subdomain (measured: BLOCKED by connect-src; same-origin wss stays 'self').
@@ -105,6 +106,21 @@ def csp_enforced(pol: str) -> dict:
     assert ok, f"the sign-in page calls {sso} (chip sso.settings api) but connect-src blocks it: {parts['connect-src']}"
     assert "'self'" in parts["worker-src"], f"worker-src must let the portal's own service worker start: {parts['worker-src']}"
     return parts
+
+
+def csp_loopback_test() -> None:
+    """2026-11-23 (lesson feedback_csp_connector_port_range): a local connector's loopback http address is named in connect-src;
+    any other http host is still refused."""
+    base = "default-src 'self'; script-src 'self'; worker-src 'self'; connect-src 'self' https://*.valuestream.in wss://*.valuestream.in {}"
+    for ok in ("http://127.0.0.1:8898", "http://localhost:8907", "http://127.0.0.1"):
+        csp_enforced(base.format(ok))
+    for bad in ("http://evil.example.com", "http://127.0.0.1." + "evil" + ".test", "http://10.0.0.5:8898", "http://127.0.0.1:8898/x", "http:"):
+        try:
+            csp_enforced(base.format(bad))
+        except AssertionError:
+            continue
+        raise AssertionError(f"csp_enforced let {bad} through")
+    print("  CSP loopback: 127.0.0.1 / localhost named, remote http refused OK")
 
 
 def csp_quiet() -> None:
@@ -224,6 +240,7 @@ def memory_pushed() -> None:
 
 
 def main() -> None:
+    csp_loopback_test()
     no_polls()
     memory_pushed()
     csp_quiet()
