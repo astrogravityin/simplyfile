@@ -810,6 +810,14 @@ def standards_check() -> None:
 
 
 if __name__ == "__main__":
+    # 2026-11-23 owner: off requirements.lock the counts are wrong - run again in the locked venv (tools/lockenv.py, chip deps.lock gate_venvs)
+    import subprocess as _lsp
+    from pathlib import Path as _LP
+    sys.path.append(str(_LP(__file__).resolve().parent / "tools"))   # appended: sys.path[0] stays the portal folder
+    _lpy = __import__("lockenv").locked_python(_LP(__file__).resolve().parent)
+    if _lpy:
+        print(f"this Python is off requirements.lock - running the self-check in {_lpy}", flush=True)
+        sys.exit(_lsp.run([_lpy, __file__, *sys.argv[1:]], cwd=_LP(__file__).resolve().parent).returncode)
     import subprocess as _sp
     _sp.run([sys.executable, "-m", "core.qualitycheck"], cwd=sys.path[0] or ".", check=True)   # QA/QC travel with the repo (owner 2026-11-16); own process - importing core loads the store
     print("SimplyFy - self-check")
