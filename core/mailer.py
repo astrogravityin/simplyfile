@@ -8,6 +8,7 @@ owner can act on; it is never swallowed into a log nobody reads.
 """
 from __future__ import annotations
 
+from typing import Any
 import html
 import json
 import re
@@ -292,7 +293,7 @@ if __name__ == "__main__":  # ponytail: one runnable self-check
     mono = build("to@x.example", "s", "t", who, root=t)             # no mark in the site file = the label's monogram, no image
     mono_page = next(p for p in mono.walk() if p.get_content_type() == "text/html").get_content()
     assert "cid:" not in mono_page and ">EF<" in mono_page and not any(p.get_content_type() == "image/png" for p in mono.walk())
-    calls = []                                   # one automatic retry on a passing timeout, never on a refused password
+    calls: list[Any] = []                                   # one automatic retry on a passing timeout, never on a refused password
 
     def flaky(c, port, timeout, msg):
         calls.append(1)

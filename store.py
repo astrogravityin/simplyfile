@@ -10,6 +10,7 @@ default, the fall-back order and what a model id may look like are `store.models
 """
 from __future__ import annotations
 
+from typing import Any
 import os
 
 # The framework reads PORTAL_*; this portal was deployed with TV_*. Map once, before core loads, so
@@ -346,7 +347,7 @@ if __name__ == "__main__":  # ponytail: one runnable self-check
         spend("u2", "gemini", 50)
         assert funds_for("u2")["low"] is False and funds_for("nobody")["low"] is False
         # 2026-09-19 live rates: fetched once, kept, a failure keeps the last table + its reason, never re-asked at once
-        asked = []
+        asked: list[Any] = []
 
         def fake_feed(url, timeout):
             asked.append(url)

@@ -14,6 +14,7 @@ label and limit is chip myreturn.read; every sentence is ui.myreturn.
 """
 from __future__ import annotations
 
+from typing import Any
 import base64
 import copy
 import hashlib
@@ -1030,7 +1031,7 @@ def form16(text: str, data: bytes, user: dict | None, ai_ok: bool, pan: str, ay:
                 e["tds"] = a[1] if len(a) >= 3 else a[-1]
                 e["parta_paid"] = a[0]
                 break
-    got = {}
+    got: dict[Any, Any] = {}
     for row in k["form16_anchors"]:
         for i, ln in enumerate(lines):
             if re.search(row["pattern"], ln, re.I):

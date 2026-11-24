@@ -16,6 +16,7 @@ Every number is chip health.settings; every sentence chip health.messages.
 """
 from __future__ import annotations
 
+from typing import Any
 import shutil
 import socket
 import ssl
@@ -224,7 +225,7 @@ if __name__ == "__main__":  # ponytail: a probe that raises is a problem, the ba
     import tempfile
     from pathlib import Path
     store.DATA = Path(tempfile.mkdtemp())
-    rang = []
+    rang: list[Any] = []
     bell.push = lambda uid, text, href="": rang.append(text)
     agents._owners = lambda: ["o"]   # noqa: SLF001
     PROBES.clear()

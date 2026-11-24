@@ -12,6 +12,7 @@ SDK) is code here. Three call sites in the portal ask this module: text_json, im
 """
 from __future__ import annotations
 
+from typing import Any
 import base64
 import json
 import time
@@ -1154,7 +1155,7 @@ if __name__ == "__main__":  # ponytail: one runnable self-check of the wire's sh
         b = pool_add(u, "gemini", "AIza-second-000000000000", "Spare")
         assert [k["name"] for k in pool(u, "gemini")] == ["Key 1", "Spare"] and key_for(u, "gemini") == "AIza-legacy-000000000000"
         assert store.keys_of(u)["gemini_api_key"] == "AIza-legacy-000000000000", "a spare never touches the field"
-        seen_keys = []
+        seen_keys: list[Any] = []
 
         def flaky(secret):
             seen_keys.append(secret)
@@ -1249,7 +1250,7 @@ if __name__ == "__main__":  # ponytail: one runnable self-check of the wire's sh
         # reports its ticket at once
         posts_.clear()
         answers_ = iter([{"status": "COMPLETED"}, {"video": {"url": "u"}}])
-        seen_ = []
+        seen_: list[Any] = []
         fal_clip("k", "https://queue.fal.run", {"id": "m", "fields": {"prompt": "prompt"}, "video_path": "video.url"}, "p", 5, "16:9",
                  Path("x.mp4"), None, ticket={"status_url": "https://queue.fal.run/m/requests/1/status", "response_url": "https://queue.fal.run/m/requests/1"}, on_ticket=seen_.append)
         assert posts_ == [] and seen_ == [{"status_url": "https://queue.fal.run/m/requests/1/status", "response_url": "https://queue.fal.run/m/requests/1"}], ("a ticket is collected, never re-sent", posts_, seen_)

@@ -10,6 +10,7 @@ Words: ui.changes. The list: list.changes (core/lists.py).
 """
 from __future__ import annotations
 
+from typing import Any
 import fnmatch
 import re
 import threading
@@ -252,7 +253,7 @@ if __name__ == "__main__":  # ponytail: a client edit and a replaced statement c
     es = _docs(ws, {"cid": "c1", "ay": "2026-27"}, [{"id": "f1", "name": "books.xlsx", "version": 1}], [{"id": "f1", "name": "books.xlsx", "version": 2}])
     assert len(es) == 1 and es[0]["old"] == "books.xlsx (v1)" and es[0]["file"] == {"kept_in": "sf_files", "fid": "f1", "v": 1}, es
     assert es[0]["file_new"]["v"] == 2, "the new version is offered too"
-    got = []
+    got: list[Any] = []
     _keep = lambda es: got.extend(es)  # noqa: E731 - catch what would be kept
     on_write("users", [{"id": "u1", "firm_id": "f1", "firm_role": "preparer", "password": "x"}],
              [{"id": "u1", "firm_id": "f1", "firm_role": "reviewer", "password": "y"}])

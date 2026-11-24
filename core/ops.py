@@ -1515,7 +1515,7 @@ def group_digits(value: Any = None, style: Any = "international", digits: Any = 
     whole, _, frac = f"{abs(x):.{d}f}".partition(".")
     if str(style) == "indian" and len(whole) > 3:
         head, tail = whole[:-3], whole[-3:]
-        pairs = []
+        pairs: list[Any] = []
         while len(head) > 2:
             head, pairs = head[:-2], [head[-2:]] + pairs
         whole = ",".join([head] + pairs + [tail])

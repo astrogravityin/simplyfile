@@ -465,7 +465,7 @@ if __name__ == "__main__":
     globals()["run"] = lambda *a, **k: 0.1 + 0.2
     assert run_tests({"chip_id": "x.float", "test_cases": [{"expect_value": 0.3}]}, {})[0]["ok"], "float noise failed a test"
     globals()["run"] = _run
-    _m = {}
+    _m: dict[Any, Any] = {}
     assert run_memo(_m, "find.score", {}) == run("find.score") and len(_m) == 1 and run_memo(None, "find.score") == run("find.score")
     # 2026-10-08 owner "the name should be chip/ops": {product} in any answer is the edition's product_name
     _ed = {"chip_id": "edition.settings", "params": [{"name": "default_edition", "default": "x"},

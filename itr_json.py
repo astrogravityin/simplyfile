@@ -10,6 +10,7 @@ checks the result before it is offered - every problem is listed with its path, 
 """
 from __future__ import annotations
 
+from typing import Any
 import datetime
 import json
 import re
@@ -439,7 +440,7 @@ def _fill(f: dict, spec: dict, m: list) -> tuple:
         if "each" in row:
             items = []
             for it in _get(f, row["each"]) or []:      # a list fact, dotted when it sits inside another (co.g80.50q.rows)
-                one = {}
+                one: dict[Any, Any] = {}
                 for p, key in row["item"].items():
                     v = _get(it, key)
                     if v not in (None, ""):

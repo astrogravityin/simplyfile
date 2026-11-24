@@ -99,6 +99,10 @@
         {
           "route": "POST /api/taxwatch/{ay}/fetch",
           "why": "reads the official tax sites over the network"
+        },
+        {
+          "route": "POST /api/core/agents/{agent_id}/run",
+          "why": "a dry run approved for real calls the osv.dev security feed over the network (securitywatch); the agent runs are walked by the agent walk"
         }
       ]
     },
@@ -177,6 +181,10 @@
           {
             "route": "POST /api/taxwatch/{ay}/fetch",
             "why": "reads the official tax sites over the network"
+          },
+          {
+            "route": "POST /api/core/agents/{agent_id}/run",
+            "why": "a dry run approved for real calls the osv.dev security feed over the network (securitywatch); the agent runs are walked by the agent walk"
           }
         ],
         "rates_off": true

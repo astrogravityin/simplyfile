@@ -16,6 +16,7 @@ chip list.backlog names the lists still sent whole; tv selfcheck lets it only sh
 """
 from __future__ import annotations
 
+from typing import Any
 from typing import Callable
 
 from fastapi import APIRouter, Depends, HTTPException, Request
@@ -73,7 +74,7 @@ def api_list(list_id: str, request: Request, u: dict = Depends(auth.signed_in)):
 
 
 if __name__ == "__main__":  # ponytail: one runnable self-check - 20,000 rows, one page out, the costly part paid per page
-    filled = []
+    filled: list[Any] = []
     SOURCES.clear()
     source("t", rows=lambda user, a: [{"id": i, "name": f"p{i}", "n": i % 7} for i in range(20000) if not a.get("odd") or i % 2],
            fill=lambda user, rows, a: filled.append(len(rows)) or [r | {"x": 1} for r in rows])

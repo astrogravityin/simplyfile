@@ -16,6 +16,7 @@ import re
 import subprocess
 import sys
 from pathlib import Path
+from lockenv import off_lock  # noqa: F401 - 2026-11-24 the one copy lives in tools/lockenv.py (clone check)
 
 ROOT = Path(__file__).resolve().parent.parent
 CHIP = "chips/selfcheck.quality.json"
@@ -41,29 +42,6 @@ def loosened(now: dict, before: dict | None) -> list[str]:
         return []
     bad = [f"{k} {before[k]} -> {now[k]}" for k in now.get("ceilings", []) if k in before and now[k] > before[k]]
     return bad + [f"{k} {before[k]} -> {now[k]}" for k in now.get("floors", []) if k in before and now[k] < before[k]]
-
-
-def off_lock(root: Path = ROOT) -> list[str]:
-    """Locked packages installed here at another version. The counts depend on them: 2026-11-13 the ceilings were measured
-    in a venv with other fastapi/httpx versions and the VPS (which installs the lock) counted 3 more mypy errors, so its
-    deploy stopped. A locked package that is not installed is off the lock too, unless chip deps.lock names it in `extra`
-    (Linux-only, uvloop): 2026-11-16 a hash install of the Linux lock failed on Windows, the venv stayed empty, every
-    package was skipped and the mypy ceiling was set from the wrong count (481; the lock counts 483)."""
-    from importlib import metadata
-    lk = knobs((root / "core" / "chips" / "deps.lock.json").read_text(encoding="utf-8"))
-    out, linux_only = [], {x.lower() for x in lk.get("extra", [])}
-    for f in (lk[k] for k in ("lock", "dev_lock") if k in lk):     # an older deps.lock chip has no dev_lock
-        p = root / f
-        for name, ver in re.findall(r"^([A-Za-z0-9_.\-]+)==([^\s;\\]+)", p.read_text(encoding="utf-8") if p.exists() else "", re.M):
-            try:
-                have = metadata.version(name)
-            except metadata.PackageNotFoundError:
-                if name.lower() not in linux_only:
-                    out.append(f"{name} not installed (lock {ver})")
-                continue
-            if have != ver:
-                out.append(f"{name} {have} (lock {ver})")
-    return out
 
 
 def places() -> list[Path]:

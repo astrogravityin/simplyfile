@@ -18,6 +18,7 @@ Nothing here knows what a step IS. The caller (narration today, shorts and film 
 """
 from __future__ import annotations
 
+from typing import Any
 import json
 import re
 import threading
@@ -357,7 +358,7 @@ if __name__ == "__main__":  # ponytail: one runnable self-check of stop, keep an
         store.DATA = Path(tmp)
         parts = Path(tmp) / "parts"
         parts.mkdir()
-        made = []
+        made: list[Any] = []
 
         def make(i, st):
             f = parts / f"{st['key']}.bin"
@@ -380,12 +381,12 @@ if __name__ == "__main__":  # ponytail: one runnable self-check of stop, keep an
         assert "top up" in m["reason"] and "₹25.20" in m["reason"] and "$" not in m["reason"], m["reason"]
         # 2. topped up: the same button carries on from step 3, and nothing is made twice
         wallet["left"] = 10.0
-        lines = []
+        lines: list[Any] = []
         m = me.run(me.open_job("render-abc123", "u1", "render", steps), make, funds=funds, log=lines.append)
         assert m["status"] == "done" and made == ["s1", "s2", "s3", "s4", "s5"], made
         assert any("carrying on from step 3" in x for x in lines), lines
         # 3. a step that keeps failing is tried again, then the job stops with what came before kept
-        calls = []
+        calls: list[Any] = []
 
         def flaky(i, st):
             calls.append(st["key"])
@@ -414,7 +415,7 @@ if __name__ == "__main__":  # ponytail: one runnable self-check of stop, keep an
         # point": the provider's "no credit" is never retried, the job stops at that step with what came before kept,
         # says what to do, and the same button carries on from exactly there once the account has money again
         broke = {"on": True}
-        tried = []
+        tried: list[Any] = []
 
         def paid(i, st):
             tried.append(st["key"])
@@ -503,7 +504,7 @@ if __name__ == "__main__":  # ponytail: one runnable self-check of stop, keep an
         assert not any(s["status"] == "done" for s in m["steps"] if s["key"] == "fA2"), "a scene stops where it broke"
         # 2026-09-28 owner: a restart must not lose paid work - a step that SENT its paid request keeps the ticket; the
         # next run hands it back (collect, never pay again) and a done step drops it
-        sent = []
+        sent: list[Any] = []
 
         def dies(i, st):
             me.remember(m_, st, {"id": f"req-{st['key']}"})

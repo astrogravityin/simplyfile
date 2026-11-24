@@ -12,6 +12,7 @@ Download writes the workbook back with the SF Ref column filled - the client's i
 """
 from __future__ import annotations
 
+from typing import Any
 import csv
 import hashlib
 import io
@@ -175,7 +176,7 @@ def parse(book: dict[str, list[list]]) -> list[dict]:
     """Every row with words or numbers: label, numbers, heading, and the file's own ref."""
     k = settings()
     head_re = re.compile(k["heading_words"], re.I)
-    out = []
+    out: list[Any] = []
     for sheet, whole in book.items():
         at = two_sided_at(whole, k)
         parts = [("", whole)] if at is None else [("", [c[:at] for c in whole]), (k["right_suffix"], [c[at:] for c in whole])]

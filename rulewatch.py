@@ -16,6 +16,7 @@ Periods are "2026" or "2026-27". Who: the portal owner fetches, edits and applie
 """
 from __future__ import annotations
 
+from typing import Any
 import copy
 import json
 import re
@@ -37,7 +38,7 @@ def next_period(p: str, n: int = 1) -> str:
 # --- paths inside a chip's params: "slabs.new", "regimes[id=new].slabs" -----------------------------------------------
 
 def _steps(path: str) -> list:
-    out = []
+    out: list[Any] = []
     for part in path.split("."):
         m = re.fullmatch(r"(\w+)\[(\w+)=([\w-]+)\]", part)
         out += [m[1], (m[2], m[3])] if m else [part]

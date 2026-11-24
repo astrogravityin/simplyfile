@@ -16,6 +16,7 @@ the year cannot move to a stage in chip recon.blocks while a red one is unexplai
 """
 from __future__ import annotations
 
+from typing import Any
 import csv
 import hashlib
 import io
@@ -275,7 +276,7 @@ def findings(cid: str, ay: str) -> dict:
             p = p_tds.setdefault(key, {"party": e["party"], "tax": 0.0, "gross": 0.0})
             p["tax"] += e["tax"]
             p["gross"] += e["gross"]
-    used = set()
+    used: set[Any] = set()
     for key, p in p_tds.items():
         mine = [r for r in b_tds if same_party(r["label"], p["party"])]
         used.update(r["key"] for r in mine)

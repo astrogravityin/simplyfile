@@ -14,6 +14,7 @@ ITR-6 rows their facts, in our words; the rows say where each goes in the CBDT s
 """
 from __future__ import annotations
 
+from typing import Any
 import re
 
 from fastapi import HTTPException
@@ -328,7 +329,7 @@ def work(cid: str, ay: str, c: dict, st: dict, books: list[dict], kc: dict) -> d
                                        "cess_pct": R["cess_pct"], "round_to": R["round_to"]})
 
     # MAT u/s 115JB and the credit u/s 115JAA
-    mat_items = {}
+    mat_items: dict[Any, Any] = {}
     for r in (r for r in books if r["table"] == "MAT"):
         it = str(r.get("serial") or "").lower()
         if it in k["mat_items"]:
@@ -423,7 +424,7 @@ def itr_facts(cid: str, ay: str, d: dict, f: dict) -> dict:
                         "addl_more": round(b["addl_more"]) or None, "addl_less": round(b["addl_less"]) or None, "addl_bf": round(b["addl_bf"]) or None,
                         "total": round(b["total"]), "zero": 0, "net": round(b["total"]), "wdv_last": round(b["wdv_last"]), "gain_50": round(b["gain_50"])}
               for b in dep["blocks"]}
-    sums = {}
+    sums: dict[Any, Any] = {}
     for b in dep["blocks"]:
         sums[b["sum"]] = sums.get(b["sum"], 0) + round(b["total"])
     pm = sum(sums.get(s, 0) for s in ("pm15", "pm30", "pm40", "pm45"))
@@ -449,7 +450,7 @@ def itr_facts(cid: str, ay: str, d: dict, f: dict) -> dict:
     inc["lt"] = inc.get("ltcg_112", 0) + inc.get("ltcg_112a", 0)
     bf_by = {key: after_cyla[key] - inc[key] for key in inc}
     ud_on = {key: v - (bf_bus if key == "bp" else 0) for key, v in bf_by.items()}
-    cfl = {}
+    cfl: dict[Any, Any] = {}
     for r in x["bfla"]:
         a = cfl.setdefault(r["ay"], {"filed_on": r["filed_on"] or "", "business": 0, "available": 0})
         if r["kind"] == "business":

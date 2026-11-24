@@ -86,7 +86,8 @@ def record(source: str, kind: str, message: str, where: str, line: str, extra: s
     picture's path) is kept with a new row but is NOT part of the fingerprint - 2026-10-21: a walk picture named by its run made the
     same finding new every night (REQ-0027 and REQ-0028 for one fault)."""
     k = K()
-    msg = mask(message)[: int(k["text_chars"])]
+    cap = int(k["text_chars"])
+    msg = mask(str(message or "")[: cap * 2])[:cap]   # cap BEFORE masking: a 200 KB probe made the regexes run for minutes (shape walk stall, 2026-11-24)
     fp = hashlib.sha1(f"{source}|{kind}|{where}|{line}|{re.sub(r'<[a-z]+>', '', msg)[:120]}".encode()).hexdigest()[:12]
     with LOCK:
         rows = store.read(FILE, {})

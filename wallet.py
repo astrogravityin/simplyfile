@@ -12,6 +12,7 @@ Every number and sentence is a chip: wallet.settings, wallet.block, wallet.messa
 """
 from __future__ import annotations
 
+from typing import Any
 from datetime import datetime, timezone
 
 from fastapi import HTTPException
@@ -101,7 +102,7 @@ def add(owner: dict, email: str, amount_usd: float, note: str = "") -> dict:
         amount = 0.0
     if not 0 < amount <= float(k["add_max_usd"]):
         raise HTTPException(400, say("bad_amount", max=store.money_text(owner["id"], k["add_max_usd"], 0)))
-    keys = {}
+    keys: dict[Any, Any] = {}
     for kk in providers.own_keys(owner["id"]):          # the default first, so the first per provider is the one lent
         keys.setdefault(kk["provider"], kk)
     if not keys:

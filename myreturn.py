@@ -15,6 +15,7 @@ rule and word is a chip (myreturn.*, ui.myreturn).
 """
 from __future__ import annotations
 
+from typing import Any
 import copy
 import datetime
 import re
@@ -898,7 +899,7 @@ def apply_status(r: dict, res: dict) -> dict:
     for x in r.get("club_rows") or []:
         c = engine.run("myreturn.club_row", {f: x.get(f) for f in ("relation", "head", "amount", "skill", "disabled")})
         rows.append(dict(x) | c | {"included": c["amount"], "exempt": 0.0})
-    kids = {}
+    kids: dict[Any, Any] = {}
     for x in rows:                                          # s.10(32): 1,500 a child, off the child's income other than a house
         if x["counts"] and x["relation"] == "minor_child" and x["to"] != "house":
             kids.setdefault((x.get("name") or "").strip().upper() or "-", []).append(x)
@@ -1285,7 +1286,7 @@ def checks_of(st: dict, r: dict, regime: str = "new") -> list[dict]:
     docs = st.get("docs") or []
     by_kind = lambda kind: [d for d in docs if d["kind"] == kind]  # noqa: E731
     out = []
-    credit = {}
+    credit: dict[Any, Any] = {}
     for kind in engine.run("myreturn.sources").get("tds", []):
         for d in by_kind(kind):
             for t in d["facts"].get("tds") or []:
@@ -1355,7 +1356,7 @@ def facts(cid: str, ay: str) -> dict:
     sal = g["salary"]
     rates = engine.run("myreturn.rates")
     keep_new = set(rates["exempt_in_new"])
-    ex = {}
+    ex: dict[Any, Any] = {}
     for e in r["employers"]:
         for x in e.get("exempt_rows") or []:
             if w["regime"] == "old" or x["code"] in keep_new:

@@ -8,6 +8,7 @@ Turnover for the presumptive tax (s.44AD) is the customer receipts - never loans
 No sentence and no word list lives here: every pattern, word and threshold is chip bank.classify."""
 from __future__ import annotations
 
+from typing import Any
 import datetime
 import difflib
 import re
@@ -92,7 +93,7 @@ def classify(txns: list[dict], holder: str, saved: dict | None = None) -> dict:
     saved = saved or {}
     pt = passthrough(txns, k)
     fr = k["fee_rule"]
-    same = {}                                                     # how often each plain credit amount occurs
+    same: dict[Any, Any] = {}                                                     # how often each plain credit amount occurs
     for x in txns:
         if x["credit"] and kind_of(x["narration"], counterparty(x["narration"], k), "cr", holder, k) == k["default_credit"]:
             same[x["credit"]] = same.get(x["credit"], 0) + 1

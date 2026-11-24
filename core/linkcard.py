@@ -6,6 +6,7 @@ portal's one mark by .agents/skills/domain-portal/make_share_assets.py. The scre
 file draws them all. `python -m core.linkcard` fails a portal whose card or icon is missing, blank or the wrong size."""
 from __future__ import annotations
 
+from typing import Any
 import functools
 import html
 import json
@@ -67,7 +68,7 @@ def modules(*entries: str) -> tuple[str, ...]:
             rel = m.group(1) or m.group(2)
             if rel.startswith("."):
                 parts = (u.rsplit("/", 1)[0] + "/" + rel).split("/")
-                out = []
+                out: list[Any] = []
                 for x in parts:
                     out = out[:-1] if x == ".." else out if x == "." else out + [x]
                 todo.append("/".join(out))
