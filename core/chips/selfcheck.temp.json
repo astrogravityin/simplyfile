@@ -1,0 +1,66 @@
+{
+  "chip_id": "selfcheck.temp",
+  "kind": "accessor",
+  "set": "selfcheck",
+  "audience": "admin",
+  "label": "Self-check: where its temp folders live and how they are removed",
+  "aliases": [
+    "temp folders",
+    "selfcheck leftovers",
+    "disk full"
+  ],
+  "params": [
+    {
+      "name": "roots",
+      "type": "json",
+      "default": [
+        "D:/Temp/selfcheck"
+      ],
+      "label": "Where a run keeps its temp folders - the first whose drive exists (owner 2026-10-21: temp on D:); none = the computer's temp folder"
+    },
+    {
+      "name": "retries",
+      "type": "number",
+      "default": 10,
+      "label": "Tries to remove the run's folder after the run ends (Windows lets go of a file a moment late)"
+    },
+    {
+      "name": "wait_s",
+      "type": "number",
+      "default": 1,
+      "label": "Seconds between tries"
+    },
+    {
+      "name": "stale_hours",
+      "type": "number",
+      "default": 12,
+      "label": "A run folder older than this (a run that was killed) is removed by the next run"
+    }
+  ],
+  "expr": {
+    "vop": "record",
+    "fields": {
+      "roots": "$roots",
+      "retries": "$retries",
+      "wait_s": "$wait_s",
+      "stale_hours": "$stale_hours"
+    }
+  },
+  "returns": "record",
+  "version": 1,
+  "status": "published",
+  "description_nl": "2026-11-28: C: held 7,720 tmp*/perm-* folders (46 GB, each a portal data copy with secret.json) left by self-checks whose TemporaryDirectory(ignore_cleanup_errors=True) failed silently on a held sqlite file; C: fell under machine.check min_disk_gb and Main Machine stopped taking work. tools/tempscope.py runs the self-check with TEMP pointed at one run folder here and removes it after the run's process has ended.",
+  "test_cases": [
+    {
+      "args": {},
+      "expect_value": {
+        "roots": [
+          "D:/Temp/selfcheck"
+        ],
+        "retries": 10,
+        "wait_s": 1,
+        "stale_hours": 12
+      }
+    }
+  ]
+}

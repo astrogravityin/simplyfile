@@ -18,6 +18,14 @@ import subprocess
 import sys
 import tempfile
 from pathlib import Path
+if __name__ == "__main__":
+    # 2026-11-28 (C: full, 7,720 leftover temp folders): the run goes on in a child whose TEMP is one run folder on D:,
+    # removed once the child has ended - a folder that will not go fails the run (chip selfcheck.temp, tools/tempscope.py).
+    # Here, before anything below makes a temp folder at import (the seal key folder did, on C:, every run).
+    sys.path.append(str(Path(__file__).resolve().parent / "tools"))   # appended: sys.path[0] stays the portal folder
+    _rc = __import__("tempscope").scoped([sys.executable, __file__, *sys.argv[1:]], Path(__file__).resolve().parent.name)
+    if _rc is not None:
+        sys.exit(_rc)
 
 # 2026-11-20 SimplyFile deploy: store tests run with PORTAL_DATA=<tmp>/tmpX, so the seal key defaulted to <tmp>/seal.key - one
 # file for every portal on the server; a root-run check left it 0600 and the next portal's non-root check could not read it
@@ -809,6 +817,19 @@ def standards_check() -> None:
     print("  " + w["ok"].format(known=len(got["known"]), env_file=got["env_file"]))
 
 
+def tempscope_check() -> None:
+    """2026-11-28 (C: full, 7,720 leftover temp folders, Main Machine not ready): a run's temp folders go with the run. The
+    scope's own self-test plants the leak (mkdtemp never removed, a TemporaryDirectory beaten by an open sqlite file) and
+    finds nothing left; a direct `python selfcheck.py` is scoped before the first def (tools/tempscope.py, chip selfcheck.temp)."""
+    here = Path(__file__).resolve().parent
+    r = subprocess.run([sys.executable, "tools/tempscope.py", "--selftest"], cwd=here, capture_output=True, text=True, timeout=120,
+                       env={k: v for k, v in os.environ.items() if k != "SELFCHECK_TEMP_SCOPE"})
+    assert r.returncode == 0 and "tempscope selftest OK" in r.stdout, "temp scope:" + chr(10) + (r.stdout + r.stderr)[-1500:]
+    top = (here / "selfcheck.py").read_text(encoding="utf-8").split(chr(10) + "def ", 1)[0]
+    assert "_rc = " + '__import__("tempscope").scoped(' in top, "selfcheck.py no longer runs inside a temp scope: its folders are left on C: again"
+    print("  temp scope: a run's temp folders are removed after it, a held one fails the run OK")
+
+
 if __name__ == "__main__":
     # 2026-11-23 owner: off requirements.lock the counts are wrong - run again in the locked venv (tools/lockenv.py, chip deps.lock gate_venvs)
     import subprocess as _lsp
@@ -822,7 +843,7 @@ if __name__ == "__main__":
     _sp.run([sys.executable, "-m", "core.qualitycheck"], cwd=sys.path[0] or ".", check=True)   # QA/QC travel with the repo (owner 2026-11-16); own process - importing core loads the store
     print("SimplyFy - self-check")
     only = sys.argv[1:]
-    for name, fn in {"modules": module_checks, "statics": static_checks, "chips": chips_first_check, "guides": guides_tours_check, "name": name_once_check, "verbs": verbs_check, "ai": ai_check, "site": site_manifest_check, "standards": standards_check, "api": api_check, "secrets": lambda: __import__("core.secretscan", fromlist=["check"]).check(HERE), "push": lambda: __import__("selfcheck_push").main()}.items():
+    for name, fn in {"temp": tempscope_check, "modules": module_checks, "statics": static_checks, "chips": chips_first_check, "guides": guides_tours_check, "name": name_once_check, "verbs": verbs_check, "ai": ai_check, "site": site_manifest_check, "standards": standards_check, "api": api_check, "secrets": lambda: __import__("core.secretscan", fromlist=["check"]).check(HERE), "push": lambda: __import__("selfcheck_push").main()}.items():
         if not only or name in only:
             fn()
     import selfcheck_quality  # W1.3 quality gate: lint/types, shape walk, word drift, clones, deps (+ coverage when named)
